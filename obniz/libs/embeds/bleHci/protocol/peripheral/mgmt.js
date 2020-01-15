@@ -1,4 +1,5 @@
-let debug = require('debug')('mgmt');
+// let debug = require('debug')('mgmt');
+const debug = () => {};
 
 let LTK_INFO_SIZE = 36;
 
@@ -81,7 +82,7 @@ Mgmt.prototype.write = function(opcode, index, data) {
   }
 
   debug('writing -> ' + pkt.toString('hex'));
-  this._hci.write(pkt);
+  this._hci._socket.write(pkt);
 };
 
 module.exports = Mgmt;

@@ -1,4 +1,5 @@
-let debug = require('debug')('signaling');
+// let debug = require('debug')('signaling');
+let debug = () => {};
 
 let events = require('events');
 let util = require('util');

@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 const BleRemoteService = require('./bleRemoteService');
 const emitter = require('eventemitter3');
 const BleHelper = require('./bleHelper');
@@ -26,7 +24,7 @@ class BleRemotePeripheral {
       'scan_resp',
     ];
 
-    this.services = [];
+    this._services = [];
     this.emitter = new emitter();
   }
 
@@ -169,13 +167,28 @@ class BleRemotePeripheral {
   }
 
   connect() {
+    this.obnizBle.scan.end();
     this.obnizBle.centralBindings.connect(this.address);
   }
 
   connectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
+      // if (this.connected) {
+      //   resolve();
+      //   return;
+      // }
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'connected');
+        if (params.status === 'connected') {
+          resolve(true); // for compatibility
+        } else {
+          reject(
+            new Error(
+              `connection to peripheral name=${this.localName} address=${
+                this.address
+              } can't be established`
+            )
+          );
+        }
       });
       this.connect();
     });
@@ -186,25 +199,40 @@ class BleRemotePeripheral {
   }
 
   disconnectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
+      // if (!this.connected) {
+      //   resolve();
+      //   return;
+      // }
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'disconnected');
+        if (params.status === 'disconnected') {
+          resolve(true); // for compatibility
+        } else {
+          reject(
+            new Error(
+              `cutting connection to peripheral name=${
+                this.localName
+              } address=${this.address} was failed`
+            )
+          );
+        }
       });
       this.disconnect();
     });
   }
 
+  get services() {
+    return this._services;
+  }
+
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    for (let key in this.services) {
-      if (this.services[key].uuid === uuid) {
-        return this.services[key];
+    for (let key in this._services) {
+      if (this._services[key].uuid === uuid) {
+        return this._services[key];
       }
     }
-    let newService = new BleRemoteService({ uuid });
-    newService.parent = this;
-    this.services.push(newService);
-    return newService;
+    return undefined;
   }
 
   findService(param) {
@@ -238,7 +266,7 @@ class BleRemotePeripheral {
   discoverAllServicesWait() {
     return new Promise(resolve => {
       this.emitter.once('discoverfinished', () => {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
@@ -247,29 +275,32 @@ class BleRemotePeripheral {
     });
   }
 
-  async discoverAllHandlesWait(){
-    if (!Array.prototype.flat) {
-      Array.prototype.flat = function(depth) {
-        var flattend = [];
-        (function flat(array, depth) {
-          for (let el of array) {
-            if (Array.isArray(el) && depth > 0) {
-              flat(el, depth - 1);
-            } else {
-              flattend.push(el);
-            }
+  async discoverAllHandlesWait() {
+    let ArrayFlat = function(array, depth) {
+      let flattend = [];
+      (function flat(array, depth) {
+        for (let el of array) {
+          if (Array.isArray(el) && depth > 0) {
+            flat(el, depth - 1);
+          } else {
+            flattend.push(el);
           }
-        })(this, Math.floor(depth) || 1);
-        return flattend;
-      };
-    }
+        }
+      })(array, Math.floor(depth) || 1);
+      return flattend;
+    };
 
     let services = await this.discoverAllServicesWait();
-    let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait()));
-    let chars = charsNest.flat();
-    let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
-    let descriptors = descriptorsNest.flat();
+    let charsNest = await Promise.all(
+      services.map(s => s.discoverAllCharacteristicsWait())
+    );
+    let chars = ArrayFlat(charsNest);
+    let descriptorsNest = await Promise.all(
+      chars.map(c => c.discoverAllDescriptorsWait())
+    );
 
+    // eslint-disable-next-line no-unused-vars
+    let descriptors = ArrayFlat(descriptorsNest);
   }
 
   onconnect() {}
@@ -299,13 +330,20 @@ class BleRemotePeripheral {
         break;
       }
       case 'discover': {
-        let child = this.getService(params.service_uuid);
+        let uuid = params.service_uuid;
+        let child = this.getService(uuid);
+        if (!child) {
+          let newService = new BleRemoteService({ uuid });
+          newService.parent = this;
+          this._services.push(newService);
+          child = newService;
+        }
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
       }
       case 'discoverfinished': {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverservicefinished(children);

@@ -1,21 +1,27 @@
-/* eslint-disable */
-
 const emitter = require('eventemitter3');
 const BleHelper = require('./bleHelper');
 
 class BleScan {
   constructor(obnizBle) {
     this.scanTarget = null;
+    this.scanSettings = {};
     this.obnizBle = obnizBle;
     this.emitter = new emitter();
 
     this.scanedPeripherals = [];
-
+    this._timeoutTimer = null;
   }
 
   start(target, settings) {
+    this.obnizBle.warningIfNotInitialize();
 
-    let timeout = (settings || {} ).duration || 30;
+    if (!settings) {
+      settings = {};
+    }
+    let timeout = settings.duration || 30;
+    settings.duplicate = settings.duplicate === true ? true : false;
+    this.scanSettings = settings;
+    target = target || {};
     this.scanTarget = target;
     if (
       this.scanTarget &&
@@ -28,10 +34,13 @@ class BleScan {
     }
     this.scanedPeripherals = [];
 
-
     this.obnizBle.centralBindings.startScanning(null, false);
 
-    setTimeout(()=>{ this.end() },timeout * 1000);
+    this.clearTimeoutTimer();
+    this._timeoutTimer = setTimeout(() => {
+      this._timeoutTimer = null;
+      this.end();
+    }, timeout * 1000);
   }
 
   startOneWait(target, settings) {
@@ -68,7 +77,8 @@ class BleScan {
   }
 
   end() {
-    this.obnizBle.centralBindings.stopScanning()
+    this.clearTimeoutTimer();
+    this.obnizBle.centralBindings.stopScanning();
   }
 
   isTarget(peripheral) {
@@ -98,9 +108,11 @@ class BleScan {
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
       case 'onfind': {
-        //duplicate filter
-        if(this.scanedPeripherals.find(e=>e.address === params.address)){
-          break;
+        if (this.scanSettings.duplicate === false) {
+          //duplicate filter
+          if (this.scanedPeripherals.find(e => e.address === params.address)) {
+            break;
+          }
         }
         if (this.isTarget(params)) {
           this.scanedPeripherals.push(params);
@@ -110,10 +122,18 @@ class BleScan {
         break;
       }
       case 'onfinish': {
+        this.clearTimeoutTimer();
         this.emitter.emit(notifyName, this.scanedPeripherals);
         this.onfinish(this.scanedPeripherals);
         break;
       }
+    }
+  }
+
+  clearTimeoutTimer() {
+    if (this._timeoutTimer) {
+      clearTimeout(this._timeoutTimer);
+      this._timeoutTimer = null;
     }
   }
 }

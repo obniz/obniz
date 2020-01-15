@@ -97,6 +97,21 @@ auto_connect | `boolean` | true | obniz.js automatically connect to cloud API af
 access_token | `string` | null | If you specified access_token to your obniz Board. set it's key to this parameter.
 reset_obniz_on_ws_disconnection | `boolean` | true | With 'true', obniz cloud will reset your obniz Board after all websocket connection to an obniz Board was closed.
 
+### obnizOS version and obniz.js version
+
+obniz cloud compare your obniz.js version and target device obnizOS version.
+If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
+It will work somehow but some functions looses compatibility.
+
+### one device from two program
+
+obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
+every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
+
+But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
+
+If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
+
 
 ## connect()
 You can connect to obniz Board manually by calling connect() when auto_connect is set to be false.
@@ -148,7 +163,7 @@ You can set timeout(sec) param. False will be returned when connection is not es
 ```javascript
 var obniz = new Obniz('1234-5678');
 
-var connected = await obniz.connectWait({timeout:10});  //timeout 10sec
+await obniz.connectWait({timeout:10});  //timeout 10sec
 
 if(connected){
     obniz.io0.output(true);

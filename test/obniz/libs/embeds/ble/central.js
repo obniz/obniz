@@ -241,7 +241,7 @@ describe('ble', function() {
 
     this.obniz.ble.scan.onfind = stub;
     let target = {
-      uuids: ['FFF0'], //scan only has uuids "FFF0" and "FFF1"
+      uuids: ['FFF0'], //scan only has uuids "fff0" and "FFF1"
       localName: 'obniz-BLE', //scan only has localName "obniz-BLE"
     };
 
@@ -345,7 +345,7 @@ describe('ble', function() {
 
     this.obniz.ble.scan.onfind = stub;
     let target = {
-      uuids: ['713d0000-503e-4c75-ba94-3148f18d9400'], //scan only has uuids "FFF0" and "FFF1"
+      uuids: ['713d0000-503e-4c75-ba94-3148f18d9400'], //scan only has uuids "fff0" and "FFF1"
     };
 
     let setting = {
@@ -521,7 +521,7 @@ describe('ble', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('on scan finished2', function() {
+  it('on scan finished2', async function() {
     let stub1 = sinon.stub();
     let stub2 = sinon.stub();
 
@@ -549,6 +549,7 @@ describe('ble', function() {
     ];
 
     testUtil.receiveJson(this.obniz, results1);
+    await wait(1);
 
     sinon.assert.callCount(stub1, 1);
     sinon.assert.callCount(stub2, 0);
@@ -579,7 +580,7 @@ describe('ble', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('connect', function() {
+  it('connect', async function() {
     let stub = sinon.stub();
 
     this.obniz.ble.scan.onfind = stub;
@@ -614,6 +615,8 @@ describe('ble', function() {
     peripheral.onconnect = connectStub;
     peripheral.connect();
 
+    expect(this.obniz).send([{ ble: { scan: null } }]);
+
     expect(this.obniz).send([
       { ble: { connect: { address: 'e5f678800700' } } },
     ]);
@@ -631,6 +634,57 @@ describe('ble', function() {
       },
     ]);
 
+    /* eslint-disable */
+    /* @formatter:off */
+    let connectionCommunication = [
+      {type:"send",data:[{"ble":{"get_services":{"address":"e5f678800700"}}}]},
+      {type:"recv",data:[{"ble":{"get_service_result":{"address":"e5f678800700","service_uuid":"1800"}}}]},
+      {type:"recv",data:[{"ble":{"get_service_result":{"address":"e5f678800700","service_uuid":"3000"}}}]},
+      {type:"recv",data:[{"ble":{"get_service_result_finish":{"address":"e5f678800700"}}}]},
+      {type:"send",data:[{"ble":{"get_characteristics":{"address":"e5f678800700","service_uuid":"1800"}}}]},
+      {type:"send",data:[{"ble":{"get_characteristics":{"address":"e5f678800700","service_uuid":"3000"}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a00","properties":["read"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a01","properties":["read"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result_finish":{"address":"e5f678800700","service_uuid":"1800"}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000","properties":["read"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001","properties":["read"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002","properties":["write"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result_finish":{"address":"e5f678800700","service_uuid":"3000"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a00"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a01"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a00"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a01"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}}]},
+    ];
+    /* @formatter:on */
+    /* eslint-enable */
+
+    for (let one of connectionCommunication) {
+      if (one.type === 'send') {
+        expect(this.obniz).send(one.data);
+      } else if (one.type === 'recv') {
+        testUtil.receiveJson(this.obniz, one.data);
+        await wait(1); // waiting for process receiveJson
+      }
+    }
+
+    sinon.assert.callCount(connectStub, 0);
+    testUtil.receiveJson(this.obniz, [
+      {
+        ble: {
+          get_descriptor_result_finish: {
+            address: 'e5f678800700',
+            service_uuid: '3000',
+            characteristic_uuid: '3002',
+          },
+        },
+      },
+    ]);
+    await wait(1); // waiting for process receiveJson
     sinon.assert.callCount(connectStub, 1);
 
     expect(this.obniz).to.be.finished;
@@ -673,6 +727,8 @@ describe('ble', function() {
     peripheral.ondisconnect = disconnectStub;
     peripheral.connect();
 
+    expect(this.obniz).send([{ ble: { scan: null } }]);
+
     expect(this.obniz).send([
       { ble: { connect: { address: 'e5f678800700' } } },
     ]);
@@ -696,3 +752,9 @@ describe('ble', function() {
     expect(this.obniz).to.be.finished;
   });
 });
+
+function wait(ms) {
+  return new Promise(r => {
+    setTimeout(r, ms);
+  });
+}
