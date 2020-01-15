@@ -1,6 +1,9 @@
+
+type ObnizSwitchCallback = (result: boolean) => void;
+
 class ObnizSwitch {
   public Obniz: any;
-  public observers: any;
+  public observers!: ObnizSwitchCallback[];
   public onChangeForStateWait: any;
   public state: any;
   public onchange: any;
@@ -16,7 +19,7 @@ class ObnizSwitch {
     };
   }
 
-  public addObserver(callback: any) {
+  public addObserver(callback: ObnizSwitchCallback) {
     if (callback) {
       this.observers.push(callback);
     }
@@ -32,10 +35,10 @@ class ObnizSwitch {
     });
   }
 
-  public stateWait(isPressed: any) {
+  public stateWait(isPressed: boolean) {
     const self: any = this;
     return new Promise((resolve: any, reject: any) => {
-      self.onChangeForStateWait = (pressed: any ) => {
+      self.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
           self.onChangeForStateWait = () => {
           };

@@ -80,7 +80,7 @@ class Display {
     }
   }
 
-  public font(font: any, size: any) {
+  public font(font: string | null, size?: number) {
     const ctx: any = this._ctx();
     if (typeof size !== "number") {
       size = 16;
@@ -111,7 +111,7 @@ class Display {
     }
   }
 
-  public pos(x: any, y: any) {
+  public pos(x: number, y: number) {
     this._ctx(); // crete first
     if (typeof x === "number") {
       this._pos.x = x;
@@ -193,7 +193,7 @@ class Display {
     this.Obniz.send(obj);
   }
 
-  public raw(data: any) {
+  public raw(data: number[]) {
     const obj: any = {};
     obj.display = {
       raw: data,
@@ -258,7 +258,7 @@ class Display {
     }
   }
 
-  public drawing(autoFlush: any) {
+  public drawing(autoFlush: boolean) {
     this.autoFlush = !!autoFlush;
     const ctx: any = this._ctx();
     if (ctx) {
