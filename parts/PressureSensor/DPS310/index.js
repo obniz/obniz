@@ -169,8 +169,8 @@ class DPS310 {
 
   async readByteBitfieldWait(field) {
     let regAddress = field.address,
-        mask = field.mask,
-        shift = field.shift;
+      mask = field.mask,
+      shift = field.shift;
     let ret = await this.readByteWait(regAddress);
     if (ret < 0) {
       return ret;
@@ -186,7 +186,7 @@ class DPS310 {
 
   async readBlockWait(datablock) {
     let address = datablock.address,
-        length = datablock.length;
+      length = datablock.length;
     await this.obniz.wait(1);
     this.i2c.write(this.address, [address]);
     let results = await this.i2c.readWait(this.address, length);
@@ -211,20 +211,20 @@ class DPS310 {
 
   async setOpModeDetailWait(background, temperature, pressure) {
     let opMode =
-        ((background & this.DPS310__LSB) << 2) |
-        ((temperature & this.DPS310__LSB) << 1) |
-        (pressure & this.DPS310__LSB);
+      ((background & this.DPS310__LSB) << 2) |
+      ((temperature & this.DPS310__LSB) << 1) |
+      (pressure & this.DPS310__LSB);
     return await this.setOpModeWait(opMode);
   }
 
   async setOpModeWait(opMode) {
     opMode &=
-        this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
-        this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
+      this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
+      this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
 
     await this.writeByteWait(
-        this.bitFileds.DPS310__REG_INFO_OPMODE.address,
-        opMode
+      this.bitFileds.DPS310__REG_INFO_OPMODE.address,
+      opMode
     );
     this.opMode = opMode;
   }
@@ -237,12 +237,12 @@ class DPS310 {
 
   async configTempWait(tempMr, tempOsr) {
     await this.writeByteBitfield(
-        this.bitFileds.DPS310__REG_INFO_TEMP_MR,
-        tempMr
+      this.bitFileds.DPS310__REG_INFO_TEMP_MR,
+      tempMr
     );
     await this.writeByteBitfield(
-        this.bitFileds.DPS310__REG_INFO_TEMP_OSR,
-        tempOsr
+      this.bitFileds.DPS310__REG_INFO_TEMP_OSR,
+      tempOsr
     );
 
     if (tempOsr > this.DPS310__OSR_SE) {
@@ -258,8 +258,8 @@ class DPS310 {
   async configPressureWait(prsMr, prsOsr) {
     await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
     await this.writeByteBitfield(
-        this.bitFileds.DPS310__REG_INFO_PRS_OSR,
-        prsOsr
+      this.bitFileds.DPS310__REG_INFO_PRS_OSR,
+      prsOsr
     );
 
     if (prsOsr > this.DPS310__OSR_SE) {
@@ -285,13 +285,13 @@ class DPS310 {
       this.coeffs.m_c1 -= 1 << 12;
     }
     this.coeffs.m_c00 =
-        (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+      (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
     if (this.coeffs.m_c00 & (1 << 19)) {
       this.coeffs.m_c00 -= 1 << 20;
     }
 
     this.coeffs.m_c10 =
-        ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+      ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
     if (this.coeffs.m_c10 & (1 << 19)) {
       this.coeffs.m_c10 -= 1 << 20;
     }
@@ -324,7 +324,7 @@ class DPS310 {
 
   async initWait() {
     let prodId = await this.readByteBitfieldWait(
-        this.bitFileds.DPS310__REG_INFO_PROD_ID
+      this.bitFileds.DPS310__REG_INFO_PROD_ID
     );
     if (prodId != 0) {
       throw new Error('invalid prodId');
@@ -332,23 +332,23 @@ class DPS310 {
     await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
 
     await this.readByteBitfieldWait(
-        this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC
+      this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC
     );
 
     await this.writeByteBitfield(
-        this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR,
-        0
+      this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR,
+      0
     );
 
     await this.readCoeffsWait();
     await this.standbyWait();
     await this.configTempWait(
-        this.DPS310__TEMP_STD_MR,
-        this.DPS310__TEMP_STD_OSR
+      this.DPS310__TEMP_STD_MR,
+      this.DPS310__TEMP_STD_OSR
     );
     await this.configPressureWait(
-        this.DPS310__PRS_STD_MR,
-        this.DPS310__PRS_STD_OSR
+      this.DPS310__PRS_STD_MR,
+      this.DPS310__PRS_STD_OSR
     );
     await this.standbyWait();
     await this.measureTempOnceWait();
@@ -361,12 +361,12 @@ class DPS310 {
     switch (this.opMode) {
       case this.mode.CMD_TEMP:
         rdy = await this.readByteBitfieldWait(
-            this.bitFileds.DPS310__REG_INFO_TEMP_RDY
+          this.bitFileds.DPS310__REG_INFO_TEMP_RDY
         );
         break;
       case this.mode.CMD_PRS:
         rdy = await this.readByteBitfieldWait(
-            this.bitFileds.DPS310__REG_INFO_PRS_RDY
+          this.bitFileds.DPS310__REG_INFO_PRS_RDY
         );
         break;
       default:
@@ -410,13 +410,13 @@ class DPS310 {
     let prs = raw;
     prs /= this.scaling_facts[this.prsOsr];
     prs =
-        this.coeffs.m_c00 +
-        prs *
+      this.coeffs.m_c00 +
+      prs *
         (this.coeffs.m_c10 +
-            prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
-        this.m_lastTempScal *
+          prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
+      this.m_lastTempScal *
         (this.coeffs.m_c01 +
-            prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
+          prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
     return prs;
   }
 
