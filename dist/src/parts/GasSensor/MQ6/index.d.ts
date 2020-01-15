@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface MQ6Options {
 }
 declare class MQ6 implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     onchangeanalog: any;
@@ -21,6 +19,6 @@ declare class MQ6 implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     startHeating(): void;
-    heatWait(seconds: any): Promise<{}>;
+    heatWait(seconds: any): Promise<unknown>;
 }
 export default MQ6;

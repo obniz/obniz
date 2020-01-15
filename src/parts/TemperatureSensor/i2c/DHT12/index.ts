@@ -1,17 +1,16 @@
 import i2cParts from "../../../i2cParts";
 
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
 export interface DHT12Options { }
 class DHT12 extends i2cParts implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "DHT12",
     };
   }
-
 
   public i2cInfo() {
     return {

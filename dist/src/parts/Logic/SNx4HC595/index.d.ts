@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface SNx4HC595Options {
 }
 declare class SNx4HC595 implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     autoFlash: any;

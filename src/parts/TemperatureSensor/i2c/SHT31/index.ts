@@ -1,10 +1,10 @@
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
 export interface SHT31Options { }
 class SHT31 implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "SHT31",
     };

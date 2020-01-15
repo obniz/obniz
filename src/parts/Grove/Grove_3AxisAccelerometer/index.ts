@@ -1,10 +1,10 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface Grove_3AxisAccelerometerOptions { }
 class Grove_3AxisAccelerometer implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "Grove_3AxisAccelerometer",
     };

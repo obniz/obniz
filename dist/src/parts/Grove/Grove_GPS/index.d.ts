@@ -1,13 +1,11 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface Grove_GPSOptions {
 }
 declare class Grove_GPS implements ObnizPartsInterface {
-    readonly latitude: number;
-    readonly longitude: number;
-    static info(): {
-        name: string;
-    };
+    get latitude(): number;
+    get longitude(): number;
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     ioKeys: string[];

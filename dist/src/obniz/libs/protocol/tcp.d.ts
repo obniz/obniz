@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import Obniz from "../../index";
 declare type TCPCallbackFunction = (data: number[]) => void;
 declare class Tcp {
@@ -13,7 +14,7 @@ declare class Tcp {
     _reset(): void;
     _addConnectObserver(callback: any): void;
     _addReadObserver(callback: TCPCallbackFunction): void;
-    connectWait(port: number, domain: string): Promise<{}>;
+    connectWait(port: number, domain: string): Promise<unknown>;
     close(): void;
     write(data: number | number[] | Buffer | string): void;
     readWait(): Promise<number[]>;

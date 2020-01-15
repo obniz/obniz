@@ -111,4 +111,5 @@ class BleCharacteristic extends bleLocalAttributeAbstract_1.default {
     }
 }
 exports.default = BleCharacteristic;
+
 //# sourceMappingURL=bleCharacteristic.js.map

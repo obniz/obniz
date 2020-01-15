@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface MFRC522Options {
 }
 declare class MFRC522 implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     PCD_Idle: any;
     PCD_Mem: any;
     PCD_GenerateRandomID: any;

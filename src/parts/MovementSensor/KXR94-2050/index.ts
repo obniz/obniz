@@ -1,12 +1,12 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface KXR94_2050Options {
 }
 
 class KXR94_2050 implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "KXR94-2050",
     };

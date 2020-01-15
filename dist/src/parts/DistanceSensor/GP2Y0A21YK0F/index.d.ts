@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface GP2Y0A21YK0FOptions {
 }
 declare class GP2Y0A21YK0F implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     displayIoNames: any;
@@ -18,7 +16,7 @@ declare class GP2Y0A21YK0F implements ObnizPartsInterface {
     wired(obniz: Obniz): void;
     start(callback: any): void;
     _volt2distance(val: any): any;
-    getWait(): Promise<{}>;
+    getWait(): Promise<unknown>;
     unit(unit: any): void;
 }
 export default GP2Y0A21YK0F;

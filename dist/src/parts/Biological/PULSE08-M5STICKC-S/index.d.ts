@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface Puls08M5stickcSOptions {
 }
 declare class Puls08M5stickcS implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     delimiter: any;

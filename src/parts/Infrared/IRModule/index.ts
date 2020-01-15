@@ -1,5 +1,5 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface IRModuleOptions { }
 class IRModule implements ObnizPartsInterface {
@@ -13,7 +13,7 @@ class IRModule implements ObnizPartsInterface {
     this.led.dataSymbolLength = x;
   }
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "IRModule",
     };

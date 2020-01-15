@@ -169,4 +169,5 @@ class WSCommandI2C extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandI2C;
+
 //# sourceMappingURL=WSCommandI2C.js.map

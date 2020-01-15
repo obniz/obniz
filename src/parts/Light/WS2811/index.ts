@@ -1,10 +1,10 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface WS2811Options { }
 class WS2811 implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "WS2811",
     };

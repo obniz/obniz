@@ -3,11 +3,11 @@ import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 // sensor resopnse not found
 
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
 export interface S8100BOptions { }
 class S8100B extends AnalogTemperatureSensor implements ObnizPartsInterface {
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "S8100B",
     };

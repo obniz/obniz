@@ -1,10 +1,10 @@
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
 export interface AMG8833Options { }
 class AMG8833 implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "AMG8833",
     };

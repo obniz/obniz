@@ -1,6 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class GYSFDMAXB {
+    constructor() {
+        this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
+        this.requiredKeys = ["txd", "rxd"];
+        this.ioKeys = this.keys;
+        this.displayName = "gps";
+        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
+    }
     // -------------------
     get latitude() {
         return this.nmea2dd(this._latitude);
@@ -12,13 +19,6 @@ class GYSFDMAXB {
         return {
             name: "GYSFDMAXB",
         };
-    }
-    constructor() {
-        this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
-        this.requiredKeys = ["txd", "rxd"];
-        this.ioKeys = this.keys;
-        this.displayName = "gps";
-        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -342,4 +342,5 @@ class GYSFDMAXB {
     }
 }
 exports.default = GYSFDMAXB;
+
 //# sourceMappingURL=index.js.map

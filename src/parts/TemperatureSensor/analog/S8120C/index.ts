@@ -5,11 +5,11 @@ import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 // resoson2:Is the sensor oscillating?
 
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
 export interface S8120COptions { }
 class S8120C extends AnalogTemperatureSensor implements ObnizPartsInterface {
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "S8120C",
     };

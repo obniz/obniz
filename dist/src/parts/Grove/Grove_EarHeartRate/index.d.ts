@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface Grove_EarHeartRateOptions {
 }
 declare class Grove_EarHeartRate implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     displayIoNames: any;
@@ -16,6 +14,6 @@ declare class Grove_EarHeartRate implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     start(callback: any): void;
-    getWait(): Promise<{}>;
+    getWait(): Promise<unknown>;
 }
 export default Grove_EarHeartRate;

@@ -7,10 +7,10 @@ declare class BleService extends BleAttributeAbstract {
     uuid: any;
     peripheral: any;
     constructor(obj: any);
-    readonly parentName: string | null;
-    readonly childrenName: string | null;
-    readonly childrenClass: any;
-    readonly advData: {
+    get parentName(): string | null;
+    get childrenName(): string | null;
+    get childrenClass(): any;
+    get advData(): {
         flags: string[];
         serviceUuids: any[];
     };

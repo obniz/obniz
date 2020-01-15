@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface HCSR04Options {
 }
 declare class HCSR04 implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     _unit: any;
@@ -19,7 +17,7 @@ declare class HCSR04 implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     measure(callback: any): void;
-    measureWait(): Promise<{}>;
+    measureWait(): Promise<unknown>;
     unit(unit: any): void;
 }
 export default HCSR04;

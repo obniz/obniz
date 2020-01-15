@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface FullColorLEDOptions {
 }
 declare class FullColorLED implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     COMMON_TYPE_ANODE: any;
     COMMON_TYPE_CATHODE: any;
     anode_keys: any;

@@ -939,4 +939,5 @@ class Gatt extends events.EventEmitter {
     }
 }
 exports.default = Gatt;
+
 //# sourceMappingURL=gatt.js.map

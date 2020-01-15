@@ -1,11 +1,13 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface Hx711Options {
+    vcc?: number;
+    gnd?: number;
+    sck: number;
+    dout: number;
 }
 declare class Hx711 implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     _offset: any;
@@ -18,13 +20,13 @@ declare class Hx711 implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     readWait(): Promise<number>;
-    doubleBit2singleBit(a: any, b: any): number;
-    bit(a: any, n: any): 0 | 1;
+    doubleBit2singleBit(a: number, b: number): number;
+    bit(a: number, n: number): 1 | 0;
     readAverageWait(times: any): Promise<number>;
     powerDown(): void;
     powerUp(): void;
-    zeroAdjustWait(times: any): Promise<void>;
-    getValueWait(times: any): Promise<number>;
+    zeroAdjustWait(times: number | any): Promise<void>;
+    getValueWait(times: number | any): Promise<number>;
     setOffset(offset: any): void;
     setScale(scale: any): void;
 }

@@ -1,6 +1,6 @@
 import Obniz from "../obniz";
-import ObnizPartsInterface from "../obniz/ObnizPartsInterface";
 import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
+import ObnizPartsInterface from "../obniz/ObnizPartsInterface";
 export interface I2cPartsAbstructOptions {
 }
 export default class I2cPartsAbstruct implements ObnizPartsInterface {

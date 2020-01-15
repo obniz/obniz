@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Puls08M5stickcS {
-    static info() {
-        return {
-            name: "Puls08M5stickcS",
-        };
-    }
     constructor() {
         this.keys = ["vcc", "gnd", "tx", "rx"];
         this.requiredKeys = ["tx", "rx"];
         this.delimiter = 0x0a;
+    }
+    static info() {
+        return {
+            name: "Puls08M5stickcS",
+        };
     }
     onbpmupdate(data) {
         return;
@@ -72,4 +72,5 @@ class Puls08M5stickcS {
     }
 }
 exports.default = Puls08M5stickcS;
+
 //# sourceMappingURL=index.js.map

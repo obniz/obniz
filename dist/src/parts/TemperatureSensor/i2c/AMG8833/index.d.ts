@@ -1,11 +1,9 @@
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 export interface AMG8833Options {
 }
 declare class AMG8833 implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     requiredKeys: string[];
     keys: string[];
     ioKeys: string[];

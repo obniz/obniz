@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import events from "events";
 declare class BlenoBindings extends events.EventEmitter {
     _state: any;

@@ -1,19 +1,15 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class AMG8833 {
-    static info() {
-        return {
-            name: "AMG8833",
-        };
-    }
     constructor() {
         this.requiredKeys = [];
         this.keys = ["vcc", "gnd", "sda", "scl", "address"];
@@ -32,6 +28,11 @@ class AMG8833 {
         this.commands.statClr_int = [0x05, 0x02];
         this.commands.average_disable = [0x07, 0x00];
         this.commands.average_enable = [0x07, 0x10];
+    }
+    static info() {
+        return {
+            name: "AMG8833",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -109,4 +110,5 @@ class AMG8833 {
     }
 }
 exports.default = AMG8833;
+
 //# sourceMappingURL=index.js.map

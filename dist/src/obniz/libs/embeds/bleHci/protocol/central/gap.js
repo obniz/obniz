@@ -29,8 +29,17 @@ class Gap extends events.EventEmitter {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         this._hci.setScanEnabled(false, true);
-        this._hci.setScanParameters();
-        this._hci.setScanEnabled(true, this._scanFilterDuplicates);
+        this._hci.once("leScanEnableSet", (scanStopStatus) => {
+            this._hci.setScanParameters();
+            this._hci.once("leScanParametersSet", (setParamStatus) => {
+                setTimeout(() => {
+                    this._hci.setScanEnabled(true, this._scanFilterDuplicates);
+                    this._hci.once("leScanEnableSet", (scanStartStatus) => {
+                        console.log("stan start ", scanStopStatus, setParamStatus, scanStartStatus);
+                    });
+                }, 10);
+            });
+        });
     }
     stopScanning() {
         this._scanState = "stopping";
@@ -413,4 +422,5 @@ class Gap extends events.EventEmitter {
     }
 }
 exports.default = Gap;
+
 //# sourceMappingURL=gap.js.map

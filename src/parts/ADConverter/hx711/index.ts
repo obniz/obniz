@@ -1,10 +1,16 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Hx711Options { }
-class Hx711 implements ObnizPartsInterface{
+export interface Hx711Options {
+  vcc?: number;
+  gnd?: number;
+  sck: number;
+  dout: number;
+}
 
-  public static info() {
+class Hx711 implements ObnizPartsInterface {
+
+  public static info(): ObnizPartsInfo {
     return {
       name: "hx711",
     };
@@ -81,7 +87,7 @@ class Hx711 implements ObnizPartsInterface{
     return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
   }
 
-  public doubleBit2singleBit(a: any, b: any) {
+  public doubleBit2singleBit(a: number, b: number) {
     return (
       (this.bit(a, 7) << 7) |
       (this.bit(a, 5) << 6) |
@@ -94,7 +100,7 @@ class Hx711 implements ObnizPartsInterface{
     );
   }
 
-  public bit(a: any, n: any) {
+  public bit(a: number, n: number) {
     return a & (1 << n) ? 1 : 0;
   }
 
@@ -118,12 +124,12 @@ class Hx711 implements ObnizPartsInterface{
     this.sck.output(false);
   }
 
-  public async zeroAdjustWait(times: any) {
+  public async zeroAdjustWait(times: number | any) {
     times = parseInt(times) || 1;
     this._offset = await this.readAverageWait(times);
   }
 
-  public async getValueWait(times: any) {
+  public async getValueWait(times: number | any): Promise<number> {
     times = parseInt(times) || 1;
     const val: any = await this.readAverageWait(times);
     return (val - this._offset) / this._scale;

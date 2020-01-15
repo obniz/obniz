@@ -14,7 +14,7 @@ declare class Hci extends events.EventEmitter {
     addressType: any;
     address: any;
     constructor(obnizHci: any);
-    initWait(): Promise<{}>;
+    initWait(): Promise<unknown>;
     setEventMask(): void;
     reset(): void;
     resetBuffers(): void;
@@ -24,7 +24,7 @@ declare class Hci extends events.EventEmitter {
     readLeHostSupported(): void;
     writeLeHostSupported(): void;
     setScanParameters(): void;
-    setScanEnabled(enabled: any, filterDuplicates: any): void;
+    setScanEnabled(enabled: boolean, filterDuplicates: boolean): void;
     createLeConn(address: any, addressType: any): void;
     connUpdateLe(handle: any, minInterval: any, maxInterval: any, latency: any, supervisionTimeout: any): void;
     startLeEncryption(handle: any, random: any, diversifier: any, key: any): void;

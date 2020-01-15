@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface XBeeOptions {
 }
 declare class XBee implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     displayIoNames: any;
@@ -25,6 +23,6 @@ declare class XBee implements ObnizPartsInterface {
     sendCommand(): void;
     enterAtMode(): void;
     exitAtMode(): void;
-    configWait(config: any): Promise<{}>;
+    configWait(config: any): Promise<unknown>;
 }
 export default XBee;

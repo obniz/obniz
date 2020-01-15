@@ -1,5 +1,5 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface AnalogTemperatureSensorOptions { }
 class AnalogTemperatureSensor implements ObnizPartsInterface {

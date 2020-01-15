@@ -1,5 +1,5 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 class PCA9685_PWM  {
   public chip: any;
@@ -31,7 +31,7 @@ export interface PCA9685Options { }
 // tslint:disable-next-line:max-classes-per-file
 class PCA9685 implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "PCA9685",
     };

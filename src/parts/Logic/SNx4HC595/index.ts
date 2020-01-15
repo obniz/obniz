@@ -1,5 +1,5 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 class SNx4HC595_IO {
   public chip: any;
@@ -23,7 +23,7 @@ export interface SNx4HC595Options {
 // tslint:disable-next-line:max-classes-per-file
 class SNx4HC595 implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "SNx4HC595",
     };

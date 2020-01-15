@@ -5064,9 +5064,9 @@ const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/emb
 const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleSecurity.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
 class ObnizBLE {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.hci = new hci_1.default(Obniz);
+    constructor(obniz) {
+        this.Obniz = obniz;
+        this.hci = new hci_1.default(obniz);
         this.hciProtocol = new hci_2.default(this.hci);
         this.centralBindings = new bindings_1.default(this.hciProtocol);
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
@@ -5082,7 +5082,6 @@ class ObnizBLE {
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
         this.peripheral = new blePeripheral_1.default(this);
-        this.scanTarget = null;
         this.advertisement = new bleAdvertisement_1.default(this);
         this.scan = new bleScan_1.default(this);
         this.security = new bleSecurity_1.default(this);
@@ -5173,7 +5172,7 @@ class ObnizBLE {
     onScanStart() {
     }
     onScanStop() {
-        this.scan.notifyFromServer("onfinish");
+        this.scan.notifyFromServer("onfinish", null);
     }
     onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
         let val = this.findPeripheral(uuid);
@@ -6199,9 +6198,9 @@ class BlePeripheral {
     end() {
         this.stopAllService();
     }
-    onconnectionupdates() {
+    onconnectionupdates(param) {
     }
-    onerror() {
+    onerror(error) {
     }
 }
 exports.default = BlePeripheral;
@@ -6878,12 +6877,12 @@ const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 class BleScan {
     constructor(obnizBle) {
-        this.scanTarget = null;
+        this.scanTarget = {};
         this.scanSettings = {};
         this.obnizBle = obnizBle;
         this.emitter = new emitter();
         this.scanedPeripherals = [];
-        this._timeoutTimer = null;
+        this._timeoutTimer = undefined;
     }
     start(target, settings) {
         this.obnizBle.warningIfNotInitialize();
@@ -6891,7 +6890,7 @@ class BleScan {
             settings = {};
         }
         const timeout = settings.duration || 30;
-        settings.duplicate = settings.duplicate === true ? true : false;
+        settings.duplicate = !!settings.duplicate;
         this.scanSettings = settings;
         target = target || {};
         this.scanTarget = target;
@@ -6906,7 +6905,7 @@ class BleScan {
         this.obnizBle.centralBindings.startScanning(null, false);
         this.clearTimeoutTimer();
         this._timeoutTimer = setTimeout(() => {
-            this._timeoutTimer = null;
+            this._timeoutTimer = undefined;
             this.end();
         }, timeout * 1000);
     }
@@ -6990,7 +6989,7 @@ class BleScan {
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
-            this._timeoutTimer = null;
+            this._timeoutTimer = undefined;
         }
     }
 }
@@ -7741,8 +7740,17 @@ class Gap extends events.EventEmitter {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         this._hci.setScanEnabled(false, true);
-        this._hci.setScanParameters();
-        this._hci.setScanEnabled(true, this._scanFilterDuplicates);
+        this._hci.once("leScanEnableSet", (scanStopStatus) => {
+            this._hci.setScanParameters();
+            this._hci.once("leScanParametersSet", (setParamStatus) => {
+                setTimeout(() => {
+                    this._hci.setScanEnabled(true, this._scanFilterDuplicates);
+                    this._hci.once("leScanEnableSet", (scanStartStatus) => {
+                        console.log("stan start ", scanStopStatus, setParamStatus, scanStartStatus);
+                    });
+                }, 10);
+            });
+        });
     }
     stopScanning() {
         this._scanState = "stopping";
@@ -9681,7 +9689,7 @@ class Hci extends events.EventEmitter {
         }
         else if (cmd === LE_SET_SCAN_PARAMETERS_CMD) {
             this.emit("stateChange", "poweredOn");
-            this.emit("leScanParametersSet");
+            this.emit("leScanParametersSet", status);
         }
         else if (cmd === LE_SET_SCAN_ENABLE_CMD) {
             this.emit("leScanEnableSet", status);
@@ -12992,8 +13000,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const isNode = typeof window === "undefined";
 const semver = __webpack_require__("./node_modules/semver/semver.js");
 class Tcp {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
@@ -20647,11 +20655,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// SainSmart ST7735 1.8" TFT LCD 128x160 pixel
 class ST7735S {
     constructor() {
         this.keys = ["sclk", "mosi", "cs", "res", "dc"];
-        this.required = [];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -22857,11 +22864,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// SainSmart ST7735 1.8" TFT LCD 128x160 pixel
 class SainSmartTFT18LCD {
     constructor() {
         this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];
-        this.required = ["scl", "sda", "dc", "res", "cs"];
+        this.requiredKeys = ["scl", "sda", "dc", "res", "cs"];
         this.displayIoNames = {
             vcc: "vcc",
             gnd: "gnd",
@@ -25594,13 +25600,12 @@ class GYSFDMAXB {
         this.on1pps = callback;
         if (callback) {
             this.last1pps = 2;
-            this.obniz.getAD(this.Opps).self = this;
             this.obniz.getAD(this.Opps).start((voltage) => {
                 const vol = Math.round(voltage);
-                if (vol !== this.self.last1pps) {
-                    this.self.last1pps = vol;
-                    if (vol === 0 && this.self.on1pps) {
-                        this.self.on1pps();
+                if (vol !== this.last1pps) {
+                    this.last1pps = vol;
+                    if (vol === 0 && this.on1pps) {
+                        this.on1pps();
                     }
                 }
             });
@@ -27337,7 +27342,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class ENC03R_Module {
     constructor() {
         this.keys = ["vcc", "out1", "out2", "gnd"];
-        this.required = ["out1", "out2"];
+        this.requiredKeys = ["out1", "out2"];
         this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
     }
     static info() {
@@ -28420,6 +28425,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class HMC5883L {
     constructor() {
         this.keys = ["gnd", "sda", "scl", "i2c"];
+        this.requiredKeys = [];
         this.address = {};
         this.address.device = 0x1e;
         this.address.reset = [0x02, 0x00]; // Continuous Measurment Mode
@@ -28541,7 +28547,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AK8963 {
     constructor() {
         this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address", "adb_cycle"];
-        this.required = [];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -29244,12 +29250,10 @@ class KXR94_2050 {
         if (obniz.isValidIO(this.params.enable)) {
             obniz.getIO(this.params.enable).drive("5v");
             obniz.getIO(this.params.enable).output(true);
-            obniz.display.setPinName(this.params.enable, "KXR94_2050", "E");
         }
         if (obniz.isValidIO(this.params.self_test)) {
             obniz.getIO(this.params.self_test).drive("5v");
             obniz.getIO(this.params.self_test).output(false);
-            obniz.display.setPinName(this.params.self_test, "KXR94_2050", "T");
         }
         this.changeVccVoltage(5);
         this.ad_x.start((value) => {
@@ -29283,12 +29287,6 @@ class KXR94_2050 {
             this.obniz.getAD(this.params.vcc).start((value) => {
                 this.changeVccVoltage(value);
             });
-        }
-        obniz.display.setPinName(this.params.x, "KXR94_2050", "x");
-        obniz.display.setPinName(this.params.y, "KXR94_2050", "y");
-        obniz.display.setPinName(this.params.z, "KXR94_2050", "z");
-        if (this.obniz.isValidIO(this.params.vcc)) {
-            obniz.display.setPinName(this.params.vcc, "KXR94_2050", "vcc");
         }
     }
     changeVccVoltage(pwrVoltage) {
@@ -29418,7 +29416,7 @@ class MPU6050 {
             "accelerometer_range",
             "gyroscope_range",
         ];
-        this.required = [];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -29579,7 +29577,10 @@ class MPU6886 extends i2cParts_1.default {
         };
     }
     whoamiWait() {
-        return this.readWait(this.commands.whoami, 1)[0];
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.readWait(this.commands.whoami, 1);
+            return result[0];
+        });
     }
     init() {
         this.write(this.commands.pwrMgmt1, 0x00);
@@ -29709,7 +29710,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class MPU9250 {
     constructor(obniz) {
         this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
-        this.required = [];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -29904,7 +29905,10 @@ class SH200Q extends i2cParts_1.default {
         };
     }
     whoamiWait() {
-        return this.readWait(this.commands.whoami, 1)[0];
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.readWait(this.commands.whoami, 1);
+            return result[0];
+        });
     }
     initWait() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -30757,9 +30761,9 @@ class AXP192 {
     getVbat() {
         return __awaiter(this, void 0, void 0, function* () {
             this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
-            const vbat_lsb = yield this.readWait(AXP192_ADDRESS, 1);
+            const vbat_lsb = yield this.i2c.readWait(AXP192_ADDRESS, 1);
             this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
-            const vbat_msb = yield this.readWait(AXP192_ADDRESS, 1);
+            const vbat_msb = yield this.i2c.readWait(AXP192_ADDRESS, 1);
             return (vbat_lsb << 4) + vbat_msb;
         });
     }
@@ -31162,7 +31166,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-// sensor resopnse not found
 class S8100B extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -31190,9 +31193,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-// this not work, but sometimes good
-// resason1:too low of obniz input Impedance ?
-// resoson2:Is the sensor oscillating?
 class S8120C extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -31400,10 +31400,10 @@ class AMG8833 {
         this.params.pull = this.params.pull || null; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(50);
-        obniz.i2c0.write(this.address, this.commands.mode_normal);
-        obniz.i2c0.write(this.address, this.commands.reset_flag);
-        obniz.i2c0.write(this.address, this.commands.frameRate_10fps);
-        obniz.i2c0.write(this.address, this.commands.int_disable);
+        this.i2c.write(this.address, this.commands.mode_normal);
+        this.i2c.write(this.address, this.commands.reset_flag);
+        this.i2c.write(this.address, this.commands.frameRate_10fps);
+        this.i2c.write(this.address, this.commands.int_disable);
     }
     getOnePixWait(pixel) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31631,7 +31631,7 @@ class BME280 {
         return value;
     }
     write(data) {
-        this.obniz.i2c0.write(this.address, data);
+        this.i2c.write(this.address, data);
     }
     getData() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31882,7 +31882,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// sensor response not found
 class S5851A {
     constructor() {
         this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
@@ -32049,7 +32048,7 @@ class SHT31 {
         this.params.mode = this.params.mode || "master"; // for i2c
         this.params.pull = this.params.pull || "5v"; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
-        obniz.i2c0.write(this.address, this.commands.softReset);
+        this.i2c.write(this.address, this.commands.softReset);
     }
     getData() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -32135,6 +32134,7 @@ class ADT7310 {
         });
     }
 }
+exports.ADT7310 = ADT7310;
 exports.default = ADT7310;
 
 //# sourceMappingURL=index.js.map
@@ -32296,7 +32296,7 @@ class MFRC522 {
             "spi",
             "spi_frequency",
         ];
-        this.required = ["cs", "mosi", "miso", "rst"];
+        this.requiredKeys = ["cs", "mosi", "miso", "rst"];
     }
     static info() {
         return {
@@ -33147,12 +33147,10 @@ class I2cPartsAbstruct {
             return yield this.i2c.readWait(this.address, length);
         });
     }
-    readUint16Wait(command, length) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [command]);
-            return yield this.i2c.readWait(this.address, length);
-        });
-    }
+    // public async readUint16Wait(command: number, length: number): Promise<number[]> {
+    //   this.i2c.write(this.address, [command]);
+    //   return await this.i2c.readWait(this.address, length);
+    // }
     write(command, buf) {
         if (!Array.isArray(buf)) {
             buf = [buf];

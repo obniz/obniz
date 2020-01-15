@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MQ8 {
-    static info() {
-        return {
-            name: "MQ8",
-        };
-    }
     constructor() {
         this.keys = ["gnd", "vcc", "do", "ao"];
         this.requiredKeys = [];
@@ -15,6 +10,11 @@ class MQ8 {
         this.voltageLimit = undefined;
         // this.RL = 2 * 1000;
         // this.RO = 20 * 1000;
+    }
+    static info() {
+        return {
+            name: "MQ8",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -60,4 +60,5 @@ class MQ8 {
     }
 }
 exports.default = MQ8;
+
 //# sourceMappingURL=index.js.map

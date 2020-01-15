@@ -1,11 +1,9 @@
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 export interface S5851AOptions {
 }
 declare class S5851A implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     requiredKeys: string[];
     keys: string[];
     io_adr0: any;

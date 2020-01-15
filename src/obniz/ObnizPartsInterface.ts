@@ -2,6 +2,7 @@ import Obniz = require("./index");
 
 export interface ObnizPartsInfo {
   name: string;
+  datasheet?: any;
 }
 
 export default abstract class ObnizPartsInterface {

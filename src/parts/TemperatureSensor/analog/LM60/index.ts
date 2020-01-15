@@ -1,14 +1,14 @@
 import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
 export interface LM60Options {
 }
 
 export default class LM60 extends AnalogTemperatureSensor implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "LM60",
     };

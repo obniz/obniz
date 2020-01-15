@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class ObnizUtil {
+    constructor(obniz) {
+        this.obniz = obniz;
+    }
     static _keyFilter(params, keys) {
         let filterdParams = {};
         if (typeof params !== "object") {
@@ -46,9 +49,6 @@ class ObnizUtil {
         const buf = Buffer.from(str);
         return [...buf];
     }
-    constructor(obniz) {
-        this.obniz = obniz;
-    }
     createCanvasContext(width, height) {
         if (this.obniz.isNode) {
             try {
@@ -72,4 +72,5 @@ class ObnizUtil {
     }
 }
 exports.default = ObnizUtil;
+
 //# sourceMappingURL=util.js.map

@@ -1,11 +1,11 @@
 // SainSmart ST7735 1.8" TFT LCD 128x160 pixel
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface SainSmartTFT18LCDOptions { }
 class SainSmartTFT18LCD implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "SainSmartTFT18LCD",
     };

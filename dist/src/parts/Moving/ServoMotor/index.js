@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class ServoMotor {
-    static info() {
-        return {
-            name: "ServoMotor",
-        };
-    }
     constructor() {
         this.keys = ["gnd", "vcc", "signal", "pwm"];
         this.requiredKeys = [];
         this.range = {
             min: 0.5,
             max: 2.4,
+        };
+    }
+    static info() {
+        return {
+            name: "ServoMotor",
         };
     }
     wired(obniz) {
@@ -49,4 +49,5 @@ class ServoMotor {
     }
 }
 exports.default = ServoMotor;
+
 //# sourceMappingURL=index.js.map

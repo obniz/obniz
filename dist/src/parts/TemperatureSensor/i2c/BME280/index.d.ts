@@ -1,12 +1,9 @@
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 export interface BME280Options {
 }
 declare class BME280 implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-        datasheet: string;
-    };
+    static info(): ObnizPartsInfo;
     requiredKeys: string[];
     keys: string[];
     ioKeys: string[];

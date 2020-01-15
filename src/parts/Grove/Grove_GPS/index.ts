@@ -1,5 +1,5 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface Grove_GPSOptions { }
 class Grove_GPS implements ObnizPartsInterface {
@@ -12,7 +12,7 @@ class Grove_GPS implements ObnizPartsInterface {
     return this.nmea2dd(this._longitude);
   }
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "Grove_GPS",
     };

@@ -1,12 +1,10 @@
 import i2cParts from "../../i2cParts";
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface MPU6886Options {
 }
 declare class MPU6886 extends i2cParts implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     commands: any;
     write: any;
     obniz: Obniz;

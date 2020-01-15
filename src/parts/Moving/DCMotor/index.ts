@@ -1,15 +1,14 @@
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
 import Obniz from "../../../obniz";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface DCMotorOptions {
   forward: number;
   back: number;
 }
 
-
 class DCMotor implements ObnizPartsInterface {
 
-  public static info() {
+  public static info(): ObnizPartsInfo {
     return {
       name: "DCMotor",
     };

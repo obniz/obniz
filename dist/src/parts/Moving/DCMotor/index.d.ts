@@ -1,13 +1,11 @@
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
 import Obniz from "../../../obniz";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface DCMotorOptions {
     forward: number;
     back: number;
 }
 declare class DCMotor implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     status: any;

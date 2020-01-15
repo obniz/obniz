@@ -1,22 +1,23 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class PT550 {
+    constructor() {
+        this.keys = ["signal", "vcc", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
     static info() {
         return {
             name: "PT550",
         };
-    }
-    constructor() {
-        this.keys = ["signal", "vcc", "gnd"];
-        this.requiredKeys = ["signal"];
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -35,4 +36,5 @@ class PT550 {
     }
 }
 exports.default = PT550;
+
 //# sourceMappingURL=index.js.map

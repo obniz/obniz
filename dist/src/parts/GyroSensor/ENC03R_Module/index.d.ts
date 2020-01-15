@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface ENC03R_ModuleOptions {
 }
 declare class ENC03R_Module implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: any;
     Sens: any;
@@ -19,7 +17,7 @@ declare class ENC03R_Module implements ObnizPartsInterface {
     onchange2: any;
     constructor();
     wired(obniz: Obniz): void;
-    get1Wait(): Promise<{}>;
-    get2Wait(): Promise<{}>;
+    get1Wait(): Promise<unknown>;
+    get2Wait(): Promise<unknown>;
 }
 export default ENC03R_Module;

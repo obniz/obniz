@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Buzzer {
+    constructor(obniz) {
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
     static info() {
         return {
             name: "Grove_Buzzer",
         };
-    }
-    constructor(obniz) {
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -34,4 +34,5 @@ class Grove_Buzzer {
     }
 }
 exports.default = Grove_Buzzer;
+
 //# sourceMappingURL=index.js.map

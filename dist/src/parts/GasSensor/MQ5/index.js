@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MQ5 {
-    static info() {
-        return {
-            name: "MQ5",
-        };
-    }
     // https://www.parallax.com/sites/default/files/downloads/605-00009-MQ-5-Datasheet.pdf
     constructor() {
         this.keys = ["gnd", "vcc", "do", "ao"];
@@ -16,6 +11,11 @@ class MQ5 {
         this.voltageLimit = undefined;
         // this.RL = 2 * 1000;
         // this.RO = 20 * 1000;
+    }
+    static info() {
+        return {
+            name: "MQ5",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -61,4 +61,5 @@ class MQ5 {
     }
 }
 exports.default = MQ5;
+
 //# sourceMappingURL=index.js.map

@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class RN42 {
+    constructor() {
+        this.keys = ["tx", "rx", "gnd"];
+        this.requiredKeys = ["tx", "rx"];
+    }
     static info() {
         return {
             name: "RN42",
         };
-    }
-    constructor() {
-        this.keys = ["tx", "rx", "gnd"];
-        this.requiredKeys = ["tx", "rx"];
     }
     wired(obniz) {
         if (obniz.isValidIO(this.params.gnd)) {
@@ -196,4 +196,5 @@ class RN42 {
     }
 }
 exports.default = RN42;
+
 //# sourceMappingURL=index.js.map

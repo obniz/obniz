@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class DCMotor {
+    constructor() {
+        this.keys = ["forward", "back"];
+        this.requiredKeys = ["forward", "back"];
+    }
     static info() {
         return {
             name: "DCMotor",
         };
-    }
-    constructor() {
-        this.keys = ["forward", "back"];
-        this.requiredKeys = ["forward", "back"];
     }
     wired(obniz) {
         this.status = {
@@ -78,4 +78,5 @@ class DCMotor {
     }
 }
 exports.default = DCMotor;
+
 //# sourceMappingURL=index.js.map

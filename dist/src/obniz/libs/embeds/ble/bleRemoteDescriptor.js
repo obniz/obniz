@@ -45,4 +45,5 @@ class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
     }
 }
 exports.default = BleRemoteDescriptor;
+
 //# sourceMappingURL=bleRemoteDescriptor.js.map

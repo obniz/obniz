@@ -1,25 +1,26 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_MP3 {
-    static info() {
-        return {
-            name: "Grove_MP3",
-        };
-    }
     constructor() {
         this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx"];
         this.requiredKeys = ["mp3_rx", "mp3_tx"];
         this.ioKeys = this.keys;
         this.displayName = "MP3";
         this.displayIoNames = { mp3_rx: "MP3Rx", mp3_tx: "MP3Tx" };
+    }
+    static info() {
+        return {
+            name: "Grove_MP3",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -100,4 +101,5 @@ class Grove_MP3 {
     }
 }
 exports.default = Grove_MP3;
+
 //# sourceMappingURL=index.js.map

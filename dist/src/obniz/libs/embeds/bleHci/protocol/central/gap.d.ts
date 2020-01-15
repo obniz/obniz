@@ -7,7 +7,7 @@ declare class Gap extends events.EventEmitter {
     emit: any;
     _advertiseState: any;
     constructor(hci: any);
-    startScanning(allowDuplicates: any): void;
+    startScanning(allowDuplicates: boolean): void;
     stopScanning(): void;
     onHciLeScanParametersSet(): void;
     onHciLeScanEnableSet(status: any): void;

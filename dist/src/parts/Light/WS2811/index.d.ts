@@ -1,11 +1,9 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface WS2811Options {
 }
 declare class WS2811 implements ObnizPartsInterface {
-    static info(): {
-        name: string;
-    };
+    static info(): ObnizPartsInfo;
     static _generateFromByte(val: any): any;
     static _generateColor(r: any, g: any, b: any): any;
     static _generateHsvColor(h: any, s: any, v: any): any;
