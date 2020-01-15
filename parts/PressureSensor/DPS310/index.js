@@ -257,7 +257,10 @@ class DPS310 {
 
   async configPressureWait(prsMr, prsOsr) {
     await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
-    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
+    await this.writeByteBitfield(
+        this.bitFileds.DPS310__REG_INFO_PRS_OSR,
+        prsOsr
+    );
 
     if (prsOsr > this.DPS310__OSR_SE) {
       await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
@@ -281,12 +284,14 @@ class DPS310 {
     if (this.coeffs.m_c1 & (1 << 11)) {
       this.coeffs.m_c1 -= 1 << 12;
     }
-    this.coeffs.m_c00 = (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+    this.coeffs.m_c00 =
+        (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
     if (this.coeffs.m_c00 & (1 << 19)) {
       this.coeffs.m_c00 -= 1 << 20;
     }
 
-    this.coeffs.m_c10 = ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+    this.coeffs.m_c10 =
+        ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
     if (this.coeffs.m_c10 & (1 << 19)) {
       this.coeffs.m_c10 -= 1 << 20;
     }
@@ -322,12 +327,13 @@ class DPS310 {
         this.bitFileds.DPS310__REG_INFO_PROD_ID
     );
     if (prodId != 0) {
-      throw new Error("invalid prodId")
-      return;
+      throw new Error('invalid prodId');
     }
     await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
 
-    await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
+    await this.readByteBitfieldWait(
+        this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC
+    );
 
     await this.writeByteBitfield(
         this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR,
@@ -336,8 +342,14 @@ class DPS310 {
 
     await this.readCoeffsWait();
     await this.standbyWait();
-    await this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
-    await this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
+    await this.configTempWait(
+        this.DPS310__TEMP_STD_MR,
+        this.DPS310__TEMP_STD_OSR
+    );
+    await this.configPressureWait(
+        this.DPS310__PRS_STD_MR,
+        this.DPS310__PRS_STD_OSR
+    );
     await this.standbyWait();
     await this.measureTempOnceWait();
     await this.standbyWait();
@@ -417,11 +429,11 @@ class DPS310 {
   }
 
   async correctTempWait() {
-    this.writeByteWait(0x0E, 0xE5);
-    this.writeByteWait(0x0F, 0x96);
+    this.writeByteWait(0x0e, 0xe5);
+    this.writeByteWait(0x0f, 0x96);
     this.writeByteWait(0x62, 0x02);
-    this.writeByteWait(0x0E, 0x00);
-    this.writeByteWait(0x0F, 0x00);
+    this.writeByteWait(0x0e, 0x00);
+    this.writeByteWait(0x0f, 0x00);
 
     await this.measureTempOnceWait();
   }
@@ -467,7 +479,6 @@ class DPS310 {
     return result;
   }
 }
-
 
 if (typeof module === 'object') {
   module.exports = DPS310;
