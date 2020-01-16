@@ -35815,6 +35815,7 @@ Gap.prototype.startScanning = function(allowDuplicates) {
   // Always set scan parameters before scanning
   // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
   // p106 - p107
+  this._hci.setScanEnabled(false, true);
   this._hci.once('leScanEnableSet', scanStopStatus => {
     this._hci.setScanParameters();
     this._hci.once('leScanParametersSet', setParamStatus => {

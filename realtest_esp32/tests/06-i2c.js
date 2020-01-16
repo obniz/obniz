@@ -18,6 +18,15 @@ describe('6-i2c', function() {
     });
   });
 
+  afterEach(async () => {
+    if (checkBoard.i2c0.isUsed()) {
+      checkBoard.i2c0.end();
+    }
+    if (obnizA.i2c0.isUsed()) {
+      obnizA.i2c0.end();
+    }
+  });
+
   it('1k data', async function() {
     const sender = obnizA.getFreeI2C();
     sender.start({
