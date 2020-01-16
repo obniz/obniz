@@ -26,7 +26,8 @@
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
-    "lint": "npm run lint-ts ",
+    "lint": "npm run lint-ts && npm run lint-js",
+    "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
     "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
     "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
