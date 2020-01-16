@@ -130,6 +130,9 @@ describe('11-tcp', function() {
   });
 
   it('tcp port', async function() {
+    if (!useIp) {
+      this.skip();
+    }
     await checkBoard.tcp0.connectWait(3001, useIp);
     checkBoard.tcp0.write(
       'GET / HTTP/1.0\r\n' +
@@ -161,6 +164,9 @@ describe('11-tcp', function() {
   });
 
   it('tcp image', async function() {
+    if (!useIp) {
+      this.skip();
+    }
     await checkBoard.tcp0.connectWait(3001, useIp);
     checkBoard.tcp0.write(
       'GET /obniz_big.png HTTP/1.0\r\n' +
@@ -202,6 +208,9 @@ describe('11-tcp', function() {
   });
 
   it('tcp mult connect', async function() {
+    if (!useIp) {
+      this.skip();
+    }
     for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
       tcpArray.push(checkBoard.getFreeTcp());
       await tcpArray[i].connectWait(3001, useIp);
