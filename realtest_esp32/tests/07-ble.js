@@ -5,14 +5,16 @@ let obnizA, checkBoard;
 describe('7-ble', function() {
   this.timeout(30000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(async function() {
+    await new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
         resolve();
       });
     });
+    await checkBoard.ble.initWait();
+    await obnizA.ble.initWait();
   });
 
   it('simple ad', async function() {
@@ -35,6 +37,7 @@ describe('7-ble', function() {
             return;
           }
         }
+        console.log('FOUND! ' + peripheral.address);
         found = true;
       }
     };
@@ -44,6 +47,7 @@ describe('7-ble', function() {
       await wait(1);
     }
 
+    obnizA.ble.scan.end();
     checkBoard.ble.advertisement.end();
     checkBoard.ble.peripheral.end();
   });
@@ -65,6 +69,9 @@ describe('7-ble', function() {
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
     obnizA.ble.scan.onfind = function(peripheral) {
       if (peripheral.localName === localName) {
+        console.log(
+          'FOUND! ' + peripheral.address + ' ' + peripheral.localName
+        );
         found = true;
       }
     };
@@ -73,6 +80,7 @@ describe('7-ble', function() {
     while (!found) {
       await wait(1);
     }
+    obnizA.ble.scan.end();
     checkBoard.ble.advertisement.end();
     checkBoard.ble.peripheral.end();
   });

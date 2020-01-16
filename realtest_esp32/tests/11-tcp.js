@@ -15,7 +15,7 @@ let checkBoard;
 const MAX_TCP_CONNECTION = 8;
 let tcpArray = [];
 
-describe('10-tcp', function() {
+describe('11-tcp', function() {
   this.timeout(30000);
 
   before(function() {
@@ -50,8 +50,8 @@ describe('10-tcp', function() {
   it('tcp connect error', async function() {
     let res = await checkBoard.tcp0.connectWait(80, 'obniz.i');
     expect(res).to.deep.within(3, 4);
-    checkBoard.tcp0.close();
     await checkBoard.pingWait();
+    checkBoard.tcp0.close();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);

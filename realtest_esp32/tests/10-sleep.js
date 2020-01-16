@@ -9,7 +9,7 @@ Sleep test
 3. A:sleep end 5v output B:5v check 
 */
 
-let obnizA, obnizB;
+let checkBoard, obnizA;
 
 describe('10-sleep', function() {
   this.timeout(40000);
@@ -19,8 +19,8 @@ describe('10-sleep', function() {
     }
     return new Promise(resolve => {
       config.waitForConenct(() => {
+        checkBoard = config.checkBoard;
         obnizA = config.obnizA;
-        obnizB = config.obnizB;
         resolve();
       });
     });
@@ -28,20 +28,20 @@ describe('10-sleep', function() {
 
   //step1
   it('setup', async function() {
-    obnizA.getIO(0).output(true);
-    await obnizA.pingWait();
-    let valB = await obnizB.getIO(0).inputWait();
+    checkBoard.getIO(0).output(true);
+    await checkBoard.pingWait();
+    let valB = await obnizA.getIO(0).inputWait();
     expect(valB, `expected io0 ${valB} is must be true`).to.be.equal(true);
   });
 
   //step2
   it('sleep', async function() {
-    obnizA.sleepSeconds(5);
-    obnizB.getIO(0).pull('0v');
-    obnizB.getIO(0).drive('open-drain');
+    checkBoard.sleepSeconds(5);
+    obnizA.getIO(0).pull('0v');
+    obnizA.getIO(0).drive('open-drain');
     await wait(3000); //sleep = Wait 3 seconds because we can't verify if the command was executed offline
-    config.close(obnizA);
-    let voltage = await obnizB.getAD(0).getWait();
+    config.close(checkBoard);
+    let voltage = await obnizA.getAD(0).getWait();
     expect(voltage, `expected io0 ${voltage} is  0 ~ 2`).to.be.within(0, 2);
   });
 
@@ -49,38 +49,38 @@ describe('10-sleep', function() {
   it('wakeup', async function() {
     await reconnect();
     await wait(1000);
-    await obnizA.pingWait();
-    obnizA.getIO(0).output(true);
-    await obnizA.pingWait();
-    let valB = await obnizB.getIO(0).inputWait();
+    await checkBoard.pingWait();
+    checkBoard.getIO(0).output(true);
+    await checkBoard.pingWait();
+    let valB = await obnizA.io0.inputWait();
     expect(valB, `expected io0 ${valB} is must be true`).to.be.equal(true);
-    obnizA.getIO(0).end();
+    checkBoard.getIO(0).end();
   });
 
   //step4
   it('sleepIO sleep', async function() {
-    obnizA.sleepIoTrigger(true);
-    config.close(obnizA);
+    checkBoard.sleepIoTrigger(true);
+    config.close(checkBoard);
     await wait(3000); //sleep = Wait 3 seconds because we can't verify if the command was executed offline
-    obnizB.getIO(0).output(true); //wake up
-    await obnizB.pingWait();
-    obnizB.getIO(0).end();
+    obnizA.io0.output(true); //wake up
+    await obnizA.pingWait();
+    obnizA.io0.end();
     await reconnect();
     await wait(1000);
-    await obnizA.pingWait();
-    obnizA.getIO(0).output(true);
-    await obnizA.pingWait();
-    let valB = await obnizB.getIO(0).inputWait();
+    await checkBoard.pingWait();
+    checkBoard.getIO(0).output(true);
+    await checkBoard.pingWait();
+    let valB = await obnizA.getIO(0).inputWait();
     expect(valB, `expected io0 ${valB} is must be true`).to.be.equal(true);
-    obnizA.getIO(0).end();
+    checkBoard.getIO(0).end();
   });
 });
 
 function reconnect() {
   return new Promise(resolve => {
     config.reboot(() => {
+      checkBoard = config.checkBoard;
       obnizA = config.obnizA;
-      obnizB = config.obnizB;
       console.error('reboot finished');
       resolve();
     }, false);

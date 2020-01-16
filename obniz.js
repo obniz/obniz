@@ -30376,6 +30376,18 @@ class ObnizBLE {
 
   _reset() {}
 
+  directConnect(uuid, addressType) {
+    throw new Error(
+      'directConnect cannot use obnizOS < 3.0.0. Please update obnizOS'
+    );
+  }
+
+  async directConnectWait(uuid, addressType) {
+    throw new Error(
+      'directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS'
+    );
+  }
+
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
@@ -32640,6 +32652,28 @@ class ObnizBLE {
   }
 
   _reset() {}
+
+  directConnect(uuid, addressType) {
+    let peripheral = this.findPeripheral(uuid);
+    if (!peripheral) {
+      peripheral = new BleRemotePeripheral(this, uuid);
+      this.remotePeripherals.push(peripheral);
+    }
+    if (!this.centralBindings._addresses[uuid]) {
+      let address = uuid.match(/.{1,2}/g).join(':');
+      this.centralBindings._addresses[uuid] = address;
+      this.centralBindings._addresseTypes[uuid] = addressType;
+      this.centralBindings._connectable[uuid] = true;
+    }
+    peripheral.connect();
+    return peripheral;
+  }
+
+  async directConnectWait(uuid, addressType) {
+    let peripheral = this.directConnect(uuid, addressType);
+    await peripheral.connectWait();
+    return peripheral;
+  }
 
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
@@ -35777,12 +35811,21 @@ Gap.prototype.startScanning = function(allowDuplicates) {
   this._scanState = 'starting';
   this._scanFilterDuplicates = !allowDuplicates;
 
+  this._discoveries = {};
   // Always set scan parameters before scanning
   // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
   // p106 - p107
-  this._hci.setScanEnabled(false, true);
-  this._hci.setScanParameters();
-  this._hci.setScanEnabled(true, this._scanFilterDuplicates);
+  this._hci.once('leScanEnableSet', scanStopStatus => {
+    this._hci.setScanParameters();
+    this._hci.once('leScanParametersSet', setParamStatus => {
+      setTimeout(() => {
+        this._hci.setScanEnabled(true, this._scanFilterDuplicates);
+        this._hci.once('leScanEnableSet', scanStartStatus => {
+          debug('stan start ', scanStopStatus, setParamStatus, scanStartStatus);
+        });
+      }, 10);
+    });
+  });
 };
 
 Gap.prototype.stopScanning = function() {
