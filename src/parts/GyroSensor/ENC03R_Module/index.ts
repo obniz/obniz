@@ -1,7 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface ENC03R_ModuleOptions { }
+export interface ENC03R_ModuleOptions {
+  gnd?: number;
+  vcc?: number;
+  out2: number;
+  out1: number;
+}
+
 class ENC03R_Module implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
@@ -12,15 +19,15 @@ class ENC03R_Module implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: any;
-  public Sens: any;
+  public Sens: number;
   public obniz!: Obniz;
   public params: any;
-  public ad0: any;
-  public ad1: any;
+  public ad0!: PeripheralAD;
+  public ad1!: PeripheralAD;
   public sens1: any;
-  public onchange1: any;
+  public onchange1?: (val: number) => void;
   public sens2: any;
-  public onchange2: any;
+  public onchange2?: (val: number) => void;
 
   constructor() {
     this.keys = ["vcc", "out1", "out2", "gnd"];
@@ -34,14 +41,14 @@ class ENC03R_Module implements ObnizPartsInterface {
     this.ad0 = obniz.getAD(this.params.out1);
     this.ad1 = obniz.getAD(this.params.out2);
 
-    this.ad0.start((value: any) => {
+    this.ad0.start((value: number) => {
       this.sens1 = (value - 1.45) / this.Sens; // [Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
       if (this.onchange1) {
         this.onchange1(this.sens1);
       }
     });
 
-    this.ad1.start((value: any) => {
+    this.ad1.start((value: number) => {
       this.sens2 = (value - 1.35) / this.Sens; // [Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
       if (this.onchange2) {
         this.onchange2(this.sens2);
@@ -49,17 +56,17 @@ class ENC03R_Module implements ObnizPartsInterface {
     });
   }
 
-  public get1Wait() {
+  public get1Wait(): Promise<number> {
     return new Promise(async (resolve) => {
-      const value: any = this.ad0.getWait();
+      const value: number = await this.ad0.getWait();
       this.sens1 = (value - 1.45) / this.Sens;
       resolve(this.sens1);
     });
   }
 
-  public get2Wait() {
+  public get2Wait(): Promise<number> {
     return new Promise(async (resolve) => {
-      const value: any = this.ad1.getWait();
+      const value: number = await this.ad1.getWait();
       this.sens2 = (value - 1.35) / this.Sens;
       resolve(this.sens2);
     });
