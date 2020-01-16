@@ -23,8 +23,18 @@ describe('5-spi', function() {
   });
 
   afterEach(async () => {
-    checkBoard.spi0.end();
-    checkBoard.spi1.end();
+    if (checkBoard.spi0.isUsed()) {
+      checkBoard.spi0.end();
+    }
+    if (checkBoard.spi1.isUsed()) {
+      checkBoard.spi1.end();
+    }
+    if (obnizA.spi0.isUsed()) {
+      obnizA.spi0.end();
+    }
+    if (obnizA.spi1.isUsed()) {
+      obnizA.spi1.end();
+    }
   });
 
   it('send-receive', async function() {

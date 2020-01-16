@@ -77,6 +77,7 @@ describe('0-ad', function() {
 
 async function ioInRange(out_dev, out_io, in_dev, in_io, out_val, range) {
   out_dev.getIO(out_io).end();
+  out_dev.getIO(out_io).drive('3v');
   out_dev.getIO(out_io).output(out_val);
   await out_dev.pingWait();
   let voltage = await in_dev.getAD(in_io).getWait();

@@ -17,8 +17,18 @@ describe('4-uart', function() {
   });
 
   afterEach(async () => {
-    checkBoard.uart0.end();
-    checkBoard.uart1.end();
+    if (checkBoard.uart0.isUsed()) {
+      checkBoard.uart0.end();
+    }
+    if (checkBoard.uart1.isUsed()) {
+      checkBoard.uart1.end();
+    }
+    if (obnizA.uart0.isUsed()) {
+      obnizA.uart0.end();
+    }
+    if (obnizA.uart1.isUsed()) {
+      obnizA.uart1.end();
+    }
   });
 
   it('short string tx rx', async function() {

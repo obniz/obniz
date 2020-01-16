@@ -18,7 +18,6 @@ describe.only('9-ble-security', function() {
     });
   });
   it('dummy for reboot', async function() {});
-  it('dummy for reboot 2', async function() {});
 
   it('security', async function() {
     if (obnizA.ble.hci) {
@@ -58,7 +57,9 @@ describe.only('9-ble-security', function() {
     });
     console.log(peripheral);
     await peripheral.connectWait();
-
+    await new Promise(r => {
+      setTimeout(r, 1000);
+    });
     let data = await peripheral
       .getService('E625601E-9E55-4597-A598-76018A0D293D')
       .getCharacteristic('26E2B12B-85F0-4F3F-9FDD-91D114270E6E')

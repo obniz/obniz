@@ -18,31 +18,26 @@ describe('6-i2c', function() {
     });
   });
 
-  afterEach(async () => {
-    checkBoard.i2c0.end();
-    //checkBoard.i2c1.end();
-  });
-
   it('1k data', async function() {
-    const sender = checkBoard.getFreeI2C();
+    const sender = obnizA.getFreeI2C();
     sender.start({
       mode: 'master',
-      sda: check_io[0].board_io,
-      scl: check_io[1].board_io,
-      clock: 100 * 1000,
-      pull: '3v',
-    });
-    await checkBoard.pingWait();
-    const receiver = obnizA.getFreeI2C();
-    receiver.start({
-      mode: 'slave',
       sda: check_io[0].obniz_io,
       scl: check_io[1].obniz_io,
       clock: 100 * 1000,
-      slave_address: 0x50,
-      pull: '3v',
+      pull: '5v',
     });
     await obnizA.pingWait();
+    const receiver = checkBoard.getFreeI2C();
+    receiver.start({
+      mode: 'slave',
+      sda: check_io[0].board_io,
+      scl: check_io[1].board_io,
+      clock: 100 * 1000,
+      slave_address: 0x50,
+      pull: '5v',
+    });
+    await checkBoard.pingWait();
 
     let data = [];
     for (let i = 0; i < 1024; i++) {
@@ -67,25 +62,25 @@ describe('6-i2c', function() {
   });
 
   it('1k data again', async function() {
-    const sender = checkBoard.getFreeI2C();
+    const sender = obnizA.getFreeI2C();
     sender.start({
       mode: 'master',
-      sda: check_io[0].board_io,
-      scl: check_io[1].board_io,
-      clock: 100 * 1000,
-      pull: '3v',
-    });
-    await obnizA.pingWait();
-    const receiver = obnizA.getFreeI2C();
-    receiver.start({
-      mode: 'slave',
       sda: check_io[0].obniz_io,
       scl: check_io[1].obniz_io,
       clock: 100 * 1000,
-      slave_address: 0x50,
-      pull: '3v',
+      pull: '5v',
     });
     await obnizA.pingWait();
+    const receiver = checkBoard.getFreeI2C();
+    receiver.start({
+      mode: 'slave',
+      sda: check_io[0].board_io,
+      scl: check_io[1].board_io,
+      clock: 100 * 1000,
+      slave_address: 0x50,
+      pull: '5v',
+    });
+    await checkBoard.pingWait();
 
     let data = [];
     for (let i = 0; i < 1024; i++) {
@@ -110,25 +105,25 @@ describe('6-i2c', function() {
   });
 
   it('1k data counter direction', async function() {
-    const sender = obnizA.getFreeI2C();
+    const sender = checkBoard.getFreeI2C();
     sender.start({
       mode: 'master',
-      sda: check_io[0].obniz_io,
-      scl: check_io[1].obniz_io,
-      clock: 100 * 1000,
-      pull: '3v',
-    });
-    await obnizA.pingWait();
-    const receiver = checkBoard.getFreeI2C();
-    receiver.start({
-      mode: 'slave',
       sda: check_io[0].board_io,
       scl: check_io[1].board_io,
       clock: 100 * 1000,
-      slave_address: 0x50,
-      pull: '3v',
+      pull: '5v',
     });
     await checkBoard.pingWait();
+    const receiver = obnizA.getFreeI2C();
+    receiver.start({
+      mode: 'slave',
+      sda: check_io[0].obniz_io,
+      scl: check_io[1].obniz_io,
+      clock: 100 * 1000,
+      slave_address: 0x50,
+      pull: '5v',
+    });
+    await obnizA.pingWait();
 
     let data = [];
     for (let i = 0; i < 1024; i++) {
