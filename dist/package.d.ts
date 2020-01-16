@@ -71,13 +71,11 @@ declare const _exports: {
         "gulp-concat": string;
         "gulp-ejs": string;
         "gulp-filter": string;
-        "gulp-notify": string;
         "gulp-plumber": string;
         "gulp-rename": string;
         "gulp-sort": string;
         "gulp-sourcemaps": string;
         "gulp-typescript": string;
-        "gulp-util": string;
         "gulp-yaml": string;
         "husky": string;
         "json-loader": string;
@@ -98,7 +96,6 @@ declare const _exports: {
         "through2": string;
         "tslint": string;
         "typescript": string;
-        "uglifyjs-webpack-plugin": string;
         "vinyl": string;
         "webpack": string;
         "webpack-cli": string;
@@ -111,6 +108,7 @@ declare const _exports: {
         "js-yaml": string;
         "node-dir": string;
         "node-fetch": string;
+        "plugin-error": string;
         "semver": string;
         "tv4": string;
         "ws": string;

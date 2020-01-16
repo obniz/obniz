@@ -3,7 +3,7 @@ let tv4 = require('tv4');
 let fs = require('fs');
 const ejs = require('ejs');
 let through = require('through2');
-let PluginError = require('gulp-util').PluginError;
+let PluginError = require('plugin-error');
 let PLUGIN_NAME = 'wsDocGenerator';
 
 module.exports = function(docfilePath, moduleName) {
