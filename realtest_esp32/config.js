@@ -1,31 +1,35 @@
 const Obniz = require('../index.js');
 
+//TCP Command Test
+//Express server used your pc IP Address
+const LOCAL_IP = '';
+
+//Select Test Board
 //const json = require('./board/esp32devkitc_check_io.json');
 //const json = require('./board/m5stickc_check_io.json');
 //const json = require('./board/obniz_check_io.json');
-//const json = require('./board/obniz_1y_check_io.json');
+const json = require('./board/obniz_1y_check_io.json');
 //const json = require('./board/esp32lte_check_io.json');
-const json = require('./board/esp32pikokitv4_check_io.json');
+//const json = require('./board/esp32pikokitv4_check_io.json');
 
+let checkBoard_ID = '';
 //test device
-//esp32
-//const checkBoard_ID = '30109815';
-//m5stickc
-//const checkBoard_ID = '09130585';
-//obniz
-//const checkBoard_ID = '09643850';
-//LTE
-//const checkBoard_ID = '64188531';
-//pico
-const checkBoard_ID = '05094470';
-//check device
-const obnizA_ID = '07368634';
-const obnizB_ID = '75373579';
+if (json.name === 'ESP32 Dev Kit') {
+  checkBoard_ID = '32106175';
+} else if (json.name === 'M5STICK C') {
+  checkBoard_ID = '88801217';
+} else if (json.name === 'obniz board') {
+  checkBoard_ID = '00747253';
+} else if (json.name === 'obniz 1Y') {
+  checkBoard_ID = '41232281';
+} else if (json.name === 'ESP32 Pico Kit v4') {
+  checkBoard_ID = '05094470';
+} else if (json.name === 'ESP32 LTE') {
+  checkBoard_ID = '41232281';
+}
 
-//TCP Command Test
-//Express server used
-// your pc IP Address
-const LOCAL_IP = '192.168.8.33';
+const obnizA_ID = '95496709';
+const obnizB_ID = '00747253';
 
 let obnizA, obnizB, checkBoard;
 const check_io = json.io;
@@ -69,10 +73,8 @@ function reboot(done) {
 function connectTwoObniz(done, params) {
   console.log(json.name + ' Board Test Program');
   let local_connect = true;
-  checkBoard = new Obniz(checkBoard_ID, { local_connect: local_connect }); //,obniz_server: "ws://oooo.ngrok.io"
+  checkBoard = new Obniz(checkBoard_ID, { local_connect: true }); //obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
   checkBoard.onconnect = () => {
-    // checkBoard.debugprintBinary = true;
-    // checkBoard.debugprint = true;
     if (process.env.DEBUG) {
       checkBoard.debugprint = true;
     }
@@ -124,6 +126,16 @@ function getDevice(device) {
   return obnizA;
 }
 
+function close(obniz) {
+  if (obniz == obnizA) {
+    obnizA.close();
+    obnizA = undefined;
+  } else if (obniz == obnizB) {
+    obnizB.close();
+    obnizB = undefined;
+  }
+}
+
 module.exports = {
   waitForConenct,
   get obnizA() {
@@ -143,4 +155,5 @@ module.exports = {
   getDevice,
   LOCAL_IP,
   json,
+  close,
 };
