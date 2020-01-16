@@ -56,8 +56,8 @@ class MPU6886 extends i2cParts {
     };
   }
 
-  whoamiWait() {
-    return this.readWait(this.commands.whoami, 1)[0];
+  async whoamiWait() {
+    return (await this.readWait(this.commands.whoami, 1))[0];
   }
 
   init() {

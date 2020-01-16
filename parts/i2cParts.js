@@ -46,6 +46,17 @@ class I2cPartsAbstruct {
     return await this.i2c.readWait(this.address, length);
   }
 
+  async writeFlagWait(address, index) {
+    let tempdata = await this.readWait(address, 1);
+    tempdata[0] = tempdata[0] | (0b1 << index);
+    this.write(address, tempdata);
+  }
+  async clearFlagWait(address, index) {
+    let tempdata = await this.readWait(address, 1);
+    tempdata[0] = tempdata[0] | (0b0 << index);
+    this.write(address, tempdata);
+  }
+
   write(command, buf) {
     if (!Array.isArray(buf)) {
       buf = [buf];

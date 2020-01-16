@@ -40,8 +40,8 @@ class SH200Q extends i2cParts {
     };
   }
 
-  whoamiWait() {
-    return this.readWait(this.commands.whoami, 1)[0];
+  async whoamiWait() {
+    return (await this.readWait(this.commands.whoami, 1))[0];
   }
 
   async initWait() {
@@ -135,18 +135,18 @@ class SH200Q extends i2cParts {
     let gy_scale = this._gyro_range / 32768;
 
     const accelerometer = {
-      x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
-      y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
-      z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+      x: this.char2short(raw_data[1], raw_data[0]) * ac_scale,
+      y: this.char2short(raw_data[3], raw_data[2]) * ac_scale,
+      z: this.char2short(raw_data[5], raw_data[4]) * ac_scale,
     };
     const gyroscope = {
-      x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
-      y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
-      z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+      x: this.char2short(raw_data[7], raw_data[6]) * gy_scale,
+      y: this.char2short(raw_data[9], raw_data[8]) * gy_scale,
+      z: this.char2short(raw_data[11], raw_data[10]) * gy_scale,
     };
 
     const temperature =
-      this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
+      this.char2short(raw_data[13], raw_data[12]) / 333.87 + 21.0;
 
     return {
       accelerometer,

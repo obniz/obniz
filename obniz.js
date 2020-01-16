@@ -30585,11 +30585,7 @@ class ObnizBLE {
       }
       if (!handled) {
         this.Obniz.error(
-          `ble ${params.message} service=${
-            params.service_uuid
-          } characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${
-            params.descriptor_uuid
-          }`
+          `ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`
         );
       }
     }
@@ -32402,9 +32398,7 @@ class BleSecurity {
   checkIntroducedFirmware(introducedVersion, functionName) {
     let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
     if (results) {
-      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
-        this.Obniz.firmware_ver
-      })`;
+      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${this.Obniz.firmware_ver})`;
       this.Obniz.error(msg);
       throw new Error(msg);
     }
@@ -34415,9 +34409,7 @@ class BleRemotePeripheral {
         } else {
           reject(
             new Error(
-              `connection to peripheral name=${this.localName} address=${
-                this.address
-              } can't be established`
+              `connection to peripheral name=${this.localName} address=${this.address} can't be established`
             )
           );
         }
@@ -34442,9 +34434,7 @@ class BleRemotePeripheral {
         } else {
           reject(
             new Error(
-              `cutting connection to peripheral name=${
-                this.localName
-              } address=${this.address} was failed`
+              `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`
             )
           );
         }
@@ -35815,6 +35805,7 @@ Gap.prototype.startScanning = function(allowDuplicates) {
   // Always set scan parameters before scanning
   // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
   // p106 - p107
+  this._hci.setScanEnabled(false, true);
   this._hci.once('leScanEnableSet', scanStopStatus => {
     this._hci.setScanParameters();
     this._hci.once('leScanParametersSet', setParamStatus => {
@@ -42124,11 +42115,7 @@ class PeripheralSPI {
     }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
-        `with your obniz ${
-          this.Obniz.firmware_ver
-        }. spi max length=32byte but yours ${
-          data.length
-        }. Please update obniz firmware`
+        `with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`
       );
     }
 
@@ -42150,11 +42137,7 @@ class PeripheralSPI {
     }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
-        `with your obniz ${
-          this.Obniz.firmware_ver
-        }. spi max length=32byte but yours ${
-          data.length
-        }. Please update obniz firmware`
+        `with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`
       );
     }
 
@@ -44814,9 +44797,7 @@ module.exports = class WSCommand {
         err.err0 = payload[0];
         err.err1 = payload[1];
         err.function = payload[2];
-        err.message = `Error module=${this.module} func=${err.function} err0=${
-          err.err0
-        } returned=${err.err1}`;
+        err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
       } else {
         err.message = `Error module=${this.module} with + ${err._args}`;
       }
@@ -47293,11 +47274,7 @@ class WSCommand_IO extends WSCommand {
         const oldMutexOwner = payload[4];
         const newMutexOwner = payload[5];
         this.envelopWarning(objToSend, 'debug', {
-          message: `io${module_index} binded "${
-            COMMAND_IO_MUTEX_NAMES[oldMutexOwner]
-          }" was stopped. "${
-            COMMAND_IO_MUTEX_NAMES[newMutexOwner]
-          }" have started using this io.`,
+          message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.`,
         });
       }
     } else {
@@ -59460,11 +59437,7 @@ class FlickHat {
             this.statusInfo = statusInfo;
             if (this.debugprint || this.obniz.debugprint) {
               console.log(
-                `flickHat: system status: {msgId: ${
-                  statusInfo.msgId
-                }, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${
-                  statusInfo.error
-                }}`
+                `flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`
               );
             }
             break;
@@ -60023,8 +59996,8 @@ class MPU6886 extends i2cParts {
     };
   }
 
-  whoamiWait() {
-    return this.readWait(this.commands.whoami, 1)[0];
+  async whoamiWait() {
+    return (await this.readWait(this.commands.whoami, 1))[0];
   }
 
   init() {
@@ -60338,8 +60311,8 @@ class SH200Q extends i2cParts {
     };
   }
 
-  whoamiWait() {
-    return this.readWait(this.commands.whoami, 1)[0];
+  async whoamiWait() {
+    return (await this.readWait(this.commands.whoami, 1))[0];
   }
 
   async initWait() {
@@ -60433,18 +60406,18 @@ class SH200Q extends i2cParts {
     let gy_scale = this._gyro_range / 32768;
 
     const accelerometer = {
-      x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
-      y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
-      z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+      x: this.char2short(raw_data[1], raw_data[0]) * ac_scale,
+      y: this.char2short(raw_data[3], raw_data[2]) * ac_scale,
+      z: this.char2short(raw_data[5], raw_data[4]) * ac_scale,
     };
     const gyroscope = {
-      x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
-      y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
-      z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+      x: this.char2short(raw_data[7], raw_data[6]) * gy_scale,
+      y: this.char2short(raw_data[9], raw_data[8]) * gy_scale,
+      z: this.char2short(raw_data[11], raw_data[10]) * gy_scale,
     };
 
     const temperature =
-      this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
+      this.char2short(raw_data[13], raw_data[12]) / 333.87 + 21.0;
 
     return {
       accelerometer,
@@ -60931,8 +60904,18 @@ class StepperMotor {
     this.requiredKeys = ['a', 'b', 'aa', 'bb'];
 
     this._stepInstructions = {
-      '1': [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
-      '2': [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
+      '1': [
+        [0, 1, 1, 1],
+        [1, 0, 1, 1],
+        [1, 1, 0, 1],
+        [1, 1, 1, 0],
+      ],
+      '2': [
+        [0, 0, 1, 1],
+        [1, 0, 0, 1],
+        [1, 1, 0, 0],
+        [0, 1, 1, 0],
+      ],
       '1-2': [
         [0, 1, 1, 1],
         [0, 0, 1, 1],
@@ -62978,9 +62961,9 @@ class MFRC522 {
 
   async authenticateSectorWait(Sector, uid) {
     /* Password authentication mode (A or B)
-		 * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
-		 * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
-		 */
+     * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
+     * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
+     */
     const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
     // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
     const Block = Sector * 4;
@@ -62996,9 +62979,9 @@ class MFRC522 {
 
   async authenticateBlockWait(Block, uid) {
     /* Password authentication mode (A or B)
-		 * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
-		 * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
-		 */
+     * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
+     * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
+     */
     const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
     // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
     let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
@@ -63497,6 +63480,17 @@ class I2cPartsAbstruct {
   async readUint16Wait(command, length) {
     this.i2c.write(this.address, [command]);
     return await this.i2c.readWait(this.address, length);
+  }
+
+  async writeFlagWait(address, index) {
+    let tempdata = await this.readWait(address, 1);
+    tempdata[0] = tempdata[0] | (0b1 << index);
+    this.write(address, tempdata);
+  }
+  async clearFlagWait(address, index) {
+    let tempdata = await this.readWait(address, 1);
+    tempdata[0] = tempdata[0] | (0b0 << index);
+    this.write(address, tempdata);
   }
 
   write(command, buf) {
