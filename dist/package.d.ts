@@ -17,7 +17,6 @@ declare const _exports: {
         "tsExampleTest": string;
         "realtest": string;
         "realtest-debug": string;
-        "realtest-esp32": string;
         "local": string;
         "build": string;
         "build-ts": string;
