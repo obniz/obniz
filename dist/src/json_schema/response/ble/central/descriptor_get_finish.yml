@@ -1,0 +1,17 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/descriptor_get_finish"
+deprecated: 3.0.0
+
+type: object
+required: [get_descriptor_result_finish]
+properties:
+  get_descriptor_result_finish:
+    type: object
+    required: [address,service_uuid,characteristic_uuid]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress" }
+      service_uuid: {$ref: "/uuid"}
+      characteristic_uuid: {$ref: "/uuid"}

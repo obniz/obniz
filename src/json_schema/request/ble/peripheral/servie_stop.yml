@@ -1,0 +1,21 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral/service_stop"
+deprecated: 3.0.0
+
+
+type: object
+required: [peripheral]
+properties:
+  peripheral:
+    type: object
+    required: [stop_service]
+    properties:
+      stop_service:
+        type: object
+        required: [service_uuid]
+        additionalProperties: false
+        properties:
+          service_uuid: {$ref: "/uuid"}
+

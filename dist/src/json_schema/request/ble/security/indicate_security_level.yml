@@ -1,0 +1,19 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/security/indicate_security_level"
+description: "ble indicate security level settings"
+deprecated: 3.0.0
+
+
+type: object
+required: [security]
+properties:
+  security:
+    type: object
+    required: [indicate_security_level]
+    properties:
+      indicate_security_level:
+        type: integer
+        min: 0
+        max: 4

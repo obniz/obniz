@@ -1,0 +1,18 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/status_update"
+deprecated: 3.0.0
+
+type: object
+required: [status_update]
+properties:
+  status_update:
+    type: object
+    required: [address, status]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress"}
+      status:
+        type: string
+        enum: [connected, disconnected]

@@ -1,0 +1,9 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/pwm/init"
+
+type: object
+required: [io]
+properties:
+  io: {$ref: "/pinSetting"}

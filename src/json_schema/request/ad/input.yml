@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ad/get"
+related: "/response/ad/get"
+desription: "enable & start ad module at io."
+
+type: object
+required: [stream]
+properties:
+  stream:
+    type: boolean
+    default: false
+    description: "true to continuous notifying on voltage change."

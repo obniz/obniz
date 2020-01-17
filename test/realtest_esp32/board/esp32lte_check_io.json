@@ -1,0 +1,78 @@
+{
+  "name": "ESP32 Dev Kit",
+  "board": [
+    "obnizA",
+    "obnizB"
+  ],
+  "sleep_test": false,
+  "io": [
+
+    {
+      "board_io": 5,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 8
+    },
+    {
+      "board_io": 18,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 11
+    },
+    {
+      "board_io": 39,
+      "mode": [
+        "digitalRead",
+        "analogRead"
+      ],
+      "obniz": "obnizB",
+      "obniz_io": 0
+    },
+    {
+      "board_io": 36,
+      "mode": [
+        "digitalRead",
+        "analogRead"
+      ],
+      "obniz": "obnizB",
+      "obniz_io": 1
+    },
+    {
+      "board_io": 34,
+      "mode": [
+        "digitalRead",
+        "analogRead"
+      ],
+      "obniz": "obnizB",
+      "obniz_io": 2
+    },
+    {
+      "board_io": 35,
+      "mode": [
+        "digitalRead",
+        "analogRead"
+      ],
+      "obniz": "obnizB",
+      "obniz_io": 3
+    },
+    {
+      "board_io": 4,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogWrite"
+      ],
+      "obniz": "obnizB",
+      "obniz_io": 4
+    }
+
+  ]
+}
