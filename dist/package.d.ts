@@ -23,6 +23,7 @@ declare const _exports: {
         "build-ts": string;
         "version": string;
         "lint": string;
+        "lint-js": string;
         "lint-ts": string;
         "precommit": string;
         "clean": string;
