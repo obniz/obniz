@@ -1,0 +1,24 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/peripheral/characteristic_notify_read"
+description: "callback of external device read characteristic"
+deprecated: 3.0.0
+
+
+type: object
+required: [peripheral]
+properties:
+  peripheral:
+    type: object
+    additionalProperties: false
+    required: [notify_read_characteristic]
+    properties:
+      notify_read_characteristic:
+        type: object
+        required: [address,service_uuid, characteristic_uuid]
+        additionalProperties: false
+        properties:
+          address: {$ref: "/deviceAddress"}
+          service_uuid: {$ref: "/uuid"}
+          characteristic_uuid: {$ref: "/uuid"}

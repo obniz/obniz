@@ -1,0 +1,15 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/io/pull_type"
+
+type: object
+required: [pull_type]
+properties:
+  pull_type:
+    type: string
+    enum:
+      - pull-up5v
+      - pull-up3v
+      - pull-down
+      - float

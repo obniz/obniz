@@ -1,30 +1,43 @@
 {
   "name": "obniz",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "obniz sdk for javascript",
-  "main": "index.js",
-  "types": "obniz.d.ts",
+  "main": "./dist/src/obniz/index.js",
+  "types": "./dist/src/obniz/index.d.ts",
+  "files": [
+    "dist",
+    "obniz.js",
+    "obniz.min.js"
+  ],
   "engines": {
     "node": ">=7.6.0"
   },
   "engineStrict": true,
   "scripts": {
-    "test": "npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1",
+    "test": "npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
     "testOnlyNodejs": "NO_BROWSER_TEST=1 npm test",
     "buildAndtest": "npm run build && npm test",
-    "tstest": "tsc --project ./test",
+    "tstest": "mocha --require espower-typescript/guess test/functiontest/obniz-ts/**/*.ts",
+    "tsExampleTest": "tsc --project ./test/functiontest",
     "realtest": "mocha $NODE_DEBUG_OPTION ./realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
     "realtest-esp32": "mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js",
-    "local": "gulp --gulpfile ./_tools/server.js --cwd .",
-    "build": "npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build",
+    "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
+    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
-    "lint": "eslint --fix . --rulesdir eslint/rule",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js"
+    "lint": "npm run lint-ts ",
+    "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
+    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
+    "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
     "*.js": [
       "eslint --rulesdir eslint/rule --fix ",
+      "git add"
+    ],
+    "*.ts": [
+      "tslint -c tslint.json --fix ",
       "git add"
     ]
   },
@@ -36,6 +49,23 @@
   "homepage": "https://obniz.io/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/chai-like": "^1.1.0",
+    "@types/eventemitter3": "^1.2.0",
+    "@types/events": "^3.0.0",
+    "@types/glob": "^7.1.1",
+    "@types/js-yaml": "^3.12.1",
+    "@types/minimatch": "^3.0.3",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^13.1.5",
+    "@types/node-dir": "0.0.33",
+    "@types/node-fetch": "^2.5.4",
+    "@types/semver": "^6.2.0",
+    "@types/sinon": "^7.5.1",
+    "@types/tv4": "^1.2.29",
+    "@types/webpack-env": "^1.15.0",
+    "@types/window-or-global": "^1.0.0",
+    "@types/ws": "^6.0.4",
     "chai": "^4.2.0",
     "chai-like": "^1.1.1",
     "child_process": "^1.0.2",
@@ -45,6 +75,7 @@
     "eslint-config-prettier": "^3.6.0",
     "eslint-plugin-jasmine": "^2.10.1",
     "eslint-plugin-prettier": "^2.7.0",
+    "espower-typescript": "^9.0.2",
     "express": "^4.17.1",
     "get-port": "^4.0.0",
     "glob": "^7.1.3",
@@ -56,6 +87,8 @@
     "gulp-plumber": "^1.2.0",
     "gulp-rename": "^1.4.0",
     "gulp-sort": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-util": "^3.0.8",
     "gulp-yaml": "^2.0.2",
     "husky": "^0.14.3",
@@ -70,11 +103,13 @@
     "node-notifier": "^5.3.0",
     "nyc": "^14.1.1",
     "path": "^0.12.7",
+    "power-assert": "^1.6.1",
     "prettier": "^1.14.3",
     "sinon": "^7.5.0",
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
-    "typescript": "^3.6.4",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4",
     "uglifyjs-webpack-plugin": "^1.3.0",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
@@ -97,8 +132,9 @@
   },
   "private": false,
   "browser": {
-    "ws": "./obniz/libs/webpackReplace/ws.js",
-    "canvas": "./obniz/libs/webpackReplace/canvas.js",
-    "./obniz/libs/webpackReplace/require-context.js": "./obniz/libs/webpackReplace/require-context-browser.js"
+    "fs": false,
+    "ws": "./src/obniz/libs/webpackReplace/ws",
+    "canvas": "./src/obniz/libs/webpackReplace/canvas",
+    "./src/obniz/libs/webpackReplace/require-context": "./src/obniz/libs/webpackReplace/require-context-browser"
   }
 }

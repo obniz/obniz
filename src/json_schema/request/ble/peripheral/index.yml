@@ -1,0 +1,17 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral"
+basePath: "ble"
+description: "use obniz Board as peripheral"
+
+"anyOf":
+  - {$ref: "/request/ble/peripheral/advertisement_start"}
+  - {$ref: "/request/ble/peripheral/advertisement_stop"}
+  - {$ref: "/request/ble/peripheral/service_start"}
+  - {$ref: "/request/ble/peripheral/service_stop"}
+  - {$ref: "/request/ble/peripheral/service_stop_all"}
+  - {$ref: "/request/ble/peripheral/characteristic_read"}
+  - {$ref: "/request/ble/peripheral/characteristic_write"}
+  - {$ref: "/request/ble/peripheral/descriptor_read"}
+  - {$ref: "/request/ble/peripheral/descriptor_write"}

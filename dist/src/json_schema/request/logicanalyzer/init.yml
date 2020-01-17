@@ -1,0 +1,45 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/logicAnalyzer/init"
+exampleDescription: "With below sample code, you will receive only data which start with 'false, false, false' 3bit."
+
+type: object
+required: [io, interval, duration]
+properties:
+  io:
+    type: array
+    minItems: 1
+    maxItems: 1
+    items: {$ref: "/pinSetting"}
+
+  interval:
+    type: number
+    minimum: 0
+    exclusiveMinimum: true
+
+  duration:
+    type: integer
+    minimum: 0
+    exclusiveMinimum: true
+
+  trigger:
+    type: object
+    description: "Without this, logic analyzer will start with any io level changes. trigger specify start position. "
+
+    additionalProperties: false
+    required: [value, samples]
+    default: {value: false, samples: 0}
+    properties:
+      value:
+        description: "start value"
+        type: boolean
+        default: false
+
+      samples:
+        type: integer
+        description: "how that values consists"
+        minimum: 0
+        default: 0
+        example: 3
+

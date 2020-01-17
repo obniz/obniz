@@ -1,0 +1,47 @@
+![photo of AnalogTemperatureSensor](./wired.png)
+<%
+if (typeof pins === "undefined") {
+    pins = {};
+}
+if (pins.gnd === undefined) {
+    pins.gnd = 0;
+}
+if (pins.output === undefined) {
+    pins.output = 1;
+}
+if (pins.vcc === undefined) {
+    pins.vcc = 2;
+}
+%>
+
+
+## wired(obniz, {vcc, output, gnd})
+obniz Boardに温度センサをつなぎます。
+```javascript
+// Javascript Example
+var tempsens = obniz.wired("<%= partname %>", { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
+```
+
+## onchange
+温度センサの値に変化があった場合にcallback関数を呼び出します。
+温度は摂氏で返されます。
+```javascript
+// Javascript Example
+var tempsens = obniz.wired("<%= partname %>", { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
+tempsens.onchange = function(temp){
+console.log(temp);
+};
+```
+
+
+## [await]getWait
+
+温度センサの値を一度だけ取得します
+温度は摂氏で返されます。
+
+```javascript
+// Javascript Example
+var tempsens = obniz.wired("<%= partname %>", { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
+var temp = await tempsens.getWait();
+console.log(temp);
+```

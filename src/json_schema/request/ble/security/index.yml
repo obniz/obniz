@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/security"
+basePath: "ble.security"
+description: "set obniz Board ble security"
+deprecated: 3.0.0
+
+
+"anyOf":
+  - {$ref: "/request/ble/security/indicate_security_level"}
+  - {$ref: "/request/ble/security/auth"}
+  - {$ref: "/request/ble/security/key_type"}
+  - {$ref: "/request/ble/security/key_max_size"}
+  #  -  {$ref : "/request/ble/security/io_capability"}
+  - {$ref: "/request/ble/security/devices_clear"}

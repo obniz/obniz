@@ -1,0 +1,9 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/uart/send"
+
+type: object
+required: [data]
+properties:
+  data: {$ref: "/dataArray"}

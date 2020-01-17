@@ -1,0 +1,22 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/measure/echo"
+
+type: object
+required: [echo]
+properties:
+  echo:
+    type: array
+    minItesm: 1
+    items:
+      type: object
+      required: [edge, timing]
+      properties:
+        edge:
+          type: boolean
+          description: "rising = true"
+        timing:
+          type: number
+          description: "milliseconds from end of pulse"
+

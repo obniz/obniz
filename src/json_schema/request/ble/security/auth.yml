@@ -1,0 +1,24 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/security/auth"
+description: "ble auth settings"
+
+
+type: object
+required: [security]
+properties:
+  security:
+    type: object
+    required: [auth]
+    properties:
+      auth:
+        type: array
+        default: [bonding]
+        minItems: 1,
+        items:
+          type: string
+          enum:
+            - bonding
+            - mitm
+            - secure_connection

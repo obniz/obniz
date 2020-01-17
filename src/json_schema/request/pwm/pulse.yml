@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/pwm/pulse"
+
+type: object
+required: [pulse]
+properties:
+  pulse:
+    type:  number
+    minimum: 0
+    description: "pulse width (ms)"

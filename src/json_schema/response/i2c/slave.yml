@@ -1,0 +1,22 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/i2c/slave"
+
+
+type: object
+required: [mode, address, is_fragmented, data]
+properties:
+  mode:
+    type: string
+    enum: [slave]
+
+  address:
+    type: integer
+    minimum: 0
+    maximum: 1023
+
+  is_fragmented:
+    type: boolean
+
+  data: {$ref: "/dataArray" }
