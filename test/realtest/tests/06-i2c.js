@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const config = require('../config.js');
+const config = require('../../realtest_esp32/config.js');
 
 let obnizA, checkBoard, check_io;
 
@@ -16,6 +16,14 @@ describe('6-i2c', function() {
         resolve();
       });
     });
+  });
+  afterEach(async () => {
+    if (checkBoard.i2c0.isUsed()) {
+      checkBoard.i2c0.end();
+    }
+    if (obnizA.i2c0.isUsed()) {
+      obnizA.i2c0.end();
+    }
   });
 
   it('1k data', async function() {

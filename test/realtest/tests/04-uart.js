@@ -1,4 +1,4 @@
-const config = require('../config.js');
+const config = require('../../realtest_esp32/config.js');
 
 let obnizA, checkBoard, check_io;
 

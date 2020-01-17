@@ -1,5 +1,5 @@
 {
-  "name": "ESP32 Dev Kit",
+  "name": "ESP32 LTE",
   "board": [
     "obnizA",
     "obnizB"

@@ -21,7 +21,6 @@
     "tsExampleTest": "tsc --project ./test/functiontest",
     "realtest": "mocha $NODE_DEBUG_OPTION ./realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
-    "realtest-esp32": "mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
