@@ -87,6 +87,7 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 import ST7735S, { ST7735SOptions } from "../parts/Display/ST7735S";
 import SH200Q, { SH200QOptions } from "../parts/MovementSensor/SH200Q";
 import AXP192, { AXP192Options } from "../parts/Power/AXP192";
+import DPS310, { DPS310Options } from "../parts/PressureSensor/DPS310";
 export interface WiredNameMap {
     "LED": LED;
     "FullColorLED": FullColorLED;
@@ -177,6 +178,7 @@ export interface WiredNameMap {
     "S8120C": S8120C;
     "ADT7410": ADT7410;
     "S5851A": S5851A;
+    "DPS310": DPS310;
 }
 export interface WiredNameOptionsMap {
     "LED": LEDOptions;
@@ -268,4 +270,5 @@ export interface WiredNameOptionsMap {
     "S8120C": S8120COptions;
     "ADT7410": ADT7410Options;
     "S5851A": S5851AOptions;
+    "DPS310": DPS310Options;
 }

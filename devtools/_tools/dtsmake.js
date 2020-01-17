@@ -11,6 +11,7 @@ function camelCase(str) {
   });
 }
 
+// eslint-disable-next-line no-unused-vars
 function snakeCase(str) {
   let camel = camelCase(str);
   return camel.replace(/[A-Z]/g, function(s) {
@@ -18,6 +19,7 @@ function snakeCase(str) {
   });
 }
 
+// eslint-disable-next-line no-unused-vars
 function pascalCase(str) {
   let camel = camelCase(str);
   return camel.charAt(0).toUpperCase() + camel.slice(1);
