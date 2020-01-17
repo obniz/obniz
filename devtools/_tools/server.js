@@ -7,7 +7,6 @@ const gulp = require('gulp');
 const plumber = require('gulp-plumber');
 const gulp_ejs = require('gulp-ejs');
 const rename = require('gulp-rename');
-const gulp_notify = require('gulp-notify');
 const gulp_yaml = require('gulp-yaml');
 const concatWith = require('./concatWith');
 const gulp_sort = require('gulp-sort');
@@ -231,14 +230,6 @@ gulp.task('readMe', function readMeBuild(done) {
 });
 
 function reportError(error) {
-  let lineNumber = error.lineNumber ? 'LINE ' + error.lineNumber + ' -- ' : '';
-
-  gulp_notify({
-    title: 'Task Failed [' + error.plugin + ']',
-    message: lineNumber + 'See console.',
-    sound: 'Sosumi', // See: https://github.com/mikaelbr/node-notifier#all-notification-options-with-their-defaults
-  }).write(error);
-
   let report = '';
   report += 'TASK:' + ' [' + error.plugin + ']\n';
   report += 'MESSAGE:' + ' ' + error.message + '\n';

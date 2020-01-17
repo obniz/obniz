@@ -1,5 +1,5 @@
 let through = require('through2');
-let PluginError = require('gulp-util').PluginError;
+let PluginError = require('plugin-error');
 let PLUGIN_NAME = 'obnizVersion';
 
 module.exports = function() {

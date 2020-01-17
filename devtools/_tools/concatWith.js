@@ -3,7 +3,7 @@
 let through = require('through2');
 let path = require('path');
 let File = require('vinyl');
-let PluginError = require('gulp-util').PluginError;
+let PluginError = require('plugin-error');
 let PLUGIN_NAME = 'concatWith';
 
 // file can be a vinyl file object or a string
