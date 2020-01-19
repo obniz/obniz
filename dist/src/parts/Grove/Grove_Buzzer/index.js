@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Buzzer {
-    constructor(obniz) {
+    constructor() {
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
     }

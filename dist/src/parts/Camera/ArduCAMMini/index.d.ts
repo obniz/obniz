@@ -1,8 +1,27 @@
 import Obniz from "../../../obniz";
+import { DriveType } from "../../../obniz/libs/io_peripherals/common";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface ArduCAMMiniOptions {
+    cs: PeripheralIO;
+    mosi?: PeripheralIO;
+    miso?: PeripheralIO;
+    sclk?: PeripheralIO;
+    gnd?: PeripheralIO;
+    vcc?: PeripheralIO;
+    sda?: PeripheralIO;
+    scl?: PeripheralIO;
+    i2c?: PeripheralI2C;
+    spi?: PeripheralSPI;
+    spi_drive?: DriveType;
+    spi_frequency?: number;
+    module_version?: number;
 }
-declare class ArduCAMMini implements ObnizPartsInterface {
+export declare type ArduCAMMiniMode = "MCU2LCD" | "CAM2LCD" | "LCD2MCU";
+export declare type ArduCAMMiniSize = "160x120" | "176x144" | "320x240" | "352x288" | "640x480" | "800x600" | "1024x768" | "1280x960" | "1600x1200";
+export default class ArduCAMMini implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
@@ -14,30 +33,29 @@ declare class ArduCAMMini implements ObnizPartsInterface {
     params: any;
     io_cs: any;
     sensor_addr: any;
-    spi: any;
-    i2c: any;
     _size: any;
+    protected spi: PeripheralSPI;
+    protected i2c: PeripheralI2C;
     constructor();
     wired(obniz: Obniz): void;
-    spi_write(addr: any, byteData: any): void;
-    spi_readWait(addr: any): Promise<any>;
-    i2c_byte_write(addr: any, byteData: any): void;
-    i2c_regs_write(regs: any): void;
-    spi_write_reg(addr: any, byteData: any): void;
-    spi_read_regWait(addr: any): Promise<any>;
+    spi_write(addr: number, byteData: number): void;
+    spi_readWait(addr: number): Promise<number>;
+    i2c_byte_write(addr: number, byteData: number): void;
+    i2c_regs_write(regs: number[]): void;
+    spi_write_reg(addr: number, byteData: number): void;
+    spi_read_regWait(addr: number): Promise<number>;
     spi_pingpongWait(): Promise<void>;
-    setMode(mode: any): void;
-    getChipIdWait(): Promise<any>;
+    setMode(mode: string): void;
+    getChipIdWait(): Promise<number>;
     init(): void;
     startupWait(): Promise<void>;
-    takeWait(size: any): Promise<any>;
-    setSize(string: any): void;
+    takeWait(size: number): Promise<number[]>;
+    setSize(string: string): void;
     updateFIFO(data: any): void;
     flushFIFO(): void;
     readFIFOLengthWait(): Promise<number>;
     startCapture(): void;
     isCaptureDoneWait(): Promise<boolean>;
-    readFIFOWait(): Promise<any>;
-    arrayToBase64(array: any): string;
+    readFIFOWait(): Promise<number[]>;
+    arrayToBase64(array: number[]): string;
 }
-export default ArduCAMMini;

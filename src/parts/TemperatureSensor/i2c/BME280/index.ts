@@ -1,8 +1,22 @@
 import Obniz from "../../../../obniz";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
+import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
-export interface BME280Options { }
-class BME280 implements ObnizPartsInterface {
+export interface BME280Options {
+  vio?: number;
+  vcore?: number;
+  gnd?: number;
+  csb?: number;
+  sdi?: number;
+  sck?: number;
+  sdo?: number;
+  address?: number;
+  i2c?: any;
+ }
+
+export default class BME280 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -17,14 +31,16 @@ class BME280 implements ObnizPartsInterface {
   public ioKeys: string[];
   public configration: any;
   public commands: any;
-  public obniz!: Obniz;
   public params: any;
-  public io_csb: any;
+  public io_csb?: PeripheralIO;
   public address: any;
-  public io_sdo: any;
-  public i2c: any;
-  public _calibrated: any;
-  public _t_fine: any;
+  public io_sdo?: PeripheralIO;
+
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
+
+  private _calibrated: any;
+  private _t_fine: any;
 
   constructor() {
     this.requiredKeys = [];
@@ -168,14 +184,14 @@ class BME280 implements ObnizPartsInterface {
     this._t_fine = 0;
   }
 
-  public _readSigned16(value: any) {
+  public _readSigned16(value: number) {
     if (value >= 0x8000) {
       value = value - 0x10000;
     }
     return value;
   }
 
-  public _readSigned8(value: any) {
+  public _readSigned8(value: number) {
     if (value >= 0x80) {
       value = value - 0x100;
     }
@@ -191,16 +207,16 @@ public async getData() {
     return await this.i2c.readWait(this.address, 8);
   }
 
-  public async getAllWait() {
-    const data: any = await this.getData();
+  public async getAllWait(): Promise<{ temperature: number; humidity: number; pressure: number }> {
+    const data = await this.getData();
 
-    const press_raw: any = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
-    const temp_raw: any = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
-    const hum_raw: any = (data[6] << 8) | data[7];
+    const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
+    const temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
+    const hum_raw = (data[6] << 8) | data[7];
 
-    const temperature: any = this.calibration_T(temp_raw) / 100.0;
-    const pressure: any = this.calibration_P(press_raw) / 100.0;
-    const humidity: any = this.calibration_H(hum_raw);
+    const temperature = this.calibration_T(temp_raw) / 100.0;
+    const pressure = this.calibration_P(press_raw) / 100.0;
+    const humidity = this.calibration_H(hum_raw);
 
     return {temperature, humidity, pressure};
   }
@@ -262,15 +278,15 @@ public async getData() {
     return h;
   }
 
-  public async getTempWait() {
+  public async getTempWait(): Promise<number> {
     return (await this.getAllWait()).temperature;
   }
 
-  public async getHumdWait() {
+  public async getHumdWait(): Promise<number> {
     return (await this.getAllWait()).humidity;
   }
 
-  public async getPressureWait() {
+  public async getPressureWait(): Promise<number> {
     return (await this.getAllWait()).pressure;
   }
 
@@ -279,11 +295,12 @@ public async getData() {
     return this.calcAltitude(pressure);
   }
 
-  public calcAltitude(pressure: any, seaLevel: any = 1013.25) {
+  public calcAltitude(pressure: number, seaPressure?: number): number {
+    if (typeof seaPressure !== "number") {
+      seaPressure = 1013.25;
+    }
     return (
-      (1.0 - Math.pow(pressure / seaLevel, 1 / 5.2553)) * 145366.45 * 0.3048
+      (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048
     );
   }
 }
-
-export default BME280;

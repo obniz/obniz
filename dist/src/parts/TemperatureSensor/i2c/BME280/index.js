@@ -254,8 +254,11 @@ class BME280 {
             return this.calcAltitude(pressure);
         });
     }
-    calcAltitude(pressure, seaLevel = 1013.25) {
-        return ((1.0 - Math.pow(pressure / seaLevel, 1 / 5.2553)) * 145366.45 * 0.3048);
+    calcAltitude(pressure, seaPressure) {
+        if (typeof seaPressure !== "number") {
+            seaPressure = 1013.25;
+        }
+        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
     }
 }
 exports.default = BME280;

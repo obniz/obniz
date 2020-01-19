@@ -1,10 +1,17 @@
 import Obniz from "../../../../obniz";
+import PeripheralSPI from "../../../../obniz/libs/io_peripherals/spi";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
 export interface ADT7310Options {
-
+  vcc: number;
+  gnd: number;
+  din: number;
+  dout: number;
+  sclk: number;
 }
-export class ADT7310 implements ObnizPartsInterface {
+
+export default class ADT7310 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -14,9 +21,10 @@ export class ADT7310 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public spi: any;
+
+  protected obniz!: Obniz;
+  protected spi!: PeripheralSPI;
 
   constructor() {
     this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
@@ -35,7 +43,7 @@ export class ADT7310 implements ObnizPartsInterface {
     this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
-  public async getTempWait() {
+  public async getTempWait(): Promise<number> {
     await this.spi.writeWait([0x54]); // send before each commands for stable
     await this.obniz.wait(200);
     const ret: any = await this.spi.writeWait([0x00, 0x00]);
@@ -50,5 +58,3 @@ export class ADT7310 implements ObnizPartsInterface {
     return tempBin / 16;
   }
 }
-
-export default ADT7310;

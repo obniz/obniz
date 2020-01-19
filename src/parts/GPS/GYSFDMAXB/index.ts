@@ -1,8 +1,29 @@
 import Obniz from "../../../obniz";
+import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface GYSFDMAXBOptions { }
-class GYSFDMAXB implements ObnizPartsInterface {
+export interface GYSFDMAXBOptions {
+  vcc?: number;
+  gnd?: number;
+  txd: number;
+  rxd: number;
+  Opps?: number;
+}
+
+export interface GYSFDMAXBEditedData {
+  enable: boolean;
+  GPGGA: number;
+  GPGLL: number;
+  GPGSA: number;
+  GPGSV: any[];
+  GPRMC: number;
+  GPVTG: number;
+  GPZDA: number;
+  [key: string]: any;
+  timestamp: Date;
+}
+
+export default class GYSFDMAXB implements ObnizPartsInterface {
   // -------------------
   get latitude() {
     return this.nmea2dd(this._latitude);
@@ -21,34 +42,35 @@ class GYSFDMAXB implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public ioKeys: string[];
-  public displayName: any;
-  public displayIoNames: any;
-  public obniz!: Obniz;
-  public tx: any;
+  public displayName = "gps";
+  public displayIoNames = {txd: "txd", rxd: "rxd", Opps: "1pps"};
   public params: any;
-  public rx: any;
-  public vcc: any;
-  public gnd: any;
-  public Opps: any;
-  public uart: any;
+
   public editedData: any;
-  public on1pps: any;
-  public last1pps: any;
+  public on1pps: (() => void) | null = null;
+  public last1pps = 0;
   public gpsInfo: any;
-  public self: any;
-  public _latitude: any;
-  public _longitude: any;
   public status: any;
   public fixMode: any;
   public gpsQuality: any;
+
+  protected obniz!: Obniz;
+
+  private tx!: number;
+  private rx!: number;
+  private vcc!: number;
+  private gnd!: number;
+  private Opps!: number;
+  private uart!: PeripheralUART;
+
+  private _latitude: any;
+  private _longitude: any;
 
   constructor() {
     this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
     this.requiredKeys = ["txd", "rxd"];
 
     this.ioKeys = this.keys;
-    this.displayName = "gps";
-    this.displayIoNames = {txd: "txd", rxd: "rxd", Opps: "1pps"};
   }
 
   public wired(obniz: Obniz) {
@@ -92,7 +114,7 @@ class GYSFDMAXB implements ObnizPartsInterface {
     };
   }
 
-  public start1pps(callback: any) {
+  public start1pps(callback: (() => void) | null) {
     this.on1pps = callback;
     if (callback) {
       this.last1pps = 2;
@@ -110,7 +132,7 @@ class GYSFDMAXB implements ObnizPartsInterface {
     }
   }
 
-  public readSentence() {
+  public readSentence(): any {
     let results: any = [];
     if (this.uart.isDataExists()) {
       const pos: any = this.uart.received.indexOf(0x0a);
@@ -123,7 +145,7 @@ class GYSFDMAXB implements ObnizPartsInterface {
     return "";
   }
 
-  public getEditedData() {
+  public getEditedData(): GYSFDMAXBEditedData {
     let n: any;
     let utc: any;
     let format: any;
@@ -191,7 +213,7 @@ class GYSFDMAXB implements ObnizPartsInterface {
     return this.editedData;
   }
 
-  public getGpsInfo(editedData: any) {
+  public getGpsInfo(editedData?: GYSFDMAXBEditedData): any {
     const NMEA_SATINSENTENCE: any = 4;
     const NMEA_MAXSAT: any = 12;
     editedData = editedData || this.getEditedData();
@@ -359,7 +381,7 @@ class GYSFDMAXB implements ObnizPartsInterface {
   }
 
   // --- latitude/longitude MNEA format change to each unit
-  public nmea2dms(val: any) {
+  public nmea2dms(val: any): string {
     // NMEA format to DMS format string (999° 99'99.9")
     val = parseFloat(val);
     const d: any = Math.floor(val / 100);
@@ -368,7 +390,7 @@ class GYSFDMAXB implements ObnizPartsInterface {
     return d + "°" + m + "'" + s.toFixed(1) + '"';
   }
 
-  public nmea2dm(val: any) {
+  public nmea2dm(val: any): string {
     // NMEA format to DM format string (999° 99.9999')
     val = parseFloat(val);
     const d: any = Math.floor(val / 100.0);
@@ -376,7 +398,7 @@ class GYSFDMAXB implements ObnizPartsInterface {
     return d + "°" + m.toFixed(4) + "'";
   }
 
-  public nmea2dd(val: any) {
+  public nmea2dd(val: any): number {
     // NMEA format to DD format decimal (999.999999)
     val = parseFloat(val);
     const d: any = Math.floor(val / 100.0);
@@ -385,7 +407,7 @@ class GYSFDMAXB implements ObnizPartsInterface {
     return parseFloat((d + m + s).toFixed(6));
   }
 
-  public nmea2s(val: any) {
+  public nmea2s(val: any): number {
     // NMEA format to S format decimal (99999.9999)
     val = parseFloat(val);
     const d: any = Math.floor(val / 100.0);
@@ -394,5 +416,3 @@ class GYSFDMAXB implements ObnizPartsInterface {
     return (d + m + s) / (1.0 / 60.0 / 60.0);
   }
 }
-
-export default GYSFDMAXB;

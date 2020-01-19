@@ -1,8 +1,24 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface Grove_GPSOptions {
+    vcc?: number;
+    gnd?: number;
+    tx: number;
+    rx: number;
 }
-declare class Grove_GPS implements ObnizPartsInterface {
+export interface Grove_GPSEditedData {
+    enable: boolean;
+    GPGGA: any;
+    GPGLL: any;
+    GPGSA: any;
+    GPGSV: any[];
+    GPRMC: any;
+    GPVTG: any;
+    GPZDA: any;
+    [key: string]: any;
+    timestamp: Date;
+}
+export default class Grove_GPS implements ObnizPartsInterface {
     get latitude(): number;
     get longitude(): number;
     static info(): ObnizPartsInfo;
@@ -11,21 +27,21 @@ declare class Grove_GPS implements ObnizPartsInterface {
     ioKeys: string[];
     displayName: any;
     displayIoNames: any;
-    obniz: Obniz;
     params: any;
-    uart: any;
     editedData: any;
     gpsInfo: any;
-    _latitude: any;
-    _longitude: any;
     status: any;
     fixMode: any;
     gpsQuality: any;
+    protected obniz: Obniz;
+    private uart;
+    private _latitude;
+    private _longitude;
     constructor();
     wired(obniz: Obniz): void;
-    readSentence(): any;
-    getEditedData(): any;
-    getGpsInfo(editedData: any): any;
+    readSentence(): string;
+    getEditedData(): Grove_GPSEditedData;
+    getGpsInfo(editedData?: Grove_GPSEditedData): any;
     _mneaTo(format: any, value: any): any;
     latitudeTo(format: any): any;
     longitudeTo(format: any): any;
@@ -37,4 +53,3 @@ declare class Grove_GPS implements ObnizPartsInterface {
     nmea2dd(val: any): number;
     nmea2s(val: any): number;
 }
-export default Grove_GPS;

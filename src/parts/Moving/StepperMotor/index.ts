@@ -1,8 +1,19 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface StepperMotorOptions { }
-class StepperMotor implements ObnizPartsInterface {
+export interface StepperMotorOptions {
+  a: number;
+  b: number;
+  aa: number;
+  bb: number;
+  common?: number;
+}
+
+export type StepType = "1" | "2" | "1-2";
+
+export default class StepperMotor implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,44 +23,37 @@ class StepperMotor implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public _stepInstructions: any;
-  public type: any;
-  public currentStep: any;
-  public _stepType: any;
-  public frequency: any;
-  public rotationStepCount: any;
-  public milliMeterStepCount: any;
-  public obniz!: Obniz;
   public params: any;
+
+  public type?: string;
+  public currentStep = 0;
+  public frequency = 100;
+  public rotationStepCount = 100;
+  public milliMeterStepCount = 1;
   public common: any;
-  public ios: any;
+  public ios: PeripheralIO[] = [];
+
+  protected obniz!: Obniz;
+
+  private _stepInstructions = {
+    "1": [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
+    "2": [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
+    "1-2": [
+      [0, 1, 1, 1],
+      [0, 0, 1, 1],
+      [1, 0, 1, 1],
+      [1, 0, 0, 1],
+      [1, 1, 0, 1],
+      [1, 1, 0, 0],
+      [1, 1, 1, 0],
+      [0, 1, 1, 0],
+    ],
+  };
+  private _stepType: StepType = "2";
 
   constructor() {
     this.keys = ["a", "b", "aa", "bb", "common"];
     this.requiredKeys = ["a", "b", "aa", "bb"];
-
-    this._stepInstructions = {
-      "1": [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
-      "2": [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
-      "1-2": [
-        [0, 1, 1, 1],
-        [0, 0, 1, 1],
-        [1, 0, 1, 1],
-        [1, 0, 0, 1],
-        [1, 1, 0, 1],
-        [1, 1, 0, 0],
-        [1, 1, 1, 0],
-        [0, 1, 1, 0],
-      ],
-    };
-
-    this.type = undefined; // common exist? => unipolar : bipolar
-    this.currentStep = 0;
-    this._stepType = "2";
-    this.frequency = 100;
-
-    this.rotationStepCount = 100;
-    this.milliMeterStepCount = 1;
   }
 
   public wired(obniz: Obniz) {
@@ -69,7 +73,7 @@ class StepperMotor implements ObnizPartsInterface {
     this.ios.push(obniz.getIO(this.params.bb));
   }
 
-  public async stepWait(step_count: any) {
+  public async stepWait(step_count: number) {
     if (typeof step_count !== "number") {
       throw new Error("must provide number");
     }
@@ -77,12 +81,12 @@ class StepperMotor implements ObnizPartsInterface {
     if (step_count === 0) {
       return;
     }
-    const step_count_abs: any = Math.abs(step_count);
-    const instructions: any = this._getStepInstructions();
-    const instruction_length: any = instructions.length;
+    const step_count_abs = Math.abs(step_count);
+    const instructions = this._getStepInstructions();
+    const instruction_length = instructions.length;
     const array: any = [];
     // set instructions
-    let currentPhase: any = this.currentStep % instruction_length;
+    let currentPhase = this.currentStep % instruction_length;
     if (currentPhase < 0) {
       currentPhase = instruction_length - currentPhase * -1;
     }
@@ -102,18 +106,18 @@ class StepperMotor implements ObnizPartsInterface {
       }
     }
     // prepare animation
-    let msec: any = 1000 / this.frequency;
-    msec = parseInt(msec);
+    let msec = 1000 / this.frequency;
+    msec = parseInt(msec as any);
     if (msec < 1) {
       msec = 1;
     }
-    const state: any = (index: any) => {
-      const instruction: any = array[index];
+    const state = (index: number) => {
+      const instruction = array[index];
       for (let i = 0; i < this.ios.length; i++) {
         this.ios[i].output(instruction[i]);
       }
     };
-    const states: any = [];
+    const states = [];
     for (let i = 0; i < instruction_length; i++) {
       states.push({
         duration: msec,
@@ -125,22 +129,22 @@ class StepperMotor implements ObnizPartsInterface {
     this.currentStep += step_count;
   }
 
-  public async stepToWait(destination: any) {
-    const mustmove: any = destination - this.currentStep;
+  public async stepToWait(destination: number) {
+    const mustmove = destination - this.currentStep;
     await this.stepWait(mustmove);
   }
 
   public async holdWait() {
-    const instructions: any = this._getStepInstructions();
-    const instruction_length: any = instructions.length;
+    const instructions = this._getStepInstructions();
+    const instruction_length = instructions.length;
     // set instructions
-    let currentPhase: any = this.currentStep % instruction_length;
+    let currentPhase = this.currentStep % instruction_length;
     if (currentPhase < 0) {
       currentPhase = instruction_length - currentPhase * -1;
     }
 
     for (let i = 0; i < this.ios.length; i++) {
-      this.ios[i].output(instructions[currentPhase][i]);
+      this.ios[i].output(instructions[currentPhase][i] === 1);
     }
     await this.obniz.pingWait();
   }
@@ -152,15 +156,15 @@ class StepperMotor implements ObnizPartsInterface {
     await this.obniz.pingWait();
   }
 
-  public stepType(stepType: any) {
-    const newType: any = this._stepInstructions[stepType];
+  public stepType(stepType: StepType) {
+    const newType = this._stepInstructions[stepType];
     if (!newType) {
       throw new Error("unknown step type " + stepType);
     }
     this._stepType = stepType;
   }
 
-  public speed(step_per_sec: any) {
+  public speed(step_per_sec: number) {
     this.frequency = step_per_sec;
   }
 
@@ -171,21 +175,21 @@ class StepperMotor implements ObnizPartsInterface {
 
   public currentAngle() {
     // => degree
-    let angle: any = (Math.floor(this.currentRotation() * 1000) % 360000) / 1000;
+    let angle = (Math.floor(this.currentRotation() * 1000) % 360000) / 1000;
     if (angle < 0) {
       angle = 360 - angle;
     }
     return angle;
   }
 
-  public async rotateWait(rotation: any) {
+  public async rotateWait(rotation: number) {
     rotation /= 360;
-    const needed: any = rotation * this.rotationStepCount;
+    const needed = rotation * this.rotationStepCount;
     await this.stepWait(needed);
   }
 
-  public async rotateToWait(angle: any) {
-    let needed: any = angle - this.currentAngle();
+  public async rotateToWait(angle: number) {
+    let needed = angle - this.currentAngle();
     if (Math.abs(needed) > 180) {
       needed = needed > 0 ? needed - 360 : 360 + needed;
     }
@@ -198,13 +202,13 @@ class StepperMotor implements ObnizPartsInterface {
     return this.currentStep / this.milliMeterStepCount;
   }
 
-  public async moveWait(distance: any) {
-    const needed: any = distance * this.milliMeterStepCount;
+  public async moveWait(distance: number) {
+    const needed = distance * this.milliMeterStepCount;
     await this.stepWait(needed);
   }
 
-  public async moveToWait(destination: any) {
-    const needed: any =
+  public async moveToWait(destination: number) {
+    const needed =
       (destination - this.currentDistance()) * this.milliMeterStepCount;
     await this.stepWait(needed);
   }
@@ -213,5 +217,3 @@ class StepperMotor implements ObnizPartsInterface {
     return this._stepInstructions[this._stepType];
   }
 }
-
-export default StepperMotor;

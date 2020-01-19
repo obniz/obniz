@@ -1,29 +1,35 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface MatrixLED_MAX7219Options {
+    clk: number;
+    cs: number;
+    din: number;
+    gnd?: number;
+    vcc?: number;
 }
-declare class MatrixLED_MAX7219 implements ObnizPartsInterface {
+export default class MatrixLED_MAX7219 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    cs: any;
+    cs: PeripheralIO;
     params: any;
-    spi: any;
+    spi: PeripheralSPI;
     obniz: Obniz;
-    width: any;
-    height: any;
-    vram: any;
+    width: number;
+    height: number;
+    vram: number[][];
     constructor();
     wired(obniz: Obniz): void;
-    init(width: any, height: any): void;
+    init(width: number, height: number): void;
     initModule(): void;
     test(): void;
     passingCommands(): void;
-    brightness(val: any): void;
-    preparevram(width: any, height: any): void;
-    write(data: any): void;
+    brightness(val: number): void;
+    preparevram(width: number, height: number): void;
+    write(data: number[]): void;
     writeVram(): void;
     clear(): void;
-    draw(ctx: any): void;
+    draw(ctx: CanvasRenderingContext2D): void;
 }
-export default MatrixLED_MAX7219;

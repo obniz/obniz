@@ -1,8 +1,36 @@
 import Obniz from "../../../obniz";
+import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface RN42Options { }
-class RN42 implements ObnizPartsInterface {
+export interface RN42Options {
+  tx: number;
+  rx: number;
+  gnd?: number;
+}
+
+export type RN42Config_Mode =
+  | "slave"
+  | "master"
+  | "trigger"
+  | "auto-connect-master"
+  | "auto-connect-dtr"
+  | "auto-connect-any"
+  | "pairing";
+export type RN42Config_Profile = "SPP" | "DUN-DCE" | "DUN-DTE" | "MDM-SPP" | "SPP-DUN-DCE" | "APL" | "HID";
+export type RN42Config_Auth = "open" | "ssp-keyboard" | "just-work" | "pincode";
+export type RN43Config_Power = 16 | 12 | 8 | 4 | 0 | -4 | -8;
+
+export interface RN42Config {
+  display_name?: string;
+  master_slave?: RN42Config_Mode;
+  profile?: RN42Config_Profile;
+  auth?: RN42Config_Auth;
+  power?: RN43Config_Power;
+  hid_flag?: any;
+}
+
+export default class RN42 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -13,9 +41,12 @@ class RN42 implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public params: any;
-  public uart: any;
-  public obniz!: Obniz;
-  public onreceive: any;
+
+  public onreceive?: (data: any, text: string) => void;
+
+  protected obniz!: Obniz;
+
+  private uart!: PeripheralUART;
 
   constructor() {
     this.keys = ["tx", "rx", "gnd"];
@@ -35,16 +66,16 @@ class RN42 implements ObnizPartsInterface {
       baud: 115200,
       drive: "3v",
     });
-    const self: any = this;
+
     this.uart.onreceive = (data: any, text: any) => {
       // this is not perfect. separation is possible.
       if (text.indexOf("CONNECT") >= 0) {
-        console.log("connected");
+        // console.log("connected");
       } else if (text.indexOf("DISCONNECT") >= 0) {
-        console.log("disconnected");
+        // console.log("disconnected");
       }
-      if (typeof self.onreceive === "function") {
-        self.onreceive(data, text);
+      if (typeof this.onreceive === "function") {
+        this.onreceive(data, text);
       }
     };
   }
@@ -63,7 +94,7 @@ class RN42 implements ObnizPartsInterface {
     this.obniz.wait(100);
   }
 
-  public config(json: any) {
+  public config(json: RN42Config) {
     this.enterCommandMode();
     if (typeof json !== "object") {
       // TODO: warning
@@ -215,5 +246,3 @@ class RN42 implements ObnizPartsInterface {
     this.sendCommand("E");
   }
 }
-
-export default RN42;

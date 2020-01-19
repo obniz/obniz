@@ -1,15 +1,23 @@
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface AnalogTemperatureSensorOptions { }
-class AnalogTemperatureSensor implements ObnizPartsInterface {
+export interface AnalogTemperatureSensorOptions {
+  vcc?: number;
+  output: number;
+  gnd?: number;
+}
+
+export default class AnalogTemperatureSensor implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public drive: any;
-  public obniz!: Obniz;
   public params: any;
-  public ad: any;
-  public temp: any;
+  public temp = 0;
+
+  protected obniz!: Obniz;
+  protected ad!: PeripheralAD;
 
   constructor() {
     this.keys = ["vcc", "gnd", "output"];
@@ -36,12 +44,10 @@ class AnalogTemperatureSensor implements ObnizPartsInterface {
     return this.temp;
   }
 
-  public onchange(temp: any) {
+  public onchange(temp: number) {
   }
 
   public calc(voltage: any) {
     return 0;
   }
 }
-
-export default AnalogTemperatureSensor;

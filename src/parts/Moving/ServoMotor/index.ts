@@ -1,8 +1,16 @@
 import Obniz from "../../../obniz";
+import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface ServoMotorOptions { }
-class ServoMotor implements ObnizPartsInterface {
+export interface ServoMotorOptions {
+  vcc?: number;
+  gnd?: number;
+  signal?: number;
+  pwm?: PeripheralPWM;
+}
+
+export default class ServoMotor implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,21 +20,22 @@ class ServoMotor implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public range: any;
-  public obniz!: Obniz;
   public params: any;
-  public io_vcc: any;
-  public pwm: any;
-  public pwm_io_num: any;
+
+  public range = {
+    min: 0.5,
+    max: 2.4,
+  };
+
+  protected obniz!: Obniz;
+
+  private pwm!: PeripheralPWM;
+  private pwm_io_num?: number;
+  private io_vcc: any;
 
   constructor() {
     this.keys = ["gnd", "vcc", "signal", "pwm"];
     this.requiredKeys = [];
-
-    this.range = {
-      min: 0.5,
-      max: 2.4,
-    };
   }
 
   public wired(obniz: Obniz) {
@@ -42,6 +51,9 @@ class ServoMotor implements ObnizPartsInterface {
     } else {
       this.pwm = obniz.getFreePwm();
       this.pwm_io_num = this.params.signal;
+      if (typeof this.pwm_io_num !== "number") {
+        throw new Error(`no io specified for pwm`);
+      }
       this.pwm.start({io: this.pwm_io_num});
     }
     this.pwm.freq(50);
@@ -49,10 +61,10 @@ class ServoMotor implements ObnizPartsInterface {
 
   // Module functions
 
-  public angle(ratio: any) {
-    const max: any = this.range.max;
-    const min: any = this.range.min;
-    const val: any = ((max - min) * ratio) / 180.0 + min;
+  public angle(ratio: number) {
+    const max = this.range.max;
+    const min = this.range.min;
+    const val = ((max - min) * ratio) / 180.0 + min;
     this.pwm.pulse(val);
   }
 
@@ -68,5 +80,3 @@ class ServoMotor implements ObnizPartsInterface {
     }
   }
 }
-
-export default ServoMotor;

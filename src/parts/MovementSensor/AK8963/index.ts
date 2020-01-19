@@ -1,8 +1,18 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface AK8963Options { }
-class AK8963 implements ObnizPartsInterface {
+export interface AK8963Options {
+  gnd?: number;
+  vcc?: number;
+  sda?: number;
+  scl?: number;
+  i2c?: PeripheralI2C;
+  address?: number;
+  adb_cycle?: number;
+}
+
+export default class AK8963 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,11 +22,13 @@ class AK8963 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public _address: any;
-  public i2c: any;
-  public _adc_cycle: any;
+
+  protected obniz!: Obniz;
+
+  private _address: any;
+  private i2c!: PeripheralI2C;
+  private _adc_cycle = 0;
 
   constructor() {
     this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address", "adb_cycle"];
@@ -34,7 +46,7 @@ class AK8963 implements ObnizPartsInterface {
     this.setConfig(this.params.adc_cycle || 8);
   }
 
-  public setConfig(ADC_cycle: any) {
+  public setConfig(ADC_cycle: number) {
     switch (ADC_cycle) {
       case 8:
         this.i2c.write(this._address, [0x0a, 0x12]);
@@ -48,9 +60,13 @@ class AK8963 implements ObnizPartsInterface {
     this._adc_cycle = ADC_cycle;
   }
 
-  public async getWait() {
+  public async getWait(): Promise<{
+    x: number,
+    y: number,
+    z: number,
+  }> {
     this.i2c.write(this._address, [0x03]); // request AK8963 data
-    const raw_data_AK8963: any = await this.i2c.readWait(this._address, 7); // read 7byte(read mag_data[6] to refresh)
+    const raw_data_AK8963 = await this.i2c.readWait(this._address, 7); // read 7byte(read mag_data[6] to refresh)
     return {
       x: this.char2short(raw_data_AK8963[0], raw_data_AK8963[1]),
       y: this.char2short(raw_data_AK8963[2], raw_data_AK8963[3]),
@@ -58,13 +74,11 @@ class AK8963 implements ObnizPartsInterface {
     };
   }
 
-  public char2short(valueH: any, valueL: any) {
-    const buffer: any = new ArrayBuffer(2);
-    const dv: any = new DataView(buffer);
+  public char2short(valueH: number, valueL: number) {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
     dv.setUint8(0, valueH);
     dv.setUint8(1, valueL);
     return dv.getInt16(0, false);
   }
 }
-
-export default AK8963;

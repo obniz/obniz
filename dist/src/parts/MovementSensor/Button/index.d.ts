@@ -1,20 +1,21 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface ButtonOptions {
+    signal: number;
+    gnd?: number;
 }
-declare class Button implements ObnizPartsInterface {
+export default class Button implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    onChangeForStateWait: any;
-    io_signal: any;
     params: any;
-    io_supply: any;
-    isPressed: any;
-    onchange: any;
+    onChangeForStateWait: any;
+    isPressed: boolean | null;
+    onchange: ((pressed: boolean) => void) | null;
+    private io_signal;
+    private io_supply?;
     constructor();
     wired(obniz: Obniz): void;
     isPressedWait(): Promise<boolean>;
-    stateWait(isPressed: any): Promise<unknown>;
+    stateWait(isPressed: boolean): Promise<unknown>;
 }
-export default Button;

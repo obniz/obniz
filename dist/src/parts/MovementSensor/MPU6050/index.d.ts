@@ -1,20 +1,29 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface MPU6050Options {
+    gnd?: number;
+    vcc?: number;
+    sda?: number;
+    scl?: number;
+    i2c?: PeripheralI2C;
+    address?: number;
+    accelerometer_range?: number;
+    gyroscope_range?: number;
 }
-declare class MPU6050 implements ObnizPartsInterface {
+export default class MPU6050 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
     params: any;
-    _address: any;
-    i2c: any;
-    _accel_range: any;
-    _gyro_range: any;
+    protected obniz: Obniz;
+    private i2c;
+    private _address;
+    private _accel_range;
+    private _gyro_range;
     constructor();
     wired(obniz: Obniz): void;
-    setConfig(accelerometer_range: any, gyroscope_range: any): void;
+    setConfig(accelerometer_range: number, gyroscope_range: number): void;
     getWait(): Promise<{
         accelerometer: {
             x: number;
@@ -28,6 +37,5 @@ declare class MPU6050 implements ObnizPartsInterface {
             z: number;
         };
     }>;
-    char2short(valueH: any, valueL: any): any;
+    char2short(valueH: number, valueL: number): number;
 }
-export default MPU6050;

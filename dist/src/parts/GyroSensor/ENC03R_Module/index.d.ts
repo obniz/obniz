@@ -1,5 +1,4 @@
 import Obniz from "../../../obniz";
-import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface ENC03R_ModuleOptions {
     gnd?: number;
@@ -7,22 +6,21 @@ export interface ENC03R_ModuleOptions {
     out2: number;
     out1: number;
 }
-declare class ENC03R_Module implements ObnizPartsInterface {
+export default class ENC03R_Module implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: any;
-    Sens: number;
-    obniz: Obniz;
     params: any;
-    ad0: PeripheralAD;
-    ad1: PeripheralAD;
-    sens1: any;
+    Sens: number;
+    sens1: number;
     onchange1?: (val: number) => void;
-    sens2: any;
+    sens2: number;
     onchange2?: (val: number) => void;
+    protected obniz: Obniz;
+    private ad0;
+    private ad1;
     constructor();
     wired(obniz: Obniz): void;
     get1Wait(): Promise<number>;
     get2Wait(): Promise<number>;
 }
-export default ENC03R_Module;

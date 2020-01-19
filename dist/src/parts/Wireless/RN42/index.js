@@ -21,17 +21,16 @@ class RN42 {
             baud: 115200,
             drive: "3v",
         });
-        const self = this;
         this.uart.onreceive = (data, text) => {
             // this is not perfect. separation is possible.
             if (text.indexOf("CONNECT") >= 0) {
-                console.log("connected");
+                // console.log("connected");
             }
             else if (text.indexOf("DISCONNECT") >= 0) {
-                console.log("disconnected");
+                // console.log("disconnected");
             }
-            if (typeof self.onreceive === "function") {
-                self.onreceive(data, text);
+            if (typeof this.onreceive === "function") {
+                this.onreceive(data, text);
             }
         };
     }

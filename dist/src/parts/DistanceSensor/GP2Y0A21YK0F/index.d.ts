@@ -1,22 +1,29 @@
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface GP2Y0A21YK0FOptions {
+    vcc?: number;
+    gnd?: number;
+    signal: number;
 }
-declare class GP2Y0A21YK0F implements ObnizPartsInterface {
+export declare type GP2Y0A21YK0FUnitType = "mm" | "inch";
+export default class GP2Y0A21YK0F implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    displayIoNames: any;
-    _unit: any;
+    displayIoNames: {
+        vcc: string;
+        gnd: string;
+        signal: string;
+    };
+    _unit: GP2Y0A21YK0FUnitType;
     obniz: Obniz;
     params: any;
-    io_signal: any;
-    ad_signal: any;
+    ad_signal: PeripheralAD;
     constructor();
     wired(obniz: Obniz): void;
-    start(callback: any): void;
-    _volt2distance(val: any): any;
-    getWait(): Promise<unknown>;
-    unit(unit: any): void;
+    start(callback: (distance: number) => void): void;
+    _volt2distance(val: number): number;
+    getWait(): Promise<number>;
+    unit(unit: GP2Y0A21YK0FUnitType): void;
 }
-export default GP2Y0A21YK0F;

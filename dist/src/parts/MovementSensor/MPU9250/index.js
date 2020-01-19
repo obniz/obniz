@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class MPU9250 {
-    constructor(obniz) {
+    constructor() {
         this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
         this.requiredKeys = [];
     }

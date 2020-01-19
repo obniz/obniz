@@ -1,28 +1,35 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface _7SegmentLED_MAX7219Options {
+    clk: number;
+    cs: number;
+    din: number;
+    gnd?: number;
+    vcc?: number;
 }
-declare class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
+export declare type MAX7219NumberType = "on" | "off" | "-" | "e" | "h" | "l" | "p";
+export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    cs: any;
+    cs: PeripheralIO;
     params: any;
-    spi: any;
+    spi: PeripheralSPI;
     obniz: Obniz;
-    numOfDisp: any;
-    digits: any;
+    numOfDisp: number;
+    digits: number;
     constructor();
     wired(obniz: Obniz): void;
-    init(numOfDisplay: any, digits: any): void;
-    clear(disp: any): void;
+    init(numberOfDisplays: number, digits: number): void;
+    clear(disp: number): void;
     clearAll(): void;
     test(): void;
-    brightness(disp: any, val: any): void;
-    brightnessAll(val: any): void;
-    writeAllDisp(data: any): void;
-    writeOneDisp(disp: any, data: any): void;
-    setNumber(disp: any, digit: any, number: any, dp: any): void;
-    encodeBCD(decimal: any, dp: any): number;
+    brightness(display: number, value: number): void;
+    brightnessAll(value: number): void;
+    writeAllDisp(data: number[]): void;
+    writeOneDisp(disp: number, data: number[]): void;
+    setNumber(display: number, digit: number, number: number | MAX7219NumberType, dp: boolean): void;
+    encodeBCD(decimal: number | string, dp: any): number;
 }
-export default _7SegmentLED_MAX7219;

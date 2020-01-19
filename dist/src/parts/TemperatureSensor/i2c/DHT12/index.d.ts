@@ -1,8 +1,9 @@
 import i2cParts from "../../../i2cParts";
+import { I2cPartsAbstructOptions } from "../../../i2cParts";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-export interface DHT12Options {
+export interface DHT12Options extends I2cPartsAbstructOptions {
 }
-declare class DHT12 extends i2cParts implements ObnizPartsInterface {
+export default class DHT12 extends i2cParts implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     i2cInfo(): {
         address: number;
@@ -10,10 +11,9 @@ declare class DHT12 extends i2cParts implements ObnizPartsInterface {
         voltage: string;
     };
     getAllDataWait(): Promise<{
-        humidity: any;
-        temperature: any;
-    } | null>;
-    getTempWait(): Promise<any>;
-    getHumdWait(): Promise<any>;
+        humidity: number;
+        temperature: number;
+    }>;
+    getTempWait(): Promise<number>;
+    getHumdWait(): Promise<number>;
 }
-export default DHT12;

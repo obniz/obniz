@@ -30,8 +30,8 @@ class _7SegmentLED_MAX7219 {
         this.cs.output(false);
         this.cs.output(true);
     }
-    init(numOfDisplay, digits) {
-        this.numOfDisp = numOfDisplay;
+    init(numberOfDisplays, digits) {
+        this.numOfDisp = numberOfDisplays;
         this.digits = digits;
         this.writeAllDisp([0x09, 0xff]); // Code B decode for digits 7-0
         this.writeAllDisp([0x0a, 0x05]); // brightness 11/32 0 to f
@@ -55,11 +55,11 @@ class _7SegmentLED_MAX7219 {
     test() {
         this.writeAllDisp([0x0f, 0x00]); // test command
     }
-    brightness(disp, val) {
-        this.writeOneDisp(disp, [0x0a, val]); // 0 to 15;
+    brightness(display, value) {
+        this.writeOneDisp(display, [0x0a, value]); // 0 to 15;
     }
-    brightnessAll(val) {
-        this.writeAllDisp([0x0a, val]); // 0 to 15;
+    brightnessAll(value) {
+        this.writeAllDisp([0x0a, value]); // 0 to 15;
     }
     writeAllDisp(data) {
         for (let i = 0; i < this.numOfDisp; i++) {
@@ -77,19 +77,13 @@ class _7SegmentLED_MAX7219 {
         }
         this.cs.output(true);
     }
-    setNumber(disp, digit, number, dp) {
+    setNumber(display, digit, number, dp) {
         if (digit >= 0 && digit <= this.digits - 1) {
-            this.writeOneDisp(disp, [digit + 1, this.encodeBCD(number, dp)]);
+            this.writeOneDisp(display, [digit + 1, this.encodeBCD(number, dp)]);
         }
     }
     encodeBCD(decimal, dp) {
-        let dpreg;
-        if (dp === true) {
-            dpreg = 0x80;
-        }
-        else {
-            dpreg = 0x00;
-        }
+        const dpreg = (dp === true) ? 0x80 : 0x00;
         if (decimal >= 0 && decimal <= 9) {
             return decimal | dpreg;
         }

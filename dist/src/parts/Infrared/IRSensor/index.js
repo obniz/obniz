@@ -2,14 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class IRSensor {
     constructor() {
-        this.keys = ["output", "vcc", "gnd"];
-        this.requiredKeys = ["output"];
         this.dataSymbolLength = 0.07;
-        this.duration = 500; // 500msec
+        this.duration = 500; // 500msec;
         this.dataInverted = true;
         this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
         this.cutTail = false;
         this.output_pullup = true;
+        this.ondetect = null;
+        this.keys = ["output", "vcc", "gnd"];
+        this.requiredKeys = ["output"];
     }
     static info() {
         return {

@@ -1,14 +1,17 @@
 import semver = require("semver");
 import Obniz from "../../index";
 
+export type DirectiveStatuse = "loop" | "registrate" | "pause" | "resume";
+
 class Directive {
   public Obniz: Obniz;
-  public observers: any;
-  public _animationIdentifier: any;
+  public observers: any[];
+  public _animationIdentifier: number;
 
   constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
     this.observers = [];
+    this._animationIdentifier = 0;
     this._reset();
   }
 
@@ -20,7 +23,7 @@ class Directive {
     this._animationIdentifier = 0;
   }
 
-  public addObserver(name: any, resolve: any, reject: any) {
+  public addObserver(name: string, resolve: any, reject: any) {
     if (name && resolve && reject) {
       this.observers.push({
         name,
@@ -30,7 +33,7 @@ class Directive {
     }
   }
 
-  public animation(name: any, status: any, array?: any, repeat?: any) {
+  public animation(name: string, status: DirectiveStatuse, array?: any[], repeat?: number) {
     if (
       (typeof repeat === "number" || status === "registrate") &&
       semver.lt(this.Obniz.firmware_ver, "2.0.0")
@@ -51,11 +54,11 @@ class Directive {
       array = [];
     }
 
-    const states: any = [];
+    const states: any[] = [];
     for (let i = 0; i < array.length; i++) {
       const state: any = array[i];
-      const duration: any = state.duration;
-      const operation: any = state.state;
+      const duration: number = state.duration;
+      const operation: (index: number) => {} = state.state;
 
       // dry run. and get json commands
       this.Obniz.sendPool = [];
@@ -73,7 +76,7 @@ class Directive {
     this.Obniz.send(obj);
   }
 
-  public repeatWait(array: any, repeat: any) {
+  public repeatWait(array: any[], repeat: number) {
     if (semver.lt(this.Obniz.firmware_ver, "2.0.0")) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
@@ -85,7 +88,7 @@ class Directive {
     }
 
     return new Promise((resolve: any, reject: any) => {
-      const name: any = "_repeatwait" + Date.now() + this._animationIdentifier;
+      const name = "_repeatwait" + Date.now() + this._animationIdentifier;
       if (++this._animationIdentifier > 1000) {
         this._animationIdentifier = 0;
       }
@@ -95,7 +98,7 @@ class Directive {
     });
   }
 
-  public notified(obj: any) {
+  public notified(obj: {[key: string]: any}) {
     if (obj.animation.status === "finish") {
       for (let i = this.observers.length - 1; i >= 0; i--) {
         if (obj.animation.name === this.observers[i].name) {

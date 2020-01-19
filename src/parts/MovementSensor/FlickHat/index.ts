@@ -1,8 +1,65 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface FlickHatOptions { }
-class FlickHat implements ObnizPartsInterface {
+export interface FlickHatOptions {
+  vcc?: number;
+  sda: number;
+  scl: number;
+  reset: number;
+  ts: number;
+  gnd: number;
+  led1?: number;
+  led2?: number;
+}
+
+export type FlickHat_Direction = "west" | "east" | "north" | "south";
+export type FlickHat_Direction2 = "west" | "east" | "north" | "south" | "center";
+
+export interface FlickHat_XYZ {
+  x: number;
+  y: number;
+  z: number;
+  seq: number;
+}
+
+export interface FlickHat_Gesture {
+  action: "gesture";
+  from: FlickHat_Direction;
+  to: FlickHat_Direction;
+  seq: number;
+  raw: any;
+}
+
+export interface FlickHat_Touch {
+  action: "touch";
+  positions: FlickHat_Direction2[];
+  seq: number;
+  raw: any;
+}
+
+export interface FlickHat_Tap {
+  action: "tap";
+  positions: FlickHat_Direction2[];
+  seq: number;
+  raw: any;
+}
+
+export interface FlickHat_DoubleTap {
+  action: "doubletap";
+  positions: FlickHat_Direction2[];
+  seq: number;
+  raw: any;
+}
+
+export interface FlickHat_AirWheel {
+  delta: number;
+  rotation: number;
+  seq: number;
+  raw: any;
+}
+
+export default class FlickHat implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -13,31 +70,33 @@ class FlickHat implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public displayIoNames: any;
-  public obniz!: Obniz;
-  public address: any;
   public params: any;
+
+  public address: any;
   public io_reset: any;
   public io_ts: any;
-  public i2c: any;
+  public i2c!: PeripheralI2C;
   public led1: any;
   public led2: any;
-  public onfwinfo: any;
+  public onfwinfo?: (fwInfo: any) => void;
   public fwInfo: any;
   public rotation: any;
   public lastRotation: any;
   public readSize: any;
   public debugprint: any;
   public xyz: any;
-  public onxyz: any;
+  public onxyz?: (xyz: FlickHat_XYZ) => void;
   public lastGesture: any;
   public ongestureall: any;
-  public ongesture: any;
+  public ongesture?: (gesture: FlickHat_Gesture) => void;
   public lastTouch: any;
-  public ontouch: any;
-  public ontap: any;
+  public ontouch?: (touch: FlickHat_Touch) => void;
+  public ontap?: ((tap: FlickHat_Tap) => void);
   public ondoubletap: any;
-  public onairwheel: any;
+  public onairwheel?: (airwheel: FlickHat_AirWheel) => void ;
   public statusInfo: any;
+
+  protected obniz!: Obniz;
 
   constructor() {
     this.keys = ["vcc", "gnd", "sda", "scl", "reset", "ts", "led1", "led2"];
@@ -86,7 +145,7 @@ class FlickHat implements ObnizPartsInterface {
     }
   }
 
-  public async start(callbackFwInfo: any) {
+  public async start(callback: (fwInfo: any) => void): Promise<void> {
     this.io_ts.pull("3v");
 
     this.io_reset.output(false);
@@ -94,7 +153,7 @@ class FlickHat implements ObnizPartsInterface {
     this.io_reset.output(true);
     await this.obniz.wait(50);
 
-    this.onfwinfo = callbackFwInfo;
+    this.onfwinfo = callback;
     this.fwInfo = {
       fwValid: 0,
       fwInfoReceived: false,
@@ -431,5 +490,3 @@ class FlickHat implements ObnizPartsInterface {
     }
   }
 }
-
-export default FlickHat;

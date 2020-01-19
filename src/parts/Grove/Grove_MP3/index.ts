@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_MP3Options { }
-class Grove_MP3 implements ObnizPartsInterface {
+export interface Grove_MP3Options {
+  vcc?: number;
+  gnd?: number;
+  mp3_rx: number;
+  mp3_tx: number;
+}
+
+export default class Grove_MP3 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -64,7 +70,7 @@ class Grove_MP3 implements ObnizPartsInterface {
     await this.obniz.wait(200);
   }
 
-  public setVolume(vol: any) {
+  public setVolume(vol: number) {
     if (vol >= 0 && vol <= 31) {
       this.uartSend(0x06, vol);
     }
@@ -117,5 +123,3 @@ class Grove_MP3 implements ObnizPartsInterface {
     // return response;
   }
 }
-
-export default Grove_MP3;

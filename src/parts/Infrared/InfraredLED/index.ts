@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface InfraredLEDOptions { }
-class InfraredLED implements ObnizPartsInterface {
+export interface InfraredLEDOptions {
+  anode: number;
+  cathode?: number;
+}
+
+export default class InfraredLED implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,17 +18,18 @@ class InfraredLED implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public dataSymbolLength: any;
-  public obniz!: Obniz;
+
+  public dataSymbolLength = 0.07;
   public params: any;
-  public io_cathode: any;
-  public pwm: any;
+
+  protected obniz!: Obniz;
+
+  private io_cathode?: PeripheralIO;
+  private pwm!: PeripheralPWM;
 
   constructor() {
     this.keys = ["anode", "cathode"];
     this.requiredKeys = ["anode"];
-
-    this.dataSymbolLength = 0.07;
   }
 
   public wired(obniz: Obniz) {
@@ -43,12 +50,10 @@ class InfraredLED implements ObnizPartsInterface {
     this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
   }
 
-  public send(arr: any) {
-    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
-      arr.push(0);
+  public send(data: number[]) {
+    if (data && data.length > 0 && data[data.length - 1] === 1) {
+      data.push(0);
     }
-    this.pwm.modulate("am", this.dataSymbolLength, arr);
+    this.pwm.modulate("am", this.dataSymbolLength, data);
   }
 }
-
-export default InfraredLED;

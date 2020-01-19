@@ -8,7 +8,13 @@ interface PeripheralPWMOptions {
   pull?: PullType;
 }
 
-class PeripheralPWM {
+export interface PWMInterface  {
+  freq: (frequency: number) => void;
+  pulse: (value: number) => void;
+  duty: (value: number) => void;
+}
+
+export default class PeripheralPWM implements PWMInterface {
   public Obniz: Obniz;
   public id: number;
   public state: any;
@@ -131,5 +137,3 @@ class PeripheralPWM {
     });
   }
 }
-
-export default PeripheralPWM;

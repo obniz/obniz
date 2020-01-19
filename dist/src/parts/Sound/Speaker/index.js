@@ -16,14 +16,14 @@ class Speaker {
         this.pwm = obniz.getFreePwm();
         this.pwm.start({ io: this.params.signal });
     }
-    play(freq) {
-        if (typeof freq !== "number") {
+    play(frequency) {
+        if (typeof frequency !== "number") {
             throw new Error("freq must be a number");
         }
-        freq = Math.floor(freq); // temporary
-        if (freq > 0) {
-            this.pwm.freq(freq);
-            this.pwm.pulse((1 / freq / 2) * 1000);
+        frequency = Math.floor(frequency); // temporary
+        if (frequency > 0) {
+            this.pwm.freq(frequency);
+            this.pwm.pulse((1 / frequency / 2) * 1000);
         }
         else {
             this.pwm.pulse(0);

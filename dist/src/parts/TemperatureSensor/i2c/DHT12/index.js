@@ -36,7 +36,7 @@ class DHT12 extends i2cParts_1.default {
             }
             const checksum = data[0] + data[1] + data[2] + data[3];
             if (checksum !== data[4]) {
-                return null;
+                throw new Error(`checksum does not match`);
             }
             return {
                 humidity,

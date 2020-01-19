@@ -1,8 +1,10 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface USBOptions {
+    vcc: number;
+    gnd: number;
 }
-declare class USB implements ObnizPartsInterface {
+export default class USB implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
@@ -16,4 +18,3 @@ declare class USB implements ObnizPartsInterface {
     on(): void;
     off(): void;
 }
-export default USB;

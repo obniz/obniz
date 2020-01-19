@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SpeakerOptions { }
-class Speaker implements ObnizPartsInterface {
+export interface SpeakerOptions {
+  signal: number;
+  gnd?: number;
+}
+
+export default class Speaker implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,9 +18,11 @@ class Speaker implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public pwm: any;
+
+  protected obniz!: Obniz;
+
+  private pwm!: PeripheralPWM;
 
   constructor(obniz: any) {
     this.keys = ["signal", "gnd"];
@@ -28,14 +36,14 @@ class Speaker implements ObnizPartsInterface {
     this.pwm.start({io: this.params.signal});
   }
 
-  public play(freq: any) {
-    if (typeof freq !== "number") {
+  public play(frequency: number) {
+    if (typeof frequency !== "number") {
       throw new Error("freq must be a number");
     }
-    freq = Math.floor(freq); // temporary
-    if (freq > 0) {
-      this.pwm.freq(freq);
-      this.pwm.pulse((1 / freq / 2) * 1000);
+    frequency = Math.floor(frequency); // temporary
+    if (frequency > 0) {
+      this.pwm.freq(frequency);
+      this.pwm.pulse((1 / frequency / 2) * 1000);
     } else {
       this.pwm.pulse(0);
     }
@@ -45,5 +53,3 @@ class Speaker implements ObnizPartsInterface {
     this.play(0);
   }
 }
-
-export default Speaker;

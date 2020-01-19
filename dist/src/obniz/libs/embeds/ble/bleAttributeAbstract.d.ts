@@ -21,7 +21,7 @@ declare class BleAttributeAbstract {
     write(val: any, needResponse?: any): void;
     writeNumber(val: any, needResponse?: any): void;
     writeText(str: any, needResponse?: any): void;
-    readWait(): Promise<unknown>;
+    readWait(): Promise<number[]>;
     writeWait(data: any, needResponse: any): Promise<unknown>;
     writeTextWait(data: any): Promise<unknown>;
     writeNumberWait(data: any): Promise<unknown>;

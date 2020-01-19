@@ -1,7 +1,20 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface _7SegmentLEDOptions { }
+export interface _7SegmentLEDOptions {
+  a: number;
+  b: number;
+  c: number;
+  d: number;
+  e: number;
+  f: number;
+  g: number;
+  dp?: number;
+  common?: number;
+  commonType?: string;
+}
+
 class _7SegmentLED implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
@@ -12,14 +25,14 @@ class _7SegmentLED implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public digits: any;
-  public displayIoNames: any;
+  public digits: number[];
+  public displayIoNames: {[key: string]: string};
   public obniz!: Obniz;
-  public ios: any;
+  public ios: PeripheralIO[];
   public params: any;
-  public isCathodeCommon: any;
-  public dp: any;
-  public common: any;
+  public isCathodeCommon: boolean;
+  public dp?: PeripheralIO;
+  public common?: PeripheralIO;
 
   constructor() {
     this.keys = [
@@ -61,6 +74,8 @@ class _7SegmentLED implements ObnizPartsInterface {
       dp: "dp",
       common: "com",
     };
+    this.ios = [];
+    this.isCathodeCommon = false;
   }
 
   public wired(obniz: Obniz) {
@@ -99,8 +114,9 @@ class _7SegmentLED implements ObnizPartsInterface {
     }
 
     if (isValidIO(this.params.dp)) {
-      this.dp = getIO(this.params.dp);
-      this.dp.output(false);
+      const dp = getIO(this.params.dp);
+      dp.output(false);
+      this.dp = dp;
     }
     if (isValidIO(this.params.common)) {
       this.common = getIO(this.params.common);
@@ -108,7 +124,7 @@ class _7SegmentLED implements ObnizPartsInterface {
     }
   }
 
-  public print(data: any) {
+  public print(data: number) {
     if (typeof data === "number") {
       data = Math.floor(data);
       data = data % 10;
@@ -126,7 +142,7 @@ class _7SegmentLED implements ObnizPartsInterface {
     }
   }
 
-  public printRaw(data: any) {
+  public printRaw(data: number) {
     if (typeof data === "number") {
       for (let i = 0; i < 7; i++) {
         if (this.ios[i]) {
@@ -141,18 +157,22 @@ class _7SegmentLED implements ObnizPartsInterface {
     }
   }
 
-  public dpState(show: any) {
+  public dpState(show: boolean) {
     if (this.dp) {
       this.dp.output(this.isCathodeCommon ? show : !show);
     }
   }
 
   public on() {
-    this.common.output(this.isCathodeCommon ? false : true);
+    if (this.common) {
+      this.common.output(this.isCathodeCommon ? false : true);
+    }
   }
 
   public off() {
-    this.common.output(this.isCathodeCommon ? true : false);
+    if (this.common) {
+      this.common.output(this.isCathodeCommon ? true : false);
+    }
   }
 }
 

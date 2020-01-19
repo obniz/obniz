@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface WS2812BOptions { }
-class WS2812B implements ObnizPartsInterface {
+export interface WS2812BOptions {
+  din: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export default class WS2812B implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -10,7 +16,7 @@ class WS2812B implements ObnizPartsInterface {
     };
   }
 
-  public static _generateFromByte(val: any) {
+  private static _generateFromByte(val: any) {
     // T0H 0.35us+-0.15us
     // T1H 0.9us+-0.15us
     // T0L 0.9us+-0.15us
@@ -39,14 +45,14 @@ class WS2812B implements ObnizPartsInterface {
     return ret;
   }
 
-  public static _generateColor(r: any, g: any, b: any) {
+  private static _generateColor(r: any, g: any, b: any) {
     let array: any = WS2812B._generateFromByte(g);
     array = array.concat(WS2812B._generateFromByte(r));
     array = array.concat(WS2812B._generateFromByte(b));
     return array;
   }
 
-  public static _generateHsvColor(h: any, s: any, v: any) {
+  private static _generateHsvColor(h: any, s: any, v: any) {
     const C: any = v * s;
     const Hp: any = h / 60;
     const X: any = C * (1 - Math.abs((Hp % 2) - 1));
@@ -85,9 +91,11 @@ class WS2812B implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public spi: any;
+
+  protected obniz!: Obniz;
+
+  private spi!: PeripheralSPI;
 
   constructor() {
     this.keys = ["din", "vcc", "gnd"];
@@ -106,18 +114,18 @@ class WS2812B implements ObnizPartsInterface {
     this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
-  public rgb(r: any, g: any, b: any) {
-    this.spi.write(WS2812B._generateColor(r, g, b));
+  public rgb(red: number, green: number, blue: number) {
+    this.spi.write(WS2812B._generateColor(red, green, blue));
   }
 
-  public hsv(h: any, s: any, v: any) {
-    this.spi.write(WS2812B._generateHsvColor(h, s, v));
+  public hsv(hue: number, saturation: number, value: number) {
+    this.spi.write(WS2812B._generateHsvColor(hue, saturation, value));
   }
 
-  public rgbs(array: any) {
-    let bytes: any = [];
+  public rgbs(array: Array<[number, number, number]>) {
+    let bytes: number[] = [];
     for (let i = 0; i < array.length; i++) {
-      const oneArray: any = array[i];
+      const oneArray = array[i];
       bytes = bytes.concat(
         WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2]),
       );
@@ -125,16 +133,15 @@ class WS2812B implements ObnizPartsInterface {
     this.spi.write(bytes);
   }
 
-  public hsvs(array: any) {
-    let bytes: any = [];
+  public hsvs(array: Array<[number, number, number]>) {
+    let bytes: number[] = [];
     for (let i = 0; i < array.length; i++) {
-      const oneArray: any = array[i];
+      const oneArray = array[i];
       bytes = bytes.concat(
         WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]),
       );
     }
     this.spi.write(bytes);
   }
-}
 
-export default WS2812B;
+}

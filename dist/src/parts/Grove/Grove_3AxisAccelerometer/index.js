@@ -11,12 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_3AxisAccelerometer {
     constructor() {
-        this.keys = ["gnd", "vcc", "sda", "scl"];
-        this.requiredKeys = ["sda", "scl"];
-        this.ioKeys = this.keys;
         this.displayName = "3axis";
         this.displayIoNames = { sda: "sda", scl: "scl" };
         this.address = 0x53;
+        this.keys = ["gnd", "vcc", "sda", "scl"];
+        this.requiredKeys = ["sda", "scl"];
+        this.ioKeys = this.keys;
         this.regAdrs = {};
         this.regAdrs.POWER_CTL = 0x2d;
         this.regAdrs.THRESH_ACT = 0x24;

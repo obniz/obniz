@@ -1,17 +1,18 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface SpeakerOptions {
+    signal: number;
+    gnd?: number;
 }
-declare class Speaker implements ObnizPartsInterface {
+export default class Speaker implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
     params: any;
-    pwm: any;
+    protected obniz: Obniz;
+    private pwm;
     constructor(obniz: any);
     wired(obniz: Obniz): void;
-    play(freq: any): void;
+    play(frequency: number): void;
     stop(): void;
 }
-export default Speaker;

@@ -1,8 +1,11 @@
 import Obniz from "../../../../obniz";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../../i2cParts";
 
-export interface AM2320Options { }
-class AM2320 implements ObnizPartsInterface {
+export interface AM2320Options extends I2cPartsAbstructOptions { }
+
+export default class AM2320 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,10 +15,11 @@ class AM2320 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
   public address: any;
-  public i2c: any;
+
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
 
   constructor() {
     this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
@@ -32,7 +36,7 @@ class AM2320 implements ObnizPartsInterface {
     this.i2c = obniz.getI2CWithConfig(this.params);
   }
 
-  public async getAllWait() {
+  public async getAllWait(): Promise<{ temperature: number; humidity: number }> {
     const i2cOnerror: any = this.i2c.onerror;
     this.i2c.onerror = () => {
     };
@@ -44,21 +48,18 @@ class AM2320 implements ObnizPartsInterface {
     const ret: any = await this.i2c.readWait(this.address, 6);
     this.i2c.onerror = i2cOnerror;
     if (ret[0] !== 3 || ret[1] !== 4) {
-      console.log("AM2320: Could not receive data correctly");
-      return {};
+      throw new Error(`Could not receive data correctly`);
     }
     const humidity: any = (ret[2] * 256 + ret[3]) / 10.0;
     const temperature: any = (ret[4] * 256 + ret[5]) / 10.0;
     return {temperature, humidity};
   }
 
-  public async getTempWait() {
+  public async getTempWait(): Promise<number | null> {
     return (await this.getAllWait()).temperature;
   }
 
-  public async getHumdWait() {
+  public async getHumdWait(): Promise<number> {
     return (await this.getAllWait()).humidity;
   }
 }
-
-export default AM2320;

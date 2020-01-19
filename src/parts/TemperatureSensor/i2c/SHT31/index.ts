@@ -1,8 +1,17 @@
 import Obniz from "../../../../obniz";
+import {PullType} from "../../../../obniz/libs/io_peripherals/common";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
+import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../../i2cParts";
 
-export interface SHT31Options { }
-class SHT31 implements ObnizPartsInterface {
+export interface SHT31Options extends I2cPartsAbstructOptions {
+  adr: number;
+  addressmode: number;
+  pull?: PullType;
+}
+
+export default class SHT31 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,14 +21,16 @@ class SHT31 implements ObnizPartsInterface {
 
   public requiredKeys: string[];
   public keys: string[];
+  public params: any;
+
   public ioKeys: string[];
   public commands: any;
-  public waitTime: any;
-  public obniz!: Obniz;
-  public params: any;
-  public io_adr: any;
-  public address: any;
-  public i2c: any;
+  public waitTime: {[key: string]: number};
+  public io_adr!: PeripheralIO;
+  public address!: number;
+
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
 
   constructor() {
     this.requiredKeys = ["adr", "addressmode"];
@@ -81,24 +92,22 @@ class SHT31 implements ObnizPartsInterface {
     return await this.i2c.readWait(this.address, 6);
   }
 
-  public async getTempWait() {
+  public async getTempWait(): Promise<number> {
     return (await this.getAllWait()).temperature;
   }
 
-  public async getHumdWait() {
+  public async getHumdWait(): Promise<number> {
     return (await this.getAllWait()).humidity;
   }
 
-  public async getAllWait() {
-    const ret: any = await this.getData();
+  public async getAllWait(): Promise<{temperature: number, humidity: number}> {
+    const ret = await this.getData();
 
-    const tempBin: any = ret[0] * 256 + ret[1];
-    const temperature: any = -45 + 175 * (tempBin / (65536 - 1));
+    const tempBin = ret[0] * 256 + ret[1];
+    const temperature = -45 + 175 * (tempBin / (65536 - 1));
 
-    const humdBin: any = ret[3] * 256 + ret[4];
-    const humidity: any = 100 * (humdBin / (65536 - 1));
+    const humdBin = ret[3] * 256 + ret[4];
+    const humidity = 100 * (humdBin / (65536 - 1));
     return {temperature, humidity};
   }
 }
-
-export default SHT31;

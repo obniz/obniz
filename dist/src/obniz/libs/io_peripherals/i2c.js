@@ -13,7 +13,6 @@ class PeripheralI2C {
     }
     _reset() {
         this.observers = [];
-        this.state = {};
         this.used = false;
         this.onwritten = undefined;
     }
@@ -203,7 +202,6 @@ class PeripheralI2C {
         return this.used;
     }
     end() {
-        this.state = {};
         const obj = {};
         obj["i2c" + this.id] = null;
         this.Obniz.send(obj);

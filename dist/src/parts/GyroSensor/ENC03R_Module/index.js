@@ -11,9 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class ENC03R_Module {
     constructor() {
+        this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
+        this.sens1 = 0;
+        this.sens2 = 0;
         this.keys = ["vcc", "out1", "out2", "gnd"];
         this.requiredKeys = ["out1", "out2"];
-        this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
     }
     static info() {
         return {

@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class MPU6050 {
     constructor() {
+        this._address = 0x68;
         this.keys = [
             "gnd",
             "vcc",
@@ -34,7 +35,9 @@ class MPU6050 {
         this.params.clock = 100000;
         this.params.pull = "3v";
         this.params.mode = "master";
-        this._address = this.params.address || 0x68;
+        if (typeof this.params.address === "number") {
+            this._address = this.params.address;
+        }
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.setConfig(this.params.accelerometer_range || 2, this.params.gyroscope_range || 250);
     }

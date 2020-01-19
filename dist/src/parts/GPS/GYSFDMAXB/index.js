@@ -2,11 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class GYSFDMAXB {
     constructor() {
+        this.displayName = "gps";
+        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
+        this.on1pps = null;
+        this.last1pps = 0;
         this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
         this.requiredKeys = ["txd", "rxd"];
         this.ioKeys = this.keys;
-        this.displayName = "gps";
-        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
     }
     // -------------------
     get latitude() {

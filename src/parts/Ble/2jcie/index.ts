@@ -1,8 +1,24 @@
 import Obniz from "../../../obniz";
+import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
+import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface OMRON_2JCIEOptions { }
-class OMRON_2JCIE implements ObnizPartsInterface {
+export interface OMRON_2JCIEOptions {}
+
+export interface OMRON_2JCIE_Data {
+  row_number: number;
+  temperature: number;
+  relative_humidity: number;
+  light: number;
+  uv_index: number;
+  barometric_pressure: number;
+  soud_noise: number;
+  discomfort_index: number;
+  heatstroke_risk_factor: number;
+  battery_voltage: number;
+}
+
+export default class OMRON_2JCIE implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,7 +28,7 @@ class OMRON_2JCIE implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public periperal: any;
+  public periperal: bleRemotePeripheral | null;
   public obniz!: Obniz;
 
   constructor() {
@@ -25,7 +41,7 @@ class OMRON_2JCIE implements ObnizPartsInterface {
     this.obniz = obniz;
   }
 
-  public async findWait() {
+  public async findWait(): Promise<any> {
     const target: any = {
       localName: "Env",
     };
@@ -35,11 +51,11 @@ class OMRON_2JCIE implements ObnizPartsInterface {
     return this.periperal;
   }
 
-  public omron_uuid(uuid: any) {
+  public omron_uuid(uuid: string): string {
     return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
   }
 
-  public async connectWait() {
+  public async connectWait(): Promise<void> {
     if (!this.periperal) {
       await this.findWait();
     }
@@ -57,9 +73,9 @@ class OMRON_2JCIE implements ObnizPartsInterface {
     }
   }
 
-  public signedNumberFromBinary(data: any) {
+  public signedNumberFromBinary(data: number[]) {
     // little adian
-    let val: any = data[data.length - 1] & 0x7f;
+    let val: number = data[data.length - 1] & 0x7f;
     for (let i = data.length - 2; i >= 0; i--) {
       val = val * 256 + data[i];
     }
@@ -69,22 +85,22 @@ class OMRON_2JCIE implements ObnizPartsInterface {
     return val;
   }
 
-  public unsignedNumberFromBinary(data: any) {
+  public unsignedNumberFromBinary(data: number[]) {
     // little adian
-    let val: any = data[data.length - 1];
+    let val: number = data[data.length - 1];
     for (let i = data.length - 2; i >= 0; i--) {
       val = val * 256 + data[i];
     }
     return val;
   }
 
-  public async getLatestData() {
+  public async getLatestData(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
-    const c: any = this.periperal
+    const c: bleRemoteCharacteristic = this.periperal!
       .getService(this.omron_uuid("3000"))
       .getCharacteristic(this.omron_uuid("3001"));
-    const data: any = await c.readWait();
+    const data: number[] = await c.readWait();
     const json: any = {
       row_number: data[0],
       temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
@@ -103,5 +119,3 @@ class OMRON_2JCIE implements ObnizPartsInterface {
     return json;
   }
 }
-
-export default OMRON_2JCIE;

@@ -1,18 +1,26 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface HMC5883LOptions {
+    gnd?: number;
+    sda?: number;
+    scl?: number;
+    i2c?: PeripheralI2C;
 }
-declare class HMC5883L implements ObnizPartsInterface {
+export default class HMC5883L implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    address: any;
-    obniz: Obniz;
     params: any;
-    i2c: any;
+    address: {
+        device: number;
+        reset: number[];
+        xMSB: number[];
+    };
+    i2c: PeripheralI2C;
+    protected obniz: Obniz;
     constructor();
     wired(obniz: Obniz): void;
     init(): void;
     get(): Promise<any>;
 }
-export default HMC5883L;

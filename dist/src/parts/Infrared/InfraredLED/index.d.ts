@@ -1,18 +1,19 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface InfraredLEDOptions {
+    anode: number;
+    cathode?: number;
 }
-declare class InfraredLED implements ObnizPartsInterface {
+export default class InfraredLED implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    dataSymbolLength: any;
-    obniz: Obniz;
+    dataSymbolLength: number;
     params: any;
-    io_cathode: any;
-    pwm: any;
+    protected obniz: Obniz;
+    private io_cathode?;
+    private pwm;
     constructor();
     wired(obniz: Obniz): void;
-    send(arr: any): void;
+    send(data: number[]): void;
 }
-export default InfraredLED;

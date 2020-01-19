@@ -1,24 +1,31 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface AK8963Options {
+    gnd?: number;
+    vcc?: number;
+    sda?: number;
+    scl?: number;
+    i2c?: PeripheralI2C;
+    address?: number;
+    adb_cycle?: number;
 }
-declare class AK8963 implements ObnizPartsInterface {
+export default class AK8963 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
     params: any;
-    _address: any;
-    i2c: any;
-    _adc_cycle: any;
+    protected obniz: Obniz;
+    private _address;
+    private i2c;
+    private _adc_cycle;
     constructor();
     wired(obniz: Obniz): void;
-    setConfig(ADC_cycle: any): void;
+    setConfig(ADC_cycle: number): void;
     getWait(): Promise<{
-        x: any;
-        y: any;
-        z: any;
+        x: number;
+        y: number;
+        z: number;
     }>;
-    char2short(valueH: any, valueL: any): any;
+    char2short(valueH: number, valueL: number): number;
 }
-export default AK8963;

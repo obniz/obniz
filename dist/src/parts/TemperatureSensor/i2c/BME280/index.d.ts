@@ -1,43 +1,53 @@
 import Obniz from "../../../../obniz";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
+import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 export interface BME280Options {
+    vio?: number;
+    vcore?: number;
+    gnd?: number;
+    csb?: number;
+    sdi?: number;
+    sck?: number;
+    sdo?: number;
+    address?: number;
+    i2c?: any;
 }
-declare class BME280 implements ObnizPartsInterface {
+export default class BME280 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];
     keys: string[];
     ioKeys: string[];
     configration: any;
     commands: any;
-    obniz: Obniz;
     params: any;
-    io_csb: any;
+    io_csb?: PeripheralIO;
     address: any;
-    io_sdo: any;
-    i2c: any;
-    _calibrated: any;
-    _t_fine: any;
+    io_sdo?: PeripheralIO;
+    protected obniz: Obniz;
+    protected i2c: PeripheralI2C;
+    private _calibrated;
+    private _t_fine;
     constructor();
     wired(obniz: Obniz): void;
     config(): Promise<void>;
     setIIRStrength(strengh: any): Promise<void>;
     applyCalibration(): Promise<void>;
-    _readSigned16(value: any): any;
-    _readSigned8(value: any): any;
+    _readSigned16(value: number): number;
+    _readSigned8(value: number): number;
     write(data: any): void;
-    getData(): Promise<any>;
+    getData(): Promise<number[]>;
     getAllWait(): Promise<{
-        temperature: any;
-        humidity: any;
-        pressure: any;
+        temperature: number;
+        humidity: number;
+        pressure: number;
     }>;
     calibration_T(adc_T: any): any;
     calibration_P(adc_P: any): any;
     calibration_H(adc_H: any): any;
-    getTempWait(): Promise<any>;
-    getHumdWait(): Promise<any>;
-    getPressureWait(): Promise<any>;
+    getTempWait(): Promise<number>;
+    getHumdWait(): Promise<number>;
+    getPressureWait(): Promise<number>;
     getAltitudeWait(): Promise<number>;
-    calcAltitude(pressure: any, seaLevel?: any): number;
+    calcAltitude(pressure: number, seaPressure?: number): number;
 }
-export default BME280;

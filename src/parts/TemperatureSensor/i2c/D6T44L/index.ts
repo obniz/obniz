@@ -1,7 +1,11 @@
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 
-export interface D6T44LOptions { }
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../../i2cParts";
+
+export interface D6T44LOptions extends I2cPartsAbstructOptions { }
+
 class D6T44L implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
@@ -12,12 +16,14 @@ class D6T44L implements ObnizPartsInterface {
 
   public requiredKeys: string[];
   public keys: string[];
+  public params: any;
+
   public address: any;
   public ioKeys: string[];
   public commands: any;
-  public obniz!: Obniz;
-  public params: any;
-  public i2c: any;
+
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
 
   constructor() {
     this.requiredKeys = [];
@@ -40,17 +46,17 @@ class D6T44L implements ObnizPartsInterface {
     this.obniz.wait(50);
   }
 
-  public async getOnePixWait(pixcel: any) {
-    const data: any = await this.getAllPixWait();
+  public async getOnePixWait(pixcel: number): Promise<number> {
+    const data = await this.getAllPixWait();
     return data[pixcel];
   }
 
-  public async getAllPixWait() {
+  public async getAllPixWait(): Promise<number[]> {
     this.i2c.write(this.address, [0x4c]);
     // await obniz.wait(160);
-    const raw: any = await this.i2c.readWait(this.address, 35);
+    const raw = await this.i2c.readWait(this.address, 35);
 
-    const data: any = [];
+    const data: number[] = [];
 
     for (let i = 0; i < 16; i++) {
       data[i] = parseFloat(

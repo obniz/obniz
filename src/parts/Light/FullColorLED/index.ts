@@ -1,10 +1,18 @@
 import {createSocket} from "dgram";
 
 import Obniz from "../../../obniz";
+import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface FullColorLEDOptions { }
-class FullColorLED implements ObnizPartsInterface {
+export interface FullColorLEDOptions {
+  r: number;
+  g: number;
+  b: number;
+  common: number;
+  commonType: string;
+}
+
+export default class FullColorLED implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,24 +20,25 @@ class FullColorLED implements ObnizPartsInterface {
     };
   }
 
-  public COMMON_TYPE_ANODE: any;
-  public COMMON_TYPE_CATHODE: any;
+  public keys: string[];
+  public requiredKeys: string[];
+
+  public params: any;
+
+  public COMMON_TYPE_ANODE = 1;
+  public COMMON_TYPE_CATHODE = 0;
   public anode_keys: any;
   public cathode_keys: any;
   public animationName: any;
-  public keys: string[];
-  public requiredKeys: string[];
-  public params: any;
-  public obniz!: Obniz;
   public commontype: any;
   public common: any;
-  public pwmR: any;
-  public pwmG: any;
-  public pwmB: any;
+  public pwmR!: PeripheralPWM;
+  public pwmG!: PeripheralPWM;
+  public pwmB!: PeripheralPWM;
+
+  protected obniz!: Obniz;
 
   constructor() {
-    this.COMMON_TYPE_ANODE = 1;
-    this.COMMON_TYPE_CATHODE = 0;
 
     this.anode_keys = ["anode", "anode_common", "anodeCommon", "vcc"];
     this.cathode_keys = ["cathode", "cathode_common", "cathodeCommon", "gnd"];
@@ -40,10 +49,10 @@ class FullColorLED implements ObnizPartsInterface {
   }
 
   public wired(obniz: Obniz) {
-    const r: any = this.params.r;
-    const g: any = this.params.g;
-    const b: any = this.params.b;
-    const common: any = this.params.common;
+    const r: number = this.params.r;
+    const g: number = this.params.g;
+    const b: number = this.params.b;
+    const common: number = this.params.common;
     const commontype: any = this.params.commonType;
 
     this.obniz = obniz;
@@ -75,29 +84,29 @@ class FullColorLED implements ObnizPartsInterface {
     this.rgb(0, 0, 0);
   }
 
-  public rgb(r: any, g: any, b: any) {
-    r = Math.min(Math.max(parseInt(r), 0), 255);
-    g = Math.min(Math.max(parseInt(g), 0), 255);
-    b = Math.min(Math.max(parseInt(b), 0), 255);
+  public rgb(red: any, green: any, blue: any) {
+    red = Math.min(Math.max(parseInt(red), 0), 255);
+    green = Math.min(Math.max(parseInt(green), 0), 255);
+    blue = Math.min(Math.max(parseInt(blue), 0), 255);
 
     if (this.commontype === this.COMMON_TYPE_ANODE) {
-      r = 255 - r;
-      g = 255 - g;
-      b = 255 - b;
+      red = 255 - red;
+      green = 255 - green;
+      blue = 255 - blue;
     }
-    this.pwmR.duty((r / 255) * 100);
-    this.pwmG.duty((g / 255) * 100);
-    this.pwmB.duty((b / 255) * 100);
+    this.pwmR.duty((red / 255) * 100);
+    this.pwmG.duty((green / 255) * 100);
+    this.pwmB.duty((blue / 255) * 100);
   }
 
-  public hsv(h: any, s: any, v: any) {
-    const C: any = v * s;
-    const Hp: any = h / 60;
-    const X: any = C * (1 - Math.abs((Hp % 2) - 1));
+  public hsv(hue: number, saturation: number, value: number) {
+    const C = value * saturation;
+    const Hp = hue / 60;
+    const X = C * (1 - Math.abs((Hp % 2) - 1));
 
-    let R: any;
-    let G: any;
-    let B: any;
+    let R = 0;
+    let G = 0;
+    let B = 0;
     if (0 <= Hp && Hp < 1) {
       [R, G, B] = [C, X, 0];
     }
@@ -117,7 +126,7 @@ class FullColorLED implements ObnizPartsInterface {
       [R, G, B] = [C, 0, X];
     }
 
-    const m: any = v - C;
+    const m: any = value - C;
     [R, G, B] = [R + m, G + m, B + m];
 
     R = Math.floor(R * 255);
@@ -127,14 +136,14 @@ class FullColorLED implements ObnizPartsInterface {
     this.rgb(R, G, B);
   }
 
-  public gradation(cycletime_ms: any) {
+  public gradation(cycletime_ms: number) {
     const frames: any = [];
-    const max: any = 36 / 2;
-    const duration: any = Math.round(cycletime_ms / max);
+    const max = 36 / 2;
+    const duration = Math.round(cycletime_ms / max);
     for (let i = 0; i < max; i++) {
-      const oneFrame: any = {
+      const oneFrame = {
         duration,
-        state: (index: any) => {
+        state: (index: number) => {
           // index = 0
           this.hsv(index * 10 * 2, 1, 1);
         },
@@ -148,5 +157,3 @@ class FullColorLED implements ObnizPartsInterface {
     this.obniz.io!.animation(this.animationName, "pause");
   }
 }
-
-export default FullColorLED;

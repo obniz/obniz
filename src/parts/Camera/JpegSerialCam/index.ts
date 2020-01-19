@@ -1,8 +1,19 @@
 import Obniz from "../../../obniz";
+import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface JpegSerialCamOptions { }
-class JpegSerialCam implements ObnizPartsInterface {
+export interface JpegSerialCamOptions {
+  vcc?: number;
+  cam_tx: number;
+  cam_rx: number;
+  gnd?: number;
+}
+
+export type JpegSerialCamSize = "640x480" | "320x240" | "160x120";
+
+export type JpegSerialCamBaud = 9600 | 19200 | 38400 | 57600 | 115200;
+
+export default class JpegSerialCam implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -13,13 +24,13 @@ class JpegSerialCam implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public ioKeys: string[];
-  public displayName: any;
+  public displayName: string;
   public displayIoNames: any;
   public obniz!: Obniz;
   public params: any;
   public my_tx: any;
   public my_rx: any;
-  public uart: any;
+  public uart!: PeripheralUART;
 
   constructor() {
     this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
@@ -41,14 +52,14 @@ class JpegSerialCam implements ObnizPartsInterface {
     this.uart = this.obniz.getFreeUart();
   }
 
-  public async _drainUntil(uart: any, search: any, recv?: any) {
+  public async _drainUntil(uart: PeripheralUART, search: number[], recv?: number[]) {
     if (!recv) {
       recv = [];
     }
     while (true) {
-      const readed: any = uart.readBytes();
+      const readed = uart.readBytes();
       recv = recv.concat(readed);
-      const tail: any = this._seekTail(search, recv);
+      const tail = this._seekTail(search, recv);
       if (tail >= 0) {
         recv.splice(0, tail);
         return recv;
@@ -57,8 +68,8 @@ class JpegSerialCam implements ObnizPartsInterface {
     }
   }
 
-  public _seekTail(search: any, src: any) {
-    let f: any = 0;
+  public _seekTail(search: number[], src: number[]) {
+    let f = 0;
     for (let i = 0; i < src.length; i++) {
       if (src[i] === search[f]) {
         f++;
@@ -72,7 +83,7 @@ class JpegSerialCam implements ObnizPartsInterface {
     return -1;
   }
 
-  public arrayToBase64(array: any) {
+  public arrayToBase64(array: number[]): string {
     return Buffer.from(array).toString("base64");
   }
 
@@ -96,8 +107,8 @@ class JpegSerialCam implements ObnizPartsInterface {
     await this.obniz.wait(2500);
   }
 
-  public async setSizeWait(resolution: any) {
-    let val: any;
+  public async setSizeWait(resolution: JpegSerialCamSize) {
+    let val: number;
     if (resolution === "640x480") {
       val = 0x00;
     } else if (resolution === "320x240") {
@@ -112,14 +123,14 @@ class JpegSerialCam implements ObnizPartsInterface {
     await this.resetwait();
   }
 
-  public async setCompressibilityWait(compress: any) {
-    const val: any = Math.floor((compress / 100) * 0xff);
+  public async setCompressibilityWait(compress: number) {
+    const val = Math.floor((compress / 100) * 0xff);
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     await this.resetwait();
   }
 
-  public async setBaudWait(baud: any) {
+  public async setBaudWait(baud: JpegSerialCamBaud) {
     let val: any;
     switch (baud) {
       case 9600:
@@ -159,8 +170,8 @@ class JpegSerialCam implements ObnizPartsInterface {
     });
   }
 
-  public async takeWait() {
-    const uart: any = this.uart;
+  public async takeWait(): Promise<number[]> {
+    const uart = this.uart;
     // console.log("stop a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
     await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
@@ -171,7 +182,7 @@ class JpegSerialCam implements ObnizPartsInterface {
 
     // console.log("read length")
     uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-    let recv: any = await this._drainUntil(uart, [
+    let recv = await this._drainUntil(uart, [
       0x76,
       0x00,
       0x34,
@@ -183,7 +194,7 @@ class JpegSerialCam implements ObnizPartsInterface {
     let XX: any;
     let YY: any;
     while (true) {
-      const readed: any = uart.readBytes();
+      const readed = uart.readBytes();
       // console.log(recv);
       recv = recv.concat(readed);
       if (recv.length >= 2) {
@@ -193,7 +204,7 @@ class JpegSerialCam implements ObnizPartsInterface {
       }
       await this.obniz.wait(1000);
     }
-    const databytes: any = XX * 256 + YY;
+    const databytes = XX * 256 + YY;
     // console.log("image: " + databytes + " Bytes");
     // const high = (databytes >> 8) & 0xff;
     // const low = databytes & 0xff;
@@ -220,7 +231,7 @@ class JpegSerialCam implements ObnizPartsInterface {
     recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
     // console.log("reading...");
     while (true) {
-      const readed: any = uart.readBytes();
+      const readed = uart.readBytes();
       recv = recv.concat(readed);
       // console.log(readed.length);
       if (recv.length >= databytes) {
@@ -234,5 +245,3 @@ class JpegSerialCam implements ObnizPartsInterface {
     return recv;
   }
 }
-
-export default JpegSerialCam;

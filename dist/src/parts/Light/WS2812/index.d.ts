@@ -1,22 +1,24 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface WS2812Options {
+    din: number;
+    vcc?: number;
+    gnd?: number;
 }
-declare class WS2812 implements ObnizPartsInterface {
+export default class WS2812 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
-    static _generateFromByte(val: any): any;
-    static _generateColor(r: any, g: any, b: any): any;
-    static _generateHsvColor(h: any, s: any, v: any): any;
+    private static _generateFromByte;
+    private static _generateColor;
+    private static _generateHsvColor;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
     params: any;
-    spi: any;
+    protected obniz: Obniz;
+    private spi;
     constructor();
     wired(obniz: Obniz): void;
-    rgb(r: any, g: any, b: any): void;
-    hsv(h: any, s: any, v: any): void;
-    rgbs(array: any): void;
-    hsvs(array: any): void;
+    rgb(red: number, green: number, blue: number): void;
+    hsv(hue: number, saturation: number, value: number): void;
+    rgbs(array: Array<[number, number, number]>): void;
+    hsvs(array: Array<[number, number, number]>): void;
 }
-export default WS2812;

@@ -1,8 +1,19 @@
 import Obniz from "../../../obniz";
+import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface XBeeOptions { }
-class XBee implements ObnizPartsInterface {
+export interface XBeeOptions {
+  tx: number;
+  rx: number;
+  gnd?: number;
+ }
+
+export interface XBeeConfig {
+  [key: string]: string;
+}
+
+export default class XBee implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,21 +23,22 @@ class XBee implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public displayIoNames: any;
-  public uart: any;
+  public params: any;
+
+  public displayIoNames = {tx: "<tx", rx: ">rx"};
   public currentCommand: any;
   public commands: any;
   public isAtMode: any;
   public onFinishAtModeCallback: any;
-  public params: any;
-  public onreceive: any;
-  public obniz!: Obniz;
+  public onreceive?: (data: any, text: string) => void;
+
+  protected obniz!: Obniz;
+
+  private uart!: PeripheralUART;
 
   constructor() {
     this.keys = ["tx", "rx", "gnd"];
     this.requiredKeys = ["tx", "rx"];
-
-    this.displayIoNames = {tx: "<tx", rx: ">rx"};
   }
 
   public wired(obniz: Obniz) {
@@ -58,9 +70,9 @@ class XBee implements ObnizPartsInterface {
     };
   }
 
-  public send(text: any) {
+  public send(data: any) {
     if (this.isAtMode === false) {
-      this.uart.send(text);
+      this.uart.send(data);
     } else {
       this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
     }
@@ -168,5 +180,3 @@ class XBee implements ObnizPartsInterface {
     );
   }
 }
-
-export default XBee;

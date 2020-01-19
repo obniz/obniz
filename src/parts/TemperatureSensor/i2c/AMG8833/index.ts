@@ -1,8 +1,14 @@
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 
-export interface AMG8833Options { }
-class AMG8833 implements ObnizPartsInterface {
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../../i2cParts";
+
+export interface AMG8833Options extends I2cPartsAbstructOptions {
+  address?: number;
+ }
+
+export default class AMG8833 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -14,10 +20,11 @@ class AMG8833 implements ObnizPartsInterface {
   public keys: string[];
   public ioKeys: string[];
   public commands: any;
-  public obniz!: Obniz;
   public params: any;
   public address: any;
-  public i2c: any;
+
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
 
   constructor() {
     this.requiredKeys = [];
@@ -65,7 +72,7 @@ class AMG8833 implements ObnizPartsInterface {
     this.i2c.write(this.address, this.commands.int_disable);
   }
 
-  public async getOnePixWait(pixel: any) {
+  public async getOnePixWait(pixel: number): Promise<number> {
     let pixelAddrL: any = 0x80;
     let pixelAddrH: any = 0x81;
     if (pixel >= 0 && pixel <= 63) {
@@ -90,10 +97,10 @@ class AMG8833 implements ObnizPartsInterface {
     }
   }
 
-  public async getAllPixWait() {
-    const tempArray: any = new Array(64);
+  public async getAllPixWait(): Promise<number[]> {
+    const tempArray = new Array(64);
     this.i2c.write(this.address, [0x80]);
-    const datas: any = await this.i2c.readWait(this.address, 64 * 2);
+    const datas = await this.i2c.readWait(this.address, 64 * 2);
 
     for (let i = 0; i < 64; i++) {
       let temp12bit: any = (datas[i * 2 + 1] << 8) | datas[i * 2];
@@ -113,5 +120,3 @@ class AMG8833 implements ObnizPartsInterface {
     return tempArray;
   }
 }
-
-export default AMG8833;

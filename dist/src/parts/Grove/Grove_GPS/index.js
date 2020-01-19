@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_GPS {
     constructor() {
+        this._latitude = 0;
+        this._longitude = 0;
         this.keys = ["tx", "rx", "vcc", "gnd"];
         this.requiredKeys = ["tx", "rx"];
         this.ioKeys = this.keys;

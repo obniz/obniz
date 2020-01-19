@@ -47,26 +47,26 @@ class FullColorLED {
         this.pwmB.freq(1000);
         this.rgb(0, 0, 0);
     }
-    rgb(r, g, b) {
-        r = Math.min(Math.max(parseInt(r), 0), 255);
-        g = Math.min(Math.max(parseInt(g), 0), 255);
-        b = Math.min(Math.max(parseInt(b), 0), 255);
+    rgb(red, green, blue) {
+        red = Math.min(Math.max(parseInt(red), 0), 255);
+        green = Math.min(Math.max(parseInt(green), 0), 255);
+        blue = Math.min(Math.max(parseInt(blue), 0), 255);
         if (this.commontype === this.COMMON_TYPE_ANODE) {
-            r = 255 - r;
-            g = 255 - g;
-            b = 255 - b;
+            red = 255 - red;
+            green = 255 - green;
+            blue = 255 - blue;
         }
-        this.pwmR.duty((r / 255) * 100);
-        this.pwmG.duty((g / 255) * 100);
-        this.pwmB.duty((b / 255) * 100);
+        this.pwmR.duty((red / 255) * 100);
+        this.pwmG.duty((green / 255) * 100);
+        this.pwmB.duty((blue / 255) * 100);
     }
-    hsv(h, s, v) {
-        const C = v * s;
-        const Hp = h / 60;
+    hsv(hue, saturation, value) {
+        const C = value * saturation;
+        const Hp = hue / 60;
         const X = C * (1 - Math.abs((Hp % 2) - 1));
-        let R;
-        let G;
-        let B;
+        let R = 0;
+        let G = 0;
+        let B = 0;
         if (0 <= Hp && Hp < 1) {
             [R, G, B] = [C, X, 0];
         }
@@ -85,7 +85,7 @@ class FullColorLED {
         if (5 <= Hp && Hp < 6) {
             [R, G, B] = [C, 0, X];
         }
-        const m = v - C;
+        const m = value - C;
         [R, G, B] = [R + m, G + m, B + m];
         R = Math.floor(R * 255);
         G = Math.floor(G * 255);

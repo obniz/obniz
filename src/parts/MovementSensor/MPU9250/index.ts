@@ -1,7 +1,17 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
-export interface MPU9250Options { }
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../i2cParts";
+import AK8963 from "../AK8963";
+import MPU6050 from "../MPU6050";
+
+export interface MPU9250Options extends I2cPartsAbstructOptions {
+  gnd?: number;
+  vcc?: number;
+  address?: number;
+}
+
 class MPU9250 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
@@ -12,14 +22,15 @@ class MPU9250 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
   public _address: any;
-  public i2c: any;
-  public mpu6050: any;
-  public ak8963: any;
+  public mpu6050!: MPU6050;
+  public ak8963!: AK8963;
 
-  constructor(obniz: any) {
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
+
+  constructor() {
     this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
     this.requiredKeys = [];
   }
@@ -56,21 +67,50 @@ class MPU9250 implements ObnizPartsInterface {
     return {};
   }
 
-  public async getAllWait() {
+  public async getAllWait(): Promise<{
+    accelerometer: {
+      x: number,
+      y: number,
+      z: number,
+    },
+    temp: number,
+    gyroscope: {
+      x: number,
+      y: number,
+      z: number,
+    },
+    compass: {
+      x: number,
+      y: number,
+      z: number,
+    },
+  }> {
     const data: any = await this.mpu6050.getWait();
     data.compass = await this.ak8963.getWait();
     return data;
   }
 
-  public async getCompassWait() {
+  public async getCompassWait(): Promise<{
+    x: number,
+    y: number,
+    z: number,
+  }> {
     return await this.ak8963.getWait();
   }
 
-  public async getAccelerometerWait() {
+  public async getAccelerometerWait(): Promise<{
+    x: number,
+    y: number,
+    z: number,
+  }> {
     return (await this.mpu6050.getWait()).accelerometer;
   }
 
-  public async getGyroscopeWait() {
+  public async getGyroscopeWait(): Promise<{
+    x: number,
+    y: number,
+    z: number,
+  }> {
     return (await this.mpu6050.getWait()).gyroscope;
   }
 }

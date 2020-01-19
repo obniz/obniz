@@ -1,8 +1,15 @@
 import Obniz from "../../../obniz";
+import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Puls08M5stickcSOptions { }
-class Puls08M5stickcS implements ObnizPartsInterface {
+export interface Puls08M5stickcSOptions {
+  vcc?: number;
+  gnd?: number;
+  rx: number;
+  tx: number;
+}
+
+export default class Puls08M5stickcS implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -15,7 +22,7 @@ class Puls08M5stickcS implements ObnizPartsInterface {
   public delimiter: any;
   public obniz!: Obniz;
   public params: any;
-  public uart: any;
+  public uart!: PeripheralUART;
   public receivingData: any;
 
   constructor() {
@@ -24,11 +31,11 @@ class Puls08M5stickcS implements ObnizPartsInterface {
     this.delimiter = 0x0a;
   }
 
-  public onbpmupdate(data: any) {
+  public onbpmupdate(bpm: number | null) {
     return;
   }
 
-  public onrawupdate(data: any) {
+  public onrawupdate(values: number[]) {
     return;
   }
 
@@ -42,7 +49,7 @@ class Puls08M5stickcS implements ObnizPartsInterface {
 
     this.init();
 
-    this.uart.onreceive = (data: any, text: any) => {
+    this.uart.onreceive = (data: number[], text: any) => {
       const dataToCallback: any = [];
       data.forEach((e: any) => {
         if (e !== this.delimiter) {
@@ -52,9 +59,9 @@ class Puls08M5stickcS implements ObnizPartsInterface {
           const row: any = this.receivingData;
           if (row[0] === "#".charCodeAt(0)) {
             row[0] = " ".charCodeAt(0);
-            const str: any = this.decode(row);
-            const val: any = parseInt(str);
-            const bpm: any = val > 0 ? 60000 / val : null;
+            const str: string = this.decode(row);
+            const val: number = parseInt(str);
+            const bpm: number | null = val > 0 ? 60000 / val : null;
             this.onbpmupdate(bpm);
           } else {
             const str: any = this.decode(row);
@@ -70,7 +77,7 @@ class Puls08M5stickcS implements ObnizPartsInterface {
     };
   }
 
-  public decode(data: any) {
+  public decode(data: any): string {
     return Buffer.from(data).toString("utf8");
 
     // if (typeof TextDecoder !== 'undefined') {
@@ -90,5 +97,3 @@ class Puls08M5stickcS implements ObnizPartsInterface {
     this.uart.send(0x0a);
   }
 }
-
-export default Puls08M5stickcS;

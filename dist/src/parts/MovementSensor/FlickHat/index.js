@@ -52,14 +52,14 @@ class FlickHat {
             this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
         }
     }
-    start(callbackFwInfo) {
+    start(callback) {
         return __awaiter(this, void 0, void 0, function* () {
             this.io_ts.pull("3v");
             this.io_reset.output(false);
             yield this.obniz.wait(50);
             this.io_reset.output(true);
             yield this.obniz.wait(50);
-            this.onfwinfo = callbackFwInfo;
+            this.onfwinfo = callback;
             this.fwInfo = {
                 fwValid: 0,
                 fwInfoReceived: false,

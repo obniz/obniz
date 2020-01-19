@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_BuzzerOptions { }
-class Grove_Buzzer implements ObnizPartsInterface {
+export interface Grove_BuzzerOptions {
+  signal: number;
+  gnd?: number;
+  vcc?: number;
+}
+
+export default class Grove_Buzzer implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,11 +18,13 @@ class Grove_Buzzer implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public pwm: any;
 
-  constructor(obniz: any) {
+  protected obniz!: Obniz;
+
+  private pwm!: PeripheralPWM;
+
+  constructor() {
     this.keys = ["signal", "gnd", "vcc"];
     this.requiredKeys = ["signal"];
   }
@@ -28,7 +36,7 @@ class Grove_Buzzer implements ObnizPartsInterface {
     this.pwm.start({io: this.params.signal});
   }
 
-  public play(freq: any) {
+  public play(freq: number) {
     if (typeof freq !== "number") {
       throw new Error("freq must be a number");
     }
@@ -45,5 +53,3 @@ class Grove_Buzzer implements ObnizPartsInterface {
     this.play(0);
   }
 }
-
-export default Grove_Buzzer;

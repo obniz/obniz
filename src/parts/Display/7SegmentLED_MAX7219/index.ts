@@ -1,8 +1,19 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface _7SegmentLED_MAX7219Options { }
-class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
+export interface _7SegmentLED_MAX7219Options {
+  clk: number;
+  cs: number;
+  din: number;
+  gnd?: number;
+  vcc?: number;
+}
+
+export type MAX7219NumberType = "on" | "off" | "-" | "e" | "h" | "l" | "p";
+
+export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,12 +23,12 @@ class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public cs: any;
+  public cs!: PeripheralIO;
   public params: any;
-  public spi: any;
+  public spi!: PeripheralSPI;
   public obniz!: Obniz;
-  public numOfDisp: any;
-  public digits: any;
+  public numOfDisp!: number;
+  public digits!: number;
 
   constructor() {
     this.keys = ["vcc", "gnd", "din", "cs", "clk"];
@@ -47,8 +58,8 @@ class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     this.cs.output(true);
   }
 
-  public init(numOfDisplay: any, digits: any) {
-    this.numOfDisp = numOfDisplay;
+  public init(numberOfDisplays: number, digits: number) {
+    this.numOfDisp = numberOfDisplays;
     this.digits = digits;
     this.writeAllDisp([0x09, 0xff]); // Code B decode for digits 7-0
     this.writeAllDisp([0x0a, 0x05]); // brightness 11/32 0 to f
@@ -58,7 +69,7 @@ class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     this.obniz.wait(10);
   }
 
-  public clear(disp: any) {
+  public clear(disp: number) {
     for (let i = 0; i < this.digits; i++) {
       this.writeOneDisp(disp, [i + 1, 0x0f]);
     }
@@ -76,21 +87,21 @@ class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     this.writeAllDisp([0x0f, 0x00]); // test command
   }
 
-  public brightness(disp: any, val: any) {
-    this.writeOneDisp(disp, [0x0a, val]); // 0 to 15;
+  public brightness(display: number, value: number) {
+    this.writeOneDisp(display, [0x0a, value]); // 0 to 15;
   }
 
-  public brightnessAll(val: any) {
-    this.writeAllDisp([0x0a, val]); // 0 to 15;
+  public brightnessAll(value: number) {
+    this.writeAllDisp([0x0a, value]); // 0 to 15;
   }
 
-  public writeAllDisp(data: any) {
+  public writeAllDisp(data: number[]) {
     for (let i = 0; i < this.numOfDisp; i++) {
       this.writeOneDisp(i, data);
     }
   }
 
-  public writeOneDisp(disp: any, data: any) {
+  public writeOneDisp(disp: number, data: number[]) {
     this.cs.output(false);
     for (let i = 0; i < disp; i++) {
       this.spi.write([0x00, 0x00]);
@@ -102,21 +113,17 @@ class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     this.cs.output(true);
   }
 
-  public setNumber(disp: any, digit: any, number: any, dp: any) {
+  public setNumber(display: number, digit: number, number: number | MAX7219NumberType, dp: boolean) {
     if (digit >= 0 && digit <= this.digits - 1) {
-      this.writeOneDisp(disp, [digit + 1, this.encodeBCD(number, dp)]);
+      this.writeOneDisp(display, [digit + 1, this.encodeBCD(number, dp)]);
     }
   }
 
-  public encodeBCD(decimal: any, dp: any) {
-    let dpreg: any;
-    if (dp === true) {
-      dpreg = 0x80;
-    } else {
-      dpreg = 0x00;
-    }
+  public encodeBCD(decimal: number | string, dp: any): number {
+    const dpreg = (dp === true) ? 0x80 : 0x00;
+
     if (decimal >= 0 && decimal <= 9) {
-      return decimal | dpreg;
+      return (decimal as number) | dpreg;
     } else if (decimal === "-" || decimal === 10) {
       return 0x0a | dpreg;
     } else if (decimal === "e" || decimal === 11) {
@@ -137,5 +144,3 @@ class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     }
   }
 }
-
-export default _7SegmentLED_MAX7219;

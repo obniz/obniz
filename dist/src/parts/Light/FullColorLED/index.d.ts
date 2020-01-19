@@ -1,28 +1,33 @@
 import Obniz from "../../../obniz";
+import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface FullColorLEDOptions {
+    r: number;
+    g: number;
+    b: number;
+    common: number;
+    commonType: string;
 }
-declare class FullColorLED implements ObnizPartsInterface {
+export default class FullColorLED implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
-    COMMON_TYPE_ANODE: any;
-    COMMON_TYPE_CATHODE: any;
-    anode_keys: any;
-    cathode_keys: any;
-    animationName: any;
     keys: string[];
     requiredKeys: string[];
     params: any;
-    obniz: Obniz;
+    COMMON_TYPE_ANODE: number;
+    COMMON_TYPE_CATHODE: number;
+    anode_keys: any;
+    cathode_keys: any;
+    animationName: any;
     commontype: any;
     common: any;
-    pwmR: any;
-    pwmG: any;
-    pwmB: any;
+    pwmR: PeripheralPWM;
+    pwmG: PeripheralPWM;
+    pwmB: PeripheralPWM;
+    protected obniz: Obniz;
     constructor();
     wired(obniz: Obniz): void;
-    rgb(r: any, g: any, b: any): void;
-    hsv(h: any, s: any, v: any): void;
-    gradation(cycletime_ms: any): void;
+    rgb(red: any, green: any, blue: any): void;
+    hsv(hue: number, saturation: number, value: number): void;
+    gradation(cycletime_ms: number): void;
     stopgradation(): void;
 }
-export default FullColorLED;

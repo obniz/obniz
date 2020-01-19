@@ -1,8 +1,17 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface MatrixLED_MAX7219Options { }
-class MatrixLED_MAX7219 implements ObnizPartsInterface {
+export interface MatrixLED_MAX7219Options {
+  clk: number;
+  cs: number;
+  din: number;
+  gnd?: number;
+  vcc?: number;
+}
+
+export default class MatrixLED_MAX7219 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,13 +21,13 @@ class MatrixLED_MAX7219 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public cs: any;
+  public cs!: PeripheralIO;
   public params: any;
-  public spi: any;
+  public spi!: PeripheralSPI;
   public obniz!: Obniz;
-  public width: any;
-  public height: any;
-  public vram: any;
+  public width: number = 0;
+  public height: number = 0;
+  public vram: number[][] = [[]];
 
   constructor() {
     this.keys = ["vcc", "gnd", "din", "cs", "clk"];
@@ -48,7 +57,7 @@ class MatrixLED_MAX7219 implements ObnizPartsInterface {
     this.cs.output(true);
   }
 
-  public init(width: any, height: any) {
+  public init(width: number, height: number) {
     this.width = width;
     this.height = height;
     this.preparevram(width, height);
@@ -77,15 +86,15 @@ class MatrixLED_MAX7219 implements ObnizPartsInterface {
     }
   }
 
-  public brightness(val: any) {
+  public brightness(val: number) {
     this.write([0x0a, val]); // 0 to 15;
     this.passingCommands();
   }
 
-  public preparevram(width: any, height: any) {
+  public preparevram(width: number, height: number) {
     this.vram = [];
     for (let i = 0; i < height; i++) {
-      const dots: any = new Array(width / 8);
+      const dots: number[] = new Array(width / 8);
       for (let ii = 0; ii < dots.length; ii++) {
         dots[ii] = 0x00;
       }
@@ -93,7 +102,7 @@ class MatrixLED_MAX7219 implements ObnizPartsInterface {
     }
   }
 
-  public write(data: any) {
+  public write(data: number[]) {
     this.cs.output(false);
     this.spi.write(data);
     this.cs.output(true);
@@ -101,9 +110,9 @@ class MatrixLED_MAX7219 implements ObnizPartsInterface {
 
   public writeVram() {
     for (let line_num = 0; line_num < this.height; line_num++) {
-      const addr: any = line_num + 1;
-      const line: any = this.vram[line_num];
-      const data: any = [];
+      const addr = line_num + 1;
+      const line = this.vram[line_num];
+      const data: number[] = [];
       for (let col = 0; col < line.length; col++) {
         data.push(addr);
         data.push(line[col]);
@@ -114,7 +123,7 @@ class MatrixLED_MAX7219 implements ObnizPartsInterface {
 
   public clear() {
     for (let line_num = 0; line_num < this.height; line_num++) {
-      const line: any = this.vram[line_num];
+      const line = this.vram[line_num];
       for (let col = 0; col < line.length; col++) {
         this.vram[line_num][col] = 0x00;
       }
@@ -122,16 +131,16 @@ class MatrixLED_MAX7219 implements ObnizPartsInterface {
     }
   }
 
-  public draw(ctx: any) {
-    const imageData: any = ctx.getImageData(0, 0, this.width, this.height);
-    const data: any = imageData.data;
+  public draw(ctx: CanvasRenderingContext2D) {
+    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+    const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      const brightness: any = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      const index: any = Math.floor(i / 4);
-      const line: any = Math.floor(index / this.width);
-      const col: any = Math.floor((index - line * this.width) / 8);
-      const bits: any = Math.floor(index - line * this.width) % 8;
+      const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      const index = Math.floor(i / 4);
+      const line = Math.floor(index / this.width);
+      const col = Math.floor((index - line * this.width) / 8);
+      const bits = Math.floor(index - line * this.width) % 8;
       if (bits === 0) {
         this.vram[line][col] = 0x00;
       }
@@ -143,5 +152,3 @@ class MatrixLED_MAX7219 implements ObnizPartsInterface {
     this.writeVram();
   }
 }
-
-export default MatrixLED_MAX7219;

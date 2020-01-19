@@ -28,6 +28,9 @@ class ADT7410 {
         else if (this.params.addressMode === 9) {
             this.address = 0x49;
         }
+        else {
+            throw new Error(`please specify address. 8 or 9`);
+        }
         this.params.clock = 400000;
         this.params.pull = "5v";
         this.params.mode = "master";

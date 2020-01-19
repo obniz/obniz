@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EarHeartRate {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["vcc", "gnd"];
         this.displayIoNames = {
             vcc: "vcc",
             gnd: "gnd",
@@ -11,6 +9,8 @@ class Grove_EarHeartRate {
         };
         this.interval = 5;
         this.duration = 2.5 * 1000;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["vcc", "gnd"];
     }
     static info() {
         return {

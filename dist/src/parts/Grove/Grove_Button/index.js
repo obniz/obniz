@@ -11,10 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Button {
     constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
-        this.onChangeForStateWait = () => {
-        };
     }
     static info() {
         return {
@@ -32,19 +33,17 @@ class Grove_Button {
             this.io_supply.output(false);
         }
         this.io_signal.pull("5v");
-        const self = this;
         this.io_signal.input((value) => {
-            self.isPressed = value;
-            if (self.onchange) {
-                self.onchange(value);
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
             }
-            self.onChangeForStateWait(value);
+            this.onChangeForStateWait(value);
         });
     }
     isPressedWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.io_signal.inputWait();
-            return ret;
+            return yield this.io_signal.inputWait();
         });
     }
     stateWait(isPressed) {

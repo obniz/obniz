@@ -85,11 +85,11 @@ class WS2812B {
         this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    rgb(r, g, b) {
-        this.spi.write(WS2812B._generateColor(r, g, b));
+    rgb(red, green, blue) {
+        this.spi.write(WS2812B._generateColor(red, green, blue));
     }
-    hsv(h, s, v) {
-        this.spi.write(WS2812B._generateHsvColor(h, s, v));
+    hsv(hue, saturation, value) {
+        this.spi.write(WS2812B._generateHsvColor(hue, saturation, value));
     }
     rgbs(array) {
         let bytes = [];

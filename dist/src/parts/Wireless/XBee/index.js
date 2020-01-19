@@ -11,9 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class XBee {
     constructor() {
+        this.displayIoNames = { tx: "<tx", rx: ">rx" };
         this.keys = ["tx", "rx", "gnd"];
         this.requiredKeys = ["tx", "rx"];
-        this.displayIoNames = { tx: "<tx", rx: ">rx" };
     }
     static info() {
         return {
@@ -46,9 +46,9 @@ class XBee {
             }
         };
     }
-    send(text) {
+    send(data) {
         if (this.isAtMode === false) {
-            this.uart.send(text);
+            this.uart.send(data);
         }
         else {
             this.obniz.error("XBee is AT Command mode now. Wait for finish config.");

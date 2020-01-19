@@ -1,9 +1,19 @@
 // sensor response not found
 import Obniz from "../../../../obniz";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
-export interface S5851AOptions { }
-class S5851A implements ObnizPartsInterface {
+export interface S5851AOptions {
+  vcc: number;
+  gnd: number;
+  sda: number;
+  scl: number;
+  addr0: number;
+  addr1: number;
+  addressmode: string;
+}
+
+export default class S5851A implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -16,10 +26,11 @@ class S5851A implements ObnizPartsInterface {
   public io_adr0: any;
   public params: any;
   public io_adr1: any;
-  public obniz!: Obniz;
   public address: any;
-  public i2c: any;
-  public i2c0: any;
+
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
+  protected i2c0!: PeripheralI2C;
 
   constructor() {
     this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
@@ -89,7 +100,7 @@ class S5851A implements ObnizPartsInterface {
     // obniz.i2c0.write(address, [0x20, 0x24]);
   }
 
-  public async getTempWait() {
+  public async getTempWait(): Promise<number> {
     // console.log("gettempwait");
     // obniz.i2c0.write(address, [0x20, 0x24]);
     // obniz.i2c0.write(address, [0xE0, 0x00]);
@@ -101,7 +112,7 @@ class S5851A implements ObnizPartsInterface {
     return temperature;
   }
 
-  public async getHumdWait() {
+  public async getHumdWait(): Promise<number> {
     this.i2c.write(this.address, [0x20, 0x24]);
     this.i2c.write(this.address, [0xe0, 0x00]);
     const ret: any = await this.i2c.readWait(this.address, 4);
@@ -111,5 +122,3 @@ class S5851A implements ObnizPartsInterface {
     return humidity;
   }
 }
-
-export default S5851A;

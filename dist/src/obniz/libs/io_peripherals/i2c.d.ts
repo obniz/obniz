@@ -2,9 +2,9 @@ import Obniz from "../../index";
 import { PullType } from "./common";
 declare type I2CMode = "master" | "slave";
 interface PeripheralI2CState {
-    "mode"?: I2CMode;
-    "sda"?: number;
-    "scl"?: number;
+    "mode": I2CMode;
+    "sda": number;
+    "scl": number;
     "pull"?: PullType;
     "gnd"?: number;
 }

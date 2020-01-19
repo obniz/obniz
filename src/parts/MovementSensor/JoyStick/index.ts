@@ -1,8 +1,18 @@
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface JoyStickOptions { }
-class JoyStick implements ObnizPartsInterface {
+export interface JoyStickOptions {
+  sw: number;
+  x: number;
+  y: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export default class JoyStick implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,20 +22,24 @@ class JoyStick implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
+  public params: any;
+
   public pins: any;
   public pinname: any;
   public shortName: any;
-  public obniz!: Obniz;
-  public params: any;
-  public io_sig_sw: any;
-  public ad_x: any;
-  public ad_y: any;
   public positionX: any;
   public positionY: any;
-  public onchangex: any;
-  public onchangey: any;
+
+  public onchangex?: (val: number) => void;
+  public onchangey?: (val: number) => void;
   public isPressed: any;
-  public onchangesw: any;
+  public onchangesw?: (pressed: boolean) => void;
+
+  protected obniz!: Obniz;
+
+  private io_sig_sw!: PeripheralIO;
+  private ad_x!: PeripheralAD;
+  private ad_y!: PeripheralAD;
 
   constructor() {
     this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
@@ -46,45 +60,42 @@ class JoyStick implements ObnizPartsInterface {
 
     this.io_sig_sw.pull("5v");
 
-    const self: any = this;
-    this.ad_x.start((value: any) => {
-      self.positionX = value / 5.0;
-      if (self.onchangex) {
-        self.onchangex(self.positionX * 2 - 1);
+    this.ad_x.start((value: number) => {
+      this.positionX = value / 5.0;
+      if (this.onchangex) {
+        this.onchangex(this.positionX * 2 - 1);
       }
     });
 
-    this.ad_y.start((value: any) => {
-      self.positionY = value / 5.0;
-      if (self.onchangey) {
-        self.onchangey(self.positionY * 2 - 1);
+    this.ad_y.start((value: number) => {
+      this.positionY = value / 5.0;
+      if (this.onchangey) {
+        this.onchangey(this.positionY * 2 - 1);
       }
     });
 
-    this.io_sig_sw.input((value: any) => {
-      self.isPressed = value === false;
-      if (self.onchangesw) {
-        self.onchangesw(value === false);
+    this.io_sig_sw.input((value: boolean) => {
+      this.isPressed = value === false;
+      if (this.onchangesw) {
+        this.onchangesw(value === false);
       }
     });
   }
 
-  public async isPressedWait() {
-    const ret: any = await this.io_sig_sw.inputWait();
+  public async isPressedWait(): Promise<boolean> {
+    const ret = await this.io_sig_sw.inputWait();
     return ret === false;
   }
 
-  public async getXWait() {
-    const value: any = await this.ad_x.getWait();
+  public async getXWait(): Promise<number> {
+    const value = await this.ad_x.getWait();
     this.positionX = value / 5.0;
     return this.positionX * 2 - 1;
   }
 
-  public async getYWait() {
-    const value: any = await this.ad_y.getWait();
+  public async getYWait(): Promise<number> {
+    const value = await this.ad_y.getWait();
     this.positionY = value / 5.0;
     return this.positionY * 2 - 1;
   }
 }
-
-export default JoyStick;

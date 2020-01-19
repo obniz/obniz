@@ -12,6 +12,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class FSR40X {
     constructor() {
+        this.pressure = 0;
         this.keys = ["pin0", "pin1"];
         this.requiredKeys = ["pin0", "pin1"];
     }
@@ -26,12 +27,11 @@ class FSR40X {
         this.ad = obniz.getAD(this.params.pin1);
         this.io_pwr.drive("5v");
         this.io_pwr.output(true);
-        const self = this;
         this.ad.start((value) => {
             const pressure = value * 100;
-            self.press = pressure;
-            if (self.onchange) {
-                self.onchange(self.press);
+            this.pressure = pressure;
+            if (this.onchange) {
+                this.onchange(this.pressure);
             }
         });
     }
@@ -39,8 +39,8 @@ class FSR40X {
         return __awaiter(this, void 0, void 0, function* () {
             const value = yield this.ad.getWait();
             const pressure = value * 100;
-            this.press = pressure;
-            return this.press;
+            this.pressure = pressure;
+            return this.pressure;
         });
     }
 }

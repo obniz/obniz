@@ -11,6 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class ST7735S {
     constructor() {
+        this.debugprint = false;
+        this.width = 0;
+        this.height = 0;
+        this.x_offset = 0;
+        this.y_offset = 0;
+        this.writeBuffer = [];
         this.keys = ["sclk", "mosi", "cs", "res", "dc"];
         this.requiredKeys = [];
     }
@@ -224,7 +230,7 @@ class ST7735S {
         // const MADCTL_ML = 0x10;
         const MADCTL_RGB = 0x00; // always RGB, never BGR
         // const MADCTL_MH = 0x04;
-        let data;
+        let data = [];
         this.rotation = m % 4; // can't be higher than 3
         switch (this.rotation) {
             case 0:
@@ -289,38 +295,35 @@ class ST7735S {
     fillScreen(color) {
         this.fillRect(0, 0, this.width, this.height, color);
     }
-    _color2pixels(w, h, color) {
-        return Array.from(new Array(Math.abs(w * h))).map((v, i) => color);
-    }
-    fillRect(x, y, w, h, color) {
+    fillRect(x, y, width, height, color) {
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (x + w - 1 >= this.width) {
-            w = this.width - x;
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
         }
-        if (y + h - 1 >= this.height) {
-            h = this.height - y;
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
         }
-        const pixels = this._color2pixels(w, h, color);
-        this.rawBound16(x, y, w, h, pixels, true);
+        const pixels = this._color2pixels(width, height, color);
+        this.rawBound16(x, y, width, height, pixels, true);
     }
-    drawRect(x, y, w, h, color) {
-        this.drawHLine(x, y, w, color);
-        this.drawHLine(x, y + h - 1, w, color);
-        this.drawVLine(x, y, h, color);
-        this.drawVLine(x + w - 1, y, h, color);
+    drawRect(x, y, width, height, color) {
+        this.drawHLine(x, y, width, color);
+        this.drawHLine(x, y + height - 1, width, color);
+        this.drawVLine(x, y, height, color);
+        this.drawVLine(x + width - 1, y, height, color);
     }
-    drawCircle(x0, y0, r, color) {
-        let f = 1 - r;
+    drawCircle(center_x, center_y, radius, color) {
+        let f = 1 - radius;
         let ddF_x = 1;
-        let ddF_y = -2 * r;
+        let ddF_y = -2 * radius;
         let x = 0;
-        let y = r;
-        this.drawPixel(x0, y0 + r, color);
-        this.drawPixel(x0, y0 - r, color);
-        this.drawPixel(x0 + r, y0, color);
-        this.drawPixel(x0 - r, y0, color);
+        let y = radius;
+        this.drawPixel(center_x, center_y + radius, color);
+        this.drawPixel(center_x, center_y - radius, color);
+        this.drawPixel(center_x + radius, center_y, color);
+        this.drawPixel(center_x - radius, center_y, color);
         while (x < y) {
             if (f >= 0) {
                 y--;
@@ -330,52 +333,19 @@ class ST7735S {
             x++;
             ddF_x += 2;
             f += ddF_x;
-            this.drawPixel(x0 + x, y0 + y, color);
-            this.drawPixel(x0 - x, y0 + y, color);
-            this.drawPixel(x0 + x, y0 - y, color);
-            this.drawPixel(x0 - x, y0 - y, color);
-            this.drawPixel(x0 + y, y0 + x, color);
-            this.drawPixel(x0 - y, y0 + x, color);
-            this.drawPixel(x0 + y, y0 - x, color);
-            this.drawPixel(x0 - y, y0 - x, color);
+            this.drawPixel(center_x + x, center_y + y, color);
+            this.drawPixel(center_x - x, center_y + y, color);
+            this.drawPixel(center_x + x, center_y - y, color);
+            this.drawPixel(center_x - x, center_y - y, color);
+            this.drawPixel(center_x + y, center_y + x, color);
+            this.drawPixel(center_x - y, center_y + x, color);
+            this.drawPixel(center_x + y, center_y - x, color);
+            this.drawPixel(center_x - y, center_y - x, color);
         }
     }
-    _drawCircleHelper(x0, y0, r, cornername, color) {
-        let f = 1 - r;
-        let ddF_x = 1;
-        let ddF_y = -2 * r;
-        let x = 0;
-        let y = r;
-        while (x < y) {
-            if (f >= 0) {
-                y--;
-                ddF_y += 2;
-                f += ddF_y;
-            }
-            x++;
-            ddF_x += 2;
-            f += ddF_x;
-            if (cornername & 0x4) {
-                this.drawPixel(x0 + x, y0 + y, color);
-                this.drawPixel(x0 + y, y0 + x, color);
-            }
-            if (cornername & 0x2) {
-                this.drawPixel(x0 + x, y0 - y, color);
-                this.drawPixel(x0 + y, y0 - x, color);
-            }
-            if (cornername & 0x8) {
-                this.drawPixel(x0 - y, y0 + x, color);
-                this.drawPixel(x0 - x, y0 + y, color);
-            }
-            if (cornername & 0x1) {
-                this.drawPixel(x0 - y, y0 - x, color);
-                this.drawPixel(x0 - x, y0 - y, color);
-            }
-        }
-    }
-    fillCircle(x0, y0, r, color) {
-        this.drawVLine(x0, y0 - r, 2 * r + 1, color);
-        this._fillCircleHelper(x0, y0, r, 3, 0, color);
+    fillCircle(center_x, center_y, radius, color) {
+        this.drawVLine(center_x, center_y - radius, 2 * radius + 1, color);
+        this._fillCircleHelper(center_x, center_y, radius, 3, 0, color);
     }
     _fillCircleHelper(x0, y0, r, cornername, delta, color) {
         let f = 1 - r;
@@ -402,20 +372,20 @@ class ST7735S {
             }
         }
     }
-    drawRoundRect(x, y, w, h, r, color) {
-        this.drawHLine(x + r, y, w - 2 * r, color); // Top
-        this.drawHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
-        this.drawVLine(x, y + r, h - 2 * r, color); // Left
-        this.drawVLine(x + w - 1, y + r, h - 2 * r, color); // Right
-        this._drawCircleHelper(x + r, y + r, r, 1, color);
-        this._drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
-        this._drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
-        this._drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
+    drawRoundRect(x, y, width, height, round, color) {
+        this.drawHLine(x + round, y, width - 2 * round, color); // Top
+        this.drawHLine(x + round, y + height - 1, width - 2 * round, color); // Bottom
+        this.drawVLine(x, y + round, height - 2 * round, color); // Left
+        this.drawVLine(x + width - 1, y + round, height - 2 * round, color); // Right
+        this._drawCircleHelper(x + round, y + round, round, 1, color);
+        this._drawCircleHelper(x + width - round - 1, y + round, round, 2, color);
+        this._drawCircleHelper(x + width - round - 1, y + height - round - 1, round, 4, color);
+        this._drawCircleHelper(x + round, y + height - round - 1, round, 8, color);
     }
-    fillRoundRect(x, y, w, h, r, color) {
-        this.fillRect(x + r, y, w - 2 * r, h, color);
-        this._fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
-        this._fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
+    fillRoundRect(x, y, width, height, round, color) {
+        this.fillRect(x + round, y, width - 2 * round, height, color);
+        this._fillCircleHelper(x + width - round - 1, y + round, round, 1, height - 2 * round - 1, color);
+        this._fillCircleHelper(x + round, y + round, round, 2, height - 2 * round - 1, color);
     }
     drawTriangle(x0, y0, x1, y1, x2, y2, color) {
         this.drawLine(x0, y0, x1, y1, color);
@@ -495,33 +465,33 @@ class ST7735S {
             this.drawHLine(a, y, b - a + 1, color);
         }
     }
-    drawVLine(x, y, h, color) {
-        if (h < 0) {
-            h = -h;
-            y = y - h;
+    drawVLine(x, y, height, color) {
+        if (height < 0) {
+            height = -height;
+            y = y - height;
         }
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (y + h - 1 >= this.height) {
-            h = this.height - y;
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
         }
-        const pixels = this._color2pixels(1, h, color);
-        this.rawBound16(x, y, 1, h, pixels, false);
+        const pixels = this._color2pixels(1, height, color);
+        this.rawBound16(x, y, 1, height, pixels, false);
     }
-    drawHLine(x, y, w, color) {
-        if (w < 0) {
-            w = -w;
-            x = x - w;
+    drawHLine(x, y, width, color) {
+        if (width < 0) {
+            width = -width;
+            x = x - width;
         }
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (x + w - 1 >= this.width) {
-            w = this.width - x;
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
         }
-        const pixels = this._color2pixels(w, 1, color);
-        this.rawBound16(x, y, w, 1, pixels, false);
+        const pixels = this._color2pixels(width, 1, color);
+        this.rawBound16(x, y, width, 1, pixels, false);
     }
     drawLine(x0, y0, x1, y1, color) {
         if (x0 === x1) {
@@ -565,7 +535,7 @@ class ST7735S {
         }
         this.rawBound16(x, y, 1, 1, [color], false);
     }
-    drawChar(x, y, ch, color, bg, size) {
+    drawChar(x, y, char, color, backgroundColor, size) {
         //  bg = bg || color;
         size = size || 1;
         if (x >= this.width || // Clip right
@@ -575,11 +545,11 @@ class ST7735S {
             // Clip top
             return;
         }
-        if (color !== bg) {
-            this.drawChar2(x, y, ch, color, bg, size);
+        if (color !== backgroundColor) {
+            this.drawChar2(x, y, char, color, backgroundColor, size);
             return;
         }
-        const c = ch.charCodeAt(0);
+        const c = char.charCodeAt(0);
         for (let i = 0; i < 6; i++) {
             let line = i === 5 ? 0 : font[c * 5 + i];
             for (let j = 0; j < 8; j++) {
@@ -593,14 +563,14 @@ class ST7735S {
                         this.fillRect(x + i * size, y + j * size, size, size, color);
                     }
                 }
-                else if (bg !== color) {
+                else if (backgroundColor !== color) {
                     if (size === 1) {
                         // default size
-                        this.drawPixel(x + i, y + j, bg);
+                        this.drawPixel(x + i, y + j, backgroundColor);
                     }
                     else {
                         // big size
-                        this.fillRect(x + i * size, y + j * size, size, size, bg);
+                        this.fillRect(x + i * size, y + j * size, size, size, backgroundColor);
                     }
                 }
                 line >>= 1;
@@ -649,12 +619,12 @@ class ST7735S {
             this.writeData(rgb);
         }
     }
-    drawString(x, y, str, color, bg, size, wrap) {
+    drawString(x, y, string, color, backgroundColor, size, wrap) {
         //  bg = bg || color;
         size = size || 1;
         //  wrap = wrap || true;
-        for (let n = 0; n < str.length; n++) {
-            const c = str.charAt(n);
+        for (let n = 0; n < string.length; n++) {
+            const c = string.charAt(n);
             if (c === "\n") {
                 y += size * 8;
                 x = 0;
@@ -663,7 +633,7 @@ class ST7735S {
                 // skip em
             }
             else {
-                this.drawChar(x, y, c, color, bg, size);
+                this.drawChar(x, y, c, color, backgroundColor, size);
                 x += size * 6;
                 if (wrap && x > this.width - size * 6) {
                     y += size * 8;
@@ -873,6 +843,42 @@ class ST7735S {
             Yellow: 0xffe0,
             YellowGreen: 0x9e66,
         };
+    }
+    _color2pixels(w, h, color) {
+        return Array.from(new Array(Math.abs(w * h))).map((v, i) => color);
+    }
+    _drawCircleHelper(x0, y0, r, cornername, color) {
+        let f = 1 - r;
+        let ddF_x = 1;
+        let ddF_y = -2 * r;
+        let x = 0;
+        let y = r;
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            if (cornername & 0x4) {
+                this.drawPixel(x0 + x, y0 + y, color);
+                this.drawPixel(x0 + y, y0 + x, color);
+            }
+            if (cornername & 0x2) {
+                this.drawPixel(x0 + x, y0 - y, color);
+                this.drawPixel(x0 + y, y0 - x, color);
+            }
+            if (cornername & 0x8) {
+                this.drawPixel(x0 - y, y0 + x, color);
+                this.drawPixel(x0 - x, y0 + y, color);
+            }
+            if (cornername & 0x1) {
+                this.drawPixel(x0 - y, y0 - x, color);
+                this.drawPixel(x0 - x, y0 - y, color);
+            }
+        }
     }
 }
 exports.default = ST7735S;

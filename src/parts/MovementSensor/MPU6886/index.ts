@@ -1,12 +1,13 @@
-import i2cParts from "../../i2cParts";
+import i2cParts, {I2cPartsAbstructOptions} from "../../i2cParts";
 
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface MPU6886Options {
+export interface MPU6886Options extends I2cPartsAbstructOptions {
+
 }
 
-class MPU6886 extends i2cParts implements ObnizPartsInterface {
+export default class MPU6886 extends i2cParts implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -16,11 +17,13 @@ class MPU6886 extends i2cParts implements ObnizPartsInterface {
 
   public commands: any;
   public write: any;
-  public obniz!: Obniz;
   public params: any;
-  public _accel_range: any;
-  public _gyro_range: any;
   public char2short: any;
+
+  protected obniz!: Obniz;
+
+  private _accel_range: any;
+  private _gyro_range: any;
 
   constructor() {
     super();
@@ -71,7 +74,7 @@ class MPU6886 extends i2cParts implements ObnizPartsInterface {
     };
   }
 
-  public async whoamiWait() {
+  public async whoamiWait(): Promise<number> {
     const result = await this.readWait(this.commands.whoami, 1);
     return result[0];
   }
@@ -106,7 +109,7 @@ class MPU6886 extends i2cParts implements ObnizPartsInterface {
     this.obniz.wait(1);
   }
 
-  public setConfig(accelerometer_range: any, gyroscope_range: any) {
+  public setConfig(accelerometer_range: number, gyroscope_range: number) {
     // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
     switch (accelerometer_range) {
       case 2:
@@ -145,19 +148,31 @@ class MPU6886 extends i2cParts implements ObnizPartsInterface {
     this._gyro_range = gyroscope_range;
   }
 
-  public async getAllDataWait() {
-    const raw_data: any = await this.readWait(this.commands.accelXoutH, 14); // request all data
-    const ac_scale: any = this._accel_range / 32768;
-    const gy_scale: any = this._gyro_range / 32768;
+  public async getAllDataWait(): Promise<{
+    accelerometer: {
+      x: number,
+      y: number,
+      z: number,
+    },
+    temperature: number,
+    gyroscope: {
+      x: number,
+      y: number,
+      z: number,
+    },
+  }> {
+    const raw_data = await this.readWait(this.commands.accelXoutH, 14); // request all data
+    const ac_scale = this._accel_range / 32768;
+    const gy_scale = this._gyro_range / 32768;
 
-    const accelerometer: any = {
+    const accelerometer = {
       x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
       y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
       z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
     };
-    const temperature: any =
+    const temperature =
       this.char2short(raw_data[6], raw_data[7]) / 326.8 + 25.0;
-    const gyroscope: any = {
+    const gyroscope = {
       x: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
       y: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
       z: this.char2short(raw_data[12], raw_data[13]) * gy_scale,
@@ -170,17 +185,23 @@ class MPU6886 extends i2cParts implements ObnizPartsInterface {
     };
   }
 
-  public async getTempWait() {
+  public async getTempWait(): Promise<number> {
     return (await this.getAllDataWait()).temperature;
   }
 
-  public async getAccelWait() {
+  public async getAccelWait(): Promise<{
+    x: number,
+    y: number,
+    z: number,
+}> {
     return (await this.getAllDataWait()).accelerometer;
   }
 
-  public async getGyroWait() {
+  public async getGyroWait(): Promise<{
+    x: number,
+    y: number,
+    z: number,
+  }> {
     return (await this.getAllDataWait()).gyroscope;
   }
 }
-
-export default MPU6886;

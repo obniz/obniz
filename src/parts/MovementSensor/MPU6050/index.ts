@@ -1,8 +1,20 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface MPU6050Options { }
-class MPU6050 implements ObnizPartsInterface {
+export interface MPU6050Options {
+  gnd?: number;
+  vcc?: number;
+  sda?: number;
+  scl?: number;
+  i2c?: PeripheralI2C;
+  address?: number;
+  accelerometer_range?: number;
+  gyroscope_range?: number;
+}
+
+export default class MPU6050 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,12 +24,15 @@ class MPU6050 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public _address: any;
-  public i2c: any;
-  public _accel_range: any;
-  public _gyro_range: any;
+
+  protected obniz!: Obniz;
+
+  private i2c!: PeripheralI2C;
+
+  private _address = 0x68;
+  private _accel_range: any;
+  private _gyro_range: any;
 
   constructor() {
     this.keys = [
@@ -39,7 +54,9 @@ class MPU6050 implements ObnizPartsInterface {
     this.params.clock = 100000;
     this.params.pull = "3v";
     this.params.mode = "master";
-    this._address = this.params.address || 0x68;
+    if (typeof this.params.address === "number") {
+      this._address = this.params.address;
+    }
     this.i2c = obniz.getI2CWithConfig(this.params);
     this.setConfig(
       this.params.accelerometer_range || 2,
@@ -47,7 +64,7 @@ class MPU6050 implements ObnizPartsInterface {
     );
   }
 
-  public setConfig(accelerometer_range: any, gyroscope_range: any) {
+  public setConfig(accelerometer_range: number, gyroscope_range: number) {
     // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
     switch (accelerometer_range) {
       case 2:
@@ -86,11 +103,23 @@ class MPU6050 implements ObnizPartsInterface {
     this._gyro_range = gyroscope_range;
   }
 
-  public async getWait() {
+  public async getWait(): Promise<{
+    accelerometer: {
+      x: number,
+      y: number,
+      z: number,
+    },
+    temp: number,
+    gyroscope: {
+      x: number,
+      y: number,
+      z: number,
+    },
+  }> {
     this.i2c.write(this._address, [0x3b]); // request MPU6050 data
-    const raw_data_MPU6050: any = await this.i2c.readWait(this._address, 14); // read 14byte
-    const ac_scale: any = this._accel_range / 32768;
-    const gy_scale: any = this._gyro_range / 32768;
+    const raw_data_MPU6050 = await this.i2c.readWait(this._address, 14); // read 14byte
+    const ac_scale = this._accel_range / 32768;
+    const gy_scale = this._gyro_range / 32768;
     return {
       accelerometer: {
         x: this.char2short(raw_data_MPU6050[0], raw_data_MPU6050[1]) * ac_scale,
@@ -111,13 +140,11 @@ class MPU6050 implements ObnizPartsInterface {
     };
   }
 
-  public char2short(valueH: any, valueL: any) {
-    const buffer: any = new ArrayBuffer(2);
-    const dv: any = new DataView(buffer);
+  public char2short(valueH: number, valueL: number) {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
     dv.setUint8(0, valueH);
     dv.setUint8(1, valueL);
     return dv.getInt16(0, false);
   }
 }
-
-export default MPU6050;

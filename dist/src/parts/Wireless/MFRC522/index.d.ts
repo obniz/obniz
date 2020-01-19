@@ -1,8 +1,18 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface MFRC522Options {
+    gnd?: number;
+    vcc?: number;
+    cs: number;
+    clk?: number;
+    mosi: number;
+    miso: number;
+    spi?: number;
+    spi_frequency?: number;
+    pull?: any;
+    rst: number;
 }
-declare class MFRC522 implements ObnizPartsInterface {
+export default class MFRC522 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     PCD_Idle: any;
     PCD_Mem: any;
@@ -106,35 +116,46 @@ declare class MFRC522 implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     init(): Promise<void>;
-    writeRegister(addr: any, val: any): void;
-    readRegister(addr: any): Promise<any>;
-    readRegister_nByte(addr: any, n?: any): Promise<any>;
+    writeRegister(addr: number, val: any): void;
+    readRegister(addr: number): Promise<any>;
+    readRegister_nByte(addr: any, n?: any): Promise<number[]>;
     setRegisterBitMask(reg: any, mask: any): Promise<void>;
     clearRegisterBitMask(reg: any, mask: any): Promise<void>;
     antennaOn(): Promise<void>;
     antennaOff(): Promise<void>;
     toCard(command: any, bitsToSend: any): Promise<{
-        status: any;
+        status: boolean;
         data: any;
-        bitSize: any;
+        bitSize: number;
     }>;
     findCardWait(): Promise<{
         uid: any;
-        PICC_Type: any;
+        PICC_Type: string;
     }>;
     searchTagWait(): Promise<void>;
     getUidWait(): Promise<any>;
-    calculateCRCWait(data: any): Promise<any>;
+    calculateCRCWait(data: any): Promise<number[]>;
     identifySoftwareWait(): Promise<any>;
     identifyCardTypeWait(uid: any): Promise<any>;
     readSectorDataWait(Sector: any, uid: any): Promise<any>;
-    readBlockDataWait(Block: any, uid: any): Promise<any>;
+    readBlockDataWait(Block: any, uid: any): Promise<{
+        status: boolean;
+        data: any;
+        bitSize: number;
+    }>;
     authenticateSectorWait(Sector: any, uid: any): Promise<void>;
     authenticateBlockWait(Block: any, uid: any): Promise<void>;
     readAgainWait(): Promise<void>;
     getSectorDataWait(address: any): Promise<any>;
-    getBlockDataWait(address: any): Promise<any>;
-    appendCRCtoBufferAndSendToCardWait(buffer: any): Promise<any>;
+    getBlockDataWait(address: any): Promise<{
+        status: boolean;
+        data: any;
+        bitSize: number;
+    }>;
+    appendCRCtoBufferAndSendToCardWait(buffer: any): Promise<{
+        status: boolean;
+        data: any;
+        bitSize: number;
+    }>;
     writeBlockDataWait(Block: any, sixteenBytes: any): Promise<void>;
 }
-export default MFRC522;

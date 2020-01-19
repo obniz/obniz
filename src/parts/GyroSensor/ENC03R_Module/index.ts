@@ -9,7 +9,7 @@ export interface ENC03R_ModuleOptions {
   out1: number;
 }
 
-class ENC03R_Module implements ObnizPartsInterface {
+export default class ENC03R_Module implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -19,20 +19,22 @@ class ENC03R_Module implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: any;
-  public Sens: number;
-  public obniz!: Obniz;
   public params: any;
-  public ad0!: PeripheralAD;
-  public ad1!: PeripheralAD;
-  public sens1: any;
+
+  public Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
+  public sens1: number = 0;
   public onchange1?: (val: number) => void;
-  public sens2: any;
+  public sens2: number = 0;
   public onchange2?: (val: number) => void;
+
+  protected obniz!: Obniz;
+
+  private ad0!: PeripheralAD;
+  private ad1!: PeripheralAD;
 
   constructor() {
     this.keys = ["vcc", "out1", "out2", "gnd"];
     this.requiredKeys = ["out1", "out2"];
-    this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
   }
 
   public wired(obniz: Obniz) {
@@ -72,5 +74,3 @@ class ENC03R_Module implements ObnizPartsInterface {
     });
   }
 }
-
-export default ENC03R_Module;

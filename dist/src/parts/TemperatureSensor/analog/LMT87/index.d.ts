@@ -1,9 +1,8 @@
-import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-export interface LMT87Options {
+import AnalogTemperatureSensor, { AnalogTemperatureSensorOptions } from "../AnalogTemperatureSensor";
+export interface LMT87Options extends AnalogTemperatureSensorOptions {
 }
-declare class LMT87 extends AnalogTemperatureSensor implements ObnizPartsInterface {
+export default class LMT87 extends AnalogTemperatureSensor implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     calc(voltage: any): number;
 }
-export default LMT87;

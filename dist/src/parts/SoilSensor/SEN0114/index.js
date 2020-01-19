@@ -32,8 +32,7 @@ class SEN0114 {
     }
     getHumidityWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.value = yield this.ad.getWait();
-            return this.value;
+            return yield this.ad.getWait();
         });
     }
 }

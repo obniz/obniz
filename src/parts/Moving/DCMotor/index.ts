@@ -1,4 +1,6 @@
 import Obniz from "../../../obniz";
+import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface DCMotorOptions {
@@ -6,7 +8,7 @@ export interface DCMotorOptions {
   back: number;
 }
 
-class DCMotor implements ObnizPartsInterface {
+export default class DCMotor implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -20,8 +22,9 @@ class DCMotor implements ObnizPartsInterface {
   public pwm1_io_num: any;
   public params: any;
   public pwm2_io_num: any;
-  public pwm1: any;
-  public pwm2: any;
+
+  public pwm1!: PeripheralPWM;
+  public pwm2!: PeripheralPWM;
 
   constructor() {
     this.keys = ["forward", "back"];
@@ -101,5 +104,3 @@ class DCMotor implements ObnizPartsInterface {
     }
   }
 }
-
-export default DCMotor;

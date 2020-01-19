@@ -5,6 +5,7 @@ import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";
 
 import PeripheralAD from "./libs/io_peripherals/ad";
+import {DriveType} from "./libs/io_peripherals/common";
 import PeripheralDirective from "./libs/io_peripherals/directive";
 import PeripheralI2C from "./libs/io_peripherals/i2c";
 import PeripheralIO from "./libs/io_peripherals/io";
@@ -58,7 +59,7 @@ export default class ObnizComponents extends ObnizParts {
   public _allComponentKeys: any;
 
   /* board peripherals */
-  public io?: PeripheralDirective;
+  public io!: PeripheralDirective;
   public io0?: PeripheralIO;
   public io1?: PeripheralIO;
   public io2?: PeripheralIO;
@@ -258,30 +259,30 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
-  public setVccGnd(vcc: any, gnd: any, drive: any) {
+  public setVccGnd(vcc: number | null, gnd: number | null, drive: DriveType) {
     if (this.isValidIO(vcc)) {
       if (drive) {
-        this.getIO(vcc).drive(drive);
+        this.getIO(vcc!).drive(drive);
       }
-      this.getIO(vcc).output(true);
+      this.getIO(vcc!).output(true);
     }
 
     if (this.isValidIO(gnd)) {
       if (drive) {
-        this.getIO(gnd).drive(drive);
+        this.getIO(gnd!).drive(drive);
       }
-      this.getIO(gnd).output(false);
+      this.getIO(gnd!).output(false);
     }
   }
 
-  public getIO(io: any): PeripheralIO {
+  public getIO(io: number): PeripheralIO {
     if (!this.isValidIO(io)) {
       throw new Error("io " + io + " is not valid io");
     }
     return (this as any)["io" + io];
   }
 
-  public getAD(io: any): PeripheralAD {
+  public getAD(io: number): PeripheralAD {
     if (!this.isValidIO(io)) {
       throw new Error("ad " + io + " is not valid io");
     }

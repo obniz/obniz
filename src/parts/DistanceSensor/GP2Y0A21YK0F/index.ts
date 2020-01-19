@@ -1,8 +1,16 @@
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface GP2Y0A21YK0FOptions { }
-class GP2Y0A21YK0F implements ObnizPartsInterface {
+export interface GP2Y0A21YK0FOptions {
+  vcc?: number;
+  gnd?: number;
+  signal: number;
+}
+
+export type GP2Y0A21YK0FUnitType = "mm" | "inch";
+
+export default class GP2Y0A21YK0F implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,48 +20,44 @@ class GP2Y0A21YK0F implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public displayIoNames: any;
-  public _unit: any;
+  public displayIoNames = {
+    vcc: "vcc",
+    gnd: "gnd",
+    signal: "signal",
+  };
+  public _unit: GP2Y0A21YK0FUnitType = "mm";
   public obniz!: Obniz;
   public params: any;
-  public io_signal: any;
-  public ad_signal: any;
+  public ad_signal!: PeripheralAD;
 
   constructor() {
     this.keys = ["vcc", "gnd", "signal"];
     this.requiredKeys = ["signal"];
-
-    this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd",
-      signal: "signal",
-    };
-    this._unit = "mm";
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    this.io_signal = obniz.getIO(this.params.signal);
-    this.io_signal.end();
+    const io_signal = obniz.getIO(this.params.signal);
+    io_signal.end();
     this.ad_signal = obniz.getAD(this.params.signal);
   }
 
-  public start(callback: any) {
-    this.ad_signal.start((val: any) => {
-      const distance: any = this._volt2distance(val);
+  public start(callback: (distance: number) => void) {
+    this.ad_signal.start((val: number) => {
+      const distance = this._volt2distance(val);
       if (typeof callback === "function") {
         callback(distance);
       }
     });
   }
 
-  public _volt2distance(val: any) {
+  public _volt2distance(val: number): number {
     if (val <= 0) {
       val = 0.001;
     }
-    let distance: any = 19988.34 * Math.pow((val / 5.0) * 1024, -1.25214) * 10;
+    let distance = 19988.34 * Math.pow((val / 5.0) * 1024, -1.25214) * 10;
     if (this._unit === "mm") {
       distance = Math.floor(distance * 10) / 10;
     } else {
@@ -63,15 +67,19 @@ class GP2Y0A21YK0F implements ObnizPartsInterface {
     return distance;
   }
 
-  public getWait() {
-    return new Promise(async (resolve) => {
-      const val: any = await this.ad_signal.getWait();
-      const distance: any = this._volt2distance(val);
-      resolve(distance);
+  public getWait(): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const val = await this.ad_signal.getWait();
+        const distance = this._volt2distance(val);
+        resolve(distance);
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
-  public unit(unit: any) {
+  public unit(unit: GP2Y0A21YK0FUnitType) {
     if (unit === "mm") {
       this._unit = "mm";
     } else if (unit === "inch") {
@@ -81,5 +89,3 @@ class GP2Y0A21YK0F implements ObnizPartsInterface {
     }
   }
 }
-
-export default GP2Y0A21YK0F;

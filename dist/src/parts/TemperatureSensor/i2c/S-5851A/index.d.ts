@@ -1,21 +1,28 @@
 import Obniz from "../../../../obniz";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 export interface S5851AOptions {
+    vcc: number;
+    gnd: number;
+    sda: number;
+    scl: number;
+    addr0: number;
+    addr1: number;
+    addressmode: string;
 }
-declare class S5851A implements ObnizPartsInterface {
+export default class S5851A implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];
     keys: string[];
     io_adr0: any;
     params: any;
     io_adr1: any;
-    obniz: Obniz;
     address: any;
-    i2c: any;
-    i2c0: any;
+    protected obniz: Obniz;
+    protected i2c: PeripheralI2C;
+    protected i2c0: PeripheralI2C;
     constructor();
     wired(obniz: Obniz): void;
-    getTempWait(): Promise<any>;
-    getHumdWait(): Promise<any>;
+    getTempWait(): Promise<number>;
+    getHumdWait(): Promise<number>;
 }
-export default S5851A;

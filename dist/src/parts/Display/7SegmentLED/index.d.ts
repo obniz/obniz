@@ -1,24 +1,37 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface _7SegmentLEDOptions {
+    a: number;
+    b: number;
+    c: number;
+    d: number;
+    e: number;
+    f: number;
+    g: number;
+    dp?: number;
+    common?: number;
+    commonType?: string;
 }
 declare class _7SegmentLED implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    digits: any;
-    displayIoNames: any;
+    digits: number[];
+    displayIoNames: {
+        [key: string]: string;
+    };
     obniz: Obniz;
-    ios: any;
+    ios: PeripheralIO[];
     params: any;
-    isCathodeCommon: any;
-    dp: any;
-    common: any;
+    isCathodeCommon: boolean;
+    dp?: PeripheralIO;
+    common?: PeripheralIO;
     constructor();
     wired(obniz: Obniz): void;
-    print(data: any): void;
-    printRaw(data: any): void;
-    dpState(show: any): void;
+    print(data: number): void;
+    printRaw(data: number): void;
+    dpState(show: boolean): void;
     on(): void;
     off(): void;
 }
