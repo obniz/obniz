@@ -27,6 +27,7 @@ class LED {
             this.io_cathode = getIO(this.params.cathode);
         }
         this.animationName = "Led-" + this.params.anode;
+        this.off();
     }
     on() {
         this.endBlink();
@@ -43,7 +44,7 @@ class LED {
             this.io_anode.output(false);
         }
         if (this.io_cathode) {
-            this.io_cathode.output(true);
+            this.io_cathode.output(false);
         }
     }
     output(value) {

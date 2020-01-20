@@ -16,6 +16,17 @@ describe('led', function() {
 
   it('wired', function() {
     this.obniz.wired('LED', { anode: 0, cathode: 1 });
+
+    expect(this.obniz).send([
+      {
+        io: {
+          animation: {
+            name: 'Led-0',
+            status: 'pause',
+          },
+        },
+      },
+    ]);
     expect(this.obniz).send([{ io0: false }]);
     expect(this.obniz).send([{ io1: false }]);
     expect(this.obniz).send([
@@ -34,6 +45,7 @@ describe('led', function() {
         },
       },
     ]);
+
     expect(this.obniz).to.be.finished;
   });
 
@@ -53,6 +65,17 @@ describe('led', function() {
 
   it('wired only anode', function() {
     this.obniz.wired('LED', { anode: 10 });
+
+    expect(this.obniz).send([
+      {
+        io: {
+          animation: {
+            name: 'Led-10',
+            status: 'pause',
+          },
+        },
+      },
+    ]);
     expect(this.obniz).send([{ io10: false }]);
     expect(this.obniz).send([
       {
@@ -71,6 +94,17 @@ describe('led', function() {
 
   it('on', function() {
     let led = this.obniz.wired('LED', { anode: 0, cathode: 1 });
+
+    expect(this.obniz).send([
+      {
+        io: {
+          animation: {
+            name: 'Led-0',
+            status: 'pause',
+          },
+        },
+      },
+    ]);
     expect(this.obniz).send([{ io0: false }]);
     expect(this.obniz).send([{ io1: false }]);
     expect(this.obniz).send([
@@ -103,6 +137,7 @@ describe('led', function() {
       },
     ]);
     expect(this.obniz).send([{ io0: true }]);
+    expect(this.obniz).send([{ io1: false }]);
     expect(this.obniz).to.be.finished;
 
     led.off();
@@ -117,6 +152,7 @@ describe('led', function() {
       },
     ]);
     expect(this.obniz).send([{ io0: false }]);
+    expect(this.obniz).send([{ io1: false }]);
     expect(this.obniz).to.be.finished;
   });
 });

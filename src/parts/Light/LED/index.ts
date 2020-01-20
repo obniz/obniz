@@ -49,6 +49,7 @@ export default class LED implements ObnizPartsInterface {
       this.io_cathode = getIO(this.params.cathode);
     }
     this.animationName = "Led-" + this.params.anode;
+    this.off();
   }
 
   public on() {
@@ -67,7 +68,7 @@ export default class LED implements ObnizPartsInterface {
       this.io_anode.output(false);
     }
     if (this.io_cathode) {
-      this.io_cathode.output(true);
+      this.io_cathode.output(false);
     }
   }
 

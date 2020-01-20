@@ -253,12 +253,9 @@ describe('11-tcp', function() {
 
 async function getServerData(port, domain, writeData) {
   let client = new net.Socket();
-  client.connect(
-    { port: port, host: domain },
-    () => {
-      client.write(writeData);
-    }
-  );
+  client.connect({ port: port, host: domain }, () => {
+    client.write(writeData);
+  });
   return new Promise(function(resolve, reject) {
     client.on('data', data => {
       resolve(data);
