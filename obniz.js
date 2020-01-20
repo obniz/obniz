@@ -27491,20 +27491,28 @@ class LED {
     }
     on() {
         this.endBlink();
-        if (this.io_anode) {
+        if (this.io_anode && this.io_cathode) {
+            this.io_anode.output(true);
+            this.io_cathode.output(false);
+        }
+        else if (this.io_anode) {
             this.io_anode.output(true);
         }
-        if (this.io_cathode) {
+        else if (this.io_cathode) {
             this.io_cathode.output(false);
         }
     }
     off() {
         this.endBlink();
-        if (this.io_anode) {
+        if (this.io_anode && this.io_cathode) {
+            this.io_anode.output(false);
+            this.io_cathode.output(false);
+        }
+        else if (this.io_anode) {
             this.io_anode.output(false);
         }
-        if (this.io_cathode) {
-            this.io_cathode.output(false);
+        else if (this.io_cathode) {
+            this.io_cathode.output(true);
         }
     }
     output(value) {

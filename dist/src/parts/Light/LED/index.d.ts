@@ -1,7 +1,7 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface LEDOptions {
-    anode: number;
+    anode?: number;
     cathode?: number;
 }
 export default class LED implements ObnizPartsInterface {

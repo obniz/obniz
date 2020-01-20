@@ -3,7 +3,7 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface LEDOptions {
-  anode: number;
+  anode?: number;
   cathode?: number;
 }
 
@@ -54,21 +54,25 @@ export default class LED implements ObnizPartsInterface {
 
   public on() {
     this.endBlink();
-    if (this.io_anode) {
+    if (this.io_anode && this.io_cathode) {
       this.io_anode.output(true);
-    }
-    if (this.io_cathode) {
+      this.io_cathode.output(false);
+    } else if (this.io_anode) {
+      this.io_anode.output(true);
+    } else if (this.io_cathode) {
       this.io_cathode.output(false);
     }
   }
 
   public off() {
     this.endBlink();
-    if (this.io_anode) {
+    if (this.io_anode && this.io_cathode) {
       this.io_anode.output(false);
-    }
-    if (this.io_cathode) {
       this.io_cathode.output(false);
+    } else if (this.io_anode) {
+      this.io_anode.output(false);
+    } else if (this.io_cathode) {
+      this.io_cathode.output(true);
     }
   }
 
