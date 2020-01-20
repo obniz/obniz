@@ -8,7 +8,7 @@ const LOCAL_IP = '';
 //const json = require('./board/esp32devkitc_check_io.json');
 //const json = require('./board/m5stickc_check_io.json');
 //const json = require('./board/obniz_check_io.json');
-const json = require('../realtest/board/obniz_1y_check_io.json');
+const json = require('./board/obniz_1y_check_io.json');
 //const json = require('./board/esp32lte_check_io.json');
 //const json = require('./board/esp32pikokitv4_check_io.json');
 
@@ -36,9 +36,9 @@ const check_io = json.io;
 
 function waitForConenct(done) {
   if (
-    (obnizA === undefined && json.board.some(board => board === 'obnizA')) ||
-    (obnizB === undefined && json.board.some(board => board === 'obnizB')) ||
-    checkBoard === undefined
+      (obnizA === undefined && json.board.some(board => board === 'obnizA')) ||
+      (obnizB === undefined && json.board.some(board => board === 'obnizB')) ||
+      checkBoard === undefined
   ) {
     connectTwoObniz(done);
   } else {
