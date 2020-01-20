@@ -1,5 +1,6 @@
-declare const events: any;
-declare class Gatt extends events.EventEmitter {
+/// <reference types="node" />
+import events from "events";
+export default class Gatt extends events.EventEmitter {
     maxMtu: any;
     _mtu: any;
     _preparedWriteRequest: any;
@@ -7,7 +8,6 @@ declare class Gatt extends events.EventEmitter {
     onAclStreamEndBinded: any;
     _handles: any;
     _aclStream: any;
-    emit: any;
     _lastIndicatedAttribute: any;
     constructor();
     setServices(services: any): void;
@@ -28,4 +28,3 @@ declare class Gatt extends events.EventEmitter {
     handleExecuteWriteRequest(request: any): any;
     handleConfirmation(request: any): void;
 }
-export default Gatt;

@@ -41,6 +41,7 @@ describe('4-uart', function() {
     const text = 'HelloWorld';
     let received = '';
     sender.send(' ');
+    await checkBoard.pingWait();
     sender.send(text);
     while (1 === 1) {
       if (receiver.isDataExists()) {
@@ -64,6 +65,8 @@ describe('4-uart', function() {
 
     const text = 'こんにちは'; //eslint-disable-line non-ascii
     let received = '';
+    sender.send(' ');
+    await checkBoard.pingWait();
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -99,6 +102,7 @@ describe('4-uart', function() {
     }
     let received = '';
     sender.send(' ');
+    await checkBoard.pingWait();
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -135,6 +139,7 @@ describe('4-uart', function() {
     }
     let received = '';
     sender.send(' ');
+    await checkBoard.pingWait();
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {

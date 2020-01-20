@@ -1,4 +1,5 @@
-declare const events: any;
+/// <reference types="node" />
+import events from "events";
 declare class Smp extends events.EventEmitter {
     _aclStream: any;
     _iat: any;
@@ -8,7 +9,6 @@ declare class Smp extends events.EventEmitter {
     onAclStreamDataBinded: any;
     onAclStreamEndBinded: any;
     _preq: any;
-    emit: any;
     _pres: any;
     _tk: any;
     _r: any;

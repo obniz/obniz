@@ -2,7 +2,7 @@
 const debug: any = () => {
 };
 
-const events: any = require("events");
+import events from "events";
 
 const CONNECTION_PARAMETER_UPDATE_REQUEST: any = 0x12;
 const CONNECTION_PARAMETER_UPDATE_RESPONSE: any = 0x13;
@@ -14,7 +14,6 @@ class Signaling extends events.EventEmitter {
   public _aclStream: any;
   public onAclStreamDataBinded: any;
   public onAclStreamEndBinded: any;
-  public emit: any;
 
   constructor(handle: any, aclStream: any) {
     super();

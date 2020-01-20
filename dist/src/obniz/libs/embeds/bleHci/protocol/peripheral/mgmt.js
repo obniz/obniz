@@ -6,7 +6,7 @@ const debug = () => {
 const LTK_INFO_SIZE = 36;
 const MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
 class Mgmt {
-    construcotr(hciProtocol) {
+    constructor(hciProtocol) {
         this._ltkInfos = [];
         this._hci = hciProtocol;
     }

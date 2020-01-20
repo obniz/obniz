@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const events = require("events");
-const crypto = require("./crypto");
+const events_1 = __importDefault(require("events"));
+const crypto_1 = __importDefault(require("./crypto"));
 const SMP_CID = 0x0006;
 const SMP_PAIRING_REQUEST = 0x01;
 const SMP_PAIRING_RESPONSE = 0x02;
@@ -10,7 +13,7 @@ const SMP_PAIRING_RANDOM = 0x04;
 const SMP_PAIRING_FAILED = 0x05;
 const SMP_ENCRYPT_INFO = 0x06;
 const SMP_MASTER_IDENT = 0x07;
-class Smp extends events.EventEmitter {
+class Smp extends events_1.default.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._aclStream = aclStream;
@@ -73,10 +76,10 @@ class Smp extends events.EventEmitter {
     handlePairingResponse(data) {
         this._pres = data;
         this._tk = Buffer.from("00000000000000000000000000000000", "hex");
-        this._r = crypto.r();
+        this._r = crypto_1.default.r();
         this.write(Buffer.concat([
             Buffer.from([SMP_PAIRING_CONFIRM]),
-            crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
+            crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
     handlePairingConfirm(data) {
@@ -87,10 +90,10 @@ class Smp extends events.EventEmitter {
         const r = data.slice(1);
         const pcnf = Buffer.concat([
             Buffer.from([SMP_PAIRING_CONFIRM]),
-            crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
+            crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
-            const stk = crypto.s1(this._tk, r, this._r);
+            const stk = crypto_1.default.s1(this._tk, r, this._r);
             this.emit("stk", stk);
         }
         else {

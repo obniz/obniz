@@ -1,4 +1,5 @@
-declare function r(): any;
+/// <reference types="node" />
+declare function r(): Buffer;
 declare function c1(k: any, _r: any, pres: any, preq: any, iat: any, ia: any, rat: any, ra: any): any;
 declare function s1(k: any, r1: any, r2: any): any;
 declare function e(key: any, data: any): any;

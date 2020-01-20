@@ -1,8 +1,8 @@
-declare const events: any;
+/// <reference types="node" />
+import events from "events";
 declare class Gap extends events.EventEmitter {
     _hci: any;
     _advertiseState: any;
-    emit: any;
     constructor(hci: any);
     startAdvertising(name: any, serviceUuids: any): void;
     startAdvertisingIBeacon(data: any): void;

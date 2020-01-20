@@ -1,6 +1,6 @@
-const events: any = require("events");
+import events from "events";
 
-const crypto: any = require("./crypto");
+import crypto from "./crypto";
 
 const SMP_CID: any = 0x0006;
 
@@ -21,7 +21,6 @@ class Smp extends events.EventEmitter {
   public onAclStreamDataBinded: any;
   public onAclStreamEndBinded: any;
   public _preq: any;
-  public emit: any;
   public _pres: any;
   public _tk: any;
   public _r: any;

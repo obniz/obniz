@@ -1,4 +1,4 @@
-const crypto: any = require("crypto");
+import crypto from "crypto";
 
 function r() {
   return crypto.randomBytes(16);

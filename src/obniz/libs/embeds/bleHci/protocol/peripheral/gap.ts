@@ -2,19 +2,16 @@
 const debug: any = () => {
 };
 
-const events: any = require("events");
-const os: any = require("os");
+import events from "events";
+import Hci from "../hci";
 
-const Hci: any = require("../hci");
-
-const isLinux: any = os.platform() === "linux";
-const isIntelEdison: any = isLinux && os.release().indexOf("edison") !== -1;
-const isYocto: any = isLinux && os.release().indexOf("yocto") !== -1;
+const isLinux: boolean = false;
+const isIntelEdison: boolean = false;
+const isYocto: boolean = false;
 
 class Gap extends events.EventEmitter {
   public _hci: any;
   public _advertiseState: any;
-  public emit: any;
 
   constructor(hci: any) {
     super();

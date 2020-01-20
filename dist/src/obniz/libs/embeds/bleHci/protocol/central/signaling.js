@@ -1,13 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('signaling');
 const debug = () => {
 };
-const events = require("events");
+const events_1 = __importDefault(require("events"));
 const CONNECTION_PARAMETER_UPDATE_REQUEST = 0x12;
 const CONNECTION_PARAMETER_UPDATE_RESPONSE = 0x13;
 const SIGNALING_CID = 0x0005;
-class Signaling extends events.EventEmitter {
+class Signaling extends events_1.default.EventEmitter {
     constructor(handle, aclStream) {
         super();
         this._handle = handle;

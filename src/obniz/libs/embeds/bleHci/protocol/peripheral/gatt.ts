@@ -2,7 +2,7 @@
 const debug: any = () => {
 };
 
-const events: any = require("events");
+import events from "events";
 
 /* eslint-disable no-unused-vars */
 const ATT_OP_ERROR: any = 0x01;
@@ -63,7 +63,7 @@ const ATT_ECODE_INSUFF_RESOURCES: any = 0x11;
 /* eslint-enable no-unused-vars */
 const ATT_CID: any = 0x0004;
 
-class Gatt extends events.EventEmitter {
+export default class Gatt extends events.EventEmitter {
   public maxMtu: any;
   public _mtu: any;
   public _preparedWriteRequest: any;
@@ -71,7 +71,6 @@ class Gatt extends events.EventEmitter {
   public onAclStreamEndBinded: any;
   public _handles: any;
   public _aclStream: any;
-  public emit: any;
   public _lastIndicatedAttribute: any;
 
   constructor() {
@@ -1271,5 +1270,3 @@ class Gatt extends events.EventEmitter {
     }
   }
 }
-
-export default Gatt;

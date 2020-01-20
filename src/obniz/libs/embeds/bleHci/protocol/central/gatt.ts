@@ -4,7 +4,7 @@ const debug: any = () => {
 
 /* eslint-disable no-unused-vars */
 
-const events: any = require("events");
+import events from "events";
 
 const ATT_OP_ERROR: any = 0x01;
 const ATT_OP_MTU_REQ: any = 0x02;
@@ -73,7 +73,6 @@ class Gatt extends events.EventEmitter {
   public onAclStreamEncryptBinded: any;
   public onAclStreamEncryptFailBinded: any;
   public onAclStreamEndBinded: any;
-  public emit: any;
 
   constructor(address: any, aclStream: any) {
     super();

@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // var debug = require('debug')('gatt');
 const debug = () => {
 };
-const events = require("events");
+const events_1 = __importDefault(require("events"));
 /* eslint-disable no-unused-vars */
 const ATT_OP_ERROR = 0x01;
 const ATT_OP_MTU_REQ = 0x02;
@@ -58,7 +61,7 @@ const ATT_ECODE_UNSUPP_GRP_TYPE = 0x10;
 const ATT_ECODE_INSUFF_RESOURCES = 0x11;
 /* eslint-enable no-unused-vars */
 const ATT_CID = 0x0004;
-class Gatt extends events.EventEmitter {
+class Gatt extends events_1.default.EventEmitter {
     constructor() {
         super();
         this.maxMtu = 256;

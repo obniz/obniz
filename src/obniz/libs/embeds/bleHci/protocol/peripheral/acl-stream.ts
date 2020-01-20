@@ -1,13 +1,12 @@
-const events: any = require("events");
+import events from "events";
 
-const Smp: any = require("./smp");
+import Smp from "./smp";
 
 class AclStream extends events.EventEmitter {
   public _hci: any;
   public _handle: any;
   public encypted: any;
   public _smp: any;
-  public emit: any;
   public encrypted: any;
 
   constructor(
@@ -33,11 +32,11 @@ class AclStream extends events.EventEmitter {
     );
   }
 
-  public rite(cid: any, data: any) {
+  public write(cid: any, data: any) {
     this._hci.queueAclDataPkt(this._handle, cid, data);
   }
 
-  public ush(cid: any, data: any) {
+  public push(cid: any, data: any) {
     if (data) {
       this.emit("data", cid, data);
     } else {
@@ -45,13 +44,13 @@ class AclStream extends events.EventEmitter {
     }
   }
 
-  public ushEncrypt(encrypt: any) {
+  public pushEncrypt(encrypt: any) {
     this.encrypted = encrypt ? true : false;
 
     this.emit("encryptChange", this.encrypted);
   }
 
-  public ushLtkNegReply() {
+  public pushLtkNegReply() {
     this.emit("ltkNegReply");
   }
 }

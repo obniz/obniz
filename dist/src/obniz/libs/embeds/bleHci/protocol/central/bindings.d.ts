@@ -13,7 +13,6 @@ declare class NobleBindings extends events.EventEmitter {
     _hci: any;
     _gap: any;
     _scanServiceUuids: any;
-    emit: any;
     constructor(hciProtocol: any);
     startScanning(serviceUuids: any, allowDuplicates: any): void;
     stopScanning(): void;

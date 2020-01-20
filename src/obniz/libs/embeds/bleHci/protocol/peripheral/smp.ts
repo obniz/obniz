@@ -1,7 +1,7 @@
 const events: any = require("events");
 
-const crypto: any = require("./crypto");
-const Mgmt: any = require("./mgmt");
+import crypto from "./crypto";
+import Mgmt from "./mgmt";
 
 const SMP_CID: any = 0x0006;
 
@@ -15,7 +15,7 @@ const SMP_MASTER_IDENT: any = 0x07;
 
 const SMP_UNSPECIFIED: any = 0x08;
 
-class Smp extends events.EventEmitter {
+export default class Smp extends events.EventEmitter {
   public _aclStream: any;
   public _mgmt: any;
   public _iat: any;
@@ -25,20 +25,6 @@ class Smp extends events.EventEmitter {
   public _stk: any;
   public _random: any;
   public _diversifier: any;
-  public onAclStreamDataBinded: any;
-  public onAclStreamData: any;
-  public onAclStreamEncryptChangeBinded: any;
-  public onAclStreamEncryptChange: any;
-  public onAclStreamLtkNegReplyBinded: any;
-  public onAclStreamLtkNegReply: any;
-  public onAclStreamEndBinded: any;
-  public onAclStreamEnd: any;
-  public handlePairingRequest: any;
-  public handlePairingConfirm: any;
-  public handlePairingRandom: any;
-  public handlePairingFailed: any;
-  public write: any;
-  public emit: any;
   public _preq: any;
   public _pres: any;
   public _pcnf: any;
@@ -91,7 +77,7 @@ class Smp extends events.EventEmitter {
     this._aclStream.on("end", this.onAclStreamEndBinded);
   }
 
-  public nAclStreamData(cid: any, data: any) {
+  public onAclStreamData(cid: any, data: any) {
     if (cid !== SMP_CID) {
       return;
     }
@@ -109,7 +95,7 @@ class Smp extends events.EventEmitter {
     }
   }
 
-  public nAclStreamEncryptChange(encrypted: any) {
+  public onAclStreamEncryptChange(encrypted: any) {
     if (encrypted) {
       if (this._stk && this._diversifier && this._random) {
         this.write(Buffer.concat([Buffer.from([SMP_ENCRYPT_INFO]), this._stk]));
@@ -125,13 +111,13 @@ class Smp extends events.EventEmitter {
     }
   }
 
-  public nAclStreamLtkNegReply() {
+  public onAclStreamLtkNegReply() {
     this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_UNSPECIFIED]));
 
     this.emit("fail");
   }
 
-  public nAclStreamEnd() {
+  public onAclStreamEnd() {
     this._aclStream.removeListener("data", this.onAclStreamDataBinded);
     this._aclStream.removeListener(
       "encryptChange",
@@ -144,7 +130,7 @@ class Smp extends events.EventEmitter {
     this._aclStream.removeListener("end", this.onAclStreamEndBinded);
   }
 
-  public andlePairingRequest(data: any) {
+  public handlePairingRequest(data: any) {
     this._preq = data;
     this._pres = Buffer.from([
       SMP_PAIRING_RESPONSE,
@@ -159,7 +145,7 @@ class Smp extends events.EventEmitter {
     this.write(this._pres);
   }
 
-  public andlePairingConfirm(data: any) {
+  public handlePairingConfirm(data: any) {
     this._pcnf = data;
 
     this._tk = Buffer.from("00000000000000000000000000000000", "hex");
@@ -182,7 +168,7 @@ class Smp extends events.EventEmitter {
     );
   }
 
-  public andlePairingRandom(data: any) {
+  public handlePairingRandom(data: any) {
     const r: any = data.slice(1);
 
     const pcnf: any = Buffer.concat([
@@ -222,13 +208,11 @@ class Smp extends events.EventEmitter {
     }
   }
 
-  public andlePairingFailed(data: any) {
+  public handlePairingFailed(data: any) {
     this.emit("fail");
   }
 
-  public rite(data: any) {
+  public write(data: any) {
     this._aclStream.write(SMP_CID, data);
   }
 }
-
-export default Smp;

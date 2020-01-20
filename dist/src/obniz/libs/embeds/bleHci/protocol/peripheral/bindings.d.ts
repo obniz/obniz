@@ -8,8 +8,7 @@ declare class BlenoBindings extends events.EventEmitter {
     _gatt: any;
     _address: any;
     _handle: any;
-    _aclStream: any;
-    emit: any;
+    private _aclStream;
     constructor(hciProtocol: any);
     startAdvertising(name: any, serviceUuids: any): void;
     startAdvertisingIBeacon(data: any): void;

@@ -10,7 +10,6 @@ declare class Hci extends events.EventEmitter {
     _aclOutQueue: any;
     _aclMtu: any;
     _aclMaxInProgress: any;
-    emit: any;
     addressType: any;
     address: any;
     constructor(obnizHci: any);

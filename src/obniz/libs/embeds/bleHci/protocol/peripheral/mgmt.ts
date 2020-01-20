@@ -6,13 +6,13 @@ const LTK_INFO_SIZE: any = 36;
 
 const MGMT_OP_LOAD_LONG_TERM_KEYS: any = 0x0013;
 
-class Mgmt {
+export default class Mgmt {
   public _ltkInfos: any;
   public _hci: any;
   public loadLongTermKeys: any;
   public write: any;
 
-  public construcotr(hciProtocol: any) {
+  public constructor(hciProtocol: any) {
     this._ltkInfos = [];
     this._hci = hciProtocol;
   }
@@ -84,5 +84,3 @@ class Mgmt {
     this._hci._socket.write(pkt);
   }
 }
-
-export default Mgmt;

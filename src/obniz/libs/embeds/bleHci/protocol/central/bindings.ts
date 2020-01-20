@@ -22,7 +22,6 @@ class NobleBindings extends events.EventEmitter {
   public _hci: any;
   public _gap: any;
   public _scanServiceUuids: any;
-  public emit: any;
 
   constructor(hciProtocol: any) {
     super();

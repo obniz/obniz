@@ -7142,15 +7142,18 @@ exports.default = ObnizBLEHci;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 // var debug = require('debug')('acl-att-stream');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const events = __webpack_require__("./node_modules/events/events.js");
-const Smp = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/smp.js");
-class AclStream extends events.EventEmitter {
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/smp.js"));
+class AclStream extends events_1.default.EventEmitter {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._hci = hci;
         this._handle = handle;
-        this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
+        this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
         this.onSmpStkBinded = this.onSmpStk.bind(this);
         this.onSmpFailBinded = this.onSmpFail.bind(this);
         this.onSmpEndBinded = this.onSmpEnd.bind(this);
@@ -7654,10 +7657,13 @@ exports.default = NobleBindings;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
+const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
 function r() {
-    return crypto.randomBytes(16);
+    return crypto_1.default.randomBytes(16);
 }
 function c1(k, _r, pres, preq, iat, ia, rat, ra) {
     const p1 = Buffer.concat([iat, rat, preq, pres]);
@@ -7674,7 +7680,7 @@ function s1(k, r1, r2) {
 function e(key, data) {
     key = swap(key);
     data = swap(data);
-    const cipher = crypto.createCipheriv("aes-128-ecb", key, "");
+    const cipher = crypto_1.default.createCipheriv("aes-128-ecb", key, "");
     cipher.setAutoPadding(false);
     return swap(Buffer.concat([cipher.update(data), cipher.final()]));
 }
@@ -7710,13 +7716,16 @@ exports.default = {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process, Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('gap');
 const debug = () => {
 };
-const events = __webpack_require__("./node_modules/events/events.js");
-const Hci = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js");
-class Gap extends events.EventEmitter {
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
+class Gap extends events_1.default.EventEmitter {
     constructor(hci) {
         super();
         this._hci = hci;
@@ -8123,7 +8132,7 @@ class Gap extends events.EventEmitter {
             this._advertiseState = "started";
             let error = null;
             if (status) {
-                error = new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+                error = new Error(hci_1.default.STATUS_MAPPER[status] || "Unknown (" + status + ")");
             }
             this.emit("advertisingStart", error);
         }
@@ -8146,12 +8155,15 @@ exports.default = Gap;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process, Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('att');
 const debug = () => {
 };
 /* eslint-disable no-unused-vars */
-const events = __webpack_require__("./node_modules/events/events.js");
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const ATT_OP_ERROR = 0x01;
 const ATT_OP_MTU_REQ = 0x02;
 const ATT_OP_MTU_RESP = 0x03;
@@ -8200,7 +8212,7 @@ const GATT_CLIENT_CHARAC_CFG_UUID = 0x2902;
 const GATT_SERVER_CHARAC_CFG_UUID = 0x2903;
 const ATT_CID = 0x0004;
 /* eslint-enable no-unused-vars */
-class Gatt extends events.EventEmitter {
+class Gatt extends events_1.default.EventEmitter {
     constructor(address, aclStream) {
         super();
         this._address = address;
@@ -8837,15 +8849,18 @@ exports.default = Gatt;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('signaling');
 const debug = () => {
 };
-const events = __webpack_require__("./node_modules/events/events.js");
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const CONNECTION_PARAMETER_UPDATE_REQUEST = 0x12;
 const CONNECTION_PARAMETER_UPDATE_RESPONSE = 0x13;
 const SIGNALING_CID = 0x0005;
-class Signaling extends events.EventEmitter {
+class Signaling extends events_1.default.EventEmitter {
     constructor(handle, aclStream) {
         super();
         this._handle = handle;
@@ -8906,9 +8921,12 @@ exports.default = Signaling;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const events = __webpack_require__("./node_modules/events/events.js");
-const crypto = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js");
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
 const SMP_CID = 0x0006;
 const SMP_PAIRING_REQUEST = 0x01;
 const SMP_PAIRING_RESPONSE = 0x02;
@@ -8917,7 +8935,7 @@ const SMP_PAIRING_RANDOM = 0x04;
 const SMP_PAIRING_FAILED = 0x05;
 const SMP_ENCRYPT_INFO = 0x06;
 const SMP_MASTER_IDENT = 0x07;
-class Smp extends events.EventEmitter {
+class Smp extends events_1.default.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._aclStream = aclStream;
@@ -8980,10 +8998,10 @@ class Smp extends events.EventEmitter {
     handlePairingResponse(data) {
         this._pres = data;
         this._tk = Buffer.from("00000000000000000000000000000000", "hex");
-        this._r = crypto.r();
+        this._r = crypto_1.default.r();
         this.write(Buffer.concat([
             Buffer.from([SMP_PAIRING_CONFIRM]),
-            crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
+            crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
     handlePairingConfirm(data) {
@@ -8994,10 +9012,10 @@ class Smp extends events.EventEmitter {
         const r = data.slice(1);
         const pcnf = Buffer.concat([
             Buffer.from([SMP_PAIRING_CONFIRM]),
-            crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
+            crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
-            const stk = crypto.s1(this._tk, r, this._r);
+            const stk = crypto_1.default.s1(this._tk, r, this._r);
             this.emit("stk", stk);
         }
         else {
@@ -9848,21 +9866,24 @@ exports.default = Hci;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const events = __webpack_require__("./node_modules/events/events.js");
-const Smp = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/smp.js");
-class AclStream extends events.EventEmitter {
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/smp.js"));
+class AclStream extends events_1.default.EventEmitter {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._hci = hci;
         this._handle = handle;
         this.encypted = false;
-        this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress, this._hci);
+        this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress, this._hci);
     }
-    rite(cid, data) {
+    write(cid, data) {
         this._hci.queueAclDataPkt(this._handle, cid, data);
     }
-    ush(cid, data) {
+    push(cid, data) {
         if (data) {
             this.emit("data", cid, data);
         }
@@ -9870,11 +9891,11 @@ class AclStream extends events.EventEmitter {
             this.emit("end");
         }
     }
-    ushEncrypt(encrypt) {
+    pushEncrypt(encrypt) {
         this.encrypted = encrypt ? true : false;
         this.emit("encryptChange", this.encrypted);
     }
-    ushLtkNegReply() {
+    pushLtkNegReply() {
         this.emit("ltkNegReply");
     }
 }
@@ -10055,10 +10076,13 @@ exports.default = BlenoBindings;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
+const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
 function r() {
-    return crypto.randomBytes(16);
+    return crypto_1.default.randomBytes(16);
 }
 function c1(k, _r, pres, preq, iat, ia, rat, ra) {
     const p1 = Buffer.concat([iat, rat, preq, pres]);
@@ -10075,7 +10099,7 @@ function s1(k, r1, r2) {
 function e(key, data) {
     key = swap(key);
     data = swap(data);
-    const cipher = crypto.createCipheriv("aes-128-ecb", key, "");
+    const cipher = crypto_1.default.createCipheriv("aes-128-ecb", key, "");
     cipher.setAutoPadding(false);
     return swap(Buffer.concat([cipher.update(data), cipher.final()]));
 }
@@ -10111,17 +10135,19 @@ exports.default = {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // var debug = require('debug')('gap');
 const debug = () => {
 };
-const events = __webpack_require__("./node_modules/events/events.js");
-const os = __webpack_require__("./node_modules/os-browserify/browser.js");
-const Hci = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js");
-const isLinux = os.platform() === "linux";
-const isIntelEdison = isLinux && os.release().indexOf("edison") !== -1;
-const isYocto = isLinux && os.release().indexOf("yocto") !== -1;
-class Gap extends events.EventEmitter {
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
+const isLinux = false;
+const isIntelEdison = false;
+const isYocto = false;
+class Gap extends events_1.default.EventEmitter {
     constructor(hci) {
         super();
         this._hci = hci;
@@ -10274,7 +10300,7 @@ class Gap extends events.EventEmitter {
             this._advertiseState = "started";
             let error = null;
             if (status) {
-                error = new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+                error = new Error(hci_1.default.STATUS_MAPPER[status] || "Unknown (" + status + ")");
             }
             this.emit("advertisingStart", error);
         }
@@ -10297,11 +10323,14 @@ exports.default = Gap;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // var debug = require('debug')('gatt');
 const debug = () => {
 };
-const events = __webpack_require__("./node_modules/events/events.js");
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 /* eslint-disable no-unused-vars */
 const ATT_OP_ERROR = 0x01;
 const ATT_OP_MTU_REQ = 0x02;
@@ -10356,7 +10385,7 @@ const ATT_ECODE_UNSUPP_GRP_TYPE = 0x10;
 const ATT_ECODE_INSUFF_RESOURCES = 0x11;
 /* eslint-enable no-unused-vars */
 const ATT_CID = 0x0004;
-class Gatt extends events.EventEmitter {
+class Gatt extends events_1.default.EventEmitter {
     constructor() {
         super();
         this.maxMtu = 256;
@@ -11256,7 +11285,7 @@ const debug = () => {
 const LTK_INFO_SIZE = 36;
 const MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
 class Mgmt {
-    construcotr(hciProtocol) {
+    constructor(hciProtocol) {
         this._ltkInfos = [];
         this._hci = hciProtocol;
     }
@@ -11321,10 +11350,13 @@ exports.default = Mgmt;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const events = __webpack_require__("./node_modules/events/events.js");
-const crypto = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js");
-const Mgmt = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js");
+const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js"));
+const mgmt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js"));
 const SMP_CID = 0x0006;
 const SMP_PAIRING_REQUEST = 0x01;
 const SMP_PAIRING_RESPONSE = 0x02;
@@ -11338,7 +11370,7 @@ class Smp extends events.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress, hciProtocol) {
         super();
         this._aclStream = aclStream;
-        this._mgmt = new Mgmt(hciProtocol);
+        this._mgmt = new mgmt_1.default(hciProtocol);
         this._iat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(remoteAddress
             .split(":")
@@ -11361,7 +11393,7 @@ class Smp extends events.EventEmitter {
         this._aclStream.on("ltkNegReply", this.onAclStreamLtkNegReplyBinded);
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
-    nAclStreamData(cid, data) {
+    onAclStreamData(cid, data) {
         if (cid !== SMP_CID) {
             return;
         }
@@ -11379,7 +11411,7 @@ class Smp extends events.EventEmitter {
             this.handlePairingFailed(data);
         }
     }
-    nAclStreamEncryptChange(encrypted) {
+    onAclStreamEncryptChange(encrypted) {
         if (encrypted) {
             if (this._stk && this._diversifier && this._random) {
                 this.write(Buffer.concat([Buffer.from([SMP_ENCRYPT_INFO]), this._stk]));
@@ -11391,17 +11423,17 @@ class Smp extends events.EventEmitter {
             }
         }
     }
-    nAclStreamLtkNegReply() {
+    onAclStreamLtkNegReply() {
         this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_UNSPECIFIED]));
         this.emit("fail");
     }
-    nAclStreamEnd() {
+    onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
         this._aclStream.removeListener("encryptChange", this.onAclStreamEncryptChangeBinded);
         this._aclStream.removeListener("ltkNegReply", this.onAclStreamLtkNegReplyBinded);
         this._aclStream.removeListener("end", this.onAclStreamEndBinded);
     }
-    andlePairingRequest(data) {
+    handlePairingRequest(data) {
         this._preq = data;
         this._pres = Buffer.from([
             SMP_PAIRING_RESPONSE,
@@ -11414,25 +11446,25 @@ class Smp extends events.EventEmitter {
         ]);
         this.write(this._pres);
     }
-    andlePairingConfirm(data) {
+    handlePairingConfirm(data) {
         this._pcnf = data;
         this._tk = Buffer.from("00000000000000000000000000000000", "hex");
-        this._r = crypto.r();
+        this._r = crypto_1.default.r();
         this.write(Buffer.concat([
             Buffer.from([SMP_PAIRING_CONFIRM]),
-            crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
+            crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
-    andlePairingRandom(data) {
+    handlePairingRandom(data) {
         const r = data.slice(1);
         const pcnf = Buffer.concat([
             Buffer.from([SMP_PAIRING_CONFIRM]),
-            crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
+            crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
             this._diversifier = Buffer.from("0000", "hex");
             this._random = Buffer.from("0000000000000000", "hex");
-            this._stk = crypto.s1(this._tk, this._r, r);
+            this._stk = crypto_1.default.s1(this._tk, this._r, r);
             this._mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
             this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
         }
@@ -11441,10 +11473,10 @@ class Smp extends events.EventEmitter {
             this.emit("fail");
         }
     }
-    andlePairingFailed(data) {
+    handlePairingFailed(data) {
         this.emit("fail");
     }
-    rite(data) {
+    write(data) {
         this._aclStream.write(SMP_CID, data);
     }
 }

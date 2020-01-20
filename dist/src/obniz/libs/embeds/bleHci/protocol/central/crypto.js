@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const crypto = require("crypto");
+const crypto_1 = __importDefault(require("crypto"));
 function r() {
-    return crypto.randomBytes(16);
+    return crypto_1.default.randomBytes(16);
 }
 function c1(k, _r, pres, preq, iat, ia, rat, ra) {
     const p1 = Buffer.concat([iat, rat, preq, pres]);
@@ -19,7 +22,7 @@ function s1(k, r1, r2) {
 function e(key, data) {
     key = swap(key);
     data = swap(data);
-    const cipher = crypto.createCipheriv("aes-128-ecb", key, "");
+    const cipher = crypto_1.default.createCipheriv("aes-128-ecb", key, "");
     cipher.setAutoPadding(false);
     return swap(Buffer.concat([cipher.update(data), cipher.final()]));
 }

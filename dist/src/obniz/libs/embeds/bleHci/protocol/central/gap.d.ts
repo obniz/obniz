@@ -1,10 +1,10 @@
-declare const events: any;
+/// <reference types="node" />
+import events from "events";
 declare class Gap extends events.EventEmitter {
     _hci: any;
     _scanState: any;
     _scanFilterDuplicates: any;
     _discoveries: any;
-    emit: any;
     _advertiseState: any;
     constructor(hci: any);
     startScanning(allowDuplicates: boolean): void;

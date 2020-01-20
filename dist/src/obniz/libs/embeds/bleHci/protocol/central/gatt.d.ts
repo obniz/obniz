@@ -1,4 +1,5 @@
-declare const events: any;
+/// <reference types="node" />
+import events from "events";
 declare class Gatt extends events.EventEmitter {
     _address: any;
     _aclStream: any;
@@ -13,7 +14,6 @@ declare class Gatt extends events.EventEmitter {
     onAclStreamEncryptBinded: any;
     onAclStreamEncryptFailBinded: any;
     onAclStreamEndBinded: any;
-    emit: any;
     constructor(address: any, aclStream: any);
     onAclStreamData(cid: any, data?: any): void;
     onAclStreamEncrypt(encrypt: any): void;

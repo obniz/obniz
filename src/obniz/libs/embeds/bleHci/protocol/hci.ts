@@ -103,7 +103,6 @@ class Hci extends events.EventEmitter {
   public _aclOutQueue: any;
   public _aclMtu: any;
   public _aclMaxInProgress: any;
-  public emit: any;
   public addressType: any;
   public address: any;
 

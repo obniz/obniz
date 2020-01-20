@@ -1,17 +1,16 @@
 // var debug = require('debug')('acl-att-stream');
 
-const events: any = require("events");
+import events from "events";
 
-const Smp: any = require("./smp");
+import Smp from "./smp";
 
-class AclStream extends events.EventEmitter {
+export  default  class AclStream extends events.EventEmitter {
   public _hci: any;
   public _handle: any;
   public _smp: any;
   public onSmpStkBinded: any;
   public onSmpFailBinded: any;
   public onSmpEndBinded: any;
-  public emit: any;
 
   constructor(
     hci: any,
@@ -79,5 +78,3 @@ class AclStream extends events.EventEmitter {
     this._smp.removeListener("end", this.onSmpEndBinded);
   }
 }
-
-export default AclStream;

@@ -1,15 +1,17 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // var debug = require('debug')('gap');
 const debug = () => {
 };
-const events = require("events");
-const os = require("os");
-const Hci = require("../hci");
-const isLinux = os.platform() === "linux";
-const isIntelEdison = isLinux && os.release().indexOf("edison") !== -1;
-const isYocto = isLinux && os.release().indexOf("yocto") !== -1;
-class Gap extends events.EventEmitter {
+const events_1 = __importDefault(require("events"));
+const hci_1 = __importDefault(require("../hci"));
+const isLinux = false;
+const isIntelEdison = false;
+const isYocto = false;
+class Gap extends events_1.default.EventEmitter {
     constructor(hci) {
         super();
         this._hci = hci;
@@ -162,7 +164,7 @@ class Gap extends events.EventEmitter {
             this._advertiseState = "started";
             let error = null;
             if (status) {
-                error = new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+                error = new Error(hci_1.default.STATUS_MAPPER[status] || "Unknown (" + status + ")");
             }
             this.emit("advertisingStart", error);
         }

@@ -1,10 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('att');
 const debug = () => {
 };
 /* eslint-disable no-unused-vars */
-const events = require("events");
+const events_1 = __importDefault(require("events"));
 const ATT_OP_ERROR = 0x01;
 const ATT_OP_MTU_REQ = 0x02;
 const ATT_OP_MTU_RESP = 0x03;
@@ -53,7 +56,7 @@ const GATT_CLIENT_CHARAC_CFG_UUID = 0x2902;
 const GATT_SERVER_CHARAC_CFG_UUID = 0x2903;
 const ATT_CID = 0x0004;
 /* eslint-enable no-unused-vars */
-class Gatt extends events.EventEmitter {
+class Gatt extends events_1.default.EventEmitter {
     constructor(address, aclStream) {
         super();
         this._address = address;

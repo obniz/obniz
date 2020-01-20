@@ -2,15 +2,14 @@
 const debug: any = () => {
 };
 
-const events: any = require("events");
-const Hci: any = require("../hci");
+import events from "events";
+import Hci from "../hci";
 
 class Gap extends events.EventEmitter {
   public _hci: any;
   public _scanState: any;
   public _scanFilterDuplicates: any;
   public _discoveries: any;
-  public emit: any;
   public _advertiseState: any;
 
   constructor(hci: any) {

@@ -16,8 +16,7 @@ class BlenoBindings extends events.EventEmitter {
   public _gatt: any;
   public _address: any;
   public _handle: any;
-  public _aclStream: any;
-  public emit: any;
+  private _aclStream: AclStream | null;
 
   constructor(hciProtocol: any) {
     super();

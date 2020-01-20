@@ -1,5 +1,5 @@
 declare const events: any;
-declare class Smp extends events.EventEmitter {
+export default class Smp extends events.EventEmitter {
     _aclStream: any;
     _mgmt: any;
     _iat: any;
@@ -9,34 +9,20 @@ declare class Smp extends events.EventEmitter {
     _stk: any;
     _random: any;
     _diversifier: any;
-    onAclStreamDataBinded: any;
-    onAclStreamData: any;
-    onAclStreamEncryptChangeBinded: any;
-    onAclStreamEncryptChange: any;
-    onAclStreamLtkNegReplyBinded: any;
-    onAclStreamLtkNegReply: any;
-    onAclStreamEndBinded: any;
-    onAclStreamEnd: any;
-    handlePairingRequest: any;
-    handlePairingConfirm: any;
-    handlePairingRandom: any;
-    handlePairingFailed: any;
-    write: any;
-    emit: any;
     _preq: any;
     _pres: any;
     _pcnf: any;
     _tk: any;
     _r: any;
     constructor(aclStream: any, localAddressType: any, localAddress: any, remoteAddressType: any, remoteAddress: any, hciProtocol: any);
-    nAclStreamData(cid: any, data: any): void;
-    nAclStreamEncryptChange(encrypted: any): void;
-    nAclStreamLtkNegReply(): void;
-    nAclStreamEnd(): void;
-    andlePairingRequest(data: any): void;
-    andlePairingConfirm(data: any): void;
-    andlePairingRandom(data: any): void;
-    andlePairingFailed(data: any): void;
-    rite(data: any): void;
+    onAclStreamData(cid: any, data: any): void;
+    onAclStreamEncryptChange(encrypted: any): void;
+    onAclStreamLtkNegReply(): void;
+    onAclStreamEnd(): void;
+    handlePairingRequest(data: any): void;
+    handlePairingConfirm(data: any): void;
+    handlePairingRandom(data: any): void;
+    handlePairingFailed(data: any): void;
+    write(data: any): void;
 }
-export default Smp;
+export {};

@@ -40,6 +40,8 @@ describe('4-uart-exchange', function() {
 
     const text = 'HelloWorld';
     let received = '';
+    sender.send(' ');
+    await obnizA.pingWait();
     sender.send(text);
     while (1 === 1) {
       if (receiver.isDataExists()) {
@@ -64,6 +66,7 @@ describe('4-uart-exchange', function() {
     const text = 'こんにちは'; //eslint-disable-line non-ascii
     let received = '';
     sender.send(' ');
+    await obnizA.pingWait();
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -99,6 +102,7 @@ describe('4-uart-exchange', function() {
     }
     let received = '';
     sender.send(' ');
+    await obnizA.pingWait();
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -135,6 +139,7 @@ describe('4-uart-exchange', function() {
     }
     let received = '';
     sender.send(' ');
+    await obnizA.pingWait();
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -170,6 +175,8 @@ describe('4-uart-exchange', function() {
       data.push(i % 256);
     }
     let received = [];
+    sender.send(' ');
+    await obnizA.pingWait();
     sender.send(data);
     while (1) {
       if (receiver.isDataExists()) {
