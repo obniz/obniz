@@ -36,9 +36,9 @@ const check_io = json.io;
 
 function waitForConenct(done) {
   if (
-      (obnizA === undefined && json.board.some(board => board === 'obnizA')) ||
-      (obnizB === undefined && json.board.some(board => board === 'obnizB')) ||
-      checkBoard === undefined
+    (obnizA === undefined && json.board.some(board => board === 'obnizA')) ||
+    (obnizB === undefined && json.board.some(board => board === 'obnizB')) ||
+    checkBoard === undefined
   ) {
     connectTwoObniz(done);
   } else {
