@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const config = require('../../realtest_esp32/config.js');
+const config = require('../config.js');
 
 let obnizA, checkBoard, check_io;
 

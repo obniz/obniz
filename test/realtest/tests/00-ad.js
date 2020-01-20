@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const config = require('../../realtest_esp32/config.js');
+const config = require('../config.js');
 
 let checkBoard, check_output_io, check_input_io;
 describe('0-ad', function() {
