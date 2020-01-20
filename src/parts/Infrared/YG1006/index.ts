@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface YG1006Options { }
-class YG1006 implements ObnizPartsInterface {
+export interface YG1006Options {
+  signal: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export default class YG1006 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,10 +18,13 @@ class YG1006 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public signal: any;
-  public onchange: any;
+
+  public onchange: ((value: number) => void) | null = null;
+
+  protected obniz!: Obniz;
+
+  private signal!: PeripheralAD;
 
   constructor() {
     this.keys = ["signal", "vcc", "gnd"];
@@ -26,7 +35,7 @@ class YG1006 implements ObnizPartsInterface {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.signal = this.obniz.getAD(this.params.signal);
-    this.signal.start((value: any) => {
+    this.signal.start((value: number) => {
       if (this.onchange) {
         this.onchange(value);
       }
@@ -34,9 +43,6 @@ class YG1006 implements ObnizPartsInterface {
   }
 
   public async getWait() {
-    const value: any = await this.signal.getWait();
-    return value;
+    return await this.signal.getWait();
   }
 }
-
-export default YG1006;

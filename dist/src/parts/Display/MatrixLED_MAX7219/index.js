@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class MatrixLED_MAX7219 {
     constructor() {
+        this.width = 0;
+        this.height = 0;
+        this.vram = [[]];
         this.keys = ["vcc", "gnd", "din", "cs", "clk"];
         this.requiredKeys = ["din", "cs", "clk"];
     }

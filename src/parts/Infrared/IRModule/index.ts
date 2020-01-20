@@ -1,17 +1,17 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface IRModuleOptions { }
-class IRModule implements ObnizPartsInterface {
+import InfraredLED from "../InfraredLED";
+import IRSensor from "../IRSensor";
 
-  get dataSymbolLength() {
-    return this.sensor.dataSymbolLength;
-  }
+export interface IRModuleOptions {
+  send: number;
+  recv: number;
+  vcc?: number;
+  gnd?: number;
+}
 
-  set dataSymbolLength(x) {
-    this.sensor.dataSymbolLength = x;
-    this.led.dataSymbolLength = x;
-  }
+export default class IRModule implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -21,10 +21,21 @@ class IRModule implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public sensor: any;
-  public led: any;
+
+  public sensor!: IRSensor;
+  public led!: InfraredLED;
+
+  protected obniz!: Obniz;
+
+  get dataSymbolLength() {
+    return this.sensor.dataSymbolLength;
+  }
+
+  set dataSymbolLength(x) {
+    this.sensor.dataSymbolLength = x;
+    this.led.dataSymbolLength = x;
+  }
 
   constructor() {
     this.keys = ["recv", "vcc", "send", "gnd"];
@@ -80,5 +91,3 @@ class IRModule implements ObnizPartsInterface {
     ;
   }
 }
-
-export default IRModule;

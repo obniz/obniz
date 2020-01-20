@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class ServoMotor {
     constructor() {
-        this.keys = ["gnd", "vcc", "signal", "pwm"];
-        this.requiredKeys = [];
         this.range = {
             min: 0.5,
             max: 2.4,
         };
+        this.keys = ["gnd", "vcc", "signal", "pwm"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -26,6 +26,9 @@ class ServoMotor {
         else {
             this.pwm = obniz.getFreePwm();
             this.pwm_io_num = this.params.signal;
+            if (typeof this.pwm_io_num !== "number") {
+                throw new Error(`no io specified for pwm`);
+            }
             this.pwm.start({ io: this.pwm_io_num });
         }
         this.pwm.freq(50);

@@ -4,21 +4,20 @@ export interface LEDOptions {
     anode: number;
     cathode?: number;
 }
-declare class LED implements ObnizPartsInterface {
+export default class LED implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
-    io_anode: any;
     params: any;
-    io_cathode: any;
-    animationName: any;
+    protected obniz: Obniz;
+    private io_anode?;
+    private io_cathode?;
+    private animationName;
     constructor();
     wired(obniz: Obniz): void;
     on(): void;
     off(): void;
     output(value: any): void;
     endBlink(): void;
-    blink(interval: any): void;
+    blink(interval?: number): void;
 }
-export default LED;

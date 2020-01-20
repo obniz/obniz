@@ -14,10 +14,11 @@ class S11059 {
         this.keys = ["vcc", "sda", "scl", "i2c", "gnd"];
         this.requiredKeys = [];
         this.address = 0x2a;
-        this.regAdrs = {};
-        this.regAdrs.ctrl = 0x00;
-        this.regAdrs.manualTiming = 0x01;
-        this.regAdrs.sensorRed = 0x03;
+        this.regAdrs = {
+            ctrl: 0x00,
+            manualTiming: 0x01,
+            sensorRed: 0x03,
+        };
     }
     static info() {
         return {
@@ -34,9 +35,9 @@ class S11059 {
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
-    init(gain, intTime) {
+    init(gain, intergerTime) {
         this.i2c.write(this.address, [this.regAdrs.ctrl, 0x80]); // Reset
-        const val = (gain << 3) | intTime;
+        const val = (gain << 3) | intergerTime;
         this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
     }
     getVal() {

@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class AK8963 {
     constructor() {
+        this._adc_cycle = 0;
         this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address", "adb_cycle"];
         this.requiredKeys = [];
     }

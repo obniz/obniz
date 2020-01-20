@@ -1,12 +1,11 @@
-import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 
-// sensor resopnse not found
-
-import Obniz from "../../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import AnalogTemperatureSensor, {AnalogTemperatureSensorOptions} from "../AnalogTemperatureSensor";
 
-export interface S8100BOptions { }
-class S8100B extends AnalogTemperatureSensor implements ObnizPartsInterface {
+export interface S8100BOptions extends AnalogTemperatureSensorOptions {
+}
+
+export default class S8100B extends AnalogTemperatureSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: "S8100B",
@@ -17,5 +16,3 @@ class S8100B extends AnalogTemperatureSensor implements ObnizPartsInterface {
     return 30 + (1.508 - voltage) / -0.08; // Temp(Celsius) =
   }
 }
-
-export default S8100B;

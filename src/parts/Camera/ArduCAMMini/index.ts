@@ -1,8 +1,40 @@
 import Obniz from "../../../obniz";
+import {DriveType} from "../../../obniz/libs/io_peripherals/common";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface ArduCAMMiniOptions { }
-class ArduCAMMini implements ObnizPartsInterface {
+export interface ArduCAMMiniOptions {
+  cs: PeripheralIO;
+  mosi?: PeripheralIO;
+  miso?: PeripheralIO;
+  sclk?: PeripheralIO;
+  gnd?: PeripheralIO;
+  vcc?: PeripheralIO;
+  sda?: PeripheralIO;
+  scl?: PeripheralIO;
+  i2c?: PeripheralI2C;
+  spi?: PeripheralSPI;
+  spi_drive?: DriveType;
+  spi_frequency?: number;
+  module_version?: number;
+}
+
+export type ArduCAMMiniMode = "MCU2LCD" | "CAM2LCD" | "LCD2MCU";
+export type ArduCAMMiniSize =
+  | "160x120"
+  | "176x144"
+  | "320x240"
+  | "352x288"
+  | "640x480"
+  | "800x600"
+  | "1024x768"
+  | "1280x960"
+  | "1600x1200";
+
+export default class ArduCAMMini implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -20,9 +52,9 @@ class ArduCAMMini implements ObnizPartsInterface {
   public params: any;
   public io_cs: any;
   public sensor_addr: any;
-  public spi: any;
-  public i2c: any;
   public _size: any;
+  protected spi!: PeripheralSPI;
+  protected i2c!: PeripheralI2C;
 
   constructor() {
     this.keys = [
@@ -703,8 +735,8 @@ class ArduCAMMini implements ObnizPartsInterface {
     this.i2c = obniz.getI2CWithConfig(this.params);
   }
 
-  public spi_write(addr: any, byteData: any) {
-    const data: any = [];
+  public spi_write(addr: number, byteData: number) {
+    const data = [];
     data.push(addr);
     data.push(byteData);
     this.io_cs.output(false);
@@ -712,44 +744,44 @@ class ArduCAMMini implements ObnizPartsInterface {
     this.io_cs.output(true);
   }
 
-  public async spi_readWait(addr: any) {
-    const data: any = [];
+  public async spi_readWait(addr: number) {
+    const data = [];
     data.push(addr);
     data.push(0x00);
     this.io_cs.output(false);
-    const recv: any = await this.spi.writeWait(data);
+    const recv = await this.spi.writeWait(data);
     this.io_cs.output(true);
     return recv[1];
   }
 
-  public i2c_byte_write(addr: any, byteData: any) {
+  public i2c_byte_write(addr: number, byteData: number) {
     this.i2c.write(this.sensor_addr, [addr, byteData]);
   }
 
-  public i2c_regs_write(regs: any) {
+  public i2c_regs_write(regs: number[]) {
     for (let i = 0; i < regs.length; i++) {
       this.i2c.write(this.sensor_addr, regs[i]);
     }
   }
 
-  public spi_write_reg(addr: any, byteData: any) {
+  public spi_write_reg(addr: number, byteData: number) {
     this.spi_write(addr | 0x80, byteData);
   }
 
-  public async spi_read_regWait(addr: any) {
+  public async spi_read_regWait(addr: number) {
     return await this.spi_readWait(addr & 0x7f);
   }
 
   public async spi_pingpongWait() {
-    const testVal: any = 0x55;
+    const testVal = 0x55;
     this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
-    const val: any = await this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
+    const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
     if (val !== testVal) {
       throw new Error("spi bus fail");
     }
   }
 
-  public setMode(mode: any) {
+  public setMode(mode: string) {
     const modes: any = {
       MCU2LCD: 0x00,
       CAM2LCD: 0x01,
@@ -761,11 +793,11 @@ class ArduCAMMini implements ObnizPartsInterface {
     this.spi_write_reg(this.regs.ARDUCHIP_MODE, modes[mode]);
   }
 
-  public async getChipIdWait() {
+  public async getChipIdWait(): Promise<number> {
     this.i2c.write(this.sensor_addr, [0x0a]);
-    const val0: any = await this.i2c.readWait(this.sensor_addr, 1);
+    const val0: number[] = await this.i2c.readWait(this.sensor_addr, 1);
     this.i2c.write(this.sensor_addr, [0x0b]);
-    const val1: any = await this.i2c.readWait(this.sensor_addr, 1);
+    const val1: number[] = await this.i2c.readWait(this.sensor_addr, 1);
     return (val0[0] << 8) + val1[0];
   }
 
@@ -785,14 +817,14 @@ class ArduCAMMini implements ObnizPartsInterface {
   public async startupWait() {
     await this.spi_pingpongWait();
     this.setMode("MCU2LCD");
-    const chipid: any = await this.getChipIdWait();
+    const chipid = await this.getChipIdWait();
     if (chipid !== 0x2642 && chipid !== 0x2641) {
       throw new Error("unknown chip " + chipid);
     }
     this.init();
   }
 
-  public async takeWait(size: any) {
+  public async takeWait(size: number): Promise<number[]> {
     if (typeof size === "string" && this._size !== size) {
       this.setSize(size);
       this.obniz.wait(1000);
@@ -809,7 +841,7 @@ class ArduCAMMini implements ObnizPartsInterface {
     return await this.readFIFOWait();
   }
 
-  public setSize(string: any) {
+  public setSize(string: string) {
     if (this._size === string) {
       return;
     }
@@ -844,10 +876,10 @@ class ArduCAMMini implements ObnizPartsInterface {
     this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x01);
   }
 
-  public async readFIFOLengthWait() {
-    const len1: any = await this.spi_read_regWait(this.regs.FIFO_SIZE1);
-    const len2: any = await this.spi_read_regWait(this.regs.FIFO_SIZE2);
-    const len3: any = (await this.spi_read_regWait(this.regs.FIFO_SIZE3)) & 0x07;
+  public async readFIFOLengthWait(): Promise<number> {
+    const len1 = await this.spi_read_regWait(this.regs.FIFO_SIZE1);
+    const len2 = await this.spi_read_regWait(this.regs.FIFO_SIZE2);
+    const len3 = (await this.spi_read_regWait(this.regs.FIFO_SIZE3)) & 0x07;
     return ((len3 << 16) | (len2 << 8) | len1) & 0x07ffff;
   }
 
@@ -855,15 +887,15 @@ class ArduCAMMini implements ObnizPartsInterface {
     this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x02);
   }
 
-  public async isCaptureDoneWait() {
-    const CAP_DONE_MASK: any = 0x08;
-    const val: any = await this.spi_read_regWait(this.regs.ARDUCHIP_TRIG);
+  public async isCaptureDoneWait(): Promise<boolean> {
+    const CAP_DONE_MASK = 0x08;
+    const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TRIG);
     return val & CAP_DONE_MASK ? true : false;
   }
 
-  public async readFIFOWait() {
+  public async readFIFOWait(): Promise<number[]> {
     // get length of image data
-    const length: any = await this.readFIFOLengthWait();
+    const length = await this.readFIFOLengthWait();
 
     // start bust
     this.io_cs.output(false);
@@ -873,16 +905,16 @@ class ArduCAMMini implements ObnizPartsInterface {
       this.spi.write([0xff]); // dummy read
     }
 
-    const buf: any = [];
+    const buf = [];
 
     while (buf.length < length) {
-      let mustRead: any = length - buf.length;
+      let mustRead: number = length - buf.length;
       if (mustRead > 1024) {
         mustRead = 1024;
       }
-      const arr: any = new Array(mustRead);
+      const arr = new Array(mustRead);
       arr.fill(0);
-      const sliced: any = await this.spi.writeWait(arr);
+      const sliced = await this.spi.writeWait(arr);
       buf.push(...sliced);
     }
     // end burst
@@ -891,9 +923,7 @@ class ArduCAMMini implements ObnizPartsInterface {
     return buf;
   }
 
-  public arrayToBase64(array: any) {
+  public arrayToBase64(array: number[]): string {
     return Buffer.from(array).toString("base64");
   }
 }
-
-export default ArduCAMMini;

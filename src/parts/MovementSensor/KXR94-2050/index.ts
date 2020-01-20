@@ -1,10 +1,19 @@
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface KXR94_2050Options {
+  x: number;
+  y: number;
+  z: number;
+  vcc?: number;
+  gnd?: number;
+  enable?: number;
+  self_test?: number;
 }
 
-class KXR94_2050 implements ObnizPartsInterface {
+export default class KXR94_2050 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -14,20 +23,23 @@ class KXR94_2050 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public ad_x: any;
-  public ad_y: any;
-  public ad_z: any;
-  public _x_val: any;
-  public onChangeX: any;
-  public onChange: any;
-  public _y_val: any;
-  public onChangeY: any;
-  public _z_val: any;
-  public onChangeZ: any;
+
   public sensitivity: any;
   public offsetVoltage: any;
+  public onChange?: (value: { x: number; y: number; z: number }) => void;
+  public onChangeX?: (x: number) => void;
+  public onChangeY?: (y: number) => void;
+  public onChangeZ?: (z: number) => void;
+
+  protected obniz!: Obniz;
+
+  private ad_x!: PeripheralAD;
+  private ad_y!: PeripheralAD;
+  private ad_z!: PeripheralAD;
+  private _x_val: any;
+  private _y_val: any;
+  private _z_val: any;
 
   constructor() {
     this.keys = ["x", "y", "z", "vcc", "gnd", "enable", "self_test"];
@@ -92,12 +104,12 @@ class KXR94_2050 implements ObnizPartsInterface {
     }
   }
 
-  public changeVccVoltage(pwrVoltage: any) {
+  public changeVccVoltage(pwrVoltage: number) {
     this.sensitivity = pwrVoltage / 5; // Set sensitivity (unit:V)
     this.offsetVoltage = pwrVoltage / 2; // Set offset voltage (Output voltage at 0g, unit:V)
   }
 
-  public voltage2gravity(volt: any) {
+  public voltage2gravity(volt: number) {
     return (volt - this.offsetVoltage) / this.sensitivity;
   }
 
@@ -121,5 +133,3 @@ class KXR94_2050 implements ObnizPartsInterface {
     return this._get();
   }
 }
-
-export default KXR94_2050;

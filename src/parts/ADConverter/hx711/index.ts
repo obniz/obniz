@@ -1,4 +1,6 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface Hx711Options {
@@ -8,7 +10,7 @@ export interface Hx711Options {
   dout: number;
 }
 
-class Hx711 implements ObnizPartsInterface {
+export default class Hx711 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -21,10 +23,10 @@ class Hx711 implements ObnizPartsInterface {
   public _offset: any;
   public _scale: any;
   public obniz!: Obniz;
-  public spi: any;
+  public spi!: PeripheralSPI;
   public params: any;
-  public sck: any;
-  public dout: any;
+  public sck!: PeripheralIO;
+  public dout!: PeripheralIO;
 
   constructor() {
     this.keys = ["vcc", "gnd", "sck", "dout"];
@@ -149,5 +151,3 @@ class Hx711 implements ObnizPartsInterface {
     this._scale = scale;
   }
 }
-
-export default Hx711;

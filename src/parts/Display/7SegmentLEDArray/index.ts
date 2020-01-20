@@ -1,8 +1,12 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import _7SegmentLED from "../7SegmentLED";
 
-export interface _7SegmentLEDArrayOptions { }
-class _7SegmentLEDArray implements ObnizPartsInterface {
+export interface _7SegmentLEDArrayOptions {
+  segments: _7SegmentLED[];
+}
+
+export default class _7SegmentLEDArray implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -10,11 +14,11 @@ class _7SegmentLEDArray implements ObnizPartsInterface {
     };
   }
 
-  public identifier: any;
+  public identifier: string;
   public keys: string[];
   public requiredKeys: string[];
   public obniz!: Obniz;
-  public segments: any;
+  public segments!: _7SegmentLED[];
   public params: any;
 
   constructor() {
@@ -30,11 +34,11 @@ class _7SegmentLEDArray implements ObnizPartsInterface {
     this.segments = this.params.segments;
   }
 
-  public print(data: any) {
+  public print(data: number) {
     if (typeof data === "number") {
       data = Math.floor(data);
 
-      const print: any = (index: any) => {
+      const print: any = (index: number) => {
         let val: any = data;
 
         for (let i = 0; i < this.segments.length; i++) {
@@ -70,5 +74,3 @@ class _7SegmentLEDArray implements ObnizPartsInterface {
     }
   }
 }
-
-export default _7SegmentLEDArray;

@@ -1,8 +1,13 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface IRSensorOptions { }
-class IRSensor implements ObnizPartsInterface {
+export interface IRSensorOptions {
+  output: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export default class IRSensor implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,26 +17,21 @@ class IRSensor implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public dataSymbolLength: any;
-  public duration: any;
-  public dataInverted: any;
-  public triggerSampleCount: any;
-  public cutTail: any;
-  public output_pullup: any;
-  public obniz!: Obniz;
   public params: any;
-  public ondetect: any;
+
+  public dataSymbolLength = 0.07;
+  public duration = 500; // 500msec;
+  public dataInverted = true;
+  public triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
+  public cutTail = false;
+  public output_pullup = true;
+  public ondetect: ((array: number[]) => void) | null = null;
+
+  protected obniz!: Obniz;
 
   constructor() {
     this.keys = ["output", "vcc", "gnd"];
     this.requiredKeys = ["output"];
-
-    this.dataSymbolLength = 0.07;
-    this.duration = 500; // 500msec
-    this.dataInverted = true;
-    this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
-    this.cutTail = false;
-    this.output_pullup = true;
   }
 
   public wired(obniz: Obniz) {
@@ -42,7 +42,7 @@ class IRSensor implements ObnizPartsInterface {
     }
   }
 
-  public start(callback: any) {
+  public start(callback: (array: number[]) => void) {
     this.ondetect = callback;
     if (this.output_pullup) {
       this.obniz.getIO(this.params.output).pull("5v");
@@ -55,10 +55,10 @@ class IRSensor implements ObnizPartsInterface {
       triggerValue: this.dataInverted ? false : true,
       triggerValueSamples: this.triggerSampleCount,
     });
-    this.obniz.logicAnalyzer!.onmeasured = (levels: any) => {
+    this.obniz.logicAnalyzer!.onmeasured = (levels: number[]) => {
       if (typeof this.ondetect === "function") {
         if (this.dataInverted) {
-          const arr: any = new Uint8Array(levels);
+          const arr = new Uint8Array(levels);
           for (let i = 0; i < arr.length; i++) {
             arr[i] = arr[i] ? 0 : 1;
           }
@@ -80,5 +80,3 @@ class IRSensor implements ObnizPartsInterface {
     };
   }
 }
-
-export default IRSensor;

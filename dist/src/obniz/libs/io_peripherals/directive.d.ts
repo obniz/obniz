@@ -1,13 +1,16 @@
 import Obniz from "../../index";
+export declare type DirectiveStatuse = "loop" | "registrate" | "pause" | "resume";
 declare class Directive {
     Obniz: Obniz;
-    observers: any;
-    _animationIdentifier: any;
+    observers: any[];
+    _animationIdentifier: number;
     constructor(obniz: Obniz, id: number);
     _reset(): void;
-    addObserver(name: any, resolve: any, reject: any): void;
-    animation(name: any, status: any, array?: any, repeat?: any): void;
-    repeatWait(array: any, repeat: any): Promise<unknown>;
-    notified(obj: any): void;
+    addObserver(name: string, resolve: any, reject: any): void;
+    animation(name: string, status: DirectiveStatuse, array?: any[], repeat?: number): void;
+    repeatWait(array: any[], repeat: number): Promise<unknown>;
+    notified(obj: {
+        [key: string]: any;
+    }): void;
 }
 export default Directive;

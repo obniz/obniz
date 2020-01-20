@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface CT10Options { }
-class CT10 implements ObnizPartsInterface {
+export interface CT10Options {
+  signal: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export default class CT10 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,13 +18,14 @@ class CT10 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public onChangeForStateWait: any;
-  public io_signal: any;
   public params: any;
-  public io_vcc: any;
-  public io_supply: any;
-  public isNear: any;
-  public onchange: any;
+
+  public onChangeForStateWait: any;
+  public io_signal!: PeripheralIO;
+  public io_vcc?: PeripheralIO;
+  public io_supply?: PeripheralIO;
+  public isNear: boolean | null = null;
+  public onchange: ((near: boolean) => void) | null = null;
 
   constructor() {
     this.keys = ["signal", "gnd", "vcc"];
@@ -43,32 +50,28 @@ class CT10 implements ObnizPartsInterface {
 
     this.io_signal.pull("0v");
 
-    const self: any = this;
-    this.io_signal.input((value: any) => {
-      self.isNear = value;
-      if (self.onchange) {
-        self.onchange(value);
+    this.io_signal.input((value: boolean) => {
+      this.isNear = value;
+      if (this.onchange) {
+        this.onchange(value);
       }
-      self.onChangeForStateWait(value);
+      this.onChangeForStateWait(value);
     });
   }
 
-  public async isNearWait() {
-    const ret: any = await this.io_signal.inputWait();
-    return ret;
+  public async isNearWait(): Promise<boolean> {
+    return await this.io_signal.inputWait();
   }
 
-  public stateWait(isNear: any) {
-    return new Promise((resolve, reject) => {
-      this.onChangeForStateWait = (near: any) => {
-        if (isNear === near) {
-          this.onChangeForStateWait = () => {
+  public stateWait(isNear: boolean): Promise<any> {
+    return new Promise((resolve) => {
+      this.onChangeForStateWait = (near: boolean) => {
+          if (isNear === near) {
+            this.onChangeForStateWait = () => {
           };
-          resolve();
+            resolve();
         }
       };
     });
   }
 }
-
-export default CT10;

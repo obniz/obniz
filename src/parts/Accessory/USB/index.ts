@@ -2,8 +2,12 @@ import Obniz from "../../../obniz";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface USBOptions { }
-class USB implements ObnizPartsInterface {
+export interface USBOptions {
+  vcc: number;
+  gnd: number;
+}
+
+export default class USB implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -45,5 +49,3 @@ class USB implements ObnizPartsInterface {
     this.io_vdd.output(false);
   }
 }
-
-export default USB;

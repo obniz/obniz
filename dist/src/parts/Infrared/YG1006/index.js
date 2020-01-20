@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class YG1006 {
     constructor() {
+        this.onchange = null;
         this.keys = ["signal", "vcc", "gnd"];
         this.requiredKeys = ["signal"];
     }
@@ -31,8 +32,7 @@ class YG1006 {
     }
     getWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.signal.getWait();
-            return value;
+            return yield this.signal.getWait();
         });
     }
 }

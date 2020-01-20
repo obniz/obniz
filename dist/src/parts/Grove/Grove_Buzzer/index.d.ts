@@ -1,17 +1,19 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface Grove_BuzzerOptions {
+    signal: number;
+    gnd?: number;
+    vcc?: number;
 }
-declare class Grove_Buzzer implements ObnizPartsInterface {
+export default class Grove_Buzzer implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
     params: any;
-    pwm: any;
-    constructor(obniz: any);
+    protected obniz: Obniz;
+    private pwm;
+    constructor();
     wired(obniz: Obniz): void;
-    play(freq: any): void;
+    play(freq: number): void;
     stop(): void;
 }
-export default Grove_Buzzer;

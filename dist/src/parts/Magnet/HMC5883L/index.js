@@ -11,12 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class HMC5883L {
     constructor() {
+        this.address = {
+            device: 0x1e,
+            reset: [0x02, 0x00],
+            xMSB: [0x03],
+        };
         this.keys = ["gnd", "sda", "scl", "i2c"];
         this.requiredKeys = [];
-        this.address = {};
-        this.address.device = 0x1e;
-        this.address.reset = [0x02, 0x00]; // Continuous Measurment Mode
-        this.address.xMSB = [0x03];
     }
     static info() {
         return {

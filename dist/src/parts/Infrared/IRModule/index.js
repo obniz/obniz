@@ -5,17 +5,17 @@ class IRModule {
         this.keys = ["recv", "vcc", "send", "gnd"];
         this.requiredKeys = ["recv", "send"];
     }
+    static info() {
+        return {
+            name: "IRModule",
+        };
+    }
     get dataSymbolLength() {
         return this.sensor.dataSymbolLength;
     }
     set dataSymbolLength(x) {
         this.sensor.dataSymbolLength = x;
         this.led.dataSymbolLength = x;
-    }
-    static info() {
-        return {
-            name: "IRModule",
-        };
     }
     wired(obniz) {
         this.obniz = obniz;

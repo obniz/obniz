@@ -1,17 +1,19 @@
 import Obniz from "../../../../obniz";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-export interface ADT7410Options {
+import { I2cPartsAbstructOptions } from "../../../i2cParts";
+export interface ADT7410Options extends I2cPartsAbstructOptions {
+    addressMode: number;
 }
-declare class ADT7410 implements ObnizPartsInterface {
+export default class ADT7410 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
     params: any;
     address: any;
-    i2c: any;
+    protected obniz: Obniz;
+    protected i2c: PeripheralI2C;
     constructor();
     wired(obniz: Obniz): void;
     getTempWait(): Promise<number>;
 }
-export default ADT7410;

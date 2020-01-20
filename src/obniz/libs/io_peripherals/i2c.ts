@@ -5,9 +5,9 @@ import {PullType} from "./common";
 type I2CMode = "master" | "slave";
 
 interface PeripheralI2CState {
-  "mode"?: I2CMode;
-  "sda"?: number;
-  "scl"?: number;
+  "mode": I2CMode;
+  "sda": number;
+  "scl": number;
   "pull"?: PullType;
   "gnd"?: number;
 }
@@ -39,7 +39,6 @@ class PeripheralI2C {
 
   public _reset() {
     this.observers = [];
-    this.state = {};
     this.used = false;
     this.onwritten = undefined;
   }
@@ -245,7 +244,6 @@ class PeripheralI2C {
   }
 
   public end() {
-    this.state = {};
     const obj: any = {};
     obj["i2c" + this.id] = null;
     this.Obniz.send(obj);

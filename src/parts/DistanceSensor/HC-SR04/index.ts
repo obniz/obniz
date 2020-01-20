@@ -1,8 +1,17 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface HCSR04Options { }
-class HCSR04 implements ObnizPartsInterface {
+export interface HCSR04Options {
+  gnd?: number;
+  echo: number;
+  trigger: number;
+  vcc: number;
+}
+
+export type HCSR04UnitType = "mm" | "inch";
+
+export default class HCSR04 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,23 +21,18 @@ class HCSR04 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public _unit: any;
-  public reset_alltime: any;
-  public temp: any;
+  public _unit: HCSR04UnitType = "mm";
+  public reset_alltime = false;
+  public temp = 15;
   public obniz!: Obniz;
   public params: any;
-  public vccIO: any;
-  public trigger: any;
-  public echo: any;
+  public vccIO!: PeripheralIO;
+  public trigger!: number;
+  public echo!: number;
 
   constructor() {
     this.keys = ["vcc", "trigger", "echo", "gnd"];
     this.requiredKeys = ["vcc", "trigger", "echo"];
-
-    this._unit = "mm";
-    this.reset_alltime = false;
-
-    this.temp = 15;
   }
 
   public wired(obniz: Obniz) {
@@ -37,6 +41,12 @@ class HCSR04 implements ObnizPartsInterface {
     obniz.setVccGnd(null, this.params.gnd, "5v");
 
     this.vccIO = obniz.getIO(this.params.vcc);
+    if (obniz.isValidIO(this.params.trigger) === false) {
+      throw new Error(`trigger ${this.params.trigger} is invalid io`);
+    }
+    if (obniz.isValidIO(this.params.echo) === false) {
+      throw new Error(`echo ${this.params.echo} is invalid io`);
+    }
     this.trigger = this.params.trigger;
     this.echo = this.params.echo;
 
@@ -45,8 +55,8 @@ class HCSR04 implements ObnizPartsInterface {
     this.obniz.wait(100);
   }
 
-  public measure(callback: any) {
-    const self: any = this;
+  public measure(callback: (distance: number) => void) {
+
     this.obniz.measure!.echo({
       io_pulse: this.trigger,
       io_echo: this.echo,
@@ -68,7 +78,7 @@ class HCSR04 implements ObnizPartsInterface {
             const time: any = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
             distance =
               (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
-            if (self._unit === "inch") {
+            if (this._unit === "inch") {
               distance = distance * 0.0393701;
             }
           }
@@ -82,13 +92,13 @@ class HCSR04 implements ObnizPartsInterface {
 
   public async measureWait() {
     return new Promise((resolve: any) => {
-      this.measure((distance: any) => {
+      this.measure((distance: number) => {
         resolve(distance);
       });
     });
   }
 
-  public unit(unit: any) {
+  public unit(unit: HCSR04UnitType) {
     if (unit === "mm") {
       this._unit = "mm";
     } else if (unit === "inch") {
@@ -98,5 +108,3 @@ class HCSR04 implements ObnizPartsInterface {
     }
   }
 }
-
-export default HCSR04;

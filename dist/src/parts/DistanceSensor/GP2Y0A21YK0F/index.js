@@ -11,14 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class GP2Y0A21YK0F {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
         this.displayIoNames = {
             vcc: "vcc",
             gnd: "gnd",
             signal: "signal",
         };
         this._unit = "mm";
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
     }
     static info() {
         return {
@@ -28,8 +28,8 @@ class GP2Y0A21YK0F {
     wired(obniz) {
         this.obniz = obniz;
         obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.io_signal = obniz.getIO(this.params.signal);
-        this.io_signal.end();
+        const io_signal = obniz.getIO(this.params.signal);
+        io_signal.end();
         this.ad_signal = obniz.getAD(this.params.signal);
     }
     start(callback) {
@@ -55,10 +55,15 @@ class GP2Y0A21YK0F {
         return distance;
     }
     getWait() {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const val = yield this.ad_signal.getWait();
-            const distance = this._volt2distance(val);
-            resolve(distance);
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const val = yield this.ad_signal.getWait();
+                const distance = this._volt2distance(val);
+                resolve(distance);
+            }
+            catch (e) {
+                reject(e);
+            }
         }));
     }
     unit(unit) {

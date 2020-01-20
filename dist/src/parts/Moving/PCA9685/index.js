@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class PCA9685_PWM {
     constructor(chip, id) {
-        this.chip = chip;
-        this.id = id;
         this.value = 0;
         this.state = {};
+        this.chip = chip;
+        this.id = id;
     }
     freq(frequency) {
         this.chip.freq(frequency);
@@ -20,6 +20,8 @@ class PCA9685_PWM {
 // tslint:disable-next-line:max-classes-per-file
 class PCA9685 {
     constructor() {
+        this.pwms = [];
+        this._freq = 0;
         /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
         this.keys = [
             "gnd",
@@ -144,13 +146,13 @@ class PCA9685 {
             this.pwms[i].state.freq = this._freq;
         }
     }
-    pulse(id, pulse_width) {
+    pulse(index, pulse_width) {
         if (typeof this._freq !== "number" || this._freq <= 0) {
             throw new Error("please provide freq first.");
         }
-        this.duty(id, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
+        this.duty(index, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
     }
-    duty(id, duty) {
+    duty(index, duty) {
         duty *= 1.0;
         if (typeof this._freq !== "number" || this._freq <= 0) {
             throw new Error("please provide freq first.");
@@ -164,12 +166,12 @@ class PCA9685 {
         if (duty > 100) {
             duty = 100;
         }
-        this.getPWM(id).state.duty = duty;
-        this.writeSingleONOFF(id, 0, (duty / 100.0) * 4095);
+        this.getPWM(index).state.duty = duty;
+        this.writeSingleONOFF(index, 0, (duty / 100.0) * 4095);
     }
-    writeSingleONOFF(id, on, off) {
+    writeSingleONOFF(index, on, off) {
         this.i2c.write(this.address, [
-            this._commands.LED0_ON_L + 4 * id,
+            this._commands.LED0_ON_L + 4 * index,
             on & 0xff,
             on >> 8,
             off & 0xff,

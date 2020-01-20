@@ -1,12 +1,12 @@
-import i2cParts from "../../i2cParts";
+import i2cParts, {I2cPartsAbstructOptions} from "../../i2cParts";
 
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SH200QOptions {
+export interface SH200QOptions extends I2cPartsAbstructOptions {
 }
 
-class SH200Q extends i2cParts implements ObnizPartsInterface {
+export default class SH200Q extends i2cParts implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -16,12 +16,14 @@ class SH200Q extends i2cParts implements ObnizPartsInterface {
 
   public commands: any;
   public writeFlagWait: any;
-  public obniz!: Obniz;
   public clearFlagWait: any;
   public write: any;
-  public _accel_range: any;
-  public _gyro_range: any;
   public char2short: any;
+
+  protected obniz!: Obniz;
+
+  private _accel_range: any;
+  private _gyro_range: any;
 
   constructor() {
     super();
@@ -56,7 +58,7 @@ class SH200Q extends i2cParts implements ObnizPartsInterface {
     };
   }
 
-  public async whoamiWait() {
+  public async whoamiWait(): Promise<number> {
     const result = await this.readWait(this.commands.whoami, 1);
     return result[0];
   }
@@ -95,7 +97,7 @@ class SH200Q extends i2cParts implements ObnizPartsInterface {
     await this.obniz.wait(10);
   }
 
-  public setConfig(accelerometer_range: any, gyroscope_range: any) {
+  public setConfig(accelerometer_range: number, gyroscope_range: number) {
     // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
     switch (accelerometer_range) {
       case 4:
@@ -146,7 +148,19 @@ class SH200Q extends i2cParts implements ObnizPartsInterface {
     this.write(this.commands.adcReset, tempdata);
   }
 
-  public async getAllDataWait() {
+  public async getAllDataWait(): Promise<{
+    accelerometer: {
+      x: number,
+      y: number,
+      z: number,
+    },
+    temperature: number,
+    gyroscope: {
+      x: number,
+      y: number,
+      z: number,
+    },
+  }> {
     const raw_data: any = await this.readWait(this.commands.outputAcc, 14); // request all data
     const ac_scale: any = this._accel_range / 32768;
     const gy_scale: any = this._gyro_range / 32768;
@@ -172,18 +186,24 @@ class SH200Q extends i2cParts implements ObnizPartsInterface {
     };
   }
 
-  public async getTempWait() {
+  public async getTempWait(): Promise<number> {
     const raw_data: any = await this.readWait(this.commands.outputTemp, 2); // request all data
     return this.char2short(raw_data[1], raw_data[0]) / 333.87 + 21.0;
   }
 
-  public async getAccelWait() {
+  public async getAccelWait(): Promise<{
+    x: number,
+    y: number,
+    z: number,
+}> {
     return (await this.getAllDataWait()).accelerometer;
   }
 
-  public async getGyroWait() {
+  public async getGyroWait(): Promise<{
+    x: number,
+    y: number,
+    z: number,
+  }> {
     return (await this.getAllDataWait()).gyroscope;
   }
 }
-
-export default SH200Q;

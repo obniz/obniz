@@ -11,8 +11,20 @@ const ERROR: any = false;
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface MFRC522Options { }
-class MFRC522 implements ObnizPartsInterface {
+export interface MFRC522Options {
+  gnd?: number;
+  vcc?: number;
+  cs: number;
+  clk?: number;
+  mosi: number;
+  miso: number;
+  spi?: number;
+  spi_frequency?: number;
+  pull?: any;
+  rst: number;
+}
+
+export default class MFRC522 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -296,7 +308,7 @@ class MFRC522 implements ObnizPartsInterface {
     await this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
   }
 
-  public writeRegister(addr: any, val: any) {
+  public writeRegister(addr: number, val: any) {
     let data: any;
     if (val instanceof Array) {
       // If val is Array
@@ -309,15 +321,15 @@ class MFRC522 implements ObnizPartsInterface {
     this.cs.output(true);
   }
 
-  public async readRegister(addr: any) {
-    const data: any = [((addr << 1) & 0x7e) | 0x80, 0];
+  public async readRegister(addr: number) {
+    const data = [((addr << 1) & 0x7e) | 0x80, 0];
     this.cs.output(false);
-    const response: any = await this.spi.writeWait(data);
+    const response = await this.spi.writeWait(data);
     this.cs.output(true);
     return response[1];
   }
 
-  public async readRegister_nByte(addr: any, n?: any) {
+  public async readRegister_nByte(addr: any, n?: any): Promise<number[]> {
     const dataArray: any = [];
     if (addr instanceof Array) {
       // Multiple addresses(If addr is Array)
@@ -332,7 +344,7 @@ class MFRC522 implements ObnizPartsInterface {
     }
     dataArray.push(0); // End reading
     this.cs.output(false);
-    const values: any = await this.spi.writeWait(dataArray);
+    const values = await this.spi.writeWait(dataArray);
     this.cs.output(true);
     values.shift();
     return values;
@@ -363,7 +375,11 @@ class MFRC522 implements ObnizPartsInterface {
   }
 
   // RC522 and ISO14443 card communication
-  public async toCard(command: any, bitsToSend: any) {
+  public async toCard(command: any, bitsToSend: any): Promise<{
+    status: boolean;
+    data: any;
+    bitSize: number;
+  }> {
     let data: any = [];
     let bitSize: any = 0;
     let status: any = ERROR;
@@ -434,7 +450,10 @@ class MFRC522 implements ObnizPartsInterface {
     return {status, data, bitSize};
   }
 
-  public async findCardWait() {
+  public async findCardWait(): Promise<{
+    uid: any;
+    PICC_Type: string;
+  }> {
     await this.init();
     await this.searchTagWait();
     const uid: any = await this.getUidWait();
@@ -452,7 +471,7 @@ class MFRC522 implements ObnizPartsInterface {
     }
   }
 
-  public async getUidWait() {
+  public async getUidWait(): Promise<any> {
     this.writeRegister(this.BitFramingReg, 0x00);
     let uid: any = [this.PICC_SEL_CL1, 0x20];
 
@@ -628,7 +647,11 @@ class MFRC522 implements ObnizPartsInterface {
     return blockData;
   }
 
-  public async getBlockDataWait(address: any) {
+  public async getBlockDataWait(address: any): Promise<{
+    status: boolean;
+    data: any;
+    bitSize: number;
+  }> {
     let request: any = [this.PICC_READ, address];
     request = request.concat(await this.calculateCRCWait(request));
     const response: any = await this.toCard(this.PCD_Transceive, request);
@@ -638,7 +661,11 @@ class MFRC522 implements ObnizPartsInterface {
     return response.data;
   }
 
-  public async appendCRCtoBufferAndSendToCardWait(buffer: any) {
+  public async appendCRCtoBufferAndSendToCardWait(buffer: any): Promise<{
+    status: boolean;
+    data: any;
+    bitSize: number;
+  }> {
     buffer = buffer.concat(await this.calculateCRCWait(buffer));
     const response: any = await this.toCard(this.PCD_Transceive, buffer);
     if (
@@ -651,7 +678,7 @@ class MFRC522 implements ObnizPartsInterface {
     return response;
   }
 
-  public async writeBlockDataWait(Block: any, sixteenBytes: any) {
+  public async writeBlockDataWait(Block: any, sixteenBytes: any): Promise<void> {
     if (Block === 0 || Block % 4 === 3) {
       throw new Error("deny_Write");
     }
@@ -664,5 +691,3 @@ class MFRC522 implements ObnizPartsInterface {
     }
   }
 }
-
-export default MFRC522;

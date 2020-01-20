@@ -5,7 +5,7 @@ import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInte
 export interface DPS310Options {
 }
 
-class DPS310 implements ObnizPartsInterface {
+export default class DPS310 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -495,5 +495,3 @@ class DPS310 implements ObnizPartsInterface {
     return this.calcPressure(prs);
   }
 }
-
-export default DPS310;

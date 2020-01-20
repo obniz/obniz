@@ -1,35 +1,48 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import {PWMInterface} from "../../../obniz/libs/io_peripherals/pwm";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-class PCA9685_PWM  {
-  public chip: any;
-  public id: any;
-  public value: any;
-  public state: any;
+class PCA9685_PWM  implements PWMInterface {
+  public chip: PCA9685;
+  public id: number;
+  public value = 0;
+  public state: any = {};
 
-  constructor(chip: any, id: any) {
+  constructor(chip: PCA9685, id: number) {
     this.chip = chip;
     this.id = id;
-    this.value = 0;
-    this.state = {};
   }
 
-  public freq(frequency: any) {
+  public freq(frequency: number) {
     this.chip.freq(frequency);
   }
 
-  public pulse(value: any) {
+  public pulse(value: number) {
     this.chip.pulse(this.id, value);
   }
 
-  public duty(value: any) {
+  public duty(value: number) {
     this.chip.duty(this.id, value);
   }
 }
 
-export interface PCA9685Options { }
+export interface PCA9685Options {
+  gnd?: number;
+  vcc?: number;
+  oe?: number;
+  scl?: number;
+  sda?: number;
+  i2c?: PeripheralI2C;
+  enabled?: boolean;
+  address?: number;
+  drive?: string;
+}
+
 // tslint:disable-next-line:max-classes-per-file
-class PCA9685 implements ObnizPartsInterface {
+export default class PCA9685 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -39,21 +52,24 @@ class PCA9685 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
+
   public address: any;
   public _commands: any;
   public _regs: any;
   public pwmNum: any;
-  public pwms: any;
-  public obniz!: Obniz;
+  public pwms: PCA9685_PWM[] = [];
   public params: any;
-  public io_oe: any;
-  public i2c: any;
   public io_srclr: any;
   public chip: any;
   public id: any;
   public value: any;
   public state: any;
-  public _freq: any;
+
+  protected obniz!: Obniz;
+
+  private io_oe?: PeripheralIO;
+  private i2c!: PeripheralI2C;
+  private _freq: number = 0;
 
   constructor() {
     /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
@@ -160,14 +176,14 @@ class PCA9685 implements ObnizPartsInterface {
     return typeof id === "number" && id >= 0 && id < this.pwmNum;
   }
 
-  public getPWM(id: any) {
+  public getPWM(id: number): PCA9685_PWM {
     if (!this.isValidPWM(id)) {
       throw new Error("pwm " + id + " is not valid pwm");
     }
     return this.pwms[id];
   }
 
-  public freq(frequency: any) {
+  public freq(frequency: number) {
     if (typeof frequency !== "number") {
       return;
     }
@@ -201,14 +217,14 @@ class PCA9685 implements ObnizPartsInterface {
     }
   }
 
-  public pulse(id: any, pulse_width: any) {
+  public pulse(index: number, pulse_width: number) {
     if (typeof this._freq !== "number" || this._freq <= 0) {
       throw new Error("please provide freq first.");
     }
-    this.duty(id, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
+    this.duty(index, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
   }
 
-  public duty(id: any, duty: any) {
+  public duty(index: number, duty: number) {
     duty *= 1.0;
     if (typeof this._freq !== "number" || this._freq <= 0) {
       throw new Error("please provide freq first.");
@@ -222,13 +238,13 @@ class PCA9685 implements ObnizPartsInterface {
     if (duty > 100) {
       duty = 100;
     }
-    this.getPWM(id).state.duty = duty;
-    this.writeSingleONOFF(id, 0, (duty / 100.0) * 4095);
+    this.getPWM(index).state.duty = duty;
+    this.writeSingleONOFF(index, 0, (duty / 100.0) * 4095);
   }
 
-  public writeSingleONOFF(id: any, on: any, off: any) {
+  public writeSingleONOFF(index: number, on: number, off: number) {
     this.i2c.write(this.address, [
-      this._commands.LED0_ON_L + 4 * id,
+      this._commands.LED0_ON_L + 4 * index,
       on & 0xff,
       on >> 8,
       off & 0xff,
@@ -236,12 +252,10 @@ class PCA9685 implements ObnizPartsInterface {
     ]);
   }
 
-  public setEnable(enable: any) {
+  public setEnable(enable: boolean) {
     if (!this.io_oe && enable === false) {
       throw new Error('pin "oe" is not specified');
     }
-    this.io_oe.output(!enable);
+    this.io_oe!.output(!enable);
   }
 }
-
-export default PCA9685;

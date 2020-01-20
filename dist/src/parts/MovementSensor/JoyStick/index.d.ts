@@ -1,29 +1,33 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface JoyStickOptions {
+    sw: number;
+    x: number;
+    y: number;
+    vcc?: number;
+    gnd?: number;
 }
-declare class JoyStick implements ObnizPartsInterface {
+export default class JoyStick implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
+    params: any;
     pins: any;
     pinname: any;
     shortName: any;
-    obniz: Obniz;
-    params: any;
-    io_sig_sw: any;
-    ad_x: any;
-    ad_y: any;
     positionX: any;
     positionY: any;
-    onchangex: any;
-    onchangey: any;
+    onchangex?: (val: number) => void;
+    onchangey?: (val: number) => void;
     isPressed: any;
-    onchangesw: any;
+    onchangesw?: (pressed: boolean) => void;
+    protected obniz: Obniz;
+    private io_sig_sw;
+    private ad_x;
+    private ad_y;
     constructor();
     wired(obniz: Obniz): void;
     isPressedWait(): Promise<boolean>;
     getXWait(): Promise<number>;
     getYWait(): Promise<number>;
 }
-export default JoyStick;

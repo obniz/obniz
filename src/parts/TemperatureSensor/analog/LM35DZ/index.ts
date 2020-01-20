@@ -1,12 +1,10 @@
-import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
-
-import Obniz from "../../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import AnalogTemperatureSensor, {AnalogTemperatureSensorOptions} from "../AnalogTemperatureSensor";
 
-export interface LM35DZOptions {
+export interface LM35DZOptions extends AnalogTemperatureSensorOptions {
 }
 
-class LM35DZ extends AnalogTemperatureSensor implements ObnizPartsInterface {
+export default class LM35DZ extends AnalogTemperatureSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: "LM35DZ",
@@ -17,5 +15,3 @@ class LM35DZ extends AnalogTemperatureSensor implements ObnizPartsInterface {
     return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
   }
 }
-
-export default LM35DZ;

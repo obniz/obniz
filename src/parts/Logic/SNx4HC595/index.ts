@@ -1,4 +1,5 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 class SNx4HC595_IO {
@@ -18,10 +19,19 @@ class SNx4HC595_IO {
 }
 
 export interface SNx4HC595Options {
+  gnd?: number;
+  vcc?: number;
+  ser: number;
+  srclk: number;
+  rclk: number;
+  oe?: number;
+  srclr?: number;
+  io_num?: number;
+  enabled?: boolean;
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class SNx4HC595 implements ObnizPartsInterface {
+export default class SNx4HC595 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -32,18 +42,20 @@ class SNx4HC595 implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public autoFlash: any;
-  public obniz!: Obniz;
-  public io_ser: any;
   public params: any;
-  public io_srclk: any;
-  public io_rclk: any;
-  public io_srclr: any;
-  public io_oe: any;
-  public chip: any;
-  public id: any;
-  public value: any;
-  public _io_num: any;
-  public io: any;
+
+  protected obniz!: Obniz;
+
+  private io_ser!: PeripheralIO;
+  private io_srclk!: PeripheralIO;
+  private io_rclk!: PeripheralIO;
+  private io_srclr?: PeripheralIO;
+  private io_oe?: PeripheralIO;
+  private chip: any;
+  private id: any;
+  private value: any;
+  private _io_num: any;
+  private io: any;
 
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
@@ -106,7 +118,7 @@ class SNx4HC595 implements ObnizPartsInterface {
     }
   }
 
-  public ioNum(num: any) {
+  public ioNum(num: number) {
 
     if (typeof num === "number" && this._io_num !== num) {
       this._io_num = num;
@@ -120,11 +132,11 @@ class SNx4HC595 implements ObnizPartsInterface {
     }
   }
 
-  public isValidIO(io: any) {
+  public isValidIO(io: number) {
     return typeof io === "number" && io >= 0 && io < this._io_num;
   }
 
-  public getIO(io: any) {
+  public getIO(io: number) {
     if (!this.isValidIO(io)) {
       throw new Error("io " + io + " is not valid io");
     }
@@ -150,11 +162,11 @@ class SNx4HC595 implements ObnizPartsInterface {
     this.autoFlash = lastValue;
   }
 
-  public setEnable(enable: any) {
+  public setEnable(enable: boolean) {
     if (!this.io_oe && enable === false) {
       throw new Error('pin "oe" is not specified');
     }
-    this.io_oe.output(!enable);
+    this.io_oe!.output(!enable);
   }
 
   public flush() {
@@ -168,5 +180,3 @@ class SNx4HC595 implements ObnizPartsInterface {
     this.io_rclk.output(true);
   }
 }
-
-export default SNx4HC595;

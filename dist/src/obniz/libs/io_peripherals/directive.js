@@ -5,6 +5,7 @@ class Directive {
     constructor(obniz, id) {
         this.Obniz = obniz;
         this.observers = [];
+        this._animationIdentifier = 0;
         this._reset();
     }
     _reset() {

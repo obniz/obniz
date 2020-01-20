@@ -1,22 +1,25 @@
 import Obniz from "../../../obniz";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface WS2811Options {
+    gnd?: number;
+    vcc?: number;
+    din: number;
 }
-declare class WS2811 implements ObnizPartsInterface {
+export default class WS2811 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
-    static _generateFromByte(val: any): any;
-    static _generateColor(r: any, g: any, b: any): any;
-    static _generateHsvColor(h: any, s: any, v: any): any;
+    private static _generateFromByte;
+    private static _generateColor;
+    private static _generateHsvColor;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
     params: any;
-    spi: any;
+    spi: PeripheralSPI;
+    protected obniz: Obniz;
     constructor();
     wired(obniz: Obniz): void;
-    rgb(r: any, g: any, b: any): void;
-    hsv(h: any, s: any, v: any): void;
-    rgbs(array: any): void;
-    hsvs(array: any): void;
+    rgb(red: number, green: number, blue: number): void;
+    hsv(hue: number, saturation: number, value: number): void;
+    rgbs(array: Array<[number, number, number]>): void;
+    hsvs(array: Array<[number, number, number]>): void;
 }
-export default WS2811;

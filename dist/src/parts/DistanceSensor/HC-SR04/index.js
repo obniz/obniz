@@ -11,11 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR04 {
     constructor() {
-        this.keys = ["vcc", "trigger", "echo", "gnd"];
-        this.requiredKeys = ["vcc", "trigger", "echo"];
         this._unit = "mm";
         this.reset_alltime = false;
         this.temp = 15;
+        this.keys = ["vcc", "trigger", "echo", "gnd"];
+        this.requiredKeys = ["vcc", "trigger", "echo"];
     }
     static info() {
         return {
@@ -26,6 +26,12 @@ class HCSR04 {
         this.obniz = obniz;
         obniz.setVccGnd(null, this.params.gnd, "5v");
         this.vccIO = obniz.getIO(this.params.vcc);
+        if (obniz.isValidIO(this.params.trigger) === false) {
+            throw new Error(`trigger ${this.params.trigger} is invalid io`);
+        }
+        if (obniz.isValidIO(this.params.echo) === false) {
+            throw new Error(`echo ${this.params.echo} is invalid io`);
+        }
         this.trigger = this.params.trigger;
         this.echo = this.params.echo;
         this.vccIO.drive("5v");
@@ -33,7 +39,6 @@ class HCSR04 {
         this.obniz.wait(100);
     }
     measure(callback) {
-        const self = this;
         this.obniz.measure.echo({
             io_pulse: this.trigger,
             io_echo: this.echo,
@@ -55,7 +60,7 @@ class HCSR04 {
                         const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
                         distance =
                             (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
-                        if (self._unit === "inch") {
+                        if (this._unit === "inch") {
                             distance = distance * 0.0393701;
                         }
                     }

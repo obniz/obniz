@@ -1,8 +1,10 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../../parts/i2cParts";
 
-export interface AXP192Options { }
-class AXP192 implements ObnizPartsInterface {
+export interface AXP192Options extends I2cPartsAbstructOptions { }
+
+export default class AXP192 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -13,7 +15,8 @@ class AXP192 implements ObnizPartsInterface {
   public requiredKeys: string[];
   public keys: string[];
   public params: any;
-  public i2c: any;
+
+  protected i2c: any;
 
   constructor() {
     this.requiredKeys = [];
@@ -27,24 +30,24 @@ class AXP192 implements ObnizPartsInterface {
   }
 
   // Module functions
-  public set(address: any, data: any) {
+  public set(address: number, data: number) {
     this.i2c.write(AXP192_ADDRESS, [address, data]);
   }
 
-  public async getWait(address: any) {
+  public async getWait(address: number) {
     this.i2c.write(AXP192_ADDRESS, [address]);
     return await this.i2c.readWait(AXP192_ADDRESS, 1);
   }
 
-  public async setLDO2Voltage(voltage: any) {
+  public async setLDO2Voltage(voltage: number) {
     if (voltage < 1.8) {
       voltage = 1.8;
     }
     if (voltage > 3.3) {
       voltage = 3.3;
     }
-    let set: any = await this.getWait(REG_VOLT_SET_LDO2_3);
-    let offset: any = (voltage - 1.8) * 10;
+    let set = await this.getWait(REG_VOLT_SET_LDO2_3);
+    let offset = (voltage - 1.8) * 10;
     if (offset > 15) {
       offset = 15;
     }
@@ -53,15 +56,15 @@ class AXP192 implements ObnizPartsInterface {
     this.set(REG_VOLT_SET_LDO2_3, set);
   }
 
-  public async setLDO3Voltage(voltage: any) {
+  public async setLDO3Voltage(voltage: number) {
     if (voltage < 1.8) {
       voltage = 1.8;
     }
     if (voltage > 3.3) {
       voltage = 3.3;
     }
-    let set: any = await this.getWait(REG_VOLT_SET_LDO2_3);
-    let offset: any = (voltage - 1.8) * 10;
+    let set = await this.getWait(REG_VOLT_SET_LDO2_3);
+    let offset = (voltage - 1.8) * 10;
     if (offset > 15) {
       offset = 15;
     }
@@ -77,16 +80,16 @@ class AXP192 implements ObnizPartsInterface {
     this.set(REG_EN_DC1_LDO2_3, 0x4d);
   }
 
-  public async toggleLDO2(val: any) {
-    const bit: any = val ? 1 : 0;
-    let state: any = await this.getWait(REG_EN_DC1_LDO2_3);
+  public async toggleLDO2(val: number) {
+    const bit = val ? 1 : 0;
+    let state = await this.getWait(REG_EN_DC1_LDO2_3);
     state = (state & LDO2_EN_MASK) | (bit << 2);
     this.set(REG_EN_DC1_LDO2_3, state);
   }
 
-  public async toggleLDO3(val: any) {
-    const bit: any = val ? 1 : 0;
-    let state: any = await this.getWait(REG_EN_DC1_LDO2_3);
+  public async toggleLDO3(val: number) {
+    const bit = val ? 1 : 0;
+    let state = await this.getWait(REG_EN_DC1_LDO2_3);
     state = (state & LDO3_EN_MASK) | (bit << 3);
     this.set(REG_EN_DC1_LDO2_3, state);
   }
@@ -113,8 +116,6 @@ class AXP192 implements ObnizPartsInterface {
     return (vbat_lsb << 4) + vbat_msb;
   }
 }
-
-export default AXP192;
 
 const AXP192_ADDRESS: any = 0x34;
 

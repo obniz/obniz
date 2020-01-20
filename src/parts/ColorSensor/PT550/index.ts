@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface PT550Options { }
-class PT550 implements ObnizPartsInterface {
+export interface PT550Options {
+  signal: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export default class PT550 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -14,12 +20,15 @@ class PT550 implements ObnizPartsInterface {
   public requiredKeys: string[];
   public obniz!: Obniz;
   public params: any;
-  public signal: any;
-  public onchange: any;
+  public signal!: PeripheralAD;
 
   constructor() {
     this.keys = ["signal", "vcc", "gnd"];
     this.requiredKeys = ["signal"];
+  }
+
+  public onchange(value: number) {
+
   }
 
   public wired(obniz: Obniz) {
@@ -33,9 +42,7 @@ class PT550 implements ObnizPartsInterface {
     });
   }
 
-  public async getWait() {
+  public async getWait(): Promise<number> {
     return await this.signal.getWait();
   }
 }
-
-export default PT550;

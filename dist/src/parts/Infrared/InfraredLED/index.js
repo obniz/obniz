@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class InfraredLED {
     constructor() {
+        this.dataSymbolLength = 0.07;
         this.keys = ["anode", "cathode"];
         this.requiredKeys = ["anode"];
-        this.dataSymbolLength = 0.07;
     }
     static info() {
         return {
@@ -28,11 +28,11 @@ class InfraredLED {
         this.pwm.freq(38000);
         this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
     }
-    send(arr) {
-        if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
-            arr.push(0);
+    send(data) {
+        if (data && data.length > 0 && data[data.length - 1] === 1) {
+            data.push(0);
         }
-        this.pwm.modulate("am", this.dataSymbolLength, arr);
+        this.pwm.modulate("am", this.dataSymbolLength, data);
     }
 }
 exports.default = InfraredLED;

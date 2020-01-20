@@ -1,8 +1,15 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_3AxisAccelerometerOptions { }
-class Grove_3AxisAccelerometer implements ObnizPartsInterface {
+export interface Grove_3AxisAccelerometerOptions {
+  gnd?: number;
+  vcc?: number;
+  sda: number;
+  scl: number;
+}
+
+export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -13,27 +20,27 @@ class Grove_3AxisAccelerometer implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public ioKeys: string[];
-  public displayName: any;
-  public displayIoNames: any;
-  public address: any;
+  public displayName = "3axis";
+  public displayIoNames = {sda: "sda", scl: "scl"};
+
+  public address = 0x53;
   public regAdrs: any;
   public constVal: any;
-  public obniz!: Obniz;
-  public vcc: any;
   public params: any;
-  public gnd: any;
-  public i2c: any;
-  public etRegisterBit: any;
+
+  protected obniz!: Obniz;
+
+  private vcc?: number;
+  private gnd?: number;
+  private i2c!: PeripheralI2C;
+  private etRegisterBit: any;
 
   constructor() {
     this.keys = ["gnd", "vcc", "sda", "scl"];
     this.requiredKeys = ["sda", "scl"];
 
     this.ioKeys = this.keys;
-    this.displayName = "3axis";
-    this.displayIoNames = {sda: "sda", scl: "scl"};
 
-    this.address = 0x53;
     this.regAdrs = {};
     this.regAdrs.POWER_CTL = 0x2d;
     this.regAdrs.THRESH_ACT = 0x24;
@@ -153,7 +160,7 @@ class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     await this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
   }
 
-  public signHandling(val: any) {
+  public signHandling(val: number): number {
     const sign: any = val >> 15;
     if (sign) {
       val = -(0xffff - val);
@@ -161,7 +168,7 @@ class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     return val;
   }
 
-  public async getRawVal() {
+  public async getRawVal(): Promise<number[]> {
     this.i2c.write(this.address, [this.regAdrs.DATAX0]);
     const buff: any = await this.i2c.readWait(this.address, 6);
     const rawVal: any = [0, 0, 0];
@@ -171,7 +178,7 @@ class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     return rawVal;
   }
 
-  public async getWait() {
+  public async getWait(): Promise<number[]> {
     const accelVal: any = [0, 0, 0];
     const raw: any = await this.getRawVal();
     accelVal[0] = raw[0] * this.constVal.gainX;
@@ -180,5 +187,3 @@ class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     return accelVal;
   }
 }
-
-export default Grove_3AxisAccelerometer;

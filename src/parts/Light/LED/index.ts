@@ -1,11 +1,13 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface LEDOptions {
   anode: number;
   cathode?: number;
 }
-class LED implements ObnizPartsInterface {
+
+export default class LED implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -15,11 +17,13 @@ class LED implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
-  public io_anode: any;
   public params: any;
-  public io_cathode: any;
-  public animationName: any;
+
+  protected obniz!: Obniz;
+
+  private io_anode?: PeripheralIO;
+  private io_cathode?: PeripheralIO;
+  private animationName!: string;
 
   constructor() {
     this.keys = ["anode", "cathode"];
@@ -37,23 +41,34 @@ class LED implements ObnizPartsInterface {
     }
 
     this.obniz = obniz;
-    this.io_anode = getIO(this.params.anode);
-    this.io_anode.output(false);
-    if (this.obniz!.isValidIO(this.params.cathode)) {
+
+    if (this.obniz.isValidIO(this.params.anode)) {
+      this.io_anode = getIO(this.params.anode);
+    }
+    if (this.obniz.isValidIO(this.params.cathode)) {
       this.io_cathode = getIO(this.params.cathode);
-      this.io_cathode.output(false);
     }
     this.animationName = "Led-" + this.params.anode;
   }
 
   public on() {
     this.endBlink();
-    this.io_anode.output(true);
+    if (this.io_anode) {
+      this.io_anode.output(true);
+    }
+    if (this.io_cathode) {
+      this.io_cathode.output(false);
+    }
   }
 
   public off() {
     this.endBlink();
-    this.io_anode.output(false);
+    if (this.io_anode) {
+      this.io_anode.output(false);
+    }
+    if (this.io_cathode) {
+      this.io_cathode.output(true);
+    }
   }
 
   public output(value: any) {
@@ -68,29 +83,27 @@ class LED implements ObnizPartsInterface {
     this.obniz!.io!.animation(this.animationName, "pause");
   }
 
-  public blink(interval: any) {
+  public blink(interval?: number) {
     if (!interval) {
       interval = 100;
     }
-    const frames: any = [
+    const frames = [
       {
         duration: interval,
-        state: (index: any) => {
+        state: (index: number) => {
           // index = 0
-          this.io_anode.output(true); // on
+          this.on(); // on
         },
       },
       {
         duration: interval,
         state: (index: any) => {
           // index = 0
-          this.io_anode.output(false); // off
+          this.off();
         },
       },
     ];
 
-    this.obniz!.io!.animation(this.animationName, "loop", frames);
+    this.obniz.io!.animation(this.animationName, "loop", frames);
   }
 }
-
-export default LED;

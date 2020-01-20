@@ -2,6 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class SharpMemoryTFT {
     constructor() {
+        this.commands = {
+            write: 0x80,
+            clear: 0x20,
+            vcom: 0x40,
+        };
+        this.width = 0;
+        this.height = 0;
+        this._pos = { x: 0, y: 0 };
+        this.autoFlush = false;
+        this.fontSize = 0;
         this.keys = [
             "vcc",
             "gnd",
@@ -17,10 +27,6 @@ class SharpMemoryTFT {
             "height",
         ];
         this.requiredKeys = ["sclk", "mosi", "cs", "width", "height"];
-        this.commands = {};
-        this.commands.write = 0x80;
-        this.commands.clear = 0x20;
-        this.commands.vcom = 0x40;
         this._canvas = null;
         this._reset();
     }
@@ -158,9 +164,7 @@ class SharpMemoryTFT {
     }
     _ctx() {
         const canvas = this._preparedCanvas();
-        if (canvas) {
-            return canvas.getContext("2d");
-        }
+        return canvas.getContext("2d");
     }
     font(font, size) {
         const ctx = this._ctx();
@@ -260,6 +264,18 @@ class SharpMemoryTFT {
             this.warnCanvasAvailability();
         }
     }
+    draw(ctx) {
+        if (this.autoFlush) {
+            this._draw(ctx);
+        }
+    }
+    drawing(autoFlush) {
+        this.autoFlush = autoFlush === true;
+        const ctx = this._ctx();
+        if (ctx) {
+            this.draw(ctx);
+        }
+    }
     _draw(ctx) {
         const stride = this.width / 8;
         const vram = new Array(stride * 64);
@@ -279,18 +295,6 @@ class SharpMemoryTFT {
             }
         }
         this.raw(vram);
-    }
-    draw(ctx) {
-        if (this.autoFlush) {
-            this._draw(ctx);
-        }
-    }
-    drawing(autoFlush) {
-        this.autoFlush = autoFlush === true;
-        const ctx = this._ctx();
-        if (ctx) {
-            this.draw(ctx);
-        }
     }
 }
 exports.default = SharpMemoryTFT;

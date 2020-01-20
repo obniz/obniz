@@ -1,8 +1,15 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface PaPIRsVZOptions { }
-class PaPIRsVZ implements ObnizPartsInterface {
+export interface PaPIRsVZOptions {
+  signal: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export default class PaPIRsVZ implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,10 +19,12 @@ class PaPIRsVZ implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
-  public io_signal: any;
   public params: any;
-  public onchange: any;
+
+  public io_signal!: PeripheralIO;
+  public onchange?: (value: boolean) => void;
+
+  protected obniz!: Obniz;
 
   constructor() {
     this.keys = ["vcc", "gnd", "signal"];
@@ -29,12 +38,10 @@ class PaPIRsVZ implements ObnizPartsInterface {
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
-    this.io_signal.input((value: any) => {
+    this.io_signal.input((value: boolean) => {
       if (this.onchange) {
         this.onchange(value);
       }
     });
   }
 }
-
-export default PaPIRsVZ;

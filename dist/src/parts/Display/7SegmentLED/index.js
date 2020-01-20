@@ -39,6 +39,8 @@ class _7SegmentLED {
             dp: "dp",
             common: "com",
         };
+        this.ios = [];
+        this.isCathodeCommon = false;
     }
     static info() {
         return {
@@ -76,8 +78,9 @@ class _7SegmentLED {
             this.ios[i].output(this.isCathodeCommon ? false : true);
         }
         if (isValidIO(this.params.dp)) {
-            this.dp = getIO(this.params.dp);
-            this.dp.output(false);
+            const dp = getIO(this.params.dp);
+            dp.output(false);
+            this.dp = dp;
         }
         if (isValidIO(this.params.common)) {
             this.common = getIO(this.params.common);
@@ -120,10 +123,14 @@ class _7SegmentLED {
         }
     }
     on() {
-        this.common.output(this.isCathodeCommon ? false : true);
+        if (this.common) {
+            this.common.output(this.isCathodeCommon ? false : true);
+        }
     }
     off() {
-        this.common.output(this.isCathodeCommon ? true : false);
+        if (this.common) {
+            this.common.output(this.isCathodeCommon ? true : false);
+        }
     }
 }
 exports.default = _7SegmentLED;

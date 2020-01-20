@@ -11,10 +11,10 @@ class Puls08M5stickcS {
             name: "Puls08M5stickcS",
         };
     }
-    onbpmupdate(data) {
+    onbpmupdate(bpm) {
         return;
     }
-    onrawupdate(data) {
+    onrawupdate(values) {
         return;
     }
     wired(obniz) {

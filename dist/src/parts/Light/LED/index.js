@@ -20,21 +20,31 @@ class LED {
             return obniz.getIO(io);
         }
         this.obniz = obniz;
-        this.io_anode = getIO(this.params.anode);
-        this.io_anode.output(false);
+        if (this.obniz.isValidIO(this.params.anode)) {
+            this.io_anode = getIO(this.params.anode);
+        }
         if (this.obniz.isValidIO(this.params.cathode)) {
             this.io_cathode = getIO(this.params.cathode);
-            this.io_cathode.output(false);
         }
         this.animationName = "Led-" + this.params.anode;
     }
     on() {
         this.endBlink();
-        this.io_anode.output(true);
+        if (this.io_anode) {
+            this.io_anode.output(true);
+        }
+        if (this.io_cathode) {
+            this.io_cathode.output(false);
+        }
     }
     off() {
         this.endBlink();
-        this.io_anode.output(false);
+        if (this.io_anode) {
+            this.io_anode.output(false);
+        }
+        if (this.io_cathode) {
+            this.io_cathode.output(true);
+        }
     }
     output(value) {
         if (value) {
@@ -56,14 +66,14 @@ class LED {
                 duration: interval,
                 state: (index) => {
                     // index = 0
-                    this.io_anode.output(true); // on
+                    this.on(); // on
                 },
             },
             {
                 duration: interval,
                 state: (index) => {
                     // index = 0
-                    this.io_anode.output(false); // off
+                    this.off();
                 },
             },
         ];

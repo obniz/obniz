@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface HCSR505Options { }
-class HCSR505 implements ObnizPartsInterface {
+export interface HCSR505Options {
+  signal: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export default class HCSR505 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,10 +18,12 @@ class HCSR505 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
-  public io_signal: any;
   public params: any;
-  public onchange: any;
+
+  public io_signal!: PeripheralIO;
+  public onchange?: (value: boolean) => void;
+
+  protected obniz!: Obniz;
 
   constructor() {
     this.keys = ["vcc", "gnd", "signal"];
@@ -35,9 +43,7 @@ class HCSR505 implements ObnizPartsInterface {
     });
   }
 
-  public getWait() {
-    return this.io_signal.inputWait();
+  public async getWait(): Promise<boolean> {
+    return await this.io_signal.inputWait();
   }
 }
-
-export default HCSR505;

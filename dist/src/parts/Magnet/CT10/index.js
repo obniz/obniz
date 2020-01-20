@@ -11,6 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class CT10 {
     constructor() {
+        this.isNear = null;
+        this.onchange = null;
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
         this.onChangeForStateWait = () => {
@@ -32,23 +34,21 @@ class CT10 {
             this.io_supply.output(false);
         }
         this.io_signal.pull("0v");
-        const self = this;
         this.io_signal.input((value) => {
-            self.isNear = value;
-            if (self.onchange) {
-                self.onchange(value);
+            this.isNear = value;
+            if (this.onchange) {
+                this.onchange(value);
             }
-            self.onChangeForStateWait(value);
+            this.onChangeForStateWait(value);
         });
     }
     isNearWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.io_signal.inputWait();
-            return ret;
+            return yield this.io_signal.inputWait();
         });
     }
     stateWait(isNear) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.onChangeForStateWait = (near) => {
                 if (isNear === near) {
                     this.onChangeForStateWait = () => {

@@ -1,8 +1,24 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SharpMemoryTFTOptions { }
-class SharpMemoryTFT implements ObnizPartsInterface {
+export interface SharpMemoryTFTOptions {
+  vcc?: number;
+  gnd?: number;
+  vcc_a?: number;
+  gnd_a?: number;
+  sclk: number;
+  mosi: number;
+  cs: number;
+  disp?: number;
+  extcomin?: number;
+  extmode?: number;
+  width: number;
+  height: number;
+}
+
+export default class SharpMemoryTFT implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,20 +28,26 @@ class SharpMemoryTFT implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public commands: any;
+
+  public commands = {
+    write: 0x80,
+    clear: 0x20,
+    vcom: 0x40,
+  };
+
   public _canvas: any;
   public obniz!: Obniz;
-  public io_cs: any;
+  public io_cs!: PeripheralIO;
   public params: any;
-  public io_disp: any;
-  public io_extcomin: any;
-  public io_extmode: any;
-  public spi: any;
-  public width: any;
-  public height: any;
-  public _pos: any;
-  public autoFlush: any;
-  public fontSize: any;
+  public io_disp?: PeripheralIO;
+  public io_extcomin?: PeripheralIO;
+  public io_extmode?: PeripheralIO;
+  public spi!: PeripheralSPI;
+  public width = 0;
+  public height = 0;
+  public _pos = {x: 0 , y: 0};
+  public autoFlush = false;
+  public fontSize = 0;
   public createCanvas: any;
 
   constructor() {
@@ -45,11 +67,6 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     ];
 
     this.requiredKeys = ["sclk", "mosi", "cs", "width", "height"];
-
-    this.commands = {};
-    this.commands.write = 0x80;
-    this.commands.clear = 0x20;
-    this.commands.vcom = 0x40;
 
     this._canvas = null;
     this._reset();
@@ -84,8 +101,8 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     this.obniz.wait(100);
   }
 
-  public _reverseBits(data: any) {
-    let revData: any = 0;
+  public _reverseBits(data: number) {
+    let revData = 0;
     for (let i = 0; i < 8; i++) {
       revData += data & 0x01;
       data >>= 1;
@@ -96,7 +113,7 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     return revData;
   }
 
-  public sendLSB(data: any) {
+  public sendLSB(data: number) {
     this.spi.write([this._reverseBits(data)]);
   }
 
@@ -106,12 +123,12 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     this.io_cs.output(false);
   }
 
-  public raw(rawData: any) {
-    let oldline: any;
-    let currentline: any;
-    const totalbytes: any = (this.width * this.height) / 8;
-    let array: any = new Array(1024);
-    let index: any = 0;
+  public raw(rawData: number[]) {
+    let oldline: number;
+    let currentline: number;
+    const totalbytes = (this.width * this.height) / 8;
+    let array = new Array(1024);
+    let index = 0;
     array[index++] = this.commands.write | this.commands.vcom;
     oldline = currentline = 1;
     array[index++] = this._reverseBits(currentline);
@@ -157,7 +174,7 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public _preparedCanvas() {
+  public _preparedCanvas(): any {
     if (this._canvas) {
       return this._canvas;
     }
@@ -170,7 +187,7 @@ class SharpMemoryTFT implements ObnizPartsInterface {
         return null;
       }
     } else {
-      const identifier: any = "MemoryDispCanvas-" + this.obniz.id;
+      const identifier = "MemoryDispCanvas-" + this.obniz.id;
       let canvas: any = document.getElementById(identifier);
       if (!canvas) {
         canvas = document.createElement("canvas");
@@ -179,12 +196,12 @@ class SharpMemoryTFT implements ObnizPartsInterface {
         canvas.width = this.width;
         canvas.height = this.height;
         canvas.style["-webkit-font-smoothing"] = "none";
-        const body: any = document.getElementsByTagName("body")[0];
+        const body = document.getElementsByTagName("body")[0];
         body.appendChild(canvas);
       }
       this._canvas = canvas;
     }
-    const ctx: any = this._canvas.getContext("2d");
+    const ctx: CanvasRenderingContext2D = this._canvas.getContext("2d");
     ctx.fillStyle = "#FFF";
     ctx.fillRect(0, 0, this.width, this.height);
     ctx.fillStyle = "#000";
@@ -196,15 +213,13 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     return this._canvas;
   }
 
-  public _ctx() {
-    const canvas: any = this._preparedCanvas();
-    if (canvas) {
-      return canvas.getContext("2d");
-    }
+  public _ctx(): CanvasRenderingContext2D {
+    const canvas = this._preparedCanvas();
+    return canvas.getContext("2d");
   }
 
-  public font(font: any, size: any) {
-    const ctx: any = this._ctx();
+  public font(font: string, size: number) {
+    const ctx = this._ctx();
     if (typeof size !== "number") {
       size = 16;
     }
@@ -216,7 +231,7 @@ class SharpMemoryTFT implements ObnizPartsInterface {
   }
 
   public clear() {
-    const ctx: any = this._ctx();
+    const ctx = this._ctx();
     this._pos.x = 0;
     this._pos.y = 0;
     if (ctx) {
@@ -230,7 +245,7 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public pos(x: any, y: any) {
+  public pos(x: number, y: number) {
     this._ctx(); // crete first
     if (typeof x === "number") {
       this._pos.x = x;
@@ -241,8 +256,8 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     return this._pos;
   }
 
-  public print(text: any) {
-    const ctx: any = this._ctx();
+  public print(text: string) {
+    const ctx = this._ctx();
     if (ctx) {
       ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
       this.draw(ctx);
@@ -258,8 +273,8 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public line(x_0: any, y_0: any, x_1: any, y_1: any) {
-    const ctx: any = this._ctx();
+  public line(x_0: number, y_0: number, x_1: number, y_1: number) {
+    const ctx = this._ctx();
     if (ctx) {
       ctx.beginPath();
       ctx.moveTo(x_0, y_0);
@@ -271,8 +286,8 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public rect(x: any, y: any, width: any, height: any, mustFill: any) {
-    const ctx: any = this._ctx();
+  public rect(x: number, y: number, width: number, height: number, mustFill: boolean) {
+    const ctx = this._ctx();
     if (ctx) {
       if (mustFill) {
         ctx.fillRect(x, y, width, height);
@@ -285,8 +300,8 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public circle(x: any, y: any, r: any, mustFill: any) {
-    const ctx: any = this._ctx();
+  public circle(x: number, y: number, r: number, mustFill: boolean) {
+    const ctx = this._ctx();
     if (ctx) {
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -301,18 +316,32 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public _draw(ctx: any) {
-    const stride: any = this.width / 8;
-    const vram: any = new Array(stride * 64);
-    const imageData: any = ctx.getImageData(0, 0, this.width, this.height);
-    const data: any = imageData.data;
+  public draw(ctx: CanvasRenderingContext2D) {
+    if (this.autoFlush) {
+      this._draw(ctx);
+    }
+  }
+
+  public drawing(autoFlush: boolean) {
+    this.autoFlush = autoFlush === true;
+    const ctx = this._ctx();
+    if (ctx) {
+      this.draw(ctx);
+    }
+  }
+
+  private _draw(ctx: CanvasRenderingContext2D) {
+    const stride = this.width / 8;
+    const vram = new Array(stride * 64);
+    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+    const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      const brightness: any = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      const index: any = Math.floor(i / 4);
-      const line: any = Math.floor(index / this.width);
-      const col: any = Math.floor((index - line * this.width) / 8);
-      const bits: any = Math.floor(index - line * this.width) % 8;
+      const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      const index = Math.floor(i / 4);
+      const line = Math.floor(index / this.width);
+      const col = Math.floor((index - line * this.width) / 8);
+      const bits = Math.floor(index - line * this.width) % 8;
       if (bits === 0) {
         vram[line * stride + col] = 0x00;
       }
@@ -322,20 +351,4 @@ class SharpMemoryTFT implements ObnizPartsInterface {
     }
     this.raw(vram);
   }
-
-  public draw(ctx: any) {
-    if (this.autoFlush) {
-      this._draw(ctx);
-    }
-  }
-
-  public drawing(autoFlush: any) {
-    this.autoFlush = autoFlush === true;
-    const ctx: any = this._ctx();
-    if (ctx) {
-      this.draw(ctx);
-    }
-  }
 }
-
-export default SharpMemoryTFT;

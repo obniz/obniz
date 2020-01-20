@@ -1,8 +1,14 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SolenoidOptions { }
-class Solenoid implements ObnizPartsInterface {
+export interface SolenoidOptions {
+  signal: number;
+  gnd?: number;
+}
+
+export default class Solenoid implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,10 +18,12 @@ class Solenoid implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
-  public io_gnd: any;
-  public io_signal: any;
+
+  protected obniz!: Obniz;
+
+  private io_gnd?: PeripheralIO;
+  private io_signal!: PeripheralIO;
 
   constructor() {
     this.keys = ["gnd", "signal"];
@@ -42,7 +50,7 @@ class Solenoid implements ObnizPartsInterface {
     this.io_signal.output(false);
   }
 
-  public click(time_msec: any) {
+  public click(time_msec?: number) {
     this.on();
     if (typeof time_msec !== "number") {
       time_msec = 100;
@@ -51,7 +59,7 @@ class Solenoid implements ObnizPartsInterface {
     this.off();
   }
 
-  public doubleClick(time_msec: any) {
+  public doubleClick(time_msec?: number) {
     if (typeof time_msec !== "number") {
       time_msec = 100;
     }
@@ -60,5 +68,3 @@ class Solenoid implements ObnizPartsInterface {
     this.click(time_msec);
   }
 }
-
-export default Solenoid;

@@ -1,8 +1,12 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface Grove_MP3Options {
+    vcc?: number;
+    gnd?: number;
+    mp3_rx: number;
+    mp3_tx: number;
 }
-declare class Grove_MP3 implements ObnizPartsInterface {
+export default class Grove_MP3 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
@@ -17,7 +21,7 @@ declare class Grove_MP3 implements ObnizPartsInterface {
     constructor();
     wired(obniz: Obniz): void;
     initWait(strage: any): Promise<void>;
-    setVolume(vol: any): void;
+    setVolume(vol: number): void;
     volUp(): void;
     volDown(): void;
     play(track: any, folder: any): void;
@@ -28,4 +32,3 @@ declare class Grove_MP3 implements ObnizPartsInterface {
     prev(): void;
     uartSend(command: any, param: any): any;
 }
-export default Grove_MP3;

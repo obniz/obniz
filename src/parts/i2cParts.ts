@@ -1,8 +1,16 @@
 import Obniz from "../obniz";
+import {PullType} from "../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../obniz/ObnizPartsInterface";
 
 export interface I2cPartsAbstructOptions {
+  vcc?: number;
+  gnd?: number;
+  sda?: number;
+  scl?: number;
+  pull?: PullType;
+  clock: number;
+  i2c?: PeripheralI2C;
 }
 
 export default class I2cPartsAbstruct implements ObnizPartsInterface {
@@ -10,9 +18,10 @@ export default class I2cPartsAbstruct implements ObnizPartsInterface {
   public requiredKeys: string[];
   public i2cinfo: any;
   public address: any;
-  public obniz!: Obniz;
   public params: any;
-  public i2c!: PeripheralI2C;
+
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
 
   constructor() {
     this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "vcc"];

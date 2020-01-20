@@ -131,7 +131,7 @@ class BleAttributeAbstract {
     this.write(ObnizUtil.string2dataArray(str), needResponse);
   }
 
-  public readWait() {
+  public readWait(): Promise<number[]> {
     return new Promise((resolve: any, reject: any) => {
       this.emitter.once("onread", (params: any) => {
         if (params.result === "success") {

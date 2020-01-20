@@ -43,7 +43,6 @@ class ADT7310 {
         });
     }
 }
-exports.ADT7310 = ADT7310;
 exports.default = ADT7310;
 
 //# sourceMappingURL=index.js.map

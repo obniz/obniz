@@ -1,8 +1,13 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface ButtonOptions { }
-class Button implements ObnizPartsInterface {
+export interface ButtonOptions {
+  signal: number;
+  gnd?: number;
+}
+
+export default class Button implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,12 +17,14 @@ class Button implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public onChangeForStateWait: any;
-  public io_signal: any;
   public params: any;
-  public io_supply: any;
-  public isPressed: any;
-  public onchange: any;
+
+  public onChangeForStateWait: any;
+  public isPressed: boolean | null = null;
+  public onchange: ((pressed: boolean) => void) | null = null;
+
+  private io_signal!: PeripheralIO;
+  private io_supply?: PeripheralIO;
 
   constructor() {
     this.keys = ["signal", "gnd", "pull"];
@@ -44,22 +51,21 @@ class Button implements ObnizPartsInterface {
       this.io_signal.pull("5v");
     }
 
-    const self: any = this;
     this.io_signal.input((value: any) => {
-      self.isPressed = value === false;
-      if (self.onchange) {
-        self.onchange(value === false);
+      this.isPressed = value === false;
+      if (this.onchange) {
+        this.onchange(value === false);
       }
-      self.onChangeForStateWait(value === false);
+      this.onChangeForStateWait(value === false);
     });
   }
 
   public async isPressedWait() {
-    const ret: any = await this.io_signal.inputWait();
+    const ret = await this.io_signal.inputWait();
     return ret === false;
   }
 
-  public stateWait(isPressed: any) {
+  public stateWait(isPressed: boolean) {
     return new Promise((resolve, reject) => {
       this.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
@@ -71,5 +77,3 @@ class Button implements ObnizPartsInterface {
     });
   }
 }
-
-export default Button;

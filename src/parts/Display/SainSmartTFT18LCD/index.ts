@@ -1,9 +1,166 @@
 // SainSmart ST7735 1.8" TFT LCD 128x160 pixel
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SainSmartTFT18LCDOptions { }
-class SainSmartTFT18LCD implements ObnizPartsInterface {
+export interface SainSmartTFT18LCDOptions {
+  scl: number;
+  sda: number;
+  dc: number;
+  res: number;
+  cs: number;
+  vcc?: number;
+  gnd?: number;
+}
+
+export type RGB16 = number;
+export type RGB24 = number;
+export interface PresetColor {
+  AliceBlue: RGB16;
+  AntiqueWhite: RGB16;
+  Aqua: RGB16;
+  Aquamarine: RGB16;
+  Azure: RGB16;
+  Beige: RGB16;
+  Bisque: RGB16;
+  Black: RGB16;
+  BlanchedAlmond: RGB16;
+  Blue: RGB16;
+  BlueViolet: RGB16;
+  Brown: RGB16;
+  BurlyWood: RGB16;
+  CadetBlue: RGB16;
+  Chartreuse: RGB16;
+  Chocolate: RGB16;
+  Coral: RGB16;
+  CornflowerBlue: RGB16;
+  Cornsilk: RGB16;
+  Crimson: RGB16;
+  Cyan: RGB16;
+  DarkBlue: RGB16;
+  DarkCyan: RGB16;
+  DarkGoldenRod: RGB16;
+  DarkGray: RGB16;
+  DarkGreen: RGB16;
+  DarkKhaki: RGB16;
+  DarkMagenta: RGB16;
+  DarkOliveGreen: RGB16;
+  DarkOrange: RGB16;
+  DarkOrchid: RGB16;
+  DarkRed: RGB16;
+  DarkSalmon: RGB16;
+  DarkSeaGreen: RGB16;
+  DarkSlateBlue: RGB16;
+  DarkSlateGray: RGB16;
+  DarkTurquoise: RGB16;
+  DarkViolet: RGB16;
+  DeepPink: RGB16;
+  DeepSkyBlue: RGB16;
+  DimGray: RGB16;
+  DodgerBlue: RGB16;
+  FireBrick: RGB16;
+  FloralWhite: RGB16;
+  ForestGreen: RGB16;
+  Fuchsia: RGB16;
+  Gainsboro: RGB16;
+  GhostWhite: RGB16;
+  Gold: RGB16;
+  GoldenRod: RGB16;
+  Gray: RGB16;
+  Green: RGB16;
+  GreenYellow: RGB16;
+  HoneyDew: RGB16;
+  HotPink: RGB16;
+  IndianRed: RGB16;
+  Indigo: RGB16;
+  Ivory: RGB16;
+  Khaki: RGB16;
+  Lavender: RGB16;
+  LavenderBlush: RGB16;
+  LawnGreen: RGB16;
+  LemonChiffon: RGB16;
+  LightBlue: RGB16;
+  LightCoral: RGB16;
+  LightCyan: RGB16;
+  LightGoldenRodYellow: RGB16;
+  LightGray: RGB16;
+  LightGreen: RGB16;
+  LightPink: RGB16;
+  LightSalmon: RGB16;
+  LightSeaGreen: RGB16;
+  LightSkyBlue: RGB16;
+  LightSlateGray: RGB16;
+  LightSteelBlue: RGB16;
+  LightYellow: RGB16;
+  Lime: RGB16;
+  LimeGreen: RGB16;
+  Linen: RGB16;
+  Magenta: RGB16;
+  Maroon: RGB16;
+  MediumAquaMarine: RGB16;
+  MediumBlue: RGB16;
+  MediumOrchid: RGB16;
+  MediumPurple: RGB16;
+  MediumSeaGreen: RGB16;
+  MediumSlateBlue: RGB16;
+  MediumSpringGreen: RGB16;
+  MediumTurquoise: RGB16;
+  MediumVioletRed: RGB16;
+  MidnightBlue: RGB16;
+  MintCream: RGB16;
+  MistyRose: RGB16;
+  Moccasin: RGB16;
+  NavajoWhite: RGB16;
+  Navy: RGB16;
+  OldLace: RGB16;
+  Olive: RGB16;
+  OliveDrab: RGB16;
+  Orange: RGB16;
+  OrangeRed: RGB16;
+  Orchid: RGB16;
+  PaleGoldenRod: RGB16;
+  PaleGreen: RGB16;
+  PaleTurquoise: RGB16;
+  PaleVioletRed: RGB16;
+  PapayaWhip: RGB16;
+  PeachPuff: RGB16;
+  Peru: RGB16;
+  Pink: RGB16;
+  Plum: RGB16;
+  PowderBlue: RGB16;
+  Purple: RGB16;
+  RebeccaPurple: RGB16;
+  Red: RGB16;
+  RosyBrown: RGB16;
+  RoyalBlue: RGB16;
+  SaddleBrown: RGB16;
+  Salmon: RGB16;
+  SandyBrown: RGB16;
+  SeaGreen: RGB16;
+  SeaShell: RGB16;
+  Sienna: RGB16;
+  Silver: RGB16;
+  SkyBlue: RGB16;
+  SlateBlue: RGB16;
+  SlateGray: RGB16;
+  Snow: RGB16;
+  SpringGreen: RGB16;
+  SteelBlue: RGB16;
+  Tan: RGB16;
+  Teal: RGB16;
+  Thistle: RGB16;
+  Tomato: RGB16;
+  Turquoise: RGB16;
+  Violet: RGB16;
+  Wheat: RGB16;
+  White: RGB16;
+  WhiteSmoke: RGB16;
+  Yellow: RGB16;
+  YellowGreen: RGB16;
+}
+
+export default class SainSmartTFT18LCD implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -13,18 +170,18 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public displayIoNames: any;
-  public debugprint: any;
+  public debugprint = false;
   public obniz!: Obniz;
-  public io_dc: any;
+  public io_dc!: PeripheralIO;
   public params: any;
-  public io_res: any;
-  public io_cs: any;
-  public spi: any;
-  public width: any;
-  public height: any;
-  public writeBuffer: any;
-  public color: any;
+  public io_res!: PeripheralIO;
+  public io_cs!: PeripheralIO;
+  public spi!: PeripheralSPI;
+  public width: number = 0;
+  public height: number = 0;
+  public writeBuffer: number[] = [];
+  public color!: PresetColor;
+  protected displayIoNames: {[key: string]: string};
 
   constructor() {
     this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];
@@ -76,7 +233,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     }
   }
 
-  public _deadSleep(waitMsec: any) {
+  public _deadSleep(waitMsec: number) {
     const startMsec: any = new Date();
     while ((new Date() as any) - startMsec < waitMsec) {
     }
@@ -89,21 +246,21 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     this._deadSleep(10);
   }
 
-  public writeCommand(cmd: any) {
+  public writeCommand(cmd: number) {
     this.io_dc.output(false);
     this.io_cs.output(false);
     this.spi.write([cmd]);
     this.io_cs.output(true);
   }
 
-  public writeData(data: any) {
+  public writeData(data: number[]) {
     this.io_dc.output(true);
     this.io_cs.output(false);
     this.spi.write(data);
     this.io_cs.output(true);
   }
 
-  public write(cmd: any, data: any) {
+  public write(cmd: number, data: number[]) {
     if (data.length === 0) {
       return;
     }
@@ -118,7 +275,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
   public _writeFlush() {
     while (this.writeBuffer.length > 0) {
       if (this.writeBuffer.length > 1024) {
-        const data: any = this.writeBuffer.slice(0, 1024);
+        const data = this.writeBuffer.slice(0, 1024);
         this.writeData(data);
         this.writeBuffer.splice(0, 1024);
       } else {
@@ -130,7 +287,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     }
   }
 
-  public _writeBuffer(data?: any) {
+  public _writeBuffer(data?: number[]) {
     if (data && data.length > 0) {
       this.writeBuffer = this.writeBuffer.concat(data);
     } else {
@@ -138,7 +295,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     }
   }
 
-  public color16(r: any, g: any, b: any) {
+  public color16(r: number, g: number, b: number): RGB16 {
     //  1st byte  (r & 0xF8 | g >> 5)
     //  2nd byte  (g & 0xFC << 3 | b >> 3)
     return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | (b >> 3);
@@ -212,7 +369,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     this.writeCommand(ST7735_DISPOFF);
   }
 
-  public setDisplay(on: any) {
+  public setDisplay(on: boolean) {
     if (on === true) {
       this.setDisplayOn();
     } else {
@@ -228,7 +385,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     this.writeCommand(ST7735_INVOFF);
   }
 
-  public setInversion(inversion: any) {
+  public setInversion(inversion: boolean) {
     if (inversion === true) {
       this.setInversionOn();
     } else {
@@ -236,16 +393,16 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     }
   }
 
-  public setRotation(m: any) {
-    const MADCTL_MY: any = 0x80;
-    const MADCTL_MX: any = 0x40;
-    const MADCTL_MV: any = 0x20;
+  public setRotation(m: number) {
+    const MADCTL_MY = 0x80;
+    const MADCTL_MX = 0x40;
+    const MADCTL_MV = 0x20;
     // const MADCTL_ML = 0x10;
-    const MADCTL_RGB: any = 0x00; // always RGB, never BGR
+    const MADCTL_RGB = 0x00; // always RGB, never BGR
     // const MADCTL_MH = 0x04;
 
     let data: any;
-    const rotation: any = m % 4; // can't be higher than 3
+    const rotation = m % 4; // can't be higher than 3
     switch (rotation) {
       case 0:
         data = [MADCTL_MX | MADCTL_MY | MADCTL_RGB];
@@ -272,7 +429,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     this.setAddrWindow(0, 0, this.width - 1, this.height - 1);
   }
 
-  public setAddrWindow(x0: any, y0: any, x1: any, y1: any) {
+  public setAddrWindow(x0: number, y0: number, x1: number, y1: number) {
     this.print_debug(
       `setAddrWindow: (x0: ${x0}, y0: ${y0}) - (x1: ${x1}, y1: ${y1})`,
     );
@@ -301,29 +458,29 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
 
   // __swap(a, b) { let t = a; a = b; b = t; }
 
-  public fillScreen(color: any) {
+  public fillScreen(color: RGB16) {
     this.fillRect(0, 0, this.width, this.height, color);
   }
 
-  public fillRect(x: any, y: any, w: any, h: any, color: any) {
+  public fillRect(x: number, y: number, width: number, height: number, color: RGB16) {
     if (x >= this.width || y >= this.height) {
       return;
     }
-    if (x + w - 1 >= this.width) {
-      w = this.width - x;
+    if (x + width - 1 >= this.width) {
+      width = this.width - x;
     }
-    if (y + h - 1 >= this.height) {
-      h = this.height - y;
+    if (y + height - 1 >= this.height) {
+      height = this.height - y;
     }
 
-    this.setAddrWindow(x, y, x + w - 1, y + h - 1);
+    this.setAddrWindow(x, y, x + width - 1, y + height - 1);
 
-    const hi: any = color >> 8;
-    const lo: any = color & 0xff;
-    const data: any = [];
+    const hi = color >> 8;
+    const lo = color & 0xff;
+    const data = [];
 
-    for (y = h; y > 0; y--) {
-      for (x = w; x > 0; x--) {
+    for (y = height; y > 0; y--) {
+      for (x = width; x > 0; x--) {
         data.push(hi);
         data.push(lo);
       }
@@ -332,24 +489,24 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     this._writeBuffer(); // for flush
   }
 
-  public drawRect(x: any, y: any, w: any, h: any, color: any) {
-    this.drawHLine(x, y, w, color);
-    this.drawHLine(x, y + h - 1, w, color);
-    this.drawVLine(x, y, h, color);
-    this.drawVLine(x + w - 1, y, h, color);
+  public drawRect(x: number, y: number, width: number, height: number, color: RGB16) {
+    this.drawHLine(x, y, width, color);
+    this.drawHLine(x, y + height - 1, width, color);
+    this.drawVLine(x, y, height, color);
+    this.drawVLine(x + width - 1, y, height, color);
   }
 
-  public drawCircle(x0: any, y0: any, r: any, color: any) {
-    let f: any = 1 - r;
-    let ddF_x: any = 1;
-    let ddF_y: any = -2 * r;
-    let x: any = 0;
-    let y: any = r;
+  public drawCircle(center_x: number, center_y: number, radius: number, color: RGB16) {
+    let f = 1 - radius;
+    let ddF_x = 1;
+    let ddF_y = -2 * radius;
+    let x = 0;
+    let y = radius;
 
-    this.drawPixel(x0, y0 + r, color);
-    this.drawPixel(x0, y0 - r, color);
-    this.drawPixel(x0 + r, y0, color);
-    this.drawPixel(x0 - r, y0, color);
+    this.drawPixel(center_x, center_y + radius, color);
+    this.drawPixel(center_x, center_y - radius, color);
+    this.drawPixel(center_x + radius, center_y, color);
+    this.drawPixel(center_x - radius, center_y, color);
 
     while (x < y) {
       if (f >= 0) {
@@ -361,115 +518,52 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
       ddF_x += 2;
       f += ddF_x;
 
-      this.drawPixel(x0 + x, y0 + y, color);
-      this.drawPixel(x0 - x, y0 + y, color);
-      this.drawPixel(x0 + x, y0 - y, color);
-      this.drawPixel(x0 - x, y0 - y, color);
-      this.drawPixel(x0 + y, y0 + x, color);
-      this.drawPixel(x0 - y, y0 + x, color);
-      this.drawPixel(x0 + y, y0 - x, color);
-      this.drawPixel(x0 - y, y0 - x, color);
+      this.drawPixel(center_x + x, center_y + y, color);
+      this.drawPixel(center_x - x, center_y + y, color);
+      this.drawPixel(center_x + x, center_y - y, color);
+      this.drawPixel(center_x - x, center_y - y, color);
+      this.drawPixel(center_x + y, center_y + x, color);
+      this.drawPixel(center_x - y, center_y + x, color);
+      this.drawPixel(center_x + y, center_y - x, color);
+      this.drawPixel(center_x - y, center_y - x, color);
     }
   }
 
-  public _drawCircleHelper(x0: any, y0: any, r: any, cornername: any, color: any) {
-    let f: any = 1 - r;
-    let ddF_x: any = 1;
-    let ddF_y: any = -2 * r;
-    let x: any = 0;
-    let y: any = r;
-
-    while (x < y) {
-      if (f >= 0) {
-        y--;
-        ddF_y += 2;
-        f += ddF_y;
-      }
-      x++;
-      ddF_x += 2;
-      f += ddF_x;
-      if (cornername & 0x4) {
-        this.drawPixel(x0 + x, y0 + y, color);
-        this.drawPixel(x0 + y, y0 + x, color);
-      }
-      if (cornername & 0x2) {
-        this.drawPixel(x0 + x, y0 - y, color);
-        this.drawPixel(x0 + y, y0 - x, color);
-      }
-      if (cornername & 0x8) {
-        this.drawPixel(x0 - y, y0 + x, color);
-        this.drawPixel(x0 - x, y0 + y, color);
-      }
-      if (cornername & 0x1) {
-        this.drawPixel(x0 - y, y0 - x, color);
-        this.drawPixel(x0 - x, y0 - y, color);
-      }
-    }
+  public fillCircle(center_x: number, center_y: number, radius: number, color: RGB16) {
+    this.drawVLine(center_x, center_y - radius, 2 * radius + 1, color);
+    this._fillCircleHelper(center_x, center_y, radius, 3, 0, color);
   }
 
-  public fillCircle(x0: any, y0: any, r: any, color: any) {
-    this.drawVLine(x0, y0 - r, 2 * r + 1, color);
-    this._fillCircleHelper(x0, y0, r, 3, 0, color);
+  public drawRoundRect(x: number, y: number, width: number, height: number, round: number, color: RGB16) {
+    this.drawHLine(x + round, y, width - 2 * round, color); // Top
+    this.drawHLine(x + round, y + height - 1, width - 2 * round, color); // Bottom
+    this.drawVLine(x, y + round, height - 2 * round, color); // Left
+    this.drawVLine(x + width - 1, y + round, height - 2 * round, color); // Right
+
+    this._drawCircleHelper(x + round, y + round, round, 1, color);
+    this._drawCircleHelper(x + width - round - 1, y + round, round, 2, color);
+    this._drawCircleHelper(x + width - round - 1, y + height - round - 1, round, 4, color);
+    this._drawCircleHelper(x + round, y + height - round - 1, round, 8, color);
   }
 
-  public _fillCircleHelper(x0: any, y0: any, r: any, cornername: any, delta: any, color: any) {
-    let f: any = 1 - r;
-    let ddF_x: any = 1;
-    let ddF_y: any = -2 * r;
-    let x: any = 0;
-    let y: any = r;
+  public fillRoundRect(x: number, y: number, width: number, height: number, round: number, color: RGB16) {
+    this.fillRect(x + round, y, width - 2 * round, height, color);
 
-    while (x < y) {
-      if (f >= 0) {
-        y--;
-        ddF_y += 2;
-        f += ddF_y;
-      }
-      x++;
-      ddF_x += 2;
-      f += ddF_x;
-
-      if (cornername & 0x1) {
-        this.drawVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
-        this.drawVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
-      }
-      if (cornername & 0x2) {
-        this.drawVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
-        this.drawVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
-      }
-    }
+    this._fillCircleHelper(x + width - round - 1, y + round, round, 1, height - 2 * round - 1, color);
+    this._fillCircleHelper(x + round, y + round, round, 2, height - 2 * round - 1, color);
   }
 
-  public drawRoundRect(x: any, y: any, w: any, h: any, r: any, color: any) {
-    this.drawHLine(x + r, y, w - 2 * r, color); // Top
-    this.drawHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
-    this.drawVLine(x, y + r, h - 2 * r, color); // Left
-    this.drawVLine(x + w - 1, y + r, h - 2 * r, color); // Right
-
-    this._drawCircleHelper(x + r, y + r, r, 1, color);
-    this._drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
-    this._drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
-    this._drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
-  }
-
-  public fillRoundRect(x: any, y: any, w: any, h: any, r: any, color: any) {
-    this.fillRect(x + r, y, w - 2 * r, h, color);
-
-    this._fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
-    this._fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
-  }
-
-  public drawTriangle(x0: any, y0: any, x1: any, y1: any, x2: any, y2: any, color: any) {
+  public drawTriangle(x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, color: RGB16) {
     this.drawLine(x0, y0, x1, y1, color);
     this.drawLine(x1, y1, x2, y2, color);
     this.drawLine(x2, y2, x0, y0, color);
   }
 
-  public fillTriangle(x0: any, y0: any, x1: any, y1: any, x2: any, y2: any, color: any) {
-    let a: any;
-    let b: any;
-    let y: any;
-    let last: any;
+  public fillTriangle(x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, color: RGB16) {
+    let a = 0;
+    let b = 0;
+    let y = 0;
+    let last = 0;
 
     // Sort coordinates by Y order (y2 >= y1 >= y0)
     if (y0 > y1) {
@@ -502,14 +596,14 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
       return;
     }
 
-    const dx01: any = x1 - x0;
-    const dy01: any = y1 - y0;
-    const dx02: any = x2 - x0;
-    const dy02: any = y2 - y0;
-    const dx12: any = x2 - x1;
-    const dy12: any = y2 - y1;
-    let sa: any = 0;
-    let sb: any = 0;
+    const dx01 = x1 - x0;
+    const dy01 = y1 - y0;
+    const dx02 = x2 - x0;
+    const dy02 = y2 - y0;
+    const dx12 = x2 - x1;
+    const dy12 = y2 - y1;
+    let sa = 0;
+    let sb = 0;
 
     if (y1 === y2) {
       last = y1;
@@ -542,48 +636,48 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     }
   }
 
-  public drawVLine(x: any, y: any, h: any, color: any) {
+  public drawVLine(x: number, y: number, height: number, color: RGB16) {
     if (x >= this.width || y >= this.height) {
       return;
     }
-    if (y + h - 1 >= this.height) {
-      h = this.height - y;
+    if (y + height - 1 >= this.height) {
+      height = this.height - y;
     }
 
-    this.setAddrWindow(x, y, x, y + h - 1);
+    this.setAddrWindow(x, y, x, y + height - 1);
 
-    const hi: any = color >> 8;
-    const lo: any = color & 0xff;
+    const hi = color >> 8;
+    const lo = color & 0xff;
     const data: any = [];
-    while (h--) {
+    while (height--) {
       data.push(hi);
       data.push(lo);
     }
     this.writeData(data);
   }
 
-  public drawHLine(x: any, y: any, w: any, color: any) {
+  public drawHLine(x: number, y: number, width: number, color: RGB16) {
     if (x >= this.width || y >= this.height) {
       return;
     }
-    if (x + w - 1 >= this.width) {
-      w = this.width - x;
+    if (x + width - 1 >= this.width) {
+      width = this.width - x;
     }
 
-    this.setAddrWindow(x, y, x + w - 1, y);
+    this.setAddrWindow(x, y, x + width - 1, y);
 
-    const hi: any = color >> 8;
-    const lo: any = color & 0xff;
+    const hi = color >> 8;
+    const lo = color & 0xff;
     const data: any = [];
-    while (w--) {
+    while (width--) {
       data.push(hi);
       data.push(lo);
     }
     this.writeData(data);
   }
 
-  public drawLine(x0: any, y0: any, x1: any, y1: any, color: any) {
-    const step: any = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+  public drawLine(x0: number, y0: number, x1: number, y1: number, color: RGB16) {
+    const step = Math.abs(y1 - y0) > Math.abs(x1 - x0);
     if (step) {
       y0 = [x0, (x0 = y0)][0]; // this._swap(x0, y0);
       y1 = [x1, (x1 = y1)][0]; // this._swap(x1, y1);
@@ -593,11 +687,11 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
       y1 = [y0, (y0 = y1)][0]; // this._swap(y0, y1);
     }
 
-    const dx: any = x1 - x0;
-    const dy: any = Math.abs(y1 - y0);
+    const dx = x1 - x0;
+    const dy = Math.abs(y1 - y0);
 
-    let err: any = dx / 2;
-    const ystep: any = y0 < y1 ? 1 : -1;
+    let err = dx / 2;
+    const ystep = y0 < y1 ? 1 : -1;
 
     for (; x0 <= x1; x0++) {
       if (step) {
@@ -613,7 +707,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     }
   }
 
-  public drawPixel(x: any, y: any, color: any) {
+  public drawPixel(x: number, y: number, color: RGB16) {
     if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
       return;
     }
@@ -622,7 +716,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     this.writeData([color >> 8, color & 0xff]);
   }
 
-  public drawChar(x: any, y: any, ch: any, color: any, bg: any, size: any) {
+  public drawChar(x: number, y: number, char: string, color: RGB16, backgroundColor: RGB16, size?: number) {
     //  bg = bg || color;
     size = size || 1;
     if (
@@ -635,14 +729,14 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
       return;
     }
 
-    if (color !== bg) {
-      this.drawChar2(x, y, ch, color, bg, size);
+    if (color !== backgroundColor) {
+      this.drawChar2(x, y, char, color, backgroundColor, size);
       return;
     }
 
-    const c: any = ch.charCodeAt(0);
+    const c = char.charCodeAt(0);
     for (let i = 0; i < 6; i++) {
-      let line: any = i === 5 ? 0 : font[c * 5 + i];
+      let line = i === 5 ? 0 : font[c * 5 + i];
       for (let j = 0; j < 8; j++) {
         if (line & 0x1) {
           if (size === 1) {
@@ -652,13 +746,13 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
             // big size
             this.fillRect(x + i * size, y + j * size, size, size, color);
           }
-        } else if (bg !== color) {
+        } else if (backgroundColor !== color) {
           if (size === 1) {
             // default size
-            this.drawPixel(x + i, y + j, bg);
+            this.drawPixel(x + i, y + j, backgroundColor);
           } else {
             // big size
-            this.fillRect(x + i * size, y + j * size, size, size, bg);
+            this.fillRect(x + i * size, y + j * size, size, size, backgroundColor);
           }
         }
         line >>= 1;
@@ -666,61 +760,27 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     }
   }
 
-  public drawChar2(x: any, y: any, ch: any, color: any, bg: any, size: any) {
-    //  bg = bg || color;
-    size = size || 1;
-    if (
-      x >= this.width || // Clip right
-      y >= this.height || // Clip bottom
-      x + 6 * size - 1 < 0 || // Clip left
-      y + 8 * size - 1 < 0 // Clip top
-    ) {
-      return;
-    }
-
-    const pixels: any = new Array(6 * 8 * size * size);
-    const c: any = ch.charCodeAt(0);
-    for (let i = 0; i < 6; i++) {
-      let line: any = i === 5 ? 0 : font[c * 5 + i];
-      for (let j = 0; j < 8; j++) {
-        const cl: any = line & 0x1 ? color : bg;
-        for (let w = 0; w < size; w++) {
-          for (let h = 0; h < size; h++) {
-            pixels[
-            i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))
-              ] = cl;
-          }
-        }
-        line >>= 1;
-      }
-    }
-    this.rawBound16(x, y, 6 * size, 8 * size, pixels);
-  }
-
-  public rawBound16(x: any, y: any, width: any, height: any, pixels: any) {
-    const rgb: any = [];
-    pixels.forEach((v: any) => {
-      rgb.push((v & 0xff00) >> 8);
-      rgb.push(v & 0xff);
-    });
-    this.setAddrWindow(x, y, x + width - 1, y + height - 1);
-    this._writeBuffer(rgb);
-    this._writeBuffer(); // for flush
-  }
-
-  public drawString(x: any, y: any, str: any, color: any, bg: any, size: any, wrap: any) {
+  public drawString(
+    x: number,
+    y: number,
+    string: string,
+    color: RGB16,
+    backgroundColor: RGB16,
+    size?: number,
+    wrap?: boolean,
+  ): [number, number] {
     //  bg = bg || color;
     size = size || 1;
     //  wrap = wrap || true;
-    for (let n = 0; n < str.length; n++) {
-      const c: any = str.charAt(n);
+    for (let n = 0; n < string.length; n++) {
+      const c = string.charAt(n);
       if (c === "\n") {
         y += size * 8;
         x = 0;
       } else if (c === "\r") {
         // skip em
       } else {
-        this.drawChar(x, y, c, color, bg, size);
+        this.drawChar(x, y, c, color, backgroundColor, size);
         x += size * 6;
         if (wrap && x > this.width - size * 6) {
           y += size * 8;
@@ -731,7 +791,16 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     return [x, y];
   }
 
-  public drawContextBound(context: any, x0: any, y0: any, width: any, height: any, x1: any, y1: any, gray: any) {
+  public drawContextBound(
+    context: CanvasRenderingContext2D,
+    x0: number,
+    y0: number,
+    width: number,
+    height: number,
+    x1: number,
+    y1: number,
+    gray: boolean,
+  ) {
     x0 = x0 || 0;
     y0 = y0 || 0;
     width = width || context.canvas.clientWidth;
@@ -740,18 +809,18 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     y1 = y1 || 0;
     gray = gray || false;
     this.write(ST7735_COLMOD, [ST7735_18bit]); // 18bit/pixel
-    const imageData: any = context.getImageData(x0, y0, width, height).data;
-    const rgb: any = [];
+    const imageData = context.getImageData(x0, y0, width, height).data;
+    const rgb: number[] = [];
     for (let n = 0; n < imageData.length; n += 4) {
-      const r: any = imageData[n + 0];
-      const g: any = imageData[n + 1];
-      const b: any = imageData[n + 2];
+      const r = imageData[n + 0];
+      const g = imageData[n + 1];
+      const b = imageData[n + 2];
       if (!gray) {
         rgb.push(r);
         rgb.push(g);
         rgb.push(b);
       } else {
-        const gs: any = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+        const gs = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
         rgb.push(gs);
         rgb.push(gs);
         rgb.push(gs);
@@ -764,12 +833,12 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     this.write(ST7735_COLMOD, [ST7735_16bit]); // 16bit/pixel
   }
 
-  public drawContext(context: any, gray: any) {
+  public drawContext(context: CanvasRenderingContext2D, gray: boolean) {
     gray = gray || false;
     this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray);
   }
 
-  public rawBound(x: any, y: any, width: any, height: any, pixels: any) {
+  public rawBound(x: number, y: number, width: number, height: number, pixels: RGB24[]) {
     const rgb: any = [];
     pixels.forEach((v: number) => {
       rgb.push((v & 0xff0000) >> 16);
@@ -783,7 +852,7 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
     this.write(ST7735_COLMOD, [ST7735_16bit]); // 16bit/pixel
   }
 
-  public raw(pixels: any) {
+  public raw(pixels: RGB24[]) {
     this.rawBound(0, 0, this.width, this.height, pixels);
   }
 
@@ -932,9 +1001,112 @@ class SainSmartTFT18LCD implements ObnizPartsInterface {
       YellowGreen: 0x9e66,
     };
   }
-}
 
-export default SainSmartTFT18LCD;
+  private _drawCircleHelper(x0: number, y0: number, r: number, cornername: number, color: RGB16) {
+    let f = 1 - r;
+    let ddF_x = 1;
+    let ddF_y = -2 * r;
+    let x = 0;
+    let y = r;
+
+    while (x < y) {
+      if (f >= 0) {
+        y--;
+        ddF_y += 2;
+        f += ddF_y;
+      }
+      x++;
+      ddF_x += 2;
+      f += ddF_x;
+      if (cornername & 0x4) {
+        this.drawPixel(x0 + x, y0 + y, color);
+        this.drawPixel(x0 + y, y0 + x, color);
+      }
+      if (cornername & 0x2) {
+        this.drawPixel(x0 + x, y0 - y, color);
+        this.drawPixel(x0 + y, y0 - x, color);
+      }
+      if (cornername & 0x8) {
+        this.drawPixel(x0 - y, y0 + x, color);
+        this.drawPixel(x0 - x, y0 + y, color);
+      }
+      if (cornername & 0x1) {
+        this.drawPixel(x0 - y, y0 - x, color);
+        this.drawPixel(x0 - x, y0 - y, color);
+      }
+    }
+  }
+
+  private _fillCircleHelper(x0: number, y0: number, r: number, cornername: number, delta: number, color: RGB16) {
+    let f = 1 - r;
+    let ddF_x = 1;
+    let ddF_y = -2 * r;
+    let x = 0;
+    let y = r;
+
+    while (x < y) {
+      if (f >= 0) {
+        y--;
+        ddF_y += 2;
+        f += ddF_y;
+      }
+      x++;
+      ddF_x += 2;
+      f += ddF_x;
+
+      if (cornername & 0x1) {
+        this.drawVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
+        this.drawVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
+      }
+      if (cornername & 0x2) {
+        this.drawVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
+        this.drawVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
+      }
+    }
+  }
+
+  private drawChar2(x: number, y: number, ch: string, color: RGB16, bg: RGB16, size: number) {
+    //  bg = bg || color;
+    size = size || 1;
+    if (
+      x >= this.width || // Clip right
+      y >= this.height || // Clip bottom
+      x + 6 * size - 1 < 0 || // Clip left
+      y + 8 * size - 1 < 0 // Clip top
+    ) {
+      return;
+    }
+
+    const pixels = new Array(6 * 8 * size * size);
+    const c = ch.charCodeAt(0);
+    for (let i = 0; i < 6; i++) {
+      let line = i === 5 ? 0 : font[c * 5 + i];
+      for (let j = 0; j < 8; j++) {
+        const cl = line & 0x1 ? color : bg;
+        for (let w = 0; w < size; w++) {
+          for (let h = 0; h < size; h++) {
+            pixels[
+            i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))
+              ] = cl;
+          }
+        }
+        line >>= 1;
+      }
+    }
+    this.rawBound16(x, y, 6 * size, 8 * size, pixels);
+  }
+
+  private rawBound16(x: number, y: number, width: number, height: number, pixels: number[]) {
+    const rgb: number[] = [];
+    pixels.forEach((v: number) => {
+      rgb.push((v & 0xff00) >> 8);
+      rgb.push(v & 0xff);
+    });
+    this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+    this._writeBuffer(rgb);
+    this._writeBuffer(); // for flush
+  }
+}
 
 // ----------------------------------------------------------
 
@@ -943,8 +1115,8 @@ export default SainSmartTFT18LCD;
 // const INITR_REDTAB = 0x1;
 // const INITR_BLACKTAB = 0x2;
 
-const ST7735_TFTWIDTH: any = 128;
-const ST7735_TFTHEIGHT: any = 160;
+const ST7735_TFTWIDTH = 128;
+const ST7735_TFTHEIGHT = 160;
 
 // const ST7735_NOP = 0x00;
 // const ST7735_SWRESET = 0x01;
@@ -953,35 +1125,35 @@ const ST7735_TFTHEIGHT: any = 160;
 // const ST7735_RDDPM = 0x0a;
 
 // const ST7735_SLPIN = 0x10;
-const ST7735_SLPOUT: any = 0x11;
+const ST7735_SLPOUT = 0x11;
 // const ST7735_PTLON = 0x12;
 // const ST7735_NORON = 0x13;
 
-const ST7735_INVOFF: any = 0x20;
-const ST7735_INVON: any = 0x21;
-const ST7735_DISPOFF: any = 0x28;
-const ST7735_DISPON: any = 0x29;
-const ST7735_CASET: any = 0x2a;
-const ST7735_RASET: any = 0x2b;
-const ST7735_RAMWR: any = 0x2c;
+const ST7735_INVOFF = 0x20;
+const ST7735_INVON = 0x21;
+const ST7735_DISPOFF = 0x28;
+const ST7735_DISPON = 0x29;
+const ST7735_CASET = 0x2a;
+const ST7735_RASET = 0x2b;
+const ST7735_RAMWR = 0x2c;
 // const ST7735_RAMRD = 0x2e;
 
 // const ST7735_PTLAR = 0x30;
-const ST7735_COLMOD: any = 0x3a;
-const ST7735_MADCTL: any = 0x36;
+const ST7735_COLMOD = 0x3a;
+const ST7735_MADCTL = 0x36;
 
-const ST7735_FRMCTR1: any = 0xb1;
-const ST7735_FRMCTR2: any = 0xb2;
-const ST7735_FRMCTR3: any = 0xb3;
-const ST7735_INVCTR: any = 0xb4;
+const ST7735_FRMCTR1 = 0xb1;
+const ST7735_FRMCTR2 = 0xb2;
+const ST7735_FRMCTR3 = 0xb3;
+const ST7735_INVCTR = 0xb4;
 // const ST7735_DISSET5 = 0xb6;
 
-const ST7735_PWCTR1: any = 0xc0;
-const ST7735_PWCTR2: any = 0xc1;
-const ST7735_PWCTR3: any = 0xc2;
-const ST7735_PWCTR4: any = 0xc3;
-const ST7735_PWCTR5: any = 0xc4;
-const ST7735_VMCTR1: any = 0xc5;
+const ST7735_PWCTR1 = 0xc0;
+const ST7735_PWCTR2 = 0xc1;
+const ST7735_PWCTR3 = 0xc2;
+const ST7735_PWCTR4 = 0xc3;
+const ST7735_PWCTR5 = 0xc4;
+const ST7735_VMCTR1 = 0xc5;
 
 // const ST7735_RDID1 = 0xda;
 // const ST7735_RDID2 = 0xdb;
@@ -990,8 +1162,8 @@ const ST7735_VMCTR1: any = 0xc5;
 
 // const ST7735_PWCTR6 = 0xfc;
 
-const ST7735_GMCTRP1: any = 0xe0;
-const ST7735_GMCTRN1: any = 0xe1;
+const ST7735_GMCTRP1 = 0xe0;
+const ST7735_GMCTRN1 = 0xe1;
 
 // Color definitions
 // const ST7735_BLACK = 0x0000;
@@ -1003,11 +1175,11 @@ const ST7735_GMCTRN1: any = 0xe1;
 // const ST7735_YELLOW = 0xffe0;
 // const ST7735_WHITE = 0xffff;
 
-const ST7735_18bit: any = 0x06; // 18bit/pixel
-const ST7735_16bit: any = 0x05; // 16bit/pixel
+const ST7735_18bit = 0x06; // 18bit/pixel
+const ST7735_16bit = 0x05; // 16bit/pixel
 
 // standard ascii 5x7 font
-const font: any = [
+const font = [
   0x00,
   0x00,
   0x00,

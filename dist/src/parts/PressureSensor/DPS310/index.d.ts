@@ -2,7 +2,7 @@ import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface DPS310Options {
 }
-declare class DPS310 implements ObnizPartsInterface {
+export default class DPS310 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];
     keys: string[];
@@ -59,4 +59,3 @@ declare class DPS310 implements ObnizPartsInterface {
     private getTempWait;
     private getPressureWait;
 }
-export default DPS310;

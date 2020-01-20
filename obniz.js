@@ -11919,6 +11919,7 @@ class Directive {
     constructor(obniz, id) {
         this.Obniz = obniz;
         this.observers = [];
+        this._animationIdentifier = 0;
         this._reset();
     }
     _reset() {
@@ -12031,7 +12032,6 @@ class PeripheralI2C {
     }
     _reset() {
         this.observers = [];
-        this.state = {};
         this.used = false;
         this.onwritten = undefined;
     }
@@ -12221,7 +12221,6 @@ class PeripheralI2C {
         return this.used;
     }
     end() {
-        this.state = {};
         const obj = {};
         obj["i2c" + this.id] = null;
         this.Obniz.send(obj);
@@ -18495,6 +18494,7 @@ var map = {
 	"./GasSensor/MQ7/index.js": "./dist/src/parts/GasSensor/MQ7/index.js",
 	"./GasSensor/MQ8/index.js": "./dist/src/parts/GasSensor/MQ8/index.js",
 	"./GasSensor/MQ9/index.js": "./dist/src/parts/GasSensor/MQ9/index.js",
+	"./GasSensor/MQGas/index.js": "./dist/src/parts/GasSensor/MQGas/index.js",
 	"./Grove/Grove_3AxisAccelerometer/index.js": "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js",
 	"./Grove/Grove_Button/index.js": "./dist/src/parts/Grove/Grove_Button/index.js",
 	"./Grove/Grove_Buzzer/index.js": "./dist/src/parts/Grove/Grove_Buzzer/index.js",
@@ -18782,10 +18782,10 @@ class Puls08M5stickcS {
             name: "Puls08M5stickcS",
         };
     }
-    onbpmupdate(data) {
+    onbpmupdate(bpm) {
         return;
     }
-    onrawupdate(data) {
+    onrawupdate(values) {
         return;
     }
     wired(obniz) {
@@ -20092,6 +20092,8 @@ class PT550 {
             name: "PT550",
         };
     }
+    onchange(value) {
+    }
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -20135,10 +20137,11 @@ class S11059 {
         this.keys = ["vcc", "sda", "scl", "i2c", "gnd"];
         this.requiredKeys = [];
         this.address = 0x2a;
-        this.regAdrs = {};
-        this.regAdrs.ctrl = 0x00;
-        this.regAdrs.manualTiming = 0x01;
-        this.regAdrs.sensorRed = 0x03;
+        this.regAdrs = {
+            ctrl: 0x00,
+            manualTiming: 0x01,
+            sensorRed: 0x03,
+        };
     }
     static info() {
         return {
@@ -20155,9 +20158,9 @@ class S11059 {
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
-    init(gain, intTime) {
+    init(gain, intergerTime) {
         this.i2c.write(this.address, [this.regAdrs.ctrl, 0x80]); // Reset
-        const val = (gain << 3) | intTime;
+        const val = (gain << 3) | intergerTime;
         this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
     }
     getVal() {
@@ -20225,6 +20228,8 @@ class _7SegmentLED {
             dp: "dp",
             common: "com",
         };
+        this.ios = [];
+        this.isCathodeCommon = false;
     }
     static info() {
         return {
@@ -20262,8 +20267,9 @@ class _7SegmentLED {
             this.ios[i].output(this.isCathodeCommon ? false : true);
         }
         if (isValidIO(this.params.dp)) {
-            this.dp = getIO(this.params.dp);
-            this.dp.output(false);
+            const dp = getIO(this.params.dp);
+            dp.output(false);
+            this.dp = dp;
         }
         if (isValidIO(this.params.common)) {
             this.common = getIO(this.params.common);
@@ -20306,10 +20312,14 @@ class _7SegmentLED {
         }
     }
     on() {
-        this.common.output(this.isCathodeCommon ? false : true);
+        if (this.common) {
+            this.common.output(this.isCathodeCommon ? false : true);
+        }
     }
     off() {
-        this.common.output(this.isCathodeCommon ? true : false);
+        if (this.common) {
+            this.common.output(this.isCathodeCommon ? true : false);
+        }
     }
 }
 exports.default = _7SegmentLED;
@@ -20418,8 +20428,8 @@ class _7SegmentLED_MAX7219 {
         this.cs.output(false);
         this.cs.output(true);
     }
-    init(numOfDisplay, digits) {
-        this.numOfDisp = numOfDisplay;
+    init(numberOfDisplays, digits) {
+        this.numOfDisp = numberOfDisplays;
         this.digits = digits;
         this.writeAllDisp([0x09, 0xff]); // Code B decode for digits 7-0
         this.writeAllDisp([0x0a, 0x05]); // brightness 11/32 0 to f
@@ -20443,11 +20453,11 @@ class _7SegmentLED_MAX7219 {
     test() {
         this.writeAllDisp([0x0f, 0x00]); // test command
     }
-    brightness(disp, val) {
-        this.writeOneDisp(disp, [0x0a, val]); // 0 to 15;
+    brightness(display, value) {
+        this.writeOneDisp(display, [0x0a, value]); // 0 to 15;
     }
-    brightnessAll(val) {
-        this.writeAllDisp([0x0a, val]); // 0 to 15;
+    brightnessAll(value) {
+        this.writeAllDisp([0x0a, value]); // 0 to 15;
     }
     writeAllDisp(data) {
         for (let i = 0; i < this.numOfDisp; i++) {
@@ -20465,19 +20475,13 @@ class _7SegmentLED_MAX7219 {
         }
         this.cs.output(true);
     }
-    setNumber(disp, digit, number, dp) {
+    setNumber(display, digit, number, dp) {
         if (digit >= 0 && digit <= this.digits - 1) {
-            this.writeOneDisp(disp, [digit + 1, this.encodeBCD(number, dp)]);
+            this.writeOneDisp(display, [digit + 1, this.encodeBCD(number, dp)]);
         }
     }
     encodeBCD(decimal, dp) {
-        let dpreg;
-        if (dp === true) {
-            dpreg = 0x80;
-        }
-        else {
-            dpreg = 0x00;
-        }
+        const dpreg = (dp === true) ? 0x80 : 0x00;
         if (decimal >= 0 && decimal <= 9) {
             return decimal | dpreg;
         }
@@ -20523,6 +20527,9 @@ exports.default = _7SegmentLED_MAX7219;
 Object.defineProperty(exports, "__esModule", { value: true });
 class MatrixLED_MAX7219 {
     constructor() {
+        this.width = 0;
+        this.height = 0;
+        this.vram = [[]];
         this.keys = ["vcc", "gnd", "din", "cs", "clk"];
         this.requiredKeys = ["din", "cs", "clk"];
     }
@@ -20659,6 +20666,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class ST7735S {
     constructor() {
+        this.debugprint = false;
+        this.width = 0;
+        this.height = 0;
+        this.x_offset = 0;
+        this.y_offset = 0;
+        this.writeBuffer = [];
         this.keys = ["sclk", "mosi", "cs", "res", "dc"];
         this.requiredKeys = [];
     }
@@ -20872,7 +20885,7 @@ class ST7735S {
         // const MADCTL_ML = 0x10;
         const MADCTL_RGB = 0x00; // always RGB, never BGR
         // const MADCTL_MH = 0x04;
-        let data;
+        let data = [];
         this.rotation = m % 4; // can't be higher than 3
         switch (this.rotation) {
             case 0:
@@ -20937,38 +20950,35 @@ class ST7735S {
     fillScreen(color) {
         this.fillRect(0, 0, this.width, this.height, color);
     }
-    _color2pixels(w, h, color) {
-        return Array.from(new Array(Math.abs(w * h))).map((v, i) => color);
-    }
-    fillRect(x, y, w, h, color) {
+    fillRect(x, y, width, height, color) {
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (x + w - 1 >= this.width) {
-            w = this.width - x;
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
         }
-        if (y + h - 1 >= this.height) {
-            h = this.height - y;
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
         }
-        const pixels = this._color2pixels(w, h, color);
-        this.rawBound16(x, y, w, h, pixels, true);
+        const pixels = this._color2pixels(width, height, color);
+        this.rawBound16(x, y, width, height, pixels, true);
     }
-    drawRect(x, y, w, h, color) {
-        this.drawHLine(x, y, w, color);
-        this.drawHLine(x, y + h - 1, w, color);
-        this.drawVLine(x, y, h, color);
-        this.drawVLine(x + w - 1, y, h, color);
+    drawRect(x, y, width, height, color) {
+        this.drawHLine(x, y, width, color);
+        this.drawHLine(x, y + height - 1, width, color);
+        this.drawVLine(x, y, height, color);
+        this.drawVLine(x + width - 1, y, height, color);
     }
-    drawCircle(x0, y0, r, color) {
-        let f = 1 - r;
+    drawCircle(center_x, center_y, radius, color) {
+        let f = 1 - radius;
         let ddF_x = 1;
-        let ddF_y = -2 * r;
+        let ddF_y = -2 * radius;
         let x = 0;
-        let y = r;
-        this.drawPixel(x0, y0 + r, color);
-        this.drawPixel(x0, y0 - r, color);
-        this.drawPixel(x0 + r, y0, color);
-        this.drawPixel(x0 - r, y0, color);
+        let y = radius;
+        this.drawPixel(center_x, center_y + radius, color);
+        this.drawPixel(center_x, center_y - radius, color);
+        this.drawPixel(center_x + radius, center_y, color);
+        this.drawPixel(center_x - radius, center_y, color);
         while (x < y) {
             if (f >= 0) {
                 y--;
@@ -20978,52 +20988,19 @@ class ST7735S {
             x++;
             ddF_x += 2;
             f += ddF_x;
-            this.drawPixel(x0 + x, y0 + y, color);
-            this.drawPixel(x0 - x, y0 + y, color);
-            this.drawPixel(x0 + x, y0 - y, color);
-            this.drawPixel(x0 - x, y0 - y, color);
-            this.drawPixel(x0 + y, y0 + x, color);
-            this.drawPixel(x0 - y, y0 + x, color);
-            this.drawPixel(x0 + y, y0 - x, color);
-            this.drawPixel(x0 - y, y0 - x, color);
+            this.drawPixel(center_x + x, center_y + y, color);
+            this.drawPixel(center_x - x, center_y + y, color);
+            this.drawPixel(center_x + x, center_y - y, color);
+            this.drawPixel(center_x - x, center_y - y, color);
+            this.drawPixel(center_x + y, center_y + x, color);
+            this.drawPixel(center_x - y, center_y + x, color);
+            this.drawPixel(center_x + y, center_y - x, color);
+            this.drawPixel(center_x - y, center_y - x, color);
         }
     }
-    _drawCircleHelper(x0, y0, r, cornername, color) {
-        let f = 1 - r;
-        let ddF_x = 1;
-        let ddF_y = -2 * r;
-        let x = 0;
-        let y = r;
-        while (x < y) {
-            if (f >= 0) {
-                y--;
-                ddF_y += 2;
-                f += ddF_y;
-            }
-            x++;
-            ddF_x += 2;
-            f += ddF_x;
-            if (cornername & 0x4) {
-                this.drawPixel(x0 + x, y0 + y, color);
-                this.drawPixel(x0 + y, y0 + x, color);
-            }
-            if (cornername & 0x2) {
-                this.drawPixel(x0 + x, y0 - y, color);
-                this.drawPixel(x0 + y, y0 - x, color);
-            }
-            if (cornername & 0x8) {
-                this.drawPixel(x0 - y, y0 + x, color);
-                this.drawPixel(x0 - x, y0 + y, color);
-            }
-            if (cornername & 0x1) {
-                this.drawPixel(x0 - y, y0 - x, color);
-                this.drawPixel(x0 - x, y0 - y, color);
-            }
-        }
-    }
-    fillCircle(x0, y0, r, color) {
-        this.drawVLine(x0, y0 - r, 2 * r + 1, color);
-        this._fillCircleHelper(x0, y0, r, 3, 0, color);
+    fillCircle(center_x, center_y, radius, color) {
+        this.drawVLine(center_x, center_y - radius, 2 * radius + 1, color);
+        this._fillCircleHelper(center_x, center_y, radius, 3, 0, color);
     }
     _fillCircleHelper(x0, y0, r, cornername, delta, color) {
         let f = 1 - r;
@@ -21050,20 +21027,20 @@ class ST7735S {
             }
         }
     }
-    drawRoundRect(x, y, w, h, r, color) {
-        this.drawHLine(x + r, y, w - 2 * r, color); // Top
-        this.drawHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
-        this.drawVLine(x, y + r, h - 2 * r, color); // Left
-        this.drawVLine(x + w - 1, y + r, h - 2 * r, color); // Right
-        this._drawCircleHelper(x + r, y + r, r, 1, color);
-        this._drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
-        this._drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
-        this._drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
+    drawRoundRect(x, y, width, height, round, color) {
+        this.drawHLine(x + round, y, width - 2 * round, color); // Top
+        this.drawHLine(x + round, y + height - 1, width - 2 * round, color); // Bottom
+        this.drawVLine(x, y + round, height - 2 * round, color); // Left
+        this.drawVLine(x + width - 1, y + round, height - 2 * round, color); // Right
+        this._drawCircleHelper(x + round, y + round, round, 1, color);
+        this._drawCircleHelper(x + width - round - 1, y + round, round, 2, color);
+        this._drawCircleHelper(x + width - round - 1, y + height - round - 1, round, 4, color);
+        this._drawCircleHelper(x + round, y + height - round - 1, round, 8, color);
     }
-    fillRoundRect(x, y, w, h, r, color) {
-        this.fillRect(x + r, y, w - 2 * r, h, color);
-        this._fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
-        this._fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
+    fillRoundRect(x, y, width, height, round, color) {
+        this.fillRect(x + round, y, width - 2 * round, height, color);
+        this._fillCircleHelper(x + width - round - 1, y + round, round, 1, height - 2 * round - 1, color);
+        this._fillCircleHelper(x + round, y + round, round, 2, height - 2 * round - 1, color);
     }
     drawTriangle(x0, y0, x1, y1, x2, y2, color) {
         this.drawLine(x0, y0, x1, y1, color);
@@ -21143,33 +21120,33 @@ class ST7735S {
             this.drawHLine(a, y, b - a + 1, color);
         }
     }
-    drawVLine(x, y, h, color) {
-        if (h < 0) {
-            h = -h;
-            y = y - h;
+    drawVLine(x, y, height, color) {
+        if (height < 0) {
+            height = -height;
+            y = y - height;
         }
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (y + h - 1 >= this.height) {
-            h = this.height - y;
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
         }
-        const pixels = this._color2pixels(1, h, color);
-        this.rawBound16(x, y, 1, h, pixels, false);
+        const pixels = this._color2pixels(1, height, color);
+        this.rawBound16(x, y, 1, height, pixels, false);
     }
-    drawHLine(x, y, w, color) {
-        if (w < 0) {
-            w = -w;
-            x = x - w;
+    drawHLine(x, y, width, color) {
+        if (width < 0) {
+            width = -width;
+            x = x - width;
         }
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (x + w - 1 >= this.width) {
-            w = this.width - x;
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
         }
-        const pixels = this._color2pixels(w, 1, color);
-        this.rawBound16(x, y, w, 1, pixels, false);
+        const pixels = this._color2pixels(width, 1, color);
+        this.rawBound16(x, y, width, 1, pixels, false);
     }
     drawLine(x0, y0, x1, y1, color) {
         if (x0 === x1) {
@@ -21213,7 +21190,7 @@ class ST7735S {
         }
         this.rawBound16(x, y, 1, 1, [color], false);
     }
-    drawChar(x, y, ch, color, bg, size) {
+    drawChar(x, y, char, color, backgroundColor, size) {
         //  bg = bg || color;
         size = size || 1;
         if (x >= this.width || // Clip right
@@ -21223,11 +21200,11 @@ class ST7735S {
             // Clip top
             return;
         }
-        if (color !== bg) {
-            this.drawChar2(x, y, ch, color, bg, size);
+        if (color !== backgroundColor) {
+            this.drawChar2(x, y, char, color, backgroundColor, size);
             return;
         }
-        const c = ch.charCodeAt(0);
+        const c = char.charCodeAt(0);
         for (let i = 0; i < 6; i++) {
             let line = i === 5 ? 0 : font[c * 5 + i];
             for (let j = 0; j < 8; j++) {
@@ -21241,14 +21218,14 @@ class ST7735S {
                         this.fillRect(x + i * size, y + j * size, size, size, color);
                     }
                 }
-                else if (bg !== color) {
+                else if (backgroundColor !== color) {
                     if (size === 1) {
                         // default size
-                        this.drawPixel(x + i, y + j, bg);
+                        this.drawPixel(x + i, y + j, backgroundColor);
                     }
                     else {
                         // big size
-                        this.fillRect(x + i * size, y + j * size, size, size, bg);
+                        this.fillRect(x + i * size, y + j * size, size, size, backgroundColor);
                     }
                 }
                 line >>= 1;
@@ -21297,12 +21274,12 @@ class ST7735S {
             this.writeData(rgb);
         }
     }
-    drawString(x, y, str, color, bg, size, wrap) {
+    drawString(x, y, string, color, backgroundColor, size, wrap) {
         //  bg = bg || color;
         size = size || 1;
         //  wrap = wrap || true;
-        for (let n = 0; n < str.length; n++) {
-            const c = str.charAt(n);
+        for (let n = 0; n < string.length; n++) {
+            const c = string.charAt(n);
             if (c === "\n") {
                 y += size * 8;
                 x = 0;
@@ -21311,7 +21288,7 @@ class ST7735S {
                 // skip em
             }
             else {
-                this.drawChar(x, y, c, color, bg, size);
+                this.drawChar(x, y, c, color, backgroundColor, size);
                 x += size * 6;
                 if (wrap && x > this.width - size * 6) {
                     y += size * 8;
@@ -21521,6 +21498,42 @@ class ST7735S {
             Yellow: 0xffe0,
             YellowGreen: 0x9e66,
         };
+    }
+    _color2pixels(w, h, color) {
+        return Array.from(new Array(Math.abs(w * h))).map((v, i) => color);
+    }
+    _drawCircleHelper(x0, y0, r, cornername, color) {
+        let f = 1 - r;
+        let ddF_x = 1;
+        let ddF_y = -2 * r;
+        let x = 0;
+        let y = r;
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            if (cornername & 0x4) {
+                this.drawPixel(x0 + x, y0 + y, color);
+                this.drawPixel(x0 + y, y0 + x, color);
+            }
+            if (cornername & 0x2) {
+                this.drawPixel(x0 + x, y0 - y, color);
+                this.drawPixel(x0 + y, y0 - x, color);
+            }
+            if (cornername & 0x8) {
+                this.drawPixel(x0 - y, y0 + x, color);
+                this.drawPixel(x0 - x, y0 + y, color);
+            }
+            if (cornername & 0x1) {
+                this.drawPixel(x0 - y, y0 - x, color);
+                this.drawPixel(x0 - x, y0 - y, color);
+            }
+        }
     }
 }
 exports.default = ST7735S;
@@ -22868,6 +22881,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class SainSmartTFT18LCD {
     constructor() {
+        this.debugprint = false;
+        this.width = 0;
+        this.height = 0;
+        this.writeBuffer = [];
         this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];
         this.requiredKeys = ["scl", "sda", "dc", "res", "cs"];
         this.displayIoNames = {
@@ -23120,22 +23137,22 @@ class SainSmartTFT18LCD {
     fillScreen(color) {
         this.fillRect(0, 0, this.width, this.height, color);
     }
-    fillRect(x, y, w, h, color) {
+    fillRect(x, y, width, height, color) {
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (x + w - 1 >= this.width) {
-            w = this.width - x;
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
         }
-        if (y + h - 1 >= this.height) {
-            h = this.height - y;
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
         }
-        this.setAddrWindow(x, y, x + w - 1, y + h - 1);
+        this.setAddrWindow(x, y, x + width - 1, y + height - 1);
         const hi = color >> 8;
         const lo = color & 0xff;
         const data = [];
-        for (y = h; y > 0; y--) {
-            for (x = w; x > 0; x--) {
+        for (y = height; y > 0; y--) {
+            for (x = width; x > 0; x--) {
                 data.push(hi);
                 data.push(lo);
             }
@@ -23143,22 +23160,22 @@ class SainSmartTFT18LCD {
         this._writeBuffer(data);
         this._writeBuffer(); // for flush
     }
-    drawRect(x, y, w, h, color) {
-        this.drawHLine(x, y, w, color);
-        this.drawHLine(x, y + h - 1, w, color);
-        this.drawVLine(x, y, h, color);
-        this.drawVLine(x + w - 1, y, h, color);
+    drawRect(x, y, width, height, color) {
+        this.drawHLine(x, y, width, color);
+        this.drawHLine(x, y + height - 1, width, color);
+        this.drawVLine(x, y, height, color);
+        this.drawVLine(x + width - 1, y, height, color);
     }
-    drawCircle(x0, y0, r, color) {
-        let f = 1 - r;
+    drawCircle(center_x, center_y, radius, color) {
+        let f = 1 - radius;
         let ddF_x = 1;
-        let ddF_y = -2 * r;
+        let ddF_y = -2 * radius;
         let x = 0;
-        let y = r;
-        this.drawPixel(x0, y0 + r, color);
-        this.drawPixel(x0, y0 - r, color);
-        this.drawPixel(x0 + r, y0, color);
-        this.drawPixel(x0 - r, y0, color);
+        let y = radius;
+        this.drawPixel(center_x, center_y + radius, color);
+        this.drawPixel(center_x, center_y - radius, color);
+        this.drawPixel(center_x + radius, center_y, color);
+        this.drawPixel(center_x - radius, center_y, color);
         while (x < y) {
             if (f >= 0) {
                 y--;
@@ -23168,92 +23185,34 @@ class SainSmartTFT18LCD {
             x++;
             ddF_x += 2;
             f += ddF_x;
-            this.drawPixel(x0 + x, y0 + y, color);
-            this.drawPixel(x0 - x, y0 + y, color);
-            this.drawPixel(x0 + x, y0 - y, color);
-            this.drawPixel(x0 - x, y0 - y, color);
-            this.drawPixel(x0 + y, y0 + x, color);
-            this.drawPixel(x0 - y, y0 + x, color);
-            this.drawPixel(x0 + y, y0 - x, color);
-            this.drawPixel(x0 - y, y0 - x, color);
+            this.drawPixel(center_x + x, center_y + y, color);
+            this.drawPixel(center_x - x, center_y + y, color);
+            this.drawPixel(center_x + x, center_y - y, color);
+            this.drawPixel(center_x - x, center_y - y, color);
+            this.drawPixel(center_x + y, center_y + x, color);
+            this.drawPixel(center_x - y, center_y + x, color);
+            this.drawPixel(center_x + y, center_y - x, color);
+            this.drawPixel(center_x - y, center_y - x, color);
         }
     }
-    _drawCircleHelper(x0, y0, r, cornername, color) {
-        let f = 1 - r;
-        let ddF_x = 1;
-        let ddF_y = -2 * r;
-        let x = 0;
-        let y = r;
-        while (x < y) {
-            if (f >= 0) {
-                y--;
-                ddF_y += 2;
-                f += ddF_y;
-            }
-            x++;
-            ddF_x += 2;
-            f += ddF_x;
-            if (cornername & 0x4) {
-                this.drawPixel(x0 + x, y0 + y, color);
-                this.drawPixel(x0 + y, y0 + x, color);
-            }
-            if (cornername & 0x2) {
-                this.drawPixel(x0 + x, y0 - y, color);
-                this.drawPixel(x0 + y, y0 - x, color);
-            }
-            if (cornername & 0x8) {
-                this.drawPixel(x0 - y, y0 + x, color);
-                this.drawPixel(x0 - x, y0 + y, color);
-            }
-            if (cornername & 0x1) {
-                this.drawPixel(x0 - y, y0 - x, color);
-                this.drawPixel(x0 - x, y0 - y, color);
-            }
-        }
+    fillCircle(center_x, center_y, radius, color) {
+        this.drawVLine(center_x, center_y - radius, 2 * radius + 1, color);
+        this._fillCircleHelper(center_x, center_y, radius, 3, 0, color);
     }
-    fillCircle(x0, y0, r, color) {
-        this.drawVLine(x0, y0 - r, 2 * r + 1, color);
-        this._fillCircleHelper(x0, y0, r, 3, 0, color);
+    drawRoundRect(x, y, width, height, round, color) {
+        this.drawHLine(x + round, y, width - 2 * round, color); // Top
+        this.drawHLine(x + round, y + height - 1, width - 2 * round, color); // Bottom
+        this.drawVLine(x, y + round, height - 2 * round, color); // Left
+        this.drawVLine(x + width - 1, y + round, height - 2 * round, color); // Right
+        this._drawCircleHelper(x + round, y + round, round, 1, color);
+        this._drawCircleHelper(x + width - round - 1, y + round, round, 2, color);
+        this._drawCircleHelper(x + width - round - 1, y + height - round - 1, round, 4, color);
+        this._drawCircleHelper(x + round, y + height - round - 1, round, 8, color);
     }
-    _fillCircleHelper(x0, y0, r, cornername, delta, color) {
-        let f = 1 - r;
-        let ddF_x = 1;
-        let ddF_y = -2 * r;
-        let x = 0;
-        let y = r;
-        while (x < y) {
-            if (f >= 0) {
-                y--;
-                ddF_y += 2;
-                f += ddF_y;
-            }
-            x++;
-            ddF_x += 2;
-            f += ddF_x;
-            if (cornername & 0x1) {
-                this.drawVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
-                this.drawVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
-            }
-            if (cornername & 0x2) {
-                this.drawVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
-                this.drawVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
-            }
-        }
-    }
-    drawRoundRect(x, y, w, h, r, color) {
-        this.drawHLine(x + r, y, w - 2 * r, color); // Top
-        this.drawHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
-        this.drawVLine(x, y + r, h - 2 * r, color); // Left
-        this.drawVLine(x + w - 1, y + r, h - 2 * r, color); // Right
-        this._drawCircleHelper(x + r, y + r, r, 1, color);
-        this._drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
-        this._drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
-        this._drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
-    }
-    fillRoundRect(x, y, w, h, r, color) {
-        this.fillRect(x + r, y, w - 2 * r, h, color);
-        this._fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
-        this._fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
+    fillRoundRect(x, y, width, height, round, color) {
+        this.fillRect(x + round, y, width - 2 * round, height, color);
+        this._fillCircleHelper(x + width - round - 1, y + round, round, 1, height - 2 * round - 1, color);
+        this._fillCircleHelper(x + round, y + round, round, 2, height - 2 * round - 1, color);
     }
     drawTriangle(x0, y0, x1, y1, x2, y2, color) {
         this.drawLine(x0, y0, x1, y1, color);
@@ -23261,10 +23220,10 @@ class SainSmartTFT18LCD {
         this.drawLine(x2, y2, x0, y0, color);
     }
     fillTriangle(x0, y0, x1, y1, x2, y2, color) {
-        let a;
-        let b;
-        let y;
-        let last;
+        let a = 0;
+        let b = 0;
+        let y = 0;
+        let last = 0;
         // Sort coordinates by Y order (y2 >= y1 >= y0)
         if (y0 > y1) {
             y1 = [y0, (y0 = y1)][0]; // this._swap(y0, y1);
@@ -23333,35 +23292,35 @@ class SainSmartTFT18LCD {
             this.drawHLine(a, y, b - a + 1, color);
         }
     }
-    drawVLine(x, y, h, color) {
+    drawVLine(x, y, height, color) {
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (y + h - 1 >= this.height) {
-            h = this.height - y;
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
         }
-        this.setAddrWindow(x, y, x, y + h - 1);
+        this.setAddrWindow(x, y, x, y + height - 1);
         const hi = color >> 8;
         const lo = color & 0xff;
         const data = [];
-        while (h--) {
+        while (height--) {
             data.push(hi);
             data.push(lo);
         }
         this.writeData(data);
     }
-    drawHLine(x, y, w, color) {
+    drawHLine(x, y, width, color) {
         if (x >= this.width || y >= this.height) {
             return;
         }
-        if (x + w - 1 >= this.width) {
-            w = this.width - x;
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
         }
-        this.setAddrWindow(x, y, x + w - 1, y);
+        this.setAddrWindow(x, y, x + width - 1, y);
         const hi = color >> 8;
         const lo = color & 0xff;
         const data = [];
-        while (w--) {
+        while (width--) {
             data.push(hi);
             data.push(lo);
         }
@@ -23402,7 +23361,7 @@ class SainSmartTFT18LCD {
         this.setAddrWindow(x, y, x + 1, y + 1);
         this.writeData([color >> 8, color & 0xff]);
     }
-    drawChar(x, y, ch, color, bg, size) {
+    drawChar(x, y, char, color, backgroundColor, size) {
         //  bg = bg || color;
         size = size || 1;
         if (x >= this.width || // Clip right
@@ -23412,11 +23371,11 @@ class SainSmartTFT18LCD {
             // Clip top
             return;
         }
-        if (color !== bg) {
-            this.drawChar2(x, y, ch, color, bg, size);
+        if (color !== backgroundColor) {
+            this.drawChar2(x, y, char, color, backgroundColor, size);
             return;
         }
-        const c = ch.charCodeAt(0);
+        const c = char.charCodeAt(0);
         for (let i = 0; i < 6; i++) {
             let line = i === 5 ? 0 : font[c * 5 + i];
             for (let j = 0; j < 8; j++) {
@@ -23430,62 +23389,26 @@ class SainSmartTFT18LCD {
                         this.fillRect(x + i * size, y + j * size, size, size, color);
                     }
                 }
-                else if (bg !== color) {
+                else if (backgroundColor !== color) {
                     if (size === 1) {
                         // default size
-                        this.drawPixel(x + i, y + j, bg);
+                        this.drawPixel(x + i, y + j, backgroundColor);
                     }
                     else {
                         // big size
-                        this.fillRect(x + i * size, y + j * size, size, size, bg);
+                        this.fillRect(x + i * size, y + j * size, size, size, backgroundColor);
                     }
                 }
                 line >>= 1;
             }
         }
     }
-    drawChar2(x, y, ch, color, bg, size) {
-        //  bg = bg || color;
-        size = size || 1;
-        if (x >= this.width || // Clip right
-            y >= this.height || // Clip bottom
-            x + 6 * size - 1 < 0 || // Clip left
-            y + 8 * size - 1 < 0 // Clip top
-        ) {
-            return;
-        }
-        const pixels = new Array(6 * 8 * size * size);
-        const c = ch.charCodeAt(0);
-        for (let i = 0; i < 6; i++) {
-            let line = i === 5 ? 0 : font[c * 5 + i];
-            for (let j = 0; j < 8; j++) {
-                const cl = line & 0x1 ? color : bg;
-                for (let w = 0; w < size; w++) {
-                    for (let h = 0; h < size; h++) {
-                        pixels[i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))] = cl;
-                    }
-                }
-                line >>= 1;
-            }
-        }
-        this.rawBound16(x, y, 6 * size, 8 * size, pixels);
-    }
-    rawBound16(x, y, width, height, pixels) {
-        const rgb = [];
-        pixels.forEach((v) => {
-            rgb.push((v & 0xff00) >> 8);
-            rgb.push(v & 0xff);
-        });
-        this.setAddrWindow(x, y, x + width - 1, y + height - 1);
-        this._writeBuffer(rgb);
-        this._writeBuffer(); // for flush
-    }
-    drawString(x, y, str, color, bg, size, wrap) {
+    drawString(x, y, string, color, backgroundColor, size, wrap) {
         //  bg = bg || color;
         size = size || 1;
         //  wrap = wrap || true;
-        for (let n = 0; n < str.length; n++) {
-            const c = str.charAt(n);
+        for (let n = 0; n < string.length; n++) {
+            const c = string.charAt(n);
             if (c === "\n") {
                 y += size * 8;
                 x = 0;
@@ -23494,7 +23417,7 @@ class SainSmartTFT18LCD {
                 // skip em
             }
             else {
-                this.drawChar(x, y, c, color, bg, size);
+                this.drawChar(x, y, c, color, backgroundColor, size);
                 x += size * 6;
                 if (wrap && x > this.width - size * 6) {
                     y += size * 8;
@@ -23701,6 +23624,100 @@ class SainSmartTFT18LCD {
             Yellow: 0xffe0,
             YellowGreen: 0x9e66,
         };
+    }
+    _drawCircleHelper(x0, y0, r, cornername, color) {
+        let f = 1 - r;
+        let ddF_x = 1;
+        let ddF_y = -2 * r;
+        let x = 0;
+        let y = r;
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            if (cornername & 0x4) {
+                this.drawPixel(x0 + x, y0 + y, color);
+                this.drawPixel(x0 + y, y0 + x, color);
+            }
+            if (cornername & 0x2) {
+                this.drawPixel(x0 + x, y0 - y, color);
+                this.drawPixel(x0 + y, y0 - x, color);
+            }
+            if (cornername & 0x8) {
+                this.drawPixel(x0 - y, y0 + x, color);
+                this.drawPixel(x0 - x, y0 + y, color);
+            }
+            if (cornername & 0x1) {
+                this.drawPixel(x0 - y, y0 - x, color);
+                this.drawPixel(x0 - x, y0 - y, color);
+            }
+        }
+    }
+    _fillCircleHelper(x0, y0, r, cornername, delta, color) {
+        let f = 1 - r;
+        let ddF_x = 1;
+        let ddF_y = -2 * r;
+        let x = 0;
+        let y = r;
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            if (cornername & 0x1) {
+                this.drawVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
+                this.drawVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
+            }
+            if (cornername & 0x2) {
+                this.drawVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
+                this.drawVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
+            }
+        }
+    }
+    drawChar2(x, y, ch, color, bg, size) {
+        //  bg = bg || color;
+        size = size || 1;
+        if (x >= this.width || // Clip right
+            y >= this.height || // Clip bottom
+            x + 6 * size - 1 < 0 || // Clip left
+            y + 8 * size - 1 < 0 // Clip top
+        ) {
+            return;
+        }
+        const pixels = new Array(6 * 8 * size * size);
+        const c = ch.charCodeAt(0);
+        for (let i = 0; i < 6; i++) {
+            let line = i === 5 ? 0 : font[c * 5 + i];
+            for (let j = 0; j < 8; j++) {
+                const cl = line & 0x1 ? color : bg;
+                for (let w = 0; w < size; w++) {
+                    for (let h = 0; h < size; h++) {
+                        pixels[i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))] = cl;
+                    }
+                }
+                line >>= 1;
+            }
+        }
+        this.rawBound16(x, y, 6 * size, 8 * size, pixels);
+    }
+    rawBound16(x, y, width, height, pixels) {
+        const rgb = [];
+        pixels.forEach((v) => {
+            rgb.push((v & 0xff00) >> 8);
+            rgb.push(v & 0xff);
+        });
+        this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+        this._writeBuffer(rgb);
+        this._writeBuffer(); // for flush
     }
 }
 exports.default = SainSmartTFT18LCD;
@@ -25052,6 +25069,16 @@ const font = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class SharpMemoryTFT {
     constructor() {
+        this.commands = {
+            write: 0x80,
+            clear: 0x20,
+            vcom: 0x40,
+        };
+        this.width = 0;
+        this.height = 0;
+        this._pos = { x: 0, y: 0 };
+        this.autoFlush = false;
+        this.fontSize = 0;
         this.keys = [
             "vcc",
             "gnd",
@@ -25067,10 +25094,6 @@ class SharpMemoryTFT {
             "height",
         ];
         this.requiredKeys = ["sclk", "mosi", "cs", "width", "height"];
-        this.commands = {};
-        this.commands.write = 0x80;
-        this.commands.clear = 0x20;
-        this.commands.vcom = 0x40;
         this._canvas = null;
         this._reset();
     }
@@ -25208,9 +25231,7 @@ class SharpMemoryTFT {
     }
     _ctx() {
         const canvas = this._preparedCanvas();
-        if (canvas) {
-            return canvas.getContext("2d");
-        }
+        return canvas.getContext("2d");
     }
     font(font, size) {
         const ctx = this._ctx();
@@ -25310,6 +25331,18 @@ class SharpMemoryTFT {
             this.warnCanvasAvailability();
         }
     }
+    draw(ctx) {
+        if (this.autoFlush) {
+            this._draw(ctx);
+        }
+    }
+    drawing(autoFlush) {
+        this.autoFlush = autoFlush === true;
+        const ctx = this._ctx();
+        if (ctx) {
+            this.draw(ctx);
+        }
+    }
     _draw(ctx) {
         const stride = this.width / 8;
         const vram = new Array(stride * 64);
@@ -25329,18 +25362,6 @@ class SharpMemoryTFT {
             }
         }
         this.raw(vram);
-    }
-    draw(ctx) {
-        if (this.autoFlush) {
-            this._draw(ctx);
-        }
-    }
-    drawing(autoFlush) {
-        this.autoFlush = autoFlush === true;
-        const ctx = this._ctx();
-        if (ctx) {
-            this.draw(ctx);
-        }
     }
 }
 exports.default = SharpMemoryTFT;
@@ -25367,14 +25388,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class GP2Y0A21YK0F {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
         this.displayIoNames = {
             vcc: "vcc",
             gnd: "gnd",
             signal: "signal",
         };
         this._unit = "mm";
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
     }
     static info() {
         return {
@@ -25384,8 +25405,8 @@ class GP2Y0A21YK0F {
     wired(obniz) {
         this.obniz = obniz;
         obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.io_signal = obniz.getIO(this.params.signal);
-        this.io_signal.end();
+        const io_signal = obniz.getIO(this.params.signal);
+        io_signal.end();
         this.ad_signal = obniz.getAD(this.params.signal);
     }
     start(callback) {
@@ -25411,10 +25432,15 @@ class GP2Y0A21YK0F {
         return distance;
     }
     getWait() {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const val = yield this.ad_signal.getWait();
-            const distance = this._volt2distance(val);
-            resolve(distance);
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const val = yield this.ad_signal.getWait();
+                const distance = this._volt2distance(val);
+                resolve(distance);
+            }
+            catch (e) {
+                reject(e);
+            }
         }));
     }
     unit(unit) {
@@ -25453,11 +25479,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR04 {
     constructor() {
-        this.keys = ["vcc", "trigger", "echo", "gnd"];
-        this.requiredKeys = ["vcc", "trigger", "echo"];
         this._unit = "mm";
         this.reset_alltime = false;
         this.temp = 15;
+        this.keys = ["vcc", "trigger", "echo", "gnd"];
+        this.requiredKeys = ["vcc", "trigger", "echo"];
     }
     static info() {
         return {
@@ -25468,6 +25494,12 @@ class HCSR04 {
         this.obniz = obniz;
         obniz.setVccGnd(null, this.params.gnd, "5v");
         this.vccIO = obniz.getIO(this.params.vcc);
+        if (obniz.isValidIO(this.params.trigger) === false) {
+            throw new Error(`trigger ${this.params.trigger} is invalid io`);
+        }
+        if (obniz.isValidIO(this.params.echo) === false) {
+            throw new Error(`echo ${this.params.echo} is invalid io`);
+        }
         this.trigger = this.params.trigger;
         this.echo = this.params.echo;
         this.vccIO.drive("5v");
@@ -25475,7 +25507,6 @@ class HCSR04 {
         this.obniz.wait(100);
     }
     measure(callback) {
-        const self = this;
         this.obniz.measure.echo({
             io_pulse: this.trigger,
             io_echo: this.echo,
@@ -25497,7 +25528,7 @@ class HCSR04 {
                         const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
                         distance =
                             (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
-                        if (self._unit === "inch") {
+                        if (this._unit === "inch") {
                             distance = distance * 0.0393701;
                         }
                     }
@@ -25544,11 +25575,13 @@ exports.default = HCSR04;
 Object.defineProperty(exports, "__esModule", { value: true });
 class GYSFDMAXB {
     constructor() {
+        this.displayName = "gps";
+        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
+        this.on1pps = null;
+        this.last1pps = 0;
         this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
         this.requiredKeys = ["txd", "rxd"];
         this.ioKeys = this.keys;
-        this.displayName = "gps";
-        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
     }
     // -------------------
     get latitude() {
@@ -25895,64 +25928,19 @@ exports.default = GYSFDMAXB;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ135 {
-    constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
-        this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
-        // this.RL = 2 * 1000;
-        // this.RO = 20 * 1000;
-    }
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ135 extends MQGas_1.default {
     static info() {
         return {
             name: "MQ135",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        this.vcc = this.params.vcc;
-        this.gnd = this.params.gnd;
-        if (this.obniz.isValidIO(this.params.ao)) {
-            this.ad = obniz.getAD(this.params.ao);
-            this.ad.start((voltage) => {
-                // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
-                    this.onchangeanalog(voltage);
-                }
-                if (typeof this.voltageLimit === "number" &&
-                    this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
-                    this.onexceedvoltage(voltage);
-                }
-            });
-        }
-        if (this.obniz.isValidIO(this.params.do)) {
-            this.do = obniz.getIO(this.params.do);
-            this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
-                    this.onchangedigital(value);
-                }
-            });
-        }
-    }
-    startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
-    }
-    heatWait(seconds) {
-        this.startHeating();
-        if (seconds > 0) {
-            seconds *= 1000;
-        }
-        else {
-            seconds = 2 * 60 * 1000;
-        }
-        return new Promise((resolve) => {
-            setTimeout(resolve, seconds);
-        });
+    constructor() {
+        super();
     }
 }
 exports.default = MQ135;
@@ -25967,64 +25955,19 @@ exports.default = MQ135;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ2 {
-    constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
-        this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
-        // this.RL = 2 * 1000;
-        // this.RO = 20 * 1000;
-    }
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ2 extends MQGas_1.default {
     static info() {
         return {
             name: "MQ2",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        this.vcc = this.params.vcc;
-        this.gnd = this.params.gnd;
-        if (this.obniz.isValidIO(this.params.ao)) {
-            this.ad = obniz.getAD(this.params.ao);
-            this.ad.start((voltage) => {
-                // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
-                    this.onchangeanalog(voltage);
-                }
-                if (typeof this.voltageLimit === "number" &&
-                    this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
-                    this.onexceedvoltage(voltage);
-                }
-            });
-        }
-        if (this.obniz.isValidIO(this.params.do)) {
-            this.do = obniz.getIO(this.params.do);
-            this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
-                    this.onchangedigital(value);
-                }
-            });
-        }
-    }
-    startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
-    }
-    heatWait(seconds) {
-        this.startHeating();
-        if (seconds > 0) {
-            seconds *= 1000;
-        }
-        else {
-            seconds = 2 * 60 * 1000;
-        }
-        return new Promise((resolve) => {
-            setTimeout(resolve, seconds);
-        });
+    constructor() {
+        super();
     }
 }
 exports.default = MQ2;
@@ -26039,64 +25982,19 @@ exports.default = MQ2;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ3 {
-    constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
-        this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
-        // this.RL = 2 * 1000;
-        // this.RO = 20 * 1000;
-    }
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ3 extends MQGas_1.default {
     static info() {
         return {
             name: "MQ3",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        this.vcc = this.params.vcc;
-        this.gnd = this.params.gnd;
-        if (this.obniz.isValidIO(this.params.ao)) {
-            this.ad = obniz.getAD(this.params.ao);
-            this.ad.start((voltage) => {
-                // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
-                    this.onchangeanalog(voltage);
-                }
-                if (typeof this.voltageLimit === "number" &&
-                    this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
-                    this.onexceedvoltage(voltage);
-                }
-            });
-        }
-        if (this.obniz.isValidIO(this.params.do)) {
-            this.do = obniz.getIO(this.params.do);
-            this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
-                    this.onchangedigital(value);
-                }
-            });
-        }
-    }
-    startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
-    }
-    heatWait(seconds) {
-        this.startHeating();
-        if (seconds > 0) {
-            seconds *= 1000;
-        }
-        else {
-            seconds = 2 * 60 * 1000;
-        }
-        return new Promise((resolve) => {
-            setTimeout(resolve, seconds);
-        });
+    constructor() {
+        super();
     }
 }
 exports.default = MQ3;
@@ -26111,64 +26009,19 @@ exports.default = MQ3;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ4 {
-    constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
-        this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
-        // this.RL = 2 * 1000;
-        // this.RO = 20 * 1000;
-    }
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ4 extends MQGas_1.default {
     static info() {
         return {
             name: "MQ4",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        this.vcc = this.params.vcc;
-        this.gnd = this.params.gnd;
-        if (this.obniz.isValidIO(this.params.ao)) {
-            this.ad = obniz.getAD(this.params.ao);
-            this.ad.start((voltage) => {
-                // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
-                    this.onchangeanalog(voltage);
-                }
-                if (typeof this.voltageLimit === "number" &&
-                    this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
-                    this.onexceedvoltage(voltage);
-                }
-            });
-        }
-        if (this.obniz.isValidIO(this.params.do)) {
-            this.do = obniz.getIO(this.params.do);
-            this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
-                    this.onchangedigital(value);
-                }
-            });
-        }
-    }
-    startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
-    }
-    heatWait(seconds) {
-        this.startHeating();
-        if (seconds > 0) {
-            seconds *= 1000;
-        }
-        else {
-            seconds = 2 * 60 * 1000;
-        }
-        return new Promise((resolve) => {
-            setTimeout(resolve, seconds);
-        });
+    constructor() {
+        super();
     }
 }
 exports.default = MQ4;
@@ -26183,65 +26036,19 @@ exports.default = MQ4;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ5 {
-    // https://www.parallax.com/sites/default/files/downloads/605-00009-MQ-5-Datasheet.pdf
-    constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
-        this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
-        // this.RL = 2 * 1000;
-        // this.RO = 20 * 1000;
-    }
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ5 extends MQGas_1.default {
     static info() {
         return {
             name: "MQ5",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        this.vcc = this.params.vcc;
-        this.gnd = this.params.gnd;
-        if (this.obniz.isValidIO(this.params.ao)) {
-            this.ad = obniz.getAD(this.params.ao);
-            this.ad.start((voltage) => {
-                // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
-                    this.onchangeanalog(voltage);
-                }
-                if (typeof this.voltageLimit === "number" &&
-                    this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
-                    this.onexceedvoltage(voltage);
-                }
-            });
-        }
-        if (this.obniz.isValidIO(this.params.do)) {
-            this.do = obniz.getIO(this.params.do);
-            this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
-                    this.onchangedigital(value);
-                }
-            });
-        }
-    }
-    startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
-    }
-    heatWait(seconds) {
-        this.startHeating();
-        if (seconds > 0) {
-            seconds *= 1000;
-        }
-        else {
-            seconds = 2 * 60 * 1000;
-        }
-        return new Promise((resolve) => {
-            setTimeout(resolve, seconds);
-        });
+    constructor() {
+        super();
     }
 }
 exports.default = MQ5;
@@ -26256,64 +26063,19 @@ exports.default = MQ5;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ6 {
-    constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
-        this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
-        // this.RL = 2 * 1000;
-        // this.RO = 20 * 1000;
-    }
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ6 extends MQGas_1.default {
     static info() {
         return {
             name: "MQ6",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        this.vcc = this.params.vcc;
-        this.gnd = this.params.gnd;
-        if (this.obniz.isValidIO(this.params.ao)) {
-            this.ad = obniz.getAD(this.params.ao);
-            this.ad.start((voltage) => {
-                // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
-                    this.onchangeanalog(voltage);
-                }
-                if (typeof this.voltageLimit === "number" &&
-                    this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
-                    this.onexceedvoltage(voltage);
-                }
-            });
-        }
-        if (this.obniz.isValidIO(this.params.do)) {
-            this.do = obniz.getIO(this.params.do);
-            this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
-                    this.onchangedigital(value);
-                }
-            });
-        }
-    }
-    startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
-    }
-    heatWait(seconds) {
-        this.startHeating();
-        if (seconds > 0) {
-            seconds *= 1000;
-        }
-        else {
-            seconds = 2 * 60 * 1000;
-        }
-        return new Promise((resolve) => {
-            setTimeout(resolve, seconds);
-        });
+    constructor() {
+        super();
     }
 }
 exports.default = MQ6;
@@ -26328,64 +26090,19 @@ exports.default = MQ6;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ7 {
-    constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
-        this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
-        // this.RL = 2 * 1000;
-        // this.RO = 20 * 1000;
-    }
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ7 extends MQGas_1.default {
     static info() {
         return {
             name: "MQ7",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        this.vcc = this.params.vcc;
-        this.gnd = this.params.gnd;
-        if (this.obniz.isValidIO(this.params.ao)) {
-            this.ad = obniz.getAD(this.params.ao);
-            this.ad.start((voltage) => {
-                // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
-                    this.onchangeanalog(voltage);
-                }
-                if (typeof this.voltageLimit === "number" &&
-                    this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
-                    this.onexceedvoltage(voltage);
-                }
-            });
-        }
-        if (this.obniz.isValidIO(this.params.do)) {
-            this.do = obniz.getIO(this.params.do);
-            this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
-                    this.onchangedigital(value);
-                }
-            });
-        }
-    }
-    startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
-    }
-    heatWait(seconds) {
-        this.startHeating();
-        if (seconds > 0) {
-            seconds *= 1000;
-        }
-        else {
-            seconds = 2 * 60 * 1000;
-        }
-        return new Promise((resolve) => {
-            setTimeout(resolve, seconds);
-        });
+    constructor() {
+        super();
     }
 }
 exports.default = MQ7;
@@ -26400,64 +26117,19 @@ exports.default = MQ7;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ8 {
-    constructor() {
-        this.keys = ["gnd", "vcc", "do", "ao"];
-        this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
-        // this.RL = 2 * 1000;
-        // this.RO = 20 * 1000;
-    }
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ8 extends MQGas_1.default {
     static info() {
         return {
             name: "MQ8",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        this.vcc = this.params.vcc;
-        this.gnd = this.params.gnd;
-        if (this.obniz.isValidIO(this.params.ao)) {
-            this.ad = obniz.getAD(this.params.ao);
-            this.ad.start((voltage) => {
-                // this.level = this.calc(voltage);
-                if (typeof this.onchangeanalog === "function") {
-                    this.onchangeanalog(voltage);
-                }
-                if (typeof this.voltageLimit === "number" &&
-                    this.voltageLimit <= voltage &&
-                    typeof this.onexceedvoltage === "function") {
-                    this.onexceedvoltage(voltage);
-                }
-            });
-        }
-        if (this.obniz.isValidIO(this.params.do)) {
-            this.do = obniz.getIO(this.params.do);
-            this.do.input((value) => {
-                if (typeof this.onchangedigital === "function") {
-                    this.onchangedigital(value);
-                }
-            });
-        }
-    }
-    startHeating() {
-        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
-    }
-    heatWait(seconds) {
-        this.startHeating();
-        if (seconds > 0) {
-            seconds *= 1000;
-        }
-        else {
-            seconds = 2 * 60 * 1000;
-        }
-        return new Promise((resolve) => {
-            setTimeout(resolve, seconds);
-        });
+    constructor() {
+        super();
     }
 }
 exports.default = MQ8;
@@ -26472,21 +26144,44 @@ exports.default = MQ8;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MQ9 {
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ9 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ9",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ9;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQGas/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MQGasSensor {
     constructor() {
         this.keys = ["gnd", "vcc", "do", "ao"];
         this.requiredKeys = [];
-        this.onchangeanalog = undefined;
-        this.onchangedigital = undefined;
-        this.onexceedvoltage = undefined;
-        this.voltageLimit = undefined;
         // this.RL = 2 * 1000;
         // this.RO = 20 * 1000;
     }
     static info() {
         return {
-            name: "MQ9",
+            name: "MQGas",
         };
     }
     wired(obniz) {
@@ -26532,7 +26227,7 @@ class MQ9 {
         });
     }
 }
-exports.default = MQ9;
+exports.default = MQGasSensor;
 
 //# sourceMappingURL=index.js.map
 
@@ -26556,12 +26251,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_3AxisAccelerometer {
     constructor() {
-        this.keys = ["gnd", "vcc", "sda", "scl"];
-        this.requiredKeys = ["sda", "scl"];
-        this.ioKeys = this.keys;
         this.displayName = "3axis";
         this.displayIoNames = { sda: "sda", scl: "scl" };
         this.address = 0x53;
+        this.keys = ["gnd", "vcc", "sda", "scl"];
+        this.requiredKeys = ["sda", "scl"];
+        this.ioKeys = this.keys;
         this.regAdrs = {};
         this.regAdrs.POWER_CTL = 0x2d;
         this.regAdrs.THRESH_ACT = 0x24;
@@ -26720,10 +26415,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Button {
     constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
-        this.onChangeForStateWait = () => {
-        };
     }
     static info() {
         return {
@@ -26741,19 +26437,17 @@ class Grove_Button {
             this.io_supply.output(false);
         }
         this.io_signal.pull("5v");
-        const self = this;
         this.io_signal.input((value) => {
-            self.isPressed = value;
-            if (self.onchange) {
-                self.onchange(value);
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
             }
-            self.onChangeForStateWait(value);
+            this.onChangeForStateWait(value);
         });
     }
     isPressedWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.io_signal.inputWait();
-            return ret;
+            return yield this.io_signal.inputWait();
         });
     }
     stateWait(isPressed) {
@@ -26782,7 +26476,7 @@ exports.default = Grove_Button;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Buzzer {
-    constructor(obniz) {
+    constructor() {
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
     }
@@ -26829,8 +26523,6 @@ exports.default = Grove_Buzzer;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EarHeartRate {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["vcc", "gnd"];
         this.displayIoNames = {
             vcc: "vcc",
             gnd: "gnd",
@@ -26838,6 +26530,8 @@ class Grove_EarHeartRate {
         };
         this.interval = 5;
         this.duration = 2.5 * 1000;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["vcc", "gnd"];
     }
     static info() {
         return {
@@ -26893,6 +26587,8 @@ exports.default = Grove_EarHeartRate;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_GPS {
     constructor() {
+        this._latitude = 0;
+        this._longitude = 0;
         this.keys = ["tx", "rx", "vcc", "gnd"];
         this.requiredKeys = ["tx", "rx"];
         this.ioKeys = this.keys;
@@ -27343,9 +27039,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class ENC03R_Module {
     constructor() {
+        this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
+        this.sens1 = 0;
+        this.sens2 = 0;
         this.keys = ["vcc", "out1", "out2", "gnd"];
         this.requiredKeys = ["out1", "out2"];
-        this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
     }
     static info() {
         return {
@@ -27403,17 +27101,17 @@ class IRModule {
         this.keys = ["recv", "vcc", "send", "gnd"];
         this.requiredKeys = ["recv", "send"];
     }
+    static info() {
+        return {
+            name: "IRModule",
+        };
+    }
     get dataSymbolLength() {
         return this.sensor.dataSymbolLength;
     }
     set dataSymbolLength(x) {
         this.sensor.dataSymbolLength = x;
         this.led.dataSymbolLength = x;
-    }
-    static info() {
-        return {
-            name: "IRModule",
-        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -27469,14 +27167,15 @@ exports.default = IRModule;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IRSensor {
     constructor() {
-        this.keys = ["output", "vcc", "gnd"];
-        this.requiredKeys = ["output"];
         this.dataSymbolLength = 0.07;
-        this.duration = 500; // 500msec
+        this.duration = 500; // 500msec;
         this.dataInverted = true;
         this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
         this.cutTail = false;
         this.output_pullup = true;
+        this.ondetect = null;
+        this.keys = ["output", "vcc", "gnd"];
+        this.requiredKeys = ["output"];
     }
     static info() {
         return {
@@ -27541,9 +27240,9 @@ exports.default = IRSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class InfraredLED {
     constructor() {
+        this.dataSymbolLength = 0.07;
         this.keys = ["anode", "cathode"];
         this.requiredKeys = ["anode"];
-        this.dataSymbolLength = 0.07;
     }
     static info() {
         return {
@@ -27567,11 +27266,11 @@ class InfraredLED {
         this.pwm.freq(38000);
         this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
     }
-    send(arr) {
-        if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
-            arr.push(0);
+    send(data) {
+        if (data && data.length > 0 && data[data.length - 1] === 1) {
+            data.push(0);
         }
-        this.pwm.modulate("am", this.dataSymbolLength, arr);
+        this.pwm.modulate("am", this.dataSymbolLength, data);
     }
 }
 exports.default = InfraredLED;
@@ -27598,6 +27297,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class YG1006 {
     constructor() {
+        this.onchange = null;
         this.keys = ["signal", "vcc", "gnd"];
         this.requiredKeys = ["signal"];
     }
@@ -27618,8 +27318,7 @@ class YG1006 {
     }
     getWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.signal.getWait();
-            return value;
+            return yield this.signal.getWait();
         });
     }
 }
@@ -27683,26 +27382,26 @@ class FullColorLED {
         this.pwmB.freq(1000);
         this.rgb(0, 0, 0);
     }
-    rgb(r, g, b) {
-        r = Math.min(Math.max(parseInt(r), 0), 255);
-        g = Math.min(Math.max(parseInt(g), 0), 255);
-        b = Math.min(Math.max(parseInt(b), 0), 255);
+    rgb(red, green, blue) {
+        red = Math.min(Math.max(parseInt(red), 0), 255);
+        green = Math.min(Math.max(parseInt(green), 0), 255);
+        blue = Math.min(Math.max(parseInt(blue), 0), 255);
         if (this.commontype === this.COMMON_TYPE_ANODE) {
-            r = 255 - r;
-            g = 255 - g;
-            b = 255 - b;
+            red = 255 - red;
+            green = 255 - green;
+            blue = 255 - blue;
         }
-        this.pwmR.duty((r / 255) * 100);
-        this.pwmG.duty((g / 255) * 100);
-        this.pwmB.duty((b / 255) * 100);
+        this.pwmR.duty((red / 255) * 100);
+        this.pwmG.duty((green / 255) * 100);
+        this.pwmB.duty((blue / 255) * 100);
     }
-    hsv(h, s, v) {
-        const C = v * s;
-        const Hp = h / 60;
+    hsv(hue, saturation, value) {
+        const C = value * saturation;
+        const Hp = hue / 60;
         const X = C * (1 - Math.abs((Hp % 2) - 1));
-        let R;
-        let G;
-        let B;
+        let R = 0;
+        let G = 0;
+        let B = 0;
         if (0 <= Hp && Hp < 1) {
             [R, G, B] = [C, X, 0];
         }
@@ -27721,7 +27420,7 @@ class FullColorLED {
         if (5 <= Hp && Hp < 6) {
             [R, G, B] = [C, 0, X];
         }
-        const m = v - C;
+        const m = value - C;
         [R, G, B] = [R + m, G + m, B + m];
         R = Math.floor(R * 255);
         G = Math.floor(G * 255);
@@ -27781,21 +27480,31 @@ class LED {
             return obniz.getIO(io);
         }
         this.obniz = obniz;
-        this.io_anode = getIO(this.params.anode);
-        this.io_anode.output(false);
+        if (this.obniz.isValidIO(this.params.anode)) {
+            this.io_anode = getIO(this.params.anode);
+        }
         if (this.obniz.isValidIO(this.params.cathode)) {
             this.io_cathode = getIO(this.params.cathode);
-            this.io_cathode.output(false);
         }
         this.animationName = "Led-" + this.params.anode;
     }
     on() {
         this.endBlink();
-        this.io_anode.output(true);
+        if (this.io_anode) {
+            this.io_anode.output(true);
+        }
+        if (this.io_cathode) {
+            this.io_cathode.output(false);
+        }
     }
     off() {
         this.endBlink();
-        this.io_anode.output(false);
+        if (this.io_anode) {
+            this.io_anode.output(false);
+        }
+        if (this.io_cathode) {
+            this.io_cathode.output(true);
+        }
     }
     output(value) {
         if (value) {
@@ -27817,14 +27526,14 @@ class LED {
                 duration: interval,
                 state: (index) => {
                     // index = 0
-                    this.io_anode.output(true); // on
+                    this.on(); // on
                 },
             },
             {
                 duration: interval,
                 state: (index) => {
                     // index = 0
-                    this.io_anode.output(false); // off
+                    this.off();
                 },
             },
         ];
@@ -27931,11 +27640,11 @@ class WS2811 {
         this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    rgb(r, g, b) {
-        this.spi.write(WS2811._generateColor(r, g, b));
+    rgb(red, green, blue) {
+        this.spi.write(WS2811._generateColor(red, green, blue));
     }
-    hsv(h, s, v) {
-        this.spi.write(WS2811._generateHsvColor(h, s, v));
+    hsv(hue, saturation, value) {
+        this.spi.write(WS2811._generateHsvColor(hue, saturation, value));
     }
     rgbs(array) {
         let bytes = [];
@@ -28052,11 +27761,11 @@ class WS2812 {
         this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    rgb(r, g, b) {
-        this.spi.write(WS2812._generateColor(r, g, b));
+    rgb(red, green, blue) {
+        this.spi.write(WS2812._generateColor(red, green, blue));
     }
-    hsv(h, s, v) {
-        this.spi.write(WS2812._generateHsvColor(h, s, v));
+    hsv(hue, saturation, value) {
+        this.spi.write(WS2812._generateHsvColor(hue, saturation, value));
     }
     rgbs(array) {
         let bytes = [];
@@ -28173,11 +27882,11 @@ class WS2812B {
         this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    rgb(r, g, b) {
-        this.spi.write(WS2812B._generateColor(r, g, b));
+    rgb(red, green, blue) {
+        this.spi.write(WS2812B._generateColor(red, green, blue));
     }
-    hsv(h, s, v) {
-        this.spi.write(WS2812B._generateHsvColor(h, s, v));
+    hsv(hue, saturation, value) {
+        this.spi.write(WS2812B._generateHsvColor(hue, saturation, value));
     }
     rgbs(array) {
         let bytes = [];
@@ -28354,6 +28063,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class CT10 {
     constructor() {
+        this.isNear = null;
+        this.onchange = null;
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
         this.onChangeForStateWait = () => {
@@ -28375,23 +28086,21 @@ class CT10 {
             this.io_supply.output(false);
         }
         this.io_signal.pull("0v");
-        const self = this;
         this.io_signal.input((value) => {
-            self.isNear = value;
-            if (self.onchange) {
-                self.onchange(value);
+            this.isNear = value;
+            if (this.onchange) {
+                this.onchange(value);
             }
-            self.onChangeForStateWait(value);
+            this.onChangeForStateWait(value);
         });
     }
     isNearWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.io_signal.inputWait();
-            return ret;
+            return yield this.io_signal.inputWait();
         });
     }
     stateWait(isNear) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.onChangeForStateWait = (near) => {
                 if (isNear === near) {
                     this.onChangeForStateWait = () => {
@@ -28426,12 +28135,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class HMC5883L {
     constructor() {
+        this.address = {
+            device: 0x1e,
+            reset: [0x02, 0x00],
+            xMSB: [0x03],
+        };
         this.keys = ["gnd", "sda", "scl", "i2c"];
         this.requiredKeys = [];
-        this.address = {};
-        this.address.device = 0x1e;
-        this.address.reset = [0x02, 0x00]; // Continuous Measurment Mode
-        this.address.xMSB = [0x03];
     }
     static info() {
         return {
@@ -28548,6 +28258,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class AK8963 {
     constructor() {
+        this._adc_cycle = 0;
         this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address", "adb_cycle"];
         this.requiredKeys = [];
     }
@@ -28622,6 +28333,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class Button {
     constructor() {
+        this.isPressed = null;
+        this.onchange = null;
         this.keys = ["signal", "gnd", "pull"];
         this.requiredKeys = ["signal"];
         this.onChangeForStateWait = () => {
@@ -28648,13 +28361,12 @@ class Button {
         else {
             this.io_signal.pull("5v");
         }
-        const self = this;
         this.io_signal.input((value) => {
-            self.isPressed = value === false;
-            if (self.onchange) {
-                self.onchange(value === false);
+            this.isPressed = value === false;
+            if (this.onchange) {
+                this.onchange(value === false);
             }
-            self.onChangeForStateWait(value === false);
+            this.onChangeForStateWait(value === false);
         });
     }
     isPressedWait() {
@@ -28740,14 +28452,14 @@ class FlickHat {
             this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
         }
     }
-    start(callbackFwInfo) {
+    start(callback) {
         return __awaiter(this, void 0, void 0, function* () {
             this.io_ts.pull("3v");
             this.io_reset.output(false);
             yield this.obniz.wait(50);
             this.io_reset.output(true);
             yield this.obniz.wait(50);
-            this.onfwinfo = callbackFwInfo;
+            this.onfwinfo = callback;
             this.fwInfo = {
                 fwValid: 0,
                 fwInfoReceived: false,
@@ -29054,6 +28766,15 @@ exports.default = FlickHat;
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR505 {
     constructor() {
@@ -29076,7 +28797,9 @@ class HCSR505 {
         });
     }
     getWait() {
-        return this.io_signal.inputWait();
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io_signal.inputWait();
+        });
     }
 }
 exports.default = HCSR505;
@@ -29123,8 +28846,7 @@ class IPM_165 {
     }
     getWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.signal.getWait();
-            return value;
+            return yield this.signal.getWait();
         });
     }
 }
@@ -29170,23 +28892,22 @@ class JoyStick {
         this.ad_x = obniz.getAD(this.params.x);
         this.ad_y = obniz.getAD(this.params.y);
         this.io_sig_sw.pull("5v");
-        const self = this;
         this.ad_x.start((value) => {
-            self.positionX = value / 5.0;
-            if (self.onchangex) {
-                self.onchangex(self.positionX * 2 - 1);
+            this.positionX = value / 5.0;
+            if (this.onchangex) {
+                this.onchangex(this.positionX * 2 - 1);
             }
         });
         this.ad_y.start((value) => {
-            self.positionY = value / 5.0;
-            if (self.onchangey) {
-                self.onchangey(self.positionY * 2 - 1);
+            this.positionY = value / 5.0;
+            if (this.onchangey) {
+                this.onchangey(this.positionY * 2 - 1);
             }
         });
         this.io_sig_sw.input((value) => {
-            self.isPressed = value === false;
-            if (self.onchangesw) {
-                self.onchangesw(value === false);
+            this.isPressed = value === false;
+            if (this.onchangesw) {
+                this.onchangesw(value === false);
             }
         });
     }
@@ -29408,6 +29129,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class MPU6050 {
     constructor() {
+        this._address = 0x68;
         this.keys = [
             "gnd",
             "vcc",
@@ -29431,7 +29153,9 @@ class MPU6050 {
         this.params.clock = 100000;
         this.params.pull = "3v";
         this.params.mode = "master";
-        this._address = this.params.address || 0x68;
+        if (typeof this.params.address === "number") {
+            this._address = this.params.address;
+        }
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.setConfig(this.params.accelerometer_range || 2, this.params.gyroscope_range || 250);
     }
@@ -29710,7 +29434,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class MPU9250 {
-    constructor(obniz) {
+    constructor() {
         this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
         this.requiredKeys = [];
     }
@@ -29821,9 +29545,10 @@ exports.default = PaPIRsVZ;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Potentiometer {
     constructor() {
+        this.vcc_voltage = 5.0;
+        this.position = 0;
         this.keys = ["pin0", "pin1", "pin2"];
         this.requiredKeys = ["pin0", "pin1", "pin2"];
-        this.vcc_voltage = 5.0;
     }
     static info() {
         return {
@@ -29833,14 +29558,13 @@ class Potentiometer {
     wired(obniz) {
         this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
         this.ad = obniz.getAD(this.params.pin1);
-        const self = this;
         obniz.getAD(this.params.pin0).start((value) => {
-            self.vcc_voltage = value;
+            this.vcc_voltage = value;
         });
         this.ad.start((value) => {
-            self.position = value / self.vcc_voltage;
-            if (self.onchange) {
-                self.onchange(self.position);
+            this.position = value / this.vcc_voltage;
+            if (this.onchange) {
+                this.onchange(this.position);
             }
         });
     }
@@ -30132,10 +29856,10 @@ exports.default = DCMotor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class PCA9685_PWM {
     constructor(chip, id) {
-        this.chip = chip;
-        this.id = id;
         this.value = 0;
         this.state = {};
+        this.chip = chip;
+        this.id = id;
     }
     freq(frequency) {
         this.chip.freq(frequency);
@@ -30150,6 +29874,8 @@ class PCA9685_PWM {
 // tslint:disable-next-line:max-classes-per-file
 class PCA9685 {
     constructor() {
+        this.pwms = [];
+        this._freq = 0;
         /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
         this.keys = [
             "gnd",
@@ -30274,13 +30000,13 @@ class PCA9685 {
             this.pwms[i].state.freq = this._freq;
         }
     }
-    pulse(id, pulse_width) {
+    pulse(index, pulse_width) {
         if (typeof this._freq !== "number" || this._freq <= 0) {
             throw new Error("please provide freq first.");
         }
-        this.duty(id, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
+        this.duty(index, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
     }
-    duty(id, duty) {
+    duty(index, duty) {
         duty *= 1.0;
         if (typeof this._freq !== "number" || this._freq <= 0) {
             throw new Error("please provide freq first.");
@@ -30294,12 +30020,12 @@ class PCA9685 {
         if (duty > 100) {
             duty = 100;
         }
-        this.getPWM(id).state.duty = duty;
-        this.writeSingleONOFF(id, 0, (duty / 100.0) * 4095);
+        this.getPWM(index).state.duty = duty;
+        this.writeSingleONOFF(index, 0, (duty / 100.0) * 4095);
     }
-    writeSingleONOFF(id, on, off) {
+    writeSingleONOFF(index, on, off) {
         this.i2c.write(this.address, [
-            this._commands.LED0_ON_L + 4 * id,
+            this._commands.LED0_ON_L + 4 * index,
             on & 0xff,
             on >> 8,
             off & 0xff,
@@ -30328,12 +30054,12 @@ exports.default = PCA9685;
 Object.defineProperty(exports, "__esModule", { value: true });
 class ServoMotor {
     constructor() {
-        this.keys = ["gnd", "vcc", "signal", "pwm"];
-        this.requiredKeys = [];
         this.range = {
             min: 0.5,
             max: 2.4,
         };
+        this.keys = ["gnd", "vcc", "signal", "pwm"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -30352,6 +30078,9 @@ class ServoMotor {
         else {
             this.pwm = obniz.getFreePwm();
             this.pwm_io_num = this.params.signal;
+            if (typeof this.pwm_io_num !== "number") {
+                throw new Error(`no io specified for pwm`);
+            }
             this.pwm.start({ io: this.pwm_io_num });
         }
         this.pwm.freq(50);
@@ -30453,8 +30182,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class StepperMotor {
     constructor() {
-        this.keys = ["a", "b", "aa", "bb", "common"];
-        this.requiredKeys = ["a", "b", "aa", "bb"];
+        this.currentStep = 0;
+        this.frequency = 100;
+        this.rotationStepCount = 100;
+        this.milliMeterStepCount = 1;
+        this.ios = [];
         this._stepInstructions = {
             "1": [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
             "2": [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
@@ -30469,12 +30201,9 @@ class StepperMotor {
                 [0, 1, 1, 0],
             ],
         };
-        this.type = undefined; // common exist? => unipolar : bipolar
-        this.currentStep = 0;
         this._stepType = "2";
-        this.frequency = 100;
-        this.rotationStepCount = 100;
-        this.milliMeterStepCount = 1;
+        this.keys = ["a", "b", "aa", "bb", "common"];
+        this.requiredKeys = ["a", "b", "aa", "bb"];
     }
     static info() {
         return {
@@ -30571,7 +30300,7 @@ class StepperMotor {
                 currentPhase = instruction_length - currentPhase * -1;
             }
             for (let i = 0; i < this.ios.length; i++) {
-                this.ios[i].output(instructions[currentPhase][i]);
+                this.ios[i].output(instructions[currentPhase][i] === 1);
             }
             yield this.obniz.pingWait();
         });
@@ -31276,6 +31005,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class FSR40X {
     constructor() {
+        this.pressure = 0;
         this.keys = ["pin0", "pin1"];
         this.requiredKeys = ["pin0", "pin1"];
     }
@@ -31290,12 +31020,11 @@ class FSR40X {
         this.ad = obniz.getAD(this.params.pin1);
         this.io_pwr.drive("5v");
         this.io_pwr.output(true);
-        const self = this;
         this.ad.start((value) => {
             const pressure = value * 100;
-            self.press = pressure;
-            if (self.onchange) {
-                self.onchange(self.press);
+            this.pressure = pressure;
+            if (this.onchange) {
+                this.onchange(this.pressure);
             }
         });
     }
@@ -31303,8 +31032,8 @@ class FSR40X {
         return __awaiter(this, void 0, void 0, function* () {
             const value = yield this.ad.getWait();
             const pressure = value * 100;
-            this.press = pressure;
-            return this.press;
+            this.pressure = pressure;
+            return this.pressure;
         });
     }
 }
@@ -31353,8 +31082,7 @@ class SEN0114 {
     }
     getHumidityWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.value = yield this.ad.getWait();
-            return this.value;
+            return yield this.ad.getWait();
         });
     }
 }
@@ -31387,14 +31115,14 @@ class Speaker {
         this.pwm = obniz.getFreePwm();
         this.pwm.start({ io: this.params.signal });
     }
-    play(freq) {
-        if (typeof freq !== "number") {
+    play(frequency) {
+        if (typeof frequency !== "number") {
             throw new Error("freq must be a number");
         }
-        freq = Math.floor(freq); // temporary
-        if (freq > 0) {
-            this.pwm.freq(freq);
-            this.pwm.pulse((1 / freq / 2) * 1000);
+        frequency = Math.floor(frequency); // temporary
+        if (frequency > 0) {
+            this.pwm.freq(frequency);
+            this.pwm.pulse((1 / frequency / 2) * 1000);
         }
         else {
             this.pwm.pulse(0);
@@ -31428,6 +31156,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class AnalogTemperatureSensor {
     constructor() {
+        this.temp = 0;
         this.keys = ["vcc", "gnd", "output"];
         this.requiredKeys = ["output"];
         this.drive = "5v";
@@ -31711,6 +31440,9 @@ class ADT7410 {
         else if (this.params.addressMode === 9) {
             this.address = 0x49;
         }
+        else {
+            throw new Error(`please specify address. 8 or 9`);
+        }
         this.params.clock = 400000;
         this.params.pull = "5v";
         this.params.mode = "master";
@@ -31783,8 +31515,7 @@ class AM2320 {
             const ret = yield this.i2c.readWait(this.address, 6);
             this.i2c.onerror = i2cOnerror;
             if (ret[0] !== 3 || ret[1] !== 4) {
-                console.log("AM2320: Could not receive data correctly");
-                return {};
+                throw new Error(`Could not receive data correctly`);
             }
             const humidity = (ret[2] * 256 + ret[3]) / 10.0;
             const temperature = (ret[4] * 256 + ret[5]) / 10.0;
@@ -32191,8 +31922,11 @@ class BME280 {
             return this.calcAltitude(pressure);
         });
     }
-    calcAltitude(pressure, seaLevel = 1013.25) {
-        return ((1.0 - Math.pow(pressure / seaLevel, 1 / 5.2553)) * 145366.45 * 0.3048);
+    calcAltitude(pressure, seaPressure) {
+        if (typeof seaPressure !== "number") {
+            seaPressure = 1013.25;
+        }
+        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
     }
 }
 exports.default = BME280;
@@ -32308,7 +32042,7 @@ class DHT12 extends i2cParts_1.default {
             }
             const checksum = data[0] + data[1] + data[2] + data[3];
             if (checksum !== data[4]) {
-                return null;
+                throw new Error(`checksum does not match`);
             }
             return {
                 humidity,
@@ -32601,7 +32335,6 @@ class ADT7310 {
         });
     }
 }
-exports.ADT7310 = ADT7310;
 exports.default = ADT7310;
 
 //# sourceMappingURL=index.js.map
@@ -33217,17 +32950,16 @@ class RN42 {
             baud: 115200,
             drive: "3v",
         });
-        const self = this;
         this.uart.onreceive = (data, text) => {
             // this is not perfect. separation is possible.
             if (text.indexOf("CONNECT") >= 0) {
-                console.log("connected");
+                // console.log("connected");
             }
             else if (text.indexOf("DISCONNECT") >= 0) {
-                console.log("disconnected");
+                // console.log("disconnected");
             }
-            if (typeof self.onreceive === "function") {
-                self.onreceive(data, text);
+            if (typeof this.onreceive === "function") {
+                this.onreceive(data, text);
             }
         };
     }
@@ -33415,9 +33147,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class XBee {
     constructor() {
+        this.displayIoNames = { tx: "<tx", rx: ">rx" };
         this.keys = ["tx", "rx", "gnd"];
         this.requiredKeys = ["tx", "rx"];
-        this.displayIoNames = { tx: "<tx", rx: ">rx" };
     }
     static info() {
         return {
@@ -33450,9 +33182,9 @@ class XBee {
             }
         };
     }
-    send(text) {
+    send(data) {
         if (this.isAtMode === false) {
-            this.uart.send(text);
+            this.uart.send(data);
         }
         else {
             this.obniz.error("XBee is AT Command mode now. Wait for finish config.");

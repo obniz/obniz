@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class AnalogTemperatureSensor {
     constructor() {
+        this.temp = 0;
         this.keys = ["vcc", "gnd", "output"];
         this.requiredKeys = ["output"];
         this.drive = "5v";

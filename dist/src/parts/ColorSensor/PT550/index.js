@@ -19,6 +19,8 @@ class PT550 {
             name: "PT550",
         };
     }
+    onchange(value) {
+    }
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

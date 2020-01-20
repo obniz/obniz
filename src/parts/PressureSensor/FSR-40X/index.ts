@@ -1,10 +1,17 @@
 // Todo: add weight and calc pressure(kg)
 
 import Obniz from "../../../obniz";
+import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
+
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface FSR40XOptions { }
-class FSR40X implements ObnizPartsInterface {
+export interface FSR40XOptions {
+  pin0: number;
+  pin1: number;
+}
+
+export default class FSR40X implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -14,12 +21,15 @@ class FSR40X implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
-  public io_pwr: any;
   public params: any;
-  public ad: any;
-  public press: any;
-  public onchange: any;
+
+  public pressure = 0;
+  public onchange?: (temp: number) => void;
+
+  protected obniz!: Obniz;
+
+  private io_pwr!: PeripheralIO;
+  private ad!: PeripheralAD;
 
   constructor() {
     this.keys = ["pin0", "pin1"];
@@ -35,22 +45,19 @@ class FSR40X implements ObnizPartsInterface {
     this.io_pwr.drive("5v");
     this.io_pwr.output(true);
 
-    const self: any = this;
-    this.ad.start((value: any) => {
+    this.ad.start((value: number) => {
       const pressure: any = value * 100;
-      self.press = pressure;
-      if (self.onchange) {
-        self.onchange(self.press);
+      this.pressure = pressure;
+      if (this.onchange) {
+        this.onchange(this.pressure);
       }
     });
   }
 
-  public async getWait() {
-    const value: any = await this.ad.getWait();
-    const pressure: any = value * 100;
-    this.press = pressure;
-    return this.press;
+  public async getWait(): Promise<number> {
+    const value = await this.ad.getWait();
+    const pressure = value * 100;
+    this.pressure = pressure;
+    return this.pressure;
   }
 }
-
-export default FSR40X;

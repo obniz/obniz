@@ -1,17 +1,20 @@
 import Obniz from "../../../obniz";
+import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 export interface HCSR505Options {
+    signal: number;
+    vcc?: number;
+    gnd?: number;
 }
-declare class HCSR505 implements ObnizPartsInterface {
+export default class HCSR505 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
-    io_signal: any;
     params: any;
-    onchange: any;
+    io_signal: PeripheralIO;
+    onchange?: (value: boolean) => void;
+    protected obniz: Obniz;
     constructor();
     wired(obniz: Obniz): void;
-    getWait(): any;
+    getWait(): Promise<boolean>;
 }
-export default HCSR505;

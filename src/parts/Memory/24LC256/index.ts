@@ -1,8 +1,17 @@
 import Obniz from "../../../obniz";
+import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface _24LC256Options { }
-class _24LC256 implements ObnizPartsInterface {
+export interface _24LC256Options {
+  sda?: number;
+  scl?: number;
+  clock?: number;
+  pull?: string;
+  i2c?: PeripheralI2C;
+  address?: number;
+}
+
+export default class _24LC256 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -13,8 +22,10 @@ class _24LC256 implements ObnizPartsInterface {
   public requiredKeys: string[];
   public keys: string[];
   public params: any;
-  public i2c: any;
-  public obniz!: Obniz;
+
+  protected obniz!: Obniz;
+
+  private i2c!: PeripheralI2C;
 
   constructor() {
     this.requiredKeys = ["address"];
@@ -29,8 +40,8 @@ class _24LC256 implements ObnizPartsInterface {
 
   // Module functions
 
-  public set(address: any, data: any) {
-    const array: any = [];
+  public set(address: number, data: number[]) {
+    const array = [];
     array.push((address >> 8) & 0xff);
     array.push(address & 0xff);
     array.push.apply(array, data);
@@ -38,13 +49,11 @@ class _24LC256 implements ObnizPartsInterface {
     this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
   }
 
-  public async getWait(address: any, length: any) {
-    const array: any = [];
+  public async getWait(address: number, length: number) {
+    const array = [];
     array.push((address >> 8) & 0xff);
     array.push(address & 0xff);
     this.i2c.write(0x50, array);
     return await this.i2c.readWait(0x50, length);
   }
 }
-
-export default _24LC256;

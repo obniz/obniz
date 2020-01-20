@@ -31,8 +31,7 @@ class IPM_165 {
     }
     getWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.signal.getWait();
-            return value;
+            return yield this.signal.getWait();
         });
     }
 }

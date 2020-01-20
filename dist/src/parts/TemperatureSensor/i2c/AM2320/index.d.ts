@@ -1,25 +1,23 @@
 import Obniz from "../../../../obniz";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-export interface AM2320Options {
+import { I2cPartsAbstructOptions } from "../../../i2cParts";
+export interface AM2320Options extends I2cPartsAbstructOptions {
 }
-declare class AM2320 implements ObnizPartsInterface {
+export default class AM2320 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
-    obniz: Obniz;
     params: any;
     address: any;
-    i2c: any;
+    protected obniz: Obniz;
+    protected i2c: PeripheralI2C;
     constructor();
     wired(obniz: Obniz): void;
     getAllWait(): Promise<{
-        temperature?: undefined;
-        humidity?: undefined;
-    } | {
-        temperature: any;
-        humidity: any;
+        temperature: number;
+        humidity: number;
     }>;
-    getTempWait(): Promise<any>;
-    getHumdWait(): Promise<any>;
+    getTempWait(): Promise<number | null>;
+    getHumdWait(): Promise<number>;
 }
-export default AM2320;

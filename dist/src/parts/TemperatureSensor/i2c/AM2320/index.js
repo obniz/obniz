@@ -41,8 +41,7 @@ class AM2320 {
             const ret = yield this.i2c.readWait(this.address, 6);
             this.i2c.onerror = i2cOnerror;
             if (ret[0] !== 3 || ret[1] !== 4) {
-                console.log("AM2320: Could not receive data correctly");
-                return {};
+                throw new Error(`Could not receive data correctly`);
             }
             const humidity = (ret[2] * 256 + ret[3]) / 10.0;
             const temperature = (ret[4] * 256 + ret[5]) / 10.0;

@@ -11,8 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class StepperMotor {
     constructor() {
-        this.keys = ["a", "b", "aa", "bb", "common"];
-        this.requiredKeys = ["a", "b", "aa", "bb"];
+        this.currentStep = 0;
+        this.frequency = 100;
+        this.rotationStepCount = 100;
+        this.milliMeterStepCount = 1;
+        this.ios = [];
         this._stepInstructions = {
             "1": [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
             "2": [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
@@ -27,12 +30,9 @@ class StepperMotor {
                 [0, 1, 1, 0],
             ],
         };
-        this.type = undefined; // common exist? => unipolar : bipolar
-        this.currentStep = 0;
         this._stepType = "2";
-        this.frequency = 100;
-        this.rotationStepCount = 100;
-        this.milliMeterStepCount = 1;
+        this.keys = ["a", "b", "aa", "bb", "common"];
+        this.requiredKeys = ["a", "b", "aa", "bb"];
     }
     static info() {
         return {
@@ -129,7 +129,7 @@ class StepperMotor {
                 currentPhase = instruction_length - currentPhase * -1;
             }
             for (let i = 0; i < this.ios.length; i++) {
-                this.ios[i].output(instructions[currentPhase][i]);
+                this.ios[i].output(instructions[currentPhase][i] === 1);
             }
             yield this.obniz.pingWait();
         });

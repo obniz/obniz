@@ -5,7 +5,12 @@ interface PeripheralPWMOptions {
     drive?: DriveType;
     pull?: PullType;
 }
-declare class PeripheralPWM {
+export interface PWMInterface {
+    freq: (frequency: number) => void;
+    pulse: (value: number) => void;
+    duty: (value: number) => void;
+}
+export default class PeripheralPWM implements PWMInterface {
     Obniz: Obniz;
     id: number;
     state: any;
@@ -22,4 +27,4 @@ declare class PeripheralPWM {
     end(): void;
     modulate(type: any, symbol_length: any, data: any): void;
 }
-export default PeripheralPWM;
+export {};

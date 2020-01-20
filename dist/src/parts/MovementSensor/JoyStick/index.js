@@ -29,23 +29,22 @@ class JoyStick {
         this.ad_x = obniz.getAD(this.params.x);
         this.ad_y = obniz.getAD(this.params.y);
         this.io_sig_sw.pull("5v");
-        const self = this;
         this.ad_x.start((value) => {
-            self.positionX = value / 5.0;
-            if (self.onchangex) {
-                self.onchangex(self.positionX * 2 - 1);
+            this.positionX = value / 5.0;
+            if (this.onchangex) {
+                this.onchangex(this.positionX * 2 - 1);
             }
         });
         this.ad_y.start((value) => {
-            self.positionY = value / 5.0;
-            if (self.onchangey) {
-                self.onchangey(self.positionY * 2 - 1);
+            this.positionY = value / 5.0;
+            if (this.onchangey) {
+                this.onchangey(this.positionY * 2 - 1);
             }
         });
         this.io_sig_sw.input((value) => {
-            self.isPressed = value === false;
-            if (self.onchangesw) {
-                self.onchangesw(value === false);
+            this.isPressed = value === false;
+            if (this.onchangesw) {
+                this.onchangesw(value === false);
             }
         });
     }

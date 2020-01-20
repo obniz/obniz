@@ -11,6 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class Button {
     constructor() {
+        this.isPressed = null;
+        this.onchange = null;
         this.keys = ["signal", "gnd", "pull"];
         this.requiredKeys = ["signal"];
         this.onChangeForStateWait = () => {
@@ -37,13 +39,12 @@ class Button {
         else {
             this.io_signal.pull("5v");
         }
-        const self = this;
         this.io_signal.input((value) => {
-            self.isPressed = value === false;
-            if (self.onchange) {
-                self.onchange(value === false);
+            this.isPressed = value === false;
+            if (this.onchange) {
+                this.onchange(value === false);
             }
-            self.onChangeForStateWait(value === false);
+            this.onChangeForStateWait(value === false);
         });
     }
     isPressedWait() {

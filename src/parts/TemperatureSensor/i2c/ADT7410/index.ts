@@ -1,8 +1,14 @@
 import Obniz from "../../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 
-export interface ADT7410Options { }
-class ADT7410 implements ObnizPartsInterface {
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../../i2cParts";
+
+export interface ADT7410Options extends I2cPartsAbstructOptions {
+  addressMode: number;
+}
+
+export default class ADT7410 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -12,10 +18,11 @@ class ADT7410 implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz!: Obniz;
   public params: any;
   public address: any;
-  public i2c: any;
+
+  protected obniz!: Obniz;
+  protected i2c!: PeripheralI2C;
 
   constructor() {
     this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
@@ -30,6 +37,8 @@ class ADT7410 implements ObnizPartsInterface {
       this.address = 0x48;
     } else if (this.params.addressMode === 9) {
       this.address = 0x49;
+    } else {
+      throw new Error(`please specify address. 8 or 9`);
     }
 
     this.params.clock = 400000;
@@ -39,8 +48,8 @@ class ADT7410 implements ObnizPartsInterface {
     this.i2c = obniz.getI2CWithConfig(this.params);
   }
 
-  public async getTempWait() {
-    const ret: any = await this.i2c.readWait(this.address, 2);
+  public async getTempWait(): Promise<number> {
+    const ret = await this.i2c.readWait(this.address, 2);
     let tempBin: any = ret[0] << 8;
     tempBin |= ret[1];
     tempBin = tempBin >> 3;
@@ -52,5 +61,3 @@ class ADT7410 implements ObnizPartsInterface {
     return tempBin / 16;
   }
 }
-
-export default ADT7410;
