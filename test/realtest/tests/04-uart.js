@@ -92,7 +92,7 @@ describe('4-uart', function() {
       baud: 9600,
     });
 
-    let text = '';
+    let text = ' ';
     for (let i = 0; i < 4096; i++) {
       text += 'a';
     }
@@ -127,7 +127,7 @@ describe('4-uart', function() {
       baud: 115200,
     });
 
-    let text = '';
+    let text = ' ';
     for (let i = 0; i < 4096; i++) {
       text += 'a';
     }
