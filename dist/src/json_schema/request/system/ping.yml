@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/ping"
+response: "/response/system/pong"
+
+type: object
+required: [ping]
+properties:
+  ping:
+    type: object
+    required: [key]
+    properties:
+      key: {$ref: "/dataArray"}

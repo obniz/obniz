@@ -1,0 +1,61 @@
+{
+  "name": "M5STICK C",
+  "board": [
+    "obnizA"
+  ],
+  "sleep_test": false,
+  "io": [
+    {
+      "//": "default pin (0:pullup,2:pulldown)",
+      "board_io": 26,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 1
+    },
+    {
+      "board_io": 0,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 0
+    },
+    {
+      "board_io": 32,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogRead",
+        "analogWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 2
+    },
+    {
+      "board_io": 33,
+      "mode": [
+        "digitalRead",
+        "digitalWrite",
+        "analogRead",
+        "analogWrite"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 3
+    },
+    {
+      "board_io": 36,
+      "mode": [
+        "digitalRead",
+        "analogRead"
+      ],
+      "obniz": "obnizA",
+      "obniz_io": 4
+    }
+  ]
+}

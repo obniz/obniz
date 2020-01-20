@@ -1,0 +1,19 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central/scan_start"
+related:
+  - "/response/ble/central/scan"
+  - "/response/ble/central/scan_finish"
+deprecated: 3.0.0
+
+type: object
+required: [scan]
+properties:
+  scan:
+    type: object
+    additionalProperties: false
+    properties:
+      duration:
+        type: integer
+        default: 30

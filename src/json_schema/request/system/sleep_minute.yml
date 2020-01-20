@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/sleepMinute"
+
+type: object
+required: [sleep_minute]
+properties:
+  sleep_minute:
+    type: integer
+    description: "sleep time (minute)"

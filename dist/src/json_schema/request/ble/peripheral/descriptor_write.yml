@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral/descriptor_write"
+related: "/response/ble/peripheral/descriptor_write"
+description: "write descriptor on own service"
+deprecated: 3.0.0
+
+
+type: object
+required: [peripheral]
+properties:
+  peripheral:
+    type: object
+    required: [write_descriptor]
+    properties:
+      write_descriptor:
+        type: object
+        required: [service_uuid,characteristic_uuid,descriptor_uuid,data]
+        additionalProperties: false
+        properties:
+          service_uuid: {$ref: "/uuid"}
+          characteristic_uuid: {$ref: "/uuid"}
+          descriptor_uuid: {$ref: "/uuid"}
+          data: {$ref: "/dataArray"}

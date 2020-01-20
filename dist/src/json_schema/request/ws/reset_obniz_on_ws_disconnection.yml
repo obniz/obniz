@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ws/reset_obniz_on_ws_disconnection"
+
+
+type: object
+required: [reset_obniz_on_ws_disconnection]
+properties:
+  reset_obniz_on_ws_disconnection:
+    type: boolean
+    default: false

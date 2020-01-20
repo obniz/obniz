@@ -1,0 +1,15 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/service_get_finish"
+deprecated: 3.0.0
+
+type: object
+required: [get_service_result_finish]
+properties:
+  get_service_result_finish:
+    type: object
+    required: [address]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress"}
