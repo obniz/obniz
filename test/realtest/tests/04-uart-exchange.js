@@ -63,6 +63,7 @@ describe('4-uart-exchange', function() {
 
     const text = 'こんにちは'; //eslint-disable-line non-ascii
     let received = '';
+    sender.send(' ');
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -97,6 +98,7 @@ describe('4-uart-exchange', function() {
       text += 'a';
     }
     let received = '';
+    sender.send(' ');
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -132,6 +134,7 @@ describe('4-uart-exchange', function() {
       text += 'a';
     }
     let received = '';
+    sender.send(' ');
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {

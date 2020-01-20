@@ -40,6 +40,7 @@ describe('4-uart', function() {
 
     const text = 'HelloWorld';
     let received = '';
+    sender.send(' ');
     sender.send(text);
     while (1 === 1) {
       if (receiver.isDataExists()) {
@@ -92,11 +93,12 @@ describe('4-uart', function() {
       baud: 9600,
     });
 
-    let text = ' ';
+    let text = '';
     for (let i = 0; i < 4096; i++) {
       text += 'a';
     }
     let received = '';
+    sender.send(' ');
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -127,11 +129,12 @@ describe('4-uart', function() {
       baud: 115200,
     });
 
-    let text = ' ';
+    let text = '';
     for (let i = 0; i < 4096; i++) {
       text += 'a';
     }
     let received = '';
+    sender.send(' ');
     sender.send(text);
     while (1) {
       if (receiver.isDataExists()) {
@@ -239,7 +242,7 @@ describe('4-uart', function() {
           received1 = '';
         }
       }
-      if (found == 2) {
+      if (found === 2) {
         break;
       }
       await wait(1); //wait for 10ms
