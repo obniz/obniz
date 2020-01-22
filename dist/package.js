@@ -6,6 +6,7 @@ module.exports = {
   "types": "./dist/src/obniz/index.d.ts",
   "files": [
     "dist",
+    "!dist/**/*.map",
     "index.js",
     "obniz.js",
     "obniz.min.js"
