@@ -69,6 +69,7 @@ import BME280, {BME280Options} from "../parts/TemperatureSensor/i2c/BME280";
 import D6T44L, {D6T44LOptions} from "../parts/TemperatureSensor/i2c/D6T44L";
 import DHT12, {DHT12Options} from "../parts/TemperatureSensor/i2c/DHT12";
 import S5851A, {S5851AOptions} from "../parts/TemperatureSensor/i2c/S-5851A";
+import SHT20, {SHT20Options} from "../parts/TemperatureSensor/i2c/SHT20";
 import SHT31, {SHT31Options} from "../parts/TemperatureSensor/i2c/SHT31";
 import ADT7310, {ADT7310Options} from "../parts/TemperatureSensor/spi/ADT7310";
 // Wireless
@@ -93,8 +94,10 @@ import OMRON_2JCIE, {OMRON_2JCIEOptions} from "../parts/Ble/2jcie";
 // biological
 import Puls08M5stickcS, {Puls08M5stickcSOptions} from "../parts/Biological/PULSE08-M5STICKC-S";
 import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
+import YunHat, {YunHatOptions} from "../parts/M5Stack/M5StickCYunHat";
 import SH200Q, {SH200QOptions} from "../parts/MovementSensor/SH200Q";
 import AXP192, {AXP192Options} from "../parts/Power/AXP192";
+import BMP280, {BMP280Options} from "../parts/PressureSensor/BMP280";
 import DPS310, {DPS310Options} from "../parts/PressureSensor/DPS310";
 
 export interface WiredNameMap {
@@ -195,6 +198,7 @@ export interface WiredNameMap {
   "DHT12": DHT12;
   // 'S5851A': S5851A;
   "SHT31": SHT31;
+  "SHT20": SHT20;
   "ADT7310": ADT7310;
   "AM2320": AM2320;
   // ColorSensor
@@ -222,6 +226,8 @@ export interface WiredNameMap {
   "ADT7410": ADT7410;
   "S5851A": S5851A;
   "DPS310": DPS310;
+  "BMP280": BMP280;
+  "YunHat": YunHat;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -323,6 +329,7 @@ export interface WiredNameOptionsMap {
   "DHT12": DHT12Options;
   // 'S5851A': S5851AOptions;
   "SHT31": SHT31Options;
+  "SHT20": SHT20Options;
   "ADT7310": ADT7310Options;
   "AM2320": AM2320Options;
   // ColorSensor
@@ -350,4 +357,6 @@ export interface WiredNameOptionsMap {
   "ADT7410": ADT7410Options;
   "S5851A": S5851AOptions;
   "DPS310": DPS310Options;
+  "BMP280": BMP280Options;
+  "YunHat": YunHatOptions;
 }

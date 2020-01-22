@@ -7,6 +7,7 @@ declare class ObnizUtil {
     static _requiredKeys(params: any, keys: any): any;
     static dataArray2string(data: any): any;
     static string2dataArray(str: any): any[];
+    static assertNumber(min: number, max: number, variable_name: string, variable: number): void;
     obniz: any;
     width: any;
     height: any;

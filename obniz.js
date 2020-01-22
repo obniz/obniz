@@ -14791,6 +14791,11 @@ class ObnizUtil {
         const buf = Buffer.from(str);
         return [...buf];
     }
+    static assertNumber(min, max, variable_name, variable) {
+        if (!(min <= variable && variable <= max)) {
+            throw new Error(`${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`);
+        }
+    }
     createCanvasContext(width, height) {
         if (this.obniz.isNode) {
             try {
@@ -18544,6 +18549,7 @@ var map = {
 	"./Light/WS2812/index.js": "./dist/src/parts/Light/WS2812/index.js",
 	"./Light/WS2812B/index.js": "./dist/src/parts/Light/WS2812B/index.js",
 	"./Logic/SNx4HC595/index.js": "./dist/src/parts/Logic/SNx4HC595/index.js",
+	"./M5Stack/M5StickCYunHat/index.js": "./dist/src/parts/M5Stack/M5StickCYunHat/index.js",
 	"./Magnet/CT10/index.js": "./dist/src/parts/Magnet/CT10/index.js",
 	"./Magnet/HMC5883L/index.js": "./dist/src/parts/Magnet/HMC5883L/index.js",
 	"./Memory/24LC256/index.js": "./dist/src/parts/Memory/24LC256/index.js",
@@ -18567,6 +18573,7 @@ var map = {
 	"./Moving/Solenoid/index.js": "./dist/src/parts/Moving/Solenoid/index.js",
 	"./Moving/StepperMotor/index.js": "./dist/src/parts/Moving/StepperMotor/index.js",
 	"./Power/AXP192/index.js": "./dist/src/parts/Power/AXP192/index.js",
+	"./PressureSensor/BMP280/index.js": "./dist/src/parts/PressureSensor/BMP280/index.js",
 	"./PressureSensor/DPS310/index.js": "./dist/src/parts/PressureSensor/DPS310/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./dist/src/parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./dist/src/parts/SoilSensor/SEN0114/index.js",
@@ -18587,6 +18594,7 @@ var map = {
 	"./TemperatureSensor/i2c/D6T44L/index.js": "./dist/src/parts/TemperatureSensor/i2c/D6T44L/index.js",
 	"./TemperatureSensor/i2c/DHT12/index.js": "./dist/src/parts/TemperatureSensor/i2c/DHT12/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./dist/src/parts/TemperatureSensor/i2c/S-5851A/index.js",
+	"./TemperatureSensor/i2c/SHT20/index.js": "./dist/src/parts/TemperatureSensor/i2c/SHT20/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./dist/src/parts/TemperatureSensor/i2c/SHT31/index.js",
 	"./TemperatureSensor/spi/ADT7310/index.js": "./dist/src/parts/TemperatureSensor/spi/ADT7310/index.js",
 	"./Wireless/MFRC522/index.js": "./dist/src/parts/Wireless/MFRC522/index.js",
@@ -28087,6 +28095,161 @@ exports.default = SNx4HC595;
 
 /***/ }),
 
+/***/ "./dist/src/parts/M5Stack/M5StickCYunHat/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+class YunHat {
+    constructor() {
+        // ホントは14個あるが全部制御するとバグる
+        this.LED_LEN = 13;
+        this.requiredKeys = [];
+        this.keys = [
+            "sda",
+            "scl",
+            "i2c",
+        ];
+        this.ioKeys = ["sda", "scl"];
+    }
+    static info() {
+        return {
+            name: "YunHat",
+        };
+    }
+    static _generateHsvColor(h, s, v) {
+        const C = v * s;
+        const Hp = h / 60;
+        const X = C * (1 - Math.abs((Hp % 2) - 1));
+        let R = 0;
+        let G = 0;
+        let B = 0;
+        if (0 <= Hp && Hp < 1) {
+            [R, G, B] = [C, X, 0];
+        }
+        if (1 <= Hp && Hp < 2) {
+            [R, G, B] = [X, C, 0];
+        }
+        if (2 <= Hp && Hp < 3) {
+            [R, G, B] = [0, C, X];
+        }
+        if (3 <= Hp && Hp < 4) {
+            [R, G, B] = [0, X, C];
+        }
+        if (4 <= Hp && Hp < 5) {
+            [R, G, B] = [X, 0, C];
+        }
+        if (5 <= Hp && Hp < 6) {
+            [R, G, B] = [C, 0, X];
+        }
+        const m = v - C;
+        [R, G, B] = [R + m, G + m, B + m];
+        R = Math.floor(R * 255);
+        G = Math.floor(G * 255);
+        B = Math.floor(B * 255);
+        return { red: R, green: G, blue: B };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.params.clock = 100 * 1000; // for i2c
+        this.params.mode = "master"; // for i2c
+        this.params.pull = "3v"; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.sht20 = obniz.wired("SHT20", { i2c: this.i2c });
+        this.bmp280 = obniz.wired("BMP280", { i2c: this.i2c });
+        this.bmp280.applyCalibration();
+    }
+    // public setColorCode(ledNum: number, colorCode: string) {
+    //   const hexConvert = (hex: string) => {
+    //     if (hex.slice(0, 1) === "#") {
+    //       hex = hex.slice(1);
+    //     }
+    //     if (hex.length === 3) {
+    //       hex = hex.slice(0, 1) + hex.slice(0, 1) + hex.slice(1, 2) + hex.slice(1, 2) + hex.slice(2, 3) + hex.slice(2, 3);
+    //     }
+    //
+    //     return [hex.slice(0, 2), hex.slice(2, 4), hex.slice(4, 6)].map((str) => {
+    //       return parseInt(str, 16);
+    //     });
+    //   };
+    //   const color: number[] = hexConvert(colorCode);
+    //   this.rgb(color[0], color[1], color[2]);
+    // }
+    rgb(red, green, blue) {
+        util_1.default.assertNumber(0, 255, "red", red);
+        util_1.default.assertNumber(0, 255, "green", green);
+        util_1.default.assertNumber(0, 255, "blue", blue);
+        const leds = [];
+        for (let i = 0; i < this.LED_LEN; i++) {
+            leds.push([red, green, blue]);
+        }
+        this.rgbs(leds);
+    }
+    hsv(hue, saturation, value) {
+        util_1.default.assertNumber(0, 300, "hue", hue);
+        util_1.default.assertNumber(0, 1, "saturation", saturation);
+        util_1.default.assertNumber(0, 1, "value", value);
+        const color = YunHat._generateHsvColor(hue, saturation, value);
+        this.rgb(color.red, color.green, color.blue);
+    }
+    rgbs(array) {
+        if (array.length <= this.LED_LEN) {
+            array.forEach((value, index) => {
+                this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
+            });
+        }
+    }
+    hsvs(array) {
+        const leds = array.map((value, index) => {
+            const color = YunHat._generateHsvColor(value[0], value[1], value[2]);
+            return [color.red, color.green, color.blue];
+        });
+        this.rgbs(leds);
+    }
+    getLightWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(0x38, [0x00]);
+            const d = yield this.i2c.readWait(0x38, 2);
+            return d[1] << 8 | d[0];
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.sht20.getTempWait();
+        });
+    }
+    getHumidWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.sht20.getHumidWait();
+        });
+    }
+    getPressureWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.bmp280.getPressureWait();
+        });
+    }
+}
+exports.default = YunHat;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Magnet/CT10/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -30563,6 +30726,241 @@ const LDO3_EN_MASK = 0xf7;
 
 /***/ }),
 
+/***/ "./dist/src/parts/PressureSensor/BMP280/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class BMP280 {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = [
+            "vcore",
+            "vio",
+            "gnd",
+            "csb",
+            "sdi",
+            "sck",
+            "sdo",
+            "i2c",
+            "address",
+        ];
+        this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
+        this.configration = {
+            sampling: {
+                temp: 1,
+                pres: 1,
+            },
+            interval: 5,
+            iir_strength: 0,
+            mode: 3,
+            Modes: {
+                sleep: 0,
+                forced: 1,
+                normal: 3,
+            },
+        };
+        this.commands = {};
+        this.commands.addresses = {
+            config: 0xf5,
+            ctrl_meas: 0xf4,
+        };
+    }
+    static info() {
+        return {
+            name: "BMP280",
+            datasheet: "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (obniz.isValidIO(this.params.csb)) {
+            // selecting I2C mode before powerup
+            this.io_csb = obniz.getIO(this.params.csb);
+            this.io_csb.drive("3v");
+            this.io_csb.output(true);
+        }
+        this.obniz.setVccGnd(this.params.vio, null, "3v");
+        this.obniz.setVccGnd(this.params.vcore, null, "3v");
+        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.wait(10);
+        this.address = 0x76;
+        if (this.params.address === 0x76) {
+            this.address = 0x76;
+        }
+        else if (this.params.address === 0x77) {
+            this.address = 0x77;
+        }
+        else if (this.params.address !== undefined) {
+            throw new Error("address must be 0x76 or 0x77");
+        }
+        if (obniz.isValidIO(this.params.sdo)) {
+            this.io_sdo = obniz.getIO(this.params.sdo);
+            this.io_sdo.drive("3v");
+            this.io_sdo.output(this.address === 0x76 ? false : true);
+        }
+        this.params.sda = this.params.sda || this.params.sdi;
+        this.params.scl = this.params.scl || this.params.sck;
+        this.params.clock = this.params.clock || 100 * 1000;
+        this.params.mode = "master";
+        this.params.pull = "3v";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(10);
+        this.config();
+        this.obniz.wait(10);
+    }
+    setIIRStrength(strengh) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.configration.iir_strength = strengh;
+            this.config();
+        });
+    }
+    applyCalibration() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [0x88]);
+            const data = yield this.i2c.readWait(this.address, 24);
+            this._calibrated = {
+                dig_T1: (data[1] << 8) | data[0],
+                dig_T2: this._readSigned16((data[3] << 8) | data[2]),
+                dig_T3: this._readSigned16((data[5] << 8) | data[4]),
+                dig_P1: (data[7] << 8) | data[6],
+                dig_P2: this._readSigned16((data[9] << 8) | data[8]),
+                dig_P3: this._readSigned16((data[11] << 8) | data[10]),
+                dig_P4: this._readSigned16((data[13] << 8) | data[12]),
+                dig_P5: this._readSigned16((data[15] << 8) | data[14]),
+                dig_P6: this._readSigned16((data[17] << 8) | data[16]),
+                dig_P7: this._readSigned16((data[19] << 8) | data[18]),
+                dig_P8: this._readSigned16((data[21] << 8) | data[20]),
+                dig_P9: this._readSigned16((data[23] << 8) | data[22]),
+            };
+            this._t_fine = 0;
+        });
+    }
+    getAllWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.getData();
+            const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
+            const temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
+            const temperature = this.calibration_T(temp_raw) / 100.0;
+            const pressure = this.calibration_P(press_raw) / 100.0;
+            return { temperature, pressure };
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).temperature;
+        });
+    }
+    getPressureWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).pressure;
+        });
+    }
+    getAltitudeWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pressure = yield this.getPressureWait();
+            return this.calcAltitude(pressure);
+        });
+    }
+    calcAltitude(pressure, seaPressure) {
+        if (typeof seaPressure !== "number") {
+            seaPressure = 1013.25;
+        }
+        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
+    }
+    config() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.write([
+                this.commands.addresses.config,
+                (this.configration.interval << 5) |
+                    (this.configration.iir_strength << 2) |
+                    0,
+            ]);
+            this.write([
+                this.commands.addresses.ctrl_meas,
+                (this.configration.sampling.temp << 5) |
+                    (this.configration.sampling.pres << 2) |
+                    this.configration.mode,
+            ]);
+        });
+    }
+    _readSigned16(value) {
+        if (value >= 0x8000) {
+            value = value - 0x10000;
+        }
+        return value;
+    }
+    _readSigned8(value) {
+        if (value >= 0x80) {
+            value = value - 0x100;
+        }
+        return value;
+    }
+    write(data) {
+        this.i2c.write(this.address, data);
+    }
+    getData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [0xf7]);
+            return yield this.i2c.readWait(this.address, 6);
+        });
+    }
+    calibration_T(adc_T) {
+        let var1;
+        let var2;
+        let T;
+        var1 =
+            (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
+                this._calibrated.dig_T2) >>
+                11;
+        var2 =
+            (((((adc_T >> 4) - this._calibrated.dig_T1) *
+                ((adc_T >> 4) - this._calibrated.dig_T1)) >>
+                12) *
+                this._calibrated.dig_T3) >>
+                14;
+        this._t_fine = var1 + var2;
+        T = (this._t_fine * 5 + 128) >> 8;
+        return T;
+    }
+    calibration_P(adc_P) {
+        let pvar1 = this._t_fine / 2 - 64000;
+        let pvar2 = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
+        pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
+        pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
+        pvar1 =
+            ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 +
+                this._calibrated.dig_P2 * pvar1) /
+                524288;
+        pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
+        if (pvar1 !== 0) {
+            let p = 1048576 - adc_P;
+            p = ((p - pvar2 / 4096) * 6250) / pvar1;
+            pvar1 = (this._calibrated.dig_P9 * p * p) / 2147483648;
+            pvar2 = (p * this._calibrated.dig_P8) / 32768;
+            p = p + (pvar1 + pvar2 + this._calibrated.dig_P7) / 16;
+            return p;
+        }
+        return 0;
+    }
+}
+exports.default = BMP280;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/PressureSensor/DPS310/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32217,6 +32615,106 @@ class S5851A {
     }
 }
 exports.default = S5851A;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/SHT20/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class SHT20 {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = [
+            "vcc",
+            "sda",
+            "scl",
+            "gnd",
+            "i2c",
+            "pull",
+        ];
+        this.ioKeys = ["vcc", "sda", "scl", "gnd"];
+        this.commands = {};
+        this.commands.softReset = [0xfe];
+        this.commands.tempNoHold = [0xf3];
+        this.commands.humidityNoHold = [0xf5];
+    }
+    static info() {
+        return {
+            name: "SHT20",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.address = 0x40;
+        this.params.clock = this.params.clock || 100 * 1000; // for i2c
+        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.pull = this.params.pull || "3v"; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.i2c.write(this.address, this.commands.softReset);
+        this.obniz.wait(50);
+    }
+    getData(command) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, command);
+            yield this.obniz.wait(100);
+            const data = yield this.i2c.readWait(this.address, 3);
+            const rawValue = (data[0] << 8) | data[1];
+            if (this.checkCRC(rawValue, data[2]) !== 0) {
+                return -2;
+            }
+            return rawValue & 0xFFFC;
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rawTemperature = yield this.getData(this.commands.tempNoHold);
+            if (rawTemperature < 0) {
+                console.log("error sht20", rawTemperature);
+                return (rawTemperature);
+            }
+            return rawTemperature * (175.72 / 65536.0) - 46.85;
+        });
+    }
+    getHumidWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rawHumidity = yield this.getData(this.commands.humidityNoHold);
+            if (rawHumidity < 0) {
+                console.log("error sht20", rawHumidity);
+                return (rawHumidity);
+            }
+            return rawHumidity * (125.0 / 65536.0) - 6.0;
+        });
+    }
+    checkCRC(message_from_sensor, check_value_from_sensor) {
+        let remainder = message_from_sensor << 8;
+        remainder |= check_value_from_sensor;
+        let divsor = 0x988000;
+        for (let i = 0; i < 16; i++) {
+            if (remainder & 1 << (23 - i)) {
+                remainder ^= divsor;
+            }
+            divsor >>= 1;
+        }
+        return remainder;
+    }
+}
+exports.default = SHT20;
 
 //# sourceMappingURL=index.js.map
 

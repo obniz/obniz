@@ -49,6 +49,11 @@ class ObnizUtil {
         const buf = Buffer.from(str);
         return [...buf];
     }
+    static assertNumber(min, max, variable_name, variable) {
+        if (!(min <= variable && variable <= max)) {
+            throw new Error(`${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`);
+        }
+    }
     createCanvasContext(width, height) {
         if (this.obniz.isNode) {
             try {

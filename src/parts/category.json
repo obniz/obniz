@@ -554,6 +554,11 @@
           }
         },
         {
+          "name": "SHT20",
+          "store": {
+          }
+        },
+        {
           "name": "BME280",
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/2236/",
@@ -656,6 +661,16 @@
       "parts": [
         {
           "name": "2JCIE",
+          "store": {}
+        }
+      ]
+    },
+    {
+      "name": "M5Stack",
+      "image_url": "",
+      "parts": [
+        {
+          "name": "YunHat",
           "store": {}
         }
       ]
