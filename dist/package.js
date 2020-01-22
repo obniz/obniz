@@ -1,6 +1,6 @@
-{
+module.exports = {
   "name": "obniz",
-  "version": "3.2.0",
+  "version": "3.3.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -10,7 +10,7 @@
     "obniz.min.js"
   ],
   "engines": {
-    "node": ">=7.6.0"
+    "node": ">=8.17.0"
   },
   "engineStrict": true,
   "scripts": {
@@ -131,8 +131,9 @@
   "private": false,
   "browser": {
     "fs": false,
-    "ws": "./src/obniz/libs/webpackReplace/ws",
-    "canvas": "./src/obniz/libs/webpackReplace/canvas",
-    "./src/obniz/libs/webpackReplace/require-context": "./src/obniz/libs/webpackReplace/require-context-browser"
+    "ws": "./dist/src/obniz/libs/webpackReplace/ws",
+    "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
+    "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser"
   }
 }
+;

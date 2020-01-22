@@ -1,7 +1,10 @@
 import emitter = require("eventemitter3");
 import wsClient = require("ws");
-import packageJson from "../../package.json";
+
+// @ts-ignore
+import packageJson from "../../package";  // pakcage.js will be created from package.json on build.
 import WSCommand from "./libs/wscommand";
+
 const isNode: any = typeof window === "undefined";
 
 export default class ObnizConnection {
