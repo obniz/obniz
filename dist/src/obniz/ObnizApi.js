@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = __importDefault(require("node-fetch"));
 // @ts-ignore
-const packageJson = require("../../package.json");
+const package_1 = __importDefault(require("../../package")); // pakcage.js will be created from package.json on build.
 class ObnizApi {
     constructor(obnizId, options) {
         this.id = obnizId;
@@ -17,7 +17,7 @@ class ObnizApi {
         this.urlBase = this.options.obniz_server + "/obniz/" + this.id;
     }
     get apiVersion() {
-        const versionString = packageJson.version;
+        const versionString = package_1.default.version;
         return versionString.split(".").shift();
     }
     post(path, params, callback) {
