@@ -98,6 +98,7 @@ module.exports = {
   "types": "./dist/src/obniz/index.d.ts",
   "files": [
     "dist",
+    "index.js",
     "obniz.js",
     "obniz.min.js"
   ],
@@ -27662,29 +27663,11 @@ class LED {
     }
     on() {
         this.endBlink();
-        if (this.io_anode && this.io_cathode) {
-            this.io_anode.output(true);
-            this.io_cathode.output(false);
-        }
-        else if (this.io_anode) {
-            this.io_anode.output(true);
-        }
-        else if (this.io_cathode) {
-            this.io_cathode.output(false);
-        }
+        this._on();
     }
     off() {
         this.endBlink();
-        if (this.io_anode && this.io_cathode) {
-            this.io_anode.output(false);
-            this.io_cathode.output(false);
-        }
-        else if (this.io_anode) {
-            this.io_anode.output(false);
-        }
-        else if (this.io_cathode) {
-            this.io_cathode.output(true);
-        }
+        this._off();
     }
     output(value) {
         if (value) {
@@ -27706,18 +27689,42 @@ class LED {
                 duration: interval,
                 state: (index) => {
                     // index = 0
-                    this.on(); // on
+                    this._on(); // on
                 },
             },
             {
                 duration: interval,
                 state: (index) => {
                     // index = 0
-                    this.off();
+                    this._off();
                 },
             },
         ];
         this.obniz.io.animation(this.animationName, "loop", frames);
+    }
+    _on() {
+        if (this.io_anode && this.io_cathode) {
+            this.io_anode.output(true);
+            this.io_cathode.output(false);
+        }
+        else if (this.io_anode) {
+            this.io_anode.output(true);
+        }
+        else if (this.io_cathode) {
+            this.io_cathode.output(false);
+        }
+    }
+    _off() {
+        if (this.io_anode && this.io_cathode) {
+            this.io_anode.output(false);
+            this.io_cathode.output(false);
+        }
+        else if (this.io_anode) {
+            this.io_anode.output(false);
+        }
+        else if (this.io_cathode) {
+            this.io_cathode.output(true);
+        }
     }
 }
 exports.default = LED;

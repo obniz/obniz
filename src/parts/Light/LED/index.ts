@@ -54,26 +54,12 @@ export default class LED implements ObnizPartsInterface {
 
   public on() {
     this.endBlink();
-    if (this.io_anode && this.io_cathode) {
-      this.io_anode.output(true);
-      this.io_cathode.output(false);
-    } else if (this.io_anode) {
-      this.io_anode.output(true);
-    } else if (this.io_cathode) {
-      this.io_cathode.output(false);
-    }
+    this._on();
   }
 
   public off() {
     this.endBlink();
-    if (this.io_anode && this.io_cathode) {
-      this.io_anode.output(false);
-      this.io_cathode.output(false);
-    } else if (this.io_anode) {
-      this.io_anode.output(false);
-    } else if (this.io_cathode) {
-      this.io_cathode.output(true);
-    }
+    this._off();
   }
 
   public output(value: any) {
@@ -85,7 +71,7 @@ export default class LED implements ObnizPartsInterface {
   }
 
   public endBlink() {
-    this.obniz!.io!.animation(this.animationName, "pause");
+    this.obniz.io.animation(this.animationName, "pause");
   }
 
   public blink(interval?: number) {
@@ -97,18 +83,40 @@ export default class LED implements ObnizPartsInterface {
         duration: interval,
         state: (index: number) => {
           // index = 0
-          this.on(); // on
+          this._on(); // on
         },
       },
       {
         duration: interval,
         state: (index: any) => {
           // index = 0
-          this.off();
+          this._off();
         },
       },
     ];
 
-    this.obniz.io!.animation(this.animationName, "loop", frames);
+    this.obniz.io.animation(this.animationName, "loop", frames);
+  }
+
+  private _on() {
+    if (this.io_anode && this.io_cathode) {
+      this.io_anode.output(true);
+      this.io_cathode.output(false);
+    } else if (this.io_anode) {
+      this.io_anode.output(true);
+    } else if (this.io_cathode) {
+      this.io_cathode.output(false);
+    }
+  }
+
+  private _off() {
+    if (this.io_anode && this.io_cathode) {
+      this.io_anode.output(false);
+      this.io_cathode.output(false);
+    } else if (this.io_anode) {
+      this.io_anode.output(false);
+    } else if (this.io_cathode) {
+      this.io_cathode.output(true);
+    }
   }
 }
