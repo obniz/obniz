@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 // @ts-ignore
-import packageJson = require( "../../package.json");
+import packageJson from "../../package"; // pakcage.js will be created from package.json on build.
 
 class ObnizApi {
   public id: any;

@@ -162,6 +162,12 @@ gulp.task('tsc:copy:statics', function(done) {
 gulp.task('tsc:copy:package.json', function(done) {
   return gulp
     .src([path.join(__dirname, '../../package.json')])
+    .pipe(
+      concatWith('package.js', {
+        header: 'module.exports = ',
+        footer: ';',
+      })
+    )
     .pipe(gulp.dest(path.join(__dirname, '../../dist')))
     .on('end', function() {
       console.log('static file copy compiled!');

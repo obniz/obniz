@@ -26,7 +26,7 @@ export default class ObnizConnection {
     sendPool: any;
     constructor(id: any, options?: any);
     prompt(filled: any, callback: any): void;
-    static get version(): string;
+    static get version(): any;
     wsOnOpen(): void;
     wsOnMessage(data: any): void;
     wsOnClose(event: any): void;

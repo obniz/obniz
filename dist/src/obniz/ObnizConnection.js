@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const emitter = require("eventemitter3");
 const wsClient = require("ws");
-const package_json_1 = __importDefault(require("../../package.json"));
+// @ts-ignore
+const package_1 = __importDefault(require("../../package")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(require("./libs/wscommand"));
 const isNode = typeof window === "undefined";
 class ObnizConnection {
@@ -61,7 +62,7 @@ class ObnizConnection {
         }
     }
     static get version() {
-        return package_json_1.default.version;
+        return package_1.default.version;
     }
     wsOnOpen() {
         this.print_debug("ws connected");
