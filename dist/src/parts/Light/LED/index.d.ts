@@ -20,4 +20,6 @@ export default class LED implements ObnizPartsInterface {
     output(value: any): void;
     endBlink(): void;
     blink(interval?: number): void;
+    private _on;
+    private _off;
 }
