@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/tcp/disconnect"
+
+
+type: object
+required: [disconnect]
+properties:
+  disconnect:
+    type: boolean
+    additionalProperties: false

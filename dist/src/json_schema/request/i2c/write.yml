@@ -1,0 +1,20 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/i2c/write"
+description: "if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode."
+
+type: object
+required: [address, data]
+properties:
+  address:
+    type: integer
+    minimum: 0
+    maximum: 1023
+
+  address_bits:
+    type: integer
+    enum: [7]
+    default: 7
+
+  data: {$ref: "/dataArray1024"}

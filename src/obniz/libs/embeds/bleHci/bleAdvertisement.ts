@@ -1,0 +1,53 @@
+import Builder from "./bleAdvertisementBuilder";
+
+class BleAdvertisement {
+  public obnizBle: any;
+  public adv_data: any;
+  public scan_resp: any;
+  public Obniz: any;
+
+  constructor(obnizBle: any) {
+    this.obnizBle = obnizBle;
+    this.adv_data = [];
+    this.scan_resp = [];
+  }
+
+  public start() {
+    this.obnizBle.warningIfNotInitialize();
+    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(
+      Buffer.from(this.adv_data),
+      Buffer.from(this.scan_resp),
+    );
+  }
+
+  public end() {
+    this.obnizBle.peripheralBindings.stopAdvertising();
+  }
+
+  public setAdvDataRaw(adv_data: any) {
+    this.adv_data = adv_data;
+  }
+
+  public setAdvData(json: any) {
+    const builder: any = this.advDataBulider(json);
+    this.setAdvDataRaw(builder.build());
+  }
+
+  public advDataBulider(jsonVal: any) {
+    return new Builder(this.Obniz, jsonVal);
+  }
+
+  public scanRespDataBuilder(json: any) {
+    return new Builder(this.Obniz, json);
+  }
+
+  public setScanRespDataRaw(scan_resp: any) {
+    this.scan_resp = scan_resp;
+  }
+
+  public setScanRespData(json: any) {
+    this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+  }
+}
+
+export default BleAdvertisement;

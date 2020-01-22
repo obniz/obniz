@@ -1,0 +1,40 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/measure/echo"
+description: "It measures pulse response."
+related: "/response/measure/echo"
+
+type: object
+required: [echo]
+properties:
+  echo:
+    type: object
+    required: [io_pulse, io_echo, pulse_width]
+    properties:
+      io_pulse: {$ref: "/pinSetting"}
+      io_echo: {$ref: "/pinSetting"}
+      pulse:
+        type: string
+        default: positive
+        enum:
+          - positive
+          - negative
+
+      pulse_width:
+        type: number
+        minimum: 0.001
+        maximum: 1000
+
+
+      measure_edges:
+        type: integer
+        minimum: 1
+        maximum: 4
+
+      timeout:
+        type: number
+        default: 1000
+        minimum: 0.001
+        maximum: 1000
+

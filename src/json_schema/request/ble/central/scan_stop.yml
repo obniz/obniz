@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central/scan_stop"
+deprecated: 3.0.0
+
+type: object
+required: [scan]
+properties:
+  scan:
+    type: "null"

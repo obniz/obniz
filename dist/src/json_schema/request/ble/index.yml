@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble"
+basePath: "ble"
+
+"anyOf":
+  - {$ref: "/request/ble/peripheral" }
+  - {$ref: "/request/ble/central" }
+  - {$ref: "/request/ble/security" }
+  - {$ref: "/request/ble/hci" }

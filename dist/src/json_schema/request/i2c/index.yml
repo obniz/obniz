@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/i2c"
+basePath: "i2c0"
+description: "available only i2c0"
+"anyOf":
+  - {$ref: "/request/i2c/init_master"}
+  - {$ref: "/request/i2c/init_slave"}
+  - {$ref: "/request/i2c/write"}
+  - {$ref: "/request/i2c/read"}
+  - {$ref: "/request/i2c/deinit"}

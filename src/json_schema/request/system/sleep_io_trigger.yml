@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/sleepIoTrigger"
+
+type: object
+required: [sleep_io_trigger]
+properties:
+  sleep_io_trigger:
+    type: boolean
+    description: "true:Wake up on rising edge false:Wake up on falling edge"

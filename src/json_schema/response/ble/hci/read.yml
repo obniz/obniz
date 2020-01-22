@@ -1,0 +1,20 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/hci/read"
+
+type: object
+required: [hci]
+properties:
+  hci:
+    type: object
+    required: [read]
+    properties:
+      read:
+        type: object
+        required: [data]
+        properties:
+          data:
+            $ref: "/dataArray"
+            description: "HCI data"
+

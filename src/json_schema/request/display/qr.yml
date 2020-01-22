@@ -1,0 +1,21 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/display/qr"
+
+
+type: object
+required: [qr]
+properties:
+  qr:
+    type: object
+    required: [text]
+    additionalProperties: false
+    properties:
+      text:
+        type: string
+        example: "Hello, obniz!"
+      correction:
+        type: string
+        enum: [L, M, Q, H]
+        default: M
