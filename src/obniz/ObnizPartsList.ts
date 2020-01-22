@@ -85,6 +85,7 @@ import BME280, {BME280Options} from "../parts/TemperatureSensor/i2c/BME280";
 import D6T44L, {D6T44LOptions} from "../parts/TemperatureSensor/i2c/D6T44L";
 import DHT12, {DHT12Options} from "../parts/TemperatureSensor/i2c/DHT12";
 import S5851A, {S5851AOptions} from "../parts/TemperatureSensor/i2c/S-5851A";
+import SHT20, {SHT20Options} from "../parts/TemperatureSensor/i2c/SHT20";
 import SHT31, {SHT31Options} from "../parts/TemperatureSensor/i2c/SHT31";
 import ADT7310, {ADT7310Options} from "../parts/TemperatureSensor/spi/ADT7310";
 // Wireless
@@ -107,6 +108,10 @@ import Grove_Buzzer, {Grove_BuzzerOptions} from "../parts/Grove/Grove_Buzzer";
 import Grove_EarHeartRate, {Grove_EarHeartRateOptions} from "../parts/Grove/Grove_EarHeartRate";
 import Grove_GPS, {Grove_GPSOptions} from "../parts/Grove/Grove_GPS";
 import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
+
+import M5StickC_YunHat, {M5StickC_YunHatOptions} from "../parts/M5Stack/M5StickCYunHat";
+import BMP280, {BMP280Options} from "../parts/PressureSensor/BMP280";
+
 // Keyestudio
 import Keyestudio_Button, {Keyestudio_ButtonOptions} from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, {Keyestudio_BuzzerOptions} from "../parts/Keyestudio/Keyestudio_Buzzer";
@@ -132,6 +137,7 @@ export interface WiredNameMap {
   "7SegmentLEDArray": _7SegmentLEDArray;
   "7SegmentLED_MAX7219": _7SegmentLED_MAX7219;
   "MatrixLED_MAX7219": MatrixLED_MAX7219;
+  "MatrixLED_HT16K33": MatrixLED_HT16K33;
   "SainSmartTFT18LCD": SainSmartTFT18LCD;
   "SharpMemoryTFT": SharpMemoryTFT;
   "ST7735S": ST7735S;
@@ -214,6 +220,7 @@ export interface WiredNameMap {
   "DHT12": DHT12;
   // 'S5851A': S5851A;
   "SHT31": SHT31;
+  "SHT20": SHT20;
   "ADT7310": ADT7310;
   "AM2320": AM2320;
   // ColorSensor
@@ -236,6 +243,7 @@ export interface WiredNameMap {
   "Keyestudio_TemperatureSensor": Keyestudio_TemperatureSensor;
   "Keyestudio_PIR": Keyestudio_PIR;
   "Keyestudio_TrafficLight": Keyestudio_TrafficLight;
+  "Keyestudio_HT16K33": Keyestudio_HT16K33;
   // Ble
   "2JCIE": OMRON_2JCIE;
   "Linking": Linking;
@@ -249,9 +257,8 @@ export interface WiredNameMap {
   "ADT7410": ADT7410;
   "S5851A": S5851A;
   "DPS310": DPS310;
-  // KeyeStudio
-  "MatrixLED_HT16K33": MatrixLED_HT16K33;
-  "Keyestudio_HT16K33": Keyestudio_HT16K33;
+  "BMP280": BMP280;
+  "M5StickC_YunHat": M5StickC_YunHat;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -271,6 +278,7 @@ export interface WiredNameOptionsMap {
   "7SegmentLEDArray": _7SegmentLEDArrayOptions;
   "7SegmentLED_MAX7219": _7SegmentLED_MAX7219Options;
   "MatrixLED_MAX7219": MatrixLED_MAX7219Options;
+  "MatrixLED_HT16K33": MatrixLED_HT16K33Options;
   "SainSmartTFT18LCD": SainSmartTFT18LCDOptions;
   "SharpMemoryTFT": SharpMemoryTFTOptions;
   "ST7735S": ST7735SOptions;
@@ -353,6 +361,7 @@ export interface WiredNameOptionsMap {
   "DHT12": DHT12Options;
   // 'S5851A': S5851AOptions;
   "SHT31": SHT31Options;
+  "SHT20": SHT20Options;
   "ADT7310": ADT7310Options;
   "AM2320": AM2320Options;
   // ColorSensor
@@ -373,6 +382,7 @@ export interface WiredNameOptionsMap {
   "Keyestudio_TemperatureSensor": Keyestudio_TemperatureSensorOptions;
   "Keyestudio_PIR": Keyestudio_PIROptions;
   "Keyestudio_TrafficLight": Keyestudio_TrafficLightOptions;
+  "Keyestudio_HT16K33": Keyestudio_HT16K33Options;
   // Ble
   "2JCIE": OMRON_2JCIEOptions;
   "Linking": LinkingOptions;
@@ -387,7 +397,6 @@ export interface WiredNameOptionsMap {
   "ADT7410": ADT7410Options;
   "S5851A": S5851AOptions;
   "DPS310": DPS310Options;
-  // KeyeStudio
-  "MatrixLED_HT16K33": MatrixLED_HT16K33Options;
-  "Keyestudio_HT16K33": Keyestudio_HT16K33Options;
+  "BMP280": BMP280Options;
+  "M5StickC_YunHat": M5StickC_YunHatOptions;
 }

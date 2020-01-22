@@ -559,6 +559,11 @@
           }
         },
         {
+          "name": "SHT20",
+          "store": {
+          }
+        },
+        {
           "name": "BME280",
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/2236/",
@@ -695,6 +700,16 @@
         },
         {
           "name": "Keyestudio_TrafficLight",
+          "store": {}
+        }
+      ]
+    },
+    {
+      "name": "M5Stack",
+      "image_url": "",
+      "parts": [
+        {
+          "name": "YunHat",
           "store": {}
         }
       ]
