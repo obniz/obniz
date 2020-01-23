@@ -52,6 +52,7 @@ import ServoMotor, {ServoMotorOptions} from "../parts/Moving/ServoMotor";
 import Solenoid, {SolenoidOptions} from "../parts/Moving/Solenoid";
 import StepperMotor, {StepperMotorOptions} from "../parts/Moving/StepperMotor";
 import FSR40X, {FSR40XOptions} from "../parts/PressureSensor/FSR-40X";
+import EARTH, {EARTHOptions} from "../parts/SoilSensor/EARTH";
 import SEN0114, {SEN0114Options} from "../parts/SoilSensor/SEN0114";
 import Speaker, {SpeakerOptions} from "../parts/Sound/Speaker";
 import LM35DZ, {LM35DZOptions} from "../parts/TemperatureSensor/analog/LM35DZ";
@@ -179,6 +180,7 @@ export interface WiredNameMap {
   "hx711": HX711;
   // SoilSensor
   "SEN0114": SEN0114;
+  "EARTH": EARTH;
   // Temperature Sensor
   "LM35DZ": LM35DZ;
   "LM60": LM60;
@@ -307,6 +309,7 @@ export interface WiredNameOptionsMap {
   "hx711": Hx711Options;
   // SoilSensor
   "SEN0114": SEN0114Options;
+  "EARTH": EARTHOptions;
   // Temperature Sensor
   "LM35DZ": LM35DZOptions;
   "LM60": LM60Options;
