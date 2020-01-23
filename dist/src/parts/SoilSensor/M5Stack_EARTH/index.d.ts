@@ -1,12 +1,12 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-export interface EARTHOptions {
+export interface M5Stack_EARTHOptions {
     vcc?: number;
     aout: number;
     dout: number;
     gnd?: number;
 }
-export default class EARTH implements ObnizPartsInterface {
+export default class M5Stack_EARTH implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];

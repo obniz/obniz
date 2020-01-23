@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-class EARTH {
+class M5Stack_EARTH {
     constructor() {
         this.keys = ["vcc", "aout", "dout", "gnd"];
         this.requiredKeys = ["aout", "dout"];
     }
     static info() {
         return {
-            name: "EARTH",
+            name: "M5Stack_EARTH",
         };
     }
     wired(obniz) {
@@ -42,6 +42,6 @@ class EARTH {
         });
     }
 }
-exports.default = EARTH;
+exports.default = M5Stack_EARTH;
 
 //# sourceMappingURL=index.js.map

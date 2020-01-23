@@ -4,18 +4,18 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface EARTHOptions {
+export interface M5Stack_EARTHOptions {
     vcc?: number;
     aout: number;
     dout: number;
     gnd?: number;
 }
 
-export default class EARTH implements ObnizPartsInterface {
+export default class M5Stack_EARTH implements ObnizPartsInterface {
 
     public static info(): ObnizPartsInfo {
         return {
-            name: "EARTH",
+            name: "M5Stack_EARTH",
         };
     }
 

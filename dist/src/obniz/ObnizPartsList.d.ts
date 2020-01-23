@@ -52,7 +52,7 @@ import ServoMotor, { ServoMotorOptions } from "../parts/Moving/ServoMotor";
 import Solenoid, { SolenoidOptions } from "../parts/Moving/Solenoid";
 import StepperMotor, { StepperMotorOptions } from "../parts/Moving/StepperMotor";
 import FSR40X, { FSR40XOptions } from "../parts/PressureSensor/FSR-40X";
-import EARTH, { EARTHOptions } from "../parts/SoilSensor/EARTH";
+import M5Stack_EARTH, { M5Stack_EARTHOptions } from "../parts/SoilSensor/M5Stack_EARTH";
 import SEN0114, { SEN0114Options } from "../parts/SoilSensor/SEN0114";
 import Speaker, { SpeakerOptions } from "../parts/Sound/Speaker";
 import LM35DZ, { LM35DZOptions } from "../parts/TemperatureSensor/analog/LM35DZ";
@@ -148,7 +148,7 @@ export interface WiredNameMap {
     "HMC5883L": HMC5883L;
     "hx711": HX711;
     "SEN0114": SEN0114;
-    "EARTH": EARTH;
+    "M5Stack_EARTH": M5Stack_EARTH;
     "LM35DZ": LM35DZ;
     "LM60": LM60;
     "LM61": LM61;
@@ -241,7 +241,7 @@ export interface WiredNameOptionsMap {
     "HMC5883L": HMC5883LOptions;
     "hx711": Hx711Options;
     "SEN0114": SEN0114Options;
-    "EARTH": EARTHOptions;
+    "M5Stack_EARTH": M5Stack_EARTHOptions;
     "LM35DZ": LM35DZOptions;
     "LM60": LM60Options;
     "LM61": LM61Options;
