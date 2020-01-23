@@ -86,8 +86,8 @@ export default class YunHat implements ObnizPartsInterface {
     this.params.mode = "master"; // for i2c
     this.params.pull = "3v"; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
-    this.sht20 = obniz.wired("SHT20",  {i2c: this.i2c});
-    this.bmp280 = obniz.wired("BMP280",  {i2c: this.i2c});
+    this.sht20 = obniz.wired("SHT20", {i2c: this.i2c});
+    this.bmp280 = obniz.wired("BMP280", {i2c: this.i2c});
     this.bmp280.applyCalibration();
   }
 
@@ -128,12 +128,12 @@ export default class YunHat implements ObnizPartsInterface {
   }
 
   public rgbs(array: Array<[number, number, number]>) {
-    if (array.length <= this.LED_LEN ) {
+    if (array.length <= this.LED_LEN) {
       array.forEach((value, index) => {
         this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
       });
     }
-}
+  }
 
   public hsvs(array: Array<[number, number, number]>) {
     const leds: Array<[number, number, number]> = array.map((value, index) => {
