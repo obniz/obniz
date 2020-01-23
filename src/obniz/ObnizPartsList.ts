@@ -41,6 +41,7 @@ import IPM_165, {IPM_165Options} from "../parts/MovementSensor/IPM-165";
 import JoyStick, {JoyStickOptions} from "../parts/MovementSensor/JoyStick";
 import KXR94_2050, {KXR94_2050Options} from "../parts/MovementSensor/KXR94-2050";
 import KXSC7_2050, {KXSC7_2050Options} from "../parts/MovementSensor/KXSC7-2050";
+import M5Stack_JoyStick, {M5Stack_JoyStickOptions} from "../parts/MovementSensor/M5Stack_JoyStick";
 import MPU6050, {MPU6050Options} from "../parts/MovementSensor/MPU6050";
 import MPU6886, {MPU6886Options} from "../parts/MovementSensor/MPU6886";
 import MPU9250, {MPU9250Options} from "../parts/MovementSensor/MPU9250";
@@ -156,6 +157,7 @@ export interface WiredNameMap {
   // 'FlickHat': FlickHat;
   "HC-SR505": HCSR505;
   "JoyStick": JoyStick;
+  "M5Stack_JoyStick": M5Stack_JoyStick;
   "KXR94-2050": KXR94_2050;
   "IPM-165": IPM_165;
   // 'KXSC7-2050': KXSC7_2050;
@@ -284,6 +286,7 @@ export interface WiredNameOptionsMap {
   // 'FlickHat': FlickHatOptions;
   "HC-SR505": HCSR505Options;
   "JoyStick": JoyStickOptions;
+  "M5Stack_JoyStick": M5Stack_JoyStickOptions;
   "KXR94-2050": KXR94_2050Options;
   "IPM-165": IPM_165Options;
   // 'KXSC7-2050': KXSC7_2050Options;
