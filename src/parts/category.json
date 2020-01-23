@@ -423,6 +423,11 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-04911/"
           }
+        },
+        {
+          "name": "BMP280",
+          "store": {
+          }
         }
       ]
     },
