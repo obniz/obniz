@@ -100,7 +100,7 @@ export default class SHT31 implements ObnizPartsInterface {
     return (await this.getAllWait()).temperature;
   }
 
-  public async getHumdWait(): Promise<number> {
+  public async getHumidWait(): Promise<number> {
     return (await this.getAllWait()).humidity;
   }
 

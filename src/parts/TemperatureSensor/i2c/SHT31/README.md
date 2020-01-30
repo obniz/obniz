@@ -29,13 +29,13 @@ var temp = await sensor.getTempWait();
 console.log('temperature:' + temp);
 ```
 
-## [await] getHumdWait()
+## [await] getHumidWait()
 Get a Humidity. Unit is Ratio(%).
 
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("SHT31", {vcc:0, sda:1, scl:2, adr:3, gnd:4, addressmode:5});
-var humd = await sensor.getHumdWait();
+var humd = await sensor.getHumidWait();
 console.log('humidity:' + humd);
 ```
 

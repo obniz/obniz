@@ -79,7 +79,7 @@ class SHT31 {
             return (yield this.getAllWait()).temperature;
         });
     }
-    getHumdWait() {
+    getHumidWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getAllWait()).humidity;
         });
