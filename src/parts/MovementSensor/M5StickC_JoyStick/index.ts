@@ -4,8 +4,8 @@ import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface M5StickC_JoyStickOptions {
-    vcc: number;
-    gnd: number;
+    vcc?: number;
+    gnd?: number;
     sda: number;
     scl: number;
 }
