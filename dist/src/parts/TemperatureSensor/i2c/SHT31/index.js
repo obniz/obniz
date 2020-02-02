@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class SHT31 {
     constructor() {
-        this.requiredKeys = ["adr", "addressmode"];
+        this.requiredKeys = [];
         this.keys = [
             "vcc",
             "sda",
@@ -21,6 +21,7 @@ class SHT31 {
             "addressmode",
             "i2c",
             "pull",
+            "address",
         ];
         this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
         this.commands = {};
@@ -48,14 +49,17 @@ class SHT31 {
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.io_adr = obniz.getIO(this.params.adr);
-        if (this.params.addressmode === 4) {
-            this.io_adr.output(false);
-            this.address = 0x44;
-        }
-        else if (this.params.addressmode === 5) {
-            this.io_adr.pull(null);
-            this.address = 0x45;
+        this.address = this.params.address || 0x44;
+        if (this.params.addressmode) {
+            this.io_adr = obniz.getIO(this.params.adr);
+            if (this.params.addressmode === 4) {
+                this.io_adr.output(false);
+                this.address = 0x44;
+            }
+            else if (this.params.addressmode === 5) {
+                this.io_adr.pull("5v");
+                this.address = 0x45;
+            }
         }
         this.params.clock = this.params.clock || 100 * 1000; // for i2c
         this.params.mode = this.params.mode || "master"; // for i2c
@@ -75,7 +79,7 @@ class SHT31 {
             return (yield this.getAllWait()).temperature;
         });
     }
-    getHumdWait() {
+    getHumidWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getAllWait()).humidity;
         });

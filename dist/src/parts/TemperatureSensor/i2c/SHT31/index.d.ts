@@ -27,7 +27,7 @@ export default class SHT31 implements ObnizPartsInterface {
     wired(obniz: Obniz): void;
     getData(): Promise<number[]>;
     getTempWait(): Promise<number>;
-    getHumdWait(): Promise<number>;
+    getHumidWait(): Promise<number>;
     getAllWait(): Promise<{
         temperature: number;
         humidity: number;

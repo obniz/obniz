@@ -25,7 +25,7 @@ export default class SHT31 implements ObnizPartsInterface {
 
   public ioKeys: string[];
   public commands: any;
-  public waitTime: {[key: string]: number};
+  public waitTime: { [key: string]: number };
   public io_adr!: PeripheralIO;
   public address!: number;
 
@@ -33,7 +33,7 @@ export default class SHT31 implements ObnizPartsInterface {
   protected i2c!: PeripheralI2C;
 
   constructor() {
-    this.requiredKeys = ["adr", "addressmode"];
+    this.requiredKeys = [];
     this.keys = [
       "vcc",
       "sda",
@@ -43,6 +43,7 @@ export default class SHT31 implements ObnizPartsInterface {
       "addressmode",
       "i2c",
       "pull",
+      "address",
     ];
 
     this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
@@ -69,14 +70,17 @@ export default class SHT31 implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    this.io_adr = obniz.getIO(this.params.adr);
+    this.address = this.params.address || 0x44;
 
-    if (this.params.addressmode === 4) {
-      this.io_adr.output(false);
-      this.address = 0x44;
-    } else if (this.params.addressmode === 5) {
-      this.io_adr.pull(null);
-      this.address = 0x45;
+    if (this.params.addressmode) {
+      this.io_adr = obniz.getIO(this.params.adr);
+      if (this.params.addressmode === 4) {
+        this.io_adr.output(false);
+        this.address = 0x44;
+      } else if (this.params.addressmode === 5) {
+        this.io_adr.pull("5v");
+        this.address = 0x45;
+      }
     }
 
     this.params.clock = this.params.clock || 100 * 1000; // for i2c
@@ -96,11 +100,11 @@ export default class SHT31 implements ObnizPartsInterface {
     return (await this.getAllWait()).temperature;
   }
 
-  public async getHumdWait(): Promise<number> {
+  public async getHumidWait(): Promise<number> {
     return (await this.getAllWait()).humidity;
   }
 
-  public async getAllWait(): Promise<{temperature: number, humidity: number}> {
+  public async getAllWait(): Promise<{ temperature: number, humidity: number }> {
     const ret = await this.getData();
 
     const tempBin = ret[0] * 256 + ret[1];
