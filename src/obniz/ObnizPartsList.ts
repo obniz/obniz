@@ -1,5 +1,6 @@
 import USB, {USBOptions} from "../parts/Accessory/USB";
 import HX711, {Hx711Options} from "../parts/ADConverter/hx711";
+import M5StickC_ADS1100, {M5StickC_ADS1100Options} from "../parts/ADConverter/M5StickC_ADS1100";
 import ArduCAMMini, {ArduCAMMiniOptions} from "../parts/Camera/ArduCAMMini";
 import JpegSerialCam, {JpegSerialCamOptions} from "../parts/Camera/JpegSerialCam";
 import _7SegmentLED, {_7SegmentLEDOptions} from "../parts/Display/7SegmentLED";
@@ -177,6 +178,7 @@ export interface WiredNameMap {
   "HMC5883L": HMC5883L;
   // ADConverter
   "hx711": HX711;
+  "M5StickC_ADS1100": M5StickC_ADS1100;
   // SoilSensor
   "SEN0114": SEN0114;
   // Temperature Sensor
@@ -305,6 +307,7 @@ export interface WiredNameOptionsMap {
   "HMC5883L": HMC5883LOptions;
   // ADConverter
   "hx711": Hx711Options;
+  "M5StickC_ADS1100": M5StickC_ADS1100Options;
   // SoilSensor
   "SEN0114": SEN0114Options;
   // Temperature Sensor

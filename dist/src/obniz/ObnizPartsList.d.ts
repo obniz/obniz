@@ -1,5 +1,6 @@
 import USB, { USBOptions } from "../parts/Accessory/USB";
 import HX711, { Hx711Options } from "../parts/ADConverter/hx711";
+import M5StickC_ADS1100, { M5StickC_ADS1100Options } from "../parts/ADConverter/M5StickC_ADS1100";
 import ArduCAMMini, { ArduCAMMiniOptions } from "../parts/Camera/ArduCAMMini";
 import JpegSerialCam, { JpegSerialCamOptions } from "../parts/Camera/JpegSerialCam";
 import _7SegmentLED, { _7SegmentLEDOptions } from "../parts/Display/7SegmentLED";
@@ -146,6 +147,7 @@ export interface WiredNameMap {
     "CT10": CT10;
     "HMC5883L": HMC5883L;
     "hx711": HX711;
+    "M5StickC_ADS1100": M5StickC_ADS1100;
     "SEN0114": SEN0114;
     "LM35DZ": LM35DZ;
     "LM60": LM60;
@@ -238,6 +240,7 @@ export interface WiredNameOptionsMap {
     "CT10": CT10Options;
     "HMC5883L": HMC5883LOptions;
     "hx711": Hx711Options;
+    "M5StickC_ADS1100": M5StickC_ADS1100Options;
     "SEN0114": SEN0114Options;
     "LM35DZ": LM35DZOptions;
     "LM60": LM60Options;
