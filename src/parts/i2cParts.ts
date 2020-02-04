@@ -1,7 +1,7 @@
 import Obniz from "../obniz";
-import {PullType} from "../obniz/libs/io_peripherals/common";
+import { PullType } from "../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../obniz/ObnizPartsInterface";
 
 export interface I2cPartsAbstructOptions {
   vcc?: number;
@@ -76,5 +76,16 @@ export default class I2cPartsAbstruct implements ObnizPartsInterface {
       buf = [buf];
     }
     this.i2c.write(this.address, [command, ...buf]);
+  }
+
+  public async writeFlagWait(address: number, index: number) {
+    const tempdata = await this.readWait(address, 1);
+    tempdata[0] = tempdata[0] | (0b1 << index);
+    this.write(address, tempdata);
+  }
+  public async clearFlagWait(address: number, index: number) {
+    const tempdata = await this.readWait(address, 1);
+    tempdata[0] = tempdata[0] & (0xff - (0b1 << index));
+    this.write(address, tempdata);
   }
 }

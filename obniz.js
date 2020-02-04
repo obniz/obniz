@@ -121,7 +121,7 @@ module.exports = {
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add dist && git add obniz.js && git add obniz.min.js",
+    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
     "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -228,8 +228,7 @@ module.exports = {
     "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser"
   }
-}
-;
+};
 
 /***/ }),
 
@@ -27635,7 +27634,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LED {
     constructor() {
         this.keys = ["anode", "cathode"];
-        this.requiredKeys = ["anode"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -29904,16 +29903,16 @@ class SH200Q extends i2cParts_1.default {
             const ac_scale = this._accel_range / 32768;
             const gy_scale = this._gyro_range / 32768;
             const accelerometer = {
-                x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
-                y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
-                z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+                x: this.char2short(raw_data[1], raw_data[0]) * ac_scale,
+                y: this.char2short(raw_data[3], raw_data[2]) * ac_scale,
+                z: this.char2short(raw_data[5], raw_data[4]) * ac_scale,
             };
             const gyroscope = {
-                x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
-                y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
-                z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+                x: this.char2short(raw_data[7], raw_data[6]) * gy_scale,
+                y: this.char2short(raw_data[9], raw_data[8]) * gy_scale,
+                z: this.char2short(raw_data[11], raw_data[10]) * gy_scale,
             };
-            const temperature = this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
+            const temperature = this.char2short(raw_data[13], raw_data[12]) / 333.87 + 21.0;
             return {
                 accelerometer,
                 temperature,
@@ -33546,6 +33545,20 @@ class I2cPartsAbstruct {
             buf = [buf];
         }
         this.i2c.write(this.address, [command, ...buf]);
+    }
+    writeFlagWait(address, index) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const tempdata = yield this.readWait(address, 1);
+            tempdata[0] = tempdata[0] | (0b1 << index);
+            this.write(address, tempdata);
+        });
+    }
+    clearFlagWait(address, index) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const tempdata = yield this.readWait(address, 1);
+            tempdata[0] = tempdata[0] & (0xff - (0b1 << index));
+            this.write(address, tempdata);
+        });
     }
 }
 exports.default = I2cPartsAbstruct;

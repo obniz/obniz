@@ -1,7 +1,7 @@
-import i2cParts, {I2cPartsAbstructOptions} from "../../i2cParts";
+import i2cParts, { I2cPartsAbstructOptions } from "../../i2cParts";
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface SH200QOptions extends I2cPartsAbstructOptions {
 }
@@ -166,18 +166,18 @@ export default class SH200Q extends i2cParts implements ObnizPartsInterface {
     const gy_scale: any = this._gyro_range / 32768;
 
     const accelerometer: any = {
-      x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
-      y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
-      z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+      x: this.char2short(raw_data[1], raw_data[0]) * ac_scale,
+      y: this.char2short(raw_data[3], raw_data[2]) * ac_scale,
+      z: this.char2short(raw_data[5], raw_data[4]) * ac_scale,
     };
     const gyroscope: any = {
-      x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
-      y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
-      z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+      x: this.char2short(raw_data[7], raw_data[6]) * gy_scale,
+      y: this.char2short(raw_data[9], raw_data[8]) * gy_scale,
+      z: this.char2short(raw_data[11], raw_data[10]) * gy_scale,
     };
 
     const temperature: any =
-      this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
+      this.char2short(raw_data[13], raw_data[12]) / 333.87 + 21.0;
 
     return {
       accelerometer,
@@ -195,7 +195,7 @@ export default class SH200Q extends i2cParts implements ObnizPartsInterface {
     x: number,
     y: number,
     z: number,
-}> {
+  }> {
     return (await this.getAllDataWait()).accelerometer;
   }
 
