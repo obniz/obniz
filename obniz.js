@@ -63489,7 +63489,7 @@ class I2cPartsAbstruct {
   }
   async clearFlagWait(address, index) {
     let tempdata = await this.readWait(address, 1);
-    tempdata[0] = tempdata[0] | (0b0 << index);
+    tempdata[0] = tempdata[0] & (0xff - (0b1 << index));
     this.write(address, tempdata);
   }
 
