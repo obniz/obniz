@@ -50,7 +50,7 @@ export default class M5Stack_EARTH implements ObnizPartsInterface {
         });
     }
 
-    public async getAnalogHumidityWait() {
+    public async getHumidityWait() {
         return await this.ad.getWait();
     }
 

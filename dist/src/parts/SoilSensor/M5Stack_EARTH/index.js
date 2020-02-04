@@ -31,7 +31,7 @@ class M5Stack_EARTH {
             }
         });
     }
-    getAnalogHumidityWait() {
+    getHumidityWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.ad.getWait();
         });

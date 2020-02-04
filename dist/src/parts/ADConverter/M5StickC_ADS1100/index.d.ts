@@ -1,23 +1,22 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-export interface M5Stack_EARTHOptions {
+export interface M5StickC_ADS1100Options {
     vcc?: number;
-    aout: number;
-    dout: number;
     gnd?: number;
+    sda: number;
+    scl: number;
 }
-export default class M5Stack_EARTH implements ObnizPartsInterface {
+export default class M5StickC_ADS1100 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
     requiredKeys: string[];
     params: any;
-    value: any;
-    onchange?: (value: number) => void;
+    address: number;
+    conversationDelay: number;
+    config_regs: any;
+    config: any;
     protected obniz: Obniz;
-    private ad;
-    private io;
     constructor();
     wired(obniz: Obniz): void;
-    getHumidityWait(): Promise<number>;
-    getDigitalHumidityWait(): Promise<boolean>;
+    private updateConfig;
 }
