@@ -18828,7 +18828,6 @@ class M5StickC_ADS1100 {
         return __awaiter(this, void 0, void 0, function* () {
             const raw = yield this.getWait();
             const voltage = raw * 3.3 / (this.minCode) * 4 * 1000;
-            // const voltage = raw * 3.3 / (this.minCode * Math.pow(2, this.pga)) * 4 * 1000;
             return voltage;
         });
     }
