@@ -2,6 +2,7 @@ import USB, {USBOptions} from "../parts/Accessory/USB";
 import HX711, {Hx711Options} from "../parts/ADConverter/hx711";
 import ArduCAMMini, {ArduCAMMiniOptions} from "../parts/Camera/ArduCAMMini";
 import JpegSerialCam, {JpegSerialCamOptions} from "../parts/Camera/JpegSerialCam";
+import M5StickC_MCP4725, {M5StickC_MCP4725Options} from "../parts/DAConverter/M5StickC_MCP4725";
 import _7SegmentLED, {_7SegmentLEDOptions} from "../parts/Display/7SegmentLED";
 import _7SegmentLED_MAX7219, {_7SegmentLED_MAX7219Options} from "../parts/Display/7SegmentLED_MAX7219";
 import _7SegmentLEDArray, {_7SegmentLEDArrayOptions} from "../parts/Display/7SegmentLEDArray";
@@ -203,6 +204,8 @@ export interface WiredNameMap {
   "YG1006": YG1006;
   // Memory
   "24LC256": _24LC256;
+  // DAConverter
+  "M5StickC_MCP4725": M5StickC_MCP4725;
   // Grove
   "Grove_Button": Grove_Button;
   "Grove_Buzzer": Grove_Buzzer;
@@ -291,6 +294,8 @@ export interface WiredNameOptionsMap {
   "Potentiometer": PotentiometerOptions;
   // Memory
   // '24LC256': _24LC256Options;
+  // DAConverter
+  "M5StickC_MCP4725": M5StickC_MCP4725Options;
   // GyroSensor
   "ENC03R_Module": ENC03R_ModuleOptions;
   // PressureSensor
