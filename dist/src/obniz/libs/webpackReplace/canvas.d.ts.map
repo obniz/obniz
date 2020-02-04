@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/obniz/libs/webpackReplace/canvas.ts"],"names":[],"mappings":"AAEA,QAAA,MAAM,MAAM,EAAE,GAAc,CAAC;AAE7B,eAAe,MAAM,CAAC","file":"canvas.d.ts","sourcesContent":["// load from webpack\r\n\r\nconst canvas: any = \"canvas\";\r\n\r\nexport default canvas;\r\n"]}
