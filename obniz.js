@@ -27635,7 +27635,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LED {
     constructor() {
         this.keys = ["anode", "cathode"];
-        this.requiredKeys = ["anode"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
