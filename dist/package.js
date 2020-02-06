@@ -1,4 +1,4 @@
-{
+module.exports = {
   "name": "obniz",
   "version": "3.3.0-beta.1",
   "description": "obniz sdk for javascript",
@@ -30,7 +30,7 @@
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
+    "precommit": "lint-staged && npm run build && git add dist && git add obniz.js && git add obniz.min.js",
     "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -53,13 +53,21 @@
   "devDependencies": {
     "@types/chai": "^4.2.7",
     "@types/chai-like": "^1.1.0",
+    "@types/eventemitter3": "^1.2.0",
     "@types/events": "^3.0.0",
     "@types/glob": "^7.1.1",
+    "@types/js-yaml": "^3.12.1",
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.7",
+    "@types/node": "^13.1.5",
+    "@types/node-dir": "0.0.33",
+    "@types/node-fetch": "^2.5.4",
+    "@types/semver": "^6.2.0",
     "@types/sinon": "^7.5.1",
+    "@types/tv4": "^1.2.29",
     "@types/webpack-env": "^1.15.0",
     "@types/window-or-global": "^1.0.0",
+    "@types/ws": "^6.0.4",
     "chai": "^4.2.0",
     "chai-like": "^1.1.1",
     "child_process": "^1.0.2",
@@ -106,23 +114,15 @@
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
-    "plugin-error": "^1.0.1",
     "webpack-stream": "^5.2.1",
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
-    "@types/eventemitter3": "^1.2.0",
-    "@types/js-yaml": "^3.12.1",
-    "@types/node": "^13.1.5",
-    "@types/node-dir": "0.0.33",
-    "@types/node-fetch": "^2.5.4",
-    "@types/semver": "^6.2.0",
-    "@types/tv4": "^1.2.29",
-    "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
+    "plugin-error": "^1.0.1",
     "semver": "^5.7.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
@@ -138,3 +138,4 @@
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser"
   }
 }
+;
