@@ -19,3 +19,4 @@ log
 /test/test*.js
 /test/test*.ts
 dist
+.vscode
