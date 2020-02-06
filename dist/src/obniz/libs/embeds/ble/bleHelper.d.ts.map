@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/obniz/libs/embeds/ble/bleHelper.ts"],"names":[],"mappings":"AAAA,QAAA,MAAM,SAAS,EAAE,GAIhB,CAAC;AAEF,eAAe,SAAS,CAAC","file":"bleHelper.d.ts","sourcesContent":["const BleHelper: any = {\n  uuidFilter(uuid: any) {\n    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, \"\");\n  },\n};\n\nexport default BleHelper;\n"]}

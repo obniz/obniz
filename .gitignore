@@ -18,3 +18,4 @@ log
 /test/test*.html
 /test/test*.js
 /test/test*.ts
+dist

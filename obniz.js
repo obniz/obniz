@@ -122,7 +122,7 @@ module.exports = {
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add dist && git add obniz.js && git add obniz.min.js",
+    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
     "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -145,21 +145,13 @@ module.exports = {
   "devDependencies": {
     "@types/chai": "^4.2.7",
     "@types/chai-like": "^1.1.0",
-    "@types/eventemitter3": "^1.2.0",
     "@types/events": "^3.0.0",
     "@types/glob": "^7.1.1",
-    "@types/js-yaml": "^3.12.1",
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^13.1.5",
-    "@types/node-dir": "0.0.33",
-    "@types/node-fetch": "^2.5.4",
-    "@types/semver": "^6.2.0",
     "@types/sinon": "^7.5.1",
-    "@types/tv4": "^1.2.29",
     "@types/webpack-env": "^1.15.0",
     "@types/window-or-global": "^1.0.0",
-    "@types/ws": "^6.0.4",
     "chai": "^4.2.0",
     "chai-like": "^1.1.1",
     "child_process": "^1.0.2",
@@ -206,15 +198,23 @@ module.exports = {
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
+    "plugin-error": "^1.0.1",
     "webpack-stream": "^5.2.1",
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "@types/eventemitter3": "^1.2.0",
+    "@types/js-yaml": "^3.12.1",
+    "@types/node": "^13.1.5",
+    "@types/node-dir": "0.0.33",
+    "@types/node-fetch": "^2.5.4",
+    "@types/semver": "^6.2.0",
+    "@types/tv4": "^1.2.29",
+    "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
-    "plugin-error": "^1.0.1",
     "semver": "^5.7.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
@@ -7896,9 +7896,6 @@ class Gap extends events_1.default.EventEmitter {
             this._hci.once("leScanParametersSet", (setParamStatus) => {
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-                    this._hci.once("leScanEnableSet", (scanStartStatus) => {
-                        console.log("stan start ", scanStopStatus, setParamStatus, scanStartStatus);
-                    });
                 }, 10);
             });
         });
@@ -27636,7 +27633,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LED {
     constructor() {
         this.keys = ["anode", "cathode"];
-        this.requiredKeys = ["anode"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -32387,7 +32384,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class SHT31 {
     constructor() {
-        this.requiredKeys = ["adr", "addressmode"];
+        this.requiredKeys = [];
         this.keys = [
             "vcc",
             "sda",
@@ -32397,6 +32394,7 @@ class SHT31 {
             "addressmode",
             "i2c",
             "pull",
+            "address",
         ];
         this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
         this.commands = {};
@@ -32424,14 +32422,17 @@ class SHT31 {
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.io_adr = obniz.getIO(this.params.adr);
-        if (this.params.addressmode === 4) {
-            this.io_adr.output(false);
-            this.address = 0x44;
-        }
-        else if (this.params.addressmode === 5) {
-            this.io_adr.pull(null);
-            this.address = 0x45;
+        this.address = this.params.address || 0x44;
+        if (this.params.addressmode) {
+            this.io_adr = obniz.getIO(this.params.adr);
+            if (this.params.addressmode === 4) {
+                this.io_adr.output(false);
+                this.address = 0x44;
+            }
+            else if (this.params.addressmode === 5) {
+                this.io_adr.pull("5v");
+                this.address = 0x45;
+            }
         }
         this.params.clock = this.params.clock || 100 * 1000; // for i2c
         this.params.mode = this.params.mode || "master"; // for i2c
@@ -32451,7 +32452,7 @@ class SHT31 {
             return (yield this.getAllWait()).temperature;
         });
     }
-    getHumdWait() {
+    getHumidWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getAllWait()).humidity;
         });
