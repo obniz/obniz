@@ -1,4 +1,4 @@
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import ObnizUtil from "../utils/util";
 import {PullType} from "./common";
 

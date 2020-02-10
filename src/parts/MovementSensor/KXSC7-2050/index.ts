@@ -1,4 +1,4 @@
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface KXSC7_2050Options { }

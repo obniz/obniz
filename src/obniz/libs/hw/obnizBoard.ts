@@ -1,4 +1,4 @@
-import Obniz = require("../../index");
+import Obniz from "../../index";
 import ObnizBLE from "../embeds/ble/ble";
 import ObnizBLEHci from "../embeds/bleHci/ble";
 import Display from "../embeds/display";

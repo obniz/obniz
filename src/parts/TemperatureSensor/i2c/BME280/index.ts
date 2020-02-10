@@ -1,4 +1,4 @@
-import Obniz  = require( "../../../../obniz");
+import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 

@@ -1,4 +1,4 @@
-import Obniz = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 import InfraredLED from "../InfraredLED";

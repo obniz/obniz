@@ -1,5 +1,5 @@
 import semver = require("semver");
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import ObnizUtil from "../utils/util";
 import {DriveType, PullType} from "./common";
 

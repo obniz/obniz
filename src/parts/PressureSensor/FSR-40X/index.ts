@@ -1,6 +1,6 @@
 // Todo: add weight and calc pressure(kg)
 
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 

@@ -1,4 +1,4 @@
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 
 class Display {
   public Obniz: Obniz;

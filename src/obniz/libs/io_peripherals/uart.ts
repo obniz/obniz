@@ -1,4 +1,4 @@
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import ObnizUtil from "../utils/util";
 import {BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType} from "./common";
 

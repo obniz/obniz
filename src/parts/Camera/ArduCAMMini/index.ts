@@ -1,4 +1,4 @@
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import {DriveType} from "../../../obniz/libs/io_peripherals/common";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 

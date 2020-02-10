@@ -8,7 +8,7 @@
 const OK: any = true;
 const ERROR: any = false;
 
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface MFRC522Options {

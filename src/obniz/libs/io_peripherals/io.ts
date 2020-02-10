@@ -1,4 +1,4 @@
-import Obniz  = require( "../../../obniz");
+import Obniz from "../../../obniz";
 import {DriveType, PullType} from "./common";
 
 class PeripheralIO {
