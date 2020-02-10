@@ -1,4 +1,4 @@
-import Obniz from "../../index";
+import Obniz  = require( "../../../obniz");
 
 const isNode: any = typeof window === "undefined";
 import semver = require("semver");

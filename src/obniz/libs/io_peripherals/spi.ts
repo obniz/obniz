@@ -1,5 +1,5 @@
 import semver = require("semver");
-import Obniz from "../../index";
+import Obniz  = require( "../../../obniz");
 import ObnizUtil from "../utils/util";
 import {DriveType, PullType} from "./common";
 
@@ -194,7 +194,7 @@ class PeripheralSPI {
     return this.used;
   }
 
-  public end(reuse: any) {
+  public end(reuse?: any) {
     const self: any = this;
     const obj: any = {};
     obj["spi" + self.id] = null;

@@ -1,6 +1,6 @@
 
 /* tslint:disable:class-name max-classes-per-file */
-import Obniz from "../../../obniz";
+import Obniz  = require( "../../../dist/src/obniz/index");
 
 const OBNIZ_ID = "1234-5678";
 
@@ -294,7 +294,7 @@ class SHT31Test {
     obniz.onconnect = async () => {
       const sensor = obniz.wired("SHT31", { vcc: 0, sda: 1, scl: 2, adr: 3, gnd: 4, addressmode: 5 });
       const temp = await sensor.getTempWait();
-      const humd = await sensor.getHumdWait();
+      const humd = await sensor.getHumidWait();
       console.log("temperature:" + temp);
       console.log("humidity:" + humd);
     };
@@ -305,7 +305,7 @@ class SHT31Test {
     obniz.onconnect = async () => {
       const sensor = obniz.wired("SHT31", { vcc: 0, sda: 1, scl: 2, adr: 3, gnd: 4, addressmode: 5 });
       const temp = await sensor.getTempWait();
-      const humd = await sensor.getHumdWait();
+      const humd = await sensor.getHumidWait();
       console.log("temperature:" + temp);
       console.log("humidity:" + humd);
     };

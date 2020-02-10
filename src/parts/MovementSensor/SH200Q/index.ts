@@ -1,6 +1,6 @@
 import i2cParts, {I2cPartsAbstructOptions} from "../../i2cParts";
 
-import Obniz from "../../../obniz";
+import Obniz  = require( "../../../obniz");
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface SH200QOptions extends I2cPartsAbstructOptions {

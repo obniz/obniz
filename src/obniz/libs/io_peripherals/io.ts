@@ -1,4 +1,4 @@
-import Obniz from "../../index";
+import Obniz  = require( "../../../obniz");
 import {DriveType, PullType} from "./common";
 
 class PeripheralIO {
@@ -25,7 +25,7 @@ class PeripheralIO {
     }
   }
 
-  public output(value: boolean) {
+  public output(value: boolean | 0 | 1) {
     value = !!value;
     const obj: any = {};
     obj["io" + this.id] = value;

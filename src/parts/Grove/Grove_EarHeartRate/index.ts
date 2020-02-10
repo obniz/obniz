@@ -1,4 +1,4 @@
-import Obniz from "../../../obniz";
+import Obniz  = require( "../../../obniz");
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface Grove_EarHeartRateOptions {

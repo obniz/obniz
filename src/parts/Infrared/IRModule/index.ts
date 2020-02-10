@@ -1,4 +1,4 @@
-import Obniz from "../../../obniz";
+import Obniz = require( "../../../obniz");
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 import InfraredLED from "../InfraredLED";
@@ -25,6 +25,12 @@ export default class IRModule implements ObnizPartsInterface {
 
   public sensor!: IRSensor;
   public led!: InfraredLED;
+
+  public duration: any;
+  public dataInverted: any;
+  public cutTail: any;
+  public output_pullup: any;
+  public ondetect?: (array: number[]) => void;
 
   protected obniz!: Obniz;
 
@@ -73,7 +79,7 @@ export default class IRModule implements ObnizPartsInterface {
     this.led.send(arr);
   }
 
-  public start(callback: any) {
+  public start(callback?: (arr: any[]) => void) {
     this.sensor.start(callback);
   }
 

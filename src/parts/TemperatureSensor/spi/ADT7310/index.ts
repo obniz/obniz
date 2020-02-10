@@ -1,4 +1,4 @@
-import Obniz from "../../../../obniz";
+import Obniz  = require( "../../../../obniz");
 import PeripheralSPI from "../../../../obniz/libs/io_peripherals/spi";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";

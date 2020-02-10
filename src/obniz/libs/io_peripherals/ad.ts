@@ -1,4 +1,4 @@
-import Obniz from "../../index";
+import Obniz  = require( "../../../obniz");
 
 class PeripheralAD {
   public Obniz: Obniz;

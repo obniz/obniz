@@ -1,5 +1,5 @@
 import semver = require("semver");
-import Obniz from "../../index";
+import Obniz  = require( "../../../obniz");
 
 export type DirectiveStatuse = "loop" | "registrate" | "pause" | "resume";
 

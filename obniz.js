@@ -111,7 +111,7 @@ module.exports = {
     "test": "npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
     "testOnlyNodejs": "NO_BROWSER_TEST=1 npm test",
     "buildAndtest": "npm run build && npm test",
-    "tstest": "mocha --require espower-typescript/guess test/functiontest/obniz-ts/**/*.ts",
+    "tstest": "mocha --require espower-typescript/guess test/functiontest/**/*.ts",
     "tsExampleTest": "tsc --project ./test/functiontest",
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
@@ -18339,6 +18339,7 @@ exports.default = tv4;
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const WSCommandAD_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAD.js"));
 const WSCommandBle_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBle.js"));
@@ -18369,7 +18370,7 @@ WSCommand_1.default.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.default
 WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
 WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
-module.exports = WSCommand_1.default;
+exports.default = WSCommand_1.default;
 
 //# sourceMappingURL=index.js.map
 
@@ -26386,7 +26387,7 @@ class MQGasSensor {
     }
     heatWait(seconds) {
         this.startHeating();
-        if (seconds > 0) {
+        if (typeof seconds === "number" && seconds > 0) {
             seconds *= 1000;
         }
         else {
@@ -27360,7 +27361,9 @@ class IRSensor {
         }
     }
     start(callback) {
-        this.ondetect = callback;
+        if (callback) {
+            this.ondetect = callback;
+        }
         if (this.output_pullup) {
             this.obniz.getIO(this.params.output).pull("5v");
         }

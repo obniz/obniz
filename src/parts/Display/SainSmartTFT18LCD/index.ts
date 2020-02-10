@@ -1,5 +1,5 @@
 // SainSmart ST7735 1.8" TFT LCD 128x160 pixel
-import Obniz from "../../../obniz";
+import Obniz  = require( "../../../obniz");
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
