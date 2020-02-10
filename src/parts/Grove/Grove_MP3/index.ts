@@ -46,7 +46,7 @@ export default class Grove_MP3 implements ObnizPartsInterface {
     this.uart = this.obniz.getFreeUart();
   }
 
-  public async initWait(strage: any) {
+  public async initWait(strage?: any): Promise<void> {
     this.uart.start({
       tx: this.my_tx,
       rx: this.my_rx,
@@ -84,7 +84,7 @@ export default class Grove_MP3 implements ObnizPartsInterface {
     this.uartSend(0x05, 0);
   }
 
-  public play(track: any, folder: any) {
+  public play(track: any, folder?: any) {
     // if (!folder) folder = {};
     if (folder) {
       this.uart.send([0x7e, 0xff, 0x06, 0x0f, 0x00, folder, track, 0xef]);

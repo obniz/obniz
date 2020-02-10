@@ -12,13 +12,13 @@ export interface GYSFDMAXBOptions {
 
 export interface GYSFDMAXBEditedData {
   enable: boolean;
-  GPGGA: number;
-  GPGLL: number;
-  GPGSA: number;
+  GPGGA: any[];
+  GPGLL: any[];
+  GPGSA: any[];
   GPGSV: any[];
-  GPRMC: number;
-  GPVTG: number;
-  GPZDA: number;
+  GPRMC: any[];
+  GPVTG: any[];
+  GPZDA: any[];
   [key: string]: any;
   timestamp: Date;
 }

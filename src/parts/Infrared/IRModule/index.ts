@@ -26,6 +26,12 @@ export default class IRModule implements ObnizPartsInterface {
   public sensor!: IRSensor;
   public led!: InfraredLED;
 
+  public duration: any;
+  public dataInverted: any;
+  public cutTail: any;
+  public output_pullup: any;
+  public ondetect?: (array: number[]) => void;
+
   protected obniz!: Obniz;
 
   get dataSymbolLength() {
@@ -73,7 +79,7 @@ export default class IRModule implements ObnizPartsInterface {
     this.led.send(arr);
   }
 
-  public start(callback: any) {
+  public start(callback?: (arr: any[]) => void) {
     this.sensor.start(callback);
   }
 
