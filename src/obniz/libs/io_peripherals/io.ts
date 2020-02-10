@@ -1,4 +1,4 @@
-import Obniz from "../../../obniz";
+import Obniz from "../../index";
 import {DriveType, PullType} from "./common";
 
 class PeripheralIO {

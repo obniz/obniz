@@ -1,4 +1,4 @@
-import Obniz from "../../../obniz";
+import Obniz from "../../index";
 
 class PeripheralAD {
   public Obniz: Obniz;

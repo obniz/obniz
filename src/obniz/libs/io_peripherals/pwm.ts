@@ -1,4 +1,4 @@
-import Obniz from "../../../obniz";
+import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 import {DriveType, PullType} from "./common";
 
