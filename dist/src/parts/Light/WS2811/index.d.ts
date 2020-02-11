@@ -1,11 +1,17 @@
 import Obniz from "../../../obniz";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface WS2811Options {
     gnd?: number;
     vcc?: number;
     din: number;
 }
+/**
+ * @category Parts
+ */
 export default class WS2811 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     private static _generateFromByte;

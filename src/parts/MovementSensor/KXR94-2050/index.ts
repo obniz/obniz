@@ -3,7 +3,10 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface KXR94_2050Options {
+/**
+ * @category Parts
+ */
+export interface  KXR94_2050Options {
   x: number;
   y: number;
   z: number;
@@ -13,6 +16,9 @@ export interface KXR94_2050Options {
   self_test?: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class KXR94_2050 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

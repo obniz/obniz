@@ -1,6 +1,9 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface MPU6050Options {
     gnd?: number;
     vcc?: number;
@@ -11,6 +14,9 @@ export interface MPU6050Options {
     accelerometer_range?: number;
     gyroscope_range?: number;
 }
+/**
+ * @category Parts
+ */
 export default class MPU6050 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

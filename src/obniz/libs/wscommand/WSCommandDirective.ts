@@ -4,6 +4,9 @@ import WSCommand from "./WSCommand";
 import CommandIO from "./WSCommandIO";
 import CommandPWM from "./WSCommandPWM";
 
+/**
+ * @ignore
+ */
 export default class WSCommandDirective extends WSCommand {
   public  availableCommands: any;
 

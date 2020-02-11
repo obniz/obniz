@@ -6,15 +6,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const events = require("events");
 const crypto_1 = __importDefault(require("./crypto"));
 const mgmt_1 = __importDefault(require("./mgmt"));
-const SMP_CID = 0x0006;
-const SMP_PAIRING_REQUEST = 0x01;
-const SMP_PAIRING_RESPONSE = 0x02;
-const SMP_PAIRING_CONFIRM = 0x03;
-const SMP_PAIRING_RANDOM = 0x04;
-const SMP_PAIRING_FAILED = 0x05;
-const SMP_ENCRYPT_INFO = 0x06;
-const SMP_MASTER_IDENT = 0x07;
-const SMP_UNSPECIFIED = 0x08;
+var SMP;
+(function (SMP) {
+    SMP.CID = 0x0006;
+    SMP.PAIRING_REQUEST = 0x01;
+    SMP.PAIRING_RESPONSE = 0x02;
+    SMP.PAIRING_CONFIRM = 0x03;
+    SMP.PAIRING_RANDOM = 0x04;
+    SMP.PAIRING_FAILED = 0x05;
+    SMP.ENCRYPT_INFO = 0x06;
+    SMP.MASTER_IDENT = 0x07;
+    SMP.UNSPECIFIED = 0x08;
+})(SMP || (SMP = {}));
+/**
+ * @ignore
+ */
 class Smp extends events.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress, hciProtocol) {
         super();
@@ -43,29 +49,29 @@ class Smp extends events.EventEmitter {
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
-        if (cid !== SMP_CID) {
+        if (cid !== SMP.CID) {
             return;
         }
         const code = data.readUInt8(0);
-        if (SMP_PAIRING_REQUEST === code) {
+        if (SMP.PAIRING_REQUEST === code) {
             this.handlePairingRequest(data);
         }
-        else if (SMP_PAIRING_CONFIRM === code) {
+        else if (SMP.PAIRING_CONFIRM === code) {
             this.handlePairingConfirm(data);
         }
-        else if (SMP_PAIRING_RANDOM === code) {
+        else if (SMP.PAIRING_RANDOM === code) {
             this.handlePairingRandom(data);
         }
-        else if (SMP_PAIRING_FAILED === code) {
+        else if (SMP.PAIRING_FAILED === code) {
             this.handlePairingFailed(data);
         }
     }
     onAclStreamEncryptChange(encrypted) {
         if (encrypted) {
             if (this._stk && this._diversifier && this._random) {
-                this.write(Buffer.concat([Buffer.from([SMP_ENCRYPT_INFO]), this._stk]));
+                this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
                 this.write(Buffer.concat([
-                    Buffer.from([SMP_MASTER_IDENT]),
+                    Buffer.from([SMP.MASTER_IDENT]),
                     this._diversifier,
                     this._random,
                 ]));
@@ -73,7 +79,7 @@ class Smp extends events.EventEmitter {
         }
     }
     onAclStreamLtkNegReply() {
-        this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_UNSPECIFIED]));
+        this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.UNSPECIFIED]));
         this.emit("fail");
     }
     onAclStreamEnd() {
@@ -85,7 +91,7 @@ class Smp extends events.EventEmitter {
     handlePairingRequest(data) {
         this._preq = data;
         this._pres = Buffer.from([
-            SMP_PAIRING_RESPONSE,
+            SMP.PAIRING_RESPONSE,
             0x03,
             0x00,
             0x01,
@@ -100,14 +106,14 @@ class Smp extends events.EventEmitter {
         this._tk = Buffer.from("00000000000000000000000000000000", "hex");
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
-            Buffer.from([SMP_PAIRING_CONFIRM]),
+            Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
     handlePairingRandom(data) {
         const r = data.slice(1);
         const pcnf = Buffer.concat([
-            Buffer.from([SMP_PAIRING_CONFIRM]),
+            Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
@@ -115,10 +121,10 @@ class Smp extends events.EventEmitter {
             this._random = Buffer.from("0000000000000000", "hex");
             this._stk = crypto_1.default.s1(this._tk, this._r, r);
             this._mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
-            this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
+            this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
         }
         else {
-            this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_PAIRING_CONFIRM]));
+            this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.PAIRING_CONFIRM]));
             this.emit("fail");
         }
     }
@@ -126,7 +132,7 @@ class Smp extends events.EventEmitter {
         this.emit("fail");
     }
     write(data) {
-        this._aclStream.write(SMP_CID, data);
+        this._aclStream.write(SMP.CID, data);
     }
 }
 exports.default = Smp;

@@ -2,6 +2,9 @@ import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
+/**
+ * @category Parts
+ */
 class SNx4HC595_IO {
   public chip: any;
   public id: any;
@@ -18,7 +21,10 @@ class SNx4HC595_IO {
   }
 }
 
-export interface SNx4HC595Options {
+/**
+ * @category Parts
+ */
+export interface  SNx4HC595Options {
   gnd?: number;
   vcc?: number;
   ser: number;
@@ -30,7 +36,10 @@ export interface SNx4HC595Options {
   enabled?: boolean;
 }
 
-// tslint:disable-next-line:max-classes-per-file
+// tslint:disable:max-classes-per-file
+/**
+ * @category Parts
+ */
 export default class SNx4HC595 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

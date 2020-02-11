@@ -1,10 +1,16 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface Grove_EarHeartRateOptions {
     gnd: number;
     vcc: number;
     signal?: number;
 }
+/**
+ * @category Parts
+ */
 export default class Grove_EarHeartRate implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

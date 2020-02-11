@@ -6,11 +6,17 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface FSR40XOptions {
+/**
+ * @category Parts
+ */
+export interface  FSR40XOptions {
   pin0: number;
   pin1: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class FSR40X implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

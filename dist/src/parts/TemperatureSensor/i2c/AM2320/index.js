@@ -9,6 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Parts
+ */
 class AM2320 {
     constructor() {
         this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];

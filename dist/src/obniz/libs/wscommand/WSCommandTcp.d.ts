@@ -1,4 +1,7 @@
 import WSCommand from "./WSCommand";
+/**
+ * @ignore
+ */
 declare class WSCommandTcp extends WSCommand {
     module: any;
     _MaxPort: any;

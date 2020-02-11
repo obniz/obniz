@@ -4,6 +4,9 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface ArduCAMMiniOptions {
     cs: PeripheralIO;
     mosi?: PeripheralIO;
@@ -21,6 +24,9 @@ export interface ArduCAMMiniOptions {
 }
 export declare type ArduCAMMiniMode = "MCU2LCD" | "CAM2LCD" | "LCD2MCU";
 export declare type ArduCAMMiniSize = "160x120" | "176x144" | "320x240" | "352x288" | "640x480" | "800x600" | "1024x768" | "1280x960" | "1600x1200";
+/**
+ * @category Parts
+ */
 export default class ArduCAMMini implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

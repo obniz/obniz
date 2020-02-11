@@ -13,70 +13,82 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = () => {
 };
 const events = require("events");
-const HCI_COMMAND_PKT = 0x01;
-const HCI_ACLDATA_PKT = 0x02;
-const HCI_EVENT_PKT = 0x04;
-const ACL_START_NO_FLUSH = 0x00;
-const ACL_CONT = 0x01;
-const ACL_START = 0x02;
-const EVT_DISCONN_COMPLETE = 0x05;
-const EVT_ENCRYPT_CHANGE = 0x08;
-const EVT_CMD_COMPLETE = 0x0e;
-const EVT_CMD_STATUS = 0x0f;
-const EVT_NUMBER_OF_COMPLETED_PACKETS = 0x13;
-const EVT_LE_META_EVENT = 0x3e;
-const EVT_LE_CONN_COMPLETE = 0x01;
-const EVT_LE_ADVERTISING_REPORT = 0x02;
-const EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
-const OGF_LINK_CTL = 0x01;
-const OCF_DISCONNECT = 0x0006;
-const OGF_HOST_CTL = 0x03;
-const OCF_SET_EVENT_MASK = 0x0001;
-const OCF_RESET = 0x0003;
-const OCF_READ_LE_HOST_SUPPORTED = 0x006c;
-const OCF_WRITE_LE_HOST_SUPPORTED = 0x006d;
-const OGF_INFO_PARAM = 0x04;
-const OCF_READ_LOCAL_VERSION = 0x0001;
-const OCF_READ_BUFFER_SIZE = 0x0005;
-const OCF_READ_BD_ADDR = 0x0009;
-const OGF_STATUS_PARAM = 0x05;
-const OCF_READ_RSSI = 0x0005;
-const OGF_LE_CTL = 0x08;
-const OCF_LE_SET_EVENT_MASK = 0x0001;
-const OCF_LE_READ_BUFFER_SIZE = 0x0002;
-const OCF_LE_SET_ADVERTISING_PARAMETERS = 0x0006;
-const OCF_LE_SET_ADVERTISING_DATA = 0x0008;
-const OCF_LE_SET_SCAN_RESPONSE_DATA = 0x0009;
-const OCF_LE_SET_ADVERTISE_ENABLE = 0x000a;
-const OCF_LE_SET_SCAN_PARAMETERS = 0x000b;
-const OCF_LE_SET_SCAN_ENABLE = 0x000c;
-const OCF_LE_CREATE_CONN = 0x000d;
-const OCF_LE_CONN_UPDATE = 0x0013;
-const OCF_LE_START_ENCRYPTION = 0x0019;
-const OCF_LE_LTK_NEG_REPLY = 0x001b;
-const DISCONNECT_CMD = OCF_DISCONNECT | (OGF_LINK_CTL << 10);
-const SET_EVENT_MASK_CMD = OCF_SET_EVENT_MASK | (OGF_HOST_CTL << 10);
-const RESET_CMD = OCF_RESET | (OGF_HOST_CTL << 10);
-const READ_LE_HOST_SUPPORTED_CMD = OCF_READ_LE_HOST_SUPPORTED | (OGF_HOST_CTL << 10);
-const WRITE_LE_HOST_SUPPORTED_CMD = OCF_WRITE_LE_HOST_SUPPORTED | (OGF_HOST_CTL << 10);
-const READ_LOCAL_VERSION_CMD = OCF_READ_LOCAL_VERSION | (OGF_INFO_PARAM << 10);
-const READ_BUFFER_SIZE_CMD = OCF_READ_BUFFER_SIZE | (OGF_INFO_PARAM << 10);
-const READ_BD_ADDR_CMD = OCF_READ_BD_ADDR | (OGF_INFO_PARAM << 10);
-const READ_RSSI_CMD = OCF_READ_RSSI | (OGF_STATUS_PARAM << 10);
-const LE_SET_EVENT_MASK_CMD = OCF_LE_SET_EVENT_MASK | (OGF_LE_CTL << 10);
-const LE_READ_BUFFER_SIZE_CMD = OCF_LE_READ_BUFFER_SIZE | (OGF_LE_CTL << 10);
-const LE_SET_SCAN_PARAMETERS_CMD = OCF_LE_SET_SCAN_PARAMETERS | (OGF_LE_CTL << 10);
-const LE_SET_SCAN_ENABLE_CMD = OCF_LE_SET_SCAN_ENABLE | (OGF_LE_CTL << 10);
-const LE_CREATE_CONN_CMD = OCF_LE_CREATE_CONN | (OGF_LE_CTL << 10);
-const LE_CONN_UPDATE_CMD = OCF_LE_CONN_UPDATE | (OGF_LE_CTL << 10);
-const LE_START_ENCRYPTION_CMD = OCF_LE_START_ENCRYPTION | (OGF_LE_CTL << 10);
-const LE_SET_ADVERTISING_PARAMETERS_CMD = OCF_LE_SET_ADVERTISING_PARAMETERS | (OGF_LE_CTL << 10);
-const LE_SET_ADVERTISING_DATA_CMD = OCF_LE_SET_ADVERTISING_DATA | (OGF_LE_CTL << 10);
-const LE_SET_SCAN_RESPONSE_DATA_CMD = OCF_LE_SET_SCAN_RESPONSE_DATA | (OGF_LE_CTL << 10);
-const LE_SET_ADVERTISE_ENABLE_CMD = OCF_LE_SET_ADVERTISE_ENABLE | (OGF_LE_CTL << 10);
-const LE_LTK_NEG_REPLY_CMD = OCF_LE_LTK_NEG_REPLY | (OGF_LE_CTL << 10);
-const HCI_OE_USER_ENDED_CONNECTION = 0x13;
+/**
+ * @ignore
+ */
+var COMMANDS;
+(function (COMMANDS) {
+    COMMANDS.HCI_COMMAND_PKT = 0x01;
+    COMMANDS.HCI_ACLDATA_PKT = 0x02;
+    COMMANDS.HCI_EVENT_PKT = 0x04;
+    COMMANDS.ACL_START_NO_FLUSH = 0x00;
+    COMMANDS.ACL_CONT = 0x01;
+    COMMANDS.ACL_START = 0x02;
+    COMMANDS.EVT_DISCONN_COMPLETE = 0x05;
+    COMMANDS.EVT_ENCRYPT_CHANGE = 0x08;
+    COMMANDS.EVT_CMD_COMPLETE = 0x0e;
+    COMMANDS.EVT_CMD_STATUS = 0x0f;
+    COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS = 0x13;
+    COMMANDS.EVT_LE_META_EVENT = 0x3e;
+    COMMANDS.EVT_LE_CONN_COMPLETE = 0x01;
+    COMMANDS.EVT_LE_ADVERTISING_REPORT = 0x02;
+    COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
+    COMMANDS.OGF_LINK_CTL = 0x01;
+    COMMANDS.OCF_DISCONNECT = 0x0006;
+    COMMANDS.OGF_HOST_CTL = 0x03;
+    COMMANDS.OCF_SET_EVENT_MASK = 0x0001;
+    COMMANDS.OCF_RESET = 0x0003;
+    COMMANDS.OCF_READ_LE_HOST_SUPPORTED = 0x006c;
+    COMMANDS.OCF_WRITE_LE_HOST_SUPPORTED = 0x006d;
+    COMMANDS.OGF_INFO_PARAM = 0x04;
+    COMMANDS.OCF_READ_LOCAL_VERSION = 0x0001;
+    COMMANDS.OCF_READ_BUFFER_SIZE = 0x0005;
+    COMMANDS.OCF_READ_BD_ADDR = 0x0009;
+    COMMANDS.OGF_STATUS_PARAM = 0x05;
+    COMMANDS.OCF_READ_RSSI = 0x0005;
+    COMMANDS.OGF_LE_CTL = 0x08;
+    COMMANDS.OCF_LE_SET_EVENT_MASK = 0x0001;
+    COMMANDS.OCF_LE_READ_BUFFER_SIZE = 0x0002;
+    COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS = 0x0006;
+    COMMANDS.OCF_LE_SET_ADVERTISING_DATA = 0x0008;
+    COMMANDS.OCF_LE_SET_SCAN_RESPONSE_DATA = 0x0009;
+    COMMANDS.OCF_LE_SET_ADVERTISE_ENABLE = 0x000a;
+    COMMANDS.OCF_LE_SET_SCAN_PARAMETERS = 0x000b;
+    COMMANDS.OCF_LE_SET_SCAN_ENABLE = 0x000c;
+    COMMANDS.OCF_LE_CREATE_CONN = 0x000d;
+    COMMANDS.OCF_LE_CONN_UPDATE = 0x0013;
+    COMMANDS.OCF_LE_START_ENCRYPTION = 0x0019;
+    COMMANDS.OCF_LE_LTK_NEG_REPLY = 0x001b;
+    COMMANDS.DISCONNECT_CMD = COMMANDS.OCF_DISCONNECT | (COMMANDS.OGF_LINK_CTL << 10);
+    COMMANDS.SET_EVENT_MASK_CMD = COMMANDS.OCF_SET_EVENT_MASK | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.RESET_CMD = COMMANDS.OCF_RESET | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.READ_LE_HOST_SUPPORTED_CMD = COMMANDS.OCF_READ_LE_HOST_SUPPORTED | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.WRITE_LE_HOST_SUPPORTED_CMD = COMMANDS.OCF_WRITE_LE_HOST_SUPPORTED | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.READ_LOCAL_VERSION_CMD = COMMANDS.OCF_READ_LOCAL_VERSION | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_BUFFER_SIZE_CMD = COMMANDS.OCF_READ_BUFFER_SIZE | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_BD_ADDR_CMD = COMMANDS.OCF_READ_BD_ADDR | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_RSSI_CMD = COMMANDS.OCF_READ_RSSI | (COMMANDS.OGF_STATUS_PARAM << 10);
+    COMMANDS.LE_SET_EVENT_MASK_CMD = COMMANDS.OCF_LE_SET_EVENT_MASK | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_BUFFER_SIZE_CMD = COMMANDS.OCF_LE_READ_BUFFER_SIZE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_SCAN_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_SCAN_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_SCAN_ENABLE_CMD = COMMANDS.OCF_LE_SET_SCAN_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CREATE_CONN_CMD = COMMANDS.OCF_LE_CREATE_CONN | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CONN_UPDATE_CMD = COMMANDS.OCF_LE_CONN_UPDATE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_START_ENCRYPTION_CMD = COMMANDS.OCF_LE_START_ENCRYPTION | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD = COMMANDS.OCF_LE_SET_SCAN_RESPONSE_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD = COMMANDS.OCF_LE_SET_ADVERTISE_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_LTK_NEG_REPLY_CMD = COMMANDS.OCF_LE_LTK_NEG_REPLY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.HCI_OE_USER_ENDED_CONNECTION = 0x13;
+})(COMMANDS || (COMMANDS = {}));
+/**
+ * @ignore
+ */
 const STATUS_MAPPER = require("./hci-status");
+/**
+ * @ignore
+ */
 class Hci extends events.EventEmitter {
     constructor(obnizHci) {
         super();
@@ -113,8 +125,8 @@ class Hci extends events.EventEmitter {
         const cmd = Buffer.alloc(12);
         const eventMask = Buffer.from("fffffbff07f8bf3d", "hex");
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(SET_EVENT_MASK_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.SET_EVENT_MASK_CMD, 1);
         // length
         cmd.writeUInt8(eventMask.length, 3);
         eventMask.copy(cmd, 4);
@@ -124,8 +136,8 @@ class Hci extends events.EventEmitter {
     reset() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(OCF_RESET | (OGF_HOST_CTL << 10), 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.OCF_RESET | (COMMANDS.OGF_HOST_CTL << 10), 1);
         // length
         cmd.writeUInt8(0x00, 3);
         debug("reset - writing: " + cmd.toString("hex"));
@@ -139,8 +151,8 @@ class Hci extends events.EventEmitter {
     readLocalVersion() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_LOCAL_VERSION_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_LOCAL_VERSION_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
         debug("read local version - writing: " + cmd.toString("hex"));
@@ -149,8 +161,8 @@ class Hci extends events.EventEmitter {
     readBdAddr() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_BD_ADDR_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_BD_ADDR_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
         debug("read bd addr - writing: " + cmd.toString("hex"));
@@ -160,8 +172,8 @@ class Hci extends events.EventEmitter {
         const cmd = Buffer.alloc(12);
         const leEventMask = Buffer.from("1f00000000000000", "hex");
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_EVENT_MASK_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EVENT_MASK_CMD, 1);
         // length
         cmd.writeUInt8(leEventMask.length, 3);
         leEventMask.copy(cmd, 4);
@@ -171,8 +183,8 @@ class Hci extends events.EventEmitter {
     readLeHostSupported() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_LE_HOST_SUPPORTED_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_LE_HOST_SUPPORTED_CMD, 1);
         // length
         cmd.writeUInt8(0x00, 3);
         debug("read LE host supported - writing: " + cmd.toString("hex"));
@@ -181,8 +193,8 @@ class Hci extends events.EventEmitter {
     writeLeHostSupported() {
         const cmd = Buffer.alloc(6);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(WRITE_LE_HOST_SUPPORTED_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.WRITE_LE_HOST_SUPPORTED_CMD, 1);
         // length
         cmd.writeUInt8(0x02, 3);
         // data
@@ -194,8 +206,8 @@ class Hci extends events.EventEmitter {
     setScanParameters() {
         const cmd = Buffer.alloc(11);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_SCAN_PARAMETERS_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD, 1);
         // length
         cmd.writeUInt8(0x07, 3);
         // data
@@ -210,8 +222,8 @@ class Hci extends events.EventEmitter {
     setScanEnabled(enabled, filterDuplicates) {
         const cmd = Buffer.alloc(6);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_SCAN_ENABLE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_SCAN_ENABLE_CMD, 1);
         // length
         cmd.writeUInt8(0x02, 3);
         // data
@@ -223,8 +235,8 @@ class Hci extends events.EventEmitter {
     createLeConn(address, addressType) {
         const cmd = Buffer.alloc(29);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_CREATE_CONN_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CMD, 1);
         // length
         cmd.writeUInt8(0x19, 3);
         // data
@@ -249,8 +261,8 @@ class Hci extends events.EventEmitter {
     connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         const cmd = Buffer.alloc(18);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_CONN_UPDATE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_CONN_UPDATE_CMD, 1);
         // length
         cmd.writeUInt8(0x0e, 3);
         // data
@@ -267,8 +279,8 @@ class Hci extends events.EventEmitter {
     startLeEncryption(handle, random, diversifier, key) {
         const cmd = Buffer.alloc(32);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_START_ENCRYPTION_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_START_ENCRYPTION_CMD, 1);
         // length
         cmd.writeUInt8(0x1c, 3);
         // data
@@ -281,10 +293,10 @@ class Hci extends events.EventEmitter {
     }
     disconnect(handle, reason) {
         const cmd = Buffer.alloc(7);
-        reason = reason || HCI_OE_USER_ENDED_CONNECTION;
+        reason = reason || COMMANDS.HCI_OE_USER_ENDED_CONNECTION;
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(DISCONNECT_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.DISCONNECT_CMD, 1);
         // length
         cmd.writeUInt8(0x03, 3);
         // data
@@ -296,8 +308,8 @@ class Hci extends events.EventEmitter {
     readRssi(handle) {
         const cmd = Buffer.alloc(6);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_RSSI_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_RSSI_CMD, 1);
         // length
         cmd.writeUInt8(0x02, 3);
         // data
@@ -308,8 +320,8 @@ class Hci extends events.EventEmitter {
     writeAclDataPkt(handle, cid, data) {
         const pkt = Buffer.alloc(9 + data.length);
         // header
-        pkt.writeUInt8(HCI_ACLDATA_PKT, 0);
-        pkt.writeUInt16LE(handle | (ACL_START_NO_FLUSH << 12), 1);
+        pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
+        pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
         pkt.writeUInt16LE(data.length + 4, 3); // data length 1
         pkt.writeUInt16LE(data.length, 5); // data length 2
         pkt.writeUInt16LE(cid, 7);
@@ -320,8 +332,8 @@ class Hci extends events.EventEmitter {
     setAdvertisingParameters() {
         const cmd = Buffer.alloc(19);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_ADVERTISING_PARAMETERS_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD, 1);
         // length
         cmd.writeUInt8(15, 3);
         const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL
@@ -343,8 +355,8 @@ class Hci extends events.EventEmitter {
         const cmd = Buffer.alloc(36);
         cmd.fill(0x00);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_ADVERTISING_DATA_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISING_DATA_CMD, 1);
         // length
         cmd.writeUInt8(32, 3);
         // data
@@ -357,8 +369,8 @@ class Hci extends events.EventEmitter {
         const cmd = Buffer.alloc(36);
         cmd.fill(0x00);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_SCAN_RESPONSE_DATA_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD, 1);
         // length
         cmd.writeUInt8(32, 3);
         // data
@@ -370,8 +382,8 @@ class Hci extends events.EventEmitter {
     setAdvertiseEnable(enabled) {
         const cmd = Buffer.alloc(5);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_ADVERTISE_ENABLE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD, 1);
         // length
         cmd.writeUInt8(0x01, 3);
         // data
@@ -382,8 +394,8 @@ class Hci extends events.EventEmitter {
     leReadBufferSize() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_READ_BUFFER_SIZE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_READ_BUFFER_SIZE_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
         debug("le read buffer size - writing: " + cmd.toString("hex"));
@@ -392,15 +404,15 @@ class Hci extends events.EventEmitter {
     readBufferSize() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_BUFFER_SIZE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_BUFFER_SIZE_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
         debug("read buffer size - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
     queueAclDataPkt(handle, cid, data) {
-        let hf = handle | (ACL_START_NO_FLUSH << 12);
+        let hf = handle | (COMMANDS.ACL_START_NO_FLUSH << 12);
         // l2cap pdu may be fragmented on hci level
         let l2capPdu = Buffer.alloc(4 + data.length);
         l2capPdu.writeUInt16LE(data.length, 0);
@@ -412,9 +424,9 @@ class Hci extends events.EventEmitter {
             l2capPdu = l2capPdu.slice(frag.length);
             const pkt = Buffer.alloc(5 + frag.length);
             // hci header
-            pkt.writeUInt8(HCI_ACLDATA_PKT, 0);
+            pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
             pkt.writeUInt16LE(hf, 1);
-            hf |= ACL_CONT << 12;
+            hf |= COMMANDS.ACL_CONT << 12;
             pkt.writeUInt16LE(frag.length, 3); // hci pdu length
             frag.copy(pkt, 5);
             this._aclOutQueue.push({
@@ -459,10 +471,10 @@ class Hci extends events.EventEmitter {
         debug("onSocketData: " + data.toString("hex"));
         const eventType = data.readUInt8(0);
         debug("\tevent type = " + eventType);
-        if (HCI_EVENT_PKT === eventType) {
+        if (COMMANDS.HCI_EVENT_PKT === eventType) {
             const subEventType = data.readUInt8(1);
             debug("\tsub event type = " + subEventType);
-            if (subEventType === EVT_DISCONN_COMPLETE) {
+            if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
                 const handle = data.readUInt16LE(4);
                 const reason = data.readUInt8(6);
                 debug("\t\thandle = " + handle);
@@ -485,14 +497,14 @@ class Hci extends events.EventEmitter {
                 this.pushAclOutQueue();
                 this.emit("disconnComplete", handle, reason);
             }
-            else if (subEventType === EVT_ENCRYPT_CHANGE) {
+            else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
                 const handle = data.readUInt16LE(4);
                 const encrypt = data.readUInt8(6);
                 debug("\t\thandle = " + handle);
                 debug("\t\tencrypt = " + encrypt);
                 this.emit("encryptChange", handle, encrypt);
             }
-            else if (subEventType === EVT_CMD_COMPLETE) {
+            else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
                 const ncmd = data.readUInt8(3);
                 const cmd = data.readUInt16LE(4);
                 const status = data.readUInt8(6);
@@ -503,14 +515,14 @@ class Hci extends events.EventEmitter {
                 debug("\t\tresult = " + result.toString("hex"));
                 this.processCmdCompleteEvent(cmd, status, result);
             }
-            else if (subEventType === EVT_CMD_STATUS) {
+            else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
                 const status = data.readUInt8(3);
                 const cmd = data.readUInt16LE(5);
                 debug("\t\tstatus = " + status);
                 debug("\t\tcmd = " + cmd);
                 this.processCmdStatusEvent(cmd, status);
             }
-            else if (subEventType === EVT_LE_META_EVENT) {
+            else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
                 const leMetaEventType = data.readUInt8(3);
                 const leMetaEventStatus = data.readUInt8(4);
                 const leMetaEventData = data.slice(5);
@@ -519,7 +531,7 @@ class Hci extends events.EventEmitter {
                 debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
                 this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
             }
-            else if (subEventType === EVT_NUMBER_OF_COMPLETED_PACKETS) {
+            else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
                 const handles = data.readUInt8(3);
                 for (let i = 0; i < handles; i++) {
                     const handle = data.readUInt16LE(4 + i * 4);
@@ -542,10 +554,10 @@ class Hci extends events.EventEmitter {
                 this.pushAclOutQueue();
             }
         }
-        else if (HCI_ACLDATA_PKT === eventType) {
+        else if (COMMANDS.HCI_ACLDATA_PKT === eventType) {
             const flags = data.readUInt16LE(1) >> 12;
             const handle = data.readUInt16LE(1) & 0x0fff;
-            if (ACL_START === flags) {
+            if (COMMANDS.ACL_START === flags) {
                 const cid = data.readUInt16LE(7);
                 const length = data.readUInt16LE(5);
                 const pktData = data.slice(9);
@@ -563,7 +575,7 @@ class Hci extends events.EventEmitter {
                     };
                 }
             }
-            else if (ACL_CONT === flags) {
+            else if (COMMANDS.ACL_CONT === flags) {
                 if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
                     return;
                 }
@@ -578,12 +590,12 @@ class Hci extends events.EventEmitter {
                 }
             }
         }
-        else if (HCI_COMMAND_PKT === eventType) {
+        else if (COMMANDS.HCI_COMMAND_PKT === eventType) {
             const cmd = data.readUInt16LE(1);
             const len = data.readUInt8(3);
             debug("\t\tcmd = " + cmd);
             debug("\t\tdata len = " + len);
-            if (cmd === LE_SET_SCAN_ENABLE_CMD) {
+            if (cmd === COMMANDS.LE_SET_SCAN_ENABLE_CMD) {
                 const enable = data.readUInt8(4) === 0x1;
                 const filterDuplicates = data.readUInt8(5) === 0x1;
                 debug("\t\t\tLE enable scan command");
@@ -603,7 +615,7 @@ class Hci extends events.EventEmitter {
         }
     }
     processCmdCompleteEvent(cmd, status, result) {
-        if (cmd === RESET_CMD) {
+        if (cmd === COMMANDS.RESET_CMD) {
             this.resetBuffers();
             this.setEventMask();
             this.setLeEventMask();
@@ -613,7 +625,7 @@ class Hci extends events.EventEmitter {
             this.readLeHostSupported();
             this.leReadBufferSize();
         }
-        else if (cmd === READ_LE_HOST_SUPPORTED_CMD) {
+        else if (cmd === COMMANDS.READ_LE_HOST_SUPPORTED_CMD) {
             if (status === 0) {
                 const le = result.readUInt8(0);
                 const simul = result.readUInt8(1);
@@ -621,7 +633,7 @@ class Hci extends events.EventEmitter {
                 debug("\t\t\tsimul = " + simul);
             }
         }
-        else if (cmd === READ_LOCAL_VERSION_CMD) {
+        else if (cmd === COMMANDS.READ_LOCAL_VERSION_CMD) {
             const hciVer = result.readUInt8(0);
             const hciRev = result.readUInt16LE(1);
             const lmpVer = result.readInt8(3);
@@ -636,7 +648,7 @@ class Hci extends events.EventEmitter {
             }
             this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
         }
-        else if (cmd === READ_BD_ADDR_CMD) {
+        else if (cmd === COMMANDS.READ_BD_ADDR_CMD) {
             this.addressType = "public";
             this.address = result
                 .toString("hex")
@@ -646,44 +658,44 @@ class Hci extends events.EventEmitter {
             debug("address = " + this.address);
             this.emit("addressChange", this.address);
         }
-        else if (cmd === LE_SET_SCAN_PARAMETERS_CMD) {
+        else if (cmd === COMMANDS.LE_SET_SCAN_PARAMETERS_CMD) {
             this.emit("stateChange", "poweredOn");
             this.emit("leScanParametersSet", status);
         }
-        else if (cmd === LE_SET_SCAN_ENABLE_CMD) {
+        else if (cmd === COMMANDS.LE_SET_SCAN_ENABLE_CMD) {
             this.emit("leScanEnableSet", status);
         }
-        else if (cmd === LE_SET_ADVERTISING_PARAMETERS_CMD) {
+        else if (cmd === COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD) {
             this.emit("stateChange", "poweredOn");
             this.emit("leAdvertisingParametersSet", status);
         }
-        else if (cmd === LE_SET_ADVERTISING_DATA_CMD) {
+        else if (cmd === COMMANDS.LE_SET_ADVERTISING_DATA_CMD) {
             this.emit("leAdvertisingDataSet", status);
         }
-        else if (cmd === LE_SET_SCAN_RESPONSE_DATA_CMD) {
+        else if (cmd === COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD) {
             this.emit("leScanResponseDataSet", status);
         }
-        else if (cmd === LE_SET_ADVERTISE_ENABLE_CMD) {
+        else if (cmd === COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD) {
             this.emit("leAdvertiseEnableSet", status);
         }
-        else if (cmd === READ_RSSI_CMD) {
+        else if (cmd === COMMANDS.READ_RSSI_CMD) {
             const handle = result.readUInt16LE(0);
             const rssi = result.readInt8(2);
             debug("\t\t\thandle = " + handle);
             debug("\t\t\trssi = " + rssi);
             this.emit("rssiRead", handle, rssi);
         }
-        else if (cmd === LE_LTK_NEG_REPLY_CMD) {
+        else if (cmd === COMMANDS.LE_LTK_NEG_REPLY_CMD) {
             const handle = result.readUInt16LE(0);
             debug("\t\t\thandle = " + handle);
             this.emit("leLtkNegReply", handle);
         }
-        else if (cmd === LE_READ_BUFFER_SIZE_CMD) {
+        else if (cmd === COMMANDS.LE_READ_BUFFER_SIZE_CMD) {
             if (!status) {
                 this.processLeReadBufferSize(result);
             }
         }
-        else if (cmd === READ_BUFFER_SIZE_CMD) {
+        else if (cmd === COMMANDS.READ_BUFFER_SIZE_CMD) {
             if (!status) {
                 const aclMtu = result.readUInt16LE(0);
                 const aclMaxInProgress = result.readUInt16LE(3);
@@ -698,13 +710,13 @@ class Hci extends events.EventEmitter {
         }
     }
     processLeMetaEvent(eventType, status, data) {
-        if (eventType === EVT_LE_CONN_COMPLETE) {
+        if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
             this.processLeConnComplete(status, data);
         }
-        else if (eventType === EVT_LE_ADVERTISING_REPORT) {
+        else if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
             this.processLeAdvertisingReport(status, data);
         }
-        else if (eventType === EVT_LE_CONN_UPDATE_COMPLETE) {
+        else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             this.processLeConnUpdateComplete(status, data);
         }
     }
@@ -767,7 +779,7 @@ class Hci extends events.EventEmitter {
         this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
     }
     processCmdStatusEvent(cmd, status) {
-        if (cmd === LE_CREATE_CONN_CMD) {
+        if (cmd === COMMANDS.LE_CREATE_CONN_CMD) {
             if (status !== 0) {
                 this.emit("leConnComplete", status);
             }

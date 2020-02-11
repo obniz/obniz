@@ -7,9 +7,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = () => {
 };
 const events_1 = __importDefault(require("events"));
+/**
+ * @ignore
+ */
 const CONNECTION_PARAMETER_UPDATE_REQUEST = 0x12;
+/**
+ * @ignore
+ */
 const CONNECTION_PARAMETER_UPDATE_RESPONSE = 0x13;
+/**
+ * @ignore
+ */
 const SIGNALING_CID = 0x0005;
+/**
+ * @ignore
+ */
 class Signaling extends events_1.default.EventEmitter {
     constructor(handle, aclStream) {
         super();

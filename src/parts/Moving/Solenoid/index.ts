@@ -3,11 +3,17 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SolenoidOptions {
+/**
+ * @category Parts
+ */
+export interface  SolenoidOptions {
   signal: number;
   gnd?: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class Solenoid implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

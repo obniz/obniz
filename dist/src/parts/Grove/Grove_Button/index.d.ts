@@ -1,10 +1,16 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface Grove_ButtonOptions {
     signal: number;
     vcc?: number;
     gnd?: number;
 }
+/**
+ * @category Parts
+ */
 export default class Grove_Button implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

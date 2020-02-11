@@ -4,6 +4,7 @@ coverage/*
 node_modules/*
 temp/*
 dist/*
+doc/*
 test.js
 test-*.js
 test/test-*.js

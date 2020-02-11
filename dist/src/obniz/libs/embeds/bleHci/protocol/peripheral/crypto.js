@@ -4,9 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = __importDefault(require("crypto"));
+/**
+ * @ignore
+ */
 function r() {
     return crypto_1.default.randomBytes(16);
 }
+/**
+ * @ignore
+ */
 function c1(k, _r, pres, preq, iat, ia, rat, ra) {
     const p1 = Buffer.concat([iat, rat, preq, pres]);
     const p2 = Buffer.concat([ra, ia, Buffer.from("00000000", "hex")]);

@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @ignore
+ */
 class WSCommandBleHci {
     constructor(delegate) {
         this._delegate = delegate;

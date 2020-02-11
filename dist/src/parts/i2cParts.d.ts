@@ -2,6 +2,9 @@ import Obniz from "../obniz";
 import { PullType } from "../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface from "../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface I2cPartsAbstructOptions {
     vcc?: number;
     gnd?: number;
@@ -11,6 +14,9 @@ export interface I2cPartsAbstructOptions {
     clock: number;
     i2c?: PeripheralI2C;
 }
+/**
+ * @category Parts
+ */
 export default class I2cPartsAbstruct implements ObnizPartsInterface {
     keys: string[];
     requiredKeys: string[];

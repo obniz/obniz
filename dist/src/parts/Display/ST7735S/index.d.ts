@@ -2,6 +2,9 @@ import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface ST7735SOptions {
     sclk?: number;
     mosi?: number;
@@ -12,6 +15,9 @@ export interface ST7735SOptions {
 }
 export declare type RGB16 = number;
 export declare type RGB24 = number;
+/**
+ * @category Parts
+ */
 export interface PresetColor {
     AliceBlue: RGB16;
     AntiqueWhite: RGB16;
@@ -155,6 +161,9 @@ export interface PresetColor {
     Yellow: RGB16;
     YellowGreen: RGB16;
 }
+/**
+ * @category Parts
+ */
 export default class ST7735S implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

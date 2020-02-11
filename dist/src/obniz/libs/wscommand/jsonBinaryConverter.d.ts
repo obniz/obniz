@@ -1,3 +1,6 @@
+/**
+ * @ignore
+ */
 declare class JsonBinaryConverter {
     static convertFromBinaryToJson(schema: any, binary: any): any;
     static hexFromBinary(data: any, schema?: any): any;

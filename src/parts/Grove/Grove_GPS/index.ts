@@ -3,14 +3,20 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_GPSOptions {
+/**
+ * @category Parts
+ */
+export interface  Grove_GPSOptions {
   vcc?: number;
   gnd?: number;
   tx: number;
   rx: number;
 }
 
-export interface Grove_GPSEditedData {
+/**
+ * @category Parts
+ */
+export interface  Grove_GPSEditedData {
   enable: boolean;
   GPGGA: any;
   GPGLL: any;
@@ -23,6 +29,9 @@ export interface Grove_GPSEditedData {
   timestamp: Date;
 }
 
+/**
+ * @category Parts
+ */
 export default class Grove_GPS implements ObnizPartsInterface {
   // -------------------
   get latitude() {

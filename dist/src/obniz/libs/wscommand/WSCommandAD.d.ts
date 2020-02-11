@@ -1,4 +1,7 @@
 import WSCommand from "./WSCommand";
+/**
+ * @ignore
+ */
 declare class WSCommandAD extends WSCommand {
     module: any;
     _CommandInitNormalInterval: any;

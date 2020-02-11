@@ -1,13 +1,22 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface XBeeOptions {
     tx: number;
     rx: number;
     gnd?: number;
 }
+/**
+ * @category Parts
+ */
 export interface XBeeConfig {
     [key: string]: string;
 }
+/**
+ * @category Parts
+ */
 export default class XBee implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

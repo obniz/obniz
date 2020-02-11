@@ -1,9 +1,15 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface USBOptions {
     vcc: number;
     gnd: number;
 }
+/**
+ * @category Parts
+ */
 export default class USB implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

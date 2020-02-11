@@ -1,3 +1,7 @@
+
+/**
+ * @ignore
+ */
 class WSCommandBleHci {
   public _delegate: any;
   public _CommandHCIInit: any;

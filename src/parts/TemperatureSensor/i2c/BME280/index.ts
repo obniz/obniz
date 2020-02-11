@@ -4,7 +4,10 @@ import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
-export interface BME280Options {
+/**
+ * @category Parts
+ */
+export interface  BME280Options {
   vio?: number;
   vcore?: number;
   gnd?: number;
@@ -16,6 +19,9 @@ export interface BME280Options {
   i2c?: any;
  }
 
+/**
+ * @category Parts
+ */
 export default class BME280 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

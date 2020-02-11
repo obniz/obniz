@@ -1,4 +1,7 @@
 import WSCommand from "./WSCommand";
+/**
+ * @ignore
+ */
 declare class WSCommandSwitch extends WSCommand {
     module: any;
     _CommandNotifyValue: any;

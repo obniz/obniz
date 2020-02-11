@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Parts
+ */
 class FullColorLED {
     constructor() {
         this.COMMON_TYPE_ANODE = 1;

@@ -2,7 +2,10 @@ import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface FlickHatOptions {
+/**
+ * @category Parts
+ */
+export interface  FlickHatOptions {
   vcc?: number;
   sda: number;
   scl: number;
@@ -16,14 +19,20 @@ export interface FlickHatOptions {
 export type FlickHat_Direction = "west" | "east" | "north" | "south";
 export type FlickHat_Direction2 = "west" | "east" | "north" | "south" | "center";
 
-export interface FlickHat_XYZ {
+/**
+ * @category Parts
+ */
+export interface  FlickHat_XYZ {
   x: number;
   y: number;
   z: number;
   seq: number;
 }
 
-export interface FlickHat_Gesture {
+/**
+ * @category Parts
+ */
+export interface  FlickHat_Gesture {
   action: "gesture";
   from: FlickHat_Direction;
   to: FlickHat_Direction;
@@ -31,34 +40,49 @@ export interface FlickHat_Gesture {
   raw: any;
 }
 
-export interface FlickHat_Touch {
+/**
+ * @category Parts
+ */
+export interface  FlickHat_Touch {
   action: "touch";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;
 }
 
-export interface FlickHat_Tap {
+/**
+ * @category Parts
+ */
+export interface  FlickHat_Tap {
   action: "tap";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;
 }
 
-export interface FlickHat_DoubleTap {
+/**
+ * @category Parts
+ */
+export interface  FlickHat_DoubleTap {
   action: "doubletap";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;
 }
 
-export interface FlickHat_AirWheel {
+/**
+ * @category Parts
+ */
+export interface  FlickHat_AirWheel {
   delta: number;
   rotation: number;
   seq: number;
   raw: any;
 }
 
+/**
+ * @category Parts
+ */
 export default class FlickHat implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

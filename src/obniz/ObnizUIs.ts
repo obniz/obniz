@@ -140,6 +140,10 @@ export default class ObnizUIs extends ObnizSystemMethods {
   }
 }
 
+/**
+ *
+ * @ignore
+ */
 function _ReadCookie(name: any) {
   const nameEQ: any = name + "=";
   const ca: any = document.cookie.split(";");

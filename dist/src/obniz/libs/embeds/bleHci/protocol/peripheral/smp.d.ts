@@ -1,4 +1,7 @@
 declare const events: any;
+/**
+ * @ignore
+ */
 export default class Smp extends events.EventEmitter {
     _aclStream: any;
     _mgmt: any;

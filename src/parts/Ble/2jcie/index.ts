@@ -3,9 +3,15 @@ import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCha
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface OMRON_2JCIEOptions {}
+/**
+ * @category Parts
+ */
+export interface  OMRON_2JCIEOptions {}
 
-export interface OMRON_2JCIE_Data {
+/**
+ * @category Parts
+ */
+export interface  OMRON_2JCIE_Data {
   row_number: number;
   temperature: number;
   relative_humidity: number;
@@ -18,6 +24,9 @@ export interface OMRON_2JCIE_Data {
   battery_voltage: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class OMRON_2JCIE implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

@@ -1,5 +1,8 @@
 import WSCommand from "./WSCommand";
 
+/**
+ * @ignore
+ */
 class WSCommandLogicAnalyzer extends WSCommand {
   public module: any;
   public _CommandInit: any;

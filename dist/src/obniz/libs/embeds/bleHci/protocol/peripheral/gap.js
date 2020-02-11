@@ -1,16 +1,19 @@
 "use strict";
+// var debug = require('debug')('gap');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// var debug = require('debug')('gap');
+/**
+ * @ignore
+ */
 const debug = () => {
 };
 const events_1 = __importDefault(require("events"));
 const hci_1 = __importDefault(require("../hci"));
-const isLinux = false;
-const isIntelEdison = false;
-const isYocto = false;
+/**
+ * @ignore
+ */
 class Gap extends events_1.default.EventEmitter {
     constructor(hci) {
         super();
@@ -130,14 +133,8 @@ class Gap extends events_1.default.EventEmitter {
         }
         else {
             this._advertiseState = "starting";
-            if (isIntelEdison || isYocto) {
-                // work around for Intel Edison
-                debug("skipping first set of scan response and advertisement data");
-            }
-            else {
-                this._hci.setScanResponseData(scanData);
-                this._hci.setAdvertisingData(advertisementData);
-            }
+            this._hci.setScanResponseData(scanData);
+            this._hci.setAdvertisingData(advertisementData);
             this._hci.setAdvertiseEnable(true);
             this._hci.setScanResponseData(scanData);
             this._hci.setAdvertisingData(advertisementData);

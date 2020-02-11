@@ -4,13 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const events = require("events");
+const events_1 = __importDefault(require("events"));
 const hci_1 = __importDefault(require("../hci"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
 const gap_1 = __importDefault(require("./gap"));
 const gatt_1 = __importDefault(require("./gatt"));
 const signaling_1 = __importDefault(require("./signaling"));
-class NobleBindings extends events.EventEmitter {
+/**
+ * @ignore
+ */
+class NobleBindings extends events_1.default.EventEmitter {
     constructor(hciProtocol) {
         super();
         this._state = null;

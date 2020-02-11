@@ -1,7 +1,13 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface DPS310Options {
 }
+/**
+ * @category Parts
+ */
 export default class DPS310 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];

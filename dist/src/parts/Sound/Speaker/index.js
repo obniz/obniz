@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Parts
+ */
 class Speaker {
     constructor(obniz) {
         this.keys = ["signal", "gnd"];

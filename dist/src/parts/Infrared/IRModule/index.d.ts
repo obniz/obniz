@@ -2,12 +2,18 @@ import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 import InfraredLED from "../InfraredLED";
 import IRSensor from "../IRSensor";
+/**
+ * @category Parts
+ */
 export interface IRModuleOptions {
     send: number;
     recv: number;
     vcc?: number;
     gnd?: number;
 }
+/**
+ * @category Parts
+ */
 export default class IRModule implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

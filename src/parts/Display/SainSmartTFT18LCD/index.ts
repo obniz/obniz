@@ -4,7 +4,10 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SainSmartTFT18LCDOptions {
+/**
+ * @category Parts
+ */
+export interface  SainSmartTFT18LCDOptions {
   scl: number;
   sda: number;
   dc: number;
@@ -16,7 +19,10 @@ export interface SainSmartTFT18LCDOptions {
 
 export type RGB16 = number;
 export type RGB24 = number;
-export interface PresetColor {
+/**
+ * @category Parts
+ */
+export interface  PresetColor {
   AliceBlue: RGB16;
   AntiqueWhite: RGB16;
   Aqua: RGB16;
@@ -160,6 +166,9 @@ export interface PresetColor {
   YellowGreen: RGB16;
 }
 
+/**
+ * @category Parts
+ */
 export default class SainSmartTFT18LCD implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

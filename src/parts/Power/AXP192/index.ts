@@ -2,8 +2,14 @@ import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 import {I2cPartsAbstructOptions} from "../../../parts/i2cParts";
 
-export interface AXP192Options extends I2cPartsAbstructOptions { }
+/**
+ * @category Parts
+ */
+export interface  AXP192Options extends I2cPartsAbstructOptions { }
 
+/**
+ * @category Parts
+ */
 export default class AXP192 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

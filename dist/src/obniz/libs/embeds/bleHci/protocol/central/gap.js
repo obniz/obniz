@@ -4,10 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('gap');
-const debug = () => {
-};
+/**
+ * @ignore
+ */
+const debug = () => { };
 const events_1 = __importDefault(require("events"));
 const hci_1 = __importDefault(require("../hci"));
+/**
+ * @ignore
+ */
 class Gap extends events_1.default.EventEmitter {
     constructor(hci) {
         super();

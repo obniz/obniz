@@ -9,6 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Parts
+ */
 class JoyStick {
     constructor() {
         this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];

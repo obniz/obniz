@@ -26,6 +26,9 @@ const COMMAND_IO_MUTEX_NAMES = {
     7: "LogicAnalyzer",
     8: "Measure",
 };
+/**
+ * @ignore
+ */
 class WSCommandIO extends WSCommand_1.default {
     constructor() {
         super();

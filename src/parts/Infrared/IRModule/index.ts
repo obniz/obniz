@@ -4,13 +4,19 @@ import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInte
 import InfraredLED from "../InfraredLED";
 import IRSensor from "../IRSensor";
 
-export interface IRModuleOptions {
+/**
+ * @category Parts
+ */
+export interface  IRModuleOptions {
   send: number;
   recv: number;
   vcc?: number;
   gnd?: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class IRModule implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

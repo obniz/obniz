@@ -1,10 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('mgmt');
+/**
+ * @ignore
+ */
 const debug = () => {
 };
+/**
+ * @ignore
+ */
 const LTK_INFO_SIZE = 36;
+/**
+ * @ignore
+ */
 const MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
+/**
+ * @ignore
+ */
 class Mgmt {
     constructor(hciProtocol) {
         this._ltkInfos = [];

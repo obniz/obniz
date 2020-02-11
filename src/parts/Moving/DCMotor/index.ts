@@ -3,11 +3,17 @@ import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface DCMotorOptions {
+/**
+ * @category Parts
+ */
+export interface  DCMotorOptions {
   forward: number;
   back: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class DCMotor implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

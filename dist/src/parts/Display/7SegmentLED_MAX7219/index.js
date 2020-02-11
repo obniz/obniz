@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Parts
+ */
 class _7SegmentLED_MAX7219 {
     constructor() {
         this.keys = ["vcc", "gnd", "din", "cs", "clk"];

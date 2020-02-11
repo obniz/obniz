@@ -1,4 +1,7 @@
 import WSCommand from "./WSCommand";
+/**
+ * @ignore
+ */
 declare class WSCommandI2C extends WSCommand {
     module: any;
     _CommandInit: any;

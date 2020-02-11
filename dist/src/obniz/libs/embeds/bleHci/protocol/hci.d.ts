@@ -1,5 +1,10 @@
-declare const events: any;
+/// <reference types="node" />
+import events = require("events");
+/**
+ * @ignore
+ */
 declare class Hci extends events.EventEmitter {
+    static STATUS_MAPPER: any;
     _obnizHci: any;
     _state: any;
     _handleBuffers: any;

@@ -1,4 +1,7 @@
 import WSCommand from "./WSCommand";
+/**
+ * @ignore
+ */
 declare class WSCommandDisplay extends WSCommand {
     module: any;
     _CommandClear: any;

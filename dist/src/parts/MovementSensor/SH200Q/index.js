@@ -13,6 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const i2cParts_1 = __importDefault(require("../../i2cParts"));
+/**
+ * @category Parts
+ */
 class SH200Q extends i2cParts_1.default {
     constructor() {
         super();

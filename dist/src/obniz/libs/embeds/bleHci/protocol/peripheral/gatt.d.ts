@@ -1,5 +1,8 @@
 /// <reference types="node" />
 import events from "events";
+/**
+ * @ignore
+ */
 export default class Gatt extends events.EventEmitter {
     maxMtu: any;
     _mtu: any;

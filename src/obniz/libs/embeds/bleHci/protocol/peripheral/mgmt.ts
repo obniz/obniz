@@ -1,11 +1,21 @@
 // let debug = require('debug')('mgmt');
+/**
+ * @ignore
+ */
 const debug: any = () => {
 };
 
+/**
+ * @ignore
+ */
 const LTK_INFO_SIZE: any = 36;
-
+/**
+ * @ignore
+ */
 const MGMT_OP_LOAD_LONG_TERM_KEYS: any = 0x0013;
-
+/**
+ * @ignore
+ */
 export default class Mgmt {
   public _ltkInfos: any;
   public _hci: any;

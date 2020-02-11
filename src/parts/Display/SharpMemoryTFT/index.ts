@@ -3,7 +3,10 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SharpMemoryTFTOptions {
+/**
+ * @category Parts
+ */
+export interface  SharpMemoryTFTOptions {
   vcc?: number;
   gnd?: number;
   vcc_a?: number;
@@ -18,6 +21,9 @@ export interface SharpMemoryTFTOptions {
   height: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class SharpMemoryTFT implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

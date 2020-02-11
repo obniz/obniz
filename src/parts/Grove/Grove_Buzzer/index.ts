@@ -2,12 +2,18 @@ import Obniz from "../../../obniz";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_BuzzerOptions {
+/**
+ * @category Parts
+ */
+export interface  Grove_BuzzerOptions {
   signal: number;
   gnd?: number;
   vcc?: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class Grove_Buzzer implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

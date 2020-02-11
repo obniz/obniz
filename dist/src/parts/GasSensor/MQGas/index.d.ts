@@ -1,11 +1,17 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface MQGasSensorOptions {
     gnd?: number;
     vcc?: number;
     do?: number;
     ao?: number;
 }
+/**
+ * @category Parts
+ */
 export default class MQGasSensor implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

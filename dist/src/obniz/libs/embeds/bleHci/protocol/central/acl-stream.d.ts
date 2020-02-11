@@ -1,5 +1,8 @@
 /// <reference types="node" />
 import events from "events";
+/**
+ * @ignore
+ */
 export default class AclStream extends events.EventEmitter {
     _hci: any;
     _handle: any;

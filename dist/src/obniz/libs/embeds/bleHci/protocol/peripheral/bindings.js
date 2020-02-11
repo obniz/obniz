@@ -1,9 +1,12 @@
 "use strict";
+// var debug = require('debug')('bindings');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// var debug = require('debug')('bindings');
+/**
+ * @ignore
+ */
 const debug = () => {
 };
 const events_1 = __importDefault(require("events"));
@@ -11,6 +14,9 @@ const os_1 = __importDefault(require("os"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
 const gap_1 = __importDefault(require("./gap"));
 const gatt_1 = __importDefault(require("./gatt"));
+/**
+ * @ignore
+ */
 class BlenoBindings extends events_1.default.EventEmitter {
     constructor(hciProtocol) {
         super();

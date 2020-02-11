@@ -6,7 +6,10 @@ import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface ArduCAMMiniOptions {
+/**
+ * @category Parts
+ */
+export interface  ArduCAMMiniOptions {
   cs: PeripheralIO;
   mosi?: PeripheralIO;
   miso?: PeripheralIO;
@@ -34,6 +37,9 @@ export type ArduCAMMiniSize =
   | "1280x960"
   | "1600x1200";
 
+/**
+ * @category Parts
+ */
 export default class ArduCAMMini implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

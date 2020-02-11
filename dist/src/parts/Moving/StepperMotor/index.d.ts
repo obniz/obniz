@@ -1,6 +1,9 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface StepperMotorOptions {
     a: number;
     b: number;
@@ -9,6 +12,9 @@ export interface StepperMotorOptions {
     common?: number;
 }
 export declare type StepType = "1" | "2" | "1-2";
+/**
+ * @category Parts
+ */
 export default class StepperMotor implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

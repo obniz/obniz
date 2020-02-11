@@ -9,6 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Parts
+ */
 class KXR94_2050 {
     constructor() {
         this.keys = ["x", "y", "z", "vcc", "gnd", "enable", "self_test"];

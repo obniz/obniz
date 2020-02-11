@@ -2,6 +2,9 @@ import JsonBinaryConverter from "./jsonBinaryConverter";
 import WSCommand from "./WSCommand";
 import WSCommandBleHci from "./WSCommandBleHci";
 
+/**
+ * @ignore
+ */
 class WSCommandBle extends WSCommand {
   public module: any;
   public uuidLength: any;

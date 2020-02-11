@@ -3,12 +3,18 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface IPM_165Options {
+/**
+ * @category Parts
+ */
+export interface  IPM_165Options {
   signal: number;
   vcc?: number;
   gnd?: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class IPM_165 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

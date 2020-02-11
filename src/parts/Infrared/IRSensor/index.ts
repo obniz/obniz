@@ -1,12 +1,18 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface IRSensorOptions {
+/**
+ * @category Parts
+ */
+export interface  IRSensorOptions {
   output: number;
   vcc?: number;
   gnd?: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class IRSensor implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

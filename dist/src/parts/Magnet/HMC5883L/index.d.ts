@@ -1,12 +1,18 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface HMC5883LOptions {
     gnd?: number;
     sda?: number;
     scl?: number;
     i2c?: PeripheralI2C;
 }
+/**
+ * @category Parts
+ */
 export default class HMC5883L implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

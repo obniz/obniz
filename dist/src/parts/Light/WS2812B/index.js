@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Parts
+ */
 class WS2812B {
     constructor() {
         this.keys = ["din", "vcc", "gnd"];

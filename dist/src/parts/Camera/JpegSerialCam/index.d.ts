@@ -1,6 +1,9 @@
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface JpegSerialCamOptions {
     vcc?: number;
     cam_tx: number;
@@ -9,6 +12,9 @@ export interface JpegSerialCamOptions {
 }
 export declare type JpegSerialCamSize = "640x480" | "320x240" | "160x120";
 export declare type JpegSerialCamBaud = 9600 | 19200 | 38400 | 57600 | 115200;
+/**
+ * @category Parts
+ */
 export default class JpegSerialCam implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

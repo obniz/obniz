@@ -1,13 +1,15 @@
 // var debug = require('debug')('bindings');
 
-const events: any = require("events");
+import events from "events";
 
 import Hci from "../hci";
 import AclStream from "./acl-stream";
 import Gap from "./gap";
 import Gatt from "./gatt";
 import Signaling from "./signaling";
-
+/**
+ * @ignore
+ */
 class NobleBindings extends events.EventEmitter {
   public _state: any;
   public _addresses: any;

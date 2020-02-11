@@ -4,7 +4,10 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface JoyStickOptions {
+/**
+ * @category Parts
+ */
+export interface  JoyStickOptions {
   sw: number;
   x: number;
   y: number;
@@ -12,6 +15,9 @@ export interface JoyStickOptions {
   gnd?: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class JoyStick implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

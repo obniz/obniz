@@ -1,9 +1,15 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface FSR40XOptions {
     pin0: number;
     pin1: number;
 }
+/**
+ * @category Parts
+ */
 export default class FSR40X implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

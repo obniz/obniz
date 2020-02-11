@@ -1,5 +1,8 @@
 /// <reference types="node" />
 import events from "events";
+/**
+ * @ignore
+ */
 declare class Gatt extends events.EventEmitter {
     _address: any;
     _aclStream: any;

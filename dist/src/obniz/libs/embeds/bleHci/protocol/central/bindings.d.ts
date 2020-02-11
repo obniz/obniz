@@ -1,4 +1,8 @@
-declare const events: any;
+/// <reference types="node" />
+import events from "events";
+/**
+ * @ignore
+ */
 declare class NobleBindings extends events.EventEmitter {
     _state: any;
     _addresses: any;

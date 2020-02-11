@@ -2,6 +2,9 @@ import ObnizUtil from "./libs/utils/util";
 import ObnizApi from "./ObnizApi";
 import ObnizUIs from "./ObnizUIs";
 
+/**
+ * @ignore
+ */
 declare global {
   var showObnizDebugError: any;
   var MozWebSocket: any;

@@ -1,4 +1,7 @@
 import WSCommand from "./WSCommand";
+/**
+ * @ignore
+ */
 declare class WSCommandIO extends WSCommand {
     module: any;
     _CommandOutput: any;

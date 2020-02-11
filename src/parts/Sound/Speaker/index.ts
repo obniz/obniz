@@ -3,11 +3,17 @@ import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SpeakerOptions {
+/**
+ * @category Parts
+ */
+export interface  SpeakerOptions {
   signal: number;
   gnd?: number;
 }
 
+/**
+ * @category Parts
+ */
 export default class Speaker implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

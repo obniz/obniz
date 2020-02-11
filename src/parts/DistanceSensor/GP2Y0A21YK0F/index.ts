@@ -2,7 +2,10 @@ import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface GP2Y0A21YK0FOptions {
+/**
+ * @category Parts
+ */
+export interface  GP2Y0A21YK0FOptions {
   vcc?: number;
   gnd?: number;
   signal: number;
@@ -10,6 +13,9 @@ export interface GP2Y0A21YK0FOptions {
 
 export type GP2Y0A21YK0FUnitType = "mm" | "inch";
 
+/**
+ * @category Parts
+ */
 export default class GP2Y0A21YK0F implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

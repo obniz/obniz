@@ -1,6 +1,9 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface HCSR04Options {
     gnd?: number;
     echo: number;
@@ -8,6 +11,9 @@ export interface HCSR04Options {
     vcc: number;
 }
 export declare type HCSR04UnitType = "mm" | "inch";
+/**
+ * @category Parts
+ */
 export default class HCSR04 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

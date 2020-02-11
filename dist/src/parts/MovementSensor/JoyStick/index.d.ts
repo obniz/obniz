@@ -1,5 +1,8 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface JoyStickOptions {
     sw: number;
     x: number;
@@ -7,6 +10,9 @@ export interface JoyStickOptions {
     vcc?: number;
     gnd?: number;
 }
+/**
+ * @category Parts
+ */
 export default class JoyStick implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

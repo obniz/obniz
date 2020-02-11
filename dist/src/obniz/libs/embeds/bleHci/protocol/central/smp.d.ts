@@ -1,5 +1,8 @@
 /// <reference types="node" />
 import events from "events";
+/**
+ * @ignore
+ */
 declare class Smp extends events.EventEmitter {
     _aclStream: any;
     _iat: any;

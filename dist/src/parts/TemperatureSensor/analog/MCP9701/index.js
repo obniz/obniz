@@ -4,6 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(require("../AnalogTemperatureSensor"));
+/**
+ * @category Parts
+ */
 class MCP9701 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {

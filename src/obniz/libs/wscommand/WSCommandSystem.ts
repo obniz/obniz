@@ -1,5 +1,8 @@
 import WSCommand from "./WSCommand";
 
+/**
+ * @ignore
+ */
 class WSCommandSystem extends WSCommand {
   public module: any;
   public _CommandReboot: any;

@@ -1,5 +1,8 @@
 /// <reference types="tv4" />
 import WSSchema from "./WSSchema";
+/**
+ * @ignore
+ */
 export default abstract class WSCommand {
     static get schema(): WSSchema.TV4;
     static get CommandClasses(): any;
@@ -33,6 +36,9 @@ export default abstract class WSCommand {
     filter(commandUri: any, json: any): any;
     _filterSchema(schema: any, json: any): any;
 }
+/**
+ * @ignore
+ */
 declare class WSCommandNotFoundError extends Error {
 }
 export {};

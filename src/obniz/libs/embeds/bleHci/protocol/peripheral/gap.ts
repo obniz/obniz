@@ -1,14 +1,17 @@
 // var debug = require('debug')('gap');
+
+/**
+ * @ignore
+ */
 const debug: any = () => {
 };
 
 import events from "events";
 import Hci from "../hci";
 
-const isLinux: boolean = false;
-const isIntelEdison: boolean = false;
-const isYocto: boolean = false;
-
+/**
+ * @ignore
+ */
 class Gap extends events.EventEmitter {
   public _hci: any;
   public _advertiseState: any;
@@ -189,13 +192,8 @@ class Gap extends events.EventEmitter {
     } else {
       this._advertiseState = "starting";
 
-      if (isIntelEdison || isYocto) {
-        // work around for Intel Edison
-        debug("skipping first set of scan response and advertisement data");
-      } else {
-        this._hci.setScanResponseData(scanData);
-        this._hci.setAdvertisingData(advertisementData);
-      }
+      this._hci.setScanResponseData(scanData);
+      this._hci.setAdvertisingData(advertisementData);
       this._hci.setAdvertiseEnable(true);
       this._hci.setScanResponseData(scanData);
       this._hci.setAdvertisingData(advertisementData);

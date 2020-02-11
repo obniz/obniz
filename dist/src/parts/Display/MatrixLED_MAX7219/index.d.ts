@@ -2,6 +2,9 @@ import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface MatrixLED_MAX7219Options {
     clk: number;
     cs: number;
@@ -9,6 +12,9 @@ export interface MatrixLED_MAX7219Options {
     gnd?: number;
     vcc?: number;
 }
+/**
+ * @category Parts
+ */
 export default class MatrixLED_MAX7219 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

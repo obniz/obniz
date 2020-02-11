@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @ignore
+ */
 class JsonBinaryConverter {
     static convertFromBinaryToJson(schema, binary) {
         const types = {

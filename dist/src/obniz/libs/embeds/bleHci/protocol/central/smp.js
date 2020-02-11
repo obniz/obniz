@@ -5,14 +5,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = __importDefault(require("events"));
 const crypto_1 = __importDefault(require("./crypto"));
-const SMP_CID = 0x0006;
-const SMP_PAIRING_REQUEST = 0x01;
-const SMP_PAIRING_RESPONSE = 0x02;
-const SMP_PAIRING_CONFIRM = 0x03;
-const SMP_PAIRING_RANDOM = 0x04;
-const SMP_PAIRING_FAILED = 0x05;
-const SMP_ENCRYPT_INFO = 0x06;
-const SMP_MASTER_IDENT = 0x07;
+/**
+ * @ignore
+ */
+var SMP;
+(function (SMP) {
+    SMP.CID = 0x0006;
+    SMP.PAIRING_REQUEST = 0x01;
+    SMP.PAIRING_RESPONSE = 0x02;
+    SMP.PAIRING_CONFIRM = 0x03;
+    SMP.PAIRING_RANDOM = 0x04;
+    SMP.PAIRING_FAILED = 0x05;
+    SMP.ENCRYPT_INFO = 0x06;
+    SMP.MASTER_IDENT = 0x07;
+})(SMP || (SMP = {}));
+/**
+ * @ignore
+ */
 class Smp extends events_1.default.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
@@ -34,7 +43,7 @@ class Smp extends events_1.default.EventEmitter {
     }
     sendPairingRequest() {
         this._preq = Buffer.from([
-            SMP_PAIRING_REQUEST,
+            SMP.PAIRING_REQUEST,
             0x03,
             0x00,
             0x01,
@@ -45,26 +54,26 @@ class Smp extends events_1.default.EventEmitter {
         this.write(this._preq);
     }
     onAclStreamData(cid, data) {
-        if (cid !== SMP_CID) {
+        if (cid !== SMP.CID) {
             return;
         }
         const code = data.readUInt8(0);
-        if (SMP_PAIRING_RESPONSE === code) {
+        if (SMP.PAIRING_RESPONSE === code) {
             this.handlePairingResponse(data);
         }
-        else if (SMP_PAIRING_CONFIRM === code) {
+        else if (SMP.PAIRING_CONFIRM === code) {
             this.handlePairingConfirm(data);
         }
-        else if (SMP_PAIRING_RANDOM === code) {
+        else if (SMP.PAIRING_RANDOM === code) {
             this.handlePairingRandom(data);
         }
-        else if (SMP_PAIRING_FAILED === code) {
+        else if (SMP.PAIRING_FAILED === code) {
             this.handlePairingFailed(data);
         }
-        else if (SMP_ENCRYPT_INFO === code) {
+        else if (SMP.ENCRYPT_INFO === code) {
             this.handleEncryptInfo(data);
         }
-        else if (SMP_MASTER_IDENT === code) {
+        else if (SMP.MASTER_IDENT === code) {
             this.handleMasterIdent(data);
         }
     }
@@ -78,18 +87,18 @@ class Smp extends events_1.default.EventEmitter {
         this._tk = Buffer.from("00000000000000000000000000000000", "hex");
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
-            Buffer.from([SMP_PAIRING_CONFIRM]),
+            Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
     handlePairingConfirm(data) {
         this._pcnf = data;
-        this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
+        this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
     }
     handlePairingRandom(data) {
         const r = data.slice(1);
         const pcnf = Buffer.concat([
-            Buffer.from([SMP_PAIRING_CONFIRM]),
+            Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
@@ -97,7 +106,7 @@ class Smp extends events_1.default.EventEmitter {
             this.emit("stk", stk);
         }
         else {
-            this.write(Buffer.from([SMP_PAIRING_RANDOM, SMP_PAIRING_CONFIRM]));
+            this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
             this.emit("fail");
         }
     }
@@ -114,7 +123,7 @@ class Smp extends events_1.default.EventEmitter {
         this.emit("masterIdent", ediv, rand);
     }
     write(data) {
-        this._aclStream.write(SMP_CID, data);
+        this._aclStream.write(SMP.CID, data);
     }
 }
 exports.default = Smp;

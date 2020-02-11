@@ -1,5 +1,8 @@
 /// <reference types="node" />
 import events from "events";
+/**
+ * @ignore
+ */
 declare class BlenoBindings extends events.EventEmitter {
     _state: any;
     _advertising: any;

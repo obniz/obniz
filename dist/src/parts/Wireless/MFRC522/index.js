@@ -16,6 +16,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /*jshint esversion: 8 */
 const OK = true;
 const ERROR = false;
+/**
+ * @category Parts
+ */
 class MFRC522 {
     constructor() {
         // PCD commands. Described in chapter 10 of the datasheet.

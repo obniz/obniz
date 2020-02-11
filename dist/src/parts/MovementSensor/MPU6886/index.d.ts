@@ -1,8 +1,14 @@
 import i2cParts, { I2cPartsAbstructOptions } from "../../i2cParts";
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+/**
+ * @category Parts
+ */
 export interface MPU6886Options extends I2cPartsAbstructOptions {
 }
+/**
+ * @category Parts
+ */
 export default class MPU6886 extends i2cParts implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     commands: any;

@@ -5,6 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const qr_1 = __importDefault(require("../utils/qr"));
 const WSCommand_1 = __importDefault(require("./WSCommand"));
+/**
+ * @ignore
+ */
 class WSCommandDisplay extends WSCommand_1.default {
     constructor() {
         super();

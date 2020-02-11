@@ -4,11 +4,24 @@ const debug: any = () => {
 
 import events from "events";
 
+/**
+ * @ignore
+ */
 const CONNECTION_PARAMETER_UPDATE_REQUEST: any = 0x12;
+
+/**
+ * @ignore
+ */
 const CONNECTION_PARAMETER_UPDATE_RESPONSE: any = 0x13;
 
+/**
+ * @ignore
+ */
 const SIGNALING_CID: any = 0x0005;
 
+/**
+ * @ignore
+ */
 class Signaling extends events.EventEmitter {
   public _handle: any;
   public _aclStream: any;

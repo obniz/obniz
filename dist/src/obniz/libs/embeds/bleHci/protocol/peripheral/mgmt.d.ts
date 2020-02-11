@@ -1,3 +1,6 @@
+/**
+ * @ignore
+ */
 export default class Mgmt {
     _ltkInfos: any;
     _hci: any;

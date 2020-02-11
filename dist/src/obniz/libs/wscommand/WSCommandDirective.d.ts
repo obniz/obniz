@@ -1,4 +1,7 @@
 import WSCommand from "./WSCommand";
+/**
+ * @ignore
+ */
 export default class WSCommandDirective extends WSCommand {
     availableCommands: any;
     protected module: number;

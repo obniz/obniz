@@ -3,16 +3,25 @@ import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface XBeeOptions {
+/**
+ * @category Parts
+ */
+export interface  XBeeOptions {
   tx: number;
   rx: number;
   gnd?: number;
  }
 
-export interface XBeeConfig {
+/**
+ * @category Parts
+ */
+export interface  XBeeConfig {
   [key: string]: string;
 }
 
+/**
+ * @category Parts
+ */
 export default class XBee implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

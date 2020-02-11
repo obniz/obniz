@@ -1,6 +1,9 @@
 import qrcode from "../utils/qr";
 import WSCommand from "./WSCommand";
 
+/**
+ * @ignore
+ */
 class WSCommandDisplay extends WSCommand {
   public module: any;
   public _CommandClear: any;

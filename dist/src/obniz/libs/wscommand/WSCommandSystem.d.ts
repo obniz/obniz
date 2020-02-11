@@ -1,4 +1,7 @@
 import WSCommand from "./WSCommand";
+/**
+ * @ignore
+ */
 declare class WSCommandSystem extends WSCommand {
     module: any;
     _CommandReboot: any;

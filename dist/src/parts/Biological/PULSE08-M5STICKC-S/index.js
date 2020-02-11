@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Parts
+ */
 class Puls08M5stickcS {
     constructor() {
         this.keys = ["vcc", "gnd", "tx", "rx"];

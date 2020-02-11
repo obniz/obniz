@@ -1,5 +1,8 @@
 /// <reference types="node" />
 import events from "events";
+/**
+ * @ignore
+ */
 declare class Signaling extends events.EventEmitter {
     _handle: any;
     _aclStream: any;

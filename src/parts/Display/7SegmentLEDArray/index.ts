@@ -2,10 +2,16 @@ import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 import _7SegmentLED from "../7SegmentLED";
 
-export interface _7SegmentLEDArrayOptions {
+/**
+ * @category Parts
+ */
+export interface  _7SegmentLEDArrayOptions {
   segments: _7SegmentLED[];
 }
 
+/**
+ * @category Parts
+ */
 export default class _7SegmentLEDArray implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {
