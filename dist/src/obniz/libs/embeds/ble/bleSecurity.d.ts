@@ -1,4 +1,4 @@
-declare class BleSecurity {
+export default class BleSecurity {
     Obniz: any;
     emitter: any;
     constructor(Obniz: any);
@@ -12,4 +12,3 @@ declare class BleSecurity {
     onerror(params: any): void;
     notifyFromServer(notifyName: any, params: any): void;
 }
-export default BleSecurity;

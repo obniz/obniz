@@ -117,7 +117,7 @@ module.exports = {
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "doc": "typedoc --includes ./src/ --mode file --excludeNotExported  --stripInternal --out doc/obnizjs --excludePrivate --excludeProtected --plugin none ",
+    "doc": "typedoc --includes ./src/ --stripInternal --readme none --out doc/obnizjs --excludePrivate --excludeProtected ",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
@@ -203,7 +203,7 @@ module.exports = {
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
     "typedoc": "^0.16.9",
-    "typedoc-plugin-markdown": "^2.2.16",
+    "typedoc-plugin-external-module-name": "^3.0.0",
     "typescript": "^3.7.4",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
@@ -220,6 +220,7 @@ module.exports = {
     "plugin-error": "^1.0.1",
     "semver": "^5.7.0",
     "tv4": "^1.3.0",
+    "typedoc-plugin-internal-external": "^2.1.1",
     "ws": "^6.1.4"
   },
   "bugs": {
@@ -1605,6 +1606,10 @@ webpackEmptyContext.id = "./dist/src/obniz sync recursive";
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -1677,6 +1682,10 @@ exports.default = ObnizApi;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -1709,6 +1718,69 @@ class ObnizComponents extends ObnizParts_1.default {
         if (this.options.reset_obniz_on_ws_disconnection) {
             this._resetComponents();
         }
+    }
+    setVccGnd(vcc, gnd, drive) {
+        if (this.isValidIO(vcc)) {
+            if (drive) {
+                this.getIO(vcc).drive(drive);
+            }
+            this.getIO(vcc).output(true);
+        }
+        if (this.isValidIO(gnd)) {
+            if (drive) {
+                this.getIO(gnd).drive(drive);
+            }
+            this.getIO(gnd).output(false);
+        }
+    }
+    getIO(io) {
+        if (!this.isValidIO(io)) {
+            throw new Error("io " + io + " is not valid io");
+        }
+        return this["io" + io];
+    }
+    getAD(io) {
+        if (!this.isValidIO(io)) {
+            throw new Error("ad " + io + " is not valid io");
+        }
+        return this["ad" + io];
+    }
+    getFreePwm() {
+        return this._getFreePeripheralUnit("pwm");
+    }
+    getFreeI2C() {
+        return this._getFreePeripheralUnit("i2c");
+    }
+    getI2CWithConfig(config) {
+        if (typeof config !== "object") {
+            throw new Error("getI2CWithConfig need config arg");
+        }
+        if (config.i2c) {
+            return config.i2c;
+        }
+        const i2c = this.getFreeI2C();
+        i2c.start(config);
+        return i2c;
+    }
+    getFreeSpi() {
+        return this._getFreePeripheralUnit("spi");
+    }
+    getSpiWithConfig(config) {
+        if (typeof config !== "object") {
+            throw new Error("getSpiWithConfig need config arg");
+        }
+        if (config.spi) {
+            return config.spi;
+        }
+        const spi = this.getFreeSpi();
+        spi.start(config);
+        return spi;
+    }
+    getFreeUart() {
+        return this._getFreePeripheralUnit("uart");
+    }
+    getFreeTcp() {
+        return this._getFreePeripheralUnit("tcp");
     }
     _callOnConnect() {
         this._prepareComponents();
@@ -1833,32 +1905,6 @@ class ObnizComponents extends ObnizParts_1.default {
             this.pongObservers.splice(index, 1);
         }
     }
-    setVccGnd(vcc, gnd, drive) {
-        if (this.isValidIO(vcc)) {
-            if (drive) {
-                this.getIO(vcc).drive(drive);
-            }
-            this.getIO(vcc).output(true);
-        }
-        if (this.isValidIO(gnd)) {
-            if (drive) {
-                this.getIO(gnd).drive(drive);
-            }
-            this.getIO(gnd).output(false);
-        }
-    }
-    getIO(io) {
-        if (!this.isValidIO(io)) {
-            throw new Error("io " + io + " is not valid io");
-        }
-        return this["io" + io];
-    }
-    getAD(io) {
-        if (!this.isValidIO(io)) {
-            throw new Error("ad " + io + " is not valid io");
-        }
-        return this["ad" + io];
-    }
     _getFreePeripheralUnit(peripheral) {
         for (const key of this._allComponentKeys) {
             if (key.indexOf(peripheral) === 0) {
@@ -1871,43 +1917,6 @@ class ObnizComponents extends ObnizParts_1.default {
             }
         }
         throw new Error(`No More ${peripheral} Available.`);
-    }
-    getFreePwm() {
-        return this._getFreePeripheralUnit("pwm");
-    }
-    getFreeI2C() {
-        return this._getFreePeripheralUnit("i2c");
-    }
-    getI2CWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getI2CWithConfig need config arg");
-        }
-        if (config.i2c) {
-            return config.i2c;
-        }
-        const i2c = this.getFreeI2C();
-        i2c.start(config);
-        return i2c;
-    }
-    getFreeSpi() {
-        return this._getFreePeripheralUnit("spi");
-    }
-    getSpiWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getSpiWithConfig need config arg");
-        }
-        if (config.spi) {
-            return config.spi;
-        }
-        const spi = this.getFreeSpi();
-        spi.start(config);
-        return spi;
-    }
-    getFreeUart() {
-        return this._getFreePeripheralUnit("uart");
-    }
-    getFreeTcp() {
-        return this._getFreePeripheralUnit("tcp");
     }
 }
 exports.default = ObnizComponents;
@@ -1922,6 +1931,10 @@ exports.default = ObnizComponents;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -1978,14 +1991,17 @@ class ObnizConnection {
             this.wsconnect();
         }
     }
+    static get version() {
+        return package_1.default.version;
+    }
+    static get WSCommand() {
+        return wscommand_1.default;
+    }
     prompt(filled, callback) {
         const obnizid = prompt("Please enter obniz id", filled);
         if (obnizid) {
             callback(obnizid);
         }
-    }
-    static get version() {
-        return package_1.default.version;
     }
     wsOnOpen() {
         this.print_debug("ws connected");
@@ -2015,16 +2031,6 @@ class ObnizConnection {
             // invalid json
         }
     }
-    wsOnClose(event) {
-        this.print_debug("closed");
-        this.close();
-        this.emitter.emit("closed");
-        if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-            this.onclose(this);
-        }
-        this.onConnectCalled = false;
-        this._reconnect();
-    }
     connectWait(option) {
         option = option || {};
         const timeout = option.timeout || null;
@@ -2048,6 +2054,100 @@ class ObnizConnection {
             }
             this.connect();
         });
+    }
+    connect() {
+        if (this.socket && this.socket.readyState <= 1) {
+            return;
+        }
+        this.wsconnect();
+    }
+    close() {
+        this._drainQueued();
+        this._disconnectLocal();
+        if (this.socket) {
+            if (this.socket.readyState <= 1) {
+                // Connecting & Connected
+                this.connectionState = "closing";
+                this.socket.close(1000, "close");
+            }
+            this.clearSocket(this.socket);
+            delete this.socket;
+        }
+        this.connectionState = "closed";
+    }
+    send(obj, options) {
+        try {
+            if (!obj || typeof obj !== "object") {
+                console.log("obnizjs. didnt send ", obj);
+                return;
+            }
+            if (Array.isArray(obj)) {
+                for (let i = 0; i < obj.length; i++) {
+                    this.send(obj[i]);
+                }
+                return;
+            }
+            if (this.sendPool) {
+                this.sendPool.push(obj);
+                return;
+            }
+            let sendData = JSON.stringify([obj]);
+            if (this.debugprint) {
+                this.print_debug("send: " + sendData);
+            }
+            /* compress */
+            if (this.wscommand &&
+                (typeof options !== "object" || options.local_connect !== false)) {
+                let compressed;
+                try {
+                    compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
+                    if (compressed) {
+                        sendData = compressed;
+                        if (this.debugprintBinary) {
+                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
+                        }
+                    }
+                }
+                catch (e) {
+                    this.error("------ errored json -------");
+                    this.error(sendData);
+                    throw e;
+                }
+            }
+            /* queue sending */
+            if (typeof sendData === "string") {
+                this._drainQueued();
+                this._sendRouted(sendData);
+            }
+            else {
+                if (this._sendQueue) {
+                    this._sendQueue.push(sendData);
+                }
+                else {
+                    this._sendQueue = [sendData];
+                    this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+                }
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    warning(msg) {
+        console.log("warning:" + msg);
+    }
+    error(msg) {
+        console.error("error:" + msg);
+    }
+    wsOnClose(event) {
+        this.print_debug("closed");
+        this.close();
+        this.emitter.emit("closed");
+        if (typeof this.onclose === "function" && this.onConnectCalled === true) {
+            this.onclose(this);
+        }
+        this.onConnectCalled = false;
+        this._reconnect();
     }
     _reconnect() {
         this._connectionRetryCount++;
@@ -2217,26 +2317,6 @@ class ObnizConnection {
             socket.onerror = null;
         }
     }
-    connect() {
-        if (this.socket && this.socket.readyState <= 1) {
-            return;
-        }
-        this.wsconnect();
-    }
-    close() {
-        this._drainQueued();
-        this._disconnectLocal();
-        if (this.socket) {
-            if (this.socket.readyState <= 1) {
-                // Connecting & Connected
-                this.connectionState = "closing";
-                this.socket.close(1000, "close");
-            }
-            this.clearSocket(this.socket);
-            delete this.socket;
-        }
-        this.connectionState = "closed";
-    }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -2271,64 +2351,6 @@ class ObnizConnection {
     print_debug(str) {
         if (this.debugprint) {
             console.log("Obniz: " + str);
-        }
-    }
-    send(obj, options) {
-        try {
-            if (!obj || typeof obj !== "object") {
-                console.log("obnizjs. didnt send ", obj);
-                return;
-            }
-            if (Array.isArray(obj)) {
-                for (let i = 0; i < obj.length; i++) {
-                    this.send(obj[i]);
-                }
-                return;
-            }
-            if (this.sendPool) {
-                this.sendPool.push(obj);
-                return;
-            }
-            let sendData = JSON.stringify([obj]);
-            if (this.debugprint) {
-                this.print_debug("send: " + sendData);
-            }
-            /* compress */
-            if (this.wscommand &&
-                (typeof options !== "object" || options.local_connect !== false)) {
-                let compressed;
-                try {
-                    compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
-                    if (compressed) {
-                        sendData = compressed;
-                        if (this.debugprintBinary) {
-                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
-                        }
-                    }
-                }
-                catch (e) {
-                    this.error("------ errored json -------");
-                    this.error(sendData);
-                    throw e;
-                }
-            }
-            /* queue sending */
-            if (typeof sendData === "string") {
-                this._drainQueued();
-                this._sendRouted(sendData);
-            }
-            else {
-                if (this._sendQueue) {
-                    this._sendQueue.push(sendData);
-                }
-                else {
-                    this._sendQueue = [sendData];
-                    this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
-                }
-            }
-        }
-        catch (e) {
-            console.log(e);
         }
     }
     _sendRouted(data) {
@@ -2437,9 +2459,6 @@ class ObnizConnection {
     }
     handleSystemCommand(wsObj) {
     }
-    static get WSCommand() {
-        return wscommand_1.default;
-    }
     binary2Json(binary) {
         let data = new Uint8Array(binary);
         const json = [];
@@ -2461,12 +2480,6 @@ class ObnizConnection {
         }
         return json;
     }
-    warning(msg) {
-        console.log("warning:" + msg);
-    }
-    error(msg) {
-        console.error("error:" + msg);
-    }
 }
 exports.default = ObnizConnection;
 
@@ -2480,6 +2493,10 @@ exports.default = ObnizConnection;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -2566,6 +2583,10 @@ exports.default = ObnizParts;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -2720,6 +2741,10 @@ exports.default = ObnizSystemMethods;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -2728,6 +2753,10 @@ const ObnizSystemMethods_1 = __importDefault(__webpack_require__("./dist/src/obn
 class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
+    }
+    close() {
+        super.close();
+        this.updateOnlineUI();
     }
     isValidObnizId(str) {
         if (typeof str !== "string" || str.length < 8) {
@@ -2788,10 +2817,6 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     _callOnConnect() {
         this.updateOnlineUI();
         super._callOnConnect();
-    }
-    close() {
-        super.close();
-        this.updateOnlineUI();
     }
     _disconnectLocal() {
         super._disconnectLocal();
@@ -2876,6 +2901,10 @@ function _ReadCookie(name) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -2897,6 +2926,13 @@ class Obniz extends ObnizUIs_1.default {
         super(id, options);
         this.util = new util_1.default(this);
     }
+    /**
+     *
+     * @returns {ObnizApi}
+     */
+    static get api() {
+        return ObnizApi_1.default;
+    }
     repeat(callback, interval) {
         if (this.looper) {
             this.looper = callback;
@@ -2907,6 +2943,40 @@ class Obniz extends ObnizUIs_1.default {
         this.repeatInterval = interval || 100;
         if (this.onConnectCalled) {
             this.loop();
+        }
+    }
+    warning(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                console.log(msg.message);
+                return;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+            }
+            console.log(`Warning: ${msg}`);
+        }
+    }
+    error(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                msg = msg.message;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+                console.error(new Error(msg));
+            }
+            else {
+                throw new Error(msg);
+            }
         }
     }
     loop() {
@@ -2959,47 +3029,6 @@ class Obniz extends ObnizUIs_1.default {
                 this.ondebug(obj.debug);
             }
         }
-    }
-    warning(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                console.log(msg.message);
-                return;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-            }
-            console.log(`Warning: ${msg}`);
-        }
-    }
-    error(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                msg = msg.message;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-                console.error(new Error(msg));
-            }
-            else {
-                throw new Error(msg);
-            }
-        }
-    }
-    /**
-     *
-     * @returns {ObnizApi}
-     */
-    static get api() {
-        return ObnizApi_1.default;
     }
 }
 /*===================*/
@@ -3057,6 +3086,10 @@ module.exports = Obniz;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -3331,11 +3364,18 @@ exports.default = ObnizBLE;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisementBuilder.js"));
+/**
+ * @category Use as Central
+ */
 class BleAdvertisement {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -3391,11 +3431,18 @@ exports.default = BleAdvertisement;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * @category Use as Central
+ */
 class BleAdvertisementBuilder {
     constructor(Obniz, json) {
         this.Obniz = Obniz;
@@ -3554,6 +3601,10 @@ exports.default = BleAdvertisementBuilder;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -3780,9 +3831,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleCharacteristic extends bleAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -3893,8 +3951,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleDescriptor extends bleAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -3964,6 +4029,10 @@ exports.default = BleDescriptor;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const BleHelper = {
     uuidFilter(uuid) {
         return uuid.toLowerCase().replace(/[^0-9abcdef]/g, "");
@@ -3985,8 +4054,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BlePeripheral {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -4077,7 +4153,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -4161,9 +4244,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteDescriptor.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -4363,8 +4453,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -4429,9 +4526,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteService.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemotePeripheral {
     constructor(Obniz, address) {
         this.Obniz = Obniz;
@@ -4777,9 +4881,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteCharacteristic.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -4846,8 +4957,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * @category Use as Central
+ */
 class BleScan {
     constructor(Obniz) {
         this.scanTarget = null;
@@ -4963,6 +5081,10 @@ exports.default = BleScan;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const semver = __webpack_require__("./node_modules/semver/semver.js");
 class BleSecurity {
@@ -5133,9 +5255,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleService extends bleAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -5185,6 +5314,10 @@ exports.default = BleService;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -5559,7 +5692,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleAdvertisement {
     constructor(obnizBle) {
         this.obnizBle = obnizBle;
@@ -5610,7 +5750,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleAdvertisementBuilder {
     constructor(Obniz, json) {
         this.Obniz = Obniz;
@@ -5764,6 +5911,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
@@ -5986,8 +6137,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
 const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleCharacteristic extends bleLocalAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -6110,7 +6268,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleDescriptor extends bleLocalAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -6186,8 +6351,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -6275,8 +6447,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BlePeripheral {
     constructor(obnizBle) {
         this.obnizBle = obnizBle;
@@ -6367,7 +6546,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -6442,8 +6628,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -6589,7 +6782,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -6630,9 +6830,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteService.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
         this.obnizBle = obnizBle;
@@ -6961,8 +7168,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
 const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -7021,8 +7235,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+/**
+ * @category Use as Central
+ */
 class BleScan {
     constructor(obnizBle) {
         this.scanTarget = {};
@@ -7154,6 +7375,10 @@ exports.default = BleScan;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 class BleSecurity {
     constructor(Obniz) {
@@ -7208,8 +7433,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
 const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleService extends bleLocalAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -7256,6 +7488,10 @@ exports.default = BleService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 class ObnizBLEHci {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -7289,6 +7525,11 @@ exports.default = ObnizBLEHci;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('acl-att-stream');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -7356,6 +7597,11 @@ exports.default = AclStream;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('bindings');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -7815,6 +8061,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
 /**
  * @ignore
@@ -7880,6 +8131,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('gap');
 /**
  * @ignore
@@ -8324,6 +8580,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('att');
 const debug = () => {
 };
@@ -9033,6 +9294,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('signaling');
 const debug = () => {
 };
@@ -9117,6 +9383,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
 /**
@@ -9260,6 +9531,10 @@ module.exports = JSON.parse("[\"Success\",\"Unknown HCI Command\",\"Unknown Conn
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer, process) {
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9274,9 +9549,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = () => {
 };
 const events = __webpack_require__("./node_modules/events/events.js");
-/**
- * @ignore
- */
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -10083,6 +10355,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/smp.js"));
 /**
@@ -10127,6 +10404,11 @@ exports.default = AclStream;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('bindings');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -10302,6 +10584,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
 /**
  * @ignore
@@ -10363,6 +10650,11 @@ exports.default = {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('gap');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -10552,6 +10844,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('gatt');
 const debug = () => {
 };
@@ -11519,6 +11816,11 @@ exports.default = Gatt;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('mgmt');
 /**
  * @ignore
@@ -11606,6 +11908,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const events = __webpack_require__("./node_modules/events/events.js");
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js"));
 const mgmt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js"));
@@ -11751,6 +12058,10 @@ exports.default = Smp;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Display {
     constructor(obniz) {
@@ -12008,6 +12319,10 @@ exports.default = Display;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class ObnizSwitch {
     constructor(Obniz) {
@@ -12090,6 +12405,10 @@ module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class HW {
     static getDefinitionFor(hw) {
@@ -12137,6 +12456,10 @@ module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb2\",\"peripherals\":{
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class PeripheralAD {
     constructor(obniz, id) {
@@ -12240,6 +12563,10 @@ exports.default = PeripheralAD;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver = __webpack_require__("./node_modules/semver/semver.js");
 class Directive {
@@ -12345,6 +12672,10 @@ exports.default = Directive;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -12566,6 +12897,10 @@ exports.default = PeripheralI2C;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class PeripheralIO {
     constructor(obniz, id) {
@@ -12706,6 +13041,10 @@ exports.default = PeripheralIO;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -12827,6 +13166,10 @@ exports.default = PeripheralPWM;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13005,6 +13348,10 @@ exports.default = PeripheralSPI;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13182,6 +13529,10 @@ exports.default = PeripheralUART;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13253,6 +13604,10 @@ exports.default = LogicAnalyzer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13323,6 +13678,10 @@ exports.default = ObnizMeasure;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const isNode = typeof window === "undefined";
 const semver = __webpack_require__("./node_modules/semver/semver.js");
@@ -13475,8 +13834,12 @@ exports.default = Tcp;
 
 "use strict";
 
-/* eslint-disable */
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable */
 /* Thanks Kazuhiko Arase */
 /* https://github.com/kazuhikoarase/qrcode-generator/tree/master/js */
 // ---------------------------------------------------------------------
@@ -15037,6 +15400,10 @@ exports.default = _qrcode;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 class ObnizUtil {
     constructor(obniz) {
         this.obniz = obniz;
@@ -15121,6 +15488,10 @@ exports.default = ObnizUtil;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 // load from webpack
 Object.defineProperty(exports, "__esModule", { value: true });
 const canvas = "canvas";
@@ -15137,6 +15508,10 @@ exports.default = canvas;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 exports.default = {};
 
 //# sourceMappingURL=require-context-browser.js.map
@@ -15149,6 +15524,10 @@ exports.default = {};
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 // load from webpack
 Object.defineProperty(exports, "__esModule", { value: true });
 let ws;
@@ -15188,18 +15567,16 @@ webpackEmptyContext.id = "./dist/src/obniz/libs/wscommand sync recursive";
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSSchema.js"));
-/**
- * @ignore
- */
 const commandClasses = {};
-/**
- * @ignore
- */
 class WSCommand {
     constructor() {
         this._hw = {
@@ -15474,9 +15851,6 @@ class WSCommand {
 }
 exports.default = WSCommand;
 // tslint:disable:max-classes-per-file
-/**
- * @ignore
- */
 class WSCommandNotFoundError extends Error {
 }
 
@@ -15494,10 +15868,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandAD extends WSCommand_1.default {
     constructor() {
         super();
@@ -15582,12 +15957,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const jsonBinaryConverter_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js"));
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const WSCommandBleHci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBleHci.js"));
-/**
- * @ignore
- */
 class WSCommandBle extends WSCommand_1.default {
     constructor() {
         super();
@@ -16822,6 +17198,7 @@ exports.default = WSCommandBle;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
 class WSCommandBleHci {
@@ -16871,14 +17248,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const semver = __webpack_require__("./node_modules/semver/semver.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const WSCommandIO_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandIO.js"));
 const WSCommandPWM_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPWM.js"));
-/**
- * @ignore
- */
 class WSCommandDirective extends WSCommand_1.default {
     constructor() {
         super();
@@ -17062,11 +17440,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const qr_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/qr.js"));
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const qr_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/qr.js"));
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandDisplay extends WSCommand_1.default {
     constructor() {
         super();
@@ -17203,10 +17582,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandI2C extends WSCommand_1.default {
     constructor() {
         super();
@@ -17387,6 +17767,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
@@ -17410,9 +17794,6 @@ const COMMAND_IO_MUTEX_NAMES = {
     7: "LogicAnalyzer",
     8: "Measure",
 };
-/**
- * @ignore
- */
 class WSCommandIO extends WSCommand_1.default {
     constructor() {
         super();
@@ -17561,10 +17942,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandLogicAnalyzer extends WSCommand_1.default {
     constructor() {
         super();
@@ -17654,10 +18036,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandMeasurement extends WSCommand_1.default {
     constructor() {
         super();
@@ -17748,10 +18131,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandPWM extends WSCommand_1.default {
     constructor() {
         super();
@@ -17867,10 +18251,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandSPI extends WSCommand_1.default {
     constructor() {
         super();
@@ -17988,10 +18373,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandSwitch extends WSCommand_1.default {
     constructor() {
         super();
@@ -18053,10 +18439,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandSystem extends WSCommand_1.default {
     constructor() {
         super();
@@ -18223,10 +18610,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandTcp extends WSCommand_1.default {
     constructor() {
         super();
@@ -18367,10 +18755,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandUart extends WSCommand_1.default {
     constructor() {
         super();
@@ -18495,6 +18884,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const tv4 = __webpack_require__("./node_modules/tv4/tv4.js");
 tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
 // @ts-ignore
@@ -18550,6 +18943,10 @@ exports.default = tv4;
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const WSCommandAD_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAD.js"));
 const WSCommandBle_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBle.js"));
@@ -18594,6 +18991,7 @@ module.exports = WSCommand_1.default;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @packageDocumentation
  * @ignore
  */
 class JsonBinaryConverter {
@@ -18974,6 +19372,10 @@ webpackContext.id = "./dist/src/parts sync recursive \\.js$";
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.hx711
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19160,6 +19562,10 @@ exports.default = USB;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -19248,6 +19654,10 @@ exports.default = Puls08M5stickcS;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19361,6 +19771,10 @@ exports.default = OMRON_2JCIE;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20227,6 +20641,10 @@ exports.default = ArduCAMMini;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20474,6 +20892,10 @@ exports.default = JpegSerialCam;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20527,6 +20949,10 @@ exports.default = PT550;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20596,6 +21022,10 @@ exports.default = S11059;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -20745,6 +21175,10 @@ exports.default = _7SegmentLED;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -20811,6 +21245,10 @@ exports.default = _7SegmentLEDArray;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -20941,6 +21379,10 @@ exports.default = _7SegmentLED_MAX7219;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -21074,6 +21516,10 @@ exports.default = MatrixLED_MAX7219;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -23292,6 +23738,10 @@ const font = [
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -25492,6 +25942,10 @@ const font = [
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -25805,6 +26259,10 @@ exports.default = SharpMemoryTFT;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -25899,6 +26357,10 @@ exports.default = GP2Y0A21YK0F;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -26007,6 +26469,10 @@ exports.default = HCSR04;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -26370,6 +26836,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ135
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26400,6 +26870,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ2
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26430,6 +26904,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ3
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26460,6 +26938,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ4
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26490,6 +26972,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ5
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26520,6 +27006,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ6
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26550,6 +27040,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ7
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26580,6 +27074,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ8
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26610,6 +27108,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ9
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 /**
  * @category Parts
@@ -26636,6 +27138,10 @@ exports.default = MQ9;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MQGas
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -26707,6 +27213,10 @@ exports.default = MQGasSensor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -26874,6 +27384,10 @@ exports.default = Grove_3AxisAccelerometer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -26948,6 +27462,10 @@ exports.default = Grove_Button;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -26997,6 +27515,10 @@ exports.default = Grove_Buzzer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -27064,6 +27586,10 @@ exports.default = Grove_EarHeartRate;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -27397,6 +27923,10 @@ exports.default = Grove_GPS;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27513,6 +28043,10 @@ exports.default = Grove_MP3;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27584,6 +28118,10 @@ exports.default = ENC03R_Module;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -27656,6 +28194,10 @@ exports.default = IRModule;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -27732,6 +28274,10 @@ exports.default = IRSensor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -27783,6 +28329,10 @@ exports.default = InfraredLED;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27835,6 +28385,10 @@ exports.default = YG1006;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -27963,6 +28517,10 @@ exports.default = FullColorLED;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -28074,6 +28632,10 @@ exports.default = LED;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -28200,6 +28762,10 @@ exports.default = WS2811;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -28324,6 +28890,10 @@ exports.default = WS2812;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -28448,6 +29018,10 @@ exports.default = WS2812B;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -28588,6 +29162,10 @@ exports.default = SNx4HC595;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28663,6 +29241,10 @@ exports.default = CT10;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28733,6 +29315,10 @@ exports.default = HMC5883L;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28792,6 +29378,10 @@ exports.default = _24LC256;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28870,6 +29460,10 @@ exports.default = AK8963;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28951,6 +29545,10 @@ exports.default = Button;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29321,6 +29919,10 @@ exports.default = FlickHat;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29372,6 +29974,10 @@ exports.default = HCSR505;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29423,6 +30029,10 @@ exports.default = IPM_165;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29508,6 +30118,10 @@ exports.default = JoyStick;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29617,6 +30231,10 @@ exports.default = KXR94_2050;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29687,6 +30305,10 @@ exports.default = KXSC7_2050;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29813,6 +30435,10 @@ exports.default = MPU6050;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29999,6 +30625,10 @@ exports.default = MPU6886;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -30086,6 +30716,10 @@ exports.default = MPU9250;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -30124,6 +30758,10 @@ exports.default = PaPIRsVZ;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -30166,6 +30804,10 @@ exports.default = Potentiometer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -30351,6 +30993,10 @@ exports.default = SH200Q;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -30444,6 +31090,10 @@ exports.default = DCMotor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -30648,6 +31298,10 @@ exports.default = PCA9685;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -30715,6 +31369,10 @@ exports.default = ServoMotor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -30773,6 +31431,10 @@ exports.default = Solenoid;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -30990,6 +31652,10 @@ exports.default = StepperMotor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31136,6 +31802,10 @@ const LDO3_EN_MASK = 0xf7;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31604,7 +32274,10 @@ exports.default = DPS310;
 
 "use strict";
 
-// Todo: add weight and calc pressure(kg)
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31664,6 +32337,10 @@ exports.default = FSR40X;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31716,6 +32393,10 @@ exports.default = SEN0114;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -31999,6 +32680,10 @@ exports.default = MCP9701;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.S8100B
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -32029,6 +32714,10 @@ exports.default = S8100B;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.S8120C
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -32059,6 +32748,10 @@ exports.default = S8120C;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32124,6 +32817,10 @@ exports.default = ADT7410;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32199,6 +32896,10 @@ exports.default = AM2320;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32324,6 +33025,10 @@ exports.default = AMG8833;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32601,6 +33306,10 @@ exports.default = BME280;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32681,6 +33390,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.DHT12
+ */
 const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
 /**
  * @category Parts
@@ -32739,6 +33452,10 @@ exports.default = DHT12;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32856,6 +33573,10 @@ exports.default = S5851A;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32963,6 +33684,10 @@ exports.default = SHT31;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.ADT7310
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -33022,9 +33747,9 @@ exports.default = ADT7310;
 
 "use strict";
 
-/* ver 1.0
- * 2019/10/14
- * Created by Zjalic
+/**
+ * @packageDocumentation
+ * @module Parts
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -33036,7 +33761,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/*jshint esversion: 8 */
 const OK = true;
 const ERROR = false;
 /**
@@ -33606,6 +34330,10 @@ exports.default = MFRC522;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts
@@ -33816,6 +34544,10 @@ exports.default = RN42;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -33982,6 +34714,10 @@ exports.default = XBee;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {

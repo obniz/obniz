@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MQ9
+ */
 import MQGas, { MQGasSensorOptions } from "../MQGas";
 
 /**

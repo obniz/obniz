@@ -1,7 +1,11 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 /// <reference types="node" />
 import Obniz from "../../index";
 declare type TCPCallbackFunction = (data: number[]) => void;
-declare class Tcp {
+export default class Tcp {
     Obniz: Obniz;
     id: number;
     connectObservers: any;
@@ -22,4 +26,4 @@ declare class Tcp {
     notified(obj: any): void;
     isUsed(): boolean;
 }
-export default Tcp;
+export {};

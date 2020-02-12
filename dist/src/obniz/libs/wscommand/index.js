@@ -2,6 +2,10 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(require("./WSCommand"));
 const WSCommandAD_1 = __importDefault(require("./WSCommandAD"));
 const WSCommandBle_1 = __importDefault(require("./WSCommandBle"));

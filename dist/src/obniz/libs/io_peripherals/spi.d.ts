@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 import Obniz from "../../index";
 import { DriveType, PullType } from "./common";
 interface PeripheralSPIOptions {
@@ -10,7 +14,7 @@ interface PeripheralSPIOptions {
     pull?: PullType;
     gnd?: number;
 }
-declare class PeripheralSPI {
+export default class PeripheralSPI {
     Obniz: Obniz;
     id: number;
     observers: any[];
@@ -26,4 +30,4 @@ declare class PeripheralSPI {
     isUsed(): boolean;
     end(reuse: any): void;
 }
-export default PeripheralSPI;
+export {};

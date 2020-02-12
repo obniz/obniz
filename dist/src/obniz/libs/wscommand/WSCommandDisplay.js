@@ -3,11 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const qr_1 = __importDefault(require("../utils/qr"));
-const WSCommand_1 = __importDefault(require("./WSCommand"));
 /**
+ * @packageDocumentation
  * @ignore
  */
+const qr_1 = __importDefault(require("../utils/qr"));
+const WSCommand_1 = __importDefault(require("./WSCommand"));
 class WSCommandDisplay extends WSCommand_1.default {
     constructor() {
         super();

@@ -1,5 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import Builder from "./bleAdvertisementBuilder";
-declare class BleAdvertisement {
+/**
+ * @category Use as Central
+ */
+export default class BleAdvertisement {
     Obniz: any;
     adv_data: any;
     scan_resp: any;
@@ -13,4 +20,3 @@ declare class BleAdvertisement {
     setScanRespDataRaw(scan_resp: any): void;
     setScanRespData(json: any): void;
 }
-export default BleAdvertisement;

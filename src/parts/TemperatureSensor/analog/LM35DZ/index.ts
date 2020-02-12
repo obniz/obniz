@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.LM35DZ
+ */
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 import AnalogTemperatureSensor, {AnalogTemperatureSensorOptions} from "../AnalogTemperatureSensor";
 

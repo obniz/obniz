@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 import Obniz from "../../index";
 import { PullType } from "./common";
 declare type I2CMode = "master" | "slave";

@@ -1,4 +1,7 @@
-declare class BleRemotePeripheral {
+/**
+ * @category Use as Central
+ */
+export default class BleRemotePeripheral {
     obnizBle: any;
     address: any;
     connected: any;
@@ -48,4 +51,3 @@ declare class BleRemotePeripheral {
     notifyFromServer(notifyName: any, params: any): void;
     onerror(): void;
 }
-export default BleRemotePeripheral;

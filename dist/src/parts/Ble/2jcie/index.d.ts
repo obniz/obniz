@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 import Obniz from "../../../obniz";
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";

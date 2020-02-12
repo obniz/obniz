@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import semver = require("semver");
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
@@ -14,7 +19,7 @@ interface PeripheralSPIOptions {
   gnd?: number;
 }
 
-class PeripheralSPI {
+export default  class PeripheralSPI {
   public Obniz: Obniz;
   public id: number;
   public observers!: any[];
@@ -205,5 +210,3 @@ class PeripheralSPI {
     }
   }
 }
-
-export default PeripheralSPI;

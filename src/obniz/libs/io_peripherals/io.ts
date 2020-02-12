@@ -1,7 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 import {DriveType, PullType} from "./common";
 
-class PeripheralIO {
+export default class PeripheralIO {
   public Obniz: Obniz;
   public id: number;
   public value!: boolean;
@@ -144,5 +149,3 @@ class PeripheralIO {
     }
   }
 }
-
-export default PeripheralIO;

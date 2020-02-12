@@ -1,7 +1,8 @@
-import WSCommand from "./WSCommand";
 /**
+ * @packageDocumentation
  * @ignore
  */
+import WSCommand from "./WSCommand";
 declare class WSCommandPWM extends WSCommand {
     module: any;
     ModuleNum: any;

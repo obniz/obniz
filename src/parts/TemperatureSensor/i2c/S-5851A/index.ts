@@ -1,4 +1,9 @@
-// sensor response not found
+
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
+
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";

@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,9 +17,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = () => {
 };
 const events = require("events");
-/**
- * @ignore
- */
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;

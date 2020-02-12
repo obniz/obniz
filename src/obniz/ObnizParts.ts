@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
 import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
 import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";

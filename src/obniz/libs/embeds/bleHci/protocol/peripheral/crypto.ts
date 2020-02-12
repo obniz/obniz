@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 import crypto from "crypto";
 
 /**

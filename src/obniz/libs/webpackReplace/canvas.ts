@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 // load from webpack
 
 const canvas: any = "canvas";

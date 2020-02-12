@@ -1,5 +1,9 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 import Obniz from "../../index";
-declare class Display {
+export default class Display {
     Obniz: Obniz;
     width: number;
     height: number;
@@ -31,4 +35,3 @@ declare class Display {
     draw(ctx: CanvasRenderingContext2D): void;
     drawing(autoFlush: boolean): void;
 }
-export default Display;

@@ -1,12 +1,14 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+
 // let debug = require('debug')('hci');
 const debug: any = () => {
 };
 
 import events = require("events");
 
-/**
- * @ignore
- */
 namespace COMMANDS {
   export const HCI_COMMAND_PKT: any = 0x01;
   export const HCI_ACLDATA_PKT: any = 0x02;

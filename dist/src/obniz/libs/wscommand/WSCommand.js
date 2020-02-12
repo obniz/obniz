@@ -1,16 +1,14 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const WSSchema_1 = __importDefault(require("./WSSchema"));
-/**
- * @ignore
- */
 const commandClasses = {};
-/**
- * @ignore
- */
 class WSCommand {
     constructor() {
         this._hw = {
@@ -285,9 +283,6 @@ class WSCommand {
 }
 exports.default = WSCommand;
 // tslint:disable:max-classes-per-file
-/**
- * @ignore
- */
 class WSCommandNotFoundError extends Error {
 }
 

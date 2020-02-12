@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
 import ObnizUtil from "./libs/utils/util";
 import ObnizApi from "./ObnizApi";
 import ObnizUIs from "./ObnizUIs";
@@ -20,15 +25,19 @@ declare global {
 const isNode: any = typeof window === "undefined";
 
 class Obniz extends ObnizUIs {
-  public util: any;
-  public looper: any;
-  public repeatInterval: any;
-  public onConnectCalled: any;
-  public send: any;
-  public onmessage: any;
-  public ondebug: any;
-  public isNode: any;
-  public showAlertUI: any;
+
+  /**
+   *
+   * @returns {ObnizApi}
+   */
+  static get api() {
+    return ObnizApi;
+  }
+  protected util: any;
+  protected looper: any;
+  protected repeatInterval: any;
+  protected onmessage: any;
+  protected ondebug: any;
 
   constructor(id: any, options?: any) {
     super(id, options);
@@ -46,59 +55,6 @@ class Obniz extends ObnizUIs {
 
     if (this.onConnectCalled) {
       this.loop();
-    }
-  }
-
-  public async loop() {
-    if (typeof this.looper === "function" && this.onConnectCalled) {
-      const prom: any = this.looper();
-      if (prom instanceof Promise) {
-        await prom;
-      }
-      setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-    }
-  }
-
-  public _callOnConnect() {
-    super._callOnConnect();
-    this.loop();
-  }
-
-  public message(target: any, message: any) {
-    let targets: any = [];
-    if (typeof target === "string") {
-      targets.push(target);
-    } else {
-      targets = target;
-    }
-    this.send({
-      message: {
-        to: targets,
-        data: message,
-      },
-    });
-  }
-
-  public notifyToModule(obj: any) {
-    super.notifyToModule(obj);
-    // notify messaging
-    if (typeof obj.message === "object" && this.onmessage) {
-      this.onmessage(obj.message.data, obj.message.from);
-    }
-    // debug
-    if (typeof obj.debug === "object") {
-      if (obj.debug.warning) {
-        const msg: any = "Warning: " + obj.debug.warning.message;
-        this.warning({alert: "warning", message: msg});
-      }
-
-      if (obj.debug.error) {
-        const msg: any = "Error: " + obj.debug.error.message;
-        this.error({alert: "error", message: msg});
-      }
-      if (this.ondebug) {
-        this.ondebug(obj.debug);
-      }
     }
   }
 
@@ -135,12 +91,57 @@ class Obniz extends ObnizUIs {
     }
   }
 
-  /**
-   *
-   * @returns {ObnizApi}
-   */
-  static get api() {
-    return ObnizApi;
+  protected async loop() {
+    if (typeof this.looper === "function" && this.onConnectCalled) {
+      const prom: any = this.looper();
+      if (prom instanceof Promise) {
+        await prom;
+      }
+      setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+    }
+  }
+
+  protected _callOnConnect() {
+    super._callOnConnect();
+    this.loop();
+  }
+
+  protected message(target: any, message: any) {
+    let targets: any = [];
+    if (typeof target === "string") {
+      targets.push(target);
+    } else {
+      targets = target;
+    }
+    this.send({
+      message: {
+        to: targets,
+        data: message,
+      },
+    });
+  }
+
+  protected notifyToModule(obj: any) {
+    super.notifyToModule(obj);
+    // notify messaging
+    if (typeof obj.message === "object" && this.onmessage) {
+      this.onmessage(obj.message.data, obj.message.from);
+    }
+    // debug
+    if (typeof obj.debug === "object") {
+      if (obj.debug.warning) {
+        const msg: any = "Warning: " + obj.debug.warning.message;
+        this.warning({alert: "warning", message: msg});
+      }
+
+      if (obj.debug.error) {
+        const msg: any = "Error: " + obj.debug.error.message;
+        this.error({alert: "error", message: msg});
+      }
+      if (this.ondebug) {
+        this.ondebug(obj.debug);
+      }
+    }
   }
 }
 

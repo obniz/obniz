@@ -12,9 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const emitter = require("eventemitter3");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 const bleRemoteService_1 = __importDefault(require("./bleRemoteService"));
+/**
+ * @category Use as Central
+ */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
         this.obnizBle = obnizBle;

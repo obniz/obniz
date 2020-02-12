@@ -1,5 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleAttributeAbstract from "./bleAttributeAbstract";
-declare class BleLocalAttributeAbstract extends BleAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleLocalAttributeAbstract extends BleAttributeAbstract {
     RESULT_SUCCESS: any;
     RESULT_INVALID_OFFSET: any;
     RESULT_ATTR_NOT_LONG: any;
@@ -21,4 +28,3 @@ declare class BleLocalAttributeAbstract extends BleAttributeAbstract {
     write(dataArray: any): void;
     read(): void;
 }
-export default BleLocalAttributeAbstract;

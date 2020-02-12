@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const events: any = require("events");
 
 import crypto from "./crypto";

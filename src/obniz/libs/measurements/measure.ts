@@ -1,14 +1,19 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 
-interface ObnizMeasureResult {
+export interface ObnizMeasureResult {
   edge: boolean;
   timing: number;
 }
 
 type ObnizMeasureResultArray = [ObnizMeasureResult, ObnizMeasureResult];
 
-interface ObnizMeasureOptions {
+export interface ObnizMeasureOptions {
   "io_pulse": number;
   "pulse": "positive" | "negative";
   "pulse_width": number;
@@ -18,7 +23,7 @@ interface ObnizMeasureOptions {
   "callback"?: (edges: ObnizMeasureResultArray) => void;
 }
 
-class ObnizMeasure {
+export default class ObnizMeasure {
   public obniz: Obniz;
   public observers!: Array<(edges: ObnizMeasureResultArray) => void>;
   public params?: ObnizMeasureOptions;
@@ -83,5 +88,3 @@ class ObnizMeasure {
     }
   }
 }
-
-export default ObnizMeasure;

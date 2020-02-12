@@ -3,14 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const semver = require("semver");
 const util_1 = __importDefault(require("../utils/util"));
 const WSCommand_1 = __importDefault(require("./WSCommand"));
 const WSCommandIO_1 = __importDefault(require("./WSCommandIO"));
 const WSCommandPWM_1 = __importDefault(require("./WSCommandPWM"));
-/**
- * @ignore
- */
 class WSCommandDirective extends WSCommand_1.default {
     constructor() {
         super();

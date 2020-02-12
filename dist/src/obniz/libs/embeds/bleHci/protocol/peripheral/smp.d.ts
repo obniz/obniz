@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 declare const events: any;
 /**
  * @ignore

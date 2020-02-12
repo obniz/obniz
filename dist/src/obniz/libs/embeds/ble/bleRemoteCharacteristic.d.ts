@@ -1,5 +1,8 @@
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
-declare class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
+/**
+ * @category Use as Central
+ */
+export default class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     properties: any;
     children: any;
     addChild: any;
@@ -41,4 +44,3 @@ declare class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     onnotify(data: any): void;
     notifyFromServer(notifyName: any, params: any): void;
 }
-export default BleRemoteCharacteristic;

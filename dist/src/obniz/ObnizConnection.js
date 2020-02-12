@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -55,14 +59,17 @@ class ObnizConnection {
             this.wsconnect();
         }
     }
+    static get version() {
+        return package_1.default.version;
+    }
+    static get WSCommand() {
+        return wscommand_1.default;
+    }
     prompt(filled, callback) {
         const obnizid = prompt("Please enter obniz id", filled);
         if (obnizid) {
             callback(obnizid);
         }
-    }
-    static get version() {
-        return package_1.default.version;
     }
     wsOnOpen() {
         this.print_debug("ws connected");
@@ -92,16 +99,6 @@ class ObnizConnection {
             // invalid json
         }
     }
-    wsOnClose(event) {
-        this.print_debug("closed");
-        this.close();
-        this.emitter.emit("closed");
-        if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-            this.onclose(this);
-        }
-        this.onConnectCalled = false;
-        this._reconnect();
-    }
     connectWait(option) {
         option = option || {};
         const timeout = option.timeout || null;
@@ -125,6 +122,100 @@ class ObnizConnection {
             }
             this.connect();
         });
+    }
+    connect() {
+        if (this.socket && this.socket.readyState <= 1) {
+            return;
+        }
+        this.wsconnect();
+    }
+    close() {
+        this._drainQueued();
+        this._disconnectLocal();
+        if (this.socket) {
+            if (this.socket.readyState <= 1) {
+                // Connecting & Connected
+                this.connectionState = "closing";
+                this.socket.close(1000, "close");
+            }
+            this.clearSocket(this.socket);
+            delete this.socket;
+        }
+        this.connectionState = "closed";
+    }
+    send(obj, options) {
+        try {
+            if (!obj || typeof obj !== "object") {
+                console.log("obnizjs. didnt send ", obj);
+                return;
+            }
+            if (Array.isArray(obj)) {
+                for (let i = 0; i < obj.length; i++) {
+                    this.send(obj[i]);
+                }
+                return;
+            }
+            if (this.sendPool) {
+                this.sendPool.push(obj);
+                return;
+            }
+            let sendData = JSON.stringify([obj]);
+            if (this.debugprint) {
+                this.print_debug("send: " + sendData);
+            }
+            /* compress */
+            if (this.wscommand &&
+                (typeof options !== "object" || options.local_connect !== false)) {
+                let compressed;
+                try {
+                    compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
+                    if (compressed) {
+                        sendData = compressed;
+                        if (this.debugprintBinary) {
+                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
+                        }
+                    }
+                }
+                catch (e) {
+                    this.error("------ errored json -------");
+                    this.error(sendData);
+                    throw e;
+                }
+            }
+            /* queue sending */
+            if (typeof sendData === "string") {
+                this._drainQueued();
+                this._sendRouted(sendData);
+            }
+            else {
+                if (this._sendQueue) {
+                    this._sendQueue.push(sendData);
+                }
+                else {
+                    this._sendQueue = [sendData];
+                    this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+                }
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    warning(msg) {
+        console.log("warning:" + msg);
+    }
+    error(msg) {
+        console.error("error:" + msg);
+    }
+    wsOnClose(event) {
+        this.print_debug("closed");
+        this.close();
+        this.emitter.emit("closed");
+        if (typeof this.onclose === "function" && this.onConnectCalled === true) {
+            this.onclose(this);
+        }
+        this.onConnectCalled = false;
+        this._reconnect();
     }
     _reconnect() {
         this._connectionRetryCount++;
@@ -294,26 +385,6 @@ class ObnizConnection {
             socket.onerror = null;
         }
     }
-    connect() {
-        if (this.socket && this.socket.readyState <= 1) {
-            return;
-        }
-        this.wsconnect();
-    }
-    close() {
-        this._drainQueued();
-        this._disconnectLocal();
-        if (this.socket) {
-            if (this.socket.readyState <= 1) {
-                // Connecting & Connected
-                this.connectionState = "closing";
-                this.socket.close(1000, "close");
-            }
-            this.clearSocket(this.socket);
-            delete this.socket;
-        }
-        this.connectionState = "closed";
-    }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -348,64 +419,6 @@ class ObnizConnection {
     print_debug(str) {
         if (this.debugprint) {
             console.log("Obniz: " + str);
-        }
-    }
-    send(obj, options) {
-        try {
-            if (!obj || typeof obj !== "object") {
-                console.log("obnizjs. didnt send ", obj);
-                return;
-            }
-            if (Array.isArray(obj)) {
-                for (let i = 0; i < obj.length; i++) {
-                    this.send(obj[i]);
-                }
-                return;
-            }
-            if (this.sendPool) {
-                this.sendPool.push(obj);
-                return;
-            }
-            let sendData = JSON.stringify([obj]);
-            if (this.debugprint) {
-                this.print_debug("send: " + sendData);
-            }
-            /* compress */
-            if (this.wscommand &&
-                (typeof options !== "object" || options.local_connect !== false)) {
-                let compressed;
-                try {
-                    compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
-                    if (compressed) {
-                        sendData = compressed;
-                        if (this.debugprintBinary) {
-                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
-                        }
-                    }
-                }
-                catch (e) {
-                    this.error("------ errored json -------");
-                    this.error(sendData);
-                    throw e;
-                }
-            }
-            /* queue sending */
-            if (typeof sendData === "string") {
-                this._drainQueued();
-                this._sendRouted(sendData);
-            }
-            else {
-                if (this._sendQueue) {
-                    this._sendQueue.push(sendData);
-                }
-                else {
-                    this._sendQueue = [sendData];
-                    this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
-                }
-            }
-        }
-        catch (e) {
-            console.log(e);
         }
     }
     _sendRouted(data) {
@@ -514,9 +527,6 @@ class ObnizConnection {
     }
     handleSystemCommand(wsObj) {
     }
-    static get WSCommand() {
-        return wscommand_1.default;
-    }
     binary2Json(binary) {
         let data = new Uint8Array(binary);
         const json = [];
@@ -537,12 +547,6 @@ class ObnizConnection {
             data = frame.next;
         }
         return json;
-    }
-    warning(msg) {
-        console.log("warning:" + msg);
-    }
-    error(msg) {
-        console.error("error:" + msg);
     }
 }
 exports.default = ObnizConnection;

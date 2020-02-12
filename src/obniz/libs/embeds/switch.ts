@@ -1,7 +1,11 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 
 type ObnizSwitchCallback = (result: boolean) => void;
 
-class ObnizSwitch {
+export default class ObnizSwitch {
   public Obniz: any;
   public observers!: ObnizSwitchCallback[];
   public onChangeForStateWait: any;
@@ -61,5 +65,3 @@ class ObnizSwitch {
     }
   }
 }
-
-export default ObnizSwitch;

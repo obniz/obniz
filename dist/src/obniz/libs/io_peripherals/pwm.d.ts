@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 import Obniz from "../../index";
 import { DriveType, PullType } from "./common";
 interface PeripheralPWMOptions {

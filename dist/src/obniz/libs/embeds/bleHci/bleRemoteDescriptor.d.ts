@@ -1,5 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
-declare class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
+/**
+ * @category Use as Central
+ */
+export default class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
     characteristic: any;
     uuid: any;
     constructor(params: any);
@@ -7,4 +14,3 @@ declare class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
     read(): void;
     write(array: any): void;
 }
-export default BleRemoteDescriptor;

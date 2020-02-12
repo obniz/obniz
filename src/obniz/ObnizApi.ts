@@ -1,14 +1,25 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
 import fetch from "node-fetch";
 
 // @ts-ignore
 import packageJson from "../../package"; // pakcage.js will be created from package.json on build.
 
-class ObnizApi {
-  public id: any;
+export default class ObnizApi {
+
+  get apiVersion() {
+
+    const versionString: any = packageJson.version;
+    return versionString.split(".").shift();
+  }
   public options: any;
   public urlBase: any;
+  private id: string;
 
-  constructor(obnizId: any, options: any) {
+  constructor(obnizId: string, options: any) {
     this.id = obnizId;
     options = options || {};
     this.options = {
@@ -16,12 +27,6 @@ class ObnizApi {
       obniz_server: options.obniz_server || "https://obniz.io",
     };
     this.urlBase = this.options.obniz_server + "/obniz/" + this.id;
-  }
-
-  get apiVersion() {
-
-    const versionString: any = packageJson.version;
-    return versionString.split(".").shift();
   }
 
   public post(path: any, params: any, callback: any) {
@@ -69,5 +74,3 @@ class ObnizApi {
     return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
   }
 }
-
-export default ObnizApi;

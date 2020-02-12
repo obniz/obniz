@@ -1,5 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleAttributeAbstract from "./bleAttributeAbstract";
-declare class BleRemoteAttributeAbstract extends BleAttributeAbstract {
+/**
+ * @category Use as Central
+ */
+export default class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     isRemote: any;
     discoverdOnRemote: any;
     childrenName: any;
@@ -18,4 +25,3 @@ declare class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     ondiscoverfinished(children: any): void;
     notifyFromServer(notifyName: any, params: any): void;
 }
-export default BleRemoteAttributeAbstract;

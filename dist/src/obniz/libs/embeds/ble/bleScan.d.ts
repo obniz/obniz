@@ -1,4 +1,7 @@
-declare class BleScan {
+/**
+ * @category Use as Central
+ */
+export default class BleScan {
     scanTarget: any;
     Obniz: any;
     emitter: any;
@@ -13,4 +16,3 @@ declare class BleScan {
     onfind(params: any): void;
     notifyFromServer(notifyName: any, params: any): void;
 }
-export default BleScan;

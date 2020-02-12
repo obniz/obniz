@@ -1,9 +1,16 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(require("./bleHelper"));
+/**
+ * @category Use as Central
+ */
 class BleAdvertisementBuilder {
     constructor(Obniz, json) {
         this.Obniz = Obniz;

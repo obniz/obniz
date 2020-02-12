@@ -1,8 +1,10 @@
-import WSCommand from "./WSCommand";
 
 /**
+ * @packageDocumentation
  * @ignore
  */
+import WSCommand from "./WSCommand";
+
 class WSCommandMeasurement extends WSCommand {
   public module: any;
   public _CommandMeasurementEcho: any;

@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 import ObnizBLE from "./libs/embeds/ble/ble";
 import ObnizBLEHci from "./libs/embeds/bleHci/ble";
 import Display from "./libs/embeds/display";
@@ -14,8 +18,6 @@ import LogicAnalyzer from "./libs/measurements/logicanalyzer";
 import ObnizMeasure from "./libs/measurements/measure";
 import ObnizParts from "./ObnizParts";
 export default class ObnizComponents extends ObnizParts {
-    pongObservers: any;
-    _allComponentKeys: any;
     io: PeripheralDirective;
     io0?: PeripheralIO;
     io1?: PeripheralIO;
@@ -57,19 +59,13 @@ export default class ObnizComponents extends ObnizParts {
     display?: Display;
     switch?: ObnizSwitch;
     ble?: ObnizBLE | ObnizBLEHci;
+    protected pongObservers: any;
+    protected _allComponentKeys: any;
     constructor(id: any, options?: any);
     close(): void;
-    _callOnConnect(): void;
-    _prepareComponents(): void;
-    _resetComponents(): void;
-    notifyToModule(obj: any): void;
-    handleSystemCommand(wsObj: any): void;
-    addPongObserver(callback: any): void;
-    removePongObserver(callback: any): void;
     setVccGnd(vcc: number | null, gnd: number | null, drive: DriveType): void;
     getIO(io: number): PeripheralIO;
     getAD(io: number): PeripheralAD;
-    _getFreePeripheralUnit(peripheral: any): any;
     getFreePwm(): PeripheralPWM;
     getFreeI2C(): PeripheralI2C;
     getI2CWithConfig(config: any): PeripheralI2C;
@@ -77,4 +73,12 @@ export default class ObnizComponents extends ObnizParts {
     getSpiWithConfig(config: any): PeripheralSPI;
     getFreeUart(): PeripheralUART;
     getFreeTcp(): any;
+    protected _callOnConnect(): void;
+    protected _prepareComponents(): void;
+    protected _resetComponents(): void;
+    protected notifyToModule(obj: any): void;
+    protected handleSystemCommand(wsObj: any): void;
+    protected addPongObserver(callback: any): void;
+    protected removePongObserver(callback: any): void;
+    protected _getFreePeripheralUnit(peripheral: any): any;
 }

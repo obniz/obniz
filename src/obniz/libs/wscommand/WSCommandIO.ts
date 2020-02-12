@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import WSCommand from "./WSCommand";
 
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH: any = 1;
@@ -25,9 +30,6 @@ const COMMAND_IO_MUTEX_NAMES: any = {
   8: "Measure",
 };
 
-/**
- * @ignore
- */
 class WSCommandIO extends WSCommand {
   public module: any;
   public _CommandOutput: any;

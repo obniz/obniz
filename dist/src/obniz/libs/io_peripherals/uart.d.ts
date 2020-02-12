@@ -1,6 +1,10 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 import Obniz from "../../index";
 import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from "./common";
-interface PeripheralUARTOptions {
+export interface PeripheralUARTOptions {
     tx: number;
     rx: number;
     gnd?: number;
@@ -14,7 +18,7 @@ interface PeripheralUARTOptions {
     drive?: DriveType;
     pull?: PullType;
 }
-declare class PeripheralUART {
+export default class PeripheralUART {
     Obniz: Obniz;
     id: number;
     received: any;
@@ -34,4 +38,3 @@ declare class PeripheralUART {
     isUsed(): boolean;
     end(): void;
 }
-export default PeripheralUART;

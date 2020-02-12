@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";

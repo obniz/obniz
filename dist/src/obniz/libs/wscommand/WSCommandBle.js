@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const jsonBinaryConverter_1 = __importDefault(require("./jsonBinaryConverter"));
 const WSCommand_1 = __importDefault(require("./WSCommand"));
 const WSCommandBleHci_1 = __importDefault(require("./WSCommandBleHci"));
-/**
- * @ignore
- */
 class WSCommandBle extends WSCommand_1.default {
     constructor() {
         super();

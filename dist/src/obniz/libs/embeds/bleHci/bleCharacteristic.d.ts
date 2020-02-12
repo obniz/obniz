@@ -1,5 +1,8 @@
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-declare class BleCharacteristic extends BleLocalAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleCharacteristic extends BleLocalAttributeAbstract {
     _maxValueSize: any;
     _updateValueCallback: any;
     addDescriptor: any;
@@ -28,4 +31,3 @@ declare class BleCharacteristic extends BleLocalAttributeAbstract {
     _onIndicate(): void;
     notify(): void;
 }
-export default BleCharacteristic;

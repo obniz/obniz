@@ -1,14 +1,12 @@
-import Obniz = require("./index");
 /**
- * @category Parts
+ * @packageDocumentation
+ * @module ObnizCore
  */
+import Obniz from "./index";
 export interface ObnizPartsInfo {
     name: string;
     datasheet?: any;
 }
-/**
- * @category Parts
- */
 export default abstract class ObnizPartsInterface {
     static info: (() => ObnizPartsInfo);
     abstract keys: string[];

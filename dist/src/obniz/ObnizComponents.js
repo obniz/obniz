@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31,6 +35,69 @@ class ObnizComponents extends ObnizParts_1.default {
         if (this.options.reset_obniz_on_ws_disconnection) {
             this._resetComponents();
         }
+    }
+    setVccGnd(vcc, gnd, drive) {
+        if (this.isValidIO(vcc)) {
+            if (drive) {
+                this.getIO(vcc).drive(drive);
+            }
+            this.getIO(vcc).output(true);
+        }
+        if (this.isValidIO(gnd)) {
+            if (drive) {
+                this.getIO(gnd).drive(drive);
+            }
+            this.getIO(gnd).output(false);
+        }
+    }
+    getIO(io) {
+        if (!this.isValidIO(io)) {
+            throw new Error("io " + io + " is not valid io");
+        }
+        return this["io" + io];
+    }
+    getAD(io) {
+        if (!this.isValidIO(io)) {
+            throw new Error("ad " + io + " is not valid io");
+        }
+        return this["ad" + io];
+    }
+    getFreePwm() {
+        return this._getFreePeripheralUnit("pwm");
+    }
+    getFreeI2C() {
+        return this._getFreePeripheralUnit("i2c");
+    }
+    getI2CWithConfig(config) {
+        if (typeof config !== "object") {
+            throw new Error("getI2CWithConfig need config arg");
+        }
+        if (config.i2c) {
+            return config.i2c;
+        }
+        const i2c = this.getFreeI2C();
+        i2c.start(config);
+        return i2c;
+    }
+    getFreeSpi() {
+        return this._getFreePeripheralUnit("spi");
+    }
+    getSpiWithConfig(config) {
+        if (typeof config !== "object") {
+            throw new Error("getSpiWithConfig need config arg");
+        }
+        if (config.spi) {
+            return config.spi;
+        }
+        const spi = this.getFreeSpi();
+        spi.start(config);
+        return spi;
+    }
+    getFreeUart() {
+        return this._getFreePeripheralUnit("uart");
+    }
+    getFreeTcp() {
+        return this._getFreePeripheralUnit("tcp");
     }
     _callOnConnect() {
         this._prepareComponents();
@@ -155,32 +222,6 @@ class ObnizComponents extends ObnizParts_1.default {
             this.pongObservers.splice(index, 1);
         }
     }
-    setVccGnd(vcc, gnd, drive) {
-        if (this.isValidIO(vcc)) {
-            if (drive) {
-                this.getIO(vcc).drive(drive);
-            }
-            this.getIO(vcc).output(true);
-        }
-        if (this.isValidIO(gnd)) {
-            if (drive) {
-                this.getIO(gnd).drive(drive);
-            }
-            this.getIO(gnd).output(false);
-        }
-    }
-    getIO(io) {
-        if (!this.isValidIO(io)) {
-            throw new Error("io " + io + " is not valid io");
-        }
-        return this["io" + io];
-    }
-    getAD(io) {
-        if (!this.isValidIO(io)) {
-            throw new Error("ad " + io + " is not valid io");
-        }
-        return this["ad" + io];
-    }
     _getFreePeripheralUnit(peripheral) {
         for (const key of this._allComponentKeys) {
             if (key.indexOf(peripheral) === 0) {
@@ -193,43 +234,6 @@ class ObnizComponents extends ObnizParts_1.default {
             }
         }
         throw new Error(`No More ${peripheral} Available.`);
-    }
-    getFreePwm() {
-        return this._getFreePeripheralUnit("pwm");
-    }
-    getFreeI2C() {
-        return this._getFreePeripheralUnit("i2c");
-    }
-    getI2CWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getI2CWithConfig need config arg");
-        }
-        if (config.i2c) {
-            return config.i2c;
-        }
-        const i2c = this.getFreeI2C();
-        i2c.start(config);
-        return i2c;
-    }
-    getFreeSpi() {
-        return this._getFreePeripheralUnit("spi");
-    }
-    getSpiWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getSpiWithConfig need config arg");
-        }
-        if (config.spi) {
-            return config.spi;
-        }
-        const spi = this.getFreeSpi();
-        spi.start(config);
-        return spi;
-    }
-    getFreeUart() {
-        return this._getFreePeripheralUnit("uart");
-    }
-    getFreeTcp() {
-        return this._getFreePeripheralUnit("tcp");
     }
 }
 exports.default = ObnizComponents;

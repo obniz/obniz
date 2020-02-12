@@ -12,6 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.DHT12
+ */
 const i2cParts_1 = __importDefault(require("../../../i2cParts"));
 /**
  * @category Parts

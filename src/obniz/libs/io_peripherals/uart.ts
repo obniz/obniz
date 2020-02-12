@@ -1,10 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 import {BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType} from "./common";
 
 const isNode: any = typeof window === "undefined";
 
-interface PeripheralUARTOptions {
+export interface PeripheralUARTOptions {
   tx: number;
   rx: number;
   gnd?: number;
@@ -19,7 +24,7 @@ interface PeripheralUARTOptions {
   pull?: PullType;
 }
 
-class PeripheralUART {
+export default class PeripheralUART {
   public Obniz: Obniz;
   public id: number;
   public received: any;
@@ -198,5 +203,3 @@ class PeripheralUART {
     this.used = false;
   }
 }
-
-export default PeripheralUART;

@@ -1,5 +1,8 @@
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
-declare class BleRemoteService extends BleRemoteAttributeAbstract {
+/**
+ * @category Use as Central
+ */
+export default class BleRemoteService extends BleRemoteAttributeAbstract {
     children: any;
     addChild: any;
     getChild: any;
@@ -22,4 +25,3 @@ declare class BleRemoteService extends BleRemoteAttributeAbstract {
     ondiscovercharacteristic(characteristic: any): void;
     ondiscovercharacteristicfinished(characteristics: any[]): void;
 }
-export default BleRemoteService;

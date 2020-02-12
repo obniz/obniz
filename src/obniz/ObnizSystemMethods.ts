@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
 import ObnizComponents from "./ObnizComponents";
 
 export default class ObnizSystemMethods extends ObnizComponents {

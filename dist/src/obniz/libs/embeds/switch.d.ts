@@ -1,5 +1,9 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 declare type ObnizSwitchCallback = (result: boolean) => void;
-declare class ObnizSwitch {
+export default class ObnizSwitch {
     Obniz: any;
     observers: ObnizSwitchCallback[];
     onChangeForStateWait: any;
@@ -12,4 +16,4 @@ declare class ObnizSwitch {
     stateWait(isPressed: boolean): Promise<unknown>;
     notified(obj: any): void;
 }
-export default ObnizSwitch;
+export {};

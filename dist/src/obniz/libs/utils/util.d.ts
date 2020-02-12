@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 declare class ObnizUtil {
     static _keyFilter(params: any, keys: any): any;
     /**

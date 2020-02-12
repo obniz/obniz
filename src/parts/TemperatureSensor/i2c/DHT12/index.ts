@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.DHT12
+ */
 import i2cParts from "../../../i2cParts";
 
 import {I2cPartsAbstructOptions} from "../../../i2cParts";

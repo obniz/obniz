@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 import events from "events";
 
 import crypto from "./crypto";

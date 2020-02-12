@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const isNode = typeof window === "undefined";
 const semver = require("semver");

@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20,6 +24,13 @@ class Obniz extends ObnizUIs_1.default {
         super(id, options);
         this.util = new util_1.default(this);
     }
+    /**
+     *
+     * @returns {ObnizApi}
+     */
+    static get api() {
+        return ObnizApi_1.default;
+    }
     repeat(callback, interval) {
         if (this.looper) {
             this.looper = callback;
@@ -30,6 +41,40 @@ class Obniz extends ObnizUIs_1.default {
         this.repeatInterval = interval || 100;
         if (this.onConnectCalled) {
             this.loop();
+        }
+    }
+    warning(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                console.log(msg.message);
+                return;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+            }
+            console.log(`Warning: ${msg}`);
+        }
+    }
+    error(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                msg = msg.message;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+                console.error(new Error(msg));
+            }
+            else {
+                throw new Error(msg);
+            }
         }
     }
     loop() {
@@ -82,47 +127,6 @@ class Obniz extends ObnizUIs_1.default {
                 this.ondebug(obj.debug);
             }
         }
-    }
-    warning(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                console.log(msg.message);
-                return;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-            }
-            console.log(`Warning: ${msg}`);
-        }
-    }
-    error(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                msg = msg.message;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-                console.error(new Error(msg));
-            }
-            else {
-                throw new Error(msg);
-            }
-        }
-    }
-    /**
-     *
-     * @returns {ObnizApi}
-     */
-    static get api() {
-        return ObnizApi_1.default;
     }
 }
 /*===================*/

@@ -3,6 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const emitter = require("eventemitter3");
 const util_1 = __importDefault(require("../../utils/util"));
 const bleHelper_1 = __importDefault(require("./bleHelper"));

@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MCP9701
+ */
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 import AnalogTemperatureSensor, {AnalogTemperatureSensorOptions} from "../AnalogTemperatureSensor";
 

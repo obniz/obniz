@@ -1,9 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import semver = require("semver");
 import Obniz from "../../index";
 
 export type DirectiveStatuse = "loop" | "registrate" | "pause" | "resume";
 
-class Directive {
+export default class Directive {
   public Obniz: Obniz;
   public observers: any[];
   public _animationIdentifier: number;
@@ -61,10 +66,10 @@ class Directive {
       const operation: (index: number) => {} = state.state;
 
       // dry run. and get json commands
-      this.Obniz.sendPool = [];
+      (this.Obniz as any).sendPool = [];
       operation(i);
-      const pooledJsonArray: any = this.Obniz.sendPool;
-      this.Obniz.sendPool = null;
+      const pooledJsonArray: any = (this.Obniz as any).sendPool;
+      (this.Obniz as any).sendPool = null;
       states.push({
         duration,
         state: pooledJsonArray,
@@ -109,5 +114,3 @@ class Directive {
     }
   }
 }
-
-export default Directive;

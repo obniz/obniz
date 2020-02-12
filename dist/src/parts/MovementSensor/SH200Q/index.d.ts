@@ -1,5 +1,9 @@
-import i2cParts, { I2cPartsAbstructOptions } from "../../i2cParts";
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 import Obniz from "../../../obniz";
+import i2cParts, { I2cPartsAbstructOptions } from "../../i2cParts";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 /**
  * @category Parts

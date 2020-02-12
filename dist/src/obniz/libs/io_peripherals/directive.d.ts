@@ -1,6 +1,10 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 import Obniz from "../../index";
 export declare type DirectiveStatuse = "loop" | "registrate" | "pause" | "resume";
-declare class Directive {
+export default class Directive {
     Obniz: Obniz;
     observers: any[];
     _animationIdentifier: number;
@@ -13,4 +17,3 @@ declare class Directive {
         [key: string]: any;
     }): void;
 }
-export default Directive;

@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MQ3
+ */
 import MQGas, { MQGasSensorOptions } from "../MQGas";
 /**
  * @category Parts

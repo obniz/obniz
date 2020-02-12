@@ -3,8 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(require("./bleAttributeAbstract"));
 const bleHelper_1 = __importDefault(require("./bleHelper"));
+/**
+ * @category Use as Peripheral
+ */
 class BleDescriptor extends bleAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);

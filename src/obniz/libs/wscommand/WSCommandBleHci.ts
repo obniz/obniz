@@ -1,5 +1,6 @@
 
 /**
+ * @packageDocumentation
  * @ignore
  */
 class WSCommandBleHci {

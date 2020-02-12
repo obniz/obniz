@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 import Obniz from "../../../../obniz";
 import { PullType } from "../../../../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";

@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import ObnizBLEHci from "./hci";
 import CentralBindings from "./protocol/central/bindings";
 import HciProtocol from "./protocol/hci";
@@ -10,7 +14,7 @@ import BleRemotePeripheral from "./bleRemotePeripheral";
 import BleScan from "./bleScan";
 import BleService from "./bleService";
 import { BleDeviceAddressType, UUID } from "./bleTypes";
-declare class ObnizBLE {
+export default class ObnizBLE {
     static _dataArray2uuidHex(data: number[], reverse: boolean): UUID;
     Obniz: Obniz;
     hci: ObnizBLEHci;
@@ -68,4 +72,3 @@ declare class ObnizBLE {
     onPeripheralRssiUpdate(rssi: any): void;
     _bind(): void;
 }
-export default ObnizBLE;

@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class HW {
     static getDefinitionFor(hw) {

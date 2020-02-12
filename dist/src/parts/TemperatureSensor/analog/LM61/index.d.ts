@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.LM61
+ */
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 import AnalogTemperatureSensor, { AnalogTemperatureSensorOptions } from "../AnalogTemperatureSensor";
 /**

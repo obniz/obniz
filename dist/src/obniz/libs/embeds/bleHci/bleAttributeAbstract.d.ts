@@ -1,4 +1,4 @@
-declare class BleAttributeAbstract {
+export default class BleAttributeAbstract {
     uuid: any;
     parent: any;
     children: any;
@@ -37,4 +37,3 @@ declare class BleAttributeAbstract {
     onerror(err: any): void;
     notifyFromServer(notifyName: any, params: any): void;
 }
-export default BleAttributeAbstract;

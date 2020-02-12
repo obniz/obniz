@@ -1,4 +1,7 @@
-declare class BleAdvertisementBuilder {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleAdvertisementBuilder {
     Obniz: any;
     rows: any;
     constructor(Obniz: any, json: any);
@@ -20,4 +23,3 @@ declare class BleAdvertisementBuilder {
     setLeBrEdrControllerFlag(): void;
     setLeBrEdrHostFlag(): void;
 }
-export default BleAdvertisementBuilder;

@@ -3,6 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const tv4 = require("tv4");
 tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
 // @ts-ignore

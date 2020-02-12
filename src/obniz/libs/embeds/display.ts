@@ -1,6 +1,11 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 
-class Display {
+export default class Display {
   public Obniz: Obniz;
   public width: number;
   public height: number;
@@ -266,5 +271,3 @@ class Display {
     }
   }
 }
-
-export default Display;

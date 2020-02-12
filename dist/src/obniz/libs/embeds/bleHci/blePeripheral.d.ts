@@ -1,4 +1,7 @@
-declare class BlePeripheral {
+/**
+ * @category Use as Peripheral
+ */
+export default class BlePeripheral {
     obnizBle: any;
     _services: any;
     currentConnectedDeviceAddress: any;
@@ -18,4 +21,3 @@ declare class BlePeripheral {
     onconnectionupdates(param: any): void;
     onerror(error: any): void;
 }
-export default BlePeripheral;

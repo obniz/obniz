@@ -1,18 +1,23 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 
-interface LogicAnalyzerOptions {
+export interface LogicAnalyzerOptions {
   "io": number;
   "interval": number;
   "duration": number;
 }
 
-interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {
+export interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {
   "triggerValue": boolean;
   "triggerValueSamples": number;
 }
 
-class LogicAnalyzer {
+export default class LogicAnalyzer {
   public obniz: Obniz;
   public onmeasured?: (array: number[]) => void;
   public params: any;
@@ -78,5 +83,3 @@ class LogicAnalyzer {
     return;
   }
 }
-
-export default LogicAnalyzer;

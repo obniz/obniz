@@ -1,5 +1,9 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 import Obniz from "../../index";
-declare class PeripheralAD {
+export default class PeripheralAD {
     Obniz: Obniz;
     id: number;
     /**
@@ -67,4 +71,3 @@ declare class PeripheralAD {
      */
     notified(obj: number): void;
 }
-export default PeripheralAD;

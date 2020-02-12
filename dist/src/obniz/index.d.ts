@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 import ObnizApi from "./ObnizApi";
 import ObnizUIs from "./ObnizUIs";
 /**
@@ -14,27 +18,23 @@ declare global {
     }
 }
 declare class Obniz extends ObnizUIs {
-    util: any;
-    looper: any;
-    repeatInterval: any;
-    onConnectCalled: any;
-    send: any;
-    onmessage: any;
-    ondebug: any;
-    isNode: any;
-    showAlertUI: any;
-    constructor(id: any, options?: any);
-    repeat(callback: any, interval: any): void;
-    loop(): Promise<void>;
-    _callOnConnect(): void;
-    message(target: any, message: any): void;
-    notifyToModule(obj: any): void;
-    warning(msg: any): void;
-    error(msg: any): void;
     /**
      *
      * @returns {ObnizApi}
      */
     static get api(): typeof ObnizApi;
+    protected util: any;
+    protected looper: any;
+    protected repeatInterval: any;
+    protected onmessage: any;
+    protected ondebug: any;
+    constructor(id: any, options?: any);
+    repeat(callback: any, interval: any): void;
+    warning(msg: any): void;
+    error(msg: any): void;
+    protected loop(): Promise<void>;
+    protected _callOnConnect(): void;
+    protected message(target: any, message: any): void;
+    protected notifyToModule(obj: any): void;
 }
 export = Obniz;

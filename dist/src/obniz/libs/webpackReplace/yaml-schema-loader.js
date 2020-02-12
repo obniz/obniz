@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const yaml = require("js-yaml");
 exports.default = (source) => {
     // @ts-ignore

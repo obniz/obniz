@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MCP9700
+ */
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 import AnalogTemperatureSensor, { AnalogTemperatureSensorOptions } from "../AnalogTemperatureSensor";
 /**

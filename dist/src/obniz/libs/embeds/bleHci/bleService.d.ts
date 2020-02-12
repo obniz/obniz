@@ -1,5 +1,8 @@
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-declare class BleService extends BleLocalAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleService extends BleLocalAttributeAbstract {
     addCharacteristic: any;
     addChild: any;
     getCharacteristic: any;
@@ -20,4 +23,3 @@ declare class BleService extends BleLocalAttributeAbstract {
     emit(name: any, ...params: any): any;
     notify(notifyName: any, params: any): void;
 }
-export default BleService;

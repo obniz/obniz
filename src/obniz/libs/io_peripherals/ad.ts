@@ -1,6 +1,11 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 
-class PeripheralAD {
+export default class PeripheralAD {
   public Obniz: Obniz;
   public id: number;
 
@@ -121,5 +126,3 @@ class PeripheralAD {
     }
   }
 }
-
-export default PeripheralAD;

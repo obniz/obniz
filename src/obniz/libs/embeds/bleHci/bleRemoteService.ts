@@ -1,7 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
-
-class BleRemoteService extends BleRemoteAttributeAbstract {
+/**
+ * @category Use as Central
+ */
+export default class BleRemoteService extends BleRemoteAttributeAbstract {
   public children: any;
   public addChild: any;
   public getChild: any;
@@ -67,5 +73,3 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   public ondiscovercharacteristicfinished(characteristics: any[]) {
   }
 }
-
-export default BleRemoteService;

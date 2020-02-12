@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.USB
+ */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 /**

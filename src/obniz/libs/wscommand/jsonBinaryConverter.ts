@@ -1,4 +1,6 @@
+
 /**
+ * @packageDocumentation
  * @ignore
  */
 class JsonBinaryConverter {

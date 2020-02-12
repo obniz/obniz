@@ -1,8 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import emitter = require("eventemitter3");
 import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
 
-class BleAttributeAbstract {
+export default class BleAttributeAbstract {
   public uuid: any;
   public parent: any;
   public children: any;
@@ -246,5 +250,3 @@ class BleAttributeAbstract {
     }
   }
 }
-
-export default BleAttributeAbstract;

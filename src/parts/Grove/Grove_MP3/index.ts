@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
+
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 

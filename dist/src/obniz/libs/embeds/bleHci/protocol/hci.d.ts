@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 /// <reference types="node" />
 import events = require("events");
 /**

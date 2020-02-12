@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 

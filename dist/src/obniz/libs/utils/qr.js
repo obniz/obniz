@@ -1,6 +1,10 @@
 "use strict";
-/* eslint-disable */
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable */
 /* Thanks Kazuhiko Arase */
 /* https://github.com/kazuhikoarase/qrcode-generator/tree/master/js */
 // ---------------------------------------------------------------------

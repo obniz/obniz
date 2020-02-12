@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 
 const isNode: any = typeof window === "undefined";
@@ -5,7 +10,7 @@ import semver = require("semver");
 
 type TCPCallbackFunction = (data: number[]) => void;
 
-class Tcp {
+export default class Tcp {
   public Obniz: Obniz;
   public id: number;
   public connectObservers: any;
@@ -160,5 +165,3 @@ class Tcp {
     return this.used;
   }
 }
-
-export default Tcp;

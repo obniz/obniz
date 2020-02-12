@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 export declare type DriveType = "5v" | "3v" | "open-drain";
 export declare type PullType = "5v" | "3v" | "0v" | null;
 export declare type AnimationStatus = "loop" | "registrate" | "pause" | "resume";

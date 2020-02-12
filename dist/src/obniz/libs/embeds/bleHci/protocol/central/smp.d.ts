@@ -1,4 +1,9 @@
 /// <reference types="node" />
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 import events from "events";
 /**
  * @ignore

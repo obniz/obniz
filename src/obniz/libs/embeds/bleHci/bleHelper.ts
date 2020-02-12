@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import {UUID} from "./bleTypes";
 
 const BleHelper: any = {

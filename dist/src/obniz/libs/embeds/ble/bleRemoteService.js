@@ -3,9 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 const bleRemoteAttributeAbstract_1 = __importDefault(require("./bleRemoteAttributeAbstract"));
 const bleRemoteCharacteristic_1 = __importDefault(require("./bleRemoteCharacteristic"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);

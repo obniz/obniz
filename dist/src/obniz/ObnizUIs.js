@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,6 +11,10 @@ const ObnizSystemMethods_1 = __importDefault(require("./ObnizSystemMethods"));
 class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
+    }
+    close() {
+        super.close();
+        this.updateOnlineUI();
     }
     isValidObnizId(str) {
         if (typeof str !== "string" || str.length < 8) {
@@ -67,10 +75,6 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     _callOnConnect() {
         this.updateOnlineUI();
         super._callOnConnect();
-    }
-    close() {
-        super.close();
-        this.updateOnlineUI();
     }
     _disconnectLocal() {
         super._disconnectLocal();

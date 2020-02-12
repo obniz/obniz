@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const yaml: any = require("js-yaml");
 
 export default (source: any) => {

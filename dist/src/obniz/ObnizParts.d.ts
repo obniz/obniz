@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 import ObnizConnection from "./ObnizConnection";
 import { WiredNameMap, WiredNameOptionsMap } from "./ObnizPartsList";
 export default class ObnizParts extends ObnizConnection {

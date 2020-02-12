@@ -3,7 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleAdvertisementBuilder_1 = __importDefault(require("./bleAdvertisementBuilder"));
+/**
+ * @category Use as Peripheral
+ */
 class BleAdvertisement {
     constructor(obnizBle) {
         this.obnizBle = obnizBle;

@@ -1,4 +1,11 @@
-declare class BleAdvertisementBuilder {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
+/**
+ * @category Use as Central
+ */
+export default class BleAdvertisementBuilder {
     Obniz: any;
     rows: any;
     constructor(Obniz: any, json: any);
@@ -20,4 +27,3 @@ declare class BleAdvertisementBuilder {
     setLeBrEdrControllerFlag(): void;
     setLeBrEdrHostFlag(): void;
 }
-export default BleAdvertisementBuilder;

@@ -1,4 +1,7 @@
-declare class BlePeripheral {
+/**
+ * @category Use as Peripheral
+ */
+export default class BlePeripheral {
     Obniz: any;
     _services: any;
     constructor(Obniz: any);
@@ -17,4 +20,3 @@ declare class BlePeripheral {
     onconnectionupdates(): void;
     onerror(): void;
 }
-export default BlePeripheral;

@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.AnalogTemperatureSensor
+ */
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 

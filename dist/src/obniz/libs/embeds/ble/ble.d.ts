@@ -1,4 +1,8 @@
-declare class ObnizBLE {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
+export default class ObnizBLE {
     static _dataArray2uuidHex(data: any, reverse: any): any;
     Obniz: any;
     remotePeripherals: any;
@@ -18,4 +22,3 @@ declare class ObnizBLE {
     findPeripheral(address: any): any;
     notified(obj: any): void;
 }
-export default ObnizBLE;

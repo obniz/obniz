@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.MQGas
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @category Parts

@@ -1,5 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleAttributeAbstract from "./bleAttributeAbstract";
-declare class BleCharacteristic extends BleAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleCharacteristic extends BleAttributeAbstract {
     addDescriptor: any;
     addChild: any;
     getDescriptor: any;
@@ -23,4 +30,3 @@ declare class BleCharacteristic extends BleAttributeAbstract {
     read(): void;
     notify(): void;
 }
-export default BleCharacteristic;
