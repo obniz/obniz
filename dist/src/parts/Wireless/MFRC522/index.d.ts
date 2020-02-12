@@ -1,12 +1,9 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MFRC522
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface MFRC522Options {
     gnd?: number;
     vcc?: number;
@@ -19,9 +16,6 @@ export interface MFRC522Options {
     pull?: any;
     rst: number;
 }
-/**
- * @category Parts
- */
 export default class MFRC522 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     PCD_Idle: any;

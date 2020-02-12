@@ -5,17 +5,11 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface AnalogTemperatureSensorOptions {
     vcc?: number;
     output: number;
     gnd?: number;
 }
-/**
- * @category Parts
- */
 export default class AnalogTemperatureSensor implements ObnizPartsInterface {
     keys: string[];
     requiredKeys: string[];

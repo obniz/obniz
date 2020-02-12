@@ -1,12 +1,9 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MatrixLED_MAX7219
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class MatrixLED_MAX7219 {
     constructor() {
         this.width = 0;

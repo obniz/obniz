@@ -1,12 +1,9 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.LED
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class LED {
     constructor() {
         this.keys = ["anode", "cathode"];

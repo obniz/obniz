@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PCA9685
  */
 
 import Obniz from "../../../obniz";
@@ -10,9 +10,6 @@ import {PWMInterface} from "../../../obniz/libs/io_peripherals/pwm";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 class PCA9685_PWM  implements PWMInterface {
   public chip: PCA9685;
   public id: number;
@@ -37,9 +34,6 @@ class PCA9685_PWM  implements PWMInterface {
   }
 }
 
-/**
- * @category Parts
- */
 export interface  PCA9685Options {
   gnd?: number;
   vcc?: number;
@@ -53,9 +47,7 @@ export interface  PCA9685Options {
 }
 
 // tslint:disable:max-classes-per-file
-/**
- * @category Parts
- */
+
 export default class PCA9685 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

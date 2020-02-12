@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.RN42
  */
 
 import Obniz from "../../../obniz";
@@ -8,9 +8,6 @@ import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  RN42Options {
   tx: number;
   rx: number;
@@ -29,9 +26,6 @@ export type RN42Config_Profile = "SPP" | "DUN-DCE" | "DUN-DTE" | "MDM-SPP" | "SP
 export type RN42Config_Auth = "open" | "ssp-keyboard" | "just-work" | "pincode";
 export type RN43Config_Power = 16 | 12 | 8 | 4 | 0 | -4 | -8;
 
-/**
- * @category Parts
- */
 export interface  RN42Config {
   display_name?: string;
   master_slave?: RN42Config_Mode;
@@ -41,9 +35,6 @@ export interface  RN42Config {
   hid_flag?: any;
 }
 
-/**
- * @category Parts
- */
 export default class RN42 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

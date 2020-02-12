@@ -1,13 +1,10 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.AK8963
  */
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface AK8963Options {
     gnd?: number;
     vcc?: number;
@@ -17,9 +14,6 @@ export interface AK8963Options {
     address?: number;
     adb_cycle?: number;
 }
-/**
- * @category Parts
- */
 export default class AK8963 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

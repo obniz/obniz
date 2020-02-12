@@ -1,21 +1,15 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.CT10
  */
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface CT10Options {
     signal: number;
     vcc?: number;
     gnd?: number;
 }
-/**
- * @category Parts
- */
 export default class CT10 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

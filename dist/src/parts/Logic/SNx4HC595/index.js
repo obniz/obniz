@@ -1,12 +1,9 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SNx4HC595
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class SNx4HC595_IO {
     constructor(chip, id) {
         this.chip = chip;
@@ -18,9 +15,6 @@ class SNx4HC595_IO {
     }
 }
 // tslint:disable:max-classes-per-file
-/**
- * @category Parts
- */
 class SNx4HC595 {
     constructor() {
         /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */

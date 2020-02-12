@@ -1,13 +1,10 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.S11059
  */
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface S11059Options {
     vcc?: number;
     sda?: number;
@@ -17,9 +14,6 @@ export interface S11059Options {
 }
 export declare type S11059Gain = 0 | 1;
 export declare type S11059IntergerTime = 0 | 1 | 2 | 3;
-/**
- * @category Parts
- */
 export default class S11059 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

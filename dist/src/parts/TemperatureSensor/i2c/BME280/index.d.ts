@@ -1,14 +1,11 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.BME280
  */
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface BME280Options {
     vio?: number;
     vcore?: number;
@@ -20,9 +17,6 @@ export interface BME280Options {
     address?: number;
     i2c?: any;
 }
-/**
- * @category Parts
- */
 export default class BME280 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];

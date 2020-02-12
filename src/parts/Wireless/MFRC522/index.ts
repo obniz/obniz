@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MFRC522
  */
 
 import Obniz from "../../../obniz";
@@ -10,9 +10,6 @@ const ERROR: any = false;
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  MFRC522Options {
   gnd?: number;
   vcc?: number;
@@ -26,9 +23,6 @@ export interface  MFRC522Options {
   rst: number;
 }
 
-/**
- * @category Parts
- */
 export default class MFRC522 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

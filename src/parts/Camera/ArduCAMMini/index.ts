@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ArduCAMMini
  */
 
 import Obniz from "../../../obniz";
@@ -12,7 +12,7 @@ import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 /**
- * @category Parts
+ * @category Parts.ArduCAMMini
  */
 export interface  ArduCAMMiniOptions {
   cs: PeripheralIO;
@@ -42,9 +42,6 @@ export type ArduCAMMiniSize =
   | "1280x960"
   | "1600x1200";
 
-/**
- * @category Parts
- */
 export default class ArduCAMMini implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

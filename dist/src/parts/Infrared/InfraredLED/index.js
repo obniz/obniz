@@ -1,12 +1,9 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.InfraredLED
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class InfraredLED {
     constructor() {
         this.dataSymbolLength = 0.07;

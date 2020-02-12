@@ -8,9 +8,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ6
  */
 const MQGas_1 = __importDefault(require("../MQGas"));
-/**
- * @category Parts
- */
 class MQ6 extends MQGas_1.default {
     static info() {
         return {

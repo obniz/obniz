@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SHT31
  */
 
 import Obniz from "../../../../obniz";
@@ -10,18 +10,12 @@ import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 import {I2cPartsAbstructOptions} from "../../../i2cParts";
 
-/**
- * @category Parts
- */
 export interface  SHT31Options extends I2cPartsAbstructOptions {
   adr: number;
   addressmode: number;
   pull?: PullType;
 }
 
-/**
- * @category Parts
- */
 export default class SHT31 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

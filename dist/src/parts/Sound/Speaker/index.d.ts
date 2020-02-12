@@ -1,19 +1,13 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Speaker
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface SpeakerOptions {
     signal: number;
     gnd?: number;
 }
-/**
- * @category Parts
- */
 export default class Speaker implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

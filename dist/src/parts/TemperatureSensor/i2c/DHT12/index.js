@@ -17,9 +17,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.DHT12
  */
 const i2cParts_1 = __importDefault(require("../../../i2cParts"));
-/**
- * @category Parts
- */
 class DHT12 extends i2cParts_1.default {
     static info() {
         return {

@@ -1,7 +1,7 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.S5851A
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -13,9 +13,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class S5851A {
     constructor() {
         this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];

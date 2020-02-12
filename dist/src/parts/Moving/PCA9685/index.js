@@ -1,12 +1,9 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PCA9685
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class PCA9685_PWM {
     constructor(chip, id) {
         this.value = 0;
@@ -25,9 +22,6 @@ class PCA9685_PWM {
     }
 }
 // tslint:disable:max-classes-per-file
-/**
- * @category Parts
- */
 class PCA9685 {
     constructor() {
         this.pwms = [];

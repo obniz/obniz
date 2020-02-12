@@ -1,14 +1,11 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SharpMemoryTFT
  */
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface SharpMemoryTFTOptions {
     vcc?: number;
     gnd?: number;
@@ -23,9 +20,6 @@ export interface SharpMemoryTFTOptions {
     width: number;
     height: number;
 }
-/**
- * @category Parts
- */
 export default class SharpMemoryTFT implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

@@ -8,9 +8,6 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  Hx711Options {
   vcc?: number;
   gnd?: number;
@@ -18,9 +15,6 @@ export interface  Hx711Options {
   dout: number;
 }
 
-/**
- * @category Parts
- */
 export default class Hx711 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

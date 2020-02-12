@@ -1,15 +1,12 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_3AxisAccelerometer
  */
 
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  Grove_3AxisAccelerometerOptions {
   gnd?: number;
   vcc?: number;
@@ -17,9 +14,6 @@ export interface  Grove_3AxisAccelerometerOptions {
   scl: number;
 }
 
-/**
- * @category Parts
- */
 export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

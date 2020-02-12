@@ -1,18 +1,12 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.OMRON_2JCIE
  */
 import Obniz from "../../../obniz";
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface OMRON_2JCIEOptions {
 }
-/**
- * @category Parts
- */
 export interface OMRON_2JCIE_Data {
     row_number: number;
     temperature: number;
@@ -25,9 +19,6 @@ export interface OMRON_2JCIE_Data {
     heatstroke_risk_factor: number;
     battery_voltage: number;
 }
-/**
- * @category Parts
- */
 export default class OMRON_2JCIE implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

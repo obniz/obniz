@@ -1,23 +1,17 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Button
  */
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  ButtonOptions {
   signal: number;
   gnd?: number;
 }
 
-/**
- * @category Parts
- */
 export default class Button implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

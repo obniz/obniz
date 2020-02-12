@@ -1,21 +1,15 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.DPS310
  */
 
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  DPS310Options {
 }
 
-/**
- * @category Parts
- */
 export default class DPS310 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

@@ -1,7 +1,7 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ST7735S
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -13,9 +13,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class ST7735S {
     constructor() {
         this.debugprint = false;

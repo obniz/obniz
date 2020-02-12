@@ -1,12 +1,9 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_Buzzer
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Grove_Buzzer {
     constructor() {
         this.keys = ["signal", "gnd", "vcc"];

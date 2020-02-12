@@ -1,7 +1,7 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MFRC522
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -15,9 +15,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const OK = true;
 const ERROR = false;
-/**
- * @category Parts
- */
 class MFRC522 {
     constructor() {
         // PCD commands. Described in chapter 10 of the datasheet.

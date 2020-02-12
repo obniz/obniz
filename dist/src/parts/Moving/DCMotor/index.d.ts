@@ -1,20 +1,14 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.DCMotor
  */
 import Obniz from "../../../obniz";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface DCMotorOptions {
     forward: number;
     back: number;
 }
-/**
- * @category Parts
- */
 export default class DCMotor implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

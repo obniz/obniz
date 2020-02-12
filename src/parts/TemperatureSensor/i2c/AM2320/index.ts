@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.AM2320
  */
 
 /**
@@ -13,14 +13,8 @@ import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 import {I2cPartsAbstructOptions} from "../../../i2cParts";
 
-/**
- * @category Parts
- */
 export interface  AM2320Options extends I2cPartsAbstructOptions { }
 
-/**
- * @category Parts
- */
 export default class AM2320 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

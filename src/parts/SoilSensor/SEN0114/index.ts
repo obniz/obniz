@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SEN0114
  */
 
 import Obniz from "../../../obniz";
@@ -8,18 +8,12 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  SEN0114Options {
   vcc?: number;
   output: number;
   gnd?: number;
 }
 
-/**
- * @category Parts
- */
 export default class SEN0114 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

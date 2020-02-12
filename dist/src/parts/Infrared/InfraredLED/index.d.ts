@@ -1,19 +1,13 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.InfraredLED
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface InfraredLEDOptions {
     anode: number;
     cathode?: number;
 }
-/**
- * @category Parts
- */
 export default class InfraredLED implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

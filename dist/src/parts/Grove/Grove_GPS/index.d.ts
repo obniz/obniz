@@ -1,21 +1,15 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_GPS
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface Grove_GPSOptions {
     vcc?: number;
     gnd?: number;
     tx: number;
     rx: number;
 }
-/**
- * @category Parts
- */
 export interface Grove_GPSEditedData {
     enable: boolean;
     GPGGA: any;
@@ -28,9 +22,6 @@ export interface Grove_GPSEditedData {
     [key: string]: any;
     timestamp: Date;
 }
-/**
- * @category Parts
- */
 export default class Grove_GPS implements ObnizPartsInterface {
     get latitude(): number;
     get longitude(): number;

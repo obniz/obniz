@@ -1,20 +1,14 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_Buzzer
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface Grove_BuzzerOptions {
     signal: number;
     gnd?: number;
     vcc?: number;
 }
-/**
- * @category Parts
- */
 export default class Grove_Buzzer implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

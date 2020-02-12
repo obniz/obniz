@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MPU9250
  */
 
 import Obniz from "../../../obniz";
@@ -11,18 +11,12 @@ import {I2cPartsAbstructOptions} from "../../i2cParts";
 import AK8963 from "../AK8963";
 import MPU6050 from "../MPU6050";
 
-/**
- * @category Parts
- */
 export interface  MPU9250Options extends I2cPartsAbstructOptions {
   gnd?: number;
   vcc?: number;
   address?: number;
 }
 
-/**
- * @category Parts
- */
 class MPU9250 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

@@ -1,21 +1,15 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PaPIRsVZ
  */
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface PaPIRsVZOptions {
     signal: number;
     vcc?: number;
     gnd?: number;
 }
-/**
- * @category Parts
- */
 export default class PaPIRsVZ implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

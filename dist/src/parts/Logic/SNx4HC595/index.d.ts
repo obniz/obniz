@@ -1,12 +1,9 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SNx4HC595
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface SNx4HC595Options {
     gnd?: number;
     vcc?: number;
@@ -18,9 +15,6 @@ export interface SNx4HC595Options {
     io_num?: number;
     enabled?: boolean;
 }
-/**
- * @category Parts
- */
 export default class SNx4HC595 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

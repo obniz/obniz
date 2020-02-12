@@ -1,12 +1,9 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.7SegmentLEDArray
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class _7SegmentLEDArray {
     constructor() {
         this.identifier = "" + new Date().getTime();

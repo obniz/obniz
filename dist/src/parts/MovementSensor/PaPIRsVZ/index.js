@@ -1,12 +1,9 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PaPIRsVZ
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class PaPIRsVZ {
     constructor() {
         this.keys = ["vcc", "gnd", "signal"];

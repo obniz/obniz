@@ -1,8 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class USB {
     constructor() {
         this.keys = ["vcc", "gnd"];

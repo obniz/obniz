@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SH200Q
  */
 
 import Obniz from "../../../obniz";
@@ -9,15 +9,9 @@ import i2cParts, {I2cPartsAbstructOptions} from "../../i2cParts";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  SH200QOptions extends I2cPartsAbstructOptions {
 }
 
-/**
- * @category Parts
- */
 export default class SH200Q extends i2cParts implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

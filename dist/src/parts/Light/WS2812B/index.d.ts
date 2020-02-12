@@ -1,20 +1,14 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.WS2812B
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface WS2812BOptions {
     din: number;
     vcc?: number;
     gnd?: number;
 }
-/**
- * @category Parts
- */
 export default class WS2812B implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     private static _generateFromByte;

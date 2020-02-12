@@ -1,21 +1,15 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_MP3
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface Grove_MP3Options {
     vcc?: number;
     gnd?: number;
     mp3_rx: number;
     mp3_tx: number;
 }
-/**
- * @category Parts
- */
 export default class Grove_MP3 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

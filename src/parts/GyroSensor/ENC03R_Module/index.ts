@@ -1,15 +1,12 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ENC03R_Module
  */
 
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  ENC03R_ModuleOptions {
   gnd?: number;
   vcc?: number;
@@ -17,9 +14,6 @@ export interface  ENC03R_ModuleOptions {
   out1: number;
 }
 
-/**
- * @category Parts
- */
 export default class ENC03R_Module implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

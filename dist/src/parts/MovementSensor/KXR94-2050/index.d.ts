@@ -1,12 +1,9 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.KXR94-2050
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface KXR94_2050Options {
     x: number;
     y: number;
@@ -16,9 +13,6 @@ export interface KXR94_2050Options {
     enable?: number;
     self_test?: number;
 }
-/**
- * @category Parts
- */
 export default class KXR94_2050 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

@@ -1,24 +1,18 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PT550
  */
 
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  PT550Options {
   signal: number;
   vcc?: number;
   gnd?: number;
 }
 
-/**
- * @category Parts
- */
 export default class PT550 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

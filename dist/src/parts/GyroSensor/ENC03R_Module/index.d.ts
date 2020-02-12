@@ -1,21 +1,15 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ENC03R_Module
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface ENC03R_ModuleOptions {
     gnd?: number;
     vcc?: number;
     out2: number;
     out1: number;
 }
-/**
- * @category Parts
- */
 export default class ENC03R_Module implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

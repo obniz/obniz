@@ -1,13 +1,10 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.S5851A
  */
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface S5851AOptions {
     vcc: number;
     gnd: number;
@@ -17,9 +14,6 @@ export interface S5851AOptions {
     addr1: number;
     addressmode: string;
 }
-/**
- * @category Parts
- */
 export default class S5851A implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     requiredKeys: string[];

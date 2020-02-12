@@ -8,9 +8,6 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  MQGasSensorOptions {
   gnd?: number;
   vcc?: number;
@@ -18,9 +15,6 @@ export interface  MQGasSensorOptions {
   ao?: number;
 }
 
-/**
- * @category Parts
- */
 export default class MQGasSensor implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

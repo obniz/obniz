@@ -1,24 +1,18 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.YG1006
  */
 
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  YG1006Options {
   signal: number;
   vcc?: number;
   gnd?: number;
 }
 
-/**
- * @category Parts
- */
 export default class YG1006 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

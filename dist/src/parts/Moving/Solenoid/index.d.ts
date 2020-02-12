@@ -1,19 +1,13 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Solenoid
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface SolenoidOptions {
     signal: number;
     gnd?: number;
 }
-/**
- * @category Parts
- */
 export default class Solenoid implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

@@ -9,9 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class AnalogTemperatureSensor {
     constructor() {
         this.temp = 0;

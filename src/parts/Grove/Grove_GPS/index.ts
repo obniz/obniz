@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_GPS
  */
 
 import Obniz from "../../../obniz";
@@ -8,9 +8,6 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  Grove_GPSOptions {
   vcc?: number;
   gnd?: number;
@@ -18,9 +15,6 @@ export interface  Grove_GPSOptions {
   rx: number;
 }
 
-/**
- * @category Parts
- */
 export interface  Grove_GPSEditedData {
   enable: boolean;
   GPGGA: any;
@@ -34,9 +28,6 @@ export interface  Grove_GPSEditedData {
   timestamp: Date;
 }
 
-/**
- * @category Parts
- */
 export default class Grove_GPS implements ObnizPartsInterface {
   // -------------------
   get latitude() {

@@ -19386,9 +19386,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Hx711 {
     constructor() {
         this.keys = ["vcc", "gnd", "sck", "dout"];
@@ -19520,9 +19517,6 @@ exports.default = Hx711;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class USB {
     constructor() {
         this.keys = ["vcc", "gnd"];
@@ -19564,12 +19558,9 @@ exports.default = USB;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Puls08M5stickcS
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Puls08M5stickcS {
     constructor() {
         this.keys = ["vcc", "gnd", "tx", "rx"];
@@ -19656,7 +19647,7 @@ exports.default = Puls08M5stickcS;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.OMRON_2JCIE
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -19668,9 +19659,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class OMRON_2JCIE {
     constructor() {
         this.keys = [];
@@ -19773,7 +19761,7 @@ exports.default = OMRON_2JCIE;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ArduCAMMini
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -19785,9 +19773,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class ArduCAMMini {
     constructor() {
         this.keys = [
@@ -20643,7 +20628,7 @@ exports.default = ArduCAMMini;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.JpegSerialCam
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -20655,9 +20640,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class JpegSerialCam {
     constructor() {
         this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
@@ -20894,7 +20876,7 @@ exports.default = JpegSerialCam;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PT550
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -20906,9 +20888,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class PT550 {
     constructor() {
         this.keys = ["signal", "vcc", "gnd"];
@@ -20951,7 +20930,7 @@ exports.default = PT550;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.S11059
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -20963,9 +20942,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class S11059 {
     constructor() {
         this.keys = ["vcc", "sda", "scl", "i2c", "gnd"];
@@ -21024,12 +21000,9 @@ exports.default = S11059;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.7SegmentLED
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class _7SegmentLED {
     constructor() {
         this.keys = [
@@ -21177,12 +21150,9 @@ exports.default = _7SegmentLED;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.7SegmentLEDArray
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class _7SegmentLEDArray {
     constructor() {
         this.identifier = "" + new Date().getTime();
@@ -21247,12 +21217,9 @@ exports.default = _7SegmentLEDArray;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.7SegmentLED_MAX7219
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class _7SegmentLED_MAX7219 {
     constructor() {
         this.keys = ["vcc", "gnd", "din", "cs", "clk"];
@@ -21381,12 +21348,9 @@ exports.default = _7SegmentLED_MAX7219;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MatrixLED_MAX7219
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class MatrixLED_MAX7219 {
     constructor() {
         this.width = 0;
@@ -21518,7 +21482,7 @@ exports.default = MatrixLED_MAX7219;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ST7735S
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -21530,9 +21494,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class ST7735S {
     constructor() {
         this.debugprint = false;
@@ -23740,7 +23701,7 @@ const font = [
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SainSmartTFT18LCD
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -23752,9 +23713,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class SainSmartTFT18LCD {
     constructor() {
         this.debugprint = false;
@@ -25944,12 +25902,9 @@ const font = [
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SharpMemoryTFT
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class SharpMemoryTFT {
     constructor() {
         this.commands = {
@@ -26261,7 +26216,7 @@ exports.default = SharpMemoryTFT;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.GP2Y0A21YK0F
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -26273,9 +26228,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class GP2Y0A21YK0F {
     constructor() {
         this.displayIoNames = {
@@ -26359,7 +26311,7 @@ exports.default = GP2Y0A21YK0F;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.HC-SR04
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -26371,9 +26323,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class HCSR04 {
     constructor() {
         this._unit = "mm";
@@ -26471,12 +26420,9 @@ exports.default = HCSR04;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.GYSFDMAXB
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class GYSFDMAXB {
     constructor() {
         this.displayName = "gps";
@@ -26841,9 +26787,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ135
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ135 extends MQGas_1.default {
     static info() {
         return {
@@ -26875,9 +26818,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ2
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ2 extends MQGas_1.default {
     static info() {
         return {
@@ -26909,9 +26849,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ3
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ3 extends MQGas_1.default {
     static info() {
         return {
@@ -26943,9 +26880,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ4
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ4 extends MQGas_1.default {
     static info() {
         return {
@@ -26977,9 +26911,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ5
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ5 extends MQGas_1.default {
     static info() {
         return {
@@ -27011,9 +26942,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ6
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ6 extends MQGas_1.default {
     static info() {
         return {
@@ -27045,9 +26973,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ7
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ7 extends MQGas_1.default {
     static info() {
         return {
@@ -27079,9 +27004,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ8
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ8 extends MQGas_1.default {
     static info() {
         return {
@@ -27113,9 +27035,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.MQ9
  */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
-/**
- * @category Parts
- */
 class MQ9 extends MQGas_1.default {
     static info() {
         return {
@@ -27143,9 +27062,6 @@ exports.default = MQ9;
  * @module Parts.MQGas
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class MQGasSensor {
     constructor() {
         this.keys = ["gnd", "vcc", "do", "ao"];
@@ -27215,7 +27131,7 @@ exports.default = MQGasSensor;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_3AxisAccelerometer
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -27227,9 +27143,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Grove_3AxisAccelerometer {
     constructor() {
         this.displayName = "3axis";
@@ -27386,7 +27299,7 @@ exports.default = Grove_3AxisAccelerometer;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_Button
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -27398,9 +27311,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Grove_Button {
     constructor() {
         this.isPressed = null;
@@ -27464,12 +27374,9 @@ exports.default = Grove_Button;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_Buzzer
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Grove_Buzzer {
     constructor() {
         this.keys = ["signal", "gnd", "vcc"];
@@ -27517,12 +27424,9 @@ exports.default = Grove_Buzzer;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_EarHeartRate
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Grove_EarHeartRate {
     constructor() {
         this.displayIoNames = {
@@ -27588,12 +27492,9 @@ exports.default = Grove_EarHeartRate;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_GPS
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Grove_GPS {
     constructor() {
         this._latitude = 0;
@@ -27925,7 +27826,7 @@ exports.default = Grove_GPS;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Grove_MP3
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -27937,9 +27838,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Grove_MP3 {
     constructor() {
         this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx"];
@@ -28045,7 +27943,7 @@ exports.default = Grove_MP3;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ENC03R_Module
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -28057,9 +27955,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class ENC03R_Module {
     constructor() {
         this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
@@ -28120,12 +28015,9 @@ exports.default = ENC03R_Module;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.IRModule
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class IRModule {
     constructor() {
         this.keys = ["recv", "vcc", "send", "gnd"];
@@ -28196,12 +28088,9 @@ exports.default = IRModule;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.IRSensor
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class IRSensor {
     constructor() {
         this.dataSymbolLength = 0.07;
@@ -28276,12 +28165,9 @@ exports.default = IRSensor;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.InfraredLED
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class InfraredLED {
     constructor() {
         this.dataSymbolLength = 0.07;
@@ -28331,7 +28217,7 @@ exports.default = InfraredLED;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.YG1006
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -28343,9 +28229,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class YG1006 {
     constructor() {
         this.onchange = null;
@@ -28387,12 +28270,9 @@ exports.default = YG1006;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.FullColorLED
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class FullColorLED {
     constructor() {
         this.COMMON_TYPE_ANODE = 1;
@@ -28519,12 +28399,9 @@ exports.default = FullColorLED;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.LED
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class LED {
     constructor() {
         this.keys = ["anode", "cathode"];
@@ -28634,12 +28511,9 @@ exports.default = LED;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.WS2811
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class WS2811 {
     constructor() {
         this.keys = ["din", "vcc", "gnd"];
@@ -28764,12 +28638,9 @@ exports.default = WS2811;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.WS2812
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class WS2812 {
     constructor() {
         this.keys = ["din", "vcc", "gnd"];
@@ -28892,12 +28763,9 @@ exports.default = WS2812;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.WS2812B
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class WS2812B {
     constructor() {
         this.keys = ["din", "vcc", "gnd"];
@@ -29020,12 +28888,9 @@ exports.default = WS2812B;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SNx4HC595
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class SNx4HC595_IO {
     constructor(chip, id) {
         this.chip = chip;
@@ -29037,9 +28902,6 @@ class SNx4HC595_IO {
     }
 }
 // tslint:disable:max-classes-per-file
-/**
- * @category Parts
- */
 class SNx4HC595 {
     constructor() {
         /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
@@ -29164,7 +29026,7 @@ exports.default = SNx4HC595;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.CT10
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29176,9 +29038,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class CT10 {
     constructor() {
         this.isNear = null;
@@ -29243,7 +29102,7 @@ exports.default = CT10;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.HMC5883L
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29255,9 +29114,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class HMC5883L {
     constructor() {
         this.address = {
@@ -29317,7 +29173,7 @@ exports.default = HMC5883L;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.24LC256
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29329,9 +29185,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class _24LC256 {
     constructor() {
         this.requiredKeys = ["address"];
@@ -29380,7 +29233,7 @@ exports.default = _24LC256;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.AK8963
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29392,9 +29245,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class AK8963 {
     constructor() {
         this._adc_cycle = 0;
@@ -29462,7 +29312,7 @@ exports.default = AK8963;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Button
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29474,9 +29324,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Button {
     constructor() {
         this.isPressed = null;
@@ -29547,7 +29394,7 @@ exports.default = Button;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.FlickHat
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29559,9 +29406,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class FlickHat {
     constructor() {
         this.keys = ["vcc", "gnd", "sda", "scl", "reset", "ts", "led1", "led2"];
@@ -29921,7 +29765,7 @@ exports.default = FlickHat;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.HC-SR505
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29933,9 +29777,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class HCSR505 {
     constructor() {
         this.keys = ["vcc", "gnd", "signal"];
@@ -29976,7 +29817,7 @@ exports.default = HCSR505;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.IPM-165
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29988,9 +29829,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class IPM_165 {
     constructor() {
         this.keys = ["signal", "vcc", "gnd"];
@@ -30031,7 +29869,7 @@ exports.default = IPM_165;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.JoyStick
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -30043,9 +29881,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class JoyStick {
     constructor() {
         this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
@@ -30120,7 +29955,7 @@ exports.default = JoyStick;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.KXR94-2050
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -30132,9 +29967,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class KXR94_2050 {
     constructor() {
         this.keys = ["x", "y", "z", "vcc", "gnd", "enable", "self_test"];
@@ -30233,7 +30065,7 @@ exports.default = KXR94_2050;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.KXSC7-2050
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -30245,9 +30077,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class KXSC7_2050 {
     constructor() {
         this.keys = ["x", "y", "z", "vcc", "gnd"];
@@ -30307,7 +30136,7 @@ exports.default = KXSC7_2050;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MPU6050
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -30319,9 +30148,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class MPU6050 {
     constructor() {
         this._address = 0x68;
@@ -30437,7 +30263,7 @@ exports.default = MPU6050;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MPU6886
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -30453,9 +30279,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
-/**
- * @category Parts
- */
 class MPU6886 extends i2cParts_1.default {
     constructor() {
         super();
@@ -30627,7 +30450,7 @@ exports.default = MPU6886;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MPU9250
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -30639,9 +30462,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class MPU9250 {
     constructor() {
         this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
@@ -30718,12 +30538,9 @@ exports.default = MPU9250;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PaPIRsVZ
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class PaPIRsVZ {
     constructor() {
         this.keys = ["vcc", "gnd", "signal"];
@@ -30760,12 +30577,9 @@ exports.default = PaPIRsVZ;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Potentiometer
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Potentiometer {
     constructor() {
         this.vcc_voltage = 5.0;
@@ -30806,7 +30620,7 @@ exports.default = Potentiometer;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SH200Q
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -30822,9 +30636,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
-/**
- * @category Parts
- */
 class SH200Q extends i2cParts_1.default {
     constructor() {
         super();
@@ -30995,12 +30806,9 @@ exports.default = SH200Q;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.DCMotor
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class DCMotor {
     constructor() {
         this.keys = ["forward", "back"];
@@ -31092,12 +30900,9 @@ exports.default = DCMotor;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PCA9685
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class PCA9685_PWM {
     constructor(chip, id) {
         this.value = 0;
@@ -31116,9 +30921,6 @@ class PCA9685_PWM {
     }
 }
 // tslint:disable:max-classes-per-file
-/**
- * @category Parts
- */
 class PCA9685 {
     constructor() {
         this.pwms = [];
@@ -31300,12 +31102,9 @@ exports.default = PCA9685;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ServoMotor
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class ServoMotor {
     constructor() {
         this.range = {
@@ -31371,12 +31170,9 @@ exports.default = ServoMotor;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Solenoid
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Solenoid {
     constructor() {
         this.keys = ["gnd", "signal"];
@@ -31433,7 +31229,7 @@ exports.default = Solenoid;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.StepperMotor
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -31445,9 +31241,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class StepperMotor {
     constructor() {
         this.currentStep = 0;
@@ -31654,7 +31447,7 @@ exports.default = StepperMotor;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.AXP192
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -31666,9 +31459,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class AXP192 {
     constructor() {
         this.requiredKeys = [];
@@ -31804,7 +31594,7 @@ const LDO3_EN_MASK = 0xf7;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.DPS310
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -31816,9 +31606,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class DPS310 {
     constructor() {
         this.configration = {
@@ -32276,7 +32063,7 @@ exports.default = DPS310;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.FSR40X
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -32288,9 +32075,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class FSR40X {
     constructor() {
         this.pressure = 0;
@@ -32339,7 +32123,7 @@ exports.default = FSR40X;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SEN0114
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -32351,9 +32135,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class SEN0114 {
     constructor() {
         this.keys = ["vcc", "output", "gnd"];
@@ -32395,12 +32176,9 @@ exports.default = SEN0114;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.Speaker
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class Speaker {
     constructor(obniz) {
         this.keys = ["signal", "gnd"];
@@ -32456,9 +32234,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class AnalogTemperatureSensor {
     constructor() {
         this.temp = 0;
@@ -32505,9 +32280,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-/**
- * @category Parts
- */
 class LM35DZ extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -32535,9 +32307,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-/**
- * @category Parts
- */
 class LM60 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -32565,9 +32334,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-/**
- * @category Parts
- */
 class LM61 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -32595,9 +32361,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-/**
- * @category Parts
- */
 class LMT87 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -32625,9 +32388,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-/**
- * @category Parts
- */
 class MCP9700 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -32655,9 +32415,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-/**
- * @category Parts
- */
 class MCP9701 extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -32689,9 +32446,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-/**
- * @category Parts
- */
 class S8100B extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -32723,9 +32477,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
-/**
- * @category Parts
- */
 class S8120C extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -32750,7 +32501,7 @@ exports.default = S8120C;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.ADT7410
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -32762,9 +32513,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class ADT7410 {
     constructor() {
         this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
@@ -32819,7 +32567,7 @@ exports.default = ADT7410;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.AM2320
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -32831,9 +32579,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class AM2320 {
     constructor() {
         this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
@@ -32898,7 +32643,7 @@ exports.default = AM2320;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.AMG8833
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -32910,9 +32655,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class AMG8833 {
     constructor() {
         this.requiredKeys = [];
@@ -33027,7 +32769,7 @@ exports.default = AMG8833;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.BME280
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -33039,9 +32781,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class BME280 {
     constructor() {
         this.requiredKeys = [];
@@ -33308,7 +33047,7 @@ exports.default = BME280;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.D6T44L
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -33320,9 +33059,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class D6T44L {
     constructor() {
         this.requiredKeys = [];
@@ -33395,9 +33131,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module Parts.DHT12
  */
 const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
-/**
- * @category Parts
- */
 class DHT12 extends i2cParts_1.default {
     static info() {
         return {
@@ -33454,7 +33187,7 @@ exports.default = DHT12;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.S5851A
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -33466,9 +33199,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class S5851A {
     constructor() {
         this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
@@ -33575,7 +33305,7 @@ exports.default = S5851A;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.SHT31
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -33587,9 +33317,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class SHT31 {
     constructor() {
         this.requiredKeys = ["adr", "addressmode"];
@@ -33698,9 +33425,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class ADT7310 {
     constructor() {
         this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
@@ -33749,7 +33473,7 @@ exports.default = ADT7310;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.MFRC522
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -33763,9 +33487,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const OK = true;
 const ERROR = false;
-/**
- * @category Parts
- */
 class MFRC522 {
     constructor() {
         // PCD commands. Described in chapter 10 of the datasheet.
@@ -34332,12 +34053,9 @@ exports.default = MFRC522;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.RN42
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class RN42 {
     constructor() {
         this.keys = ["tx", "rx", "gnd"];
@@ -34546,7 +34264,7 @@ exports.default = RN42;
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.XBee
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -34558,9 +34276,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class XBee {
     constructor() {
         this.displayIoNames = { tx: "<tx", rx: ">rx" };
@@ -34728,9 +34443,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class I2cPartsAbstruct {
     constructor() {
         this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "vcc"];

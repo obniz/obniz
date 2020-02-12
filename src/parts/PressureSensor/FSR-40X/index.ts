@@ -1,7 +1,7 @@
 
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.FSR40X
  */
 
 import Obniz from "../../../obniz";
@@ -10,17 +10,12 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 // Todo: add weight and calc pressure(kg)
-/**
- * @category Parts
- */
+
 export interface  FSR40XOptions {
   pin0: number;
   pin1: number;
 }
 
-/**
- * @category Parts
- */
 export default class FSR40X implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

@@ -1,12 +1,9 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.GYSFDMAXB
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface GYSFDMAXBOptions {
     vcc?: number;
     gnd?: number;
@@ -14,9 +11,6 @@ export interface GYSFDMAXBOptions {
     rxd: number;
     Opps?: number;
 }
-/**
- * @category Parts
- */
 export interface GYSFDMAXBEditedData {
     enable: boolean;
     GPGGA: number;
@@ -29,9 +23,6 @@ export interface GYSFDMAXBEditedData {
     [key: string]: any;
     timestamp: Date;
 }
-/**
- * @category Parts
- */
 export default class GYSFDMAXB implements ObnizPartsInterface {
     get latitude(): number;
     get longitude(): number;

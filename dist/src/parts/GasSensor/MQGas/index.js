@@ -4,9 +4,6 @@
  * @module Parts.MQGas
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @category Parts
- */
 class MQGasSensor {
     constructor() {
         this.keys = ["gnd", "vcc", "do", "ao"];

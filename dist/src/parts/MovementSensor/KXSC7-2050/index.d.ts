@@ -1,17 +1,11 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.KXSC7-2050
  */
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface KXSC7_2050Options {
 }
-/**
- * @category Parts
- */
 export default class KXSC7_2050 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

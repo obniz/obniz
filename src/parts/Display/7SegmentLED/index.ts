@@ -1,15 +1,12 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.7SegmentLED
  */
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-/**
- * @category Parts
- */
 export interface  _7SegmentLEDOptions {
   a: number;
   b: number;
@@ -23,9 +20,6 @@ export interface  _7SegmentLEDOptions {
   commonType?: string;
 }
 
-/**
- * @category Parts
- */
 class _7SegmentLED implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

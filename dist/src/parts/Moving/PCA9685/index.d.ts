@@ -1,14 +1,11 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.PCA9685
  */
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import { PWMInterface } from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 declare class PCA9685_PWM implements PWMInterface {
     chip: PCA9685;
     id: number;
@@ -19,9 +16,6 @@ declare class PCA9685_PWM implements PWMInterface {
     pulse(value: number): void;
     duty(value: number): void;
 }
-/**
- * @category Parts
- */
 export interface PCA9685Options {
     gnd?: number;
     vcc?: number;
@@ -33,9 +27,6 @@ export interface PCA9685Options {
     address?: number;
     drive?: string;
 }
-/**
- * @category Parts
- */
 export default class PCA9685 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];

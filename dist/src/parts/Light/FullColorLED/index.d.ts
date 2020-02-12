@@ -1,13 +1,10 @@
 /**
  * @packageDocumentation
- * @module Parts
+ * @module Parts.FullColorLED
  */
 import Obniz from "../../../obniz";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-/**
- * @category Parts
- */
 export interface FullColorLEDOptions {
     r: number;
     g: number;
@@ -15,9 +12,6 @@ export interface FullColorLEDOptions {
     common: number;
     commonType: string;
 }
-/**
- * @category Parts
- */
 export default class FullColorLED implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
     keys: string[];
