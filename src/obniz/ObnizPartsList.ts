@@ -10,6 +10,7 @@ import SainSmartTFT18LCD, {SainSmartTFT18LCDOptions} from "../parts/Display/Sain
 import SharpMemoryTFT, {SharpMemoryTFTOptions} from "../parts/Display/SharpMemoryTFT";
 import GP2Y0A21YK0F, {GP2Y0A21YK0FOptions} from "../parts/DistanceSensor/GP2Y0A21YK0F";
 import HCSR04, {HCSR04Options} from "../parts/DistanceSensor/HC-SR04";
+import M5StickC_ToF, {M5StickC_ToFOptions} from "../parts/DistanceSensor/M5StickC_ToF";
 import MQ135, {MQ135Options} from "../parts/GasSensor/MQ135";
 import MQ2, {MQ2Options} from "../parts/GasSensor/MQ2";
 import MQ3, {MQ3Options} from "../parts/GasSensor/MQ3";
@@ -170,6 +171,7 @@ export interface WiredNameMap {
   // Distance Sensor
   "HC-SR04": HCSR04;
   "GP2Y0A21YK0F": GP2Y0A21YK0F;
+  "M5StickC_ToF": M5StickC_ToF;
   // GPS
   "GYSFDMAXB": GYSFDMAXB;
   // MagnetSensor
@@ -298,6 +300,7 @@ export interface WiredNameOptionsMap {
   // Distance Sensor
   "HC-SR04": HCSR04Options;
   "GP2Y0A21YK0F": GP2Y0A21YK0FOptions;
+  "M5StickC_ToF": M5StickC_ToFOptions;
   // GPS
   "GYSFDMAXB": GYSFDMAXBOptions;
   // MagnetSensor
