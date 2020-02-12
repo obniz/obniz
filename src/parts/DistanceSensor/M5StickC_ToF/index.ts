@@ -2,12 +2,9 @@ import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../i2cParts";
 
-export interface M5StickC_ToFOptions {
-    vcc?: number;
-    gnd?: number;
-    sda: number;
-    scl: number;
+export interface M5StickC_ToFOptions extends I2cPartsAbstructOptions {
 }
 
 export default class M5StickC_ToF implements ObnizPartsInterface {
@@ -54,7 +51,7 @@ export default class M5StickC_ToF implements ObnizPartsInterface {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
         this.obniz.wait(100);
-        this.i2c = this.obniz.getFreeI2C();
+        this.i2c = obniz.getI2CWithConfig(this.params);
         this.i2c.start({
             mode: "master",
             sda: this.params.sda,

@@ -25782,7 +25782,7 @@ class M5StickC_ToF {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
         this.obniz.wait(100);
-        this.i2c = this.obniz.getFreeI2C();
+        this.i2c = obniz.getI2CWithConfig(this.params);
         this.i2c.start({
             mode: "master",
             sda: this.params.sda,
