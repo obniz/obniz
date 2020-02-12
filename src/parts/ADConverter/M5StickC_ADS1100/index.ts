@@ -2,12 +2,9 @@ import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../i2cParts";
 
-export interface M5StickC_ADS1100Options {
-    vcc?: number;
-    gnd?: number;
-    sda: number;
-    scl: number;
+export interface M5StickC_ADS1100Options extends I2cPartsAbstructOptions {
 }
 
 export default class M5StickC_ADS1100 implements ObnizPartsInterface {
@@ -36,7 +33,7 @@ export default class M5StickC_ADS1100 implements ObnizPartsInterface {
     private minCode: number;
 
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl"];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
         this.requiredKeys = ["sda", "scl"];
         this.address = 0x48;
         this.conversionDelay = 100;
@@ -74,14 +71,10 @@ export default class M5StickC_ADS1100 implements ObnizPartsInterface {
     public wired(obniz: Obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.i2c = this.obniz.getFreeI2C();
-        this.i2c.start({
-            mode: "master",
-            sda: this.params.sda,
-            scl: this.params.scl,
-            clock: 400000,
-            pull: "5v",
-        });
+        this.params.mode = "master";
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
 

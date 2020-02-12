@@ -18775,7 +18775,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_ADS1100 {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl"];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
         this.requiredKeys = ["sda", "scl"];
         this.address = 0x48;
         this.conversionDelay = 100;
@@ -18814,14 +18814,10 @@ class M5StickC_ADS1100 {
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.i2c = this.obniz.getFreeI2C();
-        this.i2c.start({
-            mode: "master",
-            sda: this.params.sda,
-            scl: this.params.scl,
-            clock: 400000,
-            pull: "5v",
-        });
+        this.params.mode = "master";
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
     getVoltageWait() {
