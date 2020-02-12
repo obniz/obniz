@@ -1,11 +1,8 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-export interface M5Stack_JoyStickOptions {
-    vcc: number;
-    gnd: number;
-    sda: number;
-    scl: number;
+import { I2cPartsAbstructOptions } from "../../i2cParts";
+export interface M5Stack_JoyStickOptions extends I2cPartsAbstructOptions {
 }
 export default class M5Stack_JoyStick implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;

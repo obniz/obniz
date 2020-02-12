@@ -29318,8 +29318,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5Stack_JoyStick {
     constructor() {
-        this.requiredKeys = ["vcc", "gnd", "sda", "scl"];
-        this.keys = ["vcc", "gnd", "sda", "scl"];
+        this.requiredKeys = ["sda", "scl"];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
     }
     static info() {
         return {
@@ -29330,14 +29330,10 @@ class M5Stack_JoyStick {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
         this.obniz.wait(100); // wait for booting of MEGA328
-        this.i2c = this.obniz.getFreeI2C();
-        this.i2c.start({
-            mode: "master",
-            sda: this.params.sda,
-            scl: this.params.scl,
-            clock: 400000,
-            pull: "5v",
-        });
+        this.params.mode = "master";
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
     }
     getXWait() {
         return __awaiter(this, void 0, void 0, function* () {
