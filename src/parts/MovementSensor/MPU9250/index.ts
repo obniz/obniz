@@ -2,14 +2,11 @@ import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstructOptions} from "../../i2cParts";
+import {I2cPartsAbstractOptions} from "../../i2cParts";
 import AK8963 from "../AK8963";
 import MPU6050 from "../MPU6050";
 
-export interface MPU9250Options extends I2cPartsAbstructOptions {
-  gnd?: number;
-  vcc?: number;
-  address?: number;
+export interface MPU9250Options extends I2cPartsAbstractOptions {
 }
 
 class MPU9250 implements ObnizPartsInterface {
