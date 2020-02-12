@@ -117,7 +117,7 @@ module.exports = {
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "build-ts": " npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
@@ -18641,6 +18641,7 @@ exports.default = JsonBinaryConverter;
 var map = {
 	"./ADConverter/hx711/index.js": "./dist/src/parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
+	"./Biological/M5StickC_FINGER/index.js": "./dist/src/parts/Biological/M5StickC_FINGER/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
@@ -18932,6 +18933,32 @@ class USB {
     }
 }
 exports.default = USB;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Biological/M5StickC_FINGER/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class M5StickC_FINGER {
+    constructor() {
+        this.requiredKeys = ["tx", "rx"];
+        this.keys = ["tx", "rx"];
+    }
+    static info() {
+        return {
+            name: "M5StickC_FINGER",
+        };
+    }
+    wired(obniz) {
+    }
+}
+exports.default = M5StickC_FINGER;
 
 //# sourceMappingURL=index.js.map
 
