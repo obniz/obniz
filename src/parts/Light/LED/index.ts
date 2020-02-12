@@ -32,7 +32,7 @@ export default class LED implements ObnizPartsInterface {
 
   constructor() {
     this.keys = ["anode", "cathode"];
-    this.requiredKeys = ["anode"];
+    this.requiredKeys = [];
   }
 
   public wired(obniz: Obniz) {

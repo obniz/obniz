@@ -35,4 +35,4 @@ WSCommand.addCommandClass("WSCommandBle", WSCommandBle);
 WSCommand.addCommandClass("WSCommandMeasurement", WSCommandMeasurement);
 WSCommand.addCommandClass("WSCommandTcp", WSCommandTcp);
 
-export = WSCommand;
+export default WSCommand;

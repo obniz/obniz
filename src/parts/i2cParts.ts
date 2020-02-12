@@ -14,7 +14,7 @@ export interface  I2cPartsAbstructOptions {
   sda?: number;
   scl?: number;
   pull?: PullType;
-  clock: number;
+  clock?: number;
   i2c?: PeripheralI2C;
 }
 

@@ -9,7 +9,7 @@ import CentralBindings from "./protocol/central/bindings";
 import HciProtocol from "./protocol/hci";
 import PeripheralBindings from "./protocol/peripheral/bindings";
 
-import Obniz from "../../../index";
+import Obniz = require( "../../../index");
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
 import BleDescriptor from "./bleDescriptor";

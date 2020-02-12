@@ -155,7 +155,7 @@ export default class Display {
     }
   }
 
-  public rect(x: number, y: number, width: number, height: number, mustFill: boolean) {
+  public rect(x: number, y: number, width: number, height: number, mustFill?: boolean) {
     const ctx: any = this._ctx();
     if (ctx) {
       if (mustFill) {
@@ -169,7 +169,7 @@ export default class Display {
     }
   }
 
-  public circle(x: number, y: number, r: number, mustFill: boolean) {
+  public circle(x: number, y: number, r: number, mustFill?: boolean) {
     const ctx: any = this._ctx();
     if (ctx) {
       ctx.beginPath();
@@ -185,7 +185,7 @@ export default class Display {
     }
   }
 
-  public qr(text: string, correction: "L" | "M" | "Q" | "H") {
+  public qr(text: string, correction?: "L" | "M" | "Q" | "H") {
     const obj: any = {};
     obj.display = {
       qr: {

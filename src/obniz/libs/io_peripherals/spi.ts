@@ -199,7 +199,7 @@ export default  class PeripheralSPI {
     return this.used;
   }
 
-  public end(reuse: any) {
+  public end(reuse?: any) {
     const self: any = this;
     const obj: any = {};
     obj["spi" + self.id] = null;
