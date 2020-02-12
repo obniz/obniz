@@ -74,6 +74,9 @@
 		<div class="col-8 col-content">
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The embedded switch on obniz Board.</p>
+					</div>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -97,9 +100,6 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#obniz" class="tsd-kind-icon">Obniz</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#observers" class="tsd-kind-icon">observers</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#onchangeforstatewait" class="tsd-kind-icon">on<wbr>Change<wbr>For<wbr>State<wbr>Wait</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#onchange" class="tsd-kind-icon">onchange</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#state" class="tsd-kind-icon">state</a></li>
 							</ul>
@@ -107,10 +107,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#_reset" class="tsd-kind-icon">_reset</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#addobserver" class="tsd-kind-icon">add<wbr>Observer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#getwait" class="tsd-kind-icon">get<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#notified" class="tsd-kind-icon">notified</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.obnizswitch.html#statewait" class="tsd-kind-icon">state<wbr>Wait</a></li>
 							</ul>
 						</section>
@@ -129,7 +126,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L16">src/obniz/libs/embeds/switch.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/embeds/switch.ts#L41">src/obniz/libs/embeds/switch.ts:41</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -146,135 +143,73 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="obniz" class="tsd-anchor"></a>
-					<h3>Obniz</h3>
-					<div class="tsd-signature tsd-kind-icon">Obniz<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L12">src/obniz/libs/embeds/switch.ts:12</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="observers" class="tsd-anchor"></a>
-					<h3>observers</h3>
-					<div class="tsd-signature tsd-kind-icon">observers<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.html#obnizswitchcallback" class="tsd-signature-type">ObnizSwitchCallback</a><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L13">src/obniz/libs/embeds/switch.ts:13</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="onchangeforstatewait" class="tsd-anchor"></a>
-					<h3>on<wbr>Change<wbr>For<wbr>State<wbr>Wait</h3>
-					<div class="tsd-signature tsd-kind-icon">on<wbr>Change<wbr>For<wbr>State<wbr>Wait<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L14">src/obniz/libs/embeds/switch.ts:14</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onchange" class="tsd-anchor"></a>
-					<h3>onchange</h3>
-					<div class="tsd-signature tsd-kind-icon">onchange<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onchange</h3>
+					<div class="tsd-signature tsd-kind-icon">onchange<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.html#obnizswitchcallback" class="tsd-signature-type">ObnizSwitchCallback</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L16">src/obniz/libs/embeds/switch.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/embeds/switch.ts#L38">src/obniz/libs/embeds/switch.ts:38</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>When the switch state changes, this callback function will be called.
+							If you press and release a switch, it callbacks twice (&quot;push&quot; and &quot;none&quot;).</p>
+						</div>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.display.clear();
+obniz.switch.onchange = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">state</span>) </span>{
+  <span class="hljs-keyword">if</span> (state === <span class="hljs-string">"push"</span>) {
+    obniz.display.print(<span class="hljs-string">"Pushing"</span>);
+  } <span class="hljs-keyword">else</span> {
+    obniz.display.clear();
+  }
+}</code></pre>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="state" class="tsd-anchor"></a>
 					<h3>state</h3>
-					<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.html#obnizswitchstate" class="tsd-signature-type">ObnizSwitchState</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L15">src/obniz/libs/embeds/switch.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/embeds/switch.ts#L20">src/obniz/libs/embeds/switch.ts:20</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>current switch state</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_reset" class="tsd-anchor"></a>
-					<h3>_reset</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L23">src/obniz/libs/embeds/switch.ts:23</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="addobserver" class="tsd-anchor"></a>
-					<h3>add<wbr>Observer</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Observer<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.html#obnizswitchcallback" class="tsd-signature-type">ObnizSwitchCallback</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L29">src/obniz/libs/embeds/switch.ts:29</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>callback: <a href="../modules/obnizcore.components.html#obnizswitchcallback" class="tsd-signature-type">ObnizSwitchCallback</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="getwait" class="tsd-anchor"></a>
 					<h3>get<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/obnizcore.components.html#obnizswitchstate" class="tsd-signature-type">ObnizSwitchState</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L35">src/obniz/libs/embeds/switch.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/embeds/switch.ts#L61">src/obniz/libs/embeds/switch.ts:61</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="notified" class="tsd-anchor"></a>
-					<h3>notified</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">notified<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L58">src/obniz/libs/embeds/switch.ts:58</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>obj: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This determines the current status of the switch.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.display.clear();
+<span class="hljs-keyword">var</span> state = <span class="hljs-keyword">await</span> obniz.switch.getWait();
+<span class="hljs-keyword">if</span> (state === <span class="hljs-string">"push"</span>) {
+  obniz.display.print(<span class="hljs-string">"Now Pressed"</span>);
+}</code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/obnizcore.components.html#obnizswitchstate" class="tsd-signature-type">ObnizSwitchState</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -282,22 +217,42 @@
 					<a name="statewait" class="tsd-anchor"></a>
 					<h3>state<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">state<wbr>Wait<span class="tsd-signature-symbol">(</span>isPressed<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">state<wbr>Wait<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.html#obnizswitchstate" class="tsd-signature-type">ObnizSwitchState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/4780d2ce/src/obniz/libs/embeds/switch.ts#L45">src/obniz/libs/embeds/switch.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/embeds/switch.ts#L91">src/obniz/libs/embeds/switch.ts:91</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>With this you wait until the switch status changes to state.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">await</span> obniz.switch.stateWait(<span class="hljs-string">"push"</span>);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"switch pushed"</span>);
+
+<span class="hljs-keyword">await</span> obniz.switch.stateWait(<span class="hljs-string">"left"</span>);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"switch left"</span>);
+
+<span class="hljs-keyword">await</span> obniz.switch.stateWait(<span class="hljs-string">"right"</span>);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"switch right"</span>);
+
+<span class="hljs-keyword">await</span> obniz.switch.stateWait(<span class="hljs-string">"none"</span>);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"switch none"</span>);</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>isPressed: <span class="tsd-signature-type">boolean</span></h5>
+									<h5>state: <a href="../modules/obnizcore.components.html#obnizswitchstate" class="tsd-signature-type">ObnizSwitchState</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>state for wait</p>
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -334,31 +289,13 @@
 								<a href="obnizcore.components.obnizswitch.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.obnizswitch.html#obniz" class="tsd-kind-icon">Obniz</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.obnizswitch.html#observers" class="tsd-kind-icon">observers</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.obnizswitch.html#onchangeforstatewait" class="tsd-kind-icon">on<wbr>Change<wbr>For<wbr>State<wbr>Wait</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.obnizswitch.html#onchange" class="tsd-kind-icon">onchange</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.obnizswitch.html#state" class="tsd-kind-icon">state</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.obnizswitch.html#_reset" class="tsd-kind-icon">_reset</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.obnizswitch.html#addobserver" class="tsd-kind-icon">add<wbr>Observer</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.obnizswitch.html#getwait" class="tsd-kind-icon">get<wbr>Wait</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.obnizswitch.html#notified" class="tsd-kind-icon">notified</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.obnizswitch.html#statewait" class="tsd-kind-icon">state<wbr>Wait</a>
@@ -441,6 +378,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/obnizcore.components.html#obnizswitchcallback" class="tsd-kind-icon">Obniz<wbr>Switch<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/obnizcore.components.html#obnizswitchstate" class="tsd-kind-icon">Obniz<wbr>Switch<wbr>State</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/obnizcore.components.html#paritytype" class="tsd-kind-icon">Parity<wbr>Type</a>

@@ -12566,6 +12566,7 @@ exports.default = Display;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * The embedded switch on obniz Board.
  * @category Embeds
  */
 class ObnizSwitch {
@@ -12573,16 +12574,19 @@ class ObnizSwitch {
         this.Obniz = Obniz;
         this._reset();
     }
-    _reset() {
-        this.observers = [];
-        this.onChangeForStateWait = () => {
-        };
-    }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * This determines the current status of the switch.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.clear();
+     * var state = await obniz.switch.getWait();
+     * if (state === "push") {
+     *   obniz.display.print("Now Pressed");
+     * }
+     * ```
+     *
+     */
     getWait() {
         const self = this;
         return new Promise((resolve, reject) => {
@@ -12592,11 +12596,31 @@ class ObnizSwitch {
             self.addObserver(resolve);
         });
     }
-    stateWait(isPressed) {
+    /**
+     * With this you wait until the switch status changes to state.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.switch.stateWait("push");
+     * console.log("switch pushed");
+     *
+     * await obniz.switch.stateWait("left");
+     * console.log("switch left");
+     *
+     * await obniz.switch.stateWait("right");
+     * console.log("switch right");
+     *
+     * await obniz.switch.stateWait("none");
+     * console.log("switch none");
+     * ```
+     *
+     * @param state state for wait
+     */
+    stateWait(state) {
         const self = this;
         return new Promise((resolve, reject) => {
             self.onChangeForStateWait = (pressed) => {
-                if (isPressed === pressed) {
+                if (state === pressed) {
                     self.onChangeForStateWait = () => {
                     };
                     resolve();
@@ -12604,6 +12628,10 @@ class ObnizSwitch {
             };
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         this.state = obj.state;
         if (this.onchange) {
@@ -12613,6 +12641,17 @@ class ObnizSwitch {
         const callback = this.observers.shift();
         if (callback) {
             callback(this.state);
+        }
+    }
+    _reset() {
+        this.state = "none";
+        this.observers = [];
+        this.onChangeForStateWait = () => {
+        };
+    }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
         }
     }
 }
