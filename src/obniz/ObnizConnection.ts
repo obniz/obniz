@@ -10,8 +10,6 @@ import wsClient = require("ws");
 import packageJson from "../../package";  // pakcage.js will be created from package.json on build.
 import WSCommand from "./libs/wscommand";
 
-const isNode: any = typeof window === "undefined";
-
 export default class ObnizConnection {
 
   static get version() {
@@ -28,11 +26,11 @@ export default class ObnizConnection {
   public hw: any;
   public firmware_ver: any;
 
-  /**
-   * @ignore
-   */
   public isNode: boolean;
   public id: any;
+  public onopen: any;
+  public onclose: any;
+  public onconnect: any;
   protected socket: any;
   protected socket_local: any;
   protected debugs: any;
@@ -47,13 +45,10 @@ export default class ObnizConnection {
   protected _sendQueue: any;
   protected _waitForLocalConnectReadyTimer: any;
   protected _connectionRetryCount: number;
-  protected onopen: any;
-  protected onclose: any;
-  protected onconnect: any;
   protected sendPool: any;
 
   constructor(id: any, options?: any) {
-    this.isNode = isNode;
+    this.isNode = typeof window === "undefined";
     this.id = id;
     this.socket = null;
     this.socket_local = null;
@@ -277,7 +272,7 @@ export default class ObnizConnection {
     let tryAfter: any = 1000;
     if (this._connectionRetryCount > 15) {
       tryAfter = (this._connectionRetryCount - 15) * 1000;
-      const Limit: any = isNode ? 60 * 1000 : 10 * 1000;
+      const Limit: any = this.isNode ? 60 * 1000 : 10 * 1000;
       if (tryAfter > Limit) {
         tryAfter = Limit;
       }

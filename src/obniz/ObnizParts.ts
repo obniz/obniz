@@ -7,6 +7,9 @@ import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
 import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
 
+/**
+ * @ignore
+ */
 const _parts: any = {};
 
 export default class ObnizParts extends ObnizConnection {

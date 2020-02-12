@@ -117,7 +117,7 @@ module.exports = {
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "doc": "typedoc --includes ./src/ --stripInternal --readme none --out doc/obnizjs --excludePrivate --excludeProtected ",
+    "doc": "typedoc --includes ./src/ --stripInternal --readme none --out doc/obnizjs --excludePrivate --excludeProtected  --media ./doc/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
@@ -1945,10 +1945,9 @@ const wsClient = __webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js
 // @ts-ignore
 const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/index.js"));
-const isNode = typeof window === "undefined";
 class ObnizConnection {
     constructor(id, options) {
-        this.isNode = isNode;
+        this.isNode = typeof window === "undefined";
         this.id = id;
         this.socket = null;
         this.socket_local = null;
@@ -2155,7 +2154,7 @@ class ObnizConnection {
         let tryAfter = 1000;
         if (this._connectionRetryCount > 15) {
             tryAfter = (this._connectionRetryCount - 15) * 1000;
-            const Limit = isNode ? 60 * 1000 : 10 * 1000;
+            const Limit = this.isNode ? 60 * 1000 : 10 * 1000;
             if (tryAfter > Limit) {
                 tryAfter = Limit;
             }
@@ -2504,6 +2503,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const ObnizConnection_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizConnection.js"));
+/**
+ * @ignore
+ */
 const _parts = {};
 class ObnizParts extends ObnizConnection_1.default {
     static _parts() {
@@ -2921,7 +2923,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
-const isNode = typeof window === "undefined";
 class Obniz extends ObnizUIs_1.default {
     constructor(id, options) {
         super(id, options);
@@ -3036,7 +3037,7 @@ class Obniz extends ObnizUIs_1.default {
 /* Utils */
 /*===================*/
 try {
-    if (!isNode) {
+    if (typeof window !== "undefined") {
         if (window && window.parent && window.parent.userAppLoaded) {
             window.parent.userAppLoaded(window);
         }
@@ -3063,6 +3064,9 @@ __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.
 if (requireContext.setBaseDir) {
     requireContext.setBaseDir(__dirname);
 }
+/**
+ * @ignore
+ */
 const context = __webpack_require__("./dist/src/parts sync recursive \\.js$");
 /* webpack loader */
 for (const path of context.keys()) {
@@ -12061,17 +12065,409 @@ exports.default = Smp;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Here we will show letters and pictures on OLED display on obniz Board.
+ * ![](media://obniz_display_sphere.gif)
+ * @category Embeds
+ */
 class Display {
     constructor(obniz) {
+        this.autoFlush = true;
+        this.fontSize = 16;
         this.Obniz = obniz;
         this.width = 128;
         this.height = 64;
         this._canvas = undefined;
         this._reset();
     }
-    _reset() {
-        this._pos = { x: 0, y: 0 };
-        this.autoFlush = true;
+    /**
+     * (It does not work with node.js. Please use display.draw())
+     *
+     * This changes the font.
+     * The options for fontFamily and fontSize depend on your browser.
+     *
+     * The default font is Arial 16px.
+     * If you set the parameter to null, you will be using the default font.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.font('Avenir',30)
+     * obniz.display.print("Avenir")
+     *
+     * obniz.display.font(null,30) //default font(Arial) 30px
+     * obniz.display.font('Avenir') //Avenir with default size(16px)
+     * ```
+     * ![](media://obniz_display_samples3.jpg)
+     * ![](media://obniz_display_samples2.jpg)
+     * ![](media://obniz_display_samples1.jpg)
+     *
+     * @param font font name
+     * @param size size of font
+     */
+    font(font, size) {
+        const ctx = this._ctx();
+        if (typeof size !== "number") {
+            size = 16;
+        }
+        if (typeof font !== "string") {
+            font = "Arial";
+        }
+        this.fontSize = size;
+        ctx.font = "" + +" " + size + "px " + font;
+    }
+    /**
+     * Clear the display.
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.clear();
+     * ```
+     */
+    clear() {
+        const ctx = this._ctx();
+        this._pos.x = 0;
+        this._pos.y = 0;
+        if (ctx) {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.fillStyle = "#FFF";
+            ctx.strokeStyle = "#FFF";
+            this.draw(ctx);
+        }
+        else {
+            const obj = {};
+            obj.display = {
+                clear: true,
+            };
+            this.Obniz.send(obj);
+        }
+    }
+    /**
+     * (This does not work with node.js. Please use display.draw())
+     * It changes the display position of a text. If you are using print() to display a text, position it to top left.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.pos(0,30);
+     * obniz.display.print("YES. こんにちは");
+     * ```
+     * ![](media://obniz_display_pos.jpg)
+     *  @param x
+     *  @param y
+     */
+    pos(x, y) {
+        this._ctx(); // crete first
+        if (typeof x === "number") {
+            this._pos.x = x;
+        }
+        if (typeof y === "number") {
+            this._pos.y = y;
+        }
+        return this._pos;
+    }
+    /**
+     * Print text on display.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.print("Hello!");
+     * ```
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.font('Serif',18)
+     * obniz.display.print("Hello World🧡")
+     * ```
+     * ![](media://obniz_display_print.jpg)
+     *
+     *  @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+     */
+    print(text) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
+            this.draw(ctx);
+            this._pos.y += this.fontSize;
+        }
+        else {
+            const obj = {};
+            obj.display = {
+                text: "" + text,
+            };
+            this.Obniz.send(obj);
+        }
+    }
+    /**
+     * (It does not work with node.js. Please use display.draw())
+     *
+     *
+     * Now we draw a line between two points.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.line(30, 30, 100, 30);
+     * obniz.display.rect(20, 20, 20, 20);
+     * obniz.display.circle(100, 30, 20);
+     *
+     * obniz.display.line(60, 50, 100, 30);
+     * obniz.display.rect(50, 40, 20, 20, true);
+     * obniz.display.line(50, 10, 100, 30);
+     * obniz.display.circle(50, 10, 10, true);
+     * ```
+     *
+     * ![](media://obniz_display_draws.jpg)
+     *
+     * @param x_0
+     * @param y_0
+     * @param x_1
+     * @param y_1
+     */
+    line(x_0, y_0, x_1, y_1) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(x_0, y_0);
+            ctx.lineTo(x_1, y_1);
+            ctx.stroke();
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    /**
+     * (It does not work with node.js. Please use display.draw())
+     *
+     *
+     * This draws a rectangle.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.rect(10, 10, 20, 20);
+     * obniz.display.rect(20, 20, 20, 20, true); // filled rect
+     * ```
+     *
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param mustFill
+     */
+    rect(x, y, width, height, mustFill) {
+        const ctx = this._ctx();
+        if (ctx) {
+            if (mustFill) {
+                ctx.fillRect(x, y, width, height);
+            }
+            else {
+                ctx.strokeRect(x, y, width, height);
+            }
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    /**
+     * (It does not work with node.js. Please use display.draw())
+     *
+     * This draws a circle.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.circle(40, 30, 20);
+     * obniz.display.circle(90, 30, 20, true); // filled circle
+     * ```
+     *
+     * @param x
+     * @param y
+     * @param r
+     * @param mustFill
+     */
+    circle(x, y, r, mustFill) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            if (mustFill) {
+                ctx.fill();
+            }
+            else {
+                ctx.stroke();
+            }
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    /**
+     * This shows QR code with given text and correction level.
+     * The correction level can be
+     *
+     * - L
+     * - M(default)
+     * - Q
+     * - H
+     *
+     * H is the strongest error correction.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.qr("https://obniz.io")
+     * ```
+     * @param text
+     * @param correction
+     */
+    qr(text, correction) {
+        const obj = {};
+        obj.display = {
+            qr: {
+                text,
+            },
+        };
+        if (correction) {
+            obj.display.qr.correction = correction;
+        }
+        this.Obniz.send(obj);
+    }
+    /**
+     * Draw BMP image
+     *
+     * ```javascript
+     * obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
+     * ```
+     *
+     * @param data data array. 1 bit represents 1 dot. 1=white, 0=black.
+     * 1 byte is part of one line.
+     * The order is as below.
+     * {1byte} {2byte} {3byte}...{16byte}
+     * {17byte} {18byte} {19byte}...
+     * .....
+     * .....................{1024byte}
+     */
+    raw(data) {
+        const obj = {};
+        obj.display = {
+            raw: data,
+        };
+        this.Obniz.send(obj);
+    }
+    /**
+     * @ignore
+     * @param io
+     * @param moduleName
+     * @param funcName
+     */
+    setPinName(io, moduleName, funcName) {
+        const obj = {};
+        obj.display = {};
+        obj.display.pin_assign = {};
+        obj.display.pin_assign[io] = {
+            module_name: moduleName,
+            pin_name: funcName,
+        };
+        this.Obniz.send(obj);
+    }
+    /**
+     * @ignore
+     * @param moduleName
+     * @param data
+     */
+    setPinNames(moduleName, data) {
+        const obj = {};
+        obj.display = {};
+        obj.display.pin_assign = {};
+        let noAssignee = true;
+        for (const key in data) {
+            noAssignee = false;
+            obj.display.pin_assign[key] = {
+                module_name: moduleName,
+                pin_name: data[key],
+            };
+        }
+        if (!noAssignee) {
+            this.Obniz.send(obj);
+        }
+    }
+    /**
+     * Draw OLED from HTML5 Canvas context.
+     * With node-canvas, this works with node.js.
+     *
+     * - on HTML, load ctx from existing
+     *
+     * ```javascript
+     * let ctx = $("#canvas")[0].getContext('2d');
+     *
+     * ctx.fillStyle = "white";
+     * ctx.font = "30px Avenir";
+     * ctx.fillText('Avenir', 0, 40);
+     *
+     * obniz.display.draw(ctx);
+     * ```
+     *
+     * - on HTML, create new canvas dom and load it.
+     *
+     * ```javascript
+     *
+     * let ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
+     *
+     * ctx.fillStyle = "white";
+     * ctx.font = "30px Avenir";
+     * ctx.fillText('Avenir', 0, 40);
+     *
+     * obniz.display.draw(ctx);
+     * ```
+     *
+     * - running with node.js
+     *
+     * ```javascript
+     * //    npm install canvas. ( version 2.0.0 or later required )
+     * const { createCanvas } = require('canvas');
+     * const canvas = createCanvas(128, 64);
+     * const ctx = canvas.getContext('2d');
+     *
+     * ctx.fillStyle = "white";
+     * ctx.font = "30px Avenir";
+     * ctx.fillText('Avenir', 0, 40);
+     *
+     * obniz.display.draw(ctx);
+     * ```
+     *
+     *
+     * @param ctx
+     */
+    draw(ctx) {
+        if (this.autoFlush) {
+            this._draw(ctx);
+        }
+    }
+    /**
+     * You can specify to transfer the displayed data or not.
+     * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+     *
+     * Use false to stop updating OLED and true to restart updating.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.drawing(false);
+     * for (var i=0;i<100; i++) {
+     *   var x0 = Math.random() * 128;
+     *   var y0 = Math.random() * 64;
+     *   var x1 = Math.random() * 128;
+     *   var y1 = Math.random() * 64;
+     *   obniz.display.clear();
+     *   obniz.display.line(x0, y0, x1, y1);
+     * }
+     * obniz.display.drawing(true);
+     * ```
+     * @param autoFlush
+     */
+    drawing(autoFlush) {
+        this.autoFlush = !!autoFlush;
+        const ctx = this._ctx();
+        if (ctx) {
+            this.draw(ctx);
+        }
     }
     warnCanvasAvailability() {
         if (this.Obniz.isNode) {
@@ -12080,6 +12476,10 @@ class Display {
         else {
             throw new Error("obniz.js cant create canvas element to body");
         }
+    }
+    _reset() {
+        this._pos = { x: 0, y: 0 };
+        this.autoFlush = true;
     }
     _preparedCanvas() {
         if (this._canvas) {
@@ -12127,151 +12527,6 @@ class Display {
             return canvas.getContext("2d");
         }
     }
-    font(font, size) {
-        const ctx = this._ctx();
-        if (typeof size !== "number") {
-            size = 16;
-        }
-        if (typeof font !== "string") {
-            font = "Arial";
-        }
-        this.fontSize = size;
-        ctx.font = "" + +" " + size + "px " + font;
-    }
-    clear() {
-        const ctx = this._ctx();
-        this._pos.x = 0;
-        this._pos.y = 0;
-        if (ctx) {
-            ctx.fillStyle = "#000";
-            ctx.fillRect(0, 0, this.width, this.height);
-            ctx.fillStyle = "#FFF";
-            ctx.strokeStyle = "#FFF";
-            this.draw(ctx);
-        }
-        else {
-            const obj = {};
-            obj.display = {
-                clear: true,
-            };
-            this.Obniz.send(obj);
-        }
-    }
-    pos(x, y) {
-        this._ctx(); // crete first
-        if (typeof x === "number") {
-            this._pos.x = x;
-        }
-        if (typeof y === "number") {
-            this._pos.y = y;
-        }
-        return this._pos;
-    }
-    print(text) {
-        const ctx = this._ctx();
-        if (ctx) {
-            ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
-            this.draw(ctx);
-            this._pos.y += this.fontSize;
-        }
-        else {
-            const obj = {};
-            obj.display = {
-                text: "" + text,
-            };
-            this.Obniz.send(obj);
-        }
-    }
-    line(x_0, y_0, x_1, y_1) {
-        const ctx = this._ctx();
-        if (ctx) {
-            ctx.beginPath();
-            ctx.moveTo(x_0, y_0);
-            ctx.lineTo(x_1, y_1);
-            ctx.stroke();
-            this.draw(ctx);
-        }
-        else {
-            this.warnCanvasAvailability();
-        }
-    }
-    rect(x, y, width, height, mustFill) {
-        const ctx = this._ctx();
-        if (ctx) {
-            if (mustFill) {
-                ctx.fillRect(x, y, width, height);
-            }
-            else {
-                ctx.strokeRect(x, y, width, height);
-            }
-            this.draw(ctx);
-        }
-        else {
-            this.warnCanvasAvailability();
-        }
-    }
-    circle(x, y, r, mustFill) {
-        const ctx = this._ctx();
-        if (ctx) {
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            if (mustFill) {
-                ctx.fill();
-            }
-            else {
-                ctx.stroke();
-            }
-            this.draw(ctx);
-        }
-        else {
-            this.warnCanvasAvailability();
-        }
-    }
-    qr(text, correction) {
-        const obj = {};
-        obj.display = {
-            qr: {
-                text,
-            },
-        };
-        if (correction) {
-            obj.display.qr.correction = correction;
-        }
-        this.Obniz.send(obj);
-    }
-    raw(data) {
-        const obj = {};
-        obj.display = {
-            raw: data,
-        };
-        this.Obniz.send(obj);
-    }
-    setPinName(io, moduleName, funcName) {
-        const obj = {};
-        obj.display = {};
-        obj.display.pin_assign = {};
-        obj.display.pin_assign[io] = {
-            module_name: moduleName,
-            pin_name: funcName,
-        };
-        this.Obniz.send(obj);
-    }
-    setPinNames(moduleName, data) {
-        const obj = {};
-        obj.display = {};
-        obj.display.pin_assign = {};
-        let noAssignee = true;
-        for (const key in data) {
-            noAssignee = false;
-            obj.display.pin_assign[key] = {
-                module_name: moduleName,
-                pin_name: data[key],
-            };
-        }
-        if (!noAssignee) {
-            this.Obniz.send(obj);
-        }
-    }
     _draw(ctx) {
         const stride = this.width / 8;
         const vram = new Array(stride * 64);
@@ -12292,18 +12547,6 @@ class Display {
         }
         this.raw(vram);
     }
-    draw(ctx) {
-        if (this.autoFlush) {
-            this._draw(ctx);
-        }
-    }
-    drawing(autoFlush) {
-        this.autoFlush = !!autoFlush;
-        const ctx = this._ctx();
-        if (ctx) {
-            this.draw(ctx);
-        }
-    }
 }
 exports.default = Display;
 
@@ -12322,6 +12565,9 @@ exports.default = Display;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Embeds
+ */
 class ObnizSwitch {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -12459,6 +12705,9 @@ module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb2\",\"peripherals\":{
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Peripherals
+ */
 class PeripheralAD {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -12565,8 +12814,14 @@ exports.default = PeripheralAD;
  * @packageDocumentation
  * @module ObnizCore.Components
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver = __webpack_require__("./node_modules/semver/semver.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+/**
+ * @category Peripherals
+ */
 class Directive {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -12592,7 +12847,7 @@ class Directive {
     }
     animation(name, status, array, repeat) {
         if ((typeof repeat === "number" || status === "registrate") &&
-            semver.lt(this.Obniz.firmware_ver, "2.0.0")) {
+            semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
         const obj = {};
@@ -12629,7 +12884,7 @@ class Directive {
         this.Obniz.send(obj);
     }
     repeatWait(array, repeat) {
-        if (semver.lt(this.Obniz.firmware_ver, "2.0.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
         if (typeof repeat !== "number" || repeat < 1) {
@@ -12679,6 +12934,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * @category Peripherals
+ */
 class PeripheralI2C {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -12900,6 +13158,9 @@ exports.default = PeripheralI2C;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Peripherals
+ */
 class PeripheralIO {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -13048,6 +13309,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * @category Peripherals
+ */
 class PeripheralPWM {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -13172,8 +13436,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver = __webpack_require__("./node_modules/semver/semver.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * @category Peripherals
+ */
 class PeripheralSPI {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -13284,7 +13551,7 @@ class PeripheralSPI {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
-        if (semver.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+        if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
         const self = this;
@@ -13302,7 +13569,7 @@ class PeripheralSPI {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
-        if (semver.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+        if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
         const self = this;
@@ -13355,7 +13622,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
-const isNode = typeof window === "undefined";
+/**
+ * @category Peripherals
+ */
 class PeripheralUART {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -13443,7 +13712,7 @@ class PeripheralUART {
         if (typeof data === "number") {
             data = [data];
         }
-        if (isNode && data instanceof Buffer) {
+        if (this.Obniz.isNode && data instanceof Buffer) {
             send_data = [...data];
         }
         else if (data.constructor === Array) {
@@ -13536,6 +13805,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * @category Measurement
+ */
 class LogicAnalyzer {
     constructor(obniz) {
         this.obniz = obniz;
@@ -13611,6 +13883,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * @category Measurement
+ */
 class ObnizMeasure {
     constructor(obniz) {
         this.obniz = obniz;
@@ -13680,9 +13955,14 @@ exports.default = ObnizMeasure;
  * @packageDocumentation
  * @module ObnizCore.Components
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const isNode = typeof window === "undefined";
-const semver = __webpack_require__("./node_modules/semver/semver.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+/**
+ * @category Protocol
+ */
 class Tcp {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -13705,7 +13985,7 @@ class Tcp {
         }
     }
     connectWait(port, domain) {
-        if (semver.lt(this.Obniz.firmware_ver, "2.1.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, "2.1.0")) {
             throw new Error(`Please update obniz firmware >= 2.1.0`);
         }
         // TODO
@@ -13753,7 +14033,7 @@ class Tcp {
             data = [data];
         }
         let send_data = null;
-        if (isNode && data instanceof Buffer) {
+        if (this.Obniz.isNode && data instanceof Buffer) {
             send_data = [...data];
         }
         else if (data.constructor === Array) {

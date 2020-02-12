@@ -26,6 +26,9 @@ interface PeripheralI2COptions extends PeripheralI2CState {
   slave_address_length?: number;
 }
 
+/**
+ * @category Peripherals
+ */
 class PeripheralI2C {
   public Obniz: Obniz;
   public id: number;

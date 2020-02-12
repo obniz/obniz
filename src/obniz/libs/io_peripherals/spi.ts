@@ -3,7 +3,7 @@
  * @module ObnizCore.Components
  */
 
-import semver = require("semver");
+import semver from "semver";
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 import {DriveType, PullType} from "./common";
@@ -18,7 +18,9 @@ interface PeripheralSPIOptions {
   pull?: PullType;
   gnd?: number;
 }
-
+/**
+ * @category Peripherals
+ */
 export default  class PeripheralSPI {
   public Obniz: Obniz;
   public id: number;

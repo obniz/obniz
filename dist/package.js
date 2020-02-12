@@ -25,6 +25,7 @@ module.exports = {
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "doc": "typedoc --includes ./src/ --stripInternal --readme none --out doc/obnizjs --excludePrivate --excludeProtected  --media ./doc/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
@@ -103,6 +104,8 @@ module.exports = {
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
     "typescript": "^3.7.5",
+    "typedoc": "^0.16.9",
+    "typedoc-plugin-external-module-name": "^3.0.0",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
@@ -126,6 +129,7 @@ module.exports = {
     "semver": "^5.7.0",
     "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
+    "typedoc-plugin-internal-external": "^2.1.1",
     "ws": "^6.1.4"
   },
   "bugs": {

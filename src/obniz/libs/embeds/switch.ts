@@ -5,6 +5,9 @@
 
 type ObnizSwitchCallback = (result: boolean) => void;
 
+/**
+ * @category Embeds
+ */
 export default class ObnizSwitch {
   public Obniz: any;
   public observers!: ObnizSwitchCallback[];

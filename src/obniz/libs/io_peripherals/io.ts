@@ -6,6 +6,9 @@
 import Obniz from "../../index";
 import {DriveType, PullType} from "./common";
 
+/**
+ * @category Peripherals
+ */
 export default class PeripheralIO {
   public Obniz: Obniz;
   public id: number;

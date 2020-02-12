@@ -3,13 +3,14 @@
  * @module ObnizCore.Components
  */
 
+import semver from "semver";
 import Obniz from "../../index";
-
-const isNode: any = typeof window === "undefined";
-import semver = require("semver");
 
 type TCPCallbackFunction = (data: number[]) => void;
 
+/**
+ * @category Protocol
+ */
 export default class Tcp {
   public Obniz: Obniz;
   public id: number;
@@ -99,7 +100,7 @@ export default class Tcp {
     }
 
     let send_data: any = null;
-    if (isNode && data instanceof Buffer) {
+    if (this.Obniz.isNode && data instanceof Buffer) {
       send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;

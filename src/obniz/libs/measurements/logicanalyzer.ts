@@ -16,7 +16,9 @@ export interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {
   "triggerValue": boolean;
   "triggerValueSamples": number;
 }
-
+/**
+ * @category Measurement
+ */
 export default class LogicAnalyzer {
   public obniz: Obniz;
   public onmeasured?: (array: number[]) => void;

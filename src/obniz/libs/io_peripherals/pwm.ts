@@ -19,6 +19,9 @@ export interface PWMInterface  {
   duty: (value: number) => void;
 }
 
+/**
+ * @category Peripherals
+ */
 export default class PeripheralPWM implements PWMInterface {
   public Obniz: Obniz;
   public id: number;

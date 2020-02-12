@@ -26,38 +26,6 @@ import ObnizParts from "./ObnizParts";
 
 import HW from "./libs/hw";
 
-interface ObnizComponentsObnizBoard {
-
-  // onconnect: () => Promise<void>;
-  // onclose: () => Promise<void>;
-  // wired<K extends keyof WiredNameMap>(name: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K];
-  //
-  // // connect
-  // connectionState: ConnectionState;
-  // debugprint: boolean;
-  // connect(): void;
-  // connectWait(options?: ConnectOptions): Promise<boolean>;
-  // close(): void;
-  // resetOnDisconnect(reset: boolean): void;
-  //
-  // // systems
-  // sleepSeconds(sec: number): void;
-  // sleepMinute(sec: number): void;
-  // sleep(date: Date): void;
-  // sleepIoTrigger(trigger: boolean): void;
-  // pingWait(): Promise<void>;
-  //
-  // // utils
-  // util: any;
-  // reset(): void;
-  // repeat(callback: () => void): void;
-  // wait(time: number): Promise<void>;
-  // keepWorkingAtOffline(working: boolean): void;
-  // setVccGnd(vcc: number, gnd: number, drive: DriveType): void;
-  // isValidIO(io: any): io is PeripheralIO;
-
-}
-
 export default class ObnizComponents extends ObnizParts {
 
   /* board peripherals */

@@ -3,11 +3,14 @@
  * @module ObnizCore.Components
  */
 
-import semver = require("semver");
+import semver from "semver";
 import Obniz from "../../index";
 
 export type DirectiveStatuse = "loop" | "registrate" | "pause" | "resume";
 
+/**
+ * @category Peripherals
+ */
 export default class Directive {
   public Obniz: Obniz;
   public observers: any[];

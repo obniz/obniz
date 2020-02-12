@@ -5,6 +5,9 @@
 
 import Obniz from "../../index";
 
+/**
+ * @category Peripherals
+ */
 export default class PeripheralAD {
   public Obniz: Obniz;
   public id: number;

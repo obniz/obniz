@@ -7,8 +7,6 @@ import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 import {BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType} from "./common";
 
-const isNode: any = typeof window === "undefined";
-
 export interface PeripheralUARTOptions {
   tx: number;
   rx: number;
@@ -23,7 +21,9 @@ export interface PeripheralUARTOptions {
   drive?: DriveType;
   pull?: PullType;
 }
-
+/**
+ * @category Peripherals
+ */
 export default class PeripheralUART {
   public Obniz: Obniz;
   public id: number;
@@ -126,7 +126,7 @@ export default class PeripheralUART {
     if (typeof data === "number") {
       data = [data];
     }
-    if (isNode && data instanceof Buffer) {
+    if (this.Obniz.isNode && data instanceof Buffer) {
       send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;

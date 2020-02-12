@@ -22,8 +22,6 @@ declare global {
   }
 }
 
-const isNode: any = typeof window === "undefined";
-
 class Obniz extends ObnizUIs {
 
   /**
@@ -151,7 +149,7 @@ export = Obniz;
 /* Utils */
 /*===================*/
 try {
-  if (!isNode) {
+  if (typeof window !== "undefined") {
     if (window && window.parent && window.parent.userAppLoaded) {
       window.parent.userAppLoaded(window);
     }
@@ -180,6 +178,9 @@ if (requireContext.setBaseDir) {
   requireContext.setBaseDir(__dirname);
 }
 
+/**
+ * @ignore
+ */
 const context: any = require.context("../parts", true, /\.js$/);
 /* webpack loader */
 for (const path of context.keys()) {

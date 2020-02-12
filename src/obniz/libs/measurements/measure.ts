@@ -22,7 +22,9 @@ export interface ObnizMeasureOptions {
   "timeout"?: number;
   "callback"?: (edges: ObnizMeasureResultArray) => void;
 }
-
+/**
+ * @category Measurement
+ */
 export default class ObnizMeasure {
   public obniz: Obniz;
   public observers!: Array<(edges: ObnizMeasureResultArray) => void>;
