@@ -25758,7 +25758,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_ToF {
     constructor() {
         this.requiredKeys = ["sda", "scl"];
-        this.keys = ["vcc", "gnd", "sda", "scl"];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
         this.address = 0x29;
         this.regs = {
             IDENTIFICATION_MODEL_ID: 0xc0,
@@ -25786,13 +25786,6 @@ class M5StickC_ToF {
         this.params.pull = "3v";
         this.params.mode = "master";
         this.i2c = obniz.getI2CWithConfig(this.params);
-        this.i2c.start({
-            mode: "master",
-            sda: this.params.sda,
-            scl: this.params.scl,
-            clock: 100000,
-            pull: "3v",
-        });
     }
     getWait() {
         return __awaiter(this, void 0, void 0, function* () {
