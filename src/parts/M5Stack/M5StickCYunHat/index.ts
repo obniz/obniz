@@ -66,7 +66,7 @@ export default class YunHat implements ObnizPartsInterface {
   protected bmp280!: BMP280;
 
   // ホントは14個あるが全部制御するとバグる
-  private LED_LEN = 13;
+  private LED_LEN = 14;
 
   constructor() {
     this.requiredKeys = [];

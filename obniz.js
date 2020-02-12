@@ -92,12 +92,13 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.3.0-beta.0",
+  "version": "3.3.0-beta.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
   "files": [
     "dist",
+    "!dist/**/*.map",
     "index.js",
     "obniz.js",
     "obniz.min.js"
@@ -110,7 +111,7 @@ module.exports = {
     "test": "npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1",
     "testOnlyNodejs": "NO_BROWSER_TEST=1 npm test",
     "buildAndtest": "npm run build && npm test",
-    "tstest": "mocha --require espower-typescript/guess test/functiontest/obniz-ts/**/*.ts",
+    "tstest": "mocha --require espower-typescript/guess test/functiontest/**/*.ts",
     "tsExampleTest": "tsc --project ./test/functiontest",
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
@@ -121,8 +122,8 @@ module.exports = {
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add dist && git add obniz.js && git add obniz.min.js",
-    "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
+    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -144,21 +145,13 @@ module.exports = {
   "devDependencies": {
     "@types/chai": "^4.2.7",
     "@types/chai-like": "^1.1.0",
-    "@types/eventemitter3": "^1.2.0",
     "@types/events": "^3.0.0",
     "@types/glob": "^7.1.1",
-    "@types/js-yaml": "^3.12.1",
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^13.1.5",
-    "@types/node-dir": "0.0.33",
-    "@types/node-fetch": "^2.5.4",
-    "@types/semver": "^6.2.0",
     "@types/sinon": "^7.5.1",
-    "@types/tv4": "^1.2.29",
     "@types/webpack-env": "^1.15.0",
     "@types/window-or-global": "^1.0.0",
-    "@types/ws": "^6.0.4",
     "chai": "^4.2.0",
     "chai-like": "^1.1.1",
     "child_process": "^1.0.2",
@@ -194,13 +187,14 @@ module.exports = {
     "node-notifier": "^5.3.0",
     "nyc": "^14.1.1",
     "path": "^0.12.7",
+    "plugin-error": "^1.0.1",
     "power-assert": "^1.6.1",
     "prettier": "^1.14.3",
     "sinon": "^7.5.0",
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.4",
+    "typescript": "^3.7.5",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
@@ -209,12 +203,20 @@ module.exports = {
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "@types/eventemitter3": "^1.2.0",
+    "@types/js-yaml": "^3.12.1",
+    "@types/node": "^13.1.5",
+    "@types/node-dir": "0.0.33",
+    "@types/node-fetch": "^2.5.4",
+    "@types/semver": "^6.2.0",
+    "@types/tv4": "^1.2.29",
+    "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
-    "plugin-error": "^1.0.1",
     "semver": "^5.7.0",
+    "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
   },
@@ -7895,9 +7897,6 @@ class Gap extends events_1.default.EventEmitter {
             this._hci.once("leScanParametersSet", (setParamStatus) => {
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-                    this._hci.once("leScanEnableSet", (scanStartStatus) => {
-                        console.log("stan start ", scanStopStatus, setParamStatus, scanStartStatus);
-                    });
                 }, 10);
             });
         });
@@ -18346,6 +18345,7 @@ exports.default = tv4;
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const WSCommandAD_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAD.js"));
 const WSCommandBle_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBle.js"));
@@ -18376,7 +18376,7 @@ WSCommand_1.default.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.default
 WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
 WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
-module.exports = WSCommand_1.default;
+exports.default = WSCommand_1.default;
 
 //# sourceMappingURL=index.js.map
 
@@ -26396,7 +26396,7 @@ class MQGasSensor {
     }
     heatWait(seconds) {
         this.startHeating();
-        if (seconds > 0) {
+        if (typeof seconds === "number" && seconds > 0) {
             seconds *= 1000;
         }
         else {
@@ -27370,7 +27370,9 @@ class IRSensor {
         }
     }
     start(callback) {
-        this.ondetect = callback;
+        if (callback) {
+            this.ondetect = callback;
+        }
         if (this.output_pullup) {
             this.obniz.getIO(this.params.output).pull("5v");
         }
@@ -27643,7 +27645,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LED {
     constructor() {
         this.keys = ["anode", "cathode"];
-        this.requiredKeys = ["anode"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -28263,7 +28265,7 @@ const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/
 class YunHat {
     constructor() {
         // ホントは14個あるが全部制御するとバグる
-        this.LED_LEN = 13;
+        this.LED_LEN = 14;
         this.requiredKeys = [];
         this.keys = [
             "sda",
@@ -32884,7 +32886,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class SHT31 {
     constructor() {
-        this.requiredKeys = ["adr", "addressmode"];
+        this.requiredKeys = [];
         this.keys = [
             "vcc",
             "sda",
@@ -32894,6 +32896,7 @@ class SHT31 {
             "addressmode",
             "i2c",
             "pull",
+            "address",
         ];
         this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
         this.commands = {};
@@ -32921,14 +32924,17 @@ class SHT31 {
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.io_adr = obniz.getIO(this.params.adr);
-        if (this.params.addressmode === 4) {
-            this.io_adr.output(false);
-            this.address = 0x44;
-        }
-        else if (this.params.addressmode === 5) {
-            this.io_adr.pull(null);
-            this.address = 0x45;
+        this.address = this.params.address || 0x44;
+        if (this.params.addressmode) {
+            this.io_adr = obniz.getIO(this.params.adr);
+            if (this.params.addressmode === 4) {
+                this.io_adr.output(false);
+                this.address = 0x44;
+            }
+            else if (this.params.addressmode === 5) {
+                this.io_adr.pull("5v");
+                this.address = 0x45;
+            }
         }
         this.params.clock = this.params.clock || 100 * 1000; // for i2c
         this.params.mode = this.params.mode || "master"; // for i2c
@@ -32948,7 +32954,7 @@ class SHT31 {
             return (yield this.getAllWait()).temperature;
         });
     }
-    getHumdWait() {
+    getHumidWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getAllWait()).humidity;
         });

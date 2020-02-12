@@ -1,3 +1,3 @@
-import * as Obniz from "../../../obniz";
+import Obniz from "../../../dist/src/obniz/index";
 
 console.log(Obniz);

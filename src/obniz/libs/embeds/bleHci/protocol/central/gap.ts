@@ -65,9 +65,6 @@ class Gap extends events.EventEmitter {
       this._hci.once("leScanParametersSet", (setParamStatus: number) => {
         setTimeout(() => {
           this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-          this._hci.once("leScanEnableSet", (scanStartStatus: number) => {
-            console.log("stan start ", scanStopStatus, setParamStatus, scanStartStatus);
-          });
         }, 10);
       });
     });

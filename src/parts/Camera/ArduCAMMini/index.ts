@@ -7,14 +7,14 @@ import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface ArduCAMMiniOptions {
-  cs: PeripheralIO;
-  mosi?: PeripheralIO;
-  miso?: PeripheralIO;
-  sclk?: PeripheralIO;
-  gnd?: PeripheralIO;
-  vcc?: PeripheralIO;
-  sda?: PeripheralIO;
-  scl?: PeripheralIO;
+  cs: number;
+  mosi?: number;
+  miso?: number;
+  sclk?: number;
+  gnd?: number;
+  vcc?: number;
+  sda?: number;
+  scl?: number;
   i2c?: PeripheralI2C;
   spi?: PeripheralSPI;
   spi_drive?: DriveType;
@@ -824,7 +824,7 @@ export default class ArduCAMMini implements ObnizPartsInterface {
     this.init();
   }
 
-  public async takeWait(size: number): Promise<number[]> {
+  public async takeWait(size?: string): Promise<number[]> {
     if (typeof size === "string" && this._size !== size) {
       this.setSize(size);
       this.obniz.wait(1000);

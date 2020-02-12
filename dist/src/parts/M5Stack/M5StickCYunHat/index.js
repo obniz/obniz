@@ -16,7 +16,7 @@ const util_1 = __importDefault(require("../../../obniz/libs/utils/util"));
 class YunHat {
     constructor() {
         // ホントは14個あるが全部制御するとバグる
-        this.LED_LEN = 13;
+        this.LED_LEN = 14;
         this.requiredKeys = [];
         this.keys = [
             "sda",
