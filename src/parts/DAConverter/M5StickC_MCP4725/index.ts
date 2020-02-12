@@ -1,14 +1,10 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
-import { write } from "fs";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import {I2cPartsAbstructOptions} from "../../i2cParts";
 
-export interface M5StickC_MCP4725Options {
-    vcc?: number;
-    gnd?: number;
-    sda: number;
-    scl: number;
+export interface M5StickC_MCP4725Options extends I2cPartsAbstructOptions {
 }
 
 export default class M5StickC_AMDP4725 implements ObnizPartsInterface {
@@ -33,7 +29,7 @@ export default class M5StickC_AMDP4725 implements ObnizPartsInterface {
     protected i2c!: PeripheralI2C;
 
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl"];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
         this.requiredKeys = ["sda", "scl"];
         this.address = 0x60;
     }
@@ -41,14 +37,10 @@ export default class M5StickC_AMDP4725 implements ObnizPartsInterface {
     public wired(obniz: Obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.i2c = this.obniz.getFreeI2C();
-        this.i2c.start({
-            mode: "master",
-            sda: this.params.sda,
-            scl: this.params.scl,
-            clock: 400000,
-            pull: "5v",
-        });
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
         this.obniz.wait(100);
     }
 

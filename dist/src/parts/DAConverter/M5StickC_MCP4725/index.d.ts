@@ -1,11 +1,8 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-export interface M5StickC_MCP4725Options {
-    vcc?: number;
-    gnd?: number;
-    sda: number;
-    scl: number;
+import { I2cPartsAbstructOptions } from "../../i2cParts";
+export interface M5StickC_MCP4725Options extends I2cPartsAbstructOptions {
 }
 export default class M5StickC_AMDP4725 implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;
