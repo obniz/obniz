@@ -51,6 +51,9 @@ export default class M5StickC_ToF implements ObnizPartsInterface {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
         this.obniz.wait(100);
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.i2c.start({
             mode: "master",
