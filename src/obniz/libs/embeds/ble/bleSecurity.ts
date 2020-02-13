@@ -1,7 +1,11 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import emitter = require("eventemitter3");
 import semver = require("semver");
 
-class BleSecurity {
+export default class BleSecurity {
   public Obniz: any;
   public emitter: any;
 
@@ -171,5 +175,3 @@ class BleSecurity {
     }
   }
 }
-
-export default BleSecurity;

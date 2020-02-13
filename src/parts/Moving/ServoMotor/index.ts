@@ -1,9 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module Parts.ServoMotor
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralPWM, {PWMInterface} from "../../../obniz/libs/io_peripherals/pwm";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface ServoMotorOptions {
+export interface  ServoMotorOptions {
   vcc?: number;
   gnd?: number;
   signal?: number;

@@ -1,9 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MPU6050
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface MPU6050Options {
+export interface  MPU6050Options {
   gnd?: number;
   vcc?: number;
   sda?: number;

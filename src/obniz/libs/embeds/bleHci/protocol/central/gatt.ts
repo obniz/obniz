@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('att');
 const debug: any = () => {
 };
@@ -6,59 +11,72 @@ const debug: any = () => {
 
 import events from "events";
 
-const ATT_OP_ERROR: any = 0x01;
-const ATT_OP_MTU_REQ: any = 0x02;
-const ATT_OP_MTU_RESP: any = 0x03;
-const ATT_OP_FIND_INFO_REQ: any = 0x04;
-const ATT_OP_FIND_INFO_RESP: any = 0x05;
-const ATT_OP_READ_BY_TYPE_REQ: any = 0x08;
-const ATT_OP_READ_BY_TYPE_RESP: any = 0x09;
-const ATT_OP_READ_REQ: any = 0x0a;
-const ATT_OP_READ_RESP: any = 0x0b;
-const ATT_OP_READ_BLOB_REQ: any = 0x0c;
-const ATT_OP_READ_BLOB_RESP: any = 0x0d;
-const ATT_OP_READ_BY_GROUP_REQ: any = 0x10;
-const ATT_OP_READ_BY_GROUP_RESP: any = 0x11;
-const ATT_OP_WRITE_REQ: any = 0x12;
-const ATT_OP_WRITE_RESP: any = 0x13;
-const ATT_OP_PREPARE_WRITE_REQ: any = 0x16;
-const ATT_OP_PREPARE_WRITE_RESP: any = 0x17;
-const ATT_OP_EXECUTE_WRITE_REQ: any = 0x18;
-const ATT_OP_EXECUTE_WRITE_RESP: any = 0x19;
-const ATT_OP_HANDLE_NOTIFY: any = 0x1b;
-const ATT_OP_HANDLE_IND: any = 0x1d;
-const ATT_OP_HANDLE_CNF: any = 0x1e;
-const ATT_OP_WRITE_CMD: any = 0x52;
+/**
+ * @ignore
+ */
+namespace ATT {
+  export const OP_ERROR: any = 0x01;
+  export const OP_MTU_REQ: any = 0x02;
+  export const OP_MTU_RESP: any = 0x03;
+  export const OP_FIND_INFO_REQ: any = 0x04;
+  export const OP_FIND_INFO_RESP: any = 0x05;
+  export const OP_READ_BY_TYPE_REQ: any = 0x08;
+  export const OP_READ_BY_TYPE_RESP: any = 0x09;
+  export const OP_READ_REQ: any = 0x0a;
+  export const OP_READ_RESP: any = 0x0b;
+  export const OP_READ_BLOB_REQ: any = 0x0c;
+  export const OP_READ_BLOB_RESP: any = 0x0d;
+  export const OP_READ_BY_GROUP_REQ: any = 0x10;
+  export const OP_READ_BY_GROUP_RESP: any = 0x11;
+  export const OP_WRITE_REQ: any = 0x12;
+  export const OP_WRITE_RESP: any = 0x13;
+  export const OP_PREPARE_WRITE_REQ: any = 0x16;
+  export const OP_PREPARE_WRITE_RESP: any = 0x17;
+  export const OP_EXECUTE_WRITE_REQ: any = 0x18;
+  export const OP_EXECUTE_WRITE_RESP: any = 0x19;
+  export const OP_HANDLE_NOTIFY: any = 0x1b;
+  export const OP_HANDLE_IND: any = 0x1d;
+  export const OP_HANDLE_CNF: any = 0x1e;
+  export const OP_WRITE_CMD: any = 0x52;
 
-const ATT_ECODE_SUCCESS: any = 0x00;
-const ATT_ECODE_INVALID_HANDLE: any = 0x01;
-const ATT_ECODE_READ_NOT_PERM: any = 0x02;
-const ATT_ECODE_WRITE_NOT_PERM: any = 0x03;
-const ATT_ECODE_INVALID_PDU: any = 0x04;
-const ATT_ECODE_AUTHENTICATION: any = 0x05;
-const ATT_ECODE_REQ_NOT_SUPP: any = 0x06;
-const ATT_ECODE_INVALID_OFFSET: any = 0x07;
-const ATT_ECODE_AUTHORIZATION: any = 0x08;
-const ATT_ECODE_PREP_QUEUE_FULL: any = 0x09;
-const ATT_ECODE_ATTR_NOT_FOUND: any = 0x0a;
-const ATT_ECODE_ATTR_NOT_LONG: any = 0x0b;
-const ATT_ECODE_INSUFF_ENCR_KEY_SIZE: any = 0x0c;
-const ATT_ECODE_INVAL_ATTR_VALUE_LEN: any = 0x0d;
-const ATT_ECODE_UNLIKELY: any = 0x0e;
-const ATT_ECODE_INSUFF_ENC: any = 0x0f;
-const ATT_ECODE_UNSUPP_GRP_TYPE: any = 0x10;
-const ATT_ECODE_INSUFF_RESOURCES: any = 0x11;
+  export const ECODE_SUCCESS: any = 0x00;
+  export const ECODE_INVALID_HANDLE: any = 0x01;
+  export const ECODE_READ_NOT_PERM: any = 0x02;
+  export const ECODE_WRITE_NOT_PERM: any = 0x03;
+  export const ECODE_INVALID_PDU: any = 0x04;
+  export const ECODE_AUTHENTICATION: any = 0x05;
+  export const ECODE_REQ_NOT_SUPP: any = 0x06;
+  export const ECODE_INVALID_OFFSET: any = 0x07;
+  export const ECODE_AUTHORIZATION: any = 0x08;
+  export const ECODE_PREP_QUEUE_FULL: any = 0x09;
+  export const ECODE_ATTR_NOT_FOUND: any = 0x0a;
+  export const ECODE_ATTR_NOT_LONG: any = 0x0b;
+  export const ECODE_INSUFF_ENCR_KEY_SIZE: any = 0x0c;
+  export const ECODE_INVAL_ATTR_VALUE_LEN: any = 0x0d;
+  export const ECODE_UNLIKELY: any = 0x0e;
+  export const ECODE_INSUFF_ENC: any = 0x0f;
+  export const ECODE_UNSUPP_GRP_TYPE: any = 0x10;
+  export const ECODE_INSUFF_RESOURCES: any = 0x11;
 
-const GATT_PRIM_SVC_UUID: any = 0x2800;
-const GATT_INCLUDE_UUID: any = 0x2802;
-const GATT_CHARAC_UUID: any = 0x2803;
+  export const CID: any = 0x0004;
+}
 
-const GATT_CLIENT_CHARAC_CFG_UUID: any = 0x2902;
-const GATT_SERVER_CHARAC_CFG_UUID: any = 0x2903;
+/**
+ * @ignore
+ */
+namespace GATT {
+  export const PRIM_SVC_UUID: any = 0x2800;
+  export const INCLUDE_UUID: any = 0x2802;
+  export const CHARAC_UUID: any = 0x2803;
 
-const ATT_CID: any = 0x0004;
-
+  export const CLIENT_CHARAC_CFG_UUID: any = 0x2902;
+  export const SERVER_CHARAC_CFG_UUID: any = 0x2903;
+}
 /* eslint-enable no-unused-vars */
+
+/**
+ * @ignore
+ */
 class Gatt extends events.EventEmitter {
   public _address: any;
   public _aclStream: any;
@@ -101,7 +119,7 @@ class Gatt extends events.EventEmitter {
   }
 
   public onAclStreamData(cid: any, data?: any) {
-    if (cid !== ATT_CID) {
+    if (cid !== ATT.CID) {
       return;
     }
 
@@ -124,19 +142,19 @@ class Gatt extends events.EventEmitter {
           requestType.toString(16),
         );
         this.writeAtt(
-          this.errorResponse(requestType, 0x0000, ATT_ECODE_REQ_NOT_SUPP),
+          this.errorResponse(requestType, 0x0000, ATT.ECODE_REQ_NOT_SUPP),
         );
       }
     } else if (
-      data[0] === ATT_OP_HANDLE_NOTIFY ||
-      data[0] === ATT_OP_HANDLE_IND
+      data[0] === ATT.OP_HANDLE_NOTIFY ||
+      data[0] === ATT.OP_HANDLE_IND
     ) {
       const valueHandle: any = data.readUInt16LE(1);
       const valueData: any = data.slice(3);
 
       this.emit("handleNotify", this._address, valueHandle, valueData);
 
-      if (data[0] === ATT_OP_HANDLE_IND) {
+      if (data[0] === ATT.OP_HANDLE_IND) {
         this._queueCommand(
           this.handleConfirmation(),
           null,
@@ -166,10 +184,10 @@ class Gatt extends events.EventEmitter {
       debug(this._address + ": uh oh, no current command");
     } else {
       if (
-        data[0] === ATT_OP_ERROR &&
-        (data[4] === ATT_ECODE_AUTHENTICATION ||
-          data[4] === ATT_ECODE_AUTHORIZATION ||
-          data[4] === ATT_ECODE_INSUFF_ENC) &&
+        data[0] === ATT.OP_ERROR &&
+        (data[4] === ATT.ECODE_AUTHENTICATION ||
+          data[4] === ATT.ECODE_AUTHORIZATION ||
+          data[4] === ATT.ECODE_INSUFF_ENC) &&
         this._security !== "medium"
       ) {
         this._aclStream.encrypt();
@@ -222,13 +240,13 @@ class Gatt extends events.EventEmitter {
   public writeAtt(data: any) {
     debug(this._address + ": write: " + data.toString("hex"));
 
-    this._aclStream.write(ATT_CID, data);
+    this._aclStream.write(ATT.CID, data);
   }
 
   public errorResponse(opcode: any, handle: any, status: any) {
     const buf: any = Buffer.alloc(5);
 
-    buf.writeUInt8(ATT_OP_ERROR, 0);
+    buf.writeUInt8(ATT.OP_ERROR, 0);
     buf.writeUInt8(opcode, 1);
     buf.writeUInt16LE(handle, 2);
     buf.writeUInt8(status, 4);
@@ -263,7 +281,7 @@ class Gatt extends events.EventEmitter {
   public mtuRequest(mtu: any) {
     const buf: any = Buffer.alloc(3);
 
-    buf.writeUInt8(ATT_OP_MTU_REQ, 0);
+    buf.writeUInt8(ATT.OP_MTU_REQ, 0);
     buf.writeUInt16LE(mtu, 1);
 
     return buf;
@@ -272,7 +290,7 @@ class Gatt extends events.EventEmitter {
   public readByGroupRequest(startHandle: any, endHandle: any, groupUuid: any) {
     const buf: any = Buffer.alloc(7);
 
-    buf.writeUInt8(ATT_OP_READ_BY_GROUP_REQ, 0);
+    buf.writeUInt8(ATT.OP_READ_BY_GROUP_REQ, 0);
     buf.writeUInt16LE(startHandle, 1);
     buf.writeUInt16LE(endHandle, 3);
     buf.writeUInt16LE(groupUuid, 5);
@@ -283,7 +301,7 @@ class Gatt extends events.EventEmitter {
   public readByTypeRequest(startHandle: any, endHandle: any, groupUuid: any) {
     const buf: any = Buffer.alloc(7);
 
-    buf.writeUInt8(ATT_OP_READ_BY_TYPE_REQ, 0);
+    buf.writeUInt8(ATT.OP_READ_BY_TYPE_REQ, 0);
     buf.writeUInt16LE(startHandle, 1);
     buf.writeUInt16LE(endHandle, 3);
     buf.writeUInt16LE(groupUuid, 5);
@@ -294,7 +312,7 @@ class Gatt extends events.EventEmitter {
   public readRequest(handle: any) {
     const buf: any = Buffer.alloc(3);
 
-    buf.writeUInt8(ATT_OP_READ_REQ, 0);
+    buf.writeUInt8(ATT.OP_READ_REQ, 0);
     buf.writeUInt16LE(handle, 1);
 
     return buf;
@@ -303,7 +321,7 @@ class Gatt extends events.EventEmitter {
   public readBlobRequest(handle: any, offset: any) {
     const buf: any = Buffer.alloc(5);
 
-    buf.writeUInt8(ATT_OP_READ_BLOB_REQ, 0);
+    buf.writeUInt8(ATT.OP_READ_BLOB_REQ, 0);
     buf.writeUInt16LE(handle, 1);
     buf.writeUInt16LE(offset, 3);
 
@@ -313,7 +331,7 @@ class Gatt extends events.EventEmitter {
   public findInfoRequest(startHandle: any, endHandle: any) {
     const buf: any = Buffer.alloc(5);
 
-    buf.writeUInt8(ATT_OP_FIND_INFO_REQ, 0);
+    buf.writeUInt8(ATT.OP_FIND_INFO_REQ, 0);
     buf.writeUInt16LE(startHandle, 1);
     buf.writeUInt16LE(endHandle, 3);
 
@@ -323,7 +341,7 @@ class Gatt extends events.EventEmitter {
   public writeRequest(handle: any, data: any, withoutResponse: any) {
     const buf: any = Buffer.alloc(3 + data.length);
 
-    buf.writeUInt8(withoutResponse ? ATT_OP_WRITE_CMD : ATT_OP_WRITE_REQ, 0);
+    buf.writeUInt8(withoutResponse ? ATT.OP_WRITE_CMD : ATT.OP_WRITE_REQ, 0);
     buf.writeUInt16LE(handle, 1);
 
     for (let i = 0; i < data.length; i++) {
@@ -336,7 +354,7 @@ class Gatt extends events.EventEmitter {
   public prepareWriteRequest(handle: any, offset: any, data: any) {
     const buf: any = Buffer.alloc(5 + data.length);
 
-    buf.writeUInt8(ATT_OP_PREPARE_WRITE_REQ, 0);
+    buf.writeUInt8(ATT.OP_PREPARE_WRITE_REQ, 0);
     buf.writeUInt16LE(handle, 1);
     buf.writeUInt16LE(offset, 3);
 
@@ -350,7 +368,7 @@ class Gatt extends events.EventEmitter {
   public executeWriteRequest(handle: any, cancelPreparedWrites?: any) {
     const buf: any = Buffer.alloc(2);
 
-    buf.writeUInt8(ATT_OP_EXECUTE_WRITE_REQ, 0);
+    buf.writeUInt8(ATT.OP_EXECUTE_WRITE_REQ, 0);
     buf.writeUInt8(cancelPreparedWrites ? 0 : 1, 1);
 
     return buf;
@@ -359,7 +377,7 @@ class Gatt extends events.EventEmitter {
   public handleConfirmation() {
     const buf: any = Buffer.alloc(1);
 
-    buf.writeUInt8(ATT_OP_HANDLE_CNF, 0);
+    buf.writeUInt8(ATT.OP_HANDLE_CNF, 0);
 
     return buf;
   }
@@ -370,7 +388,7 @@ class Gatt extends events.EventEmitter {
       (data: any ) => {
         const opcode: any = data[0];
 
-        if (opcode === ATT_OP_MTU_RESP) {
+        if (opcode === ATT.OP_MTU_RESP) {
           const newMtu: any = data.readUInt16LE(1);
 
           debug(this._address + ": new MTU is " + newMtu);
@@ -390,7 +408,7 @@ class Gatt extends events.EventEmitter {
       const opcode: any = data[0];
       let i: any = 0;
 
-      if (opcode === ATT_OP_READ_BY_GROUP_RESP) {
+      if (opcode === ATT.OP_READ_BY_GROUP_RESP) {
         const type: any = data[1];
         const num: any = (data.length - 2) / type;
 
@@ -413,7 +431,7 @@ class Gatt extends events.EventEmitter {
       }
 
       if (
-        opcode !== ATT_OP_READ_BY_GROUP_RESP ||
+        opcode !== ATT.OP_READ_BY_GROUP_RESP ||
         services[services.length - 1].endHandle === 0xffff
       ) {
         const serviceUuids: any = [];
@@ -430,7 +448,7 @@ class Gatt extends events.EventEmitter {
           this.readByGroupRequest(
             services[services.length - 1].endHandle + 1,
             0xffff,
-            GATT_PRIM_SVC_UUID,
+            GATT.PRIM_SVC_UUID,
           ),
           callback,
         );
@@ -438,7 +456,7 @@ class Gatt extends events.EventEmitter {
     };
 
     this._queueCommand(
-      this.readByGroupRequest(0x0001, 0xffff, GATT_PRIM_SVC_UUID),
+      this.readByGroupRequest(0x0001, 0xffff, GATT.PRIM_SVC_UUID),
       callback,
     );
   }
@@ -451,7 +469,7 @@ class Gatt extends events.EventEmitter {
       const opcode: any = data[0];
       let i: any = 0;
 
-      if (opcode === ATT_OP_READ_BY_TYPE_RESP) {
+      if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
         const type: any = data[1];
         const num: any = (data.length - 2) / type;
 
@@ -474,7 +492,7 @@ class Gatt extends events.EventEmitter {
       }
 
       if (
-        opcode !== ATT_OP_READ_BY_TYPE_RESP ||
+        opcode !== ATT.OP_READ_BY_TYPE_RESP ||
         includedServices[includedServices.length - 1].endHandle ===
         service.endHandle
       ) {
@@ -500,7 +518,7 @@ class Gatt extends events.EventEmitter {
           this.readByTypeRequest(
             includedServices[includedServices.length - 1].endHandle + 1,
             service.endHandle,
-            GATT_INCLUDE_UUID,
+            GATT.INCLUDE_UUID,
           ),
           callback,
         );
@@ -511,7 +529,7 @@ class Gatt extends events.EventEmitter {
       this.readByTypeRequest(
         service.startHandle,
         service.endHandle,
-        GATT_INCLUDE_UUID,
+        GATT.INCLUDE_UUID,
       ),
       callback,
     );
@@ -529,7 +547,7 @@ class Gatt extends events.EventEmitter {
       const opcode: any = data[0];
       let i: any = 0;
 
-      if (opcode === ATT_OP_READ_BY_TYPE_RESP) {
+      if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
         const type: any = data[1];
         const num: any = (data.length - 2) / type;
 
@@ -553,7 +571,7 @@ class Gatt extends events.EventEmitter {
       }
 
       if (
-        opcode !== ATT_OP_READ_BY_TYPE_RESP ||
+        opcode !== ATT.OP_READ_BY_TYPE_RESP ||
         characteristics[characteristics.length - 1].valueHandle ===
         service.endHandle
       ) {
@@ -629,7 +647,7 @@ class Gatt extends events.EventEmitter {
           this.readByTypeRequest(
             characteristics[characteristics.length - 1].valueHandle + 1,
             service.endHandle,
-            GATT_CHARAC_UUID,
+            GATT.CHARAC_UUID,
           ),
           callback,
         );
@@ -640,7 +658,7 @@ class Gatt extends events.EventEmitter {
       this.readByTypeRequest(
         service.startHandle,
         service.endHandle,
-        GATT_CHARAC_UUID,
+        GATT.CHARAC_UUID,
       ),
       callback,
     );
@@ -669,7 +687,7 @@ class Gatt extends events.EventEmitter {
     const callback: any = (data: any ) => {
       const opcode: any = data[0];
 
-      if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_READ_BLOB_RESP) {
+      if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_READ_BLOB_RESP) {
         readData = Buffer.from(
           readData.toString("hex") + data.slice(1).toString("hex"),
           "hex",
@@ -690,7 +708,7 @@ class Gatt extends events.EventEmitter {
             true,
           );
         }
-      } else if (opcode === ATT_OP_ERROR) {
+      } else if (opcode === ATT.OP_ERROR) {
         this.emit(
           "read",
           this._address,
@@ -745,13 +763,13 @@ class Gatt extends events.EventEmitter {
         (_data: any) => {
           const opcode: any = _data[0];
 
-          if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
+          if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
             this.emit(
               "write",
               this._address,
               serviceUuid,
               characteristicUuid,
-              opcode === ATT_OP_WRITE_RESP,
+              opcode === ATT.OP_WRITE_RESP,
             );
           }
         },
@@ -768,10 +786,10 @@ class Gatt extends events.EventEmitter {
       return (resp: any) => {
         const opcode: any = resp[0];
 
-        if (opcode !== ATT_OP_PREPARE_WRITE_RESP) {
+        if (opcode !== ATT.OP_PREPARE_WRITE_RESP) {
           debug(
             this._address +
-            ": unexpected reply opcode %d (expecting ATT_OP_PREPARE_WRITE_RESP)",
+            ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)",
             opcode,
           );
         } else {
@@ -809,7 +827,7 @@ class Gatt extends events.EventEmitter {
       (resp: any) => {
         const opcode: any = resp[0];
 
-        if (opcode === ATT_OP_EXECUTE_WRITE_RESP && !withoutResponse) {
+        if (opcode === ATT.OP_EXECUTE_WRITE_RESP && !withoutResponse) {
           this.emit("write", this._address, serviceUuid, characteristicUuid);
         }
       },
@@ -823,11 +841,11 @@ class Gatt extends events.EventEmitter {
       this.readByTypeRequest(
         characteristic.startHandle,
         characteristic.endHandle,
-        GATT_SERVER_CHARAC_CFG_UUID,
+        GATT.SERVER_CHARAC_CFG_UUID,
       ),
       (data: any) => {
         const opcode: any = data[0];
-        if (opcode === ATT_OP_READ_BY_TYPE_RESP) {
+        if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
           // let type = data[1];
           const handle: any = data.readUInt16LE(2);
           let value: any = data.readUInt16LE(4);
@@ -846,7 +864,7 @@ class Gatt extends events.EventEmitter {
             (_data: any ) => {
               const _opcode: any = _data[0];
 
-              if (_opcode === ATT_OP_WRITE_RESP) {
+              if (_opcode === ATT.OP_WRITE_RESP) {
                 this.emit(
                   "broadcast",
                   this._address,
@@ -869,11 +887,11 @@ class Gatt extends events.EventEmitter {
       this.readByTypeRequest(
         characteristic.startHandle,
         characteristic.endHandle,
-        GATT_CLIENT_CHARAC_CFG_UUID,
+        GATT.CLIENT_CHARAC_CFG_UUID,
       ),
       (data: any ) => {
         const opcode: any = data[0];
-        if (opcode === ATT_OP_READ_BY_TYPE_RESP) {
+        if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
           // let type = data[1];
           const handle: any = data.readUInt16LE(2);
           let value: any = data.readUInt16LE(4);
@@ -903,9 +921,9 @@ class Gatt extends events.EventEmitter {
             (_data: any ) => {
               const _opcode: any = _data[0];
               debug(
-                "set notify write results: " + (_opcode === ATT_OP_WRITE_RESP),
+                "set notify write results: " + (_opcode === ATT.OP_WRITE_RESP),
               );
-              // if (opcode === ATT_OP_WRITE_RESP) {
+              // if (opcode === ATT.OP_WRITE_RESP) {
               this.emit(
                 "notify",
                 this._address,
@@ -931,7 +949,7 @@ class Gatt extends events.EventEmitter {
       const opcode: any = data[0];
       let i: any = 0;
 
-      if (opcode === ATT_OP_FIND_INFO_RESP) {
+      if (opcode === ATT.OP_FIND_INFO_RESP) {
         const num: any = data[1];
 
         for (i = 0; i < num; i++) {
@@ -943,7 +961,7 @@ class Gatt extends events.EventEmitter {
       }
 
       if (
-        opcode !== ATT_OP_FIND_INFO_RESP ||
+        opcode !== ATT.OP_FIND_INFO_RESP ||
         descriptors[descriptors.length - 1].handle === characteristic.endHandle
       ) {
         const descriptorUuids: any = [];
@@ -1009,7 +1027,7 @@ class Gatt extends events.EventEmitter {
       (data: any ) => {
         const opcode: any = data[0];
 
-        if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_ERROR) {
+        if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_ERROR) {
           this.emit(
             "valueRead",
             this._address,
@@ -1017,7 +1035,7 @@ class Gatt extends events.EventEmitter {
             characteristicUuid,
             descriptorUuid,
             data.slice(1),
-            opcode === ATT_OP_READ_RESP,
+            opcode === ATT.OP_READ_RESP,
           );
         }
       },
@@ -1050,14 +1068,14 @@ class Gatt extends events.EventEmitter {
       (_data: any ) => {
         const opcode: any = _data[0];
 
-        if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
+        if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
           this.emit(
             "valueWrite",
             this._address,
             serviceUuid,
             characteristicUuid,
             descriptorUuid,
-            opcode === ATT_OP_WRITE_RESP,
+            opcode === ATT.OP_WRITE_RESP,
           );
         }
       },
@@ -1070,7 +1088,7 @@ class Gatt extends events.EventEmitter {
       (data: any ) => {
         const opcode: any = data[0];
 
-        if (opcode === ATT_OP_READ_RESP) {
+        if (opcode === ATT.OP_READ_RESP) {
           this.emit("handleRead", this._address, handle, data.slice(1));
         }
       },
@@ -1092,7 +1110,7 @@ class Gatt extends events.EventEmitter {
         (_data: any ) => {
           const opcode: any = _data[0];
 
-          if (opcode === ATT_OP_WRITE_RESP) {
+          if (opcode === ATT.OP_WRITE_RESP) {
             this.emit("handleWrite", this._address, handle);
           }
         },

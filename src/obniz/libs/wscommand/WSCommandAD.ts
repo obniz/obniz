@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import WSCommand from "./WSCommand";
 
 class WSCommandAD extends WSCommand {

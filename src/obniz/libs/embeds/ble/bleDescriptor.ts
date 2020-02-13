@@ -1,7 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleAttributeAbstract from "./bleAttributeAbstract";
 import BleHelper from "./bleHelper";
-
-class BleDescriptor extends BleAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleDescriptor extends BleAttributeAbstract {
   public permissions: any;
   public characteristic: any;
   public uuid: any;
@@ -73,5 +79,3 @@ class BleDescriptor extends BleAttributeAbstract {
     });
   }
 }
-
-export default BleDescriptor;

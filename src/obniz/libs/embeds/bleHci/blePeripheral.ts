@@ -1,7 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleHelper from "./bleHelper";
 import BleService from "./bleService";
-
-class BlePeripheral {
+/**
+ * @category Use as Peripheral
+ */
+export default class BlePeripheral {
   public obnizBle: any;
   public _services: any;
   public currentConnectedDeviceAddress: any;
@@ -93,5 +99,3 @@ class BlePeripheral {
   public onerror(error: any) {
   }
 }
-
-export default BlePeripheral;

@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import WSCommand from "./WSCommand";
 import WSCommandAD from "./WSCommandAD";
 import WSCommandBle from "./WSCommandBle";

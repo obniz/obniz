@@ -1,10 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module Parts.D6T44L
+ */
+
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 import {I2cPartsAbstructOptions} from "../../../i2cParts";
 
-export interface D6T44LOptions extends I2cPartsAbstructOptions { }
+export interface  D6T44LOptions extends I2cPartsAbstructOptions { }
 
 class D6T44L implements ObnizPartsInterface {
 

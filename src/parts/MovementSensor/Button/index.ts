@@ -1,8 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Button
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface ButtonOptions {
+export interface  ButtonOptions {
   signal: number;
   gnd?: number;
 }

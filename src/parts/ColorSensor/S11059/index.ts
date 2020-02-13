@@ -1,8 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module Parts.S11059
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface S11059Options {
+export interface  S11059Options {
   vcc?: number;
   sda?: number;
   scl?: number;

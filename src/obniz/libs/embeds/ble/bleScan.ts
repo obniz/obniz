@@ -1,7 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import emitter = require("eventemitter3");
 import BleHelper from "./bleHelper";
-
-class BleScan {
+/**
+ * @category Use as Central
+ */
+export default class BleScan {
   public scanTarget: any;
   public Obniz: any;
   public emitter: any;
@@ -127,5 +133,3 @@ class BleScan {
     }
   }
 }
-
-export default BleScan;

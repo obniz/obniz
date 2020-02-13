@@ -1,7 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module Parts.IRSensor
+ */
+
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface IRSensorOptions {
+export interface  IRSensorOptions {
   output: number;
   vcc?: number;
   gnd?: number;

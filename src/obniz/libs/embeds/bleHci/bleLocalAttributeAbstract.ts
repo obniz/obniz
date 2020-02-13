@@ -1,7 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleAttributeAbstract from "./bleAttributeAbstract";
 import BleHelper from "./bleHelper";
-
-class BleLocalAttributeAbstract extends BleAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleLocalAttributeAbstract extends BleAttributeAbstract {
   public RESULT_SUCCESS: any;
   public RESULT_INVALID_OFFSET: any;
   public RESULT_ATTR_NOT_LONG: any;
@@ -91,5 +97,3 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
     this.notifyFromServer("onread", {data: this.data});
   }
 }
-
-export default BleLocalAttributeAbstract;

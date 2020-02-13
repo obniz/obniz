@@ -1,11 +1,22 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
+import {ObnizOptions} from "./ObnizOptions";
 import ObnizSystemMethods from "./ObnizSystemMethods";
 
 export default class ObnizUIs extends ObnizSystemMethods {
-  constructor(id: any, options?: any) {
+  constructor(id: any, options?: ObnizOptions) {
     super(id, options);
   }
 
-  public isValidObnizId(str: string ) {
+  public close() {
+    super.close();
+    this.updateOnlineUI();
+  }
+
+  protected isValidObnizId(str: string) {
     if (typeof str !== "string" || str.length < 8) {
       return null;
     }
@@ -17,7 +28,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     return id !== null;
   }
 
-  public wsconnect(desired_server: any) {
+  protected wsconnect(desired_server: any) {
     this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
       if (this.isNode) {
@@ -26,7 +37,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
         const filled: any = _ReadCookie("obniz-last-used") || "";
         this.prompt(
           filled,
-          (obnizid: any ) => {
+          (obnizid: any) => {
             this.id = obnizid;
             this.wsconnect(desired_server);
           },
@@ -37,7 +48,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     super.wsconnect(desired_server);
   }
 
-  public showAlertUI(obj: any) {
+  protected showAlertUI(obj: any) {
     if (this.isNode || !document.getElementById(this.options.debug_dom_id)) {
       return;
     }
@@ -50,7 +61,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
       .insertAdjacentHTML("beforeend", dom);
   }
 
-  public getDebugDoms() {
+  protected getDebugDoms() {
     if (this.isNode) {
       return;
     }
@@ -72,22 +83,17 @@ export default class ObnizUIs extends ObnizSystemMethods {
 
   /* online offline */
 
-  public _callOnConnect() {
+  protected _callOnConnect() {
     this.updateOnlineUI();
     super._callOnConnect();
   }
 
-  public close() {
-    super.close();
-    this.updateOnlineUI();
-  }
-
-  public _disconnectLocal() {
+  protected _disconnectLocal() {
     super._disconnectLocal();
     this.updateOnlineUI();
   }
 
-  public updateOnlineUI() {
+  protected updateOnlineUI() {
     if (this.isNode) {
       return;
     }
@@ -104,7 +110,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     }
   }
 
-  public showOnLine(isConnectedLocally: any) {
+  protected showOnLine(isConnectedLocally: any) {
     if (this.isNode) {
       return;
     }
@@ -123,7 +129,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     }
   }
 
-  public showOffLine() {
+  protected showOffLine() {
     if (this.isNode) {
       return;
     }
@@ -140,6 +146,10 @@ export default class ObnizUIs extends ObnizSystemMethods {
   }
 }
 
+/**
+ *
+ * @ignore
+ */
 function _ReadCookie(name: any) {
   const nameEQ: any = name + "=";
   const ca: any = document.cookie.split(";");

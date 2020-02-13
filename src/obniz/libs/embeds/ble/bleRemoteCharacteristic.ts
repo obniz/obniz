@@ -1,8 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleHelper from "./bleHelper";
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
-
-class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
+/**
+ * @category Use as Central
+ */
+export default class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   public properties: any;
   public children: any;
   public addChild: any;
@@ -227,5 +233,3 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     }
   }
 }
-
-export default BleRemoteCharacteristic;
