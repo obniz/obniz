@@ -1,8 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import emitter = require("eventemitter3");
 import BleHelper from "./bleHelper";
 import BleRemoteService from "./bleRemoteService";
-
-class BleRemotePeripheral {
+/**
+ * @category Use as Central
+ */
+export default class BleRemotePeripheral {
   public Obniz: any;
   public address: any;
   public connected: any;
@@ -382,5 +388,3 @@ class BleRemotePeripheral {
   public onerror() {
   }
 }
-
-export default BleRemotePeripheral;

@@ -1,5 +1,9 @@
-import WSCommand from "./WSCommand";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+import WSCommand from "./WSCommand";
 class WSCommandTcp extends WSCommand {
   public module: any;
   public _MaxPort: any;

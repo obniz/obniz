@@ -1,17 +1,16 @@
-/* ver 1.0
- * 2019/10/14
- * Created by Zjalic
+/**
+ * @packageDocumentation
+ * @module Parts.MFRC522
  */
 
-/*jshint esversion: 8 */
+import Obniz from "../../../obniz";
 
 const OK: any = true;
 const ERROR: any = false;
 
-import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface MFRC522Options {
+export interface  MFRC522Options {
   gnd?: number;
   vcc?: number;
   cs: number;

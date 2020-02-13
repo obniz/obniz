@@ -1,4 +1,9 @@
-import Obniz = require("./index");
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
+import Obniz from "./index";
 
 export interface ObnizPartsInfo {
   name: string;

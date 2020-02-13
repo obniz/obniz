@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.PCA9685
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
@@ -29,7 +34,7 @@ class PCA9685_PWM  implements PWMInterface {
   }
 }
 
-export interface PCA9685Options {
+export interface  PCA9685Options {
   gnd?: number;
   vcc?: number;
   oe?: number;
@@ -41,7 +46,8 @@ export interface PCA9685Options {
   drive?: string;
 }
 
-// tslint:disable-next-line:max-classes-per-file
+// tslint:disable:max-classes-per-file
+
 export default class PCA9685 implements ObnizPartsInterface {
 
   public static info(): ObnizPartsInfo {

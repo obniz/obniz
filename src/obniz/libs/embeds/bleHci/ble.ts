@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+
 import BleHelper from "./bleHelper";
 import ObnizBLEHci from "./hci";
 import CentralBindings from "./protocol/central/bindings";
@@ -15,7 +20,7 @@ import BleSecurity from "./bleSecurity";
 import BleService from "./bleService";
 import {BleDeviceAddressType, UUID} from "./bleTypes";
 
-class ObnizBLE {
+export default class ObnizBLE {
 
   public static _dataArray2uuidHex(data: number[], reverse: boolean): UUID {
     let uuid: any = [];
@@ -484,5 +489,3 @@ class ObnizBLE {
     );
   }
 }
-
-export default ObnizBLE;

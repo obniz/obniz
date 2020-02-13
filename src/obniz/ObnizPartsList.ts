@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
 import USB, {USBOptions} from "../parts/Accessory/USB";
 import HX711, {Hx711Options} from "../parts/ADConverter/hx711";
 import ArduCAMMini, {ArduCAMMiniOptions} from "../parts/Camera/ArduCAMMini";

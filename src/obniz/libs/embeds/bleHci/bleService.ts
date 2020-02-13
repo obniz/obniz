@@ -1,7 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleCharacteristic from "./bleCharacteristic";
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-
-class BleService extends BleLocalAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleService extends BleLocalAttributeAbstract {
   public addCharacteristic: any;
   public addChild: any;
   public getCharacteristic: any;
@@ -51,5 +57,3 @@ class BleService extends BleLocalAttributeAbstract {
     // nothing
   }
 }
-
-export default BleService;

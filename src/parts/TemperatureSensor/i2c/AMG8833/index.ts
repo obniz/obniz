@@ -1,10 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module Parts.AMG8833
+ */
+
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 import {I2cPartsAbstructOptions} from "../../../i2cParts";
 
-export interface AMG8833Options extends I2cPartsAbstructOptions {
+export interface  AMG8833Options extends I2cPartsAbstructOptions {
   address?: number;
  }
 

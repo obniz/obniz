@@ -1,8 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module Parts.WS2812B
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface WS2812BOptions {
+export interface  WS2812BOptions {
   din: number;
   vcc?: number;
   gnd?: number;

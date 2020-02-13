@@ -1,7 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleDescriptor from "./bleDescriptor";
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-
-class BleCharacteristic extends BleLocalAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleCharacteristic extends BleLocalAttributeAbstract {
   public _maxValueSize: any;
   public _updateValueCallback: any;
   public addDescriptor: any;
@@ -141,5 +147,3 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
     }
   }
 }
-
-export default BleCharacteristic;

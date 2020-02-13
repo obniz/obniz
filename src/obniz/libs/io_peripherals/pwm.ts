@@ -1,25 +1,50 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 import {DriveType, PullType} from "./common";
 
 interface PeripheralPWMOptions {
+  /**
+   * device io number
+   */
   io: number;
+
   drive?: DriveType;
   pull?: PullType;
 }
 
-export interface PWMInterface  {
+export interface PWMInterface {
   freq: (frequency: number) => void;
   pulse: (value: number) => void;
   duty: (value: number) => void;
 }
 
+/**
+ * Modulate type.
+ *
+ * Currently only "am" are supported
+ */
+export type PWMModulateType = "am";
+
+/**
+ * We will now generate PWM.
+ * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
+ * @category Peripherals
+ */
 export default class PeripheralPWM implements PWMInterface {
-  public Obniz: Obniz;
-  public id: number;
-  public state: any;
+
+  /**
+   * @ignore
+   */
   public used: any;
-  public params: any;
+  private Obniz: Obniz;
+  private id: number;
+  private state: any;
+  private params: any;
 
   constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
@@ -27,17 +52,25 @@ export default class PeripheralPWM implements PWMInterface {
     this._reset();
   }
 
-  public _reset() {
-    this.state = {};
-    this.used = false;
-  }
-
-  public sendWS(obj: any) {
-    const wsObj: any = {};
-    wsObj["pwm" + this.id] = obj;
-    this.Obniz.send(wsObj);
-  }
-
+  /**
+   * This starts a pwm on a given io.
+   * freq=1khz, duty=0% at start.
+   *
+   * io drive and pull can be configured. See more details on [[PeripheralIO|io]]
+   *
+   * ```javascript
+   * // Javascript Example
+   * var pwm = obniz.getFreePwm();
+   * pwm.start({io:0}); // start pwm. output at io0
+   * pwm.freq(1000);
+   * pwm.duty(50);
+   *
+   * var pwm2 = obniz.getFreePwm();
+   * pwm2.start({io:1, drive:"open-drain", pull:"5v"});
+   * ```
+   *
+   * @param params
+   */
   public start(params: PeripheralPWMOptions) {
     const err: any = ObnizUtil._requiredKeys(params, ["io"]);
     if (err) {
@@ -61,6 +94,21 @@ export default class PeripheralPWM implements PWMInterface {
     this.used = true;
   }
 
+  /**
+   * Set frequency, not pulse duration.
+   *
+   *
+   * For example, this value will be 1khz with DC motor.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var pwm = obniz.getFreePwm();
+   * pwm.start({io:0});
+   * pwm.freq(1000); // set pwm. frequency to 1khz
+   * ```
+   *
+   * @param freq frequency (Hz)
+   */
   public freq(freq: number) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
@@ -78,6 +126,19 @@ export default class PeripheralPWM implements PWMInterface {
     }
   }
 
+  /**
+   * Set pulse duty
+   *
+   * ```javascript
+   * // Javascript Example
+   * var pwm = obniz.getFreePwm();
+   * pwm.start({io:0});
+   * pwm.freq(2000); // set pwm frequency to 2khz
+   * pwm.pulse(0.5) // set pwm pulse 0.5ms.  so this is  25% ratio.
+   * ```
+   *
+   * @param pulse_width pulse time (ms).
+   */
   public pulse(pulse_width: number) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
@@ -90,6 +151,19 @@ export default class PeripheralPWM implements PWMInterface {
     });
   }
 
+  /**
+   * Set pulse duty in terms of ratio.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var pwm = obniz.getFreePwm();
+   * pwm.start({io:0});
+   * pwm.freq(2000); // set pwm frequency to 2khz
+   * pwm.duty(50) // set pwm pulse width 50%
+   * ```
+   *
+   * @param duty
+   */
   public duty(duty: number) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
@@ -114,17 +188,52 @@ export default class PeripheralPWM implements PWMInterface {
     });
   }
 
+  /**
+   * @ignore
+   */
   public isUsed() {
     return this.used;
   }
 
+  /**
+   * It stops pwm and releases io.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var pwm = obniz.getFreePwm();
+   * pwm.start({io:0});
+   * pwm.end();
+   * ```
+   */
   public end() {
     this.state = {};
     this.sendWS(null);
     this.used = false;
   }
 
-  public modulate(type: any, symbol_length: any, data: any) {
+  /**
+   * This modulates pwm with data.
+   *
+   * Modulation can be chosen from below.
+   *
+   * 1. "am"
+   *
+   * ### am modulation
+   * data "1" means put out the pwm with duty ratio of 50%. "0" means stop pwm. io will be 0.
+   * Interval defines the symbol baud rate.
+   * Duty is fixed at 50%.
+   *
+   *
+   * ![](media://pwm_modu.png)
+   *
+   * This is useful to generate IR signal (Remote control).
+   * Frequency of 38kHz gets modulated with signals.
+   *
+   * @param type
+   * @param symbol_length
+   * @param data
+   */
+  public modulate(type: PWMModulateType, symbol_length: number, data: Array<0 | 1>) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
     }
@@ -135,5 +244,16 @@ export default class PeripheralPWM implements PWMInterface {
         data,
       },
     });
+  }
+
+  private _reset() {
+    this.state = {};
+    this.used = false;
+  }
+
+  private sendWS(obj: any) {
+    const wsObj: any = {};
+    wsObj["pwm" + this.id] = obj;
+    this.Obniz.send(wsObj);
   }
 }
