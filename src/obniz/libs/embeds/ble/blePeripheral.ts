@@ -1,7 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleHelper from "./bleHelper";
 import BleService from "./bleService";
 
-class BlePeripheral {
+/**
+ * @category Use as Peripheral
+ */
+export default  class BlePeripheral {
   public Obniz: any;
   public _services: any;
 
@@ -90,5 +97,3 @@ class BlePeripheral {
   public onerror() {
   }
 }
-
-export default BlePeripheral;

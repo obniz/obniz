@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
+
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
 import BleDescriptor from "./bleDescriptor";
@@ -7,7 +12,7 @@ import BleScan from "./bleScan";
 import BleSecurity from "./bleSecurity";
 import BleService from "./bleService";
 
-class ObnizBLE {
+export default class ObnizBLE {
 
   public static _dataArray2uuidHex(data: any, reverse: any) {
     let uuid: any = [];
@@ -292,5 +297,3 @@ class ObnizBLE {
     }
   }
 }
-
-export default ObnizBLE;

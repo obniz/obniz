@@ -1,6 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
+
 import BleHelper from "./bleHelper";
 
-class BleAdvertisementBuilder {
+/**
+ * @category Use as Central
+ */
+export default class BleAdvertisementBuilder {
   public Obniz: any;
   public rows: any;
 
@@ -185,5 +193,3 @@ class BleAdvertisementBuilder {
     this.setFlags(0x10);
   }
 }
-
-export default BleAdvertisementBuilder;

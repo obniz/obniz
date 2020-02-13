@@ -1,9 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Potentiometer
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface PotentiometerOptions {
+export interface  PotentiometerOptions {
   pin0: number;
   pin1: number;
   pin2: number;

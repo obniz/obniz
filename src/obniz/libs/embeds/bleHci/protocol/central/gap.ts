@@ -1,10 +1,20 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('gap');
-const debug: any = () => {
-};
+/**
+ * @ignore
+ */
+const debug: any = () => {};
 
 import events from "events";
 import Hci from "../hci";
 
+/**
+ * @ignore
+ */
 class Gap extends events.EventEmitter {
   public _hci: any;
   public _scanState: any;

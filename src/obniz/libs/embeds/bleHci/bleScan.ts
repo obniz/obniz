@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import emitter = require("eventemitter3");
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
@@ -14,8 +18,10 @@ export interface BleScanSetting {
   duration?: number;
   duplicate?: boolean;
 }
-
-class BleScan {
+/**
+ * @category Use as Central
+ */
+export default class BleScan {
   public scanTarget: BleScanTarget;
   public scanSettings: BleScanSetting;
   public obnizBle: ObnizBLE;
@@ -160,5 +166,3 @@ class BleScan {
     }
   }
 }
-
-export default BleScan;

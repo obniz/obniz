@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 class JsonBinaryConverter {
   public static convertFromBinaryToJson(schema: any, binary: any) {
     const types: any = {

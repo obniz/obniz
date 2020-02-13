@@ -1,9 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MQGas
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface MQGasSensorOptions {
+export interface  MQGasSensorOptions {
   gnd?: number;
   vcc?: number;
   do?: number;

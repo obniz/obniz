@@ -1,6 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import Builder from "./bleAdvertisementBuilder";
 
-class BleAdvertisement {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleAdvertisement {
   public obnizBle: any;
   public adv_data: any;
   public scan_resp: any;
@@ -49,5 +56,3 @@ class BleAdvertisement {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
 }
-
-export default BleAdvertisement;

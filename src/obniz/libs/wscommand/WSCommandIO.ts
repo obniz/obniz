@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import WSCommand from "./WSCommand";
 
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH: any = 1;

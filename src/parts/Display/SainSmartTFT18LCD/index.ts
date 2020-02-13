@@ -1,10 +1,15 @@
-// SainSmart ST7735 1.8" TFT LCD 128x160 pixel
+
+/**
+ * @packageDocumentation
+ * @module Parts.SainSmartTFT18LCD
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SainSmartTFT18LCDOptions {
+export interface  SainSmartTFT18LCDOptions {
   scl: number;
   sda: number;
   dc: number;
@@ -16,7 +21,8 @@ export interface SainSmartTFT18LCDOptions {
 
 export type RGB16 = number;
 export type RGB24 = number;
-export interface PresetColor {
+
+export interface  PresetColor {
   AliceBlue: RGB16;
   AntiqueWhite: RGB16;
   Aqua: RGB16;

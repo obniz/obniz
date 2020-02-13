@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 class ObnizUtil {
 
   public static _keyFilter(params: any, keys: any) {
@@ -32,7 +36,7 @@ class ObnizUtil {
     return null;
   }
 
-  public static dataArray2string(data: any) {
+  public static dataArray2string(data: number[]): string | null {
     let string: any = null;
     try {
       const StringDecoder: any = require("string_decoder").StringDecoder;

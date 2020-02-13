@@ -47,7 +47,7 @@ const schemaSrcPath = path.join(
   '../../dist/src/json_schema/**/*.yml'
 );
 const tsConfigPath = path.join(__dirname, '../../tsconfig.json');
-const docPath = path.join(__dirname, '../../doc');
+const docPath = path.join(__dirname, '../../docs');
 const tv4Path = require.resolve('tv4', {
   path: path.resolve(__dirname, '../../src/'),
 });
