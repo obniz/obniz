@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.hw
+ */
+
 import Obniz from "../../index";
 import ObnizBLE from "../embeds/ble/ble";
 import ObnizBLEHci from "../embeds/bleHci/ble";
@@ -12,6 +17,9 @@ import PeripheralUART from "../io_peripherals/uart";
 import LogicAnalyzer from "../measurements/logicanalyzer";
 import ObnizMeasure from "../measurements/measure";
 
+/**
+ * obniz Board interface
+ */
 interface obnizBoard extends Obniz {
   io0: PeripheralIO;
   io1: PeripheralIO;

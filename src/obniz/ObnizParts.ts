@@ -5,6 +5,7 @@
 
 import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
+import {ObnizOptions} from "./ObnizOptions";
 import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
 
 /**
@@ -37,7 +38,7 @@ export default class ObnizParts extends ObnizConnection {
     return new _parts[name]();
   }
 
-  constructor(id: any, options?: any) {
+  constructor(id: any, options?: ObnizOptions) {
     super(id, options);
   }
 

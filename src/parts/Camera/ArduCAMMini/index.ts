@@ -763,7 +763,7 @@ export default class ArduCAMMini implements ObnizPartsInterface {
     this.i2c.write(this.sensor_addr, [addr, byteData]);
   }
 
-  public i2c_regs_write(regs: number[]) {
+  public i2c_regs_write(regs: number[][]) {
     for (let i = 0; i < regs.length; i++) {
       this.i2c.write(this.sensor_addr, regs[i]);
     }

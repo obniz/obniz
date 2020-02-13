@@ -74,6 +74,9 @@
 		<div class="col-8 col-content">
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Create a TCP connection from a device throught the network the device is currently connected to.</p>
+					</div>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -97,27 +100,16 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#obniz" class="tsd-kind-icon">Obniz</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#connectobservers" class="tsd-kind-icon">connect<wbr>Observers</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#onconnection" class="tsd-kind-icon">onconnection</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#onerror" class="tsd-kind-icon">onerror</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#onreceive" class="tsd-kind-icon">onreceive</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#readobservers" class="tsd-kind-icon">read<wbr>Observers</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#used" class="tsd-kind-icon">used</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#_addconnectobserver" class="tsd-kind-icon">_add<wbr>Connect<wbr>Observer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#_addreadobserver" class="tsd-kind-icon">_add<wbr>Read<wbr>Observer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#_reset" class="tsd-kind-icon">_reset</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#close" class="tsd-kind-icon">close</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#connectwait" class="tsd-kind-icon">connect<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#end" class="tsd-kind-icon">end</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#isused" class="tsd-kind-icon">is<wbr>Used</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#notified" class="tsd-kind-icon">notified</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.tcp.html#write" class="tsd-kind-icon">write</a></li>
 							</ul>
@@ -137,7 +129,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L22">src/obniz/libs/protocol/tcp.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/protocol/tcp.ts#L78">src/obniz/libs/protocol/tcp.ts:78</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -157,181 +149,95 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="obniz" class="tsd-anchor"></a>
-					<h3>Obniz</h3>
-					<div class="tsd-signature tsd-kind-icon">Obniz<span class="tsd-signature-symbol">:</span> <a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L15">src/obniz/libs/protocol/tcp.ts:15</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="connectobservers" class="tsd-anchor"></a>
-					<h3>connect<wbr>Observers</h3>
-					<div class="tsd-signature tsd-kind-icon">connect<wbr>Observers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L17">src/obniz/libs/protocol/tcp.ts:17</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L16">src/obniz/libs/protocol/tcp.ts:16</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onconnection" class="tsd-anchor"></a>
-					<h3>onconnection</h3>
-					<div class="tsd-signature tsd-kind-icon">onconnection<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onconnection</h3>
+					<div class="tsd-signature tsd-kind-icon">onconnection<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.html#tcpconnectioncallbackfunction" class="tsd-signature-type">TCPConnectionCallbackFunction</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L20">src/obniz/libs/protocol/tcp.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/protocol/tcp.ts#L42">src/obniz/libs/protocol/tcp.ts:42</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Callback function is called when there is a change in TCP connection status.</p>
+						</div>
+						<pre><code><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> tcp = obniz.getFreeTcp();
+
+tcp.onconnection = <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> {
+ <span class="hljs-built_in">console</span>.log(data);
+};
+tcp.connectWait(<span class="hljs-number">80</span>,<span class="hljs-string">"obniz.io"</span>);</code></pre>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onerror" class="tsd-anchor"></a>
-					<h3>onerror</h3>
-					<div class="tsd-signature tsd-kind-icon">onerror<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onerror</h3>
+					<div class="tsd-signature tsd-kind-icon">onerror<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.html#tcperrorcallbackfunction" class="tsd-signature-type">TCPErrorCallbackFunction</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L22">src/obniz/libs/protocol/tcp.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/protocol/tcp.ts#L73">src/obniz/libs/protocol/tcp.ts:73</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>You can get the error message that occurred when connecting.</p>
+						</div>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> tcp = obniz.getFreeTcp();
+tcp.connectWait(<span class="hljs-number">80</span>,<span class="hljs-string">"obniz.io"</span>);
+
+tcp.onerror = <span class="hljs-function"><span class="hljs-params">state</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(state);
+};</code></pre>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onreceive" class="tsd-anchor"></a>
-					<h3>onreceive</h3>
-					<div class="tsd-signature tsd-kind-icon">onreceive<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onreceive</h3>
+					<div class="tsd-signature tsd-kind-icon">onreceive<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.html#tcpreceivecallbackfunction" class="tsd-signature-type">TCPReceiveCallbackFunction</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L21">src/obniz/libs/protocol/tcp.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/protocol/tcp.ts#L58">src/obniz/libs/protocol/tcp.ts:58</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="readobservers" class="tsd-anchor"></a>
-					<h3>read<wbr>Observers</h3>
-					<div class="tsd-signature tsd-kind-icon">read<wbr>Observers<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.html#tcpcallbackfunction" class="tsd-signature-type">TCPCallbackFunction</a><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L18">src/obniz/libs/protocol/tcp.ts:18</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="used" class="tsd-anchor"></a>
-					<h3>used</h3>
-					<div class="tsd-signature tsd-kind-icon">used<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L19">src/obniz/libs/protocol/tcp.ts:19</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Callback function is called when TCP is received.</p>
+						</div>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> tcp = obniz.getFreeTcp();
+tcp.connectWait(<span class="hljs-number">80</span>,<span class="hljs-string">"obniz.io"</span>);
+
+tcp.onreceive = <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(data);
+};</code></pre>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_addconnectobserver" class="tsd-anchor"></a>
-					<h3>_add<wbr>Connect<wbr>Observer</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_add<wbr>Connect<wbr>Observer<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L36">src/obniz/libs/protocol/tcp.ts:36</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>callback: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_addreadobserver" class="tsd-anchor"></a>
-					<h3>_add<wbr>Read<wbr>Observer</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_add<wbr>Read<wbr>Observer<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.html#tcpcallbackfunction" class="tsd-signature-type">TCPCallbackFunction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L42">src/obniz/libs/protocol/tcp.ts:42</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>callback: <a href="../modules/obnizcore.components.html#tcpcallbackfunction" class="tsd-signature-type">TCPCallbackFunction</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_reset" class="tsd-anchor"></a>
-					<h3>_reset</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L30">src/obniz/libs/protocol/tcp.ts:30</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="close" class="tsd-anchor"></a>
-					<h3>close</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">close<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L80">src/obniz/libs/protocol/tcp.ts:80</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="connectwait" class="tsd-anchor"></a>
 					<h3>connect<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">connect<wbr>Wait<span class="tsd-signature-symbol">(</span>port<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, domain<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">connect<wbr>Wait<span class="tsd-signature-symbol">(</span>port<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, domain<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L48">src/obniz/libs/protocol/tcp.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/protocol/tcp.ts#L98">src/obniz/libs/protocol/tcp.ts:98</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Starts a connection on the port and domain for which TCP is specified.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> tcp = obniz.getFreeTcp();
+tcp.connectWait(<span class="hljs-number">80</span>,<span class="hljs-string">"obniz.io"</span>);</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -339,9 +245,11 @@
 								</li>
 								<li>
 									<h5>domain: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -355,49 +263,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L129">src/obniz/libs/protocol/tcp.ts:129</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/protocol/tcp.ts#L218">src/obniz/libs/protocol/tcp.ts:218</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="isused" class="tsd-anchor"></a>
-					<h3>is<wbr>Used</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Used<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L165">src/obniz/libs/protocol/tcp.ts:165</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="notified" class="tsd-anchor"></a>
-					<h3>notified</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">notified<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L133">src/obniz/libs/protocol/tcp.ts:133</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>obj: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Terminates the TCP session.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> tcp = obniz.getFreeTcp();
+tcp.end();</code></pre>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -412,9 +288,20 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L120">src/obniz/libs/protocol/tcp.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/protocol/tcp.ts#L200">src/obniz/libs/protocol/tcp.ts:200</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wait for TCP reception.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> tcp = obniz.getFreeTcp();
+tcp.connectWait(<span class="hljs-number">80</span>,<span class="hljs-string">"obniz.io"</span>);
+
+<span class="hljs-keyword">let</span> data = <span class="hljs-keyword">await</span> tcp.readWait();
+<span class="hljs-built_in">console</span>.log(data);</code></pre>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -429,13 +316,30 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/protocol/tcp.ts#L91">src/obniz/libs/protocol/tcp.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/protocol/tcp.ts#L159">src/obniz/libs/protocol/tcp.ts:159</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The argument data is sent by TCP.</p>
+								</div>
+								<p>If you pass a string or Array type argument, the data will be sent.</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> tcp = obniz.getFreeTcp();
+tcp.connectWait(<span class="hljs-number">80</span>,<span class="hljs-string">"obniz.io"</span>);
+
+<span class="hljs-comment">// Array</span>
+tcp.write([<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]);
+
+<span class="hljs-comment">// Text</span>
+tcp.write(<span class="hljs-string">'hello'</span>);</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -496,15 +400,6 @@
 								<a href="obnizcore.components.tcp.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#obniz" class="tsd-kind-icon">Obniz</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#connectobservers" class="tsd-kind-icon">connect<wbr>Observers</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.tcp.html#onconnection" class="tsd-kind-icon">onconnection</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -513,35 +408,11 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.tcp.html#onreceive" class="tsd-kind-icon">onreceive</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#readobservers" class="tsd-kind-icon">read<wbr>Observers</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#used" class="tsd-kind-icon">used</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#_addconnectobserver" class="tsd-kind-icon">_add<wbr>Connect<wbr>Observer</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#_addreadobserver" class="tsd-kind-icon">_add<wbr>Read<wbr>Observer</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#_reset" class="tsd-kind-icon">_reset</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#close" class="tsd-kind-icon">close</a>
-							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.tcp.html#connectwait" class="tsd-kind-icon">connect<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.tcp.html#end" class="tsd-kind-icon">end</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#isused" class="tsd-kind-icon">is<wbr>Used</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.tcp.html#notified" class="tsd-kind-icon">notified</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.tcp.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a>
@@ -620,7 +491,13 @@
 						<a href="../modules/obnizcore.components.html#stopbittype" class="tsd-kind-icon">Stop<wbr>Bit<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#tcpcallbackfunction" class="tsd-kind-icon">TCPCallback<wbr>Function</a>
+						<a href="../modules/obnizcore.components.html#tcpconnectioncallbackfunction" class="tsd-kind-icon">TCPConnection<wbr>Callback<wbr>Function</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/obnizcore.components.html#tcperrorcallbackfunction" class="tsd-kind-icon">TCPError<wbr>Callback<wbr>Function</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/obnizcore.components.html#tcpreceivecallbackfunction" class="tsd-kind-icon">TCPReceive<wbr>Callback<wbr>Function</a>
 					</li>
 				</ul>
 			</nav>

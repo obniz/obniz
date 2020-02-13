@@ -5,6 +5,7 @@
 
 import ObnizUtil from "./libs/utils/util";
 import ObnizApi from "./ObnizApi";
+import {ObnizOptions} from "./ObnizOptions";
 import ObnizUIs from "./ObnizUIs";
 
 /**
@@ -31,13 +32,14 @@ class Obniz extends ObnizUIs {
   static get api() {
     return ObnizApi;
   }
+
   protected util: any;
   protected looper: any;
   protected repeatInterval: any;
   protected onmessage: any;
   protected ondebug: any;
 
-  constructor(id: any, options?: any) {
+  constructor(id: any, options?: ObnizOptions) {
     super(id, options);
     this.util = new ObnizUtil(this);
   }

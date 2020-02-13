@@ -9,6 +9,7 @@ import wsClient = require("ws");
 // @ts-ignore
 import packageJson from "../../package";  // pakcage.js will be created from package.json on build.
 import WSCommand from "./libs/wscommand";
+import {ObnizOptions} from "./ObnizOptions";
 
 export default class ObnizConnection {
 
@@ -47,7 +48,7 @@ export default class ObnizConnection {
   protected _connectionRetryCount: number;
   protected sendPool: any;
 
-  constructor(id: any, options?: any) {
+  constructor(id: any, options?: ObnizOptions) {
     this.isNode = typeof window === "undefined";
     this.id = id;
     this.socket = null;

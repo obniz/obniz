@@ -25,59 +25,221 @@ import TCP from "./libs/protocol/tcp";
 import ObnizParts from "./ObnizParts";
 
 import HW from "./libs/hw";
+import {ObnizOptions} from "./ObnizOptions";
 
 export default class ObnizComponents extends ObnizParts {
 
   /* board peripherals */
+
+  /**
+   * @category IO
+   */
   public io!: PeripheralDirective;
+
+  /**
+   * @category IO
+   */
   public io0?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io1?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io2?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io3?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io4?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io5?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io6?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io7?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io8?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io9?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io10?: PeripheralIO;
+
+  /**
+   * @category IO
+   */
   public io11?: PeripheralIO;
 
+  /**
+   * @category AD
+   */
   public ad0?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad1?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad2?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad3?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad4?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad5?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad6?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad7?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad8?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad9?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad10?: PeripheralAD;
+
+  /**
+   * @category AD
+   */
   public ad11?: PeripheralAD;
 
+  /**
+   * @category PWM
+   */
   public pwm0?: PeripheralPWM;
+
+  /**
+   * @category PWM
+   */
   public pwm1?: PeripheralPWM;
+
+  /**
+   * @category PWM
+   */
   public pwm2?: PeripheralPWM;
+
+  /**
+   * @category PWM
+   */
   public pwm3?: PeripheralPWM;
+
+  /**
+   * @category PWM
+   */
   public pwm4?: PeripheralPWM;
+
+  /**
+   * @category PWM
+   */
   public pwm5?: PeripheralPWM;
 
+  /**
+   * @category UART
+   */
   public uart0?: PeripheralUART;
+
+  /**
+   * @category UART
+   */
   public uart1?: PeripheralUART;
+
+  /**
+   * @category SPI
+   */
   public spi0?: PeripheralSPI;
+
+  /**
+   * @category SPI
+   */
   public spi1?: PeripheralSPI;
+
+  /**
+   * @category I2C
+   */
   public i2c0?: PeripheralI2C;
+
+  /**
+   * @category Measurement
+   */
   public logicAnalyzer?: LogicAnalyzer;
+
+  /**
+   * @category Measurement
+   */
   public measure?: ObnizMeasure;
+
+  /**
+   * @category Embeds
+   */
   public display?: Display;
+
+  /**
+   * @category Embeds
+   */
   public switch?: ObnizSwitch;
+
+  /**
+   * @category Embeds
+   */
   public ble?: ObnizBLE | ObnizBLEHci;
 
   protected pongObservers: any;
   protected _allComponentKeys: any;
 
-  constructor(id: any, options?: any) {
+  constructor(id: any, options?: ObnizOptions) {
     super(id, options);
     this.pongObservers = [];
     this._allComponentKeys = [];

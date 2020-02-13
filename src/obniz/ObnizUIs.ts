@@ -3,10 +3,11 @@
  * @module ObnizCore
  */
 
+import {ObnizOptions} from "./ObnizOptions";
 import ObnizSystemMethods from "./ObnizSystemMethods";
 
 export default class ObnizUIs extends ObnizSystemMethods {
-  constructor(id: any, options?: any) {
+  constructor(id: any, options?: ObnizOptions) {
     super(id, options);
   }
 
@@ -15,7 +16,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     this.updateOnlineUI();
   }
 
-  protected isValidObnizId(str: string ) {
+  protected isValidObnizId(str: string) {
     if (typeof str !== "string" || str.length < 8) {
       return null;
     }
@@ -36,7 +37,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
         const filled: any = _ReadCookie("obniz-last-used") || "";
         this.prompt(
           filled,
-          (obnizid: any ) => {
+          (obnizid: any) => {
             this.id = obnizid;
             this.wsconnect(desired_server);
           },

@@ -12066,7 +12066,7 @@ exports.default = Smp;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * Here we will show letters and pictures on OLED display on obniz Board.
+ * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
  * @category Embeds
  */
@@ -12390,7 +12390,7 @@ class Display {
         }
     }
     /**
-     * Draw OLED from HTML5 Canvas context.
+     * Draw Display from HTML5 Canvas context.
      * With node-canvas, this works with node.js.
      *
      * - on HTML, load ctx from existing
@@ -12445,7 +12445,7 @@ class Display {
      * You can specify to transfer the displayed data or not.
      * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
      *
-     * Use false to stop updating OLED and true to restart updating.
+     * Use false to stop updating display and true to restart updating.
      *
      * ```javascript
      * // Javascript Example
@@ -12974,6 +12974,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
+ * i2c can be used.
+ *  Master/Slave mode.
+ *  But slave mode only works with "written" events. You can't set data to be read.
  * @category Peripherals
  */
 class PeripheralI2C {
@@ -12983,16 +12986,50 @@ class PeripheralI2C {
         this._reset();
         this.onerror = undefined;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.observers = [];
         this.used = false;
         this.onwritten = undefined;
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * It starts i2c on given io sda, scl.
+     *
+     *
+     * Internal pull up is optional for io output setting.
+     * By default it is pull:null.
+     * See more on obniz.ioX.pull().
+     *
+     * For using internal-pull-up, you should specify "3v" to connect to 3.3v targets, and "5v" for 5v targets.
+     * When you choose internal pull up, speed is limited to up to 100khz, because internal pull up is not so tough.
+     * Please add external pull-up resistor on scl/sda and choose pull:null when you need more speed.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000});
+     * obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
+     * var ret = await obniz.i2c0.readWait(0x50, 1);
+     * console.log("read "+ret);
+     * ```
+     *
+     * - use internal pull up
+     *
+     * ```javascript
+     * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000, pull:"5v"});
+     * ```
+     *
+     * - save mode
+     *
+     * ```javascript
+     * obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
+     * ```
+     *
+     * @param arg
+     */
     start(arg) {
         const err = util_1.default._requiredKeys(arg, ["mode", "sda", "scl"]);
         if (err) {
@@ -13083,6 +13120,17 @@ class PeripheralI2C {
         this.used = true;
         this.Obniz.send(obj);
     }
+    /**
+     * It sends data to device which has the address
+     *
+     * ```
+     * // Javascript Example
+     * obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null});
+     * obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
+     * ```
+     * @param address 7bit address only.
+     * @param data Max length is 1024;
+     */
     write(address, data) {
         if (!this.used) {
             throw new Error(`i2c${this.id} is not started`);
@@ -13107,6 +13155,20 @@ class PeripheralI2C {
         };
         this.Obniz.send(obj);
     }
+    /**
+     * It reads data from the device. length defines the length of bytes. The treatment of address is same as write() function.
+     * This function will wait until data is received.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null});
+     * var ret = await obniz.i2c0.readWait(0x50, 1);
+     * console.log("read "+ret);
+     * ```
+     *
+     * @param address
+     * @param length Max is 1024;
+     */
     readWait(address, length) {
         if (!this.used) {
             throw new Error(`i2c${this.id} is not started`);
@@ -13136,6 +13198,10 @@ class PeripheralI2C {
             self.Obniz.send(obj);
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj && typeof obj === "object") {
             if (obj.data) {
@@ -13170,14 +13236,31 @@ class PeripheralI2C {
             }
         }
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
     }
+    /**
+     * end i2c .
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000});
+     * obniz.i2c0.end();
+     * ```
+     */
     end() {
         const obj = {};
         obj["i2c" + this.id] = null;
         this.Obniz.send(obj);
         this.used = false;
+    }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
+        }
     }
 }
 exports.default = PeripheralI2C;
@@ -13198,6 +13281,8 @@ exports.default = PeripheralI2C;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * General purpose IO
+ * This is available on each io (for obniz Board series, it's io0 to io11)
  * @category Peripherals
  */
 class PeripheralIO {
@@ -13206,15 +13291,27 @@ class PeripheralIO {
         this.id = id;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.value = false;
         this.observers = [];
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * Make ioX to output mode and put out 1 or 0.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.io1.output(true); // io1 is 5v
+     * obniz.io2.output(1); //  io2 is 5v
+     * obniz.io3.drive("3v");
+     * obniz.io3.output(1); // io3 is around 3v.
+     * ```
+     *
+     * @param value output value
+     */
     output(value) {
         value = !!value;
         const obj = {};
@@ -13222,6 +13319,31 @@ class PeripheralIO {
         this.value = value;
         this.Obniz.send(obj);
     }
+    /**
+     * This allows you to change output drive method.
+     * By default, it is set as push-pull 5v.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.io0.output(true); // output push-pull 5v
+     *
+     * obniz.io1.drive("3v");
+     * obniz.io1.output(true); // output push-pull 3v
+     *
+     * obniz.io2.pull("5v");
+     * obniz.io2.drive("open-drain");
+     * obniz.io2.output(true); // output open-drain with 5v pull-up
+     * ```
+     *
+     * @param drive
+     *
+     * - "5v"
+     * Push-pull 5v mode.
+     * - "3v"
+     * Push-pull 3v mode.
+     * - "Open-drain"
+     * Open-drain mode.
+     */
     drive(drive) {
         if (typeof drive !== "string") {
             throw new Error("please specify drive methods in string");
@@ -13246,6 +13368,23 @@ class PeripheralIO {
         };
         this.Obniz.send(obj);
     }
+    /**
+     * This enables/disables internal weak pull up/down resistors.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.io0.pull("3v");
+     * obniz.io0.drive("open-drain"); // output open-drain
+     * obniz.io0.output(false);
+     * ```
+     *
+     * @param updown
+     *
+     * - null (default)
+     * - "5v" pull up to 5v
+     * - "3v" pull up to 3v
+     * - "0v" pull down to gnd
+     */
     pull(updown) {
         if (typeof updown !== "string" && updown !== null) {
             throw new Error("please specify pull methods in string");
@@ -13273,6 +13412,13 @@ class PeripheralIO {
         };
         this.Obniz.send(obj);
     }
+    /**
+     * Make ioX to input mode.
+     * Callback function will be called when io changes its input value.
+     *
+     *
+     * @param callback
+     */
     input(callback) {
         this.onchange = callback;
         const obj = {};
@@ -13300,6 +13446,10 @@ class PeripheralIO {
         obj["io" + this.id] = null;
         this.Obniz.send(obj);
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (typeof obj === "boolean") {
             this.value = obj;
@@ -13324,6 +13474,11 @@ class PeripheralIO {
                     message: `io${this.id}: ${obj.error.message}`,
                 });
             }
+        }
+    }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
         }
     }
 }
@@ -14000,6 +14155,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 /**
+ * Create a TCP connection from a device throught the network the device is currently connected to.
+ *
  * @category Protocol
  */
 class Tcp {
@@ -14008,21 +14165,18 @@ class Tcp {
         this.id = id;
         this._reset();
     }
-    _reset() {
-        this.connectObservers = [];
-        this.readObservers = [];
-        this.used = false;
-    }
-    _addConnectObserver(callback) {
-        if (callback) {
-            this.connectObservers.push(callback);
-        }
-    }
-    _addReadObserver(callback) {
-        if (callback) {
-            this.readObservers.push(callback);
-        }
-    }
+    /**
+     * Starts a connection on the port and domain for which TCP is specified.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var tcp = obniz.getFreeTcp();
+     * tcp.connectWait(80,"obniz.io");
+     * ```
+     *
+     * @param port
+     * @param domain
+     */
     connectWait(port, domain) {
         if (semver_1.default.lt(this.Obniz.firmware_ver, "2.1.0")) {
             throw new Error(`Please update obniz firmware >= 2.1.0`);
@@ -14051,16 +14205,24 @@ class Tcp {
             this.Obniz.send(obj);
         });
     }
-    close() {
-        if (!this.used) {
-            throw new Error(`tcp${this.id} is not used`);
-        }
-        const obj = {};
-        obj["tcp" + this.id] = {
-            disconnect: true,
-        };
-        this.Obniz.send(obj);
-    }
+    /**
+     * The argument data is sent by TCP.
+     *
+     * If you pass a string or Array type argument, the data will be sent.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var tcp = obniz.getFreeTcp();
+     * tcp.connectWait(80,"obniz.io");
+     *
+     * // Array
+     * tcp.write([0,1,2,3,4]);
+     *
+     * // Text
+     * tcp.write('hello');
+     * ```
+     * @param data
+     */
     write(data) {
         if (!this.used) {
             throw new Error(`tcp${this.id} is not started`);
@@ -14090,6 +14252,18 @@ class Tcp {
         };
         this.Obniz.send(obj);
     }
+    /**
+     * Wait for TCP reception.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var tcp = obniz.getFreeTcp();
+     * tcp.connectWait(80,"obniz.io");
+     *
+     * let data = await tcp.readWait();
+     * console.log(data);
+     * ```
+     */
     readWait() {
         if (!this.used) {
             throw new Error(`tcp${this.id} is not started`);
@@ -14098,9 +14272,22 @@ class Tcp {
             this._addReadObserver(resolve);
         });
     }
+    /**
+     * Terminates the TCP session.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var tcp = obniz.getFreeTcp();
+     * tcp.end();
+     * ```
+     */
     end() {
         this.close();
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.connection) {
             /* Connectino state update. response of connect(), close from destination, response from */
@@ -14134,8 +14321,36 @@ class Tcp {
             }
         }
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
+    }
+    close() {
+        if (!this.used) {
+            throw new Error(`tcp${this.id} is not used`);
+        }
+        const obj = {};
+        obj["tcp" + this.id] = {
+            disconnect: true,
+        };
+        this.Obniz.send(obj);
+    }
+    _reset() {
+        this.connectObservers = [];
+        this.readObservers = [];
+        this.used = false;
+    }
+    _addConnectObserver(callback) {
+        if (callback) {
+            this.connectObservers.push(callback);
+        }
+    }
+    _addReadObserver(callback) {
+        if (callback) {
+            this.readObservers.push(callback);
+        }
     }
 }
 exports.default = Tcp;

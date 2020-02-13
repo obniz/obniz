@@ -74,6 +74,11 @@
 		<div class="col-8 col-content">
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>i2c can be used.
+							Master/Slave mode.
+						But slave mode only works with &quot;written&quot; events. You can&#39;t set data to be read.</p>
+					</div>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -97,23 +102,14 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#obniz" class="tsd-kind-icon">Obniz</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#observers" class="tsd-kind-icon">observers</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#onerror" class="tsd-kind-icon">onerror</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#onwritten" class="tsd-kind-icon">onwritten</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#state" class="tsd-kind-icon">state</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#used" class="tsd-kind-icon">used</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#_reset" class="tsd-kind-icon">_reset</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#addobserver" class="tsd-kind-icon">add<wbr>Observer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#end" class="tsd-kind-icon">end</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#isused" class="tsd-kind-icon">is<wbr>Used</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#notified" class="tsd-kind-icon">notified</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#start" class="tsd-kind-icon">start</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.peripherali2c.html#write" class="tsd-kind-icon">write</a></li>
@@ -134,7 +130,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L39">src/obniz/libs/io_peripherals/i2c.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/io_peripherals/i2c.ts#L79">src/obniz/libs/io_peripherals/i2c.ts:79</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,118 +150,55 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="obniz" class="tsd-anchor"></a>
-					<h3>Obniz</h3>
-					<div class="tsd-signature tsd-kind-icon">Obniz<span class="tsd-signature-symbol">:</span> <a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L33">src/obniz/libs/io_peripherals/i2c.ts:33</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L34">src/obniz/libs/io_peripherals/i2c.ts:34</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="observers" class="tsd-anchor"></a>
-					<h3>observers</h3>
-					<div class="tsd-signature tsd-kind-icon">observers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L36">src/obniz/libs/io_peripherals/i2c.ts:36</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onerror" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onerror</h3>
 					<div class="tsd-signature tsd-kind-icon">onerror<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L35">src/obniz/libs/io_peripherals/i2c.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/io_peripherals/i2c.ts#L52">src/obniz/libs/io_peripherals/i2c.ts:52</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>from obniz.js 1.14.0</p>
+						</div>
+						<p>It sets a function to receive error when i2c bus error occurs.
+						By setting a function, obniz.error will never be called.</p>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.i2c0.start({<span class="hljs-attr">mode</span>:<span class="hljs-string">"master"</span>, <span class="hljs-attr">sda</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">scl</span>:<span class="hljs-number">3</span>, <span class="hljs-attr">clock</span>:<span class="hljs-number">400000</span>});
+obniz.i2c0.onerror = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Error'</span>, err);
+}
+<span class="hljs-keyword">var</span> ret = <span class="hljs-keyword">await</span> obniz.i2c0.readWait(<span class="hljs-number">0x50</span>, <span class="hljs-number">1</span>);</code></pre>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onwritten" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onwritten</h3>
-					<div class="tsd-signature tsd-kind-icon">onwritten<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<div class="tsd-signature tsd-kind-icon">onwritten<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L39">src/obniz/libs/io_peripherals/i2c.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/io_peripherals/i2c.ts#L75">src/obniz/libs/io_peripherals/i2c.ts:75</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="state" class="tsd-anchor"></a>
-					<h3>state</h3>
-					<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <a href="../interfaces/obnizcore.components.peripherali2cstate.html" class="tsd-signature-type">PeripheralI2CState</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L37">src/obniz/libs/io_peripherals/i2c.ts:37</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="used" class="tsd-anchor"></a>
-					<h3>used</h3>
-					<div class="tsd-signature tsd-kind-icon">used<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L38">src/obniz/libs/io_peripherals/i2c.ts:38</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Slave mode only.</p>
+						</div>
+						<p>It is a callback that is called when data is written.
+							Received data is fragmented.
+							When written data is 100byte, you possibly receive it in 56 byte and 44 byte.
+						For data over 1024 bytes, few bytes may be dropped.</p>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.i2c0.start({<span class="hljs-attr">mode</span>: <span class="hljs-string">"slave"</span>, <span class="hljs-attr">sda</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">scl</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">slave_address</span>: <span class="hljs-number">0x01</span>});
+obniz.i2c0.onwritten = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>{
+  <span class="hljs-built_in">console</span>.log(data);
+}</code></pre>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_reset" class="tsd-anchor"></a>
-					<h3>_reset</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L48">src/obniz/libs/io_peripherals/i2c.ts:48</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="addobserver" class="tsd-anchor"></a>
-					<h3>add<wbr>Observer</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Observer<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L54">src/obniz/libs/io_peripherals/i2c.ts:54</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>callback: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="end" class="tsd-anchor"></a>
 					<h3>end</h3>
@@ -276,49 +209,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L254">src/obniz/libs/io_peripherals/i2c.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/io_peripherals/i2c.ts#L368">src/obniz/libs/io_peripherals/i2c.ts:368</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="isused" class="tsd-anchor"></a>
-					<h3>is<wbr>Used</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Used<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L250">src/obniz/libs/io_peripherals/i2c.ts:250</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="notified" class="tsd-anchor"></a>
-					<h3>notified</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">notified<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L217">src/obniz/libs/io_peripherals/i2c.ts:217</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>obj: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>end i2c .</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.i2c0.start({<span class="hljs-attr">mode</span>:<span class="hljs-string">"master"</span>, <span class="hljs-attr">sda</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">scl</span>:<span class="hljs-number">3</span>, <span class="hljs-attr">clock</span>:<span class="hljs-number">400000</span>});
+obniz.i2c0.end();</code></pre>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -327,22 +228,35 @@
 					<a name="readwait" class="tsd-anchor"></a>
 					<h3>read<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">read<wbr>Wait<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Wait<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L187">src/obniz/libs/io_peripherals/i2c.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/io_peripherals/i2c.ts#L285">src/obniz/libs/io_peripherals/i2c.ts:285</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It reads data from the device. length defines the length of bytes. The treatment of address is same as write() function.
+									This function will wait until data is received.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.i2c0.start({<span class="hljs-attr">mode</span>: <span class="hljs-string">"master"</span>,<span class="hljs-attr">sda</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">scl</span>:<span class="hljs-number">3</span>, <span class="hljs-attr">clock</span>:<span class="hljs-number">400000</span>, <span class="hljs-attr">pull</span>:<span class="hljs-literal">null</span>});
+<span class="hljs-keyword">var</span> ret = <span class="hljs-keyword">await</span> obniz.i2c0.readWait(<span class="hljs-number">0x50</span>, <span class="hljs-number">1</span>);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"read "</span>+ret);</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>address: <span class="tsd-signature-type">any</span></h5>
+									<h5>address: <span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>length: <span class="tsd-signature-type">any</span></h5>
+									<h5>length: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Max is 1024;</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -359,13 +273,39 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L60">src/obniz/libs/io_peripherals/i2c.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/io_peripherals/i2c.ts#L133">src/obniz/libs/io_peripherals/i2c.ts:133</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It starts i2c on given io sda, scl.</p>
+								</div>
+								<p>Internal pull up is optional for io output setting.
+									By default it is pull:null.
+								See more on obniz.ioX.pull().</p>
+								<p>For using internal-pull-up, you should specify &quot;3v&quot; to connect to 3.3v targets, and &quot;5v&quot; for 5v targets.
+									When you choose internal pull up, speed is limited to up to 100khz, because internal pull up is not so tough.
+								Please add external pull-up resistor on scl/sda and choose pull:null when you need more speed.</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.i2c0.start({<span class="hljs-attr">mode</span>:<span class="hljs-string">"master"</span>, <span class="hljs-attr">sda</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">scl</span>:<span class="hljs-number">3</span>, <span class="hljs-attr">clock</span>:<span class="hljs-number">400000</span>});
+obniz.i2c0.write(<span class="hljs-number">0x50</span>, [<span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x12</span>]);
+<span class="hljs-keyword">var</span> ret = <span class="hljs-keyword">await</span> obniz.i2c0.readWait(<span class="hljs-number">0x50</span>, <span class="hljs-number">1</span>);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"read "</span>+ret);</code></pre>
+								<ul>
+									<li>use internal pull up</li>
+								</ul>
+								<pre><code class="language-javascript">obniz.i2c0.start({<span class="hljs-attr">mode</span>:<span class="hljs-string">"master"</span>, <span class="hljs-attr">sda</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">scl</span>:<span class="hljs-number">3</span>, <span class="hljs-attr">clock</span>:<span class="hljs-number">400000</span>, <span class="hljs-attr">pull</span>:<span class="hljs-string">"5v"</span>});</code></pre>
+								<ul>
+									<li>save mode</li>
+								</ul>
+								<pre><code class="language-javascript">obniz.i2c0.start({<span class="hljs-attr">mode</span>: <span class="hljs-string">"slave"</span>, <span class="hljs-attr">sda</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">scl</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">slave_address</span>: <span class="hljs-number">0x01</span>});</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>arg: <a href="../interfaces/obnizcore.components.peripherali2coptions.html" class="tsd-signature-type">PeripheralI2COptions</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -376,22 +316,36 @@
 					<a name="write" class="tsd-anchor"></a>
 					<h3>write</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/34b0a269/src/obniz/libs/io_peripherals/i2c.ts#L162">src/obniz/libs/io_peripherals/i2c.ts:162</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/d3cc92d4/src/obniz/libs/io_peripherals/i2c.ts#L246">src/obniz/libs/io_peripherals/i2c.ts:246</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It sends data to device which has the address</p>
+								</div>
+								<pre><code><span class="hljs-comment">// Javascript Example</span>
+obniz.i2c0.start({mode: <span class="hljs-string">"master"</span>,sda:<span class="hljs-number">2</span>, scl:<span class="hljs-number">3</span>, clock:<span class="hljs-number">400000</span>, pull:<span class="hljs-literal">null</span>});
+obniz.i2c0.write(<span class="hljs-number">0x50</span>, [<span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x12</span>]);</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>address: <span class="tsd-signature-type">any</span></h5>
+									<h5>address: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>7bit address only.</p>
+									</div>
 								</li>
 								<li>
-									<h5>data: <span class="tsd-signature-type">any</span></h5>
+									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Max length is 1024;</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -437,40 +391,13 @@
 								<a href="obnizcore.components.peripherali2c.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#obniz" class="tsd-kind-icon">Obniz</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#observers" class="tsd-kind-icon">observers</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.peripherali2c.html#onerror" class="tsd-kind-icon">onerror</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.peripherali2c.html#onwritten" class="tsd-kind-icon">onwritten</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#state" class="tsd-kind-icon">state</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#used" class="tsd-kind-icon">used</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#_reset" class="tsd-kind-icon">_reset</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#addobserver" class="tsd-kind-icon">add<wbr>Observer</a>
-							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.peripherali2c.html#end" class="tsd-kind-icon">end</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#isused" class="tsd-kind-icon">is<wbr>Used</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.peripherali2c.html#notified" class="tsd-kind-icon">notified</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.peripherali2c.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a>
@@ -567,7 +494,13 @@
 						<a href="../modules/obnizcore.components.html#stopbittype" class="tsd-kind-icon">Stop<wbr>Bit<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#tcpcallbackfunction" class="tsd-kind-icon">TCPCallback<wbr>Function</a>
+						<a href="../modules/obnizcore.components.html#tcpconnectioncallbackfunction" class="tsd-kind-icon">TCPConnection<wbr>Callback<wbr>Function</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/obnizcore.components.html#tcperrorcallbackfunction" class="tsd-kind-icon">TCPError<wbr>Callback<wbr>Function</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/obnizcore.components.html#tcpreceivecallbackfunction" class="tsd-kind-icon">TCPReceive<wbr>Callback<wbr>Function</a>
 					</li>
 				</ul>
 			</nav>

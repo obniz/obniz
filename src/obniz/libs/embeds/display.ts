@@ -6,7 +6,7 @@
 import Obniz from "../../index";
 
 /**
- * Here we will show letters and pictures on OLED display on obniz Board.
+ * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
  * @category Embeds
  */
@@ -354,7 +354,7 @@ export default class Display {
   }
 
   /**
-   * Draw OLED from HTML5 Canvas context.
+   * Draw Display from HTML5 Canvas context.
    * With node-canvas, this works with node.js.
    *
    * - on HTML, load ctx from existing
@@ -410,7 +410,7 @@ export default class Display {
    * You can specify to transfer the displayed data or not.
    * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
    *
-   * Use false to stop updating OLED and true to restart updating.
+   * Use false to stop updating display and true to restart updating.
    *
    * ```javascript
    * // Javascript Example

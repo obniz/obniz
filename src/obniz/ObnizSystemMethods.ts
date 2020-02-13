@@ -4,9 +4,9 @@
  */
 
 import ObnizComponents from "./ObnizComponents";
-
+import {ObnizOptions} from "./ObnizOptions";
 export default class ObnizSystemMethods extends ObnizComponents {
-  constructor(id: any, options?: any) {
+  constructor(id: any, options?: ObnizOptions) {
     super(id, options);
   }
 
