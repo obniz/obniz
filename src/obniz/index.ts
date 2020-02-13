@@ -33,7 +33,10 @@ class Obniz extends ObnizUIs {
     return ObnizApi;
   }
 
-  protected util: any;
+  /**
+   * @ignore
+   */
+  public util: any;
   protected looper: any;
   protected repeatInterval: any;
   protected onmessage: any;

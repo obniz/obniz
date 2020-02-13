@@ -130,7 +130,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/6e446969/src/obniz/libs/io_peripherals/pwm.ts#L47">src/obniz/libs/io_peripherals/pwm.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/io_peripherals/pwm.ts#L47">src/obniz/libs/io_peripherals/pwm.ts:47</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -159,7 +159,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/6e446969/src/obniz/libs/io_peripherals/pwm.ts#L167">src/obniz/libs/io_peripherals/pwm.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/io_peripherals/pwm.ts#L167">src/obniz/libs/io_peripherals/pwm.ts:167</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -194,7 +194,7 @@ pwm.duty(<span class="hljs-number">50</span>) <span class="hljs-comment">// set 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/6e446969/src/obniz/libs/io_peripherals/pwm.ts#L208">src/obniz/libs/io_peripherals/pwm.ts:208</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/io_peripherals/pwm.ts#L208">src/obniz/libs/io_peripherals/pwm.ts:208</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -220,7 +220,7 @@ pwm.end();</code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/6e446969/src/obniz/libs/io_peripherals/pwm.ts#L112">src/obniz/libs/io_peripherals/pwm.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/io_peripherals/pwm.ts#L112">src/obniz/libs/io_peripherals/pwm.ts:112</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -250,13 +250,13 @@ pwm.freq(<span class="hljs-number">1000</span>); <span class="hljs-comment">// s
 					<a name="modulate" class="tsd-anchor"></a>
 					<h3>modulate</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">modulate<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.html#pwmmodulatetype" class="tsd-signature-type">PWMModulateType</a>, symbol_length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">0</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">1</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">modulate<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.html#pwmmodulatetype" class="tsd-signature-type">PWMModulateType</a>, symbol_length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/6e446969/src/obniz/libs/io_peripherals/pwm.ts#L236">src/obniz/libs/io_peripherals/pwm.ts:236</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/io_peripherals/pwm.ts#L236">src/obniz/libs/io_peripherals/pwm.ts:236</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -286,8 +286,9 @@ pwm.freq(<span class="hljs-number">1000</span>); <span class="hljs-comment">// s
 									<h5>symbol_length: <span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>data: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">0</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">1</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>data array. All data[index] is 0 or 1.</p>
 									</div>
 								</li>
 							</ul>
@@ -305,7 +306,7 @@ pwm.freq(<span class="hljs-number">1000</span>); <span class="hljs-comment">// s
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/6e446969/src/obniz/libs/io_peripherals/pwm.ts#L142">src/obniz/libs/io_peripherals/pwm.ts:142</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/io_peripherals/pwm.ts#L142">src/obniz/libs/io_peripherals/pwm.ts:142</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -341,7 +342,7 @@ pwm.pulse(<span class="hljs-number">0.5</span>) <span class="hljs-comment">// se
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/6e446969/src/obniz/libs/io_peripherals/pwm.ts#L74">src/obniz/libs/io_peripherals/pwm.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/io_peripherals/pwm.ts#L74">src/obniz/libs/io_peripherals/pwm.ts:74</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

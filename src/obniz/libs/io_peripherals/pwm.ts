@@ -231,9 +231,9 @@ export default class PeripheralPWM implements PWMInterface {
    *
    * @param type
    * @param symbol_length
-   * @param data
+   * @param data data array. All data[index] is 0 or 1.
    */
-  public modulate(type: PWMModulateType, symbol_length: number, data: Array<0 | 1>) {
+  public modulate(type: PWMModulateType, symbol_length: number, data: number[]) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
     }

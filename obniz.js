@@ -13788,7 +13788,7 @@ class PeripheralPWM {
      *
      * @param type
      * @param symbol_length
-     * @param data
+     * @param data data array. All data[index] is 0 or 1.
      */
     modulate(type, symbol_length, data) {
         if (!this.used) {
