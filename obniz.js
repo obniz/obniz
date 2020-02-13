@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.3.0-beta.1",
+  "version": "3.3.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -116,7 +116,7 @@ module.exports = {
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
-    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build && npm run doc",
     "doc": "typedoc --includes ./src/ --stripInternal --readme none --out doc/obnizjs --excludePrivate --excludeProtected  --media ./doc/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
