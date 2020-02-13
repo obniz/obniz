@@ -24,6 +24,7 @@ import ENC03R_Module, {ENC03R_ModuleOptions} from "../parts/GyroSensor/ENC03R_Mo
 import InfraredLED, {InfraredLEDOptions} from "../parts/Infrared/InfraredLED";
 import IRModule, {IRModuleOptions} from "../parts/Infrared/IRModule";
 import IRSensor, {IRSensorOptions} from "../parts/Infrared/IRSensor";
+import MatrixLED_HT16K33, {MatrixLED_HT16K33Options} from "../parts/KeyeStudio/MatrixLED_HT16K33";
 import FullColorLED, {FullColorLEDOptions} from "../parts/Light/FullColorLED";
 import LED, {LEDOptions} from "../parts/Light/LED";
 import WS2811, {WS2811Options} from "../parts/Light/WS2811";
@@ -222,6 +223,8 @@ export interface WiredNameMap {
   "ADT7410": ADT7410;
   "S5851A": S5851A;
   "DPS310": DPS310;
+  // KeyeStudio
+  "MatrixLED_HT16K33": MatrixLED_HT16K33;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -350,4 +353,6 @@ export interface WiredNameOptionsMap {
   "ADT7410": ADT7410Options;
   "S5851A": S5851AOptions;
   "DPS310": DPS310Options;
+  // KeyeStudio
+  "MatrixLED_HT16K33": MatrixLED_HT16K33Options;
 }
