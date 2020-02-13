@@ -91,7 +91,9 @@ import YG1006, {YG1006Options} from "../parts/Infrared/YG1006";
 import OMRON_2JCIE, {OMRON_2JCIEOptions} from "../parts/Ble/2jcie";
 
 // biological
+import M5StickC_FINGER, {M5StickC_FINGEROptions} from "../parts/Biological/M5StickC_FINGER";
 import Puls08M5stickcS, {Puls08M5stickcSOptions} from "../parts/Biological/PULSE08-M5STICKC-S";
+
 import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
 import SH200Q, {SH200QOptions} from "../parts/MovementSensor/SH200Q";
 import AXP192, {AXP192Options} from "../parts/Power/AXP192";
@@ -214,6 +216,7 @@ export interface WiredNameMap {
   "2JCIE": OMRON_2JCIE;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
+  "M5StickC_FINGER": M5StickC_FINGER;
 
   "FlickHat": FlickHat;
   "KXSC7_2050": KXSC7_2050;
@@ -341,6 +344,7 @@ export interface WiredNameOptionsMap {
   "2JCIE": OMRON_2JCIEOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
+  "M5StickC_FINGER": M5StickC_FINGEROptions;
 
   "24LC256": _24LC256Options;
   "FlickHat": FlickHatOptions;

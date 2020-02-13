@@ -18641,6 +18641,7 @@ exports.default = JsonBinaryConverter;
 var map = {
 	"./ADConverter/hx711/index.js": "./dist/src/parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
+	"./Biological/M5StickC_FINGER/index.js": "./dist/src/parts/Biological/M5StickC_FINGER/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
@@ -18931,6 +18932,292 @@ class USB {
     }
 }
 exports.default = USB;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Biological/M5StickC_FINGER/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class M5StickC_FINGER {
+    constructor() {
+        this.HEAD = 0;
+        this.CMD = 1;
+        this.CHK = 6;
+        this.TAIL = 7;
+        this.P1 = 2;
+        this.P2 = 3;
+        this.P3 = 4;
+        this.Q1 = 2;
+        this.Q2 = 3;
+        this.Q3 = 4;
+        this.TxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.RxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.requiredKeys = ["tx", "rx"];
+        this.keys = ["tx", "rx", "gnd"];
+        this.ack = {
+            SUCCESS: 0x00,
+            FAIL: 0x01,
+            FULL: 0x04,
+            NOUSER: 0x05,
+            USER_EXIST: 0x07,
+            TIMEOUT: 0x08,
+            GO_OUT: 0x0F,
+            ALL_USER: 0x00,
+            GUEST_USER: 0x01,
+            NORMAL_USER: 0x02,
+            MASTER_USER: 0x03,
+        };
+        this.cmd = {
+            HEAD: 0xF5,
+            TAIL: 0xF5,
+            ADD_1: 0x01,
+            ADD_2: 0x02,
+            ADD_3: 0x03,
+            GET_PERMISSION: 0x0A,
+            MATCH: 0x0C,
+            DEL: 0x04,
+            DEL_ALL: 0x05,
+            USER_CNT: 0x09,
+            SECURITY_LEVEL: 0x28,
+            SLEEP_MODE: 0x2C,
+            ADD_MODE: 0x2D,
+            FINGER_DETECTED: 0x14,
+        };
+    }
+    static info() {
+        return {
+            name: "M5StickC_FINGER",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(null, this.params.gnd, "3v");
+        this.uart = this.obniz.getFreeUart();
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: 19200,
+        });
+    }
+    getUserNumWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.USER_CNT;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = 0;
+            this.TxBuf[this.P3] = 0;
+            const res = yield this.sendAndReceiveWait(200);
+            if (res === this.ack.SUCCESS && this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                return this.RxBuf[this.Q2];
+            }
+            else {
+                return 0xFF;
+            }
+        });
+    }
+    addUserWait(userNum, userPermission) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.ADD_1;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = userNum;
+            this.TxBuf[this.P3] = userPermission;
+            let res = yield this.sendAndReceiveWait(3000);
+            if (res === this.ack.SUCCESS) {
+                if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                    this.TxBuf[this.CMD] = this.cmd.ADD_2;
+                    res = yield this.sendAndReceiveWait(3000);
+                    if (res === this.ack.SUCCESS) {
+                        this.TxBuf[this.CMD] = this.cmd.ADD_3;
+                        res = yield this.sendAndReceiveWait(3000);
+                        if (this.ack.SUCCESS) {
+                            return this.RxBuf[this.Q3];
+                        }
+                    }
+                }
+            }
+            return res;
+        });
+    }
+    compareFingerWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.MATCH;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = 0;
+            this.TxBuf[this.P3] = 0;
+            const res = yield this.sendAndReceiveWait(3000);
+            if (res === this.ack.SUCCESS) {
+                if (this.RxBuf[this.Q3] === this.ack.NOUSER) {
+                    return this.ack.NOUSER;
+                }
+                if (this.RxBuf[this.Q3] === this.ack.TIMEOUT) {
+                    return this.ack.TIMEOUT;
+                }
+                return this.RxBuf[this.Q3];
+            }
+            return res;
+        });
+    }
+    sleepWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.SLEEP_MODE;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = 0;
+            this.TxBuf[this.P3] = 0;
+            const res = yield this.sendAndReceiveWait(500);
+            if (res === this.ack.SUCCESS) {
+                return this.ack.SUCCESS;
+            }
+            else {
+                return this.ack.FAIL;
+            }
+        });
+    }
+    setAddModeWait(mode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.ADD_MODE;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = mode;
+            this.TxBuf[this.P3] = 0;
+            yield this.sendAndReceiveWait(200);
+            if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                return this.ack.SUCCESS;
+            }
+            throw Error("failed to set add mode.");
+        });
+    }
+    readAddModeWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.ADD_MODE;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = 0;
+            this.TxBuf[this.P3] = 0x01;
+            yield this.sendAndReceiveWait(200);
+            if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                return this.RxBuf[this.Q2];
+            }
+            throw Error("failed to read add mode.");
+        });
+    }
+    deleteAllUserWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.DEL_ALL;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = 0;
+            this.TxBuf[this.P3] = 0;
+            yield this.sendAndReceiveWait(200);
+            if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                return this.ack.SUCCESS;
+            }
+            throw Error("failed to delete all users.");
+        });
+    }
+    deleteUserWait(userNum) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.DEL;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = userNum;
+            this.TxBuf[this.P3] = 0;
+            yield this.sendAndReceiveWait(200);
+            if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                return this.ack.SUCCESS;
+            }
+            throw Error("failed to delete user: " + userNum);
+        });
+    }
+    getUserPermissionWait(userNum) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.GET_PERMISSION;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = userNum;
+            this.TxBuf[this.P3] = 0;
+            yield this.sendAndReceiveWait(200);
+            return this.RxBuf[this.Q3];
+        });
+    }
+    setSecurityLevelWait(level) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (level < 0 || level > 9) {
+                throw Error("security level argument must be between 0 and 9");
+            }
+            this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = level;
+            this.TxBuf[this.P3] = 0x00;
+            yield this.sendAndReceiveWait(200);
+            if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                return this.ack.SUCCESS;
+            }
+            throw Error("failed to set security level.");
+        });
+    }
+    getSecurityLevelWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
+            this.TxBuf[this.P1] = 0;
+            this.TxBuf[this.P2] = 0;
+            this.TxBuf[this.P3] = 0x01;
+            yield this.sendAndReceiveWait(200);
+            if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                return this.RxBuf[this.Q2];
+            }
+            throw Error("failed to get security level.");
+        });
+    }
+    sendAndReceiveWait(timeout) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let checkSum = 0;
+            this.TxBuf[5] = 0;
+            this.uart.send(this.cmd.HEAD);
+            for (let i = 1; i < 6; i++) {
+                this.uart.send(this.TxBuf[i]);
+                checkSum ^= this.TxBuf[i];
+            }
+            this.uart.send(checkSum);
+            this.uart.send(this.cmd.TAIL);
+            yield this.obniz.wait(timeout);
+            if (!this.uart.isDataExists()) {
+                return this.ack.TIMEOUT;
+            }
+            this.RxBuf = this.uart.readBytes();
+            // console.log("RxBuf: " + this.RxBuf);
+            if (this.RxBuf.length !== 8) {
+                return this.ack.TIMEOUT;
+            }
+            if (this.RxBuf[this.HEAD] !== this.cmd.HEAD) {
+                throw Error("communication failed.");
+            }
+            if (this.RxBuf[this.TAIL] !== this.cmd.TAIL) {
+                throw Error("communication failed.");
+            }
+            if (this.RxBuf[this.CMD] !== this.TxBuf[this.CMD]) {
+                throw Error("communication failed.");
+            }
+            checkSum = 0;
+            for (let i = 1; i < this.CHK; i++) {
+                checkSum ^= this.RxBuf[i];
+            }
+            if (checkSum !== this.RxBuf[this.CHK]) {
+                throw Error("communication failed.");
+            }
+            return this.ack.SUCCESS;
+        });
+    }
+}
+exports.default = M5StickC_FINGER;
 
 //# sourceMappingURL=index.js.map
 
