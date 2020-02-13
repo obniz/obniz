@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/obniz/libs/embeds/ble.ts"],"names":[],"mappings":";AAAA;;;;;;;GAOG","file":"ble.js","sourcesContent":["/**\n * Obniz BLE are switches automatically. <br/>\n * obnizOS ver >= 3.0.0  : Hci <br/>\n * obnizOS ver < 3.0.0   : Old <br/>\n * @internal\n * @packageDocumentation\n * @module ObnizCore.Components.Ble\n */\n\nexport {};\n"]}

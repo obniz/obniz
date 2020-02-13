@@ -6,15 +6,24 @@
 import semver from "semver";
 import Obniz from "../../index";
 
+/**
+ * @param TCPReceiveCallbackFunction.data
+ * received data
+ */
 type TCPReceiveCallbackFunction = (data: number[]) => void;
 
 /**
- * **connected**
+ * @param TCPConnectionCallbackFunction.connected
  * - True : Connect
  * - False : Disconnect
  */
 type TCPConnectionCallbackFunction = (connected: boolean) => void;
 
+/**
+ *
+ * @param TCPErrorCallbackFunction.error
+ * Error object
+ */
 type TCPErrorCallbackFunction = (error: any) => void;
 
 /**

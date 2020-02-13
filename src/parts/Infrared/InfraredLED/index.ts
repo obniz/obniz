@@ -8,7 +8,7 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  InfraredLEDOptions {
+export interface InfraredLEDOptions {
   anode: number;
   cathode?: number;
 }
@@ -55,7 +55,7 @@ export default class InfraredLED implements ObnizPartsInterface {
     this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
   }
 
-  public send(data: number[]) {
+  public send(data: Array<0 | 1>) {
     if (data && data.length > 0 && data[data.length - 1] === 1) {
       data.push(0);
     }

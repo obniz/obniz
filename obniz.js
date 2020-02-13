@@ -117,7 +117,7 @@ module.exports = {
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build && npm run doc",
-    "doc": "typedoc --includes ./src/ --stripInternal --readme none --out doc/obnizjs --excludePrivate --excludeProtected  --media ./doc/images",
+    "doc": "typedoc --includes ./src/ --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
@@ -12760,11 +12760,6 @@ class PeripheralAD {
         this.value = 0.0;
         this.observers = [];
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
     /**
      * This starts measuring voltage on ioX until end() is called.
      * ```Javascript
@@ -12773,6 +12768,7 @@ class PeripheralAD {
      * });
      * ```
      * @param callback  called when voltage gets changed.
+     * @param callback.voltage  voltage
      */
     start(callback) {
         this.onchange = callback;
@@ -12836,6 +12832,11 @@ class PeripheralAD {
             callback(obj);
         }
     }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
+        }
+    }
 }
 exports.default = PeripheralAD;
 
@@ -12868,6 +12869,9 @@ class Directive {
         this._animationIdentifier = 0;
         this._reset();
     }
+    /**
+     * @ignore
+     */
     _reset() {
         for (let i = 0; i < this.observers.length; i++) {
             this.observers[i].reject(new Error("reset called"));
@@ -12875,16 +12879,64 @@ class Directive {
         this.observers = [];
         this._animationIdentifier = 0;
     }
-    addObserver(name, resolve, reject) {
-        if (name && resolve && reject) {
-            this.observers.push({
-                name,
-                resolve,
-                reject,
-            });
-        }
-    }
-    animation(name, status, array, repeat) {
+    /**
+     * io animation is used when you wish to accelerate the serial sequence change of io.
+     *
+     * "Loop" animation can be used.
+     * io changes repeatedly in a sequential manner according to json array.
+     * io and pwm json commands can only be used.
+     *
+     *
+     * obnizOS ver >= 2.0.0 required.
+     *
+     * ```javascript
+     * //javascript
+     * // Javascript Example
+     * obniz.io.animation("animation-1", "loop", [
+     *  {
+     *   duration: 10,
+     *   state: function(index){ // index = 0
+     *     obniz.io0.output(false)
+     *     obniz.io1.output(true)
+     *   }
+     *  },{
+     *    duration: 10,
+     *    state: function(index){ // index = 1
+     *      obniz.io0.output(true)
+     *      obniz.io1.output(false)
+     *    }
+     *  }
+     * ])
+     * ```
+     *
+     * It will generate signals likes below
+     *
+     *  ![](media://ioanimation.png)
+     *
+     * - Remove animation
+     *
+     * ```javascript
+     * obniz.io.animation("animation-1", "loop")
+     * ```
+     *
+     * - Pause animation
+     *
+     * ```javascript
+     * obniz.io.animation("animation-1", "pause")
+     * ```
+     *
+     * - Resume paused animation
+     *
+     * ```javascript
+     * obniz.io.animation("animation-1", "resume")
+     * ```
+     *
+     * @param name name of animation
+     * @param status status of animation
+     * @param animations instructions. This is optional when status is pause``resume.
+     * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
+     */
+    animation(name, status, animations, repeat) {
         if ((typeof repeat === "number" || status === "registrate") &&
             semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
@@ -12899,12 +12951,12 @@ class Directive {
         if (typeof repeat === "number") {
             obj.io.animation.repeat = repeat;
         }
-        if (!array) {
-            array = [];
+        if (!animations) {
+            animations = [];
         }
         const states = [];
-        for (let i = 0; i < array.length; i++) {
-            const state = array[i];
+        for (let i = 0; i < animations.length; i++) {
+            const state = animations[i];
             const duration = state.duration;
             const operation = state.state;
             // dry run. and get json commands
@@ -12922,7 +12974,30 @@ class Directive {
         }
         this.Obniz.send(obj);
     }
-    repeatWait(array, repeat) {
+    /**
+     * It start io aniomation with limited repeat count. And It wait until done.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.io.repeatWait([
+     *   {
+     *     duration: 1000,
+     *     state: function(index){
+     *       obniz.io0.output(true)
+     *     }
+     *   },{
+     *     duration: 1000,
+     *     state: function(index){
+     *       obniz.io0.output(false)
+     *    }
+     *   }
+     * ], 4)
+     * ```
+     *
+     * @param animations instructions
+     * @param repeat 	The number of repeat count of animation.
+     */
+    repeatWait(animations, repeat) {
         if (semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
@@ -12937,10 +13012,14 @@ class Directive {
             if (++this._animationIdentifier > 1000) {
                 this._animationIdentifier = 0;
             }
-            this.animation(name, "loop", array, repeat);
+            this.animation(name, "loop", animations, repeat);
             this.addObserver(name, resolve, reject);
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.animation.status === "finish") {
             for (let i = this.observers.length - 1; i >= 0; i--) {
@@ -12949,6 +13028,15 @@ class Directive {
                     this.observers.splice(i, 1);
                 }
             }
+        }
+    }
+    addObserver(name, resolve, reject) {
+        if (name && resolve && reject) {
+            this.observers.push({
+                name,
+                resolve,
+                reject,
+            });
         }
     }
 }
@@ -13337,12 +13425,6 @@ class PeripheralIO {
      *
      * @param drive
      *
-     * - "5v"
-     * Push-pull 5v mode.
-     * - "3v"
-     * Push-pull 3v mode.
-     * - "Open-drain"
-     * Open-drain mode.
      */
     drive(drive) {
         if (typeof drive !== "string") {
@@ -13380,10 +13462,6 @@ class PeripheralIO {
      *
      * @param updown
      *
-     * - null (default)
-     * - "5v" pull up to 5v
-     * - "3v" pull up to 3v
-     * - "0v" pull down to gnd
      */
     pull(updown) {
         if (typeof updown !== "string" && updown !== null) {
@@ -13429,6 +13507,18 @@ class PeripheralIO {
         this.Obniz.send(obj);
         return this.value;
     }
+    /**
+     * Make ioX to input mode.
+     *
+     * And this will return the current input value.
+     * It pauses the process until the value is returned.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var value = await obniz.io0.inputWait();
+     * console.log(value);
+     * ```
+     */
     inputWait() {
         const self = this;
         return new Promise((resolve, reject) => {
@@ -13441,6 +13531,21 @@ class PeripheralIO {
             self.Obniz.send(obj);
         });
     }
+    /**
+     * This ends output/input on ioX.
+     *
+     *
+     * This function is effective only when using ioX.output() or ioX.input().
+     * This won't be called when AD/UART/etc are used.
+     * Pull-up down also will not affected.
+     *
+     * ```
+     * // Javascript Example
+     * obniz.io0.output(true)
+     * obniz.io0.end();
+     * ```
+     *
+     */
     end() {
         const obj = {};
         obj["io" + this.id] = null;
@@ -13504,6 +13609,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
+ * We will now generate PWM.
+ * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
  * @category Peripherals
  */
 class PeripheralPWM {
@@ -13512,15 +13619,25 @@ class PeripheralPWM {
         this.id = id;
         this._reset();
     }
-    _reset() {
-        this.state = {};
-        this.used = false;
-    }
-    sendWS(obj) {
-        const wsObj = {};
-        wsObj["pwm" + this.id] = obj;
-        this.Obniz.send(wsObj);
-    }
+    /**
+     * This starts a pwm on a given io.
+     * freq=1khz, duty=0% at start.
+     *
+     * io drive and pull can be configured. See more details on [[PeripheralIO|io]]
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0}); // start pwm. output at io0
+     * pwm.freq(1000);
+     * pwm.duty(50);
+     *
+     * var pwm2 = obniz.getFreePwm();
+     * pwm2.start({io:1, drive:"open-drain", pull:"5v"});
+     * ```
+     *
+     * @param params
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["io"]);
         if (err) {
@@ -13540,6 +13657,21 @@ class PeripheralPWM {
         });
         this.used = true;
     }
+    /**
+     * Set frequency, not pulse duration.
+     *
+     *
+     * For example, this value will be 1khz with DC motor.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0});
+     * pwm.freq(1000); // set pwm. frequency to 1khz
+     * ```
+     *
+     * @param freq frequency (Hz)
+     */
     freq(freq) {
         if (!this.used) {
             throw new Error(`pwm${this.id} is not started`);
@@ -13556,6 +13688,19 @@ class PeripheralPWM {
             this.duty(this.state.duty);
         }
     }
+    /**
+     * Set pulse duty
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0});
+     * pwm.freq(2000); // set pwm frequency to 2khz
+     * pwm.pulse(0.5) // set pwm pulse 0.5ms.  so this is  25% ratio.
+     * ```
+     *
+     * @param pulse_width pulse time (ms).
+     */
     pulse(pulse_width) {
         if (!this.used) {
             throw new Error(`pwm${this.id} is not started`);
@@ -13566,6 +13711,19 @@ class PeripheralPWM {
             pulse: pulse_width,
         });
     }
+    /**
+     * Set pulse duty in terms of ratio.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0});
+     * pwm.freq(2000); // set pwm frequency to 2khz
+     * pwm.duty(50) // set pwm pulse width 50%
+     * ```
+     *
+     * @param duty
+     */
     duty(duty) {
         if (!this.used) {
             throw new Error(`pwm${this.id} is not started`);
@@ -13589,14 +13747,49 @@ class PeripheralPWM {
             pulse: pulse_width,
         });
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
     }
+    /**
+     * It stops pwm and releases io.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0});
+     * pwm.end();
+     * ```
+     */
     end() {
         this.state = {};
         this.sendWS(null);
         this.used = false;
     }
+    /**
+     * This modulates pwm with data.
+     *
+     * Modulation can be chosen from below.
+     *
+     * 1. "am"
+     *
+     * ### am modulation
+     * data "1" means put out the pwm with duty ratio of 50%. "0" means stop pwm. io will be 0.
+     * Interval defines the symbol baud rate.
+     * Duty is fixed at 50%.
+     *
+     *
+     * ![](media://pwm_modu.png)
+     *
+     * This is useful to generate IR signal (Remote control).
+     * Frequency of 38kHz gets modulated with signals.
+     *
+     * @param type
+     * @param symbol_length
+     * @param data
+     */
     modulate(type, symbol_length, data) {
         if (!this.used) {
             throw new Error(`pwm${this.id} is not started`);
@@ -13608,6 +13801,15 @@ class PeripheralPWM {
                 data,
             },
         });
+    }
+    _reset() {
+        this.state = {};
+        this.used = false;
+    }
+    sendWS(obj) {
+        const wsObj = {};
+        wsObj["pwm" + this.id] = obj;
+        this.Obniz.send(wsObj);
     }
 }
 exports.default = PeripheralPWM;
@@ -13633,6 +13835,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
+ * It is General Purpose SPI
  * @category Peripherals
  */
 class PeripheralSPI {
@@ -13641,16 +13844,26 @@ class PeripheralSPI {
         this.id = id;
         this._reset();
     }
-    _reset() {
-        this.observers = [];
-        this.used = false;
-        this.params = null;
-    }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * It starts spi. Now the mode is only "master".
+     *
+     *
+     * drive and pull are optional settings for io output.
+     * Default settings are drive:5v, pull:null.
+     * See more using obniz.io.drive() or pull().
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+     * var ret = await obniz.spi0.writeWait([0x12, 0x98]);
+     * console.log("received: "+ret);
+     *
+     * // drive and pull is optional
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, drive: "5v", pull:null});
+     * ```
+     *
+     * @param params spi parameters
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["mode", "frequency"]);
         if (err) {
@@ -13741,6 +13954,21 @@ class PeripheralSPI {
         this.used = true;
         this.Obniz.send(obj);
     }
+    /**
+     * It sends data to spi and wait until data are received.
+     * The received data length is the same as the sent data.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+     * var ret = await obniz.spi0.writeWait([0x12, 0x98]);
+     * console.log("received: "+ret);
+     * ```
+     *
+     *
+     * @param data Max length is 1024 bytes.
+     * @return received data
+     */
     writeWait(data) {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
@@ -13759,6 +13987,17 @@ class PeripheralSPI {
             self.Obniz.send(obj);
         });
     }
+    /**
+     * It only sends data to spi and does not receive it.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+     * obniz.spi0.write([0x12, 0x98]);
+     * ```
+     *
+     * @param data Max length is 1024 bytes.
+     */
     write(data) {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
@@ -13774,6 +14013,10 @@ class PeripheralSPI {
         };
         self.Obniz.send(obj);
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         // TODO: we should compare byte length from sent
         const callback = this.observers.shift();
@@ -13781,9 +14024,26 @@ class PeripheralSPI {
             callback(obj.data);
         }
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
     }
+    /**
+     * It ends spi
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, clock:1000000});
+     * obniz.spi0.write([0x12, 0x98]);
+     * obniz.spi0.end();
+     * ```
+     *
+     * @param reuse
+     * - True : getFreeSpi will not return this object
+     * - False : getFreeSpi will return this object
+     */
     end(reuse) {
         const self = this;
         const obj = {};
@@ -13792,6 +14052,16 @@ class PeripheralSPI {
         self.Obniz.send(obj);
         if (!reuse) {
             this.used = false;
+        }
+    }
+    _reset() {
+        this.observers = [];
+        this.used = false;
+        this.params = null;
+    }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
         }
     }
 }
@@ -13817,6 +14087,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
+ * Uart module
  * @category Peripherals
  */
 class PeripheralUART {
@@ -13825,10 +14096,20 @@ class PeripheralUART {
         this.id = id;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.received = new Uint8Array([]);
         this.used = false;
     }
+    /**
+     * It starts uart on io tx, rx.
+     *
+     * You can start uart without much configuration. Just use as below.
+     * @param params
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["tx", "rx"]);
         if (err) {
@@ -13895,6 +14176,33 @@ class PeripheralUART {
         this.received = [];
         this.used = true;
     }
+    /**
+     * This sends data.
+     *
+     * Available formats are
+     *
+     * - string
+     * utf8 encoded byte array. Does not include null terminate
+     *
+     * - number
+     * will be one byte data
+     *
+     * - array of number
+     * array of bytes
+     *
+     * - Buffer
+     * array of bytes
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     * obniz.uart0.send("Hi");
+     * obniz.uart0.send(0x11);
+     * obniz.uart0.send([0x11, 0x45, 0x44]);
+     * ```
+     * @param data
+     */
     send(data) {
         if (!this.used) {
             throw new Error(`uart${this.id} is not started`);
@@ -13922,9 +14230,44 @@ class PeripheralUART {
         //  console.log(obj);
         this.Obniz.send(obj);
     }
+    /**
+     * It checks if there are data received but not yet used.
+     * If there are, it returns true.
+     *
+     * If you are using onreceive callback, it will always be false because you receive the data with the callback function as the data arrives.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     *
+     * while(1){
+     *   if(obniz.uart0.isDataExists()){
+     *      console.log(obniz.uart0.readText());
+     *   }
+     *   await obniz.wait(10);  //wait for 10ms
+     * }
+     * ```
+     *
+     */
     isDataExists() {
         return this.received && this.received.length > 0;
     }
+    /**
+     * It returns the data array that are received but not yet used.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     *
+     * while(1){
+     *   if(obniz.uart0.isDataExists()){
+     *      console.log(obniz.uart0.readBytes());
+     *   }
+     *   await obniz.wait(10);  //wait for 10ms
+     * }
+     * ```
+     * @return received data. If not exist data, return [].
+     */
     readBytes() {
         const results = [];
         if (this.isDataExists()) {
@@ -13935,6 +14278,23 @@ class PeripheralUART {
         this.received = [];
         return results;
     }
+    /**
+     * It returns the one byte that are received but not yet used.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     *
+     * while(1){
+     *    if(obniz.uart0.isDataExists()){
+     *      console.log(obniz.uart0.readBytes());
+     *    }
+     *    await obniz.wait(10);  //wait for 10ms
+     * }
+     * ```
+     *
+     * @return received data. If not exist data, return null.
+     */
     readByte() {
         const results = [];
         if (this.isDataExists()) {
@@ -13942,6 +14302,23 @@ class PeripheralUART {
         }
         return null;
     }
+    /**
+     * It returns the data that are received but not yet used as string.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     *
+     * while(1){
+     *   if(obniz.uart0.isDataExists()){
+     *     console.log(obniz.uart0.readText());
+     *   }
+     *   await obniz.wait(10);  //wait for 10ms
+     * }
+     * ```
+     *
+     * @return received text data. If not exist data, return null.
+     */
     readText() {
         let string = null;
         if (this.isDataExists()) {
@@ -13951,9 +14328,10 @@ class PeripheralUART {
         this.received = [];
         return string;
     }
-    tryConvertString(data) {
-        return util_1.default.dataArray2string(data);
-    }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (this.onreceive) {
             const string = this.tryConvertString(obj.data);
@@ -13966,15 +14344,38 @@ class PeripheralUART {
             this.received.push.apply(this.received, obj.data);
         }
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
     }
+    /**
+     * It stops uart and releases io.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     * obniz.uart0.send("Hi");
+     * obniz.uart0.end();
+     * ```
+     */
     end() {
         const obj = {};
         obj["uart" + this.id] = null;
         this.params = null;
         this.Obniz.send(obj);
         this.used = false;
+    }
+    /**
+     * Convert data array to string.
+     *
+     * @param data data array
+     *
+     * @return converted string. If convert failed, return null.
+     */
+    tryConvertString(data) {
+        return util_1.default.dataArray2string(data);
     }
 }
 exports.default = PeripheralUART;
@@ -28085,7 +28486,11 @@ class Grove_GPS {
             if (pos >= 0) {
                 results = this.uart.received.slice(0, pos - 1);
                 this.uart.received.splice(0, pos + 1);
-                return this.uart.tryConvertString(results);
+                let str = this.uart.tryConvertString(results);
+                if (str === null) {
+                    str = "";
+                }
+                return str;
             }
         }
         return "";

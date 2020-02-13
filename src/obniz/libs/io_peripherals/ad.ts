@@ -14,6 +14,8 @@ export default class PeripheralAD {
 
   /**
    * called when voltage gets changed.
+   *
+   * @param onchange.value voltage of pin
    */
   public onchange?: (value: number) => void;
 
@@ -48,12 +50,6 @@ export default class PeripheralAD {
     this.observers = [];
   }
 
-  public addObserver(callback: (value: number) => void) {
-    if (callback) {
-      this.observers.push(callback);
-    }
-  }
-
   /**
    * This starts measuring voltage on ioX until end() is called.
    * ```Javascript
@@ -62,6 +58,7 @@ export default class PeripheralAD {
    * });
    * ```
    * @param callback  called when voltage gets changed.
+   * @param callback.voltage  voltage
    */
   public start(callback?: (voltage: number) => void) {
     this.onchange = callback;
@@ -126,6 +123,12 @@ export default class PeripheralAD {
     const callback: any = this.observers.shift();
     if (callback) {
       callback(obj);
+    }
+  }
+
+  private addObserver(callback: (value: number) => void) {
+    if (callback) {
+      this.observers.push(callback);
     }
   }
 }

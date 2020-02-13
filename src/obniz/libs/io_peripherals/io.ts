@@ -12,8 +12,8 @@ import {DriveType, PullType} from "./common";
  * @category Peripherals
  */
 export default class PeripheralIO {
-  public value!: boolean;
-  public onchange?: (value: boolean) => void;
+  private value!: boolean;
+  private onchange?: (value: boolean) => void;
   private Obniz: Obniz;
   private id: number;
   private observers!: Array<(value: boolean) => void>;
@@ -72,12 +72,6 @@ export default class PeripheralIO {
    *
    * @param drive
    *
-   * - "5v"
-   * Push-pull 5v mode.
-   * - "3v"
-   * Push-pull 3v mode.
-   * - "Open-drain"
-   * Open-drain mode.
    */
   public drive(drive: DriveType) {
     if (typeof drive !== "string") {
@@ -117,10 +111,6 @@ export default class PeripheralIO {
    *
    * @param updown
    *
-   * - null (default)
-   * - "5v" pull up to 5v
-   * - "3v" pull up to 3v
-   * - "0v" pull down to gnd
    */
   public pull(updown: PullType) {
     if (typeof updown !== "string" && updown !== null) {
@@ -169,6 +159,18 @@ export default class PeripheralIO {
     return this.value;
   }
 
+  /**
+   * Make ioX to input mode.
+   *
+   * And this will return the current input value.
+   * It pauses the process until the value is returned.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var value = await obniz.io0.inputWait();
+   * console.log(value);
+   * ```
+   */
   public inputWait(): Promise<boolean> {
     const self: any = this;
     return new Promise((resolve: any, reject: any) => {
@@ -182,6 +184,21 @@ export default class PeripheralIO {
     });
   }
 
+  /**
+   * This ends output/input on ioX.
+   *
+   *
+   * This function is effective only when using ioX.output() or ioX.input().
+   * This won't be called when AD/UART/etc are used.
+   * Pull-up down also will not affected.
+   *
+   * ```
+   * // Javascript Example
+   * obniz.io0.output(true)
+   * obniz.io0.end();
+   * ```
+   *
+   */
   public end() {
     const obj: any = {};
     obj["io" + this.id] = null;

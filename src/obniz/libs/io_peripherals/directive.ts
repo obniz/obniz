@@ -5,16 +5,28 @@
 
 import semver from "semver";
 import Obniz from "../../index";
+import {AnimationStatus} from "./common";
 
-export type DirectiveStatuse = "loop" | "registrate" | "pause" | "resume";
+export interface DirectiveAnimationFrame {
+  /**
+   * frame duration time in milliseconds
+   */
+  duration: number;
+
+  /**
+   * function of frame io config
+   * @param state.index frame index
+   */
+  state: (index: number) => void;
+}
 
 /**
  * @category Peripherals
  */
 export default class Directive {
-  public Obniz: Obniz;
-  public observers: any[];
-  public _animationIdentifier: number;
+  private Obniz: Obniz;
+  private observers: any[];
+  private _animationIdentifier: number;
 
   constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
@@ -23,6 +35,9 @@ export default class Directive {
     this._reset();
   }
 
+  /**
+   * @ignore
+   */
   public _reset() {
     for (let i = 0; i < this.observers.length; i++) {
       this.observers[i].reject(new Error("reset called"));
@@ -31,17 +46,64 @@ export default class Directive {
     this._animationIdentifier = 0;
   }
 
-  public addObserver(name: string, resolve: any, reject: any) {
-    if (name && resolve && reject) {
-      this.observers.push({
-        name,
-        resolve,
-        reject,
-      });
-    }
-  }
-
-  public animation(name: string, status: DirectiveStatuse, array?: any[], repeat?: number) {
+  /**
+   * io animation is used when you wish to accelerate the serial sequence change of io.
+   *
+   * "Loop" animation can be used.
+   * io changes repeatedly in a sequential manner according to json array.
+   * io and pwm json commands can only be used.
+   *
+   *
+   * obnizOS ver >= 2.0.0 required.
+   *
+   * ```javascript
+   * //javascript
+   * // Javascript Example
+   * obniz.io.animation("animation-1", "loop", [
+   *  {
+   *   duration: 10,
+   *   state: function(index){ // index = 0
+   *     obniz.io0.output(false)
+   *     obniz.io1.output(true)
+   *   }
+   *  },{
+   *    duration: 10,
+   *    state: function(index){ // index = 1
+   *      obniz.io0.output(true)
+   *      obniz.io1.output(false)
+   *    }
+   *  }
+   * ])
+   * ```
+   *
+   * It will generate signals likes below
+   *
+   *  ![](media://ioanimation.png)
+   *
+   * - Remove animation
+   *
+   * ```javascript
+   * obniz.io.animation("animation-1", "loop")
+   * ```
+   *
+   * - Pause animation
+   *
+   * ```javascript
+   * obniz.io.animation("animation-1", "pause")
+   * ```
+   *
+   * - Resume paused animation
+   *
+   * ```javascript
+   * obniz.io.animation("animation-1", "resume")
+   * ```
+   *
+   * @param name name of animation
+   * @param status status of animation
+   * @param animations instructions. This is optional when status is pause``resume.
+   * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
+   */
+  public animation(name: string, status: AnimationStatus, animations?: DirectiveAnimationFrame[], repeat?: number) {
     if (
       (typeof repeat === "number" || status === "registrate") &&
       semver.lt(this.Obniz.firmware_ver, "2.0.0")
@@ -58,13 +120,13 @@ export default class Directive {
     if (typeof repeat === "number") {
       obj.io.animation.repeat = repeat;
     }
-    if (!array) {
-      array = [];
+    if (!animations) {
+      animations = [];
     }
 
     const states: any[] = [];
-    for (let i = 0; i < array.length; i++) {
-      const state: any = array[i];
+    for (let i = 0; i < animations.length; i++) {
+      const state: any = animations[i];
       const duration: number = state.duration;
       const operation: (index: number) => {} = state.state;
 
@@ -84,7 +146,30 @@ export default class Directive {
     this.Obniz.send(obj);
   }
 
-  public repeatWait(array: any[], repeat: number) {
+  /**
+   * It start io aniomation with limited repeat count. And It wait until done.
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.io.repeatWait([
+   *   {
+   *     duration: 1000,
+   *     state: function(index){
+   *       obniz.io0.output(true)
+   *     }
+   *   },{
+   *     duration: 1000,
+   *     state: function(index){
+   *       obniz.io0.output(false)
+   *    }
+   *   }
+   * ], 4)
+   * ```
+   *
+   * @param animations instructions
+   * @param repeat 	The number of repeat count of animation.
+   */
+  public repeatWait(animations: DirectiveAnimationFrame[], repeat: number) {
     if (semver.lt(this.Obniz.firmware_ver, "2.0.0")) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
@@ -101,12 +186,16 @@ export default class Directive {
         this._animationIdentifier = 0;
       }
 
-      this.animation(name, "loop", array, repeat);
+      this.animation(name, "loop", animations, repeat);
       this.addObserver(name, resolve, reject);
     });
   }
 
-  public notified(obj: {[key: string]: any}) {
+  /**
+   * @ignore
+   * @param obj
+   */
+  public notified(obj: { [key: string]: any }) {
     if (obj.animation.status === "finish") {
       for (let i = this.observers.length - 1; i >= 0; i--) {
         if (obj.animation.name === this.observers[i].name) {
@@ -114,6 +203,16 @@ export default class Directive {
           this.observers.splice(i, 1);
         }
       }
+    }
+  }
+
+  private addObserver(name: string, resolve: any, reject: any) {
+    if (name && resolve && reject) {
+      this.observers.push({
+        name,
+        resolve,
+        reject,
+      });
     }
   }
 }
