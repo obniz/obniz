@@ -401,7 +401,7 @@ export default class ObnizComponents extends ObnizParts {
       for (const key in embeds_map) {
         if (hw_embeds[key]) {
           const Class: any = embeds_map[key];
-          (this as any)[key] = new Class(this);
+          (this as any)[key] = new Class(this, hw_embeds[key]);
           this._allComponentKeys.push(key);
         }
       }

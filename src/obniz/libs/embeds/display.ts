@@ -28,12 +28,20 @@ export default class Display {
   private fontSize: number = 16;
   private Obniz: Obniz;
   private _canvas?: HTMLCanvasElement;
-  private _pos!: { x: number, y: number };
+  private _pos = { x: 0, y: 0 };
+  private _colorDepthCapabilities: [number] = [1];
+  private _colorDepth: number = 1;
+  private _color = "#000";
+  private _paper_white = true;
+  private _raw_alternate = false;
 
-  constructor(obniz: any) {
+  constructor(obniz: any, info: any) {
     this.Obniz = obniz;
-    this.width = 128;
-    this.height = 64;
+    this.width = info.width;
+    this.height = info.height;
+    this._colorDepthCapabilities = info.color_depth;
+    this._paper_white = info.paper_white;
+    this._raw_alternate = info.raw_alternate;
 
     this._canvas = undefined;
     this._reset();
@@ -76,6 +84,37 @@ export default class Display {
   }
 
   /**
+   * Setting color for fill/stroke style for further rendering.
+   *
+   * ```javascript
+   * obniz.display.color('#FF0000');
+   * obniz.display.rect(0, 0, 10, 10, false)
+   * obniz.display.color('blue');
+   * obniz.display.rect(0, 10, 10, 10, false)
+   * ```
+   *
+   * @param depth css acceptable color definition
+   */
+  public setColor(color: string) {
+    this._color = color;
+    const ctx: any = this._ctx();
+    ctx.fillStyle = this._color;
+    ctx.strokeStyle = this._color;
+  }
+
+  /**
+   * Getting color for fill/stroke style for further rendering.
+   *
+   * ```javascript
+   * const current = obniz.display.getColor();
+   * ```
+   *
+   */
+  public getColor() {
+    return this._color;
+  }
+
+  /**
    * Clear the display.
    * ```javascript
    * // Javascript Example
@@ -87,10 +126,10 @@ export default class Display {
     this._pos.x = 0;
     this._pos.y = 0;
     if (ctx) {
-      ctx.fillStyle = "#000";
+      const currentFillStyle = ctx.fillStyle;
+      ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
       ctx.fillRect(0, 0, this.width, this.height);
-      ctx.fillStyle = "#FFF";
-      ctx.strokeStyle = "#FFF";
+      ctx.fillStyle = currentFillStyle;
       this.draw(ctx);
     } else {
       const obj: any = {};
@@ -143,7 +182,7 @@ export default class Display {
    *  @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
    */
   public print(text: string) {
-    const ctx: any = this._ctx();
+    const ctx = this._ctx();
     if (ctx) {
       ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
       this.draw(ctx);
@@ -294,23 +333,58 @@ export default class Display {
    * Draw BMP image
    *
    * ```javascript
-   * obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
+   * obniz.display.raw([255, 255,,,,,])
    * ```
    *
-   * @param data data array. 1 bit represents 1 dot. 1=white, 0=black.
-   * 1 byte is part of one line.
+   * You should care about colorDepth before sending raw datas.
+   *
+   * @param data data array.
    * The order is as below.
    * {1byte} {2byte} {3byte}...{16byte}
    * {17byte} {18byte} {19byte}...
    * .....
-   * .....................{1024byte}
+   * .....................
    */
   public raw(data: number[]) {
     const obj: any = {};
     obj.display = {
+      color_depth: this._colorDepth,
       raw: data,
     };
     this.Obniz.send(obj);
+  }
+
+  /**
+   * Setting color depth for all communication for the display
+   * higher number will get more beautiful colors and lowest number 1 is just monochrome.
+   * But 16 bit color mode is 16 times data bytes needed for same size rendering.
+   *
+   * ```javascript
+   * obniz.display.colorDepth(4); // => 4bit color mode.
+   * ```
+   *
+   * @param depth monochrome display always 1. For color display 1(monochrome) and 4 and 16 can be selected.
+   * default value is highest color depth for your display.
+   * If you call just
+   */
+  public setColorDepth(depth: number) {
+    const found = this._colorDepthCapabilities.find((element) => element === depth);
+    if (found) {
+      this._colorDepth = depth;
+    } else {
+      throw new Error(`This device can't accept depth ${depth}. availables are ${JSON.stringify(this._colorDepthCapabilities)}`);
+    }
+  }
+
+  /**
+   * Getting color depth for all communication for the display
+   *
+   * ```javascript
+   * const current = obniz.display.getColorDepth(); // => return current depth. 1 or higher
+   * ```
+   */
+  public getColorDepth() {
+    return this._colorDepth;
   }
 
   /**
@@ -408,7 +482,7 @@ export default class Display {
 
   /**
    * You can specify to transfer the displayed data or not.
-   * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+   * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
    *
    * Use false to stop updating display and true to restart updating.
    *
@@ -445,9 +519,26 @@ export default class Display {
     }
   }
 
+  private _reset_canvas() {
+    // reset canvas
+    if (this._canvas) {
+      const ctx: any = this._canvas!.getContext("2d");
+      ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+      ctx.fillRect(0, 0, this.width, this.height);
+      ctx.fillStyle = this._color;
+      ctx.strokeStyle = this._color;
+      ctx.font = `${this.fontSize}px Arial`;
+    }
+  }
+
   private _reset() {
-    this._pos = {x: 0, y: 0};
     this.autoFlush = true;
+    // reset to default
+    this._pos = {x: 0, y: 0};
+    this._color = this._paper_white ? "#000" : "#FFF";
+    this.fontSize = this.height > 200 ? 32 : 16;
+    this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+    this._reset_canvas();
   }
 
   private _preparedCanvas() {
@@ -465,27 +556,25 @@ export default class Display {
     } else {
       const identifier: any = "obnizcanvas-" + this.Obniz.id;
       let canvas: any = document.getElementById(identifier);
-      if (!canvas) {
+      if (canvas) {
+        this._canvas = canvas;
+      } else {
         canvas = document.createElement("canvas");
         canvas.setAttribute("id", identifier);
         canvas.style.visibility = "hidden";
         canvas.width = this.width;
         canvas.height = this.height;
-        canvas.style["-webkit-font-smoothing"] = "none";
+        if (this._colorDepthCapabilities.length === 1) {
+          // for monochro display
+          canvas.style["-webkit-font-smoothing"] = "none";
+        }
         const body: any = document.getElementsByTagName("body")[0];
         body.appendChild(canvas);
+
+        this._canvas = canvas;
+        this._reset_canvas();
       }
-      this._canvas = canvas;
     }
-    const ctx: any = this._canvas!.getContext("2d");
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, this.width, this.height);
-    ctx.fillStyle = "#FFF";
-    ctx.strokeStyle = "#FFF";
-    this._pos.x = 0;
-    this._pos.y = 0;
-    this.fontSize = 16;
-    ctx.font = `${this.fontSize}px Arial`;
     return this._canvas;
   }
 
@@ -497,24 +586,81 @@ export default class Display {
   }
 
   private _draw(ctx: CanvasRenderingContext2D) {
-    const stride: any = this.width / 8;
-    const vram: any = new Array(stride * 64);
-    const imageData: any = ctx.getImageData(0, 0, this.width, this.height);
-    const data: any = imageData.data;
 
-    for (let i = 0; i < data.length; i += 4) {
-      const brightness: any = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      const index: any = Math.floor(i / 4);
-      const line: any = Math.floor(index / this.width);
-      const col: any = Math.floor((index - line * this.width) / 8);
-      const bits: any = Math.floor(index - line * this.width) % 8;
-      if (bits === 0) {
-        vram[line * stride + col] = 0x00;
+    const raw = new Array(this.width * this.height * this._colorDepth / 8);
+    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+    const data = imageData.data;
+
+    if (this._colorDepth === 16) {
+
+      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+        const red = data[pixel_index * 4];
+        const green = data[pixel_index * 4 + 1];
+        const blue = data[pixel_index * 4 + 2];
+        const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
+        raw[pixel_index * 2] = (hexColor >> 8) & 0xFF;
+        raw[pixel_index * 2 + 1] = hexColor & 0xFF;
       }
-      if (brightness > 0x7f) {
-        vram[line * stride + col] |= 0x80 >> bits;
+
+    } else if (this._colorDepth === 4) {
+
+      const stride = this.width / 2;
+      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+        const red = data[pixel_index * 4];
+        const green = data[pixel_index * 4 + 1];
+        const blue = data[pixel_index * 4 + 2];
+        const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+        const line = Math.floor(pixel_index / this.width);
+        const col = Math.floor((pixel_index - line * this.width) / 2);
+        const bits = Math.floor(pixel_index - line * this.width) % 2;
+
+        let pixel = 0b0000;
+        if (red > 0x7F) {
+          pixel |= 0b1000;
+        }
+        if (green > 0x7F) {
+          pixel |= 0b0100;
+        }
+        if (blue > 0x7F) {
+          pixel |= 0b0010;
+        }
+        if (brightness > 0x7F) {
+          pixel |= 0b0001;
+        }
+
+        if (bits === 0) {
+          raw[line * stride + col] = pixel << 4;
+        }
+        if (brightness > 0x7f) {
+          raw[line * stride + col] |= pixel;
+        }
+      }
+
+    } else {
+
+      const stride = this.width / 8;
+      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+        const red = data[pixel_index * 4];
+        const green = data[pixel_index * 4 + 1];
+        const blue = data[pixel_index * 4 + 2];
+        const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+        const row = Math.floor(pixel_index / this.width);
+        const col = Math.floor((pixel_index - row * this.width) / 8);
+        const bits = Math.floor(pixel_index - row * this.width) % 8;
+        if (bits === 0) {
+          raw[row * stride + col] = 0x00;
+        }
+        if (brightness > 0x7f) {
+          raw[row * stride + col] |= 0x80 >> bits;
+        }
       }
     }
-    this.raw(vram);
+    if (this._raw_alternate) {
+      for (let i = 0; i < raw.length; i++) {
+        raw[i] = (~raw[i]) & 0xFF;
+      }
+    }
+
+    this.raw(raw);
   }
 }

@@ -1,5 +1,5 @@
 {
-  "rev": "1",
+  "rev": "2",
   "hw": "esp32w",
   "peripherals": {
     "io": {
@@ -73,9 +73,7 @@
     }
   },
   "embeds": {
-    "ble": {},
-    "display": {},
-    "switch": {}
+    "ble": {}
   },
   "protocol": {
     "tcp": {

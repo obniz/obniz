@@ -435,7 +435,7 @@ webpackContext.id = "./dist/src/json_schema sync recursive \\.yml$";
 /***/ "./dist/src/json_schema/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageDataArray":{"id":"imageDataArray","type":"array","minItems":0,"items":{"type":"integer","minimum":0}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
 
 /***/ }),
 
@@ -729,7 +729,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/display/raw.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageData128x64"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageDataArray"},"color_depth":{"type":"integer","enum":[1,4,16],"default":1}}}
 
 /***/ }),
 
@@ -1846,7 +1846,7 @@ class ObnizComponents extends ObnizParts_1.default {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
-                    this[key] = new Class(this);
+                    this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                 }
             }
@@ -12071,12 +12071,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @category Embeds
  */
 class Display {
-    constructor(obniz) {
+    constructor(obniz, info) {
         this.autoFlush = true;
         this.fontSize = 16;
+        this._pos = { x: 0, y: 0 };
+        this._colorDepthCapabilities = [1];
+        this._colorDepth = 1;
+        this._color = "#000";
+        this._paper_white = true;
+        this._raw_alternate = false;
         this.Obniz = obniz;
-        this.width = 128;
-        this.height = 64;
+        this.width = info.width;
+        this.height = info.height;
+        this._colorDepthCapabilities = info.color_depth;
+        this._paper_white = info.paper_white;
+        this._raw_alternate = info.raw_alternate;
         this._canvas = undefined;
         this._reset();
     }
@@ -12116,6 +12125,35 @@ class Display {
         ctx.font = "" + +" " + size + "px " + font;
     }
     /**
+     * Setting color for fill/stroke style for further rendering.
+     *
+     * ```javascript
+     * obniz.display.color('#FF0000');
+     * obniz.display.rect(0, 0, 10, 10, false)
+     * obniz.display.color('blue');
+     * obniz.display.rect(0, 10, 10, 10, false)
+     * ```
+     *
+     * @param depth css acceptable color definition
+     */
+    setColor(color) {
+        this._color = color;
+        const ctx = this._ctx();
+        ctx.fillStyle = this._color;
+        ctx.strokeStyle = this._color;
+    }
+    /**
+     * Getting color for fill/stroke style for further rendering.
+     *
+     * ```javascript
+     * const current = obniz.display.getColor();
+     * ```
+     *
+     */
+    getColor() {
+        return this._color;
+    }
+    /**
      * Clear the display.
      * ```javascript
      * // Javascript Example
@@ -12127,10 +12165,10 @@ class Display {
         this._pos.x = 0;
         this._pos.y = 0;
         if (ctx) {
-            ctx.fillStyle = "#000";
+            const currentFillStyle = ctx.fillStyle;
+            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
             ctx.fillRect(0, 0, this.width, this.height);
-            ctx.fillStyle = "#FFF";
-            ctx.strokeStyle = "#FFF";
+            ctx.fillStyle = currentFillStyle;
             this.draw(ctx);
         }
         else {
@@ -12334,23 +12372,57 @@ class Display {
      * Draw BMP image
      *
      * ```javascript
-     * obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
+     * obniz.display.raw([255, 255,,,,,])
      * ```
      *
-     * @param data data array. 1 bit represents 1 dot. 1=white, 0=black.
-     * 1 byte is part of one line.
+     * You should care about colorDepth before sending raw datas.
+     *
+     * @param data data array.
      * The order is as below.
      * {1byte} {2byte} {3byte}...{16byte}
      * {17byte} {18byte} {19byte}...
      * .....
-     * .....................{1024byte}
+     * .....................
      */
     raw(data) {
         const obj = {};
         obj.display = {
+            color_depth: this._colorDepth,
             raw: data,
         };
         this.Obniz.send(obj);
+    }
+    /**
+     * Setting color depth for all communication for the display
+     * higher number will get more beautiful colors and lowest number 1 is just monochrome.
+     * But 16 bit color mode is 16 times data bytes needed for same size rendering.
+     *
+     * ```javascript
+     * obniz.display.colorDepth(4); // => 4bit color mode.
+     * ```
+     *
+     * @param depth monochrome display always 1. For color display 1(monochrome) and 4 and 16 can be selected.
+     * default value is highest color depth for your display.
+     * If you call just
+     */
+    setColorDepth(depth) {
+        const found = this._colorDepthCapabilities.find((element) => element === depth);
+        if (found) {
+            this._colorDepth = depth;
+        }
+        else {
+            throw new Error(`This device can't accept depth ${depth}. availables are ${JSON.stringify(this._colorDepthCapabilities)}`);
+        }
+    }
+    /**
+     * Getting color depth for all communication for the display
+     *
+     * ```javascript
+     * const current = obniz.display.getColorDepth(); // => return current depth. 1 or higher
+     * ```
+     */
+    getColorDepth() {
+        return this._colorDepth;
     }
     /**
      * @ignore
@@ -12443,7 +12515,7 @@ class Display {
     }
     /**
      * You can specify to transfer the displayed data or not.
-     * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+     * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
      *
      * Use false to stop updating display and true to restart updating.
      *
@@ -12477,9 +12549,25 @@ class Display {
             throw new Error("obniz.js cant create canvas element to body");
         }
     }
+    _reset_canvas() {
+        // reset canvas
+        if (this._canvas) {
+            const ctx = this._canvas.getContext("2d");
+            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.fillStyle = this._color;
+            ctx.strokeStyle = this._color;
+            ctx.font = `${this.fontSize}px Arial`;
+        }
+    }
     _reset() {
-        this._pos = { x: 0, y: 0 };
         this.autoFlush = true;
+        // reset to default
+        this._pos = { x: 0, y: 0 };
+        this._color = this._paper_white ? "#000" : "#FFF";
+        this.fontSize = this.height > 200 ? 32 : 16;
+        this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+        this._reset_canvas();
     }
     _preparedCanvas() {
         if (this._canvas) {
@@ -12498,27 +12586,25 @@ class Display {
         else {
             const identifier = "obnizcanvas-" + this.Obniz.id;
             let canvas = document.getElementById(identifier);
-            if (!canvas) {
+            if (canvas) {
+                this._canvas = canvas;
+            }
+            else {
                 canvas = document.createElement("canvas");
                 canvas.setAttribute("id", identifier);
                 canvas.style.visibility = "hidden";
                 canvas.width = this.width;
                 canvas.height = this.height;
-                canvas.style["-webkit-font-smoothing"] = "none";
+                if (this._colorDepthCapabilities.length === 1) {
+                    // for monochro display
+                    canvas.style["-webkit-font-smoothing"] = "none";
+                }
                 const body = document.getElementsByTagName("body")[0];
                 body.appendChild(canvas);
+                this._canvas = canvas;
+                this._reset_canvas();
             }
-            this._canvas = canvas;
         }
-        const ctx = this._canvas.getContext("2d");
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, this.width, this.height);
-        ctx.fillStyle = "#FFF";
-        ctx.strokeStyle = "#FFF";
-        this._pos.x = 0;
-        this._pos.y = 0;
-        this.fontSize = 16;
-        ctx.font = `${this.fontSize}px Arial`;
         return this._canvas;
     }
     _ctx() {
@@ -12528,24 +12614,74 @@ class Display {
         }
     }
     _draw(ctx) {
-        const stride = this.width / 8;
-        const vram = new Array(stride * 64);
+        const raw = new Array(this.width * this.height * this._colorDepth / 8);
         const imageData = ctx.getImageData(0, 0, this.width, this.height);
         const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-            const index = Math.floor(i / 4);
-            const line = Math.floor(index / this.width);
-            const col = Math.floor((index - line * this.width) / 8);
-            const bits = Math.floor(index - line * this.width) % 8;
-            if (bits === 0) {
-                vram[line * stride + col] = 0x00;
-            }
-            if (brightness > 0x7f) {
-                vram[line * stride + col] |= 0x80 >> bits;
+        if (this._colorDepth === 16) {
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
+                raw[pixel_index * 2] = (hexColor >> 8) & 0xFF;
+                raw[pixel_index * 2 + 1] = hexColor & 0xFF;
             }
         }
-        this.raw(vram);
+        else if (this._colorDepth === 4) {
+            const stride = this.width / 2;
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+                const line = Math.floor(pixel_index / this.width);
+                const col = Math.floor((pixel_index - line * this.width) / 2);
+                const bits = Math.floor(pixel_index - line * this.width) % 2;
+                let pixel = 0b0000;
+                if (red > 0x7F) {
+                    pixel |= 0b1000;
+                }
+                if (green > 0x7F) {
+                    pixel |= 0b0100;
+                }
+                if (blue > 0x7F) {
+                    pixel |= 0b0010;
+                }
+                if (brightness > 0x7F) {
+                    pixel |= 0b0001;
+                }
+                if (bits === 0) {
+                    raw[line * stride + col] = pixel << 4;
+                }
+                if (brightness > 0x7f) {
+                    raw[line * stride + col] |= pixel;
+                }
+            }
+        }
+        else {
+            const stride = this.width / 8;
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+                const row = Math.floor(pixel_index / this.width);
+                const col = Math.floor((pixel_index - row * this.width) / 8);
+                const bits = Math.floor(pixel_index - row * this.width) % 8;
+                if (bits === 0) {
+                    raw[row * stride + col] = 0x00;
+                }
+                if (brightness > 0x7f) {
+                    raw[row * stride + col] |= 0x80 >> bits;
+                }
+            }
+        }
+        if (this._raw_alternate) {
+            for (let i = 0; i < raw.length; i++) {
+                raw[i] = (~raw[i]) & 0xFF;
+            }
+        }
+        this.raw(raw);
     }
 }
 exports.default = Display;
@@ -12570,7 +12706,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @category Embeds
  */
 class ObnizSwitch {
-    constructor(Obniz) {
+    constructor(Obniz, info) {
         this.Obniz = Obniz;
         this._reset();
     }
@@ -12665,21 +12801,21 @@ exports.default = ObnizSwitch;
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"memo\":\"これはデバッグ用。本番にHW登録ができないから入れてる。後で消さないといけない。\",\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -12723,14 +12859,14 @@ exports.default = HW;
 /***/ "./dist/src/obniz/libs/hw/obnizb1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -18381,14 +18517,14 @@ const qr_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/qr
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandDisplay extends WSCommand_1.default {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 8;
-        this._CommandClear = 0;
-        this._CommandPrint = 1;
+        this._CommandPrint = 0;
         this._CommandDrawCampusVerticalBytes = 2;
         this._CommandDrawCampusHorizonalBytes = 3;
         this._CommandDrawIOState = 4;
         this._CommandSetPinName = 5;
+        this._CommandDrawCampusRawColors = 6;
     }
     // Commands
     clear(params) {
@@ -18407,7 +18543,12 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.printText(params.text);
     }
     raw(params) {
-        this.drawHorizonally(new Uint8Array(params.raw));
+        if (params.color_depth > 1) {
+            this.drawRawColors(params.raw, params.color_depth);
+        }
+        else {
+            this.drawHorizonally(new Uint8Array(params.raw));
+        }
     }
     qr(params) {
         const text = params.qr.text;
@@ -18474,6 +18615,12 @@ class WSCommandDisplay extends WSCommand_1.default {
         combined.set(buf, 0);
         combined.set(stringarray, 1);
         this.sendCommand(this._CommandSetPinName, combined);
+    }
+    drawRawColors(raw, colorDepth) {
+        const buf = new Uint8Array(1 + raw.length);
+        buf[0] = colorDepth;
+        buf.set(raw, 1);
+        this.sendCommand(this._CommandDrawCampusRawColors, buf);
     }
     parseFromJson(json) {
         const module = json.display;
