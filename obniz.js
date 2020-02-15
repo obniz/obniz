@@ -123,7 +123,7 @@ module.exports = {
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
+    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js && git add docs",
     "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -234,8 +234,7 @@ module.exports = {
     "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser"
   }
-}
-;
+};
 
 /***/ }),
 
