@@ -1617,7 +1617,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = __importDefault(__webpack_require__("./node_modules/node-fetch/browser.js"));
 // @ts-ignore
-const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
+const package_1 = __importDefault(__webpack_require__("./dist/package.js"));
 class ObnizApi {
     constructor(obnizId, options) {
         this.id = obnizId;
@@ -1628,9 +1628,27 @@ class ObnizApi {
         };
         this.urlBase = this.options.obniz_server + "/obniz/" + this.id;
     }
+    /**
+     * obniz.js major version string
+     */
     get apiVersion() {
         const versionString = package_1.default.version;
         return versionString.split(".").shift();
+    }
+    /**
+     * Get device is online or offline
+     * @param callback with result
+     */
+    getState(callback) {
+        return this.post("/state", null, callback);
+    }
+    /**
+     * post data via obniz REST api
+     * @param json
+     * @param callback
+     */
+    postJson(json, callback) {
+        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
     }
     post(path, params, callback) {
         const url = this.urlBase + path;
@@ -1663,12 +1681,6 @@ class ObnizApi {
                 resolve(json);
             });
         });
-    }
-    getState(callback) {
-        return this.post("/state", null, callback);
-    }
-    postJson(json, callback) {
-        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
     }
 }
 exports.default = ObnizApi;
@@ -1720,6 +1732,12 @@ class ObnizComponents extends ObnizParts_1.default {
             this._resetComponents();
         }
     }
+    /**
+     * Output pin Vcc and Gnd
+     * @param vcc
+     * @param gnd
+     * @param drive
+     */
     setVccGnd(vcc, gnd, drive) {
         if (this.isValidIO(vcc)) {
             if (drive) {
@@ -1734,24 +1752,42 @@ class ObnizComponents extends ObnizParts_1.default {
             this.getIO(gnd).output(false);
         }
     }
+    /**
+     * Get IO module from pin no
+     * @param io
+     */
     getIO(io) {
         if (!this.isValidIO(io)) {
             throw new Error("io " + io + " is not valid io");
         }
         return this["io" + io];
     }
+    /**
+     * GET AD module from pin no
+     * @param io
+     */
     getAD(io) {
         if (!this.isValidIO(io)) {
             throw new Error("ad " + io + " is not valid io");
         }
         return this["ad" + io];
     }
+    /**
+     * It returns unused PWM module.
+     */
     getFreePwm() {
         return this._getFreePeripheralUnit("pwm");
     }
+    /**
+     * It returns unused I2C module.
+     */
     getFreeI2C() {
         return this._getFreePeripheralUnit("i2c");
     }
+    /**
+     * It returns setuped I2C module .
+     * @param config
+     */
     getI2CWithConfig(config) {
         if (typeof config !== "object") {
             throw new Error("getI2CWithConfig need config arg");
@@ -1763,9 +1799,16 @@ class ObnizComponents extends ObnizParts_1.default {
         i2c.start(config);
         return i2c;
     }
+    /**
+     * It returns unused SPI module.
+     */
     getFreeSpi() {
         return this._getFreePeripheralUnit("spi");
     }
+    /**
+     * It returns setuped SPI module.
+     * @param config
+     */
     getSpiWithConfig(config) {
         if (typeof config !== "object") {
             throw new Error("getSpiWithConfig need config arg");
@@ -1777,9 +1820,15 @@ class ObnizComponents extends ObnizParts_1.default {
         spi.start(config);
         return spi;
     }
+    /**
+     * It returns unused UART module.
+     */
     getFreeUart() {
         return this._getFreePeripheralUnit("uart");
     }
+    /**
+     * It returns unused TCP module.
+     */
     getFreeTcp() {
         return this._getFreePeripheralUnit("tcp");
     }
@@ -1991,46 +2040,64 @@ class ObnizConnection {
             this.wsconnect();
         }
     }
+    /**
+     * obniz.js version
+     */
     static get version() {
         return package_1.default.version;
     }
+    /**
+     * @ignore
+     * @constructor
+     */
     static get WSCommand() {
         return wscommand_1.default;
     }
-    prompt(filled, callback) {
-        const obnizid = prompt("Please enter obniz id", filled);
-        if (obnizid) {
-            callback(obnizid);
-        }
-    }
-    wsOnOpen() {
-        this.print_debug("ws connected");
-        this._connectionRetryCount = 0;
-        // wait for {ws:{ready:true}} object
-        if (typeof this.onopen === "function") {
-            this.onopen(this);
-        }
-    }
-    wsOnMessage(data) {
-        let json;
-        if (typeof data === "string") {
-            json = JSON.parse(data);
-        }
-        else if (this.wscommands) {
-            if (this.debugprintBinary) {
-                console.log("Obniz: binalized: " + new Uint8Array(data).toString());
-            }
-            json = this.binary2Json(data);
-        }
-        if (Array.isArray(json)) {
-            for (const i in json) {
-                this.notifyToModule(json[i]);
-            }
-        }
-        else {
-            // invalid json
-        }
-    }
+    /**
+     * With this you wait until the connection to obniz Board succeeds.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     *
+     * await obniz.connectWait();
+     *
+     * obniz.io0.output(true);
+     * obniz.close();
+     *
+     * ```
+     *
+     *
+     * - with timeout
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     *
+     * await obniz.connectWait({timeout:10});  //timeout 10sec
+     *
+     * if(connected){
+     *    obniz.io0.output(true);
+     *    obniz.close();
+     * }
+     * ```
+     *
+     * - with auto_connect:false
+     *
+     * If the param auto_connect is set as false, it will try to connect only once and, if unsuccessful, return false.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678',{auto_connect: false});
+     *
+     * var connected = await obniz.connectWait();  //try once
+     *
+     * if(connected){
+     *   obniz.io0.output(true);
+     *   obniz.close();
+     * }
+     * ```
+     *
+     * @param option.timeout timeout in seconds
+     * @return False will be returned when connection is not established within a set timeout.
+     */
     connectWait(option) {
         option = option || {};
         const timeout = option.timeout || null;
@@ -2055,6 +2122,18 @@ class ObnizConnection {
             this.connect();
         });
     }
+    /**
+     * You can connect to obniz Board manually by calling connect() when auto_connect is set to be false.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678', { auto_connect: false });
+     *
+     * obniz.connect();
+     * obniz.onconnect = async function() {
+     *  obniz.io0.output(true);
+     * }
+     * ```
+     */
     connect() {
         if (this.socket && this.socket.readyState <= 1) {
             return;
@@ -2075,6 +2154,13 @@ class ObnizConnection {
         }
         this.connectionState = "closed";
     }
+    /**
+     * Send json/binary data to obniz Cloud or device.
+     *
+     * @param obj send data
+     * @param options send option
+     * @param options.local_connect If false, send data via gloval internet.
+     */
     send(obj, options) {
         try {
             if (!obj || typeof obj !== "object") {
@@ -2133,11 +2219,53 @@ class ObnizConnection {
             console.log(e);
         }
     }
+    /**
+     * @ignore
+     * @param msg
+     */
     warning(msg) {
         console.log("warning:" + msg);
     }
+    /**
+     * @ignore
+     * @param msg
+     */
     error(msg) {
         console.error("error:" + msg);
+    }
+    prompt(filled, callback) {
+        const obnizid = prompt("Please enter obniz id", filled);
+        if (obnizid) {
+            callback(obnizid);
+        }
+    }
+    wsOnOpen() {
+        this.print_debug("ws connected");
+        this._connectionRetryCount = 0;
+        // wait for {ws:{ready:true}} object
+        if (typeof this.onopen === "function") {
+            this.onopen(this);
+        }
+    }
+    wsOnMessage(data) {
+        let json;
+        if (typeof data === "string") {
+            json = JSON.parse(data);
+        }
+        else if (this.wscommands) {
+            if (this.debugprintBinary) {
+                console.log("Obniz: binalized: " + new Uint8Array(data).toString());
+            }
+            json = this.binary2Json(data);
+        }
+        if (Array.isArray(json)) {
+            for (const i in json) {
+                this.notifyToModule(json[i]);
+            }
+        }
+        else {
+            // invalid json
+        }
     }
     wsOnClose(event) {
         this.print_debug("closed");
@@ -2508,9 +2636,17 @@ const ObnizConnection_1 = __importDefault(__webpack_require__("./dist/src/obniz/
  */
 const _parts = {};
 class ObnizParts extends ObnizConnection_1.default {
+    /**
+     * @ignore
+     * @private
+     */
     static _parts() {
         return _parts;
     }
+    /**
+     * Register Parts class
+     * @param arg0 Parts class
+     */
     static PartsRegistrate(arg0, arg1) {
         if (arg0 &&
             typeof arg0.info === "function" &&
@@ -2521,6 +2657,11 @@ class ObnizParts extends ObnizConnection_1.default {
             _parts[arg0] = arg1;
         }
     }
+    /**
+     * @ignore
+     * @param name
+     * @constructor
+     */
     static Parts(name) {
         if (!_parts[name]) {
             throw new Error(`unknown parts [${name}]`);
@@ -2530,9 +2671,19 @@ class ObnizParts extends ObnizConnection_1.default {
     constructor(id, options) {
         super(id, options);
     }
+    /**
+     * Check the param is valid io pin no.
+     * @param io
+     */
     isValidIO(io) {
         return typeof io === "number" && this["io" + io] !== null;
     }
+    /**
+     * Setup Parts of parts library
+     *
+     * @param partsname
+     * @param options
+     */
     wired(partsname, options) {
         const parts = ObnizParts.Parts(partsname);
         if (!parts) {
@@ -2599,6 +2750,39 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
     constructor(id, options) {
         super(id, options);
     }
+    /**
+     * This pauses obniz Board for a period given in terms of ms (millisecond).
+     *
+     * ```javascript
+     * // Javascript Example
+     * led.on();
+     * obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * ```
+     *
+     * This method pauses only obniz Board, not JavaScript.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var time = new Date();
+     * led.on();
+     * obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * console.log((new Date()).getTime() - time.getTime()) // 0 or very few ms. not 1000ms.
+     * ```
+     *
+     * However, when you call this method together with the await function, JavaScript will pause for the given period in ms.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var time = new Date();
+     * led.on();
+     * await obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * console.log((new Date()).getTime() - time.getTime()) // => about 1000
+     * ```
+     * @param msec
+     */
     wait(msec) {
         if (msec < 0) {
             msec = 0;
@@ -2609,22 +2793,85 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         this.send({ system: { wait: msec } });
         return new Promise((resolve) => setTimeout(resolve, msec));
     }
+    /**
+     * This forces the obniz Board to go back to the initial state when the power was just turned on.
+     *
+     * ```javascript
+     * // Example
+     * obniz = new Obniz("1234-5678");
+     * obniz.onconnect = function() {
+     *   obniz.reset();
+     * }
+     * ```
+     */
     reset() {
         this.send({ system: { reset: true } });
         this._resetComponents();
     }
+    /**
+     * reboot device
+     *
+     * ```javascript
+     * obniz.reboot();
+     * ```
+     */
     reboot() {
         this.send({ system: { reboot: true } });
     }
+    /**
+     * @ignore
+     */
     selfCheck() {
         this.send({ system: { self_check: true } });
     }
+    /**
+     * By default, obniz Board resets after disconnection from the cloud.
+     * It means the output value and pwm will all stop at that point.
+     * But the above function with the argument true can nullify that default setting and change it to "do not reset when offline".
+     * This configuration remains as long as obniz Board is on.
+     *
+     * ```javascript
+     * // Example
+     * obniz.keepWorkingAtOffline(true);
+     * ```
+     * @param working
+     */
     keepWorkingAtOffline(working) {
         this.send({ system: { keep_working_at_offline: working } });
     }
+    /**
+     *
+     * This lets you change the setting of `reset_obniz_on_ws_disconnection` after connection is established.
+     *
+     * By default, obniz cloud resets target obniz Board when the all websocket to obniz cloud was closed.
+     * It means the output value and pwm will all stop at that point.
+     * With the above function, you can nullify these resetting activities.
+     * This configuration will remain until target obniz Board gets disconnected.
+     * Set this function to false to keep working without any of the websocket connections.
+     *
+     *
+     * ```javascript
+     * // Example
+     * obniz.resetOnDisconnect(false);
+     * ```
+     *
+     * @param reset
+     */
     resetOnDisconnect(reset) {
         this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in seconds.
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepSeconds (60); // 60 seconds
+     * ```
+     *
+     * @param sec up to 64800 seconds (18 hours).
+     */
     sleepSeconds(sec) {
         if (sec < 1) {
             // min 1s
@@ -2636,6 +2883,19 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         this.send({ system: { sleep_seconds: sec } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in minutes.
+     *
+     *
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepMinute （60）; // 60 minutes
+     * ```
+     * @param minute up to 64800 minutes(45 days ).
+     */
     sleepMinute(minute) {
         if (minute < 1) {
             // min 1m
@@ -2647,6 +2907,21 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         this.send({ system: { sleep_minute: minute } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in Date type.
+     * Sleep for up to 45 days (64800 minutes).
+     *
+     * ```javascript
+     * // JavaScript example
+     * let dt = new Date();
+     * dt.setHours(dt.getHours () + 1,0,0,0);
+     * obniz.sleep(dt);
+     * ```
+     *
+     * @param date
+     */
     sleep(date) {
         if (!(date instanceof Date)) {
             throw new Error("Date instance argument required");
@@ -2669,12 +2944,41 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
             throw new Error(`over max sleep time : ${sleepTime}m`);
         }
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * It returns from sleep depending on the pin state of IO0.
+     *
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepIoTrigger (true);
+     * ```
+     *
+     * @param trigger
+     *
+     *  - true: Rise （LOW -> HIGH）
+     *  - false: Falling （HIGH -> LOW）
+     */
     sleepIoTrigger(trigger) {
         if (typeof trigger !== "boolean") {
             throw new Error("sleepIoTrigger need boolean arg");
         }
         this.send({ system: { sleep_io_trigger: trigger } });
     }
+    /**
+     * Ping to obniz device and wait pong response.
+     *
+     * If debugprint option enabled, it display ping/pong response time on console.
+     *
+     * ```javascript
+     * await obniz.pingWait(); //waiting pong.
+     * ```
+     *
+     * @param unixtime start time of measure response time
+     * @param rand Unique identifier of ping data
+     * @param forceGlobalNetwork
+     */
     pingWait(unixtime, rand, forceGlobalNetwork) {
         unixtime = unixtime || new Date().getTime();
         const upper = Math.floor(unixtime / Math.pow(2, 32));
@@ -2757,6 +3061,23 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
     }
+    /**
+     * This closes the current connection.
+     * You need to set auto_connect to false. Otherwise the connection will be recovered.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678', {
+     *   auto_connect: false,
+     *   reset_obniz_on_ws_disconnection: false
+     * });
+     *
+     * obniz.connect();
+     * obniz.onconnect = async function() {
+     *   obniz.io0.output(true);
+     *   obniz.close();
+     * }
+     * ```
+     */
     close() {
         super.close();
         this.updateOnlineUI();
@@ -2923,18 +3244,101 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
+/**
+ * obniz class is the abstract version of obniz Board hardware within JavaScript.
+ *
+ * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
+ * without the details of websocket api.
+ *
+ *
+ * ### obnizOS version and obniz.js version
+ *
+ * obniz cloud compare your obniz.js version and target device obnizOS version.
+ * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
+ * It will work somehow but some functions looses compatibility.
+ *
+ * ### one device from two program
+ *
+ * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
+ * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
+ *
+ * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
+ *
+ * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
+ *
+ */
 class Obniz extends ObnizUIs_1.default {
+    /**
+     * We will now instantiate obniz.
+     *
+     * obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
+     *
+     * ```javascript
+     * new Obniz('1234-5678') // OK
+     * new Obniz('12345678') // OK
+     * new Obniz(12345678) // Can't accept
+     * ```
+     *
+     * If you connect to obniz which has an access token, provide an option like this
+     *
+     * ```javascript
+     * new Obniz('1234-5678', {access_token: 'your token here'})
+     * ```
+     *
+     * If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
+     * In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
+     * It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
+     *
+     * ![](media://obniz_prompt.png)
+     *
+     * When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
+     *
+     * When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
+     * But when cloud connection gets closed, the local connect also gets closed.
+     *
+     * ![](media://local_connect.png)
+     *
+     * The timing onconnect() gets called depends on the availability of local connect.
+     * obniz.js will wait a little to establish connection via local connect as much as possible.
+     * See the flow below.
+     *
+     * ![](media://onconnect_flow.png)
+     *
+     * The second parameter when instantiating obniz Board is an option.
+     *
+     * @param id
+     * @param options
+     */
     constructor(id, options) {
         super(id, options);
         this.util = new util_1.default(this);
     }
     /**
-     *
+     * obniz REST api class
      * @returns {ObnizApi}
      */
     static get api() {
         return ObnizApi_1.default;
     }
+    /**
+     * Repeat will call the callback function periodically while it is connected to obniz Board.
+     * It will stop calling once it is disconnected from obniz Board.
+     *
+     * ```javascript
+     * // Javascript Example
+     *  obniz.ad0.start();
+     *  obniz.repeat(function(){
+     *    if (obniz.ad0.value > 2.5) {
+     *      obniz.io0.output(true);
+     *    } else {
+     *      obniz.io0.output(false);
+     *    }
+     *  }, 100)
+     * ```
+     *
+     * @param callback
+     * @param interval  default 100. It mean 100ms interval loop.
+     */
     repeat(callback, interval) {
         if (this.looper) {
             this.looper = callback;
@@ -2947,6 +3351,10 @@ class Obniz extends ObnizUIs_1.default {
             this.loop();
         }
     }
+    /**
+     * @ignore
+     * @param msg
+     */
     warning(msg) {
         if (this.isNode) {
             console.error(msg);
@@ -2963,6 +3371,10 @@ class Obniz extends ObnizUIs_1.default {
             console.log(`Warning: ${msg}`);
         }
     }
+    /**
+     * @ignore
+     * @param msg
+     */
     error(msg) {
         if (this.isNode) {
             console.error(msg);
@@ -2981,21 +3393,35 @@ class Obniz extends ObnizUIs_1.default {
             }
         }
     }
-    loop() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof this.looper === "function" && this.onConnectCalled) {
-                const prom = this.looper();
-                if (prom instanceof Promise) {
-                    yield prom;
-                }
-                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-            }
-        });
-    }
-    _callOnConnect() {
-        super._callOnConnect();
-        this.loop();
-    }
+    /**
+     * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
+     *
+     * ```javascript
+     * // Example
+     * obniz.onconnect = function(){
+     *  var button = obniz.wired("Button",  {signal:0, gnd:1});
+     *
+     *  button.onchange = function(){
+     *    var targets = [
+     *      "1234-1231",
+     *      "1234-1232",
+     *      "1234-1233",
+     *      "1234-1234",
+     *      "1234-1235",
+     *      "1234-1236",
+     *      "1234-1237",
+     *      "1234-1238",
+     *      "1234-1239",
+     *      "1234-1230"];
+     *
+     *    obniz.message(targets, "pressed");
+     *   };
+     * }
+     * ```
+     *
+     * @param target destination obniz id
+     * @param message message data
+     */
     message(target, message) {
         let targets = [];
         if (typeof target === "string") {
@@ -3010,6 +3436,21 @@ class Obniz extends ObnizUIs_1.default {
                 data: message,
             },
         });
+    }
+    loop() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof this.looper === "function" && this.onConnectCalled) {
+                const prom = this.looper();
+                if (prom instanceof Promise) {
+                    yield prom;
+                }
+                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+            }
+        });
+    }
+    _callOnConnect() {
+        super._callOnConnect();
+        this.loop();
     }
     notifyToModule(obj) {
         super.notifyToModule(obj);
@@ -14401,6 +14842,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
+ * LogicAnalyzer records samples read from io periodically.
+ * This is useful for digital bus signal check.
+ *
+ * Only one LogicAnalyzer can be used per obniz Board.
+ *
+ * ### How it works
+ * LogicAnalyzer starts logging by a trigger.
+ * The default trigger is "value change".
+ *
+ * When it occurs, data will be recorded for a desired duration.
+ * After that is done, LogicAnalyzer starts monitoring changes in io (= continue working).
+ * One sample becomes one 1/0.
+ *
+ * ![](media://logiana_0.png)
+ *
+ * Sampling interval and duration can be configured.
+ * For example, if interval is 1 ms and duration is 800ms, you will get 800 arrays of data.
+ * The data will be in multiples of 8.
+ *
  * @category Measurement
  */
 class LogicAnalyzer {
@@ -14408,9 +14868,41 @@ class LogicAnalyzer {
         this.obniz = obniz;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.onmeasured = undefined;
     }
+    /**
+     * This starts the logic analyzer on a given io.
+     *
+     * For example, if you want to collect the data after io0 changes every 2ms for 1sec long, set as below.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 2ms interval and 1sec long.
+     * obniz.logicAnalyzer.onmeasured = function(array) {
+     *   console.log(array);
+     * }
+     * ```
+     *
+     * The trigger is an optional configuration.
+     *
+     * Without this, logicAnalyzer recognizes any io level change as trigger and start. Trigger specifies the start position.
+     * Value means start value, true/false. Samples means how much that value consists.
+     * So, with the below sample code, you will only receive data that start with "0, 0, 0"
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000, triggerValue:false, triggerValueSamples:3});  // start on io0. 2ms interval and 1sec long.
+     * obniz.logicAnalyzer.onmeasured = function(array) {
+     *   console.log(array);
+     * }
+     * ```
+     * @param params
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["io", "interval", "duration"]);
         if (err) {
@@ -14438,12 +14930,25 @@ class LogicAnalyzer {
         this.obniz.send(obj);
         return;
     }
+    /**
+     * This stops the logicAnalyzer.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1ms interval and 1sec long.
+     * obniz.logicAnalyzer.end();
+     * ```
+     */
     end() {
         const obj = {};
         obj.logic_analyzer = null;
         this.obniz.send(obj);
         return;
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (this.onmeasured) {
             this.onmeasured(obj.data);
@@ -14479,6 +14984,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
+ * The measure module provides hardware level measurement.
  * @category Measurement
  */
 class ObnizMeasure {
@@ -14486,9 +14992,38 @@ class ObnizMeasure {
         this.obniz = obniz;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.observers = [];
     }
+    /**
+     * Some electrical parts or circuits accept "pulse" and echo the "pulse" after delay.
+     * This module is best suited for measuring that delay.
+     *
+     * This module generates one pulse shot on an io, then measures the response time.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.measure.echo({
+     *   io_pulse: 0, // io for generate pulse
+     *   io_echo: 1, // io to be measured
+     *   pulse: "positive", // generate pulse pattern
+     *   pulse_width: 0.1,  // generate pulse width
+     *   measure_edges: 3, // 1 to 4. maximum edges to measure
+     *   timeout: 1000, // this is optional. 1000(1sec) is default
+     *   callback: function(edges) {
+     *     // callback function
+     *     console.log(edges);
+     *   }
+     * });
+     * ```
+     *
+     * @param params
+     */
     echo(params) {
         const err = util_1.default._requiredKeys(params, [
             "io_pulse",
@@ -14527,6 +15062,10 @@ class ObnizMeasure {
             this.observers.push(this.params.callback);
         }
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         const callback = this.observers.shift();
         if (callback) {
@@ -16335,12 +16874,18 @@ exports.default = _qrcode;
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
- * @ignore
+ * @module ObnizCore
  */
 class ObnizUtil {
     constructor(obniz) {
         this.obniz = obniz;
     }
+    /**
+     * @ignore
+     * @param params
+     * @param keys
+     * @private
+     */
     static _keyFilter(params, keys) {
         let filterdParams = {};
         if (typeof params !== "object") {
@@ -16355,7 +16900,7 @@ class ObnizUtil {
         return filterdParams;
     }
     /**
-     *
+     * @ignore
      * @return {String} key name of not found.
      */
     static _requiredKeys(params, keys) {
@@ -16369,6 +16914,10 @@ class ObnizUtil {
         }
         return null;
     }
+    /**
+     * convert from data array to string
+     * @param data
+     */
     static dataArray2string(data) {
         let string = null;
         try {
@@ -16382,10 +16931,28 @@ class ObnizUtil {
         }
         return string;
     }
+    /**
+     * convert from string to data array
+     * @param str
+     */
     static string2dataArray(str) {
         const buf = Buffer.from(str);
         return [...buf];
     }
+    /**
+     * This creates a Canvas context.
+     * It will add a canvas dom to body(in html).
+     *
+     * ```javascript
+     * // Example
+     * const ctx = obniz.util.createCanvasContext(128, 64);
+     * ctx.font = "9px sans-serif";
+     * ctx.fillText('Hello', 0, 7);
+     * ```
+     *
+     * @param width
+     * @param height
+     */
     createCanvasContext(width, height) {
         if (this.obniz.isNode) {
             try {

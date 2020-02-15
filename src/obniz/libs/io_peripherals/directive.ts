@@ -106,7 +106,7 @@ export default class Directive {
   public animation(name: string, status: AnimationStatus, animations?: DirectiveAnimationFrame[], repeat?: number) {
     if (
       (typeof repeat === "number" || status === "registrate") &&
-      semver.lt(this.Obniz.firmware_ver, "2.0.0")
+      semver.lt(this.Obniz.firmware_ver!, "2.0.0")
     ) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
@@ -170,7 +170,7 @@ export default class Directive {
    * @param repeat 	The number of repeat count of animation.
    */
   public repeatWait(animations: DirectiveAnimationFrame[], repeat: number) {
-    if (semver.lt(this.Obniz.firmware_ver, "2.0.0")) {
+    if (semver.lt(this.Obniz.firmware_ver!, "2.0.0")) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
     if (typeof repeat !== "number" || repeat < 1) {

@@ -32,182 +32,182 @@ export default class ObnizComponents extends ObnizParts {
   /* board peripherals */
 
   /**
-   * @category IO
+   * @category Peripherals
    */
-  public io!: PeripheralDirective;
+  public io?: PeripheralDirective;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io0?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io1?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io2?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io3?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io4?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io5?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io6?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io7?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io8?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io9?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io10?: PeripheralIO;
 
   /**
-   * @category IO
+   * @category Peripherals
    */
   public io11?: PeripheralIO;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad0?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad1?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad2?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad3?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad4?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad5?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad6?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad7?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad8?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad9?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad10?: PeripheralAD;
 
   /**
-   * @category AD
+   * @category Peripherals
    */
   public ad11?: PeripheralAD;
 
   /**
-   * @category PWM
+   * @category Peripherals
    */
   public pwm0?: PeripheralPWM;
 
   /**
-   * @category PWM
+   * @category Peripherals
    */
   public pwm1?: PeripheralPWM;
 
   /**
-   * @category PWM
+   * @category Peripherals
    */
   public pwm2?: PeripheralPWM;
 
   /**
-   * @category PWM
+   * @category Peripherals
    */
   public pwm3?: PeripheralPWM;
 
   /**
-   * @category PWM
+   * @category Peripherals
    */
   public pwm4?: PeripheralPWM;
 
   /**
-   * @category PWM
+   * @category Peripherals
    */
   public pwm5?: PeripheralPWM;
 
   /**
-   * @category UART
+   * @category Peripherals
    */
   public uart0?: PeripheralUART;
 
   /**
-   * @category UART
+   * @category Peripherals
    */
   public uart1?: PeripheralUART;
 
   /**
-   * @category SPI
+   * @category Peripherals
    */
   public spi0?: PeripheralSPI;
 
   /**
-   * @category SPI
+   * @category Peripherals
    */
   public spi1?: PeripheralSPI;
 
   /**
-   * @category I2C
+   * @category Peripherals
    */
   public i2c0?: PeripheralI2C;
 
@@ -239,7 +239,7 @@ export default class ObnizComponents extends ObnizParts {
   protected pongObservers: any;
   protected _allComponentKeys: any;
 
-  constructor(id: any, options?: ObnizOptions) {
+  constructor(id: string, options?: ObnizOptions) {
     super(id, options);
     this.pongObservers = [];
     this._allComponentKeys = [];
@@ -252,6 +252,12 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
+  /**
+   * Output pin Vcc and Gnd
+   * @param vcc
+   * @param gnd
+   * @param drive
+   */
   public setVccGnd(vcc: number | null, gnd: number | null, drive: DriveType) {
     if (this.isValidIO(vcc)) {
       if (drive) {
@@ -268,6 +274,10 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
+  /**
+   * Get IO module from pin no
+   * @param io
+   */
   public getIO(io: number): PeripheralIO {
     if (!this.isValidIO(io)) {
       throw new Error("io " + io + " is not valid io");
@@ -275,6 +285,10 @@ export default class ObnizComponents extends ObnizParts {
     return (this as any)["io" + io];
   }
 
+  /**
+   * GET AD module from pin no
+   * @param io
+   */
   public getAD(io: number): PeripheralAD {
     if (!this.isValidIO(io)) {
       throw new Error("ad " + io + " is not valid io");
@@ -282,14 +296,24 @@ export default class ObnizComponents extends ObnizParts {
     return (this as any)["ad" + io];
   }
 
+  /**
+   * It returns unused PWM module.
+   */
   public getFreePwm(): PeripheralPWM {
     return this._getFreePeripheralUnit("pwm");
   }
 
+  /**
+   * It returns unused I2C module.
+   */
   public getFreeI2C(): PeripheralI2C {
     return this._getFreePeripheralUnit("i2c");
   }
 
+  /**
+   * It returns setuped I2C module .
+   * @param config
+   */
   public getI2CWithConfig(config: any): PeripheralI2C {
     if (typeof config !== "object") {
       throw new Error("getI2CWithConfig need config arg");
@@ -302,10 +326,17 @@ export default class ObnizComponents extends ObnizParts {
     return i2c;
   }
 
+  /**
+   * It returns unused SPI module.
+   */
   public getFreeSpi(): PeripheralSPI {
     return this._getFreePeripheralUnit("spi");
   }
 
+  /**
+   * It returns setuped SPI module.
+   * @param config
+   */
   public getSpiWithConfig(config: any): PeripheralSPI {
     if (typeof config !== "object") {
       throw new Error("getSpiWithConfig need config arg");
@@ -318,10 +349,16 @@ export default class ObnizComponents extends ObnizParts {
     return spi;
   }
 
+  /**
+   * It returns unused UART module.
+   */
   public getFreeUart(): PeripheralUART {
     return this._getFreePeripheralUnit("uart");
   }
 
+  /**
+   * It returns unused TCP module.
+   */
   public getFreeTcp() {
     return this._getFreePeripheralUnit("tcp");
   }
@@ -363,7 +400,7 @@ export default class ObnizComponents extends ObnizParts {
     let ble: any = ObnizBLEHci;
 
     // < 3.0.0-beta
-    if (semver.lt(this.firmware_ver, "3.0.0-beta")) {
+    if (semver.lt(this.firmware_ver!, "3.0.0-beta")) {
       ble = ObnizBLE;
     }
 

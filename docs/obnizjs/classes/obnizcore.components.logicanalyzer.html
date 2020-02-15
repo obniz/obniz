@@ -74,6 +74,23 @@
 		<div class="col-8 col-content">
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>LogicAnalyzer records samples read from io periodically.
+						This is useful for digital bus signal check.</p>
+					</div>
+					<p>Only one LogicAnalyzer can be used per obniz Board.</p>
+					<a href="#how-it-works" id="how-it-works" style="color: inherit; text-decoration: none;">
+						<h3>How it works</h3>
+					</a>
+					<p>LogicAnalyzer starts logging by a trigger.
+					The default trigger is &quot;value change&quot;.</p>
+					<p>When it occurs, data will be recorded for a desired duration.
+						After that is done, LogicAnalyzer starts monitoring changes in io (= continue working).
+					One sample becomes one 1/0.</p>
+					<p><img src="../media/logiana_0.png" alt=""></p>
+					<p>Sampling interval and duration can be configured.
+						For example, if interval is 1 ms and duration is 800ms, you will get 800 arrays of data.
+					The data will be in multiples of 8.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -97,18 +114,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#measured" class="tsd-kind-icon">measured</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#obniz" class="tsd-kind-icon">obniz</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#onmeasured" class="tsd-kind-icon">onmeasured</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#params" class="tsd-kind-icon">params</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#_reset" class="tsd-kind-icon">_reset</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#end" class="tsd-kind-icon">end</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#notified" class="tsd-kind-icon">notified</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#start" class="tsd-kind-icon">start</a></li>
 							</ul>
 						</section>
@@ -127,7 +139,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L26">src/obniz/libs/measurements/logicanalyzer.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/133fb5df/src/obniz/libs/measurements/logicanalyzer.ts#L89">src/obniz/libs/measurements/logicanalyzer.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -144,65 +156,31 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="measured" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> measured</h3>
-					<div class="tsd-signature tsd-kind-icon">measured<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L26">src/obniz/libs/measurements/logicanalyzer.ts:26</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="obniz" class="tsd-anchor"></a>
-					<h3>obniz</h3>
-					<div class="tsd-signature tsd-kind-icon">obniz<span class="tsd-signature-symbol">:</span> <a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L23">src/obniz/libs/measurements/logicanalyzer.ts:23</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onmeasured" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onmeasured</h3>
 					<div class="tsd-signature tsd-kind-icon">onmeasured<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>array<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L24">src/obniz/libs/measurements/logicanalyzer.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/133fb5df/src/obniz/libs/measurements/logicanalyzer.ts#L86">src/obniz/libs/measurements/logicanalyzer.ts:86</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="params" class="tsd-anchor"></a>
-					<h3>params</h3>
-					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L25">src/obniz/libs/measurements/logicanalyzer.ts:25</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>This is a callback function that will be called when data arrives.</p>
+						</div>
+						<p>The received data is in 0/1 array.
+						And every data represents 0,1 of io in a particular instance.</p>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.logicAnalyzer.start({<span class="hljs-attr">io</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">interval</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">duration</span>:<span class="hljs-number">1000</span>});  <span class="hljs-comment">// start on io0. 1ms interval and 1sec long.</span>
+
+obniz.logicAnalyzer.onmeasured = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(array);
+}</code></pre>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_reset" class="tsd-anchor"></a>
-					<h3>_reset</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L33">src/obniz/libs/measurements/logicanalyzer.ts:33</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="end" class="tsd-anchor"></a>
 					<h3>end</h3>
@@ -213,32 +191,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L69">src/obniz/libs/measurements/logicanalyzer.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/133fb5df/src/obniz/libs/measurements/logicanalyzer.ts#L173">src/obniz/libs/measurements/logicanalyzer.ts:173</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="notified" class="tsd-anchor"></a>
-					<h3>notified</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">notified<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L76">src/obniz/libs/measurements/logicanalyzer.ts:76</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>obj: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This stops the logicAnalyzer.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.logicAnalyzer.start({<span class="hljs-attr">io</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">interval</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">duration</span>:<span class="hljs-number">1000</span>});  <span class="hljs-comment">// start on io0. 1ms interval and 1sec long.</span>
+obniz.logicAnalyzer.end();</code></pre>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -253,13 +216,35 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/b7363e49/src/obniz/libs/measurements/logicanalyzer.ts#L37">src/obniz/libs/measurements/logicanalyzer.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/133fb5df/src/obniz/libs/measurements/logicanalyzer.ts#L132">src/obniz/libs/measurements/logicanalyzer.ts:132</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This starts the logic analyzer on a given io.</p>
+								</div>
+								<p>For example, if you want to collect the data after io0 changes every 2ms for 1sec long, set as below.</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.logicAnalyzer.start({<span class="hljs-attr">io</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">interval</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">duration</span>:<span class="hljs-number">1000</span>});  <span class="hljs-comment">// start on io0. 2ms interval and 1sec long.</span>
+obniz.logicAnalyzer.onmeasured = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(array);
+}</code></pre>
+								<p>The trigger is an optional configuration.</p>
+								<p>Without this, logicAnalyzer recognizes any io level change as trigger and start. Trigger specifies the start position.
+									Value means start value, true/false. Samples means how much that value consists.
+								So, with the below sample code, you will only receive data that start with &quot;0, 0, 0&quot;</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.logicAnalyzer.start({<span class="hljs-attr">io</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">interval</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">duration</span>:<span class="hljs-number">1000</span>, <span class="hljs-attr">triggerValue</span>:<span class="hljs-literal">false</span>, <span class="hljs-attr">triggerValueSamples</span>:<span class="hljs-number">3</span>});  <span class="hljs-comment">// start on io0. 2ms interval and 1sec long.</span>
+obniz.logicAnalyzer.onmeasured = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(array);
+}</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>params: <a href="../interfaces/obnizcore.components.logicanalyzeroptions.html" class="tsd-signature-type">LogicAnalyzerOptions</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/obnizcore.components.logicanalyzeroptionsext.html" class="tsd-signature-type">LogicAnalyzerOptionsExt</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -293,25 +278,10 @@
 								<a href="obnizcore.components.logicanalyzer.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#measured" class="tsd-kind-icon">measured</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#obniz" class="tsd-kind-icon">obniz</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.logicanalyzer.html#onmeasured" class="tsd-kind-icon">onmeasured</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#params" class="tsd-kind-icon">params</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#_reset" class="tsd-kind-icon">_reset</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.logicanalyzer.html#end" class="tsd-kind-icon">end</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#notified" class="tsd-kind-icon">notified</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.logicanalyzer.html#start" class="tsd-kind-icon">start</a>
