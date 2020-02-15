@@ -1699,13 +1699,20 @@ exports.default = ObnizApi;
  * @packageDocumentation
  * @module ObnizCore
  */
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver = __webpack_require__("./node_modules/semver/semver.js");
-const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
-const ble_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
+const ObnizOldBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
+const ObnizHciBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
 const display_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/display.js"));
 const switch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/switch.js"));
 const ad_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/ad.js"));
@@ -1860,10 +1867,10 @@ class ObnizComponents extends ObnizParts_1.default {
             i2c: i2c_1.default,
             pwm: pwm_1.default,
         };
-        let ble = ble_2.default;
+        let ble = ObnizHciBLE.default;
         // < 3.0.0-beta
         if (semver.lt(this.firmware_ver, "3.0.0-beta")) {
-            ble = ble_1.default;
+            ble = ObnizOldBLE.default;
         }
         const embeds_map = {
             display: display_1.default,
@@ -5790,6 +5797,10 @@ const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/ob
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js"));
 const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleSecurity.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+/**
+ * Use a obniz device as a BLE device.
+ * Peripheral and Central mode are supported
+ */
 class ObnizBLE {
     constructor(obniz) {
         this.Obniz = obniz;
@@ -5815,6 +5826,13 @@ class ObnizBLE {
         this._bind();
         this._reset();
     }
+    /**
+     * @ignore
+     *
+     * @param data
+     * @param reverse
+     * @private
+     */
     static _dataArray2uuidHex(data, reverse) {
         let uuid = [];
         for (let i = 0; i < data.length; i++) {
@@ -5838,6 +5856,14 @@ class ObnizBLE {
         }
         return str;
     }
+    /**
+     * Initialize BLE module. You need call this first everything before.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * ```
+     */
     initWait() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._initialized) {
@@ -5846,22 +5872,38 @@ class ObnizBLE {
             }
         });
     }
-    warningIfNotInitialize() {
-        if (!this._initialized && this._initializeWarning) {
-            this._initializeWarning = true;
-            this.Obniz.warning({
-                alert: "warning",
-                message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
-            });
-        }
-    }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.hci) {
             this.hci.notified(obj.hci);
         }
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
     }
+    /**
+     * Connect to peripheral without scanning.
+     * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var peripheral = obniz.ble.directConnect("e4b9efb29218","random");
+     * peripheral.onconnect = ()=>{
+     *   console.log("connected");
+     * }
+     * ```
+     *
+     * @param uuid peripheral device address
+     * @param addressType "random" or "public"
+     */
     directConnect(uuid, addressType) {
         let peripheral = this.findPeripheral(uuid);
         if (!peripheral) {
@@ -5877,12 +5919,46 @@ class ObnizBLE {
         peripheral.connect();
         return peripheral;
     }
+    /**
+     * Connect to peripheral without scanning, and wait to finish connecting.
+     *
+     * It throws when connection establish failed.
+     * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * try {
+     *   var peripheral = await obniz.ble.directConnectWait("e4b9efb29218","random");
+     *   console.log("connected");
+     * } catch(e) {
+     *   console.log("can't connect");
+     * }
+     * ```
+     *
+     * @param uuid peripheral device address
+     * @param addressType "random" or "public"
+     */
     directConnectWait(uuid, addressType) {
         return __awaiter(this, void 0, void 0, function* () {
             const peripheral = this.directConnect(uuid, addressType);
             yield peripheral.connectWait();
             return peripheral;
         });
+    }
+    /**
+     * @ignore
+     */
+    warningIfNotInitialize() {
+        if (!this._initialized && this._initializeWarning) {
+            this._initializeWarning = true;
+            this.Obniz.warning({
+                alert: "warning",
+                message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
+            });
+        }
+    }
+    onStateChange() {
     }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
@@ -5891,8 +5967,6 @@ class ObnizBLE {
             }
         }
         return null;
-    }
-    onStateChange() {
     }
     onAddressChange() {
     }
@@ -7699,6 +7773,36 @@ class BleScan {
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
     }
+    /**
+     * This starts scanning BLE.
+     *
+     * You can filter uuids or localName using the target param.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var target = {
+     *     uuids: ["fff0","FFF1"],     //scan only has uuids "fff0" and "FFF1"
+     *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
+     * };
+     *
+     * var setting = {
+     *    duration : 10  //scan duration time in seconds. default is 30 sec.
+     * }
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.start(target, setting);
+     * ```
+     *
+     * This is also possible without params being valid.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.scan.start();
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
     start(target, settings) {
         this.obnizBle.warningIfNotInitialize();
         if (!settings) {
@@ -7724,6 +7828,24 @@ class BleScan {
             this.end();
         }, timeout * 1000);
     }
+    /**
+     * This scans and returns the first peripheral that was found among the objects specified in the target.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * console.log(peripheral);
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
     startOneWait(target, settings) {
         let state = 0;
         return new Promise((resolve) => {
@@ -7743,6 +7865,33 @@ class BleScan {
             this.start(target, settings);
         });
     }
+    /**
+     * This scans and returns all the peripherals found.
+     *
+     * This function does not return until scanning gets timed out.(default 30sec)
+     * If you want to change the default duration, you can do so with the duration param.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var setting = {
+     *   duration : 10
+     * }
+     *
+     * var peripherals = await obniz.ble.scan.startAllWait(target,setting);
+     *
+     * for(var peripheral of peripherals){
+     *   console.log(peripheral);
+     * }
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
     startAllWait(target, settings) {
         return new Promise((resolve) => {
             this.emitter.once("onfinish", () => {
@@ -7751,9 +7900,53 @@ class BleScan {
             this.start(target, settings);
         });
     }
+    /**
+     * This stops scanning BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.start();
+     * await obniz.wait(5000);
+     * obniz.ble.scan.end();
+     * ```
+     */
     end() {
         this.clearTimeoutTimer();
         this.obnizBle.centralBindings.stopScanning();
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        switch (notifyName) {
+            case "onfind": {
+                if (this.scanSettings.duplicate === false) {
+                    // duplicate filter
+                    if (this.scanedPeripherals.find((e) => e.address === params.address)) {
+                        break;
+                    }
+                }
+                if (this.isTarget(params)) {
+                    this.scanedPeripherals.push(params);
+                    this.emitter.emit(notifyName, params);
+                    if (this.onfind) {
+                        this.onfind(params);
+                    }
+                }
+                break;
+            }
+            case "onfinish": {
+                this.clearTimeoutTimer();
+                this.emitter.emit(notifyName, this.scanedPeripherals);
+                if (this.onfinish) {
+                    this.onfinish(this.scanedPeripherals);
+                }
+                break;
+            }
+        }
     }
     isTarget(peripheral) {
         if (this.scanTarget &&
@@ -7772,34 +7965,6 @@ class BleScan {
             }
         }
         return true;
-    }
-    onfinish(data) {
-    } // dummy
-    onfind(params) {
-    } // dummy
-    notifyFromServer(notifyName, params) {
-        switch (notifyName) {
-            case "onfind": {
-                if (this.scanSettings.duplicate === false) {
-                    // duplicate filter
-                    if (this.scanedPeripherals.find((e) => e.address === params.address)) {
-                        break;
-                    }
-                }
-                if (this.isTarget(params)) {
-                    this.scanedPeripherals.push(params);
-                    this.emitter.emit(notifyName, params);
-                    this.onfind(params);
-                }
-                break;
-            }
-            case "onfinish": {
-                this.clearTimeoutTimer();
-                this.emitter.emit(notifyName, this.scanedPeripherals);
-                this.onfinish(this.scanedPeripherals);
-                break;
-            }
-        }
     }
     clearTimeoutTimer() {
         if (this._timeoutTimer) {

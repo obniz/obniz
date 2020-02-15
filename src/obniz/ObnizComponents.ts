@@ -4,8 +4,8 @@
  */
 
 import semver = require("semver");
-import ObnizBLE from "./libs/embeds/ble/ble";
-import ObnizBLEHci from "./libs/embeds/bleHci/ble";
+import * as ObnizOldBLE from "./libs/embeds/ble/ble";
+import * as ObnizHciBLE from "./libs/embeds/bleHci/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";
 
@@ -232,9 +232,11 @@ export default class ObnizComponents extends ObnizParts {
   public switch?: ObnizSwitch;
 
   /**
+   * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
+   * and obnizOS ver < 3.0.0 load [[ObnizCore.Components.Ble.old.ObnizBLE|ObnizOldBLE]],
    * @category Embeds
    */
-  public ble?: ObnizBLE | ObnizBLEHci;
+  public ble?: ObnizOldBLE.default | ObnizHciBLE.default;
 
   protected pongObservers: any;
   protected _allComponentKeys: any;
@@ -397,11 +399,11 @@ export default class ObnizComponents extends ObnizParts {
       pwm: PeripheralPWM,
     };
 
-    let ble: any = ObnizBLEHci;
+    let ble: any = ObnizHciBLE.default;
 
     // < 3.0.0-beta
     if (semver.lt(this.firmware_ver!, "3.0.0-beta")) {
-      ble = ObnizBLE;
+      ble = ObnizOldBLE.default;
     }
 
     const embeds_map: any = {
