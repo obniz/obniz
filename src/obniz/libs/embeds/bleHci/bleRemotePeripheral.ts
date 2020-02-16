@@ -248,10 +248,13 @@ export default class BleRemotePeripheral {
    * This gets called with an error message when some kind of error occurs.
    */
   public onerror?: ((err: any) => void);
+  /**
+   * @ignore
+   */
+  public obnizBle: ObnizBLE;
 
   protected keys: any;
   protected advertise_data_rows: any;
-  protected obnizBle: ObnizBLE;
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
 

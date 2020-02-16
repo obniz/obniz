@@ -6460,6 +6460,224 @@ class BleAttributeAbstract {
         this.setFunctions();
         this.emitter = new emitter();
     }
+    /**
+     * @ignore
+     */
+    get childrenClass() {
+        return Object;
+    }
+    /**
+     * @ignore
+     */
+    get childrenName() {
+        return null;
+    }
+    /**
+     * @ignore
+     */
+    get parentName() {
+        return null;
+    }
+    /**
+     * @ignore
+     * @param child
+     */
+    addChild(child) {
+        if (!(child instanceof this.childrenClass)) {
+            const childrenClass = this.childrenClass;
+            child = new childrenClass(child);
+        }
+        const childobj = child;
+        childobj.parent = this;
+        this.children.push(childobj);
+        return childobj;
+    }
+    /**
+     * @ignore
+     * @param uuid
+     */
+    getChild(uuid) {
+        uuid = bleHelper_1.default.uuidFilter(uuid);
+        const result = this.children
+            .filter((element) => {
+            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
+        })
+            .shift();
+        if (!result) {
+            return null;
+        }
+        return result;
+    }
+    /**
+     * @ignore
+     */
+    toJSON() {
+        const obj = {
+            uuid: bleHelper_1.default.uuidFilter(this.uuid),
+        };
+        if (this.childrenName) {
+            const key = this.childrenName;
+            obj[key] = this.children;
+        }
+        if (this.data) {
+            obj.data = this.data;
+        }
+        return obj;
+    }
+    /**
+     * WS COMMANDS
+     */
+    /**
+     * @ignore
+     */
+    read() {
+    }
+    /**
+     * @ignore
+     */
+    write(data, needResponse) {
+    }
+    /**
+     * @ignore
+     */
+    writeNumber(val, needResponse) {
+        this.write([val], needResponse);
+    }
+    /**
+     * @ignore
+     */
+    writeText(str, needResponse) {
+        this.write(util_1.default.string2dataArray(str), needResponse);
+    }
+    /**
+     * @ignore
+     */
+    readWait() {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onread", (params) => {
+                if (params.result === "success") {
+                    resolve(params.data);
+                }
+                else {
+                    reject(new Error("readWait failed"));
+                }
+            });
+            this.read();
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeWait(data, needResponse) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeWait failed"));
+                }
+            });
+            this.write(data, needResponse);
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeTextWait(data) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeTextWait failed"));
+                }
+            });
+            this.writeText(data);
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeNumberWait(data) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeNumberWait failed"));
+                }
+            });
+            this.writeNumber(data);
+        });
+    }
+    /**
+     * @ignore
+     */
+    readFromRemoteWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("onreadfromremote", () => {
+                resolve();
+            });
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeFromRemoteWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("onreadfromremote", (params) => {
+                resolve(params.data);
+            });
+        });
+    }
+    /**
+     * @ignore
+     * @param err
+     */
+    onerror(err) {
+        console.error(err.message);
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "onerror": {
+                this.onerror(params);
+                break;
+            }
+            case "onwrite": {
+                if (this.onwrite) {
+                    this.onwrite(params.result);
+                }
+                break;
+            }
+            case "onread": {
+                if (this.onread) {
+                    this.onread(params.data);
+                }
+                break;
+            }
+            case "onwritefromremote": {
+                if (this.onwritefromremote) {
+                    this.onwritefromremote(params.address, params.data);
+                }
+                break;
+            }
+            case "onreadfromremote": {
+                if (this.onreadfromremote) {
+                    this.onreadfromremote(params.address);
+                }
+                break;
+            }
+        }
+    }
     setFunctions() {
         let childrenName = this.childrenName;
         if (childrenName) {
@@ -6481,163 +6699,6 @@ class BleAttributeAbstract {
                     this.parent = newValue;
                 },
             });
-        }
-    }
-    get childrenClass() {
-        return Object;
-    }
-    get childrenName() {
-        return null;
-    }
-    get parentName() {
-        return null;
-    }
-    addChild(child) {
-        if (!(child instanceof this.childrenClass)) {
-            const childrenClass = this.childrenClass;
-            child = new childrenClass(child);
-        }
-        child.parent = this;
-        this.children.push(child);
-        return child;
-    }
-    getChild(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this.children
-            .filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
-        })
-            .shift();
-    }
-    toJSON() {
-        const obj = {
-            uuid: bleHelper_1.default.uuidFilter(this.uuid),
-        };
-        if (this.childrenName) {
-            const key = this.childrenName;
-            obj[key] = this.children;
-        }
-        if (this.data) {
-            obj.data = this.data;
-        }
-        return obj;
-    }
-    /**
-     * WS COMMANDS
-     */
-    read() {
-    }
-    write(data, needResponse) {
-    }
-    writeNumber(val, needResponse) {
-        this.write([val], needResponse);
-    }
-    writeText(str, needResponse) {
-        this.write(util_1.default.string2dataArray(str), needResponse);
-    }
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
-    }
-    writeWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data, needResponse);
-        });
-    }
-    writeTextWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeTextWait failed"));
-                }
-            });
-            this.writeText(data);
-        });
-    }
-    writeNumberWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeNumberWait failed"));
-                }
-            });
-            this.writeNumber(data);
-        });
-    }
-    readFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", () => {
-                resolve();
-            });
-        });
-    }
-    writeFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", (params) => {
-                resolve(params.data);
-            });
-        });
-    }
-    /**
-     * CALLBACKS
-     */
-    onwrite(result) {
-    }
-    onread(data) {
-    }
-    onwritefromremote(address, data) {
-    }
-    onreadfromremote(address) {
-    }
-    onerror(err) {
-        console.error(err.message);
-    }
-    notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "onerror": {
-                this.onerror(params);
-                break;
-            }
-            case "onwrite": {
-                this.onwrite(params.result);
-                break;
-            }
-            case "onread": {
-                this.onread(params.data);
-                break;
-            }
-            case "onwritefromremote": {
-                this.onwritefromremote(params.address, params.data);
-                break;
-            }
-            case "onreadfromremote": {
-                this.onreadfromremote(params.address);
-                break;
-            }
         }
     }
 }
@@ -6788,10 +6849,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
 /**
  * @category Use as Peripheral
@@ -7080,6 +7137,9 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         this.isRemote = false;
         this.discoverdOnRemote = false;
     }
+    /**
+     * @ignore
+     */
     get wsChildUuidName() {
         const childrenName = this.childrenName;
         if (!childrenName) {
@@ -7088,8 +7148,14 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
+    /**
+     * @ignore
+     */
     discoverChildren() {
     }
+    /**
+     * @ignore
+     */
     discoverChildrenWait() {
         return new Promise((resolve) => {
             this.emitter.once("discoverfinished", () => {
@@ -7108,6 +7174,11 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     }
     ondiscoverfinished(children) {
     }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
@@ -7267,6 +7338,11 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     }
     onnotify(data) {
     }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
@@ -7895,41 +7971,137 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "peripheral";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleRemoteCharacteristic_1.default;
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "characteristics";
     }
+    /**
+     * It contains characteristics in a service.
+     * It was discovered when connection automatically.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *     uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     *  if(!peripheral) {
+     *     console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   for (var c of service.characteristics) {
+     *     console.log(c.uuid)
+     *   }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     */
     get characteristics() {
         return this.children;
     }
-    addCharacteristic(params) {
-        return this.addChild(params);
+    /**
+     * @ignore
+     * @param param
+     */
+    addCharacteristic(param) {
+        return this.addChild(param);
     }
-    getCharacteristic(params) {
-        return this.getChild(params);
+    /**
+     * It returns a characteristic which having specified uuid in a service.
+     * Return value is null when not matched.
+     *
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   var c = service.getCharacteristic("fff0")
+     *   console.log(c.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
+    getCharacteristic(uuid) {
+        return this.getChild(uuid);
     }
+    /**
+     * @ignore
+     */
     discoverAllCharacteristics() {
         return this.discoverChildren();
     }
+    /**
+     * @ignore
+     */
     discoverAllCharacteristicsWait() {
         return this.discoverChildrenWait();
     }
+    /**
+     * @ignore
+     */
     discoverChildren() {
         this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
     }
+    /**
+     * @ignore
+     * @param characteristic
+     */
     ondiscover(characteristic) {
         this.ondiscovercharacteristic(characteristic);
     }
+    /**
+     * @ignore
+     * @param characteristics
+     */
     ondiscoverfinished(characteristics) {
         this.ondiscovercharacteristicfinished(characteristics);
     }
+    /**
+     * @ignore
+     * @param characteristic
+     */
     ondiscovercharacteristic(characteristic) {
     }
+    /**
+     * @ignore
+     * @param characteristics
+     */
     ondiscovercharacteristicfinished(characteristics) {
     }
 }

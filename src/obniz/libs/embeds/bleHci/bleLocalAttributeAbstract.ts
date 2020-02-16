@@ -7,7 +7,7 @@ import BleHelper from "./bleHelper";
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalAttributeAbstract extends BleAttributeAbstract {
+export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
   public RESULT_SUCCESS: any;
   public RESULT_INVALID_OFFSET: any;
   public RESULT_ATTR_NOT_LONG: any;

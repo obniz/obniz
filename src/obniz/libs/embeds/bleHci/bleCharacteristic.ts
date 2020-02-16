@@ -4,10 +4,11 @@
  */
 import BleDescriptor from "./bleDescriptor";
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
+import BleService from "./bleService";
 /**
  * @category Use as Peripheral
  */
-export default class BleCharacteristic extends BleLocalAttributeAbstract {
+export default class BleCharacteristic extends BleLocalAttributeAbstract<BleService, BleDescriptor> {
   public _maxValueSize: any;
   public _updateValueCallback: any;
   public addDescriptor: any;

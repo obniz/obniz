@@ -4,10 +4,11 @@
  */
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
+import BleRemoteService from "./bleRemoteService";
 /**
  * @category Use as Central
  */
-export default class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
+export default class BleRemoteCharacteristic extends BleRemoteAttributeAbstract<BleRemoteService, BleRemoteDescriptor> {
   public properties: any;
   public children: any;
   public addChild: any;
@@ -184,6 +185,11 @@ export default class BleRemoteCharacteristic extends BleRemoteAttributeAbstract 
   public onnotify(data: any) {
   }
 
+  /**
+   * @ignore
+   * @param notifyName
+   * @param params
+   */
   public notifyFromServer(notifyName: any, params: any) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {

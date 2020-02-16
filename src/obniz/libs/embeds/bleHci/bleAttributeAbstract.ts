@@ -5,15 +5,66 @@
 import emitter = require("eventemitter3");
 import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
+import {UUID} from "./bleTypes";
 
-export default class BleAttributeAbstract {
-  public uuid: any;
-  public parent: any;
-  public children: any;
-  public isRemote: any;
-  public discoverdOnRemote: any;
-  public data: any;
-  public emitter: any;
+export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
+
+  /**
+   * @ignore
+   */
+  get childrenClass(): any {
+    return Object;
+  }
+
+  /**
+   * @ignore
+   */
+  get childrenName(): string | null {
+    return null;
+  }
+
+  /**
+   * @ignore
+   */
+  get parentName(): string | null {
+    return null;
+  }
+
+  /**
+   * It is uuid as string.
+   *
+   * ```javasciprt
+   * console.log(attr.uuid); // => '4C84'
+   * ```
+   */
+  public uuid: UUID;
+
+  /**
+   * @ignore
+   */
+  public onwrite?: (result: any) => void;
+
+  /**
+   * @ignore
+   */
+  public onread?: (data: any) => void;
+
+  /**
+   * @ignore
+   */
+  public onwritefromremote?: (address: any, data: any) => void;
+
+  /**
+   * @ignore
+   */
+  public onreadfromremote?: (address: any) => void;
+
+  protected parent: ParentClass | null;
+  protected children: ChildrenClass[];
+  protected isRemote: boolean;
+  protected discoverdOnRemote: any;
+  protected data: any;
+  protected emitter: any;
 
   constructor(params: any) {
     this.uuid = BleHelper.uuidFilter(params.uuid);
@@ -42,7 +93,221 @@ export default class BleAttributeAbstract {
     this.emitter = new emitter();
   }
 
-  public setFunctions() {
+  /**
+   * @ignore
+   * @param child
+   */
+  public addChild(child: { uuid: UUID } | ChildrenClass) {
+    if (!(child instanceof this.childrenClass)) {
+      const childrenClass: any = this.childrenClass;
+      child = new childrenClass(child);
+    }
+    const childobj = child as any;
+    childobj.parent = this;
+
+    this.children.push(childobj);
+    return childobj;
+  }
+
+  /**
+   * @ignore
+   * @param uuid
+   */
+  public getChild(uuid: UUID): ChildrenClass | null {
+    uuid = BleHelper.uuidFilter(uuid);
+    const result = this.children
+      .filter((element: any) => {
+        return BleHelper.uuidFilter(element.uuid) === uuid;
+      })
+      .shift();
+    if (!result) {
+      return null;
+    }
+    return result;
+  }
+
+  /**
+   * @ignore
+   */
+  public toJSON() {
+    const obj: any = {
+      uuid: BleHelper.uuidFilter(this.uuid),
+    };
+
+    if (this.childrenName) {
+      const key: any = this.childrenName;
+      obj[key] = this.children;
+    }
+    if (this.data) {
+      obj.data = this.data;
+    }
+    return obj;
+  }
+
+  /**
+   * WS COMMANDS
+   */
+
+  /**
+   * @ignore
+   */
+  public read() {
+  }
+
+  /**
+   * @ignore
+   */
+  public write(data: any, needResponse?: boolean) {
+  }
+
+  /**
+   * @ignore
+   */
+  public writeNumber(val: any, needResponse?: any) {
+    this.write([val], needResponse);
+  }
+
+  /**
+   * @ignore
+   */
+  public writeText(str: any, needResponse?: any) {
+    this.write(ObnizUtil.string2dataArray(str), needResponse);
+  }
+
+  /**
+   * @ignore
+   */
+  public readWait() {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onread", (params: any) => {
+        if (params.result === "success") {
+          resolve(params.data);
+        } else {
+          reject(new Error("readWait failed"));
+        }
+      });
+      this.read();
+    });
+  }
+
+  /**
+   * @ignore
+   */
+  public writeWait(data: any, needResponse: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onwrite", (params: any) => {
+        if (params.result === "success") {
+          resolve(true);
+        } else {
+          reject(new Error("writeWait failed"));
+        }
+      });
+      this.write(data, needResponse);
+    });
+  }
+
+  /**
+   * @ignore
+   */
+  public writeTextWait(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onwrite", (params: any) => {
+        if (params.result === "success") {
+          resolve(true);
+        } else {
+          reject(new Error("writeTextWait failed"));
+        }
+      });
+      this.writeText(data);
+    });
+  }
+
+  /**
+   * @ignore
+   */
+  public writeNumberWait(data: any) {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onwrite", (params: any) => {
+        if (params.result === "success") {
+          resolve(true);
+        } else {
+          reject(new Error("writeNumberWait failed"));
+        }
+      });
+      this.writeNumber(data);
+    });
+  }
+
+  /**
+   * @ignore
+   */
+  public readFromRemoteWait() {
+    return new Promise((resolve: any) => {
+      this.emitter.once("onreadfromremote", () => {
+        resolve();
+      });
+    });
+  }
+
+  /**
+   * @ignore
+   */
+  public writeFromRemoteWait() {
+    return new Promise((resolve: any) => {
+      this.emitter.once("onreadfromremote", (params: any) => {
+        resolve(params.data);
+      });
+    });
+  }
+
+  /**
+   * @ignore
+   * @param err
+   */
+  public onerror(err: any) {
+    console.error(err.message);
+  }
+
+  /**
+   * @ignore
+   * @param notifyName
+   * @param params
+   */
+  public notifyFromServer(notifyName: any, params: any) {
+    this.emitter.emit(notifyName, params);
+    switch (notifyName) {
+      case "onerror": {
+        this.onerror(params);
+        break;
+      }
+      case "onwrite": {
+        if (this.onwrite) {
+          this.onwrite(params.result);
+        }
+        break;
+      }
+      case "onread": {
+        if (this.onread) {
+          this.onread(params.data);
+        }
+        break;
+      }
+      case "onwritefromremote": {
+        if (this.onwritefromremote) {
+          this.onwritefromremote(params.address, params.data);
+        }
+        break;
+      }
+      case "onreadfromremote": {
+        if (this.onreadfromremote) {
+          this.onreadfromremote(params.address);
+        }
+        break;
+      }
+    }
+  }
+
+  protected setFunctions() {
     let childrenName: any = this.childrenName;
     if (childrenName) {
       childrenName =
@@ -69,184 +334,6 @@ export default class BleAttributeAbstract {
         ,
       })
       ;
-    }
-  }
-
-  get childrenClass(): any {
-    return Object;
-  }
-
-  get childrenName(): string | null {
-    return null;
-  }
-
-  get parentName(): string | null {
-    return null;
-  }
-
-  public addChild(child: any) {
-    if (!(child instanceof this.childrenClass)) {
-      const childrenClass: any = this.childrenClass;
-      child = new childrenClass(child);
-    }
-    child.parent = this;
-
-    this.children.push(child);
-    return child;
-  }
-
-  public getChild(uuid: any) {
-    uuid = BleHelper.uuidFilter(uuid);
-    return this.children
-      .filter((element: any) => {
-        return BleHelper.uuidFilter(element.uuid) === uuid;
-      })
-      .shift();
-  }
-
-  public toJSON() {
-    const obj: any = {
-      uuid: BleHelper.uuidFilter(this.uuid),
-    };
-
-    if (this.childrenName) {
-      const key: any = this.childrenName;
-      obj[key] = this.children;
-    }
-    if (this.data) {
-      obj.data = this.data;
-    }
-    return obj;
-  }
-
-  /**
-   * WS COMMANDS
-   */
-
-  public read() {
-  }
-
-  public write(data: any, needResponse?: boolean) {
-  }
-
-  public writeNumber(val: any, needResponse?: any) {
-    this.write([val], needResponse);
-  }
-
-  public writeText(str: any, needResponse?: any) {
-    this.write(ObnizUtil.string2dataArray(str), needResponse);
-  }
-
-  public readWait() {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onread", (params: any) => {
-        if (params.result === "success") {
-          resolve(params.data);
-        } else {
-          reject(new Error("readWait failed"));
-        }
-      });
-      this.read();
-    });
-  }
-
-  public writeWait(data: any, needResponse: any) {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeWait failed"));
-        }
-      });
-      this.write(data, needResponse);
-    });
-  }
-
-  public writeTextWait(data: any) {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeTextWait failed"));
-        }
-      });
-      this.writeText(data);
-    });
-  }
-
-  public writeNumberWait(data: any) {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeNumberWait failed"));
-        }
-      });
-      this.writeNumber(data);
-    });
-  }
-
-  public readFromRemoteWait() {
-    return new Promise((resolve: any) => {
-      this.emitter.once("onreadfromremote", () => {
-        resolve();
-      });
-    });
-  }
-
-  public writeFromRemoteWait() {
-    return new Promise((resolve: any) => {
-      this.emitter.once("onreadfromremote", (params: any) => {
-        resolve(params.data);
-      });
-    });
-  }
-
-  /**
-   * CALLBACKS
-   */
-  public onwrite(result: any) {
-  }
-
-  public onread(data: any) {
-  }
-
-  public onwritefromremote(address: any, data: any) {
-  }
-
-  public onreadfromremote(address: any) {
-  }
-
-  public onerror(err: any) {
-    console.error(err.message);
-  }
-
-  public notifyFromServer(notifyName: any, params: any) {
-    this.emitter.emit(notifyName, params);
-    switch (notifyName) {
-      case "onerror": {
-        this.onerror(params);
-        break;
-      }
-      case "onwrite": {
-        this.onwrite(params.result);
-        break;
-      }
-      case "onread": {
-        this.onread(params.data);
-        break;
-      }
-      case "onwritefromremote": {
-        this.onwritefromremote(params.address, params.data);
-        break;
-      }
-      case "onreadfromremote": {
-        this.onreadfromremote(params.address);
-        break;
-      }
     }
   }
 }

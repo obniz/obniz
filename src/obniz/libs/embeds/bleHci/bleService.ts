@@ -7,7 +7,7 @@ import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 /**
  * @category Use as Peripheral
  */
-export default class BleService extends BleLocalAttributeAbstract {
+export default class BleService extends BleLocalAttributeAbstract<null, BleCharacteristic> {
   public addCharacteristic: any;
   public addChild: any;
   public getCharacteristic: any;
