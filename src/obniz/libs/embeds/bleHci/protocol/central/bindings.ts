@@ -337,7 +337,7 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public discoverServices(peripheralUuid: any, uuids: any) {
+  public discoverServices(peripheralUuid: any, uuids?: any) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 

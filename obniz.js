@@ -5936,12 +5936,12 @@ class ObnizBLE {
      * }
      * ```
      *
-     * @param uuid peripheral device address
+     * @param address peripheral device address
      * @param addressType "random" or "public"
      */
-    directConnectWait(uuid, addressType) {
+    directConnectWait(address, addressType) {
         return __awaiter(this, void 0, void 0, function* () {
-            const peripheral = this.directConnect(uuid, addressType);
+            const peripheral = this.directConnect(address, addressType);
             yield peripheral.connectWait();
             return peripheral;
         });
@@ -7337,6 +7337,10 @@ exports.default = BleRemoteDescriptor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7350,11 +7354,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteService.js"));
 /**
@@ -7371,6 +7372,8 @@ class BleRemotePeripheral {
         this.rssi = null;
         this.adv_data = null;
         this.scan_resp = null;
+        this.localName = null;
+        this.iBeacon = null;
         this.keys = [
             "device_type",
             "address_type",
@@ -7380,10 +7383,40 @@ class BleRemotePeripheral {
             "scan_resp",
         ];
         this._services = [];
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
     }
     /**
+     * It contains all discovered services in a peripheral as an array. It is discovered when connection automatically.
      *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *     console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   for (var service of peripheral.services) {
+     *       console.log(service.uuid)
+     *   }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    get services() {
+        return this._services;
+    }
+    /**
+     * @ignore
      * @return {String} json value
      */
     toString() {
@@ -7395,6 +7428,10 @@ class BleRemotePeripheral {
             rssi: this.rssi,
         });
     }
+    /**
+     * @ignore
+     * @param dic
+     */
     setParams(dic) {
         this.advertise_data_rows = null;
         for (const key in dic) {
@@ -7403,6 +7440,335 @@ class BleRemotePeripheral {
             }
         }
         this.analyseAdvertisement();
+    }
+    /**
+     * This function will try to connect a peripheral.
+     * [[onconnect]] will be caled when connected or [[ondisconnect]] will be called when failed.
+     *
+     * If ble scanning is undergoing, scan will be terminated immediately.
+     *
+     * when connection established, all service/characteristics/descriptors will be discovered automatically.
+     * [[onconnect]] will be called after all discovery done.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = function(){
+     *          console.log("success");
+     *      }
+     *      peripheral.connect();
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
+     */
+    connect() {
+        this.obnizBle.scan.end();
+        this.obnizBle.centralBindings.connect(this.address);
+    }
+    /**
+     * This connects obniz to the peripheral.
+     * If ble scannning is undergoing, scan will be terminated immidiately.
+     *
+     * It throws when connection establish failed.
+     *
+     * when connection established, all service/characteristics/desriptors will be discovered automatically.
+     * This function will wait until all discovery done.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *    return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     * } catch(e) {
+     *   console.log("can't connect");
+     * }
+     * ```
+     *
+     */
+    connectWait() {
+        return new Promise((resolve, reject) => {
+            // if (this.connected) {
+            //   resolve();
+            //   return;
+            // }
+            this.emitter.once("statusupdate", (params) => {
+                if (params.status === "connected") {
+                    resolve(true); // for compatibility
+                }
+                else {
+                    reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+                }
+            });
+            this.connect();
+        });
+    }
+    /**
+     * This disconnects obniz from peripheral.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     *
+     * peripheral.connect();
+     * peripheral.onconnect = ()=>{
+     *   console.log("connected");
+     *   peripheral.disconnect();
+     * }
+     *
+     * ```
+     */
+    disconnect() {
+        this.obnizBle.centralBindings.disconnect(this.address);
+    }
+    /**
+     * This disconnects obniz from peripheral.
+     *
+     * It throws when failed
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.disconnectWait();
+     *   console.log("disconnected");
+     * } catch(e) {
+     *    console.log("can't connect / can't disconnect");
+     * }
+     * ```
+     */
+    disconnectWait() {
+        return new Promise((resolve, reject) => {
+            // if (!this.connected) {
+            //   resolve();
+            //   return;
+            // }
+            this.emitter.once("statusupdate", (params) => {
+                if (params.status === "disconnected") {
+                    resolve(true); // for compatibility
+                }
+                else {
+                    reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+                }
+            });
+            this.disconnect();
+        });
+    }
+    /**
+     * It returns a service which having specified uuid in [[services]].
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   if (!service) {
+     *     console.log("service not found")
+     *     return;
+     *   }
+     *   console.log(service.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
+    getService(uuid) {
+        uuid = bleHelper_1.default.uuidFilter(uuid);
+        for (const key in this._services) {
+            if (this._services[key].uuid === uuid) {
+                return this._services[key];
+            }
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findService(param) {
+        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
+        return this.getService(serviceUuid);
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findCharacteristic(param) {
+        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
+        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
+        const s = this.getService(serviceUuid);
+        if (s) {
+            return s.getCharacteristic(characteristicUuid);
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findDescriptor(param) {
+        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
+        const c = this.findCharacteristic(param);
+        if (c) {
+            return c.getDescriptor(descriptorUuid);
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     *
+     */
+    discoverAllServices() {
+        this.obnizBle.centralBindings.discoverServices(this.address);
+    }
+    /**
+     * @ignore
+     */
+    discoverAllServicesWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("discoverfinished", () => {
+                const children = this._services.filter((elm) => {
+                    return elm.discoverdOnRemote;
+                });
+                resolve(children);
+            });
+            this.discoverAllServices();
+        });
+    }
+    /**
+     * @ignore
+     */
+    discoverAllHandlesWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ArrayFlat = (array, depth) => {
+                const flattend = [];
+                (function flat(_array, _depth) {
+                    for (const el of _array) {
+                        if (Array.isArray(el) && _depth > 0) {
+                            flat(el, _depth - 1);
+                        }
+                        else {
+                            flattend.push(el);
+                        }
+                    }
+                })(array, Math.floor(depth) || 1);
+                return flattend;
+            };
+            const services = yield this.discoverAllServicesWait();
+            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
+            const chars = ArrayFlat(charsNest);
+            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
+            // eslint-disable-next-line no-unused-vars
+            const descriptors = ArrayFlat(descriptorsNest);
+        });
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "statusupdate": {
+                if (params.status === "connected") {
+                    this.connected = true;
+                    if (this.onconnect) {
+                        this.onconnect();
+                    }
+                }
+                if (params.status === "disconnected") {
+                    this.connected = false;
+                    if (this.ondisconnect) {
+                        this.ondisconnect();
+                    }
+                }
+                break;
+            }
+            case "discover": {
+                const uuid = params.service_uuid;
+                let child = this.getService(uuid);
+                if (!child) {
+                    const newService = new bleRemoteService_1.default({ uuid });
+                    newService.parent = this;
+                    this._services.push(newService);
+                    child = newService;
+                }
+                child.discoverdOnRemote = true;
+                if (this.ondiscoverservice) {
+                    this.ondiscoverservice(child);
+                }
+                break;
+            }
+            case "discoverfinished": {
+                const children = this._services.filter((elm) => {
+                    return elm.discoverdOnRemote;
+                });
+                if (this.ondiscoverservicefinished) {
+                    this.ondiscoverservicefinished(children);
+                }
+                break;
+            }
+        }
+    }
+    /**
+     * @ignore
+     */
+    advertisementServiceUuids() {
+        const results = [];
+        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
+        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
+        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
+        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
+        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
+        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
+        return results;
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {
@@ -7496,180 +7862,8 @@ class BleRemotePeripheral {
         const uuidLength = bit / 4;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
-            results.push(this.obnizBle.constructor._dataArray2uuidHex(one, true));
+            results.push(ble_1.default._dataArray2uuidHex(one, true));
         }
-    }
-    advertisementServiceUuids() {
-        const results = [];
-        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
-        return results;
-    }
-    connect() {
-        this.obnizBle.scan.end();
-        this.obnizBle.centralBindings.connect(this.address);
-    }
-    connectWait() {
-        return new Promise((resolve, reject) => {
-            // if (this.connected) {
-            //   resolve();
-            //   return;
-            // }
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "connected") {
-                    resolve(true); // for compatibility
-                }
-                else {
-                    reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
-                }
-            });
-            this.connect();
-        });
-    }
-    disconnect() {
-        this.obnizBle.centralBindings.disconnect(this.address);
-    }
-    disconnectWait() {
-        return new Promise((resolve, reject) => {
-            // if (!this.connected) {
-            //   resolve();
-            //   return;
-            // }
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "disconnected") {
-                    resolve(true); // for compatibility
-                }
-                else {
-                    reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
-                }
-            });
-            this.disconnect();
-        });
-    }
-    get services() {
-        return this._services;
-    }
-    getService(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        for (const key in this._services) {
-            if (this._services[key].uuid === uuid) {
-                return this._services[key];
-            }
-        }
-        return undefined;
-    }
-    findService(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        return this.getService(serviceUuid);
-    }
-    findCharacteristic(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
-        const s = this.getService(serviceUuid);
-        if (s) {
-            return s.getCharacteristic(characteristicUuid);
-        }
-        return null;
-    }
-    findDescriptor(param) {
-        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
-        const c = this.findCharacteristic(param);
-        if (c) {
-            return c.getDescriptor(descriptorUuid);
-        }
-        return null;
-    }
-    discoverAllServices() {
-        this.obnizBle.centralBindings.discoverServices(this.address);
-    }
-    discoverAllServicesWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverAllServices();
-        });
-    }
-    discoverAllHandlesWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ArrayFlat = (array, depth) => {
-                const flattend = [];
-                (function flat(_array, _depth) {
-                    for (const el of _array) {
-                        if (Array.isArray(el) && _depth > 0) {
-                            flat(el, _depth - 1);
-                        }
-                        else {
-                            flattend.push(el);
-                        }
-                    }
-                })(array, Math.floor(depth) || 1);
-                return flattend;
-            };
-            const services = yield this.discoverAllServicesWait();
-            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-            const chars = ArrayFlat(charsNest);
-            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-            // eslint-disable-next-line no-unused-vars
-            const descriptors = ArrayFlat(descriptorsNest);
-        });
-    }
-    onconnect() {
-    }
-    ondisconnect() {
-    }
-    ondiscoverservice(child) {
-    }
-    ondiscoverservicefinished(children) {
-    }
-    ondiscover() {
-    }
-    ondiscoverfinished() {
-    }
-    notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "statusupdate": {
-                if (params.status === "connected") {
-                    this.connected = true;
-                    this.onconnect();
-                }
-                if (params.status === "disconnected") {
-                    this.connected = false;
-                    this.ondisconnect();
-                }
-                break;
-            }
-            case "discover": {
-                const uuid = params.service_uuid;
-                let child = this.getService(uuid);
-                if (!child) {
-                    const newService = new bleRemoteService_1.default({ uuid });
-                    newService.parent = this;
-                    this._services.push(newService);
-                    child = newService;
-                }
-                child.discoverdOnRemote = true;
-                this.ondiscoverservice(child);
-                break;
-            }
-            case "discoverfinished": {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                this.ondiscoverservicefinished(children);
-                break;
-            }
-        }
-    }
-    onerror() {
     }
 }
 exports.default = BleRemotePeripheral;

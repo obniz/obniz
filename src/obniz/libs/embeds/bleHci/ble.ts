@@ -18,7 +18,7 @@ import BleRemotePeripheral from "./bleRemotePeripheral";
 import BleScan from "./bleScan";
 import BleSecurity from "./bleSecurity";
 import BleService from "./bleService";
-import {BleDeviceAddressType, UUID} from "./bleTypes";
+import {BleDeviceAddress, BleDeviceAddressType, UUID} from "./bleTypes";
 
 /**
  * Use a obniz device as a BLE device.
@@ -197,11 +197,11 @@ export default class ObnizBLE {
    * }
    * ```
    *
-   * @param uuid peripheral device address
+   * @param address peripheral device address
    * @param addressType "random" or "public"
    */
-  public async directConnectWait(uuid: any, addressType: any) {
-    const peripheral: any = this.directConnect(uuid, addressType);
+  public async directConnectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType) {
+    const peripheral: any = this.directConnect(address, addressType);
     await peripheral.connectWait();
     return peripheral;
   }
@@ -222,7 +222,7 @@ export default class ObnizBLE {
   protected onStateChange() {
   }
 
-  protected findPeripheral(address: any) {
+  protected findPeripheral(address: BleDeviceAddress) {
     for (const key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
         return this.remotePeripherals[key];

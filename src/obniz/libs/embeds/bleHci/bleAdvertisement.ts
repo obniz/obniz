@@ -8,10 +8,10 @@ import Builder from "./bleAdvertisementBuilder";
  * @category Use as Peripheral
  */
 export default class BleAdvertisement {
-  public obnizBle: any;
-  public adv_data: any;
-  public scan_resp: any;
-  public Obniz: any;
+  protected obnizBle: any;
+  protected adv_data: any;
+  protected scan_resp: any;
+  protected Obniz: any;
 
   constructor(obnizBle: any) {
     this.obnizBle = obnizBle;
