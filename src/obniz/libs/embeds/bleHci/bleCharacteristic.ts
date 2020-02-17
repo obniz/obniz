@@ -24,8 +24,8 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
    * }
    * ```
    *
-   * @property onwritefromremote.address central device address
-   * @property onwritefromremote.data written data
+   * @param onwritefromremote.address central device address
+   * @param onwritefromremote.data written data
    */
   public onwritefromremote?: (address: BleDeviceAddress, data: number[]) => void;
 
@@ -38,7 +38,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
    * }
    * ```
    *
-   * @property onwritefromremote.address central device address
+   * @param onreadfromremote.address central device address
    */
   public onreadfromremote?: (address: BleDeviceAddress) => void;
 
