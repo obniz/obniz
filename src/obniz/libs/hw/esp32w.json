@@ -71,19 +71,7 @@
     }
   },
   "embeds": {
-    "ble": {},
-    "display": {
-      "memo": "これはデバッグ用。本番にHW登録ができないから入れてる。後で消さないといけない。",
-      "paper_white": true,
-      "raw_alternate": false,
-      "width": 320,
-      "height": 240,
-      "color_depth": [
-        1,
-        4,
-        16
-      ]
-    }
+    "ble": {}
   },
   "protocol": {
     "tcp": {
