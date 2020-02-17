@@ -91,6 +91,8 @@ import Grove_EarHeartRate, {Grove_EarHeartRateOptions} from "../parts/Grove/Grov
 import Grove_GPS, {Grove_GPSOptions} from "../parts/Grove/Grove_GPS";
 import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
 import YG1006, {YG1006Options} from "../parts/Infrared/YG1006";
+// Keyestudio
+import Keyestudio_Button, {Keyestudio_ButtonOptions} from "../parts/Keyestudio/Keyestudio_Button";
 
 // Ble
 import OMRON_2JCIE, {OMRON_2JCIEOptions} from "../parts/Ble/2jcie";
@@ -215,6 +217,8 @@ export interface WiredNameMap {
   "Grove_MP3": Grove_MP3;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  // Keyestudio
+  "Keyestudio_Button": Keyestudio_Button;
   // Ble
   "2JCIE": OMRON_2JCIE;
   // Bioligical
@@ -341,6 +345,9 @@ export interface WiredNameOptionsMap {
   "Grove_MP3": Grove_MP3Options;
   "Grove_GPS": Grove_GPSOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  // Keyestudio
+  "Keyestudio_Button": Keyestudio_ButtonOptions;
+
   // Ble
 
   "2JCIE": OMRON_2JCIEOptions;
