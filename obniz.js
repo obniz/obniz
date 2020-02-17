@@ -20225,6 +20225,7 @@ var map = {
 	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
 	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
 	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
+	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
@@ -29378,6 +29379,62 @@ class Keyestudio_MoistureSensor {
     }
 }
 exports.default = Keyestudio_MoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TemperatureSensor {
+    constructor() {
+        this.temp = 0;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TemperatureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((voltage) => {
+            this.temp = this.calc(voltage);
+            this.onchange(this.temp);
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const voltage = yield this.ad.getWait();
+            this.temp = this.calc(voltage);
+            return this.temp;
+        });
+    }
+    onchange(temp) {
+    }
+    calc(voltage) {
+        return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
+    }
+}
+exports.default = Keyestudio_TemperatureSensor;
 
 //# sourceMappingURL=index.js.map
 
