@@ -62,7 +62,7 @@ if (res == sensor.ack.SUCCESS) {
 
 ## [await] deleteUserWait(userNum)
 指定した指紋をモジュールから削除します。  
-引数`userNUm`によって指紋を指定してください。  
+引数`userNum`によって指紋を指定してください。  
 成功するとACK`SUCCESS`を返します。
 
 ```javascript
@@ -90,7 +90,7 @@ if (res == sensor.ack.SUCCESS) {
 ## [await] compareFingerWait()
 センサで読み取った指紋がモジュールに登録してある指紋のいずれかに合致するかどうか比べます。  
 合致する指紋があった場合、ユーザ権限`1~3`を返します。
-合致する指紋がなかった場合は`ACK`のうち`NOUSER`、`TIMEOUT`のいずれかです。
+合致する指紋がなかった場合は`ACK`のうち`NOUSER`、`TIMEOUT`のいずれかを返します。
 
 ```javascript
 // JavaScript Examples
