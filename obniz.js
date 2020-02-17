@@ -20228,6 +20228,7 @@ var map = {
 	"./Light/WS2812/index.js": "./dist/src/parts/Light/WS2812/index.js",
 	"./Light/WS2812B/index.js": "./dist/src/parts/Light/WS2812B/index.js",
 	"./Logic/SNx4HC595/index.js": "./dist/src/parts/Logic/SNx4HC595/index.js",
+	"./M5Stick/RS485/index.js": "./dist/src/parts/M5Stick/RS485/index.js",
 	"./Magnet/CT10/index.js": "./dist/src/parts/Magnet/CT10/index.js",
 	"./Magnet/HMC5883L/index.js": "./dist/src/parts/Magnet/HMC5883L/index.js",
 	"./Memory/24LC256/index.js": "./dist/src/parts/Memory/24LC256/index.js",
@@ -29953,6 +29954,57 @@ class SNx4HC595 {
     }
 }
 exports.default = SNx4HC595;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/M5Stick/RS485/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.M5StackC_RS485
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class M5StickC_RS485 {
+    constructor() {
+        this.keys = ["tx", "rx", "gnd", "vcc", "baud"];
+        this.requiredKeys = ["tx", "rx"];
+    }
+    static info() {
+        return {
+            name: "M5StickC_RS485",
+        };
+    }
+    wired(obniz) {
+        if (obniz.isValidIO(this.params.gnd)) {
+            obniz.getIO(this.params.gnd).output(false);
+        }
+        if (obniz.isValidIO(this.params.vcc)) {
+            obniz.getIO(this.params.vcc).output(true);
+        }
+        this.params.baud = this.params.baud || 9600;
+        this.uart = obniz.getFreeUart();
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: this.params.baud,
+        });
+        this.uart.onreceive = (data, text) => {
+            if (typeof this.onreceive === "function") {
+                this.onreceive(data, text);
+            }
+        };
+    }
+    send(data) {
+        this.uart.send(data);
+    }
+}
+exports.default = M5StickC_RS485;
 
 //# sourceMappingURL=index.js.map
 

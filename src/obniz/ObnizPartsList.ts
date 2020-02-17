@@ -102,6 +102,8 @@ import SH200Q, {SH200QOptions} from "../parts/MovementSensor/SH200Q";
 import AXP192, {AXP192Options} from "../parts/Power/AXP192";
 import DPS310, {DPS310Options} from "../parts/PressureSensor/DPS310";
 
+import M5StickC_RS485, {M5StickC_RS485Options} from "../parts/M5Stick/RS485";
+
 export interface WiredNameMap {
   // Light
   "LED": LED;
@@ -227,6 +229,7 @@ export interface WiredNameMap {
   "ADT7410": ADT7410;
   "S5851A": S5851A;
   "DPS310": DPS310;
+  "M5StickC_RS485": M5StickC_RS485;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -355,4 +358,5 @@ export interface WiredNameOptionsMap {
   "ADT7410": ADT7410Options;
   "S5851A": S5851AOptions;
   "DPS310": DPS310Options;
+  "M5StickC_RS485": M5StickC_RS485Options;
 }
