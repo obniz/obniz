@@ -6435,7 +6435,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 class BleAttributeAbstract {
@@ -6458,7 +6458,7 @@ class BleAttributeAbstract {
             }
         }
         this.setFunctions();
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
     }
     /**
      * @ignore
@@ -6584,7 +6584,7 @@ class BleAttributeAbstract {
     /**
      * @ignore
      */
-    writeTextWait(data) {
+    writeTextWait(data, needResponse) {
         return new Promise((resolve, reject) => {
             this.emitter.once("onwrite", (params) => {
                 if (params.result === "success") {
@@ -6594,13 +6594,13 @@ class BleAttributeAbstract {
                     reject(new Error("writeTextWait failed"));
                 }
             });
-            this.writeText(data);
+            this.writeText(data, needResponse);
         });
     }
     /**
      * @ignore
      */
-    writeNumberWait(data) {
+    writeNumberWait(data, needResponse) {
         return new Promise((resolve, reject) => {
             this.emitter.once("onwrite", (params) => {
                 if (params.result === "success") {
@@ -6610,7 +6610,7 @@ class BleAttributeAbstract {
                     reject(new Error("writeNumberWait failed"));
                 }
             });
-            this.writeNumber(data);
+            this.writeNumber(data, needResponse);
         });
     }
     /**
@@ -7168,10 +7168,15 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         });
     }
     /**
-     * CALLBACKS
+     * @ignore
+     * @param child
      */
     ondiscover(child) {
     }
+    /**
+     * @ignore
+     * @param children
+     */
     ondiscoverfinished(children) {
     }
     /**
@@ -7219,16 +7224,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js"));
+const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
 /**
  * @category Use as Central
  */
-class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
+class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default {
     constructor(params) {
         super(params);
         this.properties = params.properties || [];
@@ -7236,28 +7237,149 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.properties = [this.properties];
         }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "service";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleRemoteDescriptor_1.default;
     }
+    /**
+     * @ignore
+     *
+     */
     get childrenName() {
         return "descriptors";
     }
+    /**
+     * It contains descriptors in a characteristic.
+     * It was discovered when connection automatically.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *    return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   var c = service.getCharacteristic("fff0")
+     *   for (var d of c.descriptors) {
+     *     console.log(d.uuid)
+     *  }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     */
     get descriptors() {
         return this.children;
     }
+    /**
+     * @ignore
+     * @param params
+     */
     addDescriptor(params) {
         return this.addChild(params);
     }
+    /**
+     * It returns a descriptors which having specified uuid in a characteristic.
+     * Return value is null when not matched.
+     *
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *  await peripheral.connectWait();
+     *  console.log("connected");
+     *  var service = peripheral.getService("1800")
+     *  var c = service.getCharacteristic("fff0")
+     *  var d = c.getDescriptor("fff0")
+     *  console.log(d.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
     getDescriptor(uuid) {
         return this.getChild(uuid);
     }
+    /**
+     * This sets a callback function to receive notify when it comes from periperal.
+     * To receive notify, you need to register on CCCD Descriptor(0x2902).
+     *
+     * More infomation of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * char.onregisternotify = function() {
+     *   console.log("register finshed")
+     * }
+     *
+     * char.registerNotify( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * ```
+     *
+     * @param callback
+     */
     registerNotify(callback) {
         this.onnotify = callback;
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, true);
     }
+    /**
+     * This sets a notify callback function and wait to finish register.
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * await char.registerNotifyWait( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * ```
+     *
+     * @param callback
+     *
+     */
     registerNotifyWait(callback) {
         return new Promise((resolve) => {
             this.emitter.once("onregisternotify", () => {
@@ -7266,11 +7388,64 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.registerNotify(callback);
         });
     }
+    /**
+     * unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
+     *
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * char.onregisternotify = function() {
+     *  console.log("register finshed")
+     *  char.unregisterNotify();
+     * }
+     *
+     * char.onunregisternotify = function() {
+     *   console.log("unregistrated")
+     * }
+     *
+     * char.registerNotify( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     *
+     * ```
+     */
     unregisterNotify() {
         this.onnotify = () => {
         };
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, false);
     }
+    /**
+     * Unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
+     * And wait until done.
+     *
+     * ```javascript
+     *
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * await char.registerNotifyWait( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * await char.unregisterNotifyWait();
+     * console.log("unregistrated")
+     * ```
+     *
+     */
     unregisterNotifyWait() {
         return new Promise((resolve) => {
             this.emitter.once("onunregisternotify", () => {
@@ -7279,24 +7454,144 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.unregisterNotify();
         });
     }
+    /**
+     * It reads data from the characteristic.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * The returned value appears in the callback function [[onread]].
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.scan.onfind = function(peripheral){
+     *   if(peripheral.localName == "my peripheral"){
+     *
+     *     peripheral.onconnect = function(){
+     *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+     *       characteristic.read();
+     *       characteristic.onread = function(dataArray){
+     *         console.log("value : " + dataArray);
+     *       }
+     *     }
+     *
+     *     peripheral.connect();
+     *   }
+     * }
+     * obniz.ble.startScan({duration : 10});
+     * ```
+     *
+     *
+     */
     read() {
         this.service.peripheral.obnizBle.centralBindings.read(this.service.peripheral.address, this.service.uuid, this.uuid);
     }
+    /**
+     * This writes dataArray to the characteristic.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *    await peripheral.connectWait();
+     *    console.log("connected");
+     *    await obniz.wait(1000);
+     *
+     *    var dataArray = [0x02, 0xFF];
+     *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
+     * }
+     * ```
+     *
+     * @param array
+     * @param needResponse
+     */
     write(array, needResponse) {
         if (needResponse === undefined) {
             needResponse = true;
         }
         this.service.peripheral.obnizBle.centralBindings.write(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(array), !needResponse);
     }
+    /**
+     * This writes dataArray to the characteristic.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     *  await obniz.ble.initWait();
+     *   var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
+     *   console.log("write success");
+     * }
+     * ```
+     *
+     * @param data
+     * @param needResponse
+     */
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
+    }
+    /**
+     * It reads data from the characteristic.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * The returned value appears in the callback function (onread). If reading succeeds an Array with data will be returned.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+     *   console.log(dataArray);
+     * }
+     * ```
+     */
+    readWait() {
+        return super.readWait();
+    }
+    /**
+     * @ignore
+     */
     discoverChildren() {
         this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(this.service.peripheral.address, this.service.uuid, this.uuid);
     }
+    /**
+     * @ignore
+     */
     discoverAllDescriptors() {
         return this.discoverChildren();
     }
+    /**
+     * @ignore
+     *
+     */
     discoverAllDescriptorsWait() {
         return this.discoverChildrenWait();
     }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
         if (this.properties.length > 0) {
@@ -7304,39 +7599,59 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
         }
         return obj;
     }
+    /**
+     * This characteristics can broadcast or not.
+     */
     canBroadcast() {
         return this.properties.includes("broadcast");
     }
+    /**
+     * This characteristics can notify or not.
+     */
     canNotify() {
         return this.properties.includes("notify");
     }
+    /**
+     * This characteristics can read or not.
+     */
     canRead() {
         return this.properties.includes("read");
     }
+    /**
+     * This characteristics can write or not.
+     */
     canWrite() {
         return this.properties.includes("write");
     }
+    /**
+     * This characteristics can 'write without response' or not.
+     */
     canWriteWithoutResponse() {
         return this.properties.includes("write_without_response");
     }
+    /**
+     * This characteristics can indicate or not.
+     */
     canIndicate() {
         return this.properties.includes("indicate");
     }
+    /**
+     * @ignore
+     * @param descriptor
+     */
     ondiscover(descriptor) {
-        this.ondiscoverdescriptor(descriptor);
+        if (this.ondiscoverdescriptor) {
+            this.ondiscoverdescriptor(descriptor);
+        }
     }
+    /**
+     * @ignore
+     * @param descriptors
+     */
     ondiscoverfinished(descriptors) {
-        this.ondiscoverdescriptorfinished(descriptors);
-    }
-    ondiscoverdescriptor(descriptor) {
-    }
-    ondiscoverdescriptorfinished(descriptors) {
-    }
-    onregisternotify() {
-    }
-    onunregisternotify() {
-    }
-    onnotify(data) {
+        if (this.ondiscoverdescriptorfinished) {
+            this.ondiscoverdescriptorfinished(descriptors);
+        }
     }
     /**
      * @ignore
@@ -7347,15 +7662,21 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
             case "onregisternotify": {
-                this.onregisternotify();
+                if (this.onregisternotify) {
+                    this.onregisternotify();
+                }
                 break;
             }
             case "onunregisternotify": {
-                this.onunregisternotify();
+                if (this.onunregisternotify) {
+                    this.onunregisternotify();
+                }
                 break;
             }
             case "onnotify": {
-                this.onnotify(params.data || undefined);
+                if (this.onnotify) {
+                    this.onnotify(params.data || undefined);
+                }
                 break;
             }
         }
@@ -7378,26 +7699,132 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
+const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
 /**
  * @category Use as Central
  */
-class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
+class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     constructor(params) {
         super(params);
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "characteristic";
     }
+    /**
+     * Read data from descriptor.
+     *
+     * The return value appears in the callback function [[onread]].
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   peripheral.getService("FF00").getCharacteristic("FF01").read();
+     *
+     *   peripheral.getService("FF00").getCharacteristic("FF01").onread = (dataArray)=>{
+     *   console.log(dataArray);
+     *
+     *   }
+     * }
+     * ```
+     *
+     */
     read() {
         this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
     }
-    write(array) {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(array));
+    /**
+     * Read data from descriptor.
+     *
+     * The return value appears in the callback function [[onread]].
+     * If reading succeeds an Array with data will be returned.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+     *   console.log(dataArray);
+     * }
+     * ```
+     *
+     */
+    readWait() {
+        return super.readWait();
+    }
+    /**
+     * This writes dataArray to descriptor.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write(dataArray);
+     * }
+     * ```
+     *
+     * @param data
+     */
+    write(data) {
+        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
+    }
+    /**
+     * This writes dataArray to descriptor.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
+     *   console.log("write success");
+     * }
+     * ```
+     *
+     * @param data
+     * @param needResponse
+     */
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
     }
 }
 exports.default = BleRemoteDescriptor;
@@ -8112,6 +8539,77 @@ exports.default = BleRemoteService;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
+class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
+    /**
+     * Wrapper for [[write]] with data converting from number.
+     * @param val
+     * @param needResponse
+     */
+    writeNumber(val, needResponse) {
+        return super.writeNumber(val, needResponse);
+    }
+    /**
+     * Wrapper for [[write]] with data converting from text.
+     * It convert string to UTF-8 and write binary array.
+     *
+     * @param str
+     * @param needResponse
+     */
+    writeText(str, needResponse) {
+        return super.writeText(str, needResponse);
+    }
+    readWait() {
+        return super.readWait();
+    }
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
+    }
+    /**
+     * Wrapper for [[writeWait]] with data converting from text.
+     * It convert string to UTF-8 and write binary array.
+     *
+     * It throws an error when failed.
+     * @param str
+     */
+    writeTextWait(str, needResponse) {
+        return super.writeTextWait(str, needResponse);
+    }
+    /**
+     * Wrapper for [[writeWait]] with data converting from number.
+     * It writes data as 1byte.
+     *
+     * It throws an error when failed.
+     *
+     * @param val
+     */
+    writeNumberWait(val, needResponse) {
+        return super.writeNumberWait(val, needResponse);
+    }
+}
+exports.default = BleRemoteValueAttributeAbstract;
+
+//# sourceMappingURL=bleRemoteValueAttributeAbstract.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/bleHci/bleScan.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8125,7 +8623,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @category Use as Central
@@ -8135,7 +8633,7 @@ class BleScan {
         this.scanTarget = {};
         this.scanSettings = {};
         this.obnizBle = obnizBle;
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
     }
@@ -8351,40 +8849,84 @@ exports.default = BleScan;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+/**
+ * Deprecated class
+ */
 class BleSecurity {
     constructor(Obniz) {
         this.Obniz = Obniz;
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
     }
+    /**
+     * Deprecated function
+     * @param mode
+     * @param level
+     */
     setModeLevel(mode, level) {
         throw new Error("setModeLevel is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param introducedVersion
+     * @param functionName
+     */
     checkIntroducedFirmware(introducedVersion, functionName) {
         throw new Error("checkIntroducedFirmware is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param authTypes
+     */
     setAuth(authTypes) {
         throw new Error("setAuth is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param level
+     */
     setIndicateSecurityLevel(level) {
         throw new Error("setIndicateSecurityLevel is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param keyTypes
+     */
     setEnableKeyTypes(keyTypes) {
         throw new Error("setEnableKeyTypes is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param size
+     */
     setKeyMaxSize(size) {
         throw new Error("setKeyMaxSize is deprecated method");
     }
+    /**
+     * Deprecated function
+     */
     clearBondingDevicesList() {
         throw new Error("clearBondingDevicesList is deprecated method");
     }
+    /**
+     * @ignore
+     * @param params
+     */
     onerror(params) {
     } // dummy
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {

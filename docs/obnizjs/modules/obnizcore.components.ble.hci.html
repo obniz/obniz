@@ -90,11 +90,11 @@
 							<h3>Use as Central Classes</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.ble.hci.bleremoteattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Attribute<wbr>Abstract</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.ble.hci.bleremoteattributeabstract-1.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Attribute<wbr>Abstract</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Characteristic</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.ble.hci.bleremotedescriptor.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Descriptor</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Peripheral</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.ble.hci.bleremoteservice.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Service</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.ble.hci.bleremotevalueattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Value<wbr>Attribute<wbr>Abstract</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.ble.hci.blescan.html" class="tsd-kind-icon">Ble<wbr>Scan</a></li>
 							</ul>
 							<h3>Use as Peripheral Classes</h3>
@@ -119,6 +119,7 @@
 						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#bleattributepropery" class="tsd-kind-icon">Ble<wbr>Attribute<wbr>Propery</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-kind-icon">Ble<wbr>Device<wbr>Address</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#bledeviceaddresstype" class="tsd-kind-icon">Ble<wbr>Device<wbr>Address<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#bledevicetype" class="tsd-kind-icon">Ble<wbr>Device<wbr>Type</a></li>
@@ -141,12 +142,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
+					<a name="bleattributepropery" class="tsd-anchor"></a>
+					<h3>Ble<wbr>Attribute<wbr>Propery</h3>
+					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Attribute<wbr>Propery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"broadcast"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"notify"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"read"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"write"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"write_without_response"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"indicate"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleTypes.ts#L21">src/obniz/libs/embeds/bleHci/bleTypes.ts:21</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
 					<a name="bledeviceaddress" class="tsd-anchor"></a>
 					<h3>Ble<wbr>Device<wbr>Address</h3>
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Device<wbr>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleTypes.ts#L10">src/obniz/libs/embeds/bleHci/bleTypes.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleTypes.ts#L10">src/obniz/libs/embeds/bleHci/bleTypes.ts:10</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -156,7 +167,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Device<wbr>Address<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"public"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"random"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"rpa_public"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"rpa_random"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleTypes.ts#L13">src/obniz/libs/embeds/bleHci/bleTypes.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleTypes.ts#L13">src/obniz/libs/embeds/bleHci/bleTypes.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -166,7 +177,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Device<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"ble"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"dumo"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"breder"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleTypes.ts#L12">src/obniz/libs/embeds/bleHci/bleTypes.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleTypes.ts#L12">src/obniz/libs/embeds/bleHci/bleTypes.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -176,7 +187,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Event<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"connectable_advertisemnt"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"connectable_directed_advertisemnt"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"scannable_advertising"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"non_connectable_advertising"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"scan_response"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleTypes.ts#L14">src/obniz/libs/embeds/bleHci/bleTypes.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleTypes.ts#L14">src/obniz/libs/embeds/bleHci/bleTypes.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -186,7 +197,7 @@
 					<div class="tsd-signature tsd-kind-icon">UUID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleTypes.ts#L9">src/obniz/libs/embeds/bleHci/bleTypes.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleTypes.ts#L9">src/obniz/libs/embeds/bleHci/bleTypes.ts:9</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -204,7 +215,7 @@
 					<div class="tsd-signature tsd-kind-icon">Obniz<span class="tsd-signature-symbol">:</span> <a href="../classes/obnizcore.obniz.html" class="tsd-signature-type">Obniz</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/ble.ts#L12">src/obniz/libs/embeds/bleHci/ble.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/ble.ts#L12">src/obniz/libs/embeds/bleHci/ble.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -214,7 +225,7 @@
 					<div class="tsd-signature tsd-kind-icon">emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts#L5">src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts#L5">src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts:5</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -224,7 +235,7 @@
 					<div class="tsd-signature tsd-kind-icon">emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleScan.ts#L5">src/obniz/libs/embeds/bleHci/bleScan.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleScan.ts#L5">src/obniz/libs/embeds/bleHci/bleScan.ts:5</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -234,7 +245,7 @@
 					<div class="tsd-signature tsd-kind-icon">emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleSecurity.ts#L5">src/obniz/libs/embeds/bleHci/bleSecurity.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleSecurity.ts#L5">src/obniz/libs/embeds/bleHci/bleSecurity.ts:5</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -274,9 +285,6 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../classes/obnizcore.components.ble.hci.bleremoteattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Attribute<wbr>Abstract</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../classes/obnizcore.components.ble.hci.bleremoteattributeabstract-1.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Attribute<wbr>Abstract</a>
-					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Characteristic</a>
 					</li>
@@ -288,6 +296,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/obnizcore.components.ble.hci.bleremoteservice.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../classes/obnizcore.components.ble.hci.bleremotevalueattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Value<wbr>Attribute<wbr>Abstract</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/obnizcore.components.ble.hci.blescan.html" class="tsd-kind-icon">Ble<wbr>Scan</a>
@@ -312,6 +323,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/obnizcore.components.ble.hci.ibeacon.html" class="tsd-kind-icon">IBeacon</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="obnizcore.components.ble.hci.html#bleattributepropery" class="tsd-kind-icon">Ble<wbr>Attribute<wbr>Propery</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-kind-icon">Ble<wbr>Device<wbr>Address</a>

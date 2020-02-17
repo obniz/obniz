@@ -50,11 +50,16 @@ export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> exte
   }
 
   /**
-   * CALLBACKS
+   * @ignore
+   * @param child
    */
   public ondiscover(child: any) {
   }
 
+  /**
+   * @ignore
+   * @param children
+   */
   public ondiscoverfinished(children: any) {
   }
 

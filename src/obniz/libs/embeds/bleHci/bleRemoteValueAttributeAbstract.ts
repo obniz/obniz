@@ -2,62 +2,72 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizUtil from "../../utils/util";
-import BleAttributeAbstract from "./bleAttributeAbstract";
+import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 
 /**
  * @category Use as Central
  */
-export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
+export default class BleRemoteValueAttributeAbstract<ParentClass, ChildrenClass> extends BleRemoteAttributeAbstract<ParentClass, ChildrenClass> {
+
+  /**
+   * Callback function when write value finished.
+   */
+  public onwrite?: (result: any) => void;
+
+  /**
+   * Callback function when read value.
+   */
+  public onread?: (data: any) => void;
 
   /**
    * Wrapper for [[write]] with data converting from number.
    * @param val
    * @param needResponse
    */
-  public writeNumber(val: any, needResponse?: any) {
+  public writeNumber(val: number, needResponse?: boolean) {
     return super.writeNumber(val, needResponse);
   }
 
   /**
    * Wrapper for [[write]] with data converting from text.
+   * It convert string to UTF-8 and write binary array.
+   *
    * @param str
    * @param needResponse
    */
-  public writeText(str: string, needResponse?: any) {
+  public writeText(str: string, needResponse?: boolean) {
     return super.writeText(str, needResponse);
   }
 
-  public readWait() {
+  public readWait(): Promise<number[]> {
     return super.readWait();
   }
 
-  public writeWait(data: any, needResponse: any) {
+  public writeWait(data: number[], needResponse: boolean): Promise<void> {
     return super.writeWait(data, needResponse);
   }
 
   /**
    * Wrapper for [[writeWait]] with data converting from text.
+   * It convert string to UTF-8 and write binary array.
+   *
+   * It throws an error when failed.
    * @param str
    */
-  public writeTextWait(str: string) {
-    return super.writeTextWait(str);
+  public writeTextWait(str: string, needResponse?: boolean): Promise<void> {
+    return super.writeTextWait(str, needResponse);
   }
 
   /**
    * Wrapper for [[writeWait]] with data converting from number.
+   * It writes data as 1byte.
+   *
+   * It throws an error when failed.
+   *
    * @param val
    */
-  public writeNumberWait(val: any) {
-    return super.writeNumberWait(val);
-  }
-
-  public readFromRemoteWait() {
-    return super.readFromRemoteWait();
-  }
-
-  public writeFromRemoteWait() {
-    return super.writeFromRemoteWait();
+  public writeNumberWait(val: number, needResponse?: boolean): Promise<void> {
+    return super.writeNumberWait(val, needResponse);
   }
 
 }

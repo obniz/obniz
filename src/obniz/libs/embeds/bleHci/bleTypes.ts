@@ -17,3 +17,5 @@ export type BleEventType =
   | "scannable_advertising"
   | "non_connectable_advertising"
   | "scan_response";
+
+export type BleAttributePropery = "broadcast" | "notify"| "read"| "write"| "write_without_response"|"indicate";

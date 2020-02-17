@@ -86,7 +86,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html" class="tsd-signature-type">BleRemoteAttributeAbstract</a><span class="tsd-signature-symbol">&lt;</span><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-signature-type">BleRemoteCharacteristic</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span>
+						<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html" class="tsd-signature-type">BleRemoteValueAttributeAbstract</a><span class="tsd-signature-symbol">&lt;</span><a href="obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-signature-type">BleRemoteCharacteristic</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">BleRemoteDescriptor</span>
@@ -109,22 +109,22 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#characteristic" class="tsd-kind-icon">characteristic</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#uuid" class="tsd-kind-icon">uuid</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#parentname" class="tsd-kind-icon">parent<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#onread" class="tsd-kind-icon">onread</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#onwrite" class="tsd-kind-icon">onwrite</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#uuid" class="tsd-kind-icon">uuid</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#ondiscover" class="tsd-kind-icon">ondiscover</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#ondiscoverfinished" class="tsd-kind-icon">ondiscoverfinished</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#read" class="tsd-kind-icon">read</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#write" class="tsd-kind-icon">write</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writenumber" class="tsd-kind-icon">write<wbr>Number</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writenumberwait" class="tsd-kind-icon">write<wbr>Number<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writetext" class="tsd-kind-icon">write<wbr>Text</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writetextwait" class="tsd-kind-icon">write<wbr>Text<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writewait" class="tsd-kind-icon">write<wbr>Wait</a></li>
 							</ul>
 						</section>
 					</div>
@@ -143,7 +143,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html">BleRemoteAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L12">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L14">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:14</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -162,101 +162,67 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="characteristic" class="tsd-anchor"></a>
 					<h3>characteristic</h3>
-					<div class="tsd-signature tsd-kind-icon">characteristic<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">characteristic<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-signature-type">BleRemoteCharacteristic</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L11">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L14">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="onread" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onread</h3>
+					<div class="tsd-signature tsd-kind-icon">onread<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html">BleRemoteValueAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#onread">onread</a></p>
+						<p>Overrides BleAttributeAbstract.onread</p>
+						<ul>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts#L20">src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:20</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Callback function when read value.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="onwrite" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onwrite</h3>
+					<div class="tsd-signature tsd-kind-icon">onwrite<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html">BleRemoteValueAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#onwrite">onwrite</a></p>
+						<p>Overrides BleAttributeAbstract.onwrite</p>
+						<ul>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts#L15">src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:15</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Callback function when write value finished.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="uuid" class="tsd-anchor"></a>
 					<h3>uuid</h3>
-					<div class="tsd-signature tsd-kind-icon">uuid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">uuid<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-signature-type">UUID</a></div>
 					<aside class="tsd-sources">
-						<p>Overrides <a href="obnizcore.components.ble.hci.bleattributeabstract.html">BleAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleattributeabstract.html#uuid">uuid</a></p>
+						<p>Inherited from <a href="obnizcore.components.ble.hci.bleattributeabstract.html">BleAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleattributeabstract.html#uuid">uuid</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L12">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts#L40">src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts:40</a></li>
 						</ul>
 					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-					<a name="parentname" class="tsd-anchor"></a>
-					<h3>parent<wbr>Name</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> parentName<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides BleAttributeAbstract.parentName</p>
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L18">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:18</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
-						</li>
-					</ul>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>It is uuid as string.</p>
+						</div>
+						<pre><code class="language-javasciprt">console.log(attr.uuid); // =&gt; &#39;4C84&#39;</code></pre>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a name="ondiscover" class="tsd-anchor"></a>
-					<h3>ondiscover</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">ondiscover<span class="tsd-signature-symbol">(</span>child<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html">BleRemoteAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#ondiscover">ondiscover</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts#L56">src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts:56</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>CALLBACKS</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>child: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a name="ondiscoverfinished" class="tsd-anchor"></a>
-					<h3>ondiscoverfinished</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">ondiscoverfinished<span class="tsd-signature-symbol">(</span>children<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html">BleRemoteAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#ondiscoverfinished">ondiscoverfinished</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts#L59">src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts:59</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>children: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="read" class="tsd-anchor"></a>
 					<h3>read</h3>
@@ -268,10 +234,74 @@
 							<aside class="tsd-sources">
 								<p>Overrides BleAttributeAbstract.read</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L22">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L54">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:54</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Read data from descriptor.</p>
+								</div>
+								<p>The return value appears in the callback function <a href="obnizcore.components.ble.hci.bleremotedescriptor.html#onread">onread</a>.</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">await</span> obniz.ble.initWait();
+<span class="hljs-keyword">var</span> target = {
+  <span class="hljs-attr">uuids</span>: [<span class="hljs-string">"fff0"</span>],
+};
+<span class="hljs-keyword">var</span> peripheral = <span class="hljs-keyword">await</span> obniz.ble.scan.startOneWait(target);
+<span class="hljs-keyword">if</span>(peripheral){
+  <span class="hljs-keyword">await</span> peripheral.connectWait();
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"connected"</span>);
+  <span class="hljs-keyword">await</span> obniz.wait(<span class="hljs-number">1000</span>);
+
+  peripheral.getService(<span class="hljs-string">"FF00"</span>).getCharacteristic(<span class="hljs-string">"FF01"</span>).read();
+
+  peripheral.getService(<span class="hljs-string">"FF00"</span>).getCharacteristic(<span class="hljs-string">"FF01"</span>).onread = <span class="hljs-function">(<span class="hljs-params">dataArray</span>)=&gt;</span>{
+  <span class="hljs-built_in">console</span>.log(dataArray);
+
+  }
+}</code></pre>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="readwait" class="tsd-anchor"></a>
+					<h3>read<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html">BleRemoteValueAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#readwait">readWait</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L88">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:88</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Read data from descriptor.</p>
+								</div>
+								<p>The return value appears in the callback function <a href="obnizcore.components.ble.hci.bleremotedescriptor.html#onread">onread</a>.
+									If reading succeeds an Array with data will be returned.
+								It throws an error when failed.</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">await</span> obniz.ble.initWait();
+<span class="hljs-keyword">var</span> target = {
+  <span class="hljs-attr">uuids</span>: [<span class="hljs-string">"fff0"</span>],
+};
+<span class="hljs-keyword">var</span> peripheral = <span class="hljs-keyword">await</span> obniz.ble.scan.startOneWait(target);
+<span class="hljs-keyword">if</span>(peripheral){
+  <span class="hljs-keyword">await</span> peripheral.connectWait();
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"connected"</span>);
+  <span class="hljs-keyword">await</span> obniz.wait(<span class="hljs-number">1000</span>);
+
+  <span class="hljs-keyword">var</span> dataArray = <span class="hljs-keyword">await</span> peripheral.getService(<span class="hljs-string">"FF00"</span>).getCharacteristic(<span class="hljs-string">"FF01"</span>).readWait();
+  <span class="hljs-built_in">console</span>.log(dataArray);
+}</code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -279,23 +309,241 @@
 					<a name="write" class="tsd-anchor"></a>
 					<h3>write</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>array<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides BleAttributeAbstract.write</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L31">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L115">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:115</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This writes dataArray to descriptor.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+
+<span class="hljs-keyword">await</span> obniz.ble.initWait();
+<span class="hljs-keyword">var</span> target = {
+  <span class="hljs-attr">uuids</span>: [<span class="hljs-string">"fff0"</span>],
+};
+<span class="hljs-keyword">var</span> peripheral = <span class="hljs-keyword">await</span> obniz.ble.scan.startOneWait(target);
+<span class="hljs-keyword">if</span>(peripheral){
+  <span class="hljs-keyword">await</span> peripheral.connectWait();
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"connected"</span>);
+  <span class="hljs-keyword">await</span> obniz.wait(<span class="hljs-number">1000</span>);
+
+  <span class="hljs-keyword">var</span> dataArray = [<span class="hljs-number">0x02</span>, <span class="hljs-number">0xFF</span>];
+  peripheral.getService(<span class="hljs-string">"FF00"</span>).getCharacteristic(<span class="hljs-string">"FF01"</span>).getDescriptor(<span class="hljs-string">"2901"</span>).write(dataArray);
+}</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>array: <span class="tsd-signature-type">any</span></h5>
+									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="writenumber" class="tsd-anchor"></a>
+					<h3>write<wbr>Number</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Number<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html">BleRemoteValueAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writenumber">writeNumber</a></p>
+								<p>Overrides BleAttributeAbstract.writeNumber</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts#L27">src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:27</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wrapper for <a href="obnizcore.components.ble.hci.bleremotedescriptor.html#write">write</a> with data converting from number.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>val: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> needResponse: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="writenumberwait" class="tsd-anchor"></a>
+					<h3>write<wbr>Number<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Number<wbr>Wait<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html">BleRemoteValueAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writenumberwait">writeNumberWait</a></p>
+								<p>Overrides BleAttributeAbstract.writeNumberWait</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts#L69">src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:69</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wrapper for <a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writewait">writeWait</a> with data converting from number.
+									It writes data as 1byte.</p>
+								</div>
+								<p>It throws an error when failed.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>val: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> needResponse: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="writetext" class="tsd-anchor"></a>
+					<h3>write<wbr>Text</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Text<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html">BleRemoteValueAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writetext">writeText</a></p>
+								<p>Overrides BleAttributeAbstract.writeText</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts#L38">src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:38</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wrapper for <a href="obnizcore.components.ble.hci.bleremotedescriptor.html#write">write</a> with data converting from text.
+									It convert string to UTF-8 and write binary array.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> needResponse: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="writetextwait" class="tsd-anchor"></a>
+					<h3>write<wbr>Text<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Text<wbr>Wait<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html">BleRemoteValueAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writetextwait">writeTextWait</a></p>
+								<p>Overrides BleAttributeAbstract.writeTextWait</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts#L57">src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:57</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wrapper for <a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writewait">writeWait</a> with data converting from text.
+									It convert string to UTF-8 and write binary array.</p>
+								</div>
+								<p>It throws an error when failed.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> needResponse: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="writewait" class="tsd-anchor"></a>
+					<h3>write<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Wait<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, needResponse<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html">BleRemoteValueAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writewait">writeWait</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts#L151">src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.ts:151</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This writes dataArray to descriptor.
+									It throws an error when failed.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+
+<span class="hljs-keyword">await</span> obniz.ble.initWait();
+<span class="hljs-keyword">var</span> target = {
+  <span class="hljs-attr">uuids</span>: [<span class="hljs-string">"fff0"</span>],
+};
+<span class="hljs-keyword">var</span> peripheral = <span class="hljs-keyword">await</span> obniz.ble.scan.startOneWait(target);
+<span class="hljs-keyword">if</span>(peripheral){
+  <span class="hljs-keyword">await</span> peripheral.connectWait();
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"connected"</span>);
+  <span class="hljs-keyword">await</span> obniz.wait(<span class="hljs-number">1000</span>);
+
+  <span class="hljs-keyword">var</span> dataArray = [<span class="hljs-number">0x02</span>, <span class="hljs-number">0xFF</span>];
+  <span class="hljs-keyword">await</span> peripheral.getService(<span class="hljs-string">"FF00"</span>).getCharacteristic(<span class="hljs-string">"FF01"</span>).getDescriptor(<span class="hljs-string">"2901"</span>).writeWait(dataArray);
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"write success"</span>);
+}</code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>needResponse: <span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -335,9 +583,6 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Attribute<wbr>Abstract</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="obnizcore.components.ble.hci.bleremoteattributeabstract-1.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Attribute<wbr>Abstract</a>
-					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Characteristic</a>
 					</li>
@@ -352,23 +597,38 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#characteristic" class="tsd-kind-icon">characteristic</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#onread" class="tsd-kind-icon">onread</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#onwrite" class="tsd-kind-icon">onwrite</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#uuid" class="tsd-kind-icon">uuid</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#parentname" class="tsd-kind-icon">parent<wbr>Name</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#ondiscover" class="tsd-kind-icon">ondiscover</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#ondiscoverfinished" class="tsd-kind-icon">ondiscoverfinished</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#read" class="tsd-kind-icon">read</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#write" class="tsd-kind-icon">write</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writenumber" class="tsd-kind-icon">write<wbr>Number</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writenumberwait" class="tsd-kind-icon">write<wbr>Number<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writetext" class="tsd-kind-icon">write<wbr>Text</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writetextwait" class="tsd-kind-icon">write<wbr>Text<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="obnizcore.components.ble.hci.bleremotedescriptor.html#writewait" class="tsd-kind-icon">write<wbr>Wait</a>
 							</li>
 						</ul>
 					</li>
@@ -379,6 +639,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.bleremoteservice.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Value<wbr>Attribute<wbr>Abstract</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.blescan.html" class="tsd-kind-icon">Ble<wbr>Scan</a>
@@ -403,6 +666,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/obnizcore.components.ble.hci.ibeacon.html" class="tsd-kind-icon">IBeacon</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/obnizcore.components.ble.hci.html#bleattributepropery" class="tsd-kind-icon">Ble<wbr>Attribute<wbr>Propery</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-kind-icon">Ble<wbr>Device<wbr>Address</a>

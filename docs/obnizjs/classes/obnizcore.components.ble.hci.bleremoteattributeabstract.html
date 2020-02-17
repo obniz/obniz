@@ -103,10 +103,7 @@
 								<span class="target">BleRemoteAttributeAbstract</span>
 								<ul class="tsd-hierarchy">
 									<li>
-										<a href="obnizcore.components.ble.hci.bleremotedescriptor.html" class="tsd-signature-type">BleRemoteDescriptor</a>
-									</li>
-									<li>
-										<a href="obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-signature-type">BleRemoteCharacteristic</a>
+										<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html" class="tsd-signature-type">BleRemoteValueAttributeAbstract</a>
 									</li>
 									<li>
 										<a href="obnizcore.components.ble.hci.bleremoteservice.html" class="tsd-signature-type">BleRemoteService</a>
@@ -133,13 +130,6 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#uuid" class="tsd-kind-icon">uuid</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
-							<h3>Methods</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#ondiscover" class="tsd-kind-icon">ondiscover</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#ondiscoverfinished" class="tsd-kind-icon">ondiscoverfinished</a></li>
-							</ul>
-						</section>
 					</div>
 				</section>
 			</section>
@@ -156,7 +146,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.components.ble.hci.bleattributeabstract.html">BleAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleattributeabstract.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts#L10">src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts#L10">src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -179,7 +169,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="obnizcore.components.ble.hci.bleattributeabstract.html">BleAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleattributeabstract.html#uuid">uuid</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts#L40">src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/obniz/obniz/blob/3d75a816/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts#L40">src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts:40</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -188,60 +178,6 @@
 						</div>
 						<pre><code class="language-javasciprt">console.log(attr.uuid); // =&gt; &#39;4C84&#39;</code></pre>
 					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="ondiscover" class="tsd-anchor"></a>
-					<h3>ondiscover</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">ondiscover<span class="tsd-signature-symbol">(</span>child<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts#L56">src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts:56</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>CALLBACKS</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>child: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="ondiscoverfinished" class="tsd-anchor"></a>
-					<h3>ondiscoverfinished</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">ondiscoverfinished<span class="tsd-signature-symbol">(</span>children<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/66143d03/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts#L59">src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.ts:59</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>children: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
 				</section>
 			</section>
 		</div>
@@ -287,19 +223,10 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#uuid" class="tsd-kind-icon">uuid</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#ondiscover" class="tsd-kind-icon">ondiscover</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html#ondiscoverfinished" class="tsd-kind-icon">ondiscoverfinished</a>
-							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="obnizcore.components.ble.hci.bleremoteattributeabstract-1.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Attribute<wbr>Abstract</a>
-					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Characteristic</a>
 					</li>
@@ -311,6 +238,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.bleremoteservice.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Value<wbr>Attribute<wbr>Abstract</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.blescan.html" class="tsd-kind-icon">Ble<wbr>Scan</a>
@@ -335,6 +265,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/obnizcore.components.ble.hci.ibeacon.html" class="tsd-kind-icon">IBeacon</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/obnizcore.components.ble.hci.html#bleattributepropery" class="tsd-kind-icon">Ble<wbr>Attribute<wbr>Propery</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-kind-icon">Ble<wbr>Device<wbr>Address</a>

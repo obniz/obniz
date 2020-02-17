@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import emitter = require("eventemitter3");
+import EventEmitter from "eventemitter3";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BlePeripheral from "./blePeripheral";
@@ -84,7 +84,7 @@ export default class BleScan {
   protected scanTarget: BleScanTarget;
   protected scanSettings: BleScanSetting;
   protected obnizBle: ObnizBLE;
-  protected emitter: emitter;
+  protected emitter: EventEmitter;
   protected scanedPeripherals: BleRemotePeripheral[];
   private _timeoutTimer?: NodeJS.Timeout;
 
@@ -92,7 +92,7 @@ export default class BleScan {
     this.scanTarget = {};
     this.scanSettings = {};
     this.obnizBle = obnizBle;
-    this.emitter = new emitter();
+    this.emitter = new EventEmitter();
 
     this.scanedPeripherals = [];
     this._timeoutTimer = undefined;

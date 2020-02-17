@@ -11,7 +11,11 @@ import {UUID} from "./bleTypes";
  * @category Use as Central
  */
 export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemotePeripheral, BleRemoteCharacteristic> {
-  protected peripheral!: BleRemotePeripheral;
+
+  /**
+   * Peripheral instance
+   */
+  public peripheral!: BleRemotePeripheral;
 
   constructor(obj: any) {
     super(obj);

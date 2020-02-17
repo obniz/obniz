@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import emitter = require("eventemitter3");
+import EventEmitter from "eventemitter3";
 import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
 import {UUID} from "./bleTypes";
@@ -64,7 +64,7 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   protected isRemote: boolean;
   protected discoverdOnRemote: any;
   protected data: any;
-  protected emitter: any;
+  protected emitter: EventEmitter;
 
   constructor(params: any) {
     this.uuid = BleHelper.uuidFilter(params.uuid);
@@ -90,14 +90,14 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
 
     this.setFunctions();
 
-    this.emitter = new emitter();
+    this.emitter = new EventEmitter();
   }
 
   /**
    * @ignore
    * @param child
    */
-  public addChild(child: { uuid: UUID } | ChildrenClass) {
+  public addChild(child: { uuid: UUID } | ChildrenClass): ChildrenClass {
     if (!(child instanceof this.childrenClass)) {
       const childrenClass: any = this.childrenClass;
       child = new childrenClass(child);
@@ -157,27 +157,27 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public write(data: any, needResponse?: boolean) {
+  public write(data: number[], needResponse?: boolean) {
   }
 
   /**
    * @ignore
    */
-  public writeNumber(val: any, needResponse?: any) {
+  public writeNumber(val: number, needResponse?: boolean) {
     this.write([val], needResponse);
   }
 
   /**
    * @ignore
    */
-  public writeText(str: any, needResponse?: any) {
+  public writeText(str: string, needResponse?: boolean) {
     this.write(ObnizUtil.string2dataArray(str), needResponse);
   }
 
   /**
    * @ignore
    */
-  public readWait() {
+  public readWait(): Promise<number[]> {
     return new Promise((resolve: any, reject: any) => {
       this.emitter.once("onread", (params: any) => {
         if (params.result === "success") {
@@ -193,7 +193,7 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public writeWait(data: any, needResponse: any) {
+  public writeWait(data: number[], needResponse: boolean): Promise<void> {
     return new Promise((resolve: any, reject: any) => {
       this.emitter.once("onwrite", (params: any) => {
         if (params.result === "success") {
@@ -209,7 +209,7 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public writeTextWait(data: any) {
+  public writeTextWait(data: string, needResponse?: boolean): Promise<void> {
     return new Promise((resolve: any, reject: any) => {
       this.emitter.once("onwrite", (params: any) => {
         if (params.result === "success") {
@@ -218,14 +218,14 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
           reject(new Error("writeTextWait failed"));
         }
       });
-      this.writeText(data);
+      this.writeText(data, needResponse);
     });
   }
 
   /**
    * @ignore
    */
-  public writeNumberWait(data: any) {
+  public writeNumberWait(data: number, needResponse?: boolean): Promise<void> {
     return new Promise((resolve: any, reject: any) => {
       this.emitter.once("onwrite", (params: any) => {
         if (params.result === "success") {
@@ -234,14 +234,14 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
           reject(new Error("writeNumberWait failed"));
         }
       });
-      this.writeNumber(data);
+      this.writeNumber(data, needResponse);
     });
   }
 
   /**
    * @ignore
    */
-  public readFromRemoteWait() {
+  public readFromRemoteWait(): Promise<void> {
     return new Promise((resolve: any) => {
       this.emitter.once("onreadfromremote", () => {
         resolve();
@@ -252,7 +252,7 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public writeFromRemoteWait() {
+  public writeFromRemoteWait(): Promise<number[]> {
     return new Promise((resolve: any) => {
       this.emitter.once("onreadfromremote", (params: any) => {
         resolve(params.data);
