@@ -7,7 +7,7 @@ Manufacture data says moisture level increse with moisture like:
 
 - 0~1.47: Dry
 - 1.47~3.43: Wet
-- 3.43~4.20: Under walter
+- 3.43~4.20: Under water
 
 ## wired(obniz, {signal [, vcc, gnd]})
 
