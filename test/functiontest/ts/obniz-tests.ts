@@ -292,7 +292,7 @@ class IOTest {
   public animation() {
     const obniz =  new Obniz(OBNIZ_ID) as ObnizBoard;
     obniz.onconnect = async () => {
-      obniz.io.animation("animation-1", "loop", [
+      obniz.io!.animation("animation-1", "loop", [
         {
           duration: 10,
           state(index: number) {
@@ -316,7 +316,7 @@ class IOTest {
   public repeatWait() {
     const obniz =  new Obniz(OBNIZ_ID) as ObnizBoard;
     obniz.onconnect = async () => {
-      await obniz.io.repeatWait(
+      await obniz.io!.repeatWait(
         [
           {
             duration: 1000,

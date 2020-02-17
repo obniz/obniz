@@ -3,15 +3,15 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import BleHelper from "./bleHelper";
+import {BleAdvertisementData, BleScanResponseData, UUID} from "./bleTypes";
+
 /**
  * @category Use as Peripheral
  */
 export default class BleAdvertisementBuilder {
-  public Obniz: any;
-  public rows: any;
+  protected rows: { [key: number]: number[] };
 
-  constructor(Obniz: any, json: any) {
-    this.Obniz = Obniz;
+  constructor(json: BleAdvertisementData | BleScanResponseData) {
     this.rows = {};
 
     if (json) {
@@ -39,15 +39,15 @@ export default class BleAdvertisementBuilder {
     }
   }
 
-  public setRow(type: any, data: any) {
+  public setRow(type: number, data: number[]) {
     this.rows[type] = data;
   }
 
-  public getRow(type: any) {
+  public getRow(type: number): number[] {
     return this.rows[type] || [];
   }
 
-  public build() {
+  public build(): number[] {
     const data: any = [];
     for (const key in this.rows) {
       if (this.rows[key].length === 0) {
@@ -59,7 +59,7 @@ export default class BleAdvertisementBuilder {
       Array.prototype.push.apply(data, this.rows[key]);
     }
     if (data.length > 31) {
-      this.Obniz.error(
+      throw new Error(
         "Too large data. Advertise/ScanResponse data are must be less than 32 byte.",
       );
     }
@@ -67,7 +67,7 @@ export default class BleAdvertisementBuilder {
     return data;
   }
 
-  public setStringData(type: any, string: any) {
+  public setStringData(type: number, string: string) {
     const data: any = [];
 
     for (let i = 0; i < string.length; i++) {
@@ -77,15 +77,15 @@ export default class BleAdvertisementBuilder {
     this.setRow(type, data);
   }
 
-  public setShortenedLocalName(name: any) {
+  public setShortenedLocalName(name: string) {
     this.setStringData(0x08, name);
   }
 
-  public setCompleteLocalName(name: any) {
+  public setCompleteLocalName(name: string) {
     this.setStringData(0x09, name);
   }
 
-  public setManufacturerSpecificData(companyCode: any, data: any) {
+  public setManufacturerSpecificData(companyCode: number, data: number[]) {
     const row: any = [];
     row.push(companyCode & 0xff);
     row.push((companyCode >> 8) & 0xff);
@@ -93,20 +93,20 @@ export default class BleAdvertisementBuilder {
     this.setRow(0xff, row);
   }
 
-  public setUuid(uuid: any) {
+  public setUuid(uuid: UUID) {
     const uuidData: any = this.convertUuid(uuid);
     const type: any = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length as (16 | 4 | 2)];
     this.setRow(type, uuidData);
   }
 
-  public convertUuid(uuid: any) {
+  public convertUuid(uuid: UUID) {
     const uuidNumeric: any = BleHelper.uuidFilter(uuid);
     if (
       uuidNumeric.length !== 32 &&
       uuidNumeric.length !== 8 &&
       uuidNumeric.length !== 4
     ) {
-      this.Obniz.error(
+      throw new Error(
         "BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)",
       );
     }
@@ -118,7 +118,7 @@ export default class BleAdvertisementBuilder {
     return data;
   }
 
-  public setIbeaconData(uuid: any, major: any, minor: any, txPower: any) {
+  public setIbeaconData(uuid: UUID, major: number, minor: number, txPower: number) {
     const data: any = [];
     data.push(0x02, 0x15); // fixed data
 
@@ -135,7 +135,27 @@ export default class BleAdvertisementBuilder {
     return;
   }
 
-  public extendEvalJson(json: any) {
+  public setLeLimitedDiscoverableModeFlag() {
+    this.setFlags(0x01);
+  }
+
+  public setLeGeneralDiscoverableModeFlag() {
+    this.setFlags(0x02);
+  }
+
+  public setBrEdrNotSupportedFlag() {
+    this.setFlags(0x04);
+  }
+
+  public setLeBrEdrControllerFlag() {
+    this.setFlags(0x08);
+  }
+
+  public setLeBrEdrHostFlag() {
+    this.setFlags(0x10);
+  }
+
+  protected extendEvalJson(json: BleAdvertisementData) {
     if (json) {
       if (json.flags) {
         if (json.flags.includes("limited_discoverable_mode")) {
@@ -157,29 +177,9 @@ export default class BleAdvertisementBuilder {
     }
   }
 
-  public setFlags(flag: any) {
+  protected setFlags(flag: number) {
     const data: any = this.getRow(0x01);
     data[0] = (data[0] || 0) | flag;
     this.setRow(0x01, data);
-  }
-
-  public setLeLimitedDiscoverableModeFlag() {
-    this.setFlags(0x01);
-  }
-
-  public setLeGeneralDiscoverableModeFlag() {
-    this.setFlags(0x02);
-  }
-
-  public setBrEdrNotSupportedFlag() {
-    this.setFlags(0x04);
-  }
-
-  public setLeBrEdrControllerFlag() {
-    this.setFlags(0x08);
-  }
-
-  public setLeBrEdrHostFlag() {
-    this.setFlags(0x10);
   }
 }

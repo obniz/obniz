@@ -7,6 +7,10 @@ import emitter = require("eventemitter3");
 import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
 
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 export default class BleAttributeAbstract {
   public uuid: any;
   public parent: any;
