@@ -18,4 +18,24 @@ export type BleEventType =
   | "non_connectable_advertising"
   | "scan_response";
 
-export type BleAttributePropery = "broadcast" | "notify"| "read"| "write"| "write_without_response"|"indicate";
+export type BleAttributePropery = "broadcast" | "notify" | "read" | "write" | "write_without_response" | "indicate";
+
+export type BleAdvertisementFlag =
+  "limited_discoverable_mode"
+  | "general_discoverable_mode"
+  | "br_edr_not_supported"
+  | "le_br_edr_controller"
+  | "le_br_edr_host";
+
+export interface BleScanResponseData {
+  serviceUuids?: UUID[];
+  localName?: string;
+  manufacturerData?: {
+    companyCode?: number;
+    data?: number[];
+  };
+}
+
+export interface BleAdvertisementData extends BleScanResponseData {
+  flags?: BleAdvertisementFlag[];
+}

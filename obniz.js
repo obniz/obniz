@@ -6212,10 +6212,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
 /**
  * @category Use as Peripheral
@@ -6226,31 +6222,106 @@ class BleAdvertisement {
         this.adv_data = [];
         this.scan_resp = [];
     }
+    /**
+     * This starts advertisement of BLE.
+     *
+     * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
+     * advertisement interval is 1.28sec fixed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     *   var service = new obniz.ble.service({
+     *  uuid : "fff0"
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * obniz.ble.advertisement.setAdvData(service.advData);
+     * obniz.ble.advertisement.start();
+     * ```
+     */
     start() {
         this.obnizBle.warningIfNotInitialize();
         this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
+    /**
+     * This stops advertisement of BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.start();
+     * obniz.ble.advertisement.end();
+     * ```
+     *
+     */
     end() {
         this.obnizBle.peripheralBindings.stopAdvertising();
     }
+    /**
+     * This sets advertise data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x02, 0x01, 0x1A  => BLE type for
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param adv_data
+     */
     setAdvDataRaw(adv_data) {
         this.adv_data = adv_data;
     }
+    /**
+     * This sets advertise data from json.
+     * @param json
+     */
     setAdvData(json) {
         const builder = this.advDataBulider(json);
         this.setAdvDataRaw(builder.build());
     }
-    advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, jsonVal);
-    }
-    scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, json);
-    }
+    /**
+     * This sets scan response data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param scan_resp
+     */
     setScanRespDataRaw(scan_resp) {
         this.scan_resp = scan_resp;
     }
+    /**
+     * This sets scan response data from json data.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setScanRespData({
+     *   localName : "obniz BLE",
+     * });
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     * @param json
+     */
     setScanRespData(json) {
         this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+    }
+    advDataBulider(jsonVal) {
+        return new bleAdvertisementBuilder_1.default(jsonVal);
+    }
+    scanRespDataBuilder(json) {
+        return new bleAdvertisementBuilder_1.default(json);
     }
 }
 exports.default = BleAdvertisement;
@@ -6279,8 +6350,7 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  * @category Use as Peripheral
  */
 class BleAdvertisementBuilder {
-    constructor(Obniz, json) {
-        this.Obniz = Obniz;
+    constructor(json) {
         this.rows = {};
         if (json) {
             if (json.localName) {
@@ -6318,7 +6388,7 @@ class BleAdvertisementBuilder {
             Array.prototype.push.apply(data, this.rows[key]);
         }
         if (data.length > 31) {
-            this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
+            throw new Error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
         }
         return data;
     }
@@ -6352,7 +6422,7 @@ class BleAdvertisementBuilder {
         if (uuidNumeric.length !== 32 &&
             uuidNumeric.length !== 8 &&
             uuidNumeric.length !== 4) {
-            this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+            throw new Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
         }
         const data = [];
         for (let i = uuidNumeric.length; i > 1; i -= 2) {
@@ -6372,6 +6442,21 @@ class BleAdvertisementBuilder {
         data.push((txPower >> 0) & 0xff);
         this.setManufacturerSpecificData(0x004c, data);
         return;
+    }
+    setLeLimitedDiscoverableModeFlag() {
+        this.setFlags(0x01);
+    }
+    setLeGeneralDiscoverableModeFlag() {
+        this.setFlags(0x02);
+    }
+    setBrEdrNotSupportedFlag() {
+        this.setFlags(0x04);
+    }
+    setLeBrEdrControllerFlag() {
+        this.setFlags(0x08);
+    }
+    setLeBrEdrHostFlag() {
+        this.setFlags(0x10);
     }
     extendEvalJson(json) {
         if (json) {
@@ -6398,21 +6483,6 @@ class BleAdvertisementBuilder {
         const data = this.getRow(0x01);
         data[0] = (data[0] || 0) | flag;
         this.setRow(0x01, data);
-    }
-    setLeLimitedDiscoverableModeFlag() {
-        this.setFlags(0x01);
-    }
-    setLeGeneralDiscoverableModeFlag() {
-        this.setFlags(0x02);
-    }
-    setBrEdrNotSupportedFlag() {
-        this.setFlags(0x04);
-    }
-    setLeBrEdrControllerFlag() {
-        this.setFlags(0x08);
-    }
-    setLeBrEdrHostFlag() {
-        this.setFlags(0x10);
     }
 }
 exports.default = BleAdvertisementBuilder;
