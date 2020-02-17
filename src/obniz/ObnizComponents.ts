@@ -3,7 +3,7 @@
  * @module ObnizCore
  */
 
-import semver = require("semver");
+import semver from "semver";
 import {ObnizHciBLE, ObnizOldBLE} from "./libs/embeds/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";

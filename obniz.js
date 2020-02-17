@@ -1703,7 +1703,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver = __webpack_require__("./node_modules/semver/semver.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/ble.js");
 const display_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/display.js"));
 const switch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/switch.js"));
@@ -1861,7 +1861,7 @@ class ObnizComponents extends ObnizParts_1.default {
         };
         let ble = ble_1.ObnizHciBLE.default;
         // < 3.0.0-beta
-        if (semver.lt(this.firmware_ver, "3.0.0-beta")) {
+        if (semver_1.default.lt(this.firmware_ver, "3.0.0-beta")) {
             ble = ble_1.ObnizOldBLE.default;
         }
         const embeds_map = {
@@ -1988,8 +1988,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const wsClient = __webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ws_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js"));
 // @ts-ignore
 const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/index.js"));
@@ -2007,7 +2007,7 @@ class ObnizConnection {
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
         this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
         this._connectionRetryCount = 0;
         if (!options) {
             options = {};
@@ -2331,7 +2331,7 @@ class ObnizConnection {
         this.print_debug("connecting to " + url);
         let socket;
         if (this.isNode) {
-            socket = new wsClient(url);
+            socket = new ws_1.default(url);
             socket.on("open", this.wsOnOpen.bind(this));
             socket.on("message", this.wsOnMessage.bind(this));
             socket.on("close", this.wsOnClose.bind(this));
@@ -2356,7 +2356,7 @@ class ObnizConnection {
         this.print_debug("local connect to " + url);
         let ws;
         if (this.isNode) {
-            ws = new wsClient(url);
+            ws = new ws_1.default(url);
             ws.on("open", () => {
                 this.print_debug("connected to " + url);
                 this._callOnConnect();
@@ -3499,6 +3499,9 @@ catch (e) {
 /*===================*/
 /* ReadParts */
 /*===================*/
+/**
+ * @ignore
+ */
 const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
 __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
 if (requireContext.setBaseDir) {

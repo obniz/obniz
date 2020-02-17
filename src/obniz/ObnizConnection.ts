@@ -3,8 +3,8 @@
  * @module ObnizCore
  */
 
-import emitter = require("eventemitter3");
-import wsClient = require("ws");
+import EventEmitter from "eventemitter3";
+import wsClient from "ws";
 
 // @ts-ignore
 import packageJson from "../../package";  // pakcage.js will be created from package.json on build.
@@ -172,7 +172,7 @@ export default class ObnizConnection {
     this.firmware_ver = undefined;
     this.connectionState = "closed"; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-    this.emitter = new emitter();
+    this.emitter = new EventEmitter();
 
     this._connectionRetryCount = 0;
 

@@ -1,4 +1,3 @@
-{{!--
 <aside class="tsd-sources">
     {{#if implementationOf}}
         <p>Implementation of {{#with implementationOf}}{{> typeAndParent}}{{/with}}</p>
@@ -12,13 +11,8 @@
     {{#if sources}}
         <ul>
             {{#each sources}}
-                {{#if url}}
-                    <li>Defined in <a href="{{url}}">{{fileName}}:{{line}}</a></li>
-                {{else}}
                     <li>Defined in {{fileName}}:{{line}}</li>
-                {{/if}}
             {{/each}}
         </ul>
     {{/if}}
 </aside>
---}}
