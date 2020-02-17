@@ -124,7 +124,7 @@ module.exports = {
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
     "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
-    "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
