@@ -404,7 +404,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param data
    * @param needResponse
    */
-  public writeWait(data: any, needResponse: any) {
+  public writeWait(data: any, needResponse?: any): Promise<void> {
     return super.writeWait(data, needResponse);
   }
 

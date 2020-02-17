@@ -5,7 +5,7 @@
 import EventEmitter from "eventemitter3";
 import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
-import {UUID} from "./bleTypes";
+import {BleDeviceAddress, UUID} from "./bleTypes";
 
 export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
 
@@ -52,12 +52,12 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public onwritefromremote?: (address: any, data: any) => void;
+  public onwritefromremote?: (address: BleDeviceAddress, data: number[]) => void;
 
   /**
    * @ignore
    */
-  public onreadfromremote?: (address: any) => void;
+  public onreadfromremote?: (address: BleDeviceAddress) => void;
 
   protected parent: ParentClass | null;
   protected children: ChildrenClass[];
@@ -193,7 +193,7 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public writeWait(data: number[], needResponse: boolean): Promise<void> {
+  public writeWait(data: number[], needResponse?: boolean): Promise<void> {
     return new Promise((resolve: any, reject: any) => {
       this.emitter.once("onwrite", (params: any) => {
         if (params.result === "success") {

@@ -82,6 +82,22 @@ export default class BleAdvertisement {
 
   /**
    * This sets advertise data from json.
+   *
+   * ```javascript
+   * // Javascript Example
+   *
+   * await obniz.ble.initWait();
+   * obniz.ble.advertisement.setAdvData({
+   *   flags: ["general_discoverable_mode","br_edr_not_supported"],
+   *   manufacturerData:{
+   *     companyCode : 0x004C,
+   *     serviceUuids: ["fff0"],
+   *     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
+   *   }
+   * });
+   *
+   * obniz.ble.advertisement.start();
+   * ```
    * @param json
    */
   public setAdvData(json: BleAdvertisementData) {

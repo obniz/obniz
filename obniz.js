@@ -1699,20 +1699,12 @@ exports.default = ObnizApi;
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver = __webpack_require__("./node_modules/semver/semver.js");
-const ObnizOldBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
-const ObnizHciBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
+const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/ble.js");
 const display_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/display.js"));
 const switch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/switch.js"));
 const ad_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/ad.js"));
@@ -1867,10 +1859,10 @@ class ObnizComponents extends ObnizParts_1.default {
             i2c: i2c_1.default,
             pwm: pwm_1.default,
         };
-        let ble = ObnizHciBLE.default;
+        let ble = ble_1.ObnizHciBLE.default;
         // < 3.0.0-beta
         if (semver.lt(this.firmware_ver, "3.0.0-beta")) {
-            ble = ObnizOldBLE.default;
+            ble = ble_1.ObnizOldBLE.default;
         }
         const embeds_map = {
             display: display_1.default,
@@ -3534,6 +3526,36 @@ module.exports = Obniz;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/ble.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Obniz BLE are switches automatically. <br/>
+ * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
+ * obnizOS ver < 3.0.0   : [[ObnizCore.Components.Ble.old | old]] <br/>
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble
+ */
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizOldBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
+exports.ObnizOldBLE = ObnizOldBLE;
+const ObnizHciBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
+exports.ObnizHciBLE = ObnizHciBLE;
+
+//# sourceMappingURL=ble.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/ble/ble.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3564,6 +3586,10 @@ const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/ob
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleScan.js"));
 const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleSecurity.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class ObnizBLE {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -3827,6 +3853,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisementBuilder.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleAdvertisement {
@@ -3894,6 +3922,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleAdvertisementBuilder {
@@ -4065,6 +4095,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class BleAttributeAbstract {
     constructor(params) {
         this.uuid = bleHelper_1.default.uuidFilter(params.uuid);
@@ -4292,6 +4326,8 @@ const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/o
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 class BleCharacteristic extends bleAttributeAbstract_1.default {
@@ -4411,6 +4447,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 class BleDescriptor extends bleAttributeAbstract_1.default {
@@ -4514,6 +4552,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 class BlePeripheral {
@@ -4612,6 +4652,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
@@ -4705,6 +4747,8 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteDescriptor.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
@@ -4913,6 +4957,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
@@ -4987,6 +5033,8 @@ const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteService.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemotePeripheral {
@@ -5342,6 +5390,8 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteCharacteristic.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
@@ -5417,6 +5467,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleScan {
@@ -5540,6 +5592,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const semver = __webpack_require__("./node_modules/semver/semver.js");
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class BleSecurity {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -5716,6 +5772,8 @@ const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/o
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 class BleService extends bleAttributeAbstract_1.default {
@@ -6144,20 +6202,24 @@ class ObnizBLE {
     }
     onPeripheralAccept(clientAddress) {
         this.peripheral.currentConnectedDeviceAddress = clientAddress;
-        this.peripheral.onconnectionupdates({
-            address: clientAddress,
-            status: "connected",
-        });
+        if (this.peripheral.onconnectionupdates) {
+            this.peripheral.onconnectionupdates({
+                address: clientAddress,
+                status: "connected",
+            });
+        }
     }
     onPeripheralMtuChange(mtu) {
         // console.error("onPeripheralMtuChange")
     }
     onPeripheralDisconnect(clientAddress) {
         this.peripheral.currentConnectedDeviceAddress = null;
-        this.peripheral.onconnectionupdates({
-            address: clientAddress,
-            status: "disconnected",
-        });
+        if (this.peripheral.onconnectionupdates) {
+            this.peripheral.onconnectionupdates({
+                address: clientAddress,
+                status: "disconnected",
+            });
+        }
     }
     onPeripheralRssiUpdate(rssi) {
         // console.error("onPeripheralRssiUpdate")
@@ -6277,6 +6339,22 @@ class BleAdvertisement {
     }
     /**
      * This sets advertise data from json.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setAdvData({
+     *   flags: ["general_discoverable_mode","br_edr_not_supported"],
+     *   manufacturerData:{
+     *     companyCode : 0x004C,
+     *     serviceUuids: ["fff0"],
+     *     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
+     *   }
+     * });
+     *
+     * obniz.ble.advertisement.start();
+     * ```
      * @param json
      */
     setAdvData(json) {
@@ -6793,74 +6871,146 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
-const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+const bleLocalValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js"));
 /**
  * @category Use as Peripheral
  */
-class BleCharacteristic extends bleLocalAttributeAbstract_1.default {
+class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
+    /**
+     * Create Characteristics
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var characteristic = new obniz.ble.characteristic({
+     *      "uuid" : "FFF1",
+     *      "properties" : ["read","write"],  // read, write, notify
+     *      "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
+     *      "descriptors" : [{
+     *          "uuid" : "2901",   //Characteristic User Description
+     *          "text" : "hello world characteristic",    //data for dataArray or  text for string
+     *      }]
+     * });
+     *
+     * var service = new obniz.ble.service({
+     *                "uuid" : "fff0",
+     *                "characteristics" : [ characteristic ]
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * ```
+     *
+     * @param obj
+     */
     constructor(obj) {
         super(obj);
         this._maxValueSize = null;
         this._updateValueCallback = null;
-        this.addDescriptor = this.addChild;
-        this.getDescriptor = this.getChild;
-        this.properties = obj.properties || [];
-        if (!Array.isArray(this.properties)) {
-            this.properties = [this.properties];
+        if (!Array.isArray(obj.properties) && typeof obj.properties === "string") {
+            this.properties = [obj.properties];
         }
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
+        else {
+            this.properties = obj.properties || [];
         }
+        //
+        // this.permissions = obj.permissions || [];
+        // if (!Array.isArray(this.permissions)) {
+        //   this.permissions = [this.permissions];
+        // }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "service";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleDescriptor_1.default;
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "descriptors";
     }
+    /**
+     * Get descriptor array
+     */
     get descriptors() {
         return this.children;
     }
+    /**
+     * Add new descriptor
+     * @param desc
+     */
+    addDescriptor(desc) {
+        return this.addChild(desc);
+    }
+    /**
+     * Get descriptor
+     * @param uuid
+     */
+    getDescriptor(uuid) {
+        return this.getChild(uuid);
+    }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
         if (this.properties.length > 0) {
             obj.properties = this.properties;
         }
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
+        // if (this.permissions.length > 0) {
+        //   obj.permissions = this.permissions;
+        // }
         return obj;
     }
+    /**
+     * @ignore
+     */
     toBufferObj() {
         const obj = super.toBufferObj();
         obj.properties = this.properties;
         obj.secure = [];
         return obj;
     }
+    /**
+     * Add property
+     * @param param
+     */
     addProperty(param) {
         if (!this.properties.includes(param)) {
             this.properties.push(param);
         }
     }
+    /**
+     * Remove property
+     * @param param
+     */
     removeProperty(param) {
         this.properties = this.properties.filter((elm) => {
             return elm !== param;
         });
     }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
+    //
+    // public addPermission(param: any) {
+    //   if (!this.permissions.includes(param)) {
+    //     this.permissions.push(param);
+    //   }
+    // }
+    //
+    // public removePermission(param: any) {
+    //   this.permissions = this.permissions.filter((elm: any) => {
+    //     return elm !== param;
+    //   });
+    // }
+    /**
+     * @ignore
+     * @param name
+     * @param params
+     */
     emit(name, ...params) {
         const result = super.emit(name, ...params);
         if (result) {
@@ -6883,19 +7033,58 @@ class BleCharacteristic extends bleLocalAttributeAbstract_1.default {
                 throw new Error("unknown emit");
         }
     }
+    /**
+     * @ignore
+     * @param maxValueSize
+     * @param updateValueCallback
+     * @private
+     */
     _onSubscribe(maxValueSize, updateValueCallback) {
         // console.log('_onSubscribe');
         this._maxValueSize = maxValueSize;
         this._updateValueCallback = updateValueCallback;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onUnsubscribe() {
         this._maxValueSize = null;
         this._updateValueCallback = null;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onNotify() {
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onIndicate() {
     }
+    /**
+     * This sends notify to the connected central.
+     *
+     * ```javascript
+     * var characteristic = new obniz.ble.characteristic({
+     *   uuid: 'FFF1',
+     *   data: [0x0e, 0x00],
+     *   properties : ["read","write","notify"],  // add notify properties
+     * });
+     *
+     *  var service = new obniz.ble.service({
+     *   uuid: 'FFF0',
+     *   characteristics: [characteristic],
+     * });
+     * obniz.ble.peripheral.addService(service);
+     *
+     *
+     * // after central connected
+     * characteristic.notify();
+     * ```
+     */
     notify() {
         if (this._updateValueCallback) {
             this._updateValueCallback(Buffer.from(this.data));
@@ -6919,36 +7108,69 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+const bleLocalValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js"));
 /**
  * @category Use as Peripheral
  */
-class BleDescriptor extends bleLocalAttributeAbstract_1.default {
+class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
+    // public permissions: any;
+    /**
+     * Create descriptor.
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var descriptor = new obniz.ble.characteristic({
+     *                     "uuid" : "2901",   //Characteristic User Description
+     *                     "text" : "hello world characteristic",
+     *                 });
+     *
+     *  var characteristic = new obniz.ble.characteristic({
+     *                  "uuid" : "FFF1",
+     *                  "text" : "Hi",
+     *                  "descriptors" : [ descriptor ]
+     *                });
+     *
+     * var service = new obniz.ble.service({
+     *                "uuid" : "fff0",
+     *                "characteristics" : [ characteristic ]
+     * });
+     * obniz.ble.peripheral.addService(service);
+     *
+     * ```
+     *
+     * @param obj
+     */
     constructor(obj) {
         super(obj);
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
-        }
+        // this.permissions = obj.permissions || [];
+        // if (!Array.isArray(this.permissions)) {
+        //   this.permissions = [this.permissions];
+        // }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "characteristic";
     }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
+    // public addPermission(param: any) {
+    //   if (!this.permissions.includes(param)) {
+    //     this.permissions.push(param);
+    //   }
+    // }
+    // public removePermission(param: any) {
+    //   this.permissions = this.permissions.filter ((elm: any ) => {
+    //     return elm !== param;
+    //   });
+    // }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
+        // if (this.permissions.length > 0) {
+        //   obj.permissions = this.permissions;
+        // }
         return obj;
     }
 }
@@ -7005,17 +7227,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
+ * @ignore
+ */
+var BleResponseResult;
+(function (BleResponseResult) {
+    BleResponseResult[BleResponseResult["SUCCESS"] = 0] = "SUCCESS";
+    BleResponseResult[BleResponseResult["INVALID_OFFSET"] = 7] = "INVALID_OFFSET";
+    BleResponseResult[BleResponseResult["ATTR_NOT_LONG"] = 11] = "ATTR_NOT_LONG";
+    BleResponseResult[BleResponseResult["INVALID_ATTRIBUTE_LENGTH"] = 13] = "INVALID_ATTRIBUTE_LENGTH";
+    BleResponseResult[BleResponseResult["UNLIKELY_ERROR"] = 14] = "UNLIKELY_ERROR";
+})(BleResponseResult || (BleResponseResult = {}));
+/**
  * @category Use as Peripheral
  */
 class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     constructor(params) {
         super(params);
-        this.RESULT_SUCCESS = 0x00;
-        this.RESULT_INVALID_OFFSET = 0x07;
-        this.RESULT_ATTR_NOT_LONG = 0x0b;
-        this.RESULT_INVALID_ATTRIBUTE_LENGTH = 0x0d;
-        this.RESULT_UNLIKELY_ERROR = 0x0e;
     }
+    /**
+     * @ignore
+     */
     toBufferObj() {
         const obj = {
             uuid: bleHelper_1.default.uuidFilter(this.uuid),
@@ -7027,6 +7258,11 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         obj.emit = this.emit.bind(this);
         return obj;
     }
+    /**
+     * @ignore
+     * @param name
+     * @param params
+     */
     emit(name, ...params) {
         switch (name) {
             case "readRequest":
@@ -7038,9 +7274,15 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         }
         return false;
     }
+    /**
+     * @ignore
+     * @param offset
+     * @param callback
+     * @private
+     */
     _onReadRequest(offset, callback) {
         if (this.data.length >= offset) {
-            callback(this.RESULT_SUCCESS, Buffer.from(this.data.slice(offset)));
+            callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
             let address = null;
             if (this.parentName === "characteristic") {
                 address = this.characteristic.service.peripheral
@@ -7052,13 +7294,21 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
             this.notifyFromServer("onreadfromremote", { address });
         }
         else {
-            callback(this.RESULT_UNLIKELY_ERROR, null);
+            callback(BleResponseResult.UNLIKELY_ERROR, null);
         }
     }
+    /**
+     * @ignore
+     * @param data
+     * @param offset
+     * @param withoutResponse
+     * @param callback
+     * @private
+     */
     _onWriteRequest(data, offset, withoutResponse, callback) {
         // console.log('onWriteRequest');
         this.data = Array.from(data);
-        callback(this.RESULT_SUCCESS);
+        callback(BleResponseResult.SUCCESS);
         let address = null;
         if (this.parentName === "characteristic") {
             address = this.characteristic.service.peripheral
@@ -7069,10 +7319,18 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         }
         this.notifyFromServer("onwritefromremote", { address, data });
     }
+    /**
+     * @ignore
+     * @param dataArray
+     */
     write(dataArray) {
         this.data = dataArray;
         this.notifyFromServer("onwrite", { result: "success" });
     }
+    /**
+     * @ignore
+     * @param dataArray
+     */
     read() {
         this.notifyFromServer("onread", { data: this.data });
     }
@@ -7085,6 +7343,76 @@ exports.default = BleLocalAttributeAbstract;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
+class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default {
+    constructor(params) {
+        super(params);
+    }
+    /**
+     * @ignore
+     * @param dataArray
+     */
+    write(dataArray) {
+        this.data = dataArray;
+        this.notifyFromServer("onwrite", { result: "success" });
+    }
+    /**
+     * @ignore
+     * @param dataArray
+     */
+    read() {
+        this.notifyFromServer("onread", { data: this.data });
+    }
+    /**
+     * This writes dataArray.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await attr.writeWait([0xf0,0x27]);
+     * console.log("write success");
+     * ```
+     *
+     * @param data
+     */
+    writeWait(data) {
+        return super.writeWait(data);
+    }
+    /**
+     * It reads data.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * let data =  await attr.readWait()
+     *  console.log("data: " , data );
+     * ```
+     */
+    readWait() {
+        return super.readWait();
+    }
+}
+exports.default = BleLocalValueAttributeAbstract;
+
+//# sourceMappingURL=bleLocalValueAttributeAbstract.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/bleHci/blePeripheral.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7094,10 +7422,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
 /**
@@ -7109,19 +7433,52 @@ class BlePeripheral {
         this._services = [];
         this.currentConnectedDeviceAddress = null;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _updateServices() {
         const bufData = this._services.map((e) => e.toBufferObj());
         this.obnizBle.peripheralBindings.setServices(bufData);
     }
-    addService(obj) {
+    /**
+     * This starts a service as peripheral.
+     *
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * // Service without characteristics
+     * var service1 = new obniz.ble.service({"uuid" : "fff0"});
+     * obniz.ble.peripheral.addService(service1);
+     *
+     * // Service with characteristics/descriptor
+     * var service2 = new obniz.ble.service({"uuid" : "fff0"});
+     * var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
+     * var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello world characteristic"});
+     *
+     * service2.addCharacteristic(characteristic);
+     * characteristic.addDescriptor(descriptor);
+     *
+     * obniz.ble.peripheral.addService(service2); // call this after all descriptors and characteristics added to service.
+     * ```
+     *
+     * @param service
+     */
+    addService(service) {
         this.obnizBle.warningIfNotInitialize();
-        if (!(obj instanceof bleService_1.default)) {
-            obj = new bleService_1.default(obj);
+        if (!(service instanceof bleService_1.default)) {
+            service = new bleService_1.default(service);
         }
-        this._services.push(obj);
-        obj.peripheral = this;
+        this._services.push(service);
+        service.peripheral = this;
         this._updateServices();
     }
+    /**
+     * @ignore
+     * @private
+     * @param json
+     */
     setJson(json) {
         if (json.services) {
             for (const service of json.services) {
@@ -7129,29 +7486,51 @@ class BlePeripheral {
             }
         }
     }
+    /**
+     * Get service by UUID
+     * @param uuid
+     */
     getService(uuid) {
         uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this._services
+        const result = this._services
             .filter((element) => {
             return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
         })
             .shift();
+        if (!result) {
+            return null;
+        }
+        return result;
     }
+    /**
+     * Terminate service by UUID
+     * @param uuid
+     */
     removeService(uuid) {
         this._services = this._services.filter((element) => {
             return bleHelper_1.default.uuidFilter(element.uuid) !== uuid;
         });
         this._updateServices();
     }
+    /**
+     * @ignore
+     */
     stopAllService() {
         this._services = [];
         this._updateServices();
     }
+    /**
+     * @ignore
+     */
     toJSON() {
         return {
             services: this._services,
         };
     }
+    /**
+     * @ignore
+     * @param param
+     */
     findCharacteristic(param) {
         const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
         const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
@@ -7161,6 +7540,10 @@ class BlePeripheral {
         }
         return null;
     }
+    /**
+     * @ignore
+     * @param param
+     */
     findDescriptor(param) {
         const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
         const c = this.findCharacteristic(param);
@@ -7169,11 +7552,21 @@ class BlePeripheral {
         }
         return null;
     }
+    /**
+     * This ends all the peripheral service
+     *
+     * ```javascript
+     * obniz.ble.peripheral.addService(setting);
+     * obniz.ble.peripheral.end();
+     * ```
+     */
     end() {
         this.stopAllService();
     }
-    onconnectionupdates(param) {
-    }
+    /**
+     * @ignore
+     * @param error
+     */
     onerror(error) {
     }
 }
@@ -9037,29 +9430,87 @@ class BleService extends bleLocalAttributeAbstract_1.default {
         this.addCharacteristic = this.addChild;
         this.getCharacteristic = this.getChild;
     }
+    /**
+     * Add new Characteristic
+     * @param child
+     */
+    addCharacteristic(child) {
+        return this.addChild(child);
+    }
+    /**
+     * Get Characteristic
+     * @param uuid
+     */
+    getCharacteristic(uuid) {
+        return this.getChild(uuid);
+    }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "peripheral";
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "characteristics";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleCharacteristic_1.default;
     }
     get characteristics() {
         return this.children;
     }
+    /**
+     * advertisment object for [[BleAdvertisement.setAdvData]]
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var service = new obniz.ble.service({ uuid : "1234" });
+     * var characteristic = new obniz.ble.characteristic({ uuid : "7777", data: [1, 2, 3]});
+     * service.addCharacteristic(characteristic);
+     * obniz.ble.peripheral.addService(service);
+     *
+     * obniz.ble.advertisement.setAdvData(service.advData);
+     * obniz.ble.advertisement.setScanRespData({
+     *    localName : "obniz BLE",
+     * });
+     * obniz.ble.advertisement.start();
+     * ```
+     */
     get advData() {
         return {
             flags: ["general_discoverable_mode", "br_edr_not_supported"],
             serviceUuids: [this.uuid],
         };
     }
+    /**
+     * Terminate created service
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var service = new obniz.ble.service({ uuid : "1234" });
+     * var characteristic = new obniz.ble.characteristic({ uuid : "7777", data: [1, 2, 3]});
+     * service.addCharacteristic(characteristic);
+     * obniz.ble.peripheral.addService(service);
+     *
+     * service.end();
+     * ```
+     */
     end() {
         this.peripheral.removeService(this.uuid);
     }
-    emit(name, ...params) {
-    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notify(notifyName, params) {
         // nothing
     }

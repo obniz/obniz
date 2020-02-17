@@ -3,6 +3,9 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 
+import BleCharacteristic from "./bleCharacteristic";
+import BleDescriptor from "./bleDescriptor";
+
 /**
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
  */
@@ -38,4 +41,66 @@ export interface BleScanResponseData {
 
 export interface BleAdvertisementData extends BleScanResponseData {
   flags?: BleAdvertisementFlag[];
+}
+
+export interface BleDescriptorDefine {
+
+  /**
+   * UUID
+   */
+  uuid: UUID;
+
+  /**
+   * Raw data
+   *
+   * Only one can be specifiedIf [[data]]  or [[text]]
+   */
+  data?: number[];
+
+  /**
+   * String data
+   *
+   * Only one can be specifiedIf [[data]]  or [[text]]
+   */
+  text?: string;
+}
+
+export interface BleCharacteristicDefine {
+
+  /**
+   * UUID
+   */
+  uuid: UUID;
+
+  /**
+   * Raw data
+   *
+   * Only one can be specifiedIf [[data]]  or [[text]]
+   */
+  data?: number[];
+
+  /**
+   * String data
+   *
+   * Only one can be specifiedIf [[data]]  or [[text]]
+   */
+  text?: string;
+
+  properties?: BleAttributePropery[];
+
+  descriptors?: Array<BleDescriptorDefine | BleDescriptor>;
+}
+
+export interface BleServiceDefine {
+
+  /**
+   * UUID
+   */
+  uuid: UUID;
+
+  characteristics?: Array<BleCharacteristicDefine | BleCharacteristic>;
+}
+
+export interface BlePeripheralDefine {
+
 }

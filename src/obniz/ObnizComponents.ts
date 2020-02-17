@@ -4,8 +4,7 @@
  */
 
 import semver = require("semver");
-import * as ObnizOldBLE from "./libs/embeds/ble/ble";
-import * as ObnizHciBLE from "./libs/embeds/bleHci/ble";
+import {ObnizHciBLE, ObnizOldBLE} from "./libs/embeds/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";
 

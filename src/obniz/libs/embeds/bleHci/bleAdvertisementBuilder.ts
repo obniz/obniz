@@ -9,7 +9,7 @@ import {BleAdvertisementData, BleScanResponseData, UUID} from "./bleTypes";
  * @category Use as Peripheral
  */
 export default class BleAdvertisementBuilder {
-  public rows: any;
+  protected rows: { [key: number]: number[] };
 
   constructor(json: BleAdvertisementData | BleScanResponseData) {
     this.rows = {};

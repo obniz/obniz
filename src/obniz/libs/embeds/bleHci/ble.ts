@@ -465,10 +465,12 @@ export default class ObnizBLE {
 
   protected onPeripheralAccept(clientAddress: any) {
     this.peripheral.currentConnectedDeviceAddress = clientAddress;
-    this.peripheral.onconnectionupdates({
-      address: clientAddress,
-      status: "connected",
-    });
+    if (this.peripheral.onconnectionupdates) {
+      this.peripheral.onconnectionupdates({
+        address: clientAddress,
+        status: "connected",
+      });
+    }
   }
 
   protected onPeripheralMtuChange(mtu: any) {
@@ -477,10 +479,12 @@ export default class ObnizBLE {
 
   protected onPeripheralDisconnect(clientAddress: any) {
     this.peripheral.currentConnectedDeviceAddress = null;
-    this.peripheral.onconnectionupdates({
-      address: clientAddress,
-      status: "disconnected",
-    });
+    if (this.peripheral.onconnectionupdates) {
+      this.peripheral.onconnectionupdates({
+        address: clientAddress,
+        status: "disconnected",
+      });
+    }
   }
 
   protected onPeripheralRssiUpdate(rssi: any) {
