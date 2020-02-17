@@ -18518,7 +18518,8 @@ class WSCommandDisplay extends WSCommand_1.default {
     constructor() {
         super(...arguments);
         this.module = 8;
-        this._CommandPrint = 0;
+        this._CommandClear = 0;
+        this._CommandPrint = 1;
         this._CommandDrawCampusVerticalBytes = 2;
         this._CommandDrawCampusHorizonalBytes = 3;
         this._CommandDrawIOState = 4;
@@ -18533,9 +18534,8 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.sendCommand(this._CommandPrint, buf);
     }
     printText(text) {
-        let result;
         const buf = Buffer.from(text, "utf8");
-        result = new Uint8Array(buf);
+        const result = new Uint8Array(buf);
         this.print(result);
     }
     text(params) {

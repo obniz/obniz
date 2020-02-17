@@ -10,8 +10,8 @@ class WSCommandDisplay extends WSCommand {
 
   public module = 8;
 
-  public _CommandClear: any;
-  public _CommandPrint = 0;
+  public _CommandClear = 0;
+  public _CommandPrint = 1;
   public _CommandDrawCampusVerticalBytes = 2;
   public _CommandDrawCampusHorizonalBytes = 3;
   public _CommandDrawIOState = 4;
@@ -28,14 +28,13 @@ class WSCommandDisplay extends WSCommand {
     this.sendCommand(this._CommandClear, null);
   }
 
-  public print(buf: any) {
+  public print(buf: Uint8Array) {
     this.sendCommand(this._CommandPrint, buf);
   }
 
   public printText(text: any) {
-    let result: any;
-    const buf: any = Buffer.from(text, "utf8");
-    result = new Uint8Array(buf);
+    const buf = Buffer.from(text, "utf8");
+    const result = new Uint8Array(buf);
     this.print(result);
   }
 
