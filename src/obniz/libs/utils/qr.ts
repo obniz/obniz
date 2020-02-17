@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+
 /* eslint-disable */
 
 /* Thanks Kazuhiko Arase */

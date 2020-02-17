@@ -1,9 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module Parts.7SegmentLED_MAX7219
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface _7SegmentLED_MAX7219Options {
+export interface  _7SegmentLED_MAX7219Options {
   clk: number;
   cs: number;
   din: number;

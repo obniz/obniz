@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+
 export default class HW {
 
   public static getDefinitionFor(hw: any) {

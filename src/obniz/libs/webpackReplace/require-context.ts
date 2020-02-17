@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 let baseDir: any;
 import fs = require("fs");
 import yaml = require("js-yaml");

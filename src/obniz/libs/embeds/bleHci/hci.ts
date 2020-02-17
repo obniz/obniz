@@ -1,4 +1,8 @@
-class ObnizBLEHci {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+export default class ObnizBLEHci {
   public Obniz: any;
 
   constructor(Obniz: any) {
@@ -24,5 +28,3 @@ class ObnizBLEHci {
   public onread(data: any) {
   }
 }
-
-export default ObnizBLEHci;

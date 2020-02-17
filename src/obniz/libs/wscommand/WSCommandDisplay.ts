@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import qrcode from "../utils/qr";
 import WSCommand from "./WSCommand";
 

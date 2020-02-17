@@ -1,7 +1,15 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 import events from "events";
 
 import Smp from "./smp";
 
+/**
+ * @ignore
+ */
 class AclStream extends events.EventEmitter {
   public _hci: any;
   public _handle: any;

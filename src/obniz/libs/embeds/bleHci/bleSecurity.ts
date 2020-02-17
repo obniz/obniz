@@ -1,6 +1,10 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import emitter = require("eventemitter3");
 
-class BleSecurity {
+export default class BleSecurity {
   public Obniz: any;
   public emitter: any;
 
@@ -49,5 +53,3 @@ class BleSecurity {
     }
   }
 }
-
-export default BleSecurity;

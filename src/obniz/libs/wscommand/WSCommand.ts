@@ -1,7 +1,12 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+
 import WSSchema from "./WSSchema";
 
 const commandClasses: any = {};
-
 export default abstract class WSCommand {
 
   static get schema() {
@@ -321,6 +326,7 @@ export default abstract class WSCommand {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
+// tslint:disable:max-classes-per-file
+
 class WSCommandNotFoundError extends Error {
 }

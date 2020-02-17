@@ -1,19 +1,88 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
+import semver from "semver";
 import Obniz from "../../index";
 
-const isNode: any = typeof window === "undefined";
-import semver = require("semver");
+/**
+ * @param TCPReceiveCallbackFunction.data
+ * received data
+ */
+type TCPReceiveCallbackFunction = (data: number[]) => void;
 
-type TCPCallbackFunction = (data: number[]) => void;
+/**
+ * @param TCPConnectionCallbackFunction.connected
+ * - True : Connect
+ * - False : Disconnect
+ */
+type TCPConnectionCallbackFunction = (connected: boolean) => void;
 
-class Tcp {
-  public Obniz: Obniz;
-  public id: number;
-  public connectObservers: any;
-  public readObservers!: TCPCallbackFunction[];
-  public used!: boolean;
-  public onconnection: any;
-  public onreceive: any;
-  public onerror: any;
+/**
+ *
+ * @param TCPErrorCallbackFunction.error
+ * Error object
+ */
+type TCPErrorCallbackFunction = (error: any) => void;
+
+/**
+ * Create a TCP connection from a device throught the network the device is currently connected to.
+ *
+ * @category Protocol
+ */
+export default class Tcp {
+
+  /**
+   * Callback function is called when there is a change in TCP connection status.
+   *
+   * ```
+   * // Javascript Example
+   * var tcp = obniz.getFreeTcp();
+   *
+   * tcp.onconnection = data => {
+   *  console.log(data);
+   * };
+   * tcp.connectWait(80,"obniz.io");
+   * ```
+   */
+  public onconnection?: TCPConnectionCallbackFunction;
+
+  /**
+   * Callback function is called when TCP is received.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var tcp = obniz.getFreeTcp();
+   * tcp.connectWait(80,"obniz.io");
+   *
+   * tcp.onreceive = data => {
+   *   console.log(data);
+   * };
+   * ```
+   *
+   */
+  public onreceive?: TCPReceiveCallbackFunction;
+
+  /**
+   * You can get the error message that occurred when connecting.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var tcp = obniz.getFreeTcp();
+   * tcp.connectWait(80,"obniz.io");
+   *
+   * tcp.onerror = state => {
+   *   console.log(state);
+   * };
+   * ```
+   */
+  public onerror?: TCPErrorCallbackFunction;
+  private Obniz: Obniz;
+  private id: number;
+  private connectObservers: any;
+  private readObservers!: TCPReceiveCallbackFunction[];
+  private used!: boolean;
 
   constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
@@ -21,25 +90,19 @@ class Tcp {
     this._reset();
   }
 
-  public _reset() {
-    this.connectObservers = [];
-    this.readObservers = [];
-    this.used = false;
-  }
-
-  public _addConnectObserver(callback: any) {
-    if (callback) {
-      this.connectObservers.push(callback);
-    }
-  }
-
-  public _addReadObserver(callback: TCPCallbackFunction) {
-    if (callback) {
-      this.readObservers.push(callback);
-    }
-  }
-
-  public connectWait(port: number, domain: string) {
+  /**
+   * Starts a connection on the port and domain for which TCP is specified.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var tcp = obniz.getFreeTcp();
+   * tcp.connectWait(80,"obniz.io");
+   * ```
+   *
+   * @param port
+   * @param domain
+   */
+  public connectWait(port: number, domain: string): Promise<void> {
     if (semver.lt(this.Obniz.firmware_ver, "2.1.0")) {
       throw new Error(`Please update obniz firmware >= 2.1.0`);
     }
@@ -71,17 +134,24 @@ class Tcp {
     });
   }
 
-  public close() {
-    if (!this.used) {
-      throw new Error(`tcp${this.id} is not used`);
-    }
-    const obj: any = {};
-    obj["tcp" + this.id] = {
-      disconnect: true,
-    };
-    this.Obniz.send(obj);
-  }
-
+  /**
+   * The argument data is sent by TCP.
+   *
+   * If you pass a string or Array type argument, the data will be sent.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var tcp = obniz.getFreeTcp();
+   * tcp.connectWait(80,"obniz.io");
+   *
+   * // Array
+   * tcp.write([0,1,2,3,4]);
+   *
+   * // Text
+   * tcp.write('hello');
+   * ```
+   * @param data
+   */
   public write(data: number | number[] | Buffer | string) {
     if (!this.used) {
       throw new Error(`tcp${this.id} is not started`);
@@ -94,7 +164,7 @@ class Tcp {
     }
 
     let send_data: any = null;
-    if (isNode && data instanceof Buffer) {
+    if (this.Obniz.isNode && data instanceof Buffer) {
       send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
@@ -111,6 +181,18 @@ class Tcp {
     this.Obniz.send(obj);
   }
 
+  /**
+   * Wait for TCP reception.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var tcp = obniz.getFreeTcp();
+   * tcp.connectWait(80,"obniz.io");
+   *
+   * let data = await tcp.readWait();
+   * console.log(data);
+   * ```
+   */
   public readWait(): Promise<number[]> {
     if (!this.used) {
       throw new Error(`tcp${this.id} is not started`);
@@ -120,10 +202,23 @@ class Tcp {
     });
   }
 
+  /**
+   * Terminates the TCP session.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var tcp = obniz.getFreeTcp();
+   * tcp.end();
+   * ```
+   */
   public end() {
     this.close();
   }
 
+  /**
+   * @ignore
+   * @param obj
+   */
   public notified(obj: any) {
     if (obj.connection) {
       /* Connectino state update. response of connect(), close from destination, response from */
@@ -156,9 +251,39 @@ class Tcp {
     }
   }
 
+  /**
+   * @ignore
+   */
   public isUsed() {
     return this.used;
   }
-}
 
-export default Tcp;
+  private close() {
+    if (!this.used) {
+      throw new Error(`tcp${this.id} is not used`);
+    }
+    const obj: any = {};
+    obj["tcp" + this.id] = {
+      disconnect: true,
+    };
+    this.Obniz.send(obj);
+  }
+
+  private _reset() {
+    this.connectObservers = [];
+    this.readObservers = [];
+    this.used = false;
+  }
+
+  private _addConnectObserver(callback: any) {
+    if (callback) {
+      this.connectObservers.push(callback);
+    }
+  }
+
+  private _addReadObserver(callback: TCPReceiveCallbackFunction) {
+    if (callback) {
+      this.readObservers.push(callback);
+    }
+  }
+}

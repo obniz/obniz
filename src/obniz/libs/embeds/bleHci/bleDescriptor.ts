@@ -1,6 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-
-class BleDescriptor extends BleLocalAttributeAbstract {
+/**
+ * @category Use as Peripheral
+ */
+export default class BleDescriptor extends BleLocalAttributeAbstract {
   public permissions: any;
 
   constructor(obj: any) {
@@ -37,5 +43,3 @@ class BleDescriptor extends BleLocalAttributeAbstract {
     return obj;
   }
 }
-
-export default BleDescriptor;

@@ -1,8 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module Parts.HC-SR505
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface HCSR505Options {
+export interface  HCSR505Options {
   signal: number;
   vcc?: number;
   gnd?: number;

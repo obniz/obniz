@@ -1,10 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module Parts.IRModule
+ */
+
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 import InfraredLED from "../InfraredLED";
 import IRSensor from "../IRSensor";
 
-export interface IRModuleOptions {
+export interface  IRModuleOptions {
   send: number;
   recv: number;
   vcc?: number;
