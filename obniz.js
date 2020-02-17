@@ -20223,6 +20223,7 @@ var map = {
 	"./Infrared/InfraredLED/index.js": "./dist/src/parts/Infrared/InfraredLED/index.js",
 	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
 	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
+	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
@@ -29273,6 +29274,59 @@ class Keyestudio_Button {
     }
 }
 exports.default = Keyestudio_Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_MoistureSensor
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_MoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "signal", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_MoistureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    getHumidityWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ad.getWait();
+        });
+    }
+}
+exports.default = Keyestudio_MoistureSensor;
 
 //# sourceMappingURL=index.js.map
 

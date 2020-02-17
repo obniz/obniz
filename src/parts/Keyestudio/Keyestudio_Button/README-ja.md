@@ -1,6 +1,6 @@
 # Keyestudio_Button
 
-Keyestudio製ボタンモジュールです。押されたかどうかを検知できます。
+Keyestudio社製ボタンモジュールです。押されたかどうかを検知できます。
 
 ![]()
 
