@@ -20223,6 +20223,7 @@ var map = {
 	"./Infrared/InfraredLED/index.js": "./dist/src/parts/Infrared/InfraredLED/index.js",
 	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
 	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
+	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
 	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
@@ -29274,6 +29275,56 @@ class Keyestudio_Button {
     }
 }
 exports.default = Keyestudio_Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Buzzer
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Buzzer {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Buzzer",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.pwm = obniz.getFreePwm();
+        this.pwm.start({ io: this.params.signal });
+    }
+    play(freq) {
+        if (typeof freq !== "number") {
+            throw new Error("freq must be a number");
+        }
+        freq = Math.floor(freq);
+        if (freq > 0) {
+            this.pwm.freq(freq);
+            this.pwm.pulse((1 / freq / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Keyestudio_Buzzer;
 
 //# sourceMappingURL=index.js.map
 

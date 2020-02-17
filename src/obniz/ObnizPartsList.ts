@@ -95,6 +95,7 @@ import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
 import YG1006, {YG1006Options} from "../parts/Infrared/YG1006";
 // Keyestudio
 import Keyestudio_Button, {Keyestudio_ButtonOptions} from "../parts/Keyestudio/Keyestudio_Button";
+import Keyestudio_Buzzer, {Keyestudio_BuzzerOptions} from "../parts/Keyestudio/Keyestudio_Buzzer";
 import Keyestudio_MoistureSensor, {Keyestudio_MoistureSensorOptions} from "../parts/Keyestudio/Keyestudio_MoistureSensor";
 
 // biological
@@ -220,6 +221,7 @@ export interface WiredNameMap {
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
+  "Keyestudio_Buzzer": Keyestudio_Buzzer;
   // Ble
   "2JCIE": OMRON_2JCIE;
   // Bioligical
@@ -349,6 +351,7 @@ export interface WiredNameOptionsMap {
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;
+  "Keyestudio_Buzzer": Keyestudio_BuzzerOptions;
 
   // Ble
 
