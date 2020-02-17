@@ -2,7 +2,6 @@
 The distance sensor for the M5StickC with built-in laser distance sensor VL53L0X.  
 
 ## wired(obniz, {scl, sda, gnd})
-その他の場合は、3V3ピンに外部から3.3Vを給電するようにしてください。  
 connect to the obniz Board.  
 When using M5StickC, specify G0 pin as sda and G26 pin as scl.  
 When using other devices, supply 3.3V externally to the 3V3 pin.
