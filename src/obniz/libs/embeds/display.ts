@@ -348,9 +348,11 @@ export default class Display {
   public raw(data: number[]) {
     const obj: any = {};
     obj.display = {
-      color_depth: this._colorDepth,
       raw: data,
     };
+    if (this._colorDepth > 1) {
+      obj.display.color_depth = this._colorDepth;
+    }
     this.Obniz.send(obj);
   }
 

@@ -43,7 +43,7 @@ class WSCommandDisplay extends WSCommand {
   }
 
   public raw(params: any) {
-    if (params.color_depth > 1) {
+    if (typeof params.color_depth === "number" && params.color_depth > 1) {
       this.drawRawColors(params.raw, params.color_depth);
     } else {
       this.drawHorizonally(new Uint8Array(params.raw));
@@ -132,7 +132,7 @@ class WSCommandDisplay extends WSCommand {
     this.sendCommand(this._CommandSetPinName, combined);
   }
 
-  public drawRawColors(raw: [number], colorDepth: number) {
+  public drawRawColors(raw: number[], colorDepth: number) {
     const buf = new Uint8Array(1 + raw.length);
     buf[0] = colorDepth;
     buf.set(raw, 1);
