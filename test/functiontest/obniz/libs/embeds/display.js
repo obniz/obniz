@@ -1158,7 +1158,6 @@ describe('obniz.libs.display', function() {
     expect(this.obniz).send([
       {
         display: {
-          color_depth: 1,
           raw: [
             0,
             0,
