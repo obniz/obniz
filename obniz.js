@@ -20225,6 +20225,7 @@ var map = {
 	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
 	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
 	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
+	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
 	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
@@ -29379,6 +29380,45 @@ class Keyestudio_MoistureSensor {
     }
 }
 exports.default = Keyestudio_MoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_PIR
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_PIR {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_PIR",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_signal = obniz.getIO(this.params.signal);
+        this.io_signal.pull("0v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.input((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+}
+exports.default = Keyestudio_PIR;
 
 //# sourceMappingURL=index.js.map
 
