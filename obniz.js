@@ -117,14 +117,14 @@ module.exports = {
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build && npm run doc",
-    "doc": "typedoc --includes ./src/ --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
+    "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js && git add docs",
-    "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
+    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -234,7 +234,8 @@ module.exports = {
     "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser"
   }
-};
+}
+;
 
 /***/ }),
 
@@ -1616,7 +1617,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = __importDefault(__webpack_require__("./node_modules/node-fetch/browser.js"));
 // @ts-ignore
-const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
+const package_1 = __importDefault(__webpack_require__("./dist/package.js"));
 class ObnizApi {
     constructor(obnizId, options) {
         this.id = obnizId;
@@ -1627,9 +1628,27 @@ class ObnizApi {
         };
         this.urlBase = this.options.obniz_server + "/obniz/" + this.id;
     }
+    /**
+     * obniz.js major version string
+     */
     get apiVersion() {
         const versionString = package_1.default.version;
         return versionString.split(".").shift();
+    }
+    /**
+     * Get device is online or offline
+     * @param callback with result
+     */
+    getState(callback) {
+        return this.post("/state", null, callback);
+    }
+    /**
+     * post data via obniz REST api
+     * @param json
+     * @param callback
+     */
+    postJson(json, callback) {
+        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
     }
     post(path, params, callback) {
         const url = this.urlBase + path;
@@ -1663,12 +1682,6 @@ class ObnizApi {
             });
         });
     }
-    getState(callback) {
-        return this.post("/state", null, callback);
-    }
-    postJson(json, callback) {
-        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
-    }
 }
 exports.default = ObnizApi;
 
@@ -1690,9 +1703,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver = __webpack_require__("./node_modules/semver/semver.js");
-const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
-const ble_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/ble.js");
 const display_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/display.js"));
 const switch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/switch.js"));
 const ad_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/ad.js"));
@@ -1719,6 +1731,12 @@ class ObnizComponents extends ObnizParts_1.default {
             this._resetComponents();
         }
     }
+    /**
+     * Output pin Vcc and Gnd
+     * @param vcc
+     * @param gnd
+     * @param drive
+     */
     setVccGnd(vcc, gnd, drive) {
         if (this.isValidIO(vcc)) {
             if (drive) {
@@ -1733,24 +1751,42 @@ class ObnizComponents extends ObnizParts_1.default {
             this.getIO(gnd).output(false);
         }
     }
+    /**
+     * Get IO module from pin no
+     * @param io
+     */
     getIO(io) {
         if (!this.isValidIO(io)) {
             throw new Error("io " + io + " is not valid io");
         }
         return this["io" + io];
     }
+    /**
+     * GET AD module from pin no
+     * @param io
+     */
     getAD(io) {
         if (!this.isValidIO(io)) {
             throw new Error("ad " + io + " is not valid io");
         }
         return this["ad" + io];
     }
+    /**
+     * It returns unused PWM module.
+     */
     getFreePwm() {
         return this._getFreePeripheralUnit("pwm");
     }
+    /**
+     * It returns unused I2C module.
+     */
     getFreeI2C() {
         return this._getFreePeripheralUnit("i2c");
     }
+    /**
+     * It returns setuped I2C module .
+     * @param config
+     */
     getI2CWithConfig(config) {
         if (typeof config !== "object") {
             throw new Error("getI2CWithConfig need config arg");
@@ -1762,9 +1798,16 @@ class ObnizComponents extends ObnizParts_1.default {
         i2c.start(config);
         return i2c;
     }
+    /**
+     * It returns unused SPI module.
+     */
     getFreeSpi() {
         return this._getFreePeripheralUnit("spi");
     }
+    /**
+     * It returns setuped SPI module.
+     * @param config
+     */
     getSpiWithConfig(config) {
         if (typeof config !== "object") {
             throw new Error("getSpiWithConfig need config arg");
@@ -1776,9 +1819,15 @@ class ObnizComponents extends ObnizParts_1.default {
         spi.start(config);
         return spi;
     }
+    /**
+     * It returns unused UART module.
+     */
     getFreeUart() {
         return this._getFreePeripheralUnit("uart");
     }
+    /**
+     * It returns unused TCP module.
+     */
     getFreeTcp() {
         return this._getFreePeripheralUnit("tcp");
     }
@@ -1810,10 +1859,10 @@ class ObnizComponents extends ObnizParts_1.default {
             i2c: i2c_1.default,
             pwm: pwm_1.default,
         };
-        let ble = ble_2.default;
+        let ble = ble_1.ObnizHciBLE.default;
         // < 3.0.0-beta
-        if (semver.lt(this.firmware_ver, "3.0.0-beta")) {
-            ble = ble_1.default;
+        if (semver_1.default.lt(this.firmware_ver, "3.0.0-beta")) {
+            ble = ble_1.ObnizOldBLE.default;
         }
         const embeds_map = {
             display: display_1.default,
@@ -1939,8 +1988,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const wsClient = __webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ws_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js"));
 // @ts-ignore
 const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/index.js"));
@@ -1958,7 +2007,7 @@ class ObnizConnection {
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
         this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
         this._connectionRetryCount = 0;
         if (!options) {
             options = {};
@@ -1990,46 +2039,64 @@ class ObnizConnection {
             this.wsconnect();
         }
     }
+    /**
+     * obniz.js version
+     */
     static get version() {
         return package_1.default.version;
     }
+    /**
+     * @ignore
+     * @constructor
+     */
     static get WSCommand() {
         return wscommand_1.default;
     }
-    prompt(filled, callback) {
-        const obnizid = prompt("Please enter obniz id", filled);
-        if (obnizid) {
-            callback(obnizid);
-        }
-    }
-    wsOnOpen() {
-        this.print_debug("ws connected");
-        this._connectionRetryCount = 0;
-        // wait for {ws:{ready:true}} object
-        if (typeof this.onopen === "function") {
-            this.onopen(this);
-        }
-    }
-    wsOnMessage(data) {
-        let json;
-        if (typeof data === "string") {
-            json = JSON.parse(data);
-        }
-        else if (this.wscommands) {
-            if (this.debugprintBinary) {
-                console.log("Obniz: binalized: " + new Uint8Array(data).toString());
-            }
-            json = this.binary2Json(data);
-        }
-        if (Array.isArray(json)) {
-            for (const i in json) {
-                this.notifyToModule(json[i]);
-            }
-        }
-        else {
-            // invalid json
-        }
-    }
+    /**
+     * With this you wait until the connection to obniz Board succeeds.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     *
+     * await obniz.connectWait();
+     *
+     * obniz.io0.output(true);
+     * obniz.close();
+     *
+     * ```
+     *
+     *
+     * - with timeout
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     *
+     * await obniz.connectWait({timeout:10});  //timeout 10sec
+     *
+     * if(connected){
+     *    obniz.io0.output(true);
+     *    obniz.close();
+     * }
+     * ```
+     *
+     * - with auto_connect:false
+     *
+     * If the param auto_connect is set as false, it will try to connect only once and, if unsuccessful, return false.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678',{auto_connect: false});
+     *
+     * var connected = await obniz.connectWait();  //try once
+     *
+     * if(connected){
+     *   obniz.io0.output(true);
+     *   obniz.close();
+     * }
+     * ```
+     *
+     * @param option.timeout timeout in seconds
+     * @return False will be returned when connection is not established within a set timeout.
+     */
     connectWait(option) {
         option = option || {};
         const timeout = option.timeout || null;
@@ -2054,6 +2121,18 @@ class ObnizConnection {
             this.connect();
         });
     }
+    /**
+     * You can connect to obniz Board manually by calling connect() when auto_connect is set to be false.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678', { auto_connect: false });
+     *
+     * obniz.connect();
+     * obniz.onconnect = async function() {
+     *  obniz.io0.output(true);
+     * }
+     * ```
+     */
     connect() {
         if (this.socket && this.socket.readyState <= 1) {
             return;
@@ -2074,6 +2153,13 @@ class ObnizConnection {
         }
         this.connectionState = "closed";
     }
+    /**
+     * Send json/binary data to obniz Cloud or device.
+     *
+     * @param obj send data
+     * @param options send option
+     * @param options.local_connect If false, send data via gloval internet.
+     */
     send(obj, options) {
         try {
             if (!obj || typeof obj !== "object") {
@@ -2132,11 +2218,53 @@ class ObnizConnection {
             console.log(e);
         }
     }
+    /**
+     * @ignore
+     * @param msg
+     */
     warning(msg) {
         console.log("warning:" + msg);
     }
+    /**
+     * @ignore
+     * @param msg
+     */
     error(msg) {
         console.error("error:" + msg);
+    }
+    prompt(filled, callback) {
+        const obnizid = prompt("Please enter obniz id", filled);
+        if (obnizid) {
+            callback(obnizid);
+        }
+    }
+    wsOnOpen() {
+        this.print_debug("ws connected");
+        this._connectionRetryCount = 0;
+        // wait for {ws:{ready:true}} object
+        if (typeof this.onopen === "function") {
+            this.onopen(this);
+        }
+    }
+    wsOnMessage(data) {
+        let json;
+        if (typeof data === "string") {
+            json = JSON.parse(data);
+        }
+        else if (this.wscommands) {
+            if (this.debugprintBinary) {
+                console.log("Obniz: binalized: " + new Uint8Array(data).toString());
+            }
+            json = this.binary2Json(data);
+        }
+        if (Array.isArray(json)) {
+            for (const i in json) {
+                this.notifyToModule(json[i]);
+            }
+        }
+        else {
+            // invalid json
+        }
     }
     wsOnClose(event) {
         this.print_debug("closed");
@@ -2203,7 +2331,7 @@ class ObnizConnection {
         this.print_debug("connecting to " + url);
         let socket;
         if (this.isNode) {
-            socket = new wsClient(url);
+            socket = new ws_1.default(url);
             socket.on("open", this.wsOnOpen.bind(this));
             socket.on("message", this.wsOnMessage.bind(this));
             socket.on("close", this.wsOnClose.bind(this));
@@ -2228,7 +2356,7 @@ class ObnizConnection {
         this.print_debug("local connect to " + url);
         let ws;
         if (this.isNode) {
-            ws = new wsClient(url);
+            ws = new ws_1.default(url);
             ws.on("open", () => {
                 this.print_debug("connected to " + url);
                 this._callOnConnect();
@@ -2507,9 +2635,17 @@ const ObnizConnection_1 = __importDefault(__webpack_require__("./dist/src/obniz/
  */
 const _parts = {};
 class ObnizParts extends ObnizConnection_1.default {
+    /**
+     * @ignore
+     * @private
+     */
     static _parts() {
         return _parts;
     }
+    /**
+     * Register Parts class
+     * @param arg0 Parts class
+     */
     static PartsRegistrate(arg0, arg1) {
         if (arg0 &&
             typeof arg0.info === "function" &&
@@ -2520,6 +2656,11 @@ class ObnizParts extends ObnizConnection_1.default {
             _parts[arg0] = arg1;
         }
     }
+    /**
+     * @ignore
+     * @param name
+     * @constructor
+     */
     static Parts(name) {
         if (!_parts[name]) {
             throw new Error(`unknown parts [${name}]`);
@@ -2529,9 +2670,19 @@ class ObnizParts extends ObnizConnection_1.default {
     constructor(id, options) {
         super(id, options);
     }
+    /**
+     * Check the param is valid io pin no.
+     * @param io
+     */
     isValidIO(io) {
         return typeof io === "number" && this["io" + io] !== null;
     }
+    /**
+     * Setup Parts of parts library
+     *
+     * @param partsname
+     * @param options
+     */
     wired(partsname, options) {
         const parts = ObnizParts.Parts(partsname);
         if (!parts) {
@@ -2598,6 +2749,39 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
     constructor(id, options) {
         super(id, options);
     }
+    /**
+     * This pauses obniz Board for a period given in terms of ms (millisecond).
+     *
+     * ```javascript
+     * // Javascript Example
+     * led.on();
+     * obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * ```
+     *
+     * This method pauses only obniz Board, not JavaScript.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var time = new Date();
+     * led.on();
+     * obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * console.log((new Date()).getTime() - time.getTime()) // 0 or very few ms. not 1000ms.
+     * ```
+     *
+     * However, when you call this method together with the await function, JavaScript will pause for the given period in ms.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var time = new Date();
+     * led.on();
+     * await obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * console.log((new Date()).getTime() - time.getTime()) // => about 1000
+     * ```
+     * @param msec
+     */
     wait(msec) {
         if (msec < 0) {
             msec = 0;
@@ -2608,22 +2792,85 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         this.send({ system: { wait: msec } });
         return new Promise((resolve) => setTimeout(resolve, msec));
     }
+    /**
+     * This forces the obniz Board to go back to the initial state when the power was just turned on.
+     *
+     * ```javascript
+     * // Example
+     * obniz = new Obniz("1234-5678");
+     * obniz.onconnect = function() {
+     *   obniz.reset();
+     * }
+     * ```
+     */
     reset() {
         this.send({ system: { reset: true } });
         this._resetComponents();
     }
+    /**
+     * reboot device
+     *
+     * ```javascript
+     * obniz.reboot();
+     * ```
+     */
     reboot() {
         this.send({ system: { reboot: true } });
     }
+    /**
+     * @ignore
+     */
     selfCheck() {
         this.send({ system: { self_check: true } });
     }
+    /**
+     * By default, obniz Board resets after disconnection from the cloud.
+     * It means the output value and pwm will all stop at that point.
+     * But the above function with the argument true can nullify that default setting and change it to "do not reset when offline".
+     * This configuration remains as long as obniz Board is on.
+     *
+     * ```javascript
+     * // Example
+     * obniz.keepWorkingAtOffline(true);
+     * ```
+     * @param working
+     */
     keepWorkingAtOffline(working) {
         this.send({ system: { keep_working_at_offline: working } });
     }
+    /**
+     *
+     * This lets you change the setting of `reset_obniz_on_ws_disconnection` after connection is established.
+     *
+     * By default, obniz cloud resets target obniz Board when the all websocket to obniz cloud was closed.
+     * It means the output value and pwm will all stop at that point.
+     * With the above function, you can nullify these resetting activities.
+     * This configuration will remain until target obniz Board gets disconnected.
+     * Set this function to false to keep working without any of the websocket connections.
+     *
+     *
+     * ```javascript
+     * // Example
+     * obniz.resetOnDisconnect(false);
+     * ```
+     *
+     * @param reset
+     */
     resetOnDisconnect(reset) {
         this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in seconds.
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepSeconds (60); // 60 seconds
+     * ```
+     *
+     * @param sec up to 64800 seconds (18 hours).
+     */
     sleepSeconds(sec) {
         if (sec < 1) {
             // min 1s
@@ -2635,6 +2882,19 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         this.send({ system: { sleep_seconds: sec } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in minutes.
+     *
+     *
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepMinute （60）; // 60 minutes
+     * ```
+     * @param minute up to 64800 minutes(45 days ).
+     */
     sleepMinute(minute) {
         if (minute < 1) {
             // min 1m
@@ -2646,6 +2906,21 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         this.send({ system: { sleep_minute: minute } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in Date type.
+     * Sleep for up to 45 days (64800 minutes).
+     *
+     * ```javascript
+     * // JavaScript example
+     * let dt = new Date();
+     * dt.setHours(dt.getHours () + 1,0,0,0);
+     * obniz.sleep(dt);
+     * ```
+     *
+     * @param date
+     */
     sleep(date) {
         if (!(date instanceof Date)) {
             throw new Error("Date instance argument required");
@@ -2668,12 +2943,41 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
             throw new Error(`over max sleep time : ${sleepTime}m`);
         }
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * It returns from sleep depending on the pin state of IO0.
+     *
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepIoTrigger (true);
+     * ```
+     *
+     * @param trigger
+     *
+     *  - true: Rise （LOW -> HIGH）
+     *  - false: Falling （HIGH -> LOW）
+     */
     sleepIoTrigger(trigger) {
         if (typeof trigger !== "boolean") {
             throw new Error("sleepIoTrigger need boolean arg");
         }
         this.send({ system: { sleep_io_trigger: trigger } });
     }
+    /**
+     * Ping to obniz device and wait pong response.
+     *
+     * If debugprint option enabled, it display ping/pong response time on console.
+     *
+     * ```javascript
+     * await obniz.pingWait(); //waiting pong.
+     * ```
+     *
+     * @param unixtime start time of measure response time
+     * @param rand Unique identifier of ping data
+     * @param forceGlobalNetwork
+     */
     pingWait(unixtime, rand, forceGlobalNetwork) {
         unixtime = unixtime || new Date().getTime();
         const upper = Math.floor(unixtime / Math.pow(2, 32));
@@ -2756,6 +3060,23 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
     }
+    /**
+     * This closes the current connection.
+     * You need to set auto_connect to false. Otherwise the connection will be recovered.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678', {
+     *   auto_connect: false,
+     *   reset_obniz_on_ws_disconnection: false
+     * });
+     *
+     * obniz.connect();
+     * obniz.onconnect = async function() {
+     *   obniz.io0.output(true);
+     *   obniz.close();
+     * }
+     * ```
+     */
     close() {
         super.close();
         this.updateOnlineUI();
@@ -2922,18 +3243,101 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
+/**
+ * obniz class is the abstract version of obniz Board hardware within JavaScript.
+ *
+ * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
+ * without the details of websocket api.
+ *
+ *
+ * ### obnizOS version and obniz.js version
+ *
+ * obniz cloud compare your obniz.js version and target device obnizOS version.
+ * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
+ * It will work somehow but some functions looses compatibility.
+ *
+ * ### one device from two program
+ *
+ * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
+ * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
+ *
+ * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
+ *
+ * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
+ *
+ */
 class Obniz extends ObnizUIs_1.default {
+    /**
+     * We will now instantiate obniz.
+     *
+     * obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
+     *
+     * ```javascript
+     * new Obniz('1234-5678') // OK
+     * new Obniz('12345678') // OK
+     * new Obniz(12345678) // Can't accept
+     * ```
+     *
+     * If you connect to obniz which has an access token, provide an option like this
+     *
+     * ```javascript
+     * new Obniz('1234-5678', {access_token: 'your token here'})
+     * ```
+     *
+     * If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
+     * In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
+     * It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
+     *
+     * ![](media://obniz_prompt.png)
+     *
+     * When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
+     *
+     * When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
+     * But when cloud connection gets closed, the local connect also gets closed.
+     *
+     * ![](media://local_connect.png)
+     *
+     * The timing onconnect() gets called depends on the availability of local connect.
+     * obniz.js will wait a little to establish connection via local connect as much as possible.
+     * See the flow below.
+     *
+     * ![](media://onconnect_flow.png)
+     *
+     * The second parameter when instantiating obniz Board is an option.
+     *
+     * @param id
+     * @param options
+     */
     constructor(id, options) {
         super(id, options);
         this.util = new util_1.default(this);
     }
     /**
-     *
+     * obniz REST api class
      * @returns {ObnizApi}
      */
     static get api() {
         return ObnizApi_1.default;
     }
+    /**
+     * Repeat will call the callback function periodically while it is connected to obniz Board.
+     * It will stop calling once it is disconnected from obniz Board.
+     *
+     * ```javascript
+     * // Javascript Example
+     *  obniz.ad0.start();
+     *  obniz.repeat(function(){
+     *    if (obniz.ad0.value > 2.5) {
+     *      obniz.io0.output(true);
+     *    } else {
+     *      obniz.io0.output(false);
+     *    }
+     *  }, 100)
+     * ```
+     *
+     * @param callback
+     * @param interval  default 100. It mean 100ms interval loop.
+     */
     repeat(callback, interval) {
         if (this.looper) {
             this.looper = callback;
@@ -2946,6 +3350,10 @@ class Obniz extends ObnizUIs_1.default {
             this.loop();
         }
     }
+    /**
+     * @ignore
+     * @param msg
+     */
     warning(msg) {
         if (this.isNode) {
             console.error(msg);
@@ -2962,6 +3370,10 @@ class Obniz extends ObnizUIs_1.default {
             console.log(`Warning: ${msg}`);
         }
     }
+    /**
+     * @ignore
+     * @param msg
+     */
     error(msg) {
         if (this.isNode) {
             console.error(msg);
@@ -2980,21 +3392,35 @@ class Obniz extends ObnizUIs_1.default {
             }
         }
     }
-    loop() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof this.looper === "function" && this.onConnectCalled) {
-                const prom = this.looper();
-                if (prom instanceof Promise) {
-                    yield prom;
-                }
-                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-            }
-        });
-    }
-    _callOnConnect() {
-        super._callOnConnect();
-        this.loop();
-    }
+    /**
+     * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
+     *
+     * ```javascript
+     * // Example
+     * obniz.onconnect = function(){
+     *  var button = obniz.wired("Button",  {signal:0, gnd:1});
+     *
+     *  button.onchange = function(){
+     *    var targets = [
+     *      "1234-1231",
+     *      "1234-1232",
+     *      "1234-1233",
+     *      "1234-1234",
+     *      "1234-1235",
+     *      "1234-1236",
+     *      "1234-1237",
+     *      "1234-1238",
+     *      "1234-1239",
+     *      "1234-1230"];
+     *
+     *    obniz.message(targets, "pressed");
+     *   };
+     * }
+     * ```
+     *
+     * @param target destination obniz id
+     * @param message message data
+     */
     message(target, message) {
         let targets = [];
         if (typeof target === "string") {
@@ -3009,6 +3435,21 @@ class Obniz extends ObnizUIs_1.default {
                 data: message,
             },
         });
+    }
+    loop() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof this.looper === "function" && this.onConnectCalled) {
+                const prom = this.looper();
+                if (prom instanceof Promise) {
+                    yield prom;
+                }
+                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+            }
+        });
+    }
+    _callOnConnect() {
+        super._callOnConnect();
+        this.loop();
     }
     notifyToModule(obj) {
         super.notifyToModule(obj);
@@ -3058,6 +3499,9 @@ catch (e) {
 /*===================*/
 /* ReadParts */
 /*===================*/
+/**
+ * @ignore
+ */
 const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
 __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
 if (requireContext.setBaseDir) {
@@ -3082,6 +3526,36 @@ module.exports = Obniz;
 //# sourceMappingURL=index.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/ble.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Obniz BLE are switches automatically. <br/>
+ * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
+ * obnizOS ver < 3.0.0   : [[ObnizCore.Components.Ble.old | old]] <br/>
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble
+ */
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizOldBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
+exports.ObnizOldBLE = ObnizOldBLE;
+const ObnizHciBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
+exports.ObnizHciBLE = ObnizHciBLE;
+
+//# sourceMappingURL=ble.js.map
+
 
 /***/ }),
 
@@ -3115,6 +3589,10 @@ const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/ob
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleScan.js"));
 const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleSecurity.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class ObnizBLE {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -3378,6 +3856,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisementBuilder.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleAdvertisement {
@@ -3445,6 +3925,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleAdvertisementBuilder {
@@ -3616,6 +4098,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class BleAttributeAbstract {
     constructor(params) {
         this.uuid = bleHelper_1.default.uuidFilter(params.uuid);
@@ -3843,6 +4329,8 @@ const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/o
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 class BleCharacteristic extends bleAttributeAbstract_1.default {
@@ -3962,6 +4450,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 class BleDescriptor extends bleAttributeAbstract_1.default {
@@ -4065,6 +4555,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 class BlePeripheral {
@@ -4163,6 +4655,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
@@ -4256,6 +4750,8 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteDescriptor.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
@@ -4464,6 +4960,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
@@ -4538,6 +5036,8 @@ const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteService.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemotePeripheral {
@@ -4893,6 +5393,8 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteCharacteristic.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
@@ -4968,6 +5470,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 class BleScan {
@@ -5091,6 +5595,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const semver = __webpack_require__("./node_modules/semver/semver.js");
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class BleSecurity {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -5267,6 +5775,8 @@ const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/o
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 class BleService extends bleAttributeAbstract_1.default {
@@ -5348,6 +5858,10 @@ const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/ob
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js"));
 const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleSecurity.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+/**
+ * Use a obniz device as a BLE device.
+ * Peripheral and Central mode are supported
+ */
 class ObnizBLE {
     constructor(obniz) {
         this.Obniz = obniz;
@@ -5373,6 +5887,13 @@ class ObnizBLE {
         this._bind();
         this._reset();
     }
+    /**
+     * @ignore
+     *
+     * @param data
+     * @param reverse
+     * @private
+     */
     static _dataArray2uuidHex(data, reverse) {
         let uuid = [];
         for (let i = 0; i < data.length; i++) {
@@ -5396,6 +5917,14 @@ class ObnizBLE {
         }
         return str;
     }
+    /**
+     * Initialize BLE module. You need call this first everything before.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * ```
+     */
     initWait() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._initialized) {
@@ -5404,22 +5933,38 @@ class ObnizBLE {
             }
         });
     }
-    warningIfNotInitialize() {
-        if (!this._initialized && this._initializeWarning) {
-            this._initializeWarning = true;
-            this.Obniz.warning({
-                alert: "warning",
-                message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
-            });
-        }
-    }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.hci) {
             this.hci.notified(obj.hci);
         }
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
     }
+    /**
+     * Connect to peripheral without scanning.
+     * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var peripheral = obniz.ble.directConnect("e4b9efb29218","random");
+     * peripheral.onconnect = ()=>{
+     *   console.log("connected");
+     * }
+     * ```
+     *
+     * @param uuid peripheral device address
+     * @param addressType "random" or "public"
+     */
     directConnect(uuid, addressType) {
         let peripheral = this.findPeripheral(uuid);
         if (!peripheral) {
@@ -5435,12 +5980,46 @@ class ObnizBLE {
         peripheral.connect();
         return peripheral;
     }
-    directConnectWait(uuid, addressType) {
+    /**
+     * Connect to peripheral without scanning, and wait to finish connecting.
+     *
+     * It throws when connection establish failed.
+     * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * try {
+     *   var peripheral = await obniz.ble.directConnectWait("e4b9efb29218","random");
+     *   console.log("connected");
+     * } catch(e) {
+     *   console.log("can't connect");
+     * }
+     * ```
+     *
+     * @param address peripheral device address
+     * @param addressType "random" or "public"
+     */
+    directConnectWait(address, addressType) {
         return __awaiter(this, void 0, void 0, function* () {
-            const peripheral = this.directConnect(uuid, addressType);
+            const peripheral = this.directConnect(address, addressType);
             yield peripheral.connectWait();
             return peripheral;
         });
+    }
+    /**
+     * @ignore
+     */
+    warningIfNotInitialize() {
+        if (!this._initialized && this._initializeWarning) {
+            this._initializeWarning = true;
+            this.Obniz.warning({
+                alert: "warning",
+                message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
+            });
+        }
+    }
+    onStateChange() {
     }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
@@ -5449,8 +6028,6 @@ class ObnizBLE {
             }
         }
         return null;
-    }
-    onStateChange() {
     }
     onAddressChange() {
     }
@@ -5628,20 +6205,24 @@ class ObnizBLE {
     }
     onPeripheralAccept(clientAddress) {
         this.peripheral.currentConnectedDeviceAddress = clientAddress;
-        this.peripheral.onconnectionupdates({
-            address: clientAddress,
-            status: "connected",
-        });
+        if (this.peripheral.onconnectionupdates) {
+            this.peripheral.onconnectionupdates({
+                address: clientAddress,
+                status: "connected",
+            });
+        }
     }
     onPeripheralMtuChange(mtu) {
         // console.error("onPeripheralMtuChange")
     }
     onPeripheralDisconnect(clientAddress) {
         this.peripheral.currentConnectedDeviceAddress = null;
-        this.peripheral.onconnectionupdates({
-            address: clientAddress,
-            status: "disconnected",
-        });
+        if (this.peripheral.onconnectionupdates) {
+            this.peripheral.onconnectionupdates({
+                address: clientAddress,
+                status: "disconnected",
+            });
+        }
     }
     onPeripheralRssiUpdate(rssi) {
         // console.error("onPeripheralRssiUpdate")
@@ -5696,10 +6277,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
 /**
  * @category Use as Peripheral
@@ -5710,31 +6287,122 @@ class BleAdvertisement {
         this.adv_data = [];
         this.scan_resp = [];
     }
+    /**
+     * This starts advertisement of BLE.
+     *
+     * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
+     * advertisement interval is 1.28sec fixed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     *   var service = new obniz.ble.service({
+     *  uuid : "fff0"
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * obniz.ble.advertisement.setAdvData(service.advData);
+     * obniz.ble.advertisement.start();
+     * ```
+     */
     start() {
         this.obnizBle.warningIfNotInitialize();
         this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
+    /**
+     * This stops advertisement of BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.start();
+     * obniz.ble.advertisement.end();
+     * ```
+     *
+     */
     end() {
         this.obnizBle.peripheralBindings.stopAdvertising();
     }
+    /**
+     * This sets advertise data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x02, 0x01, 0x1A  => BLE type for
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param adv_data
+     */
     setAdvDataRaw(adv_data) {
         this.adv_data = adv_data;
     }
+    /**
+     * This sets advertise data from json.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setAdvData({
+     *   flags: ["general_discoverable_mode","br_edr_not_supported"],
+     *   manufacturerData:{
+     *     companyCode : 0x004C,
+     *     serviceUuids: ["fff0"],
+     *     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
+     *   }
+     * });
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     * @param json
+     */
     setAdvData(json) {
         const builder = this.advDataBulider(json);
         this.setAdvDataRaw(builder.build());
     }
-    advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, jsonVal);
-    }
-    scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, json);
-    }
+    /**
+     * This sets scan response data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param scan_resp
+     */
     setScanRespDataRaw(scan_resp) {
         this.scan_resp = scan_resp;
     }
+    /**
+     * This sets scan response data from json data.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setScanRespData({
+     *   localName : "obniz BLE",
+     * });
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     * @param json
+     */
     setScanRespData(json) {
         this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+    }
+    advDataBulider(jsonVal) {
+        return new bleAdvertisementBuilder_1.default(jsonVal);
+    }
+    scanRespDataBuilder(json) {
+        return new bleAdvertisementBuilder_1.default(json);
     }
 }
 exports.default = BleAdvertisement;
@@ -5763,8 +6431,7 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  * @category Use as Peripheral
  */
 class BleAdvertisementBuilder {
-    constructor(Obniz, json) {
-        this.Obniz = Obniz;
+    constructor(json) {
         this.rows = {};
         if (json) {
             if (json.localName) {
@@ -5802,7 +6469,7 @@ class BleAdvertisementBuilder {
             Array.prototype.push.apply(data, this.rows[key]);
         }
         if (data.length > 31) {
-            this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
+            throw new Error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
         }
         return data;
     }
@@ -5836,7 +6503,7 @@ class BleAdvertisementBuilder {
         if (uuidNumeric.length !== 32 &&
             uuidNumeric.length !== 8 &&
             uuidNumeric.length !== 4) {
-            this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+            throw new Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
         }
         const data = [];
         for (let i = uuidNumeric.length; i > 1; i -= 2) {
@@ -5856,6 +6523,21 @@ class BleAdvertisementBuilder {
         data.push((txPower >> 0) & 0xff);
         this.setManufacturerSpecificData(0x004c, data);
         return;
+    }
+    setLeLimitedDiscoverableModeFlag() {
+        this.setFlags(0x01);
+    }
+    setLeGeneralDiscoverableModeFlag() {
+        this.setFlags(0x02);
+    }
+    setBrEdrNotSupportedFlag() {
+        this.setFlags(0x04);
+    }
+    setLeBrEdrControllerFlag() {
+        this.setFlags(0x08);
+    }
+    setLeBrEdrHostFlag() {
+        this.setFlags(0x10);
     }
     extendEvalJson(json) {
         if (json) {
@@ -5883,21 +6565,6 @@ class BleAdvertisementBuilder {
         data[0] = (data[0] || 0) | flag;
         this.setRow(0x01, data);
     }
-    setLeLimitedDiscoverableModeFlag() {
-        this.setFlags(0x01);
-    }
-    setLeGeneralDiscoverableModeFlag() {
-        this.setFlags(0x02);
-    }
-    setBrEdrNotSupportedFlag() {
-        this.setFlags(0x04);
-    }
-    setLeBrEdrControllerFlag() {
-        this.setFlags(0x08);
-    }
-    setLeBrEdrHostFlag() {
-        this.setFlags(0x10);
-    }
 }
 exports.default = BleAdvertisementBuilder;
 
@@ -5919,7 +6586,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 class BleAttributeAbstract {
@@ -5942,7 +6609,225 @@ class BleAttributeAbstract {
             }
         }
         this.setFunctions();
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
+    }
+    /**
+     * @ignore
+     */
+    get childrenClass() {
+        return Object;
+    }
+    /**
+     * @ignore
+     */
+    get childrenName() {
+        return null;
+    }
+    /**
+     * @ignore
+     */
+    get parentName() {
+        return null;
+    }
+    /**
+     * @ignore
+     * @param child
+     */
+    addChild(child) {
+        if (!(child instanceof this.childrenClass)) {
+            const childrenClass = this.childrenClass;
+            child = new childrenClass(child);
+        }
+        const childobj = child;
+        childobj.parent = this;
+        this.children.push(childobj);
+        return childobj;
+    }
+    /**
+     * @ignore
+     * @param uuid
+     */
+    getChild(uuid) {
+        uuid = bleHelper_1.default.uuidFilter(uuid);
+        const result = this.children
+            .filter((element) => {
+            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
+        })
+            .shift();
+        if (!result) {
+            return null;
+        }
+        return result;
+    }
+    /**
+     * @ignore
+     */
+    toJSON() {
+        const obj = {
+            uuid: bleHelper_1.default.uuidFilter(this.uuid),
+        };
+        if (this.childrenName) {
+            const key = this.childrenName;
+            obj[key] = this.children;
+        }
+        if (this.data) {
+            obj.data = this.data;
+        }
+        return obj;
+    }
+    /**
+     * WS COMMANDS
+     */
+    /**
+     * @ignore
+     */
+    read() {
+    }
+    /**
+     * @ignore
+     */
+    write(data, needResponse) {
+    }
+    /**
+     * @ignore
+     */
+    writeNumber(val, needResponse) {
+        this.write([val], needResponse);
+    }
+    /**
+     * @ignore
+     */
+    writeText(str, needResponse) {
+        this.write(util_1.default.string2dataArray(str), needResponse);
+    }
+    /**
+     * @ignore
+     */
+    readWait() {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onread", (params) => {
+                if (params.result === "success") {
+                    resolve(params.data);
+                }
+                else {
+                    reject(new Error("readWait failed"));
+                }
+            });
+            this.read();
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeWait(data, needResponse) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeWait failed"));
+                }
+            });
+            this.write(data, needResponse);
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeTextWait(data, needResponse) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeTextWait failed"));
+                }
+            });
+            this.writeText(data, needResponse);
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeNumberWait(data, needResponse) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeNumberWait failed"));
+                }
+            });
+            this.writeNumber(data, needResponse);
+        });
+    }
+    /**
+     * @ignore
+     */
+    readFromRemoteWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("onreadfromremote", () => {
+                resolve();
+            });
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeFromRemoteWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("onreadfromremote", (params) => {
+                resolve(params.data);
+            });
+        });
+    }
+    /**
+     * @ignore
+     * @param err
+     */
+    onerror(err) {
+        console.error(err.message);
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "onerror": {
+                this.onerror(params);
+                break;
+            }
+            case "onwrite": {
+                if (this.onwrite) {
+                    this.onwrite(params.result);
+                }
+                break;
+            }
+            case "onread": {
+                if (this.onread) {
+                    this.onread(params.data);
+                }
+                break;
+            }
+            case "onwritefromremote": {
+                if (this.onwritefromremote) {
+                    this.onwritefromremote(params.address, params.data);
+                }
+                break;
+            }
+            case "onreadfromremote": {
+                if (this.onreadfromremote) {
+                    this.onreadfromremote(params.address);
+                }
+                break;
+            }
+        }
     }
     setFunctions() {
         let childrenName = this.childrenName;
@@ -5967,163 +6852,6 @@ class BleAttributeAbstract {
             });
         }
     }
-    get childrenClass() {
-        return Object;
-    }
-    get childrenName() {
-        return null;
-    }
-    get parentName() {
-        return null;
-    }
-    addChild(child) {
-        if (!(child instanceof this.childrenClass)) {
-            const childrenClass = this.childrenClass;
-            child = new childrenClass(child);
-        }
-        child.parent = this;
-        this.children.push(child);
-        return child;
-    }
-    getChild(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this.children
-            .filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
-        })
-            .shift();
-    }
-    toJSON() {
-        const obj = {
-            uuid: bleHelper_1.default.uuidFilter(this.uuid),
-        };
-        if (this.childrenName) {
-            const key = this.childrenName;
-            obj[key] = this.children;
-        }
-        if (this.data) {
-            obj.data = this.data;
-        }
-        return obj;
-    }
-    /**
-     * WS COMMANDS
-     */
-    read() {
-    }
-    write(data, needResponse) {
-    }
-    writeNumber(val, needResponse) {
-        this.write([val], needResponse);
-    }
-    writeText(str, needResponse) {
-        this.write(util_1.default.string2dataArray(str), needResponse);
-    }
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
-    }
-    writeWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data, needResponse);
-        });
-    }
-    writeTextWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeTextWait failed"));
-                }
-            });
-            this.writeText(data);
-        });
-    }
-    writeNumberWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeNumberWait failed"));
-                }
-            });
-            this.writeNumber(data);
-        });
-    }
-    readFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", () => {
-                resolve();
-            });
-        });
-    }
-    writeFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", (params) => {
-                resolve(params.data);
-            });
-        });
-    }
-    /**
-     * CALLBACKS
-     */
-    onwrite(result) {
-    }
-    onread(data) {
-    }
-    onwritefromremote(address, data) {
-    }
-    onreadfromremote(address) {
-    }
-    onerror(err) {
-        console.error(err.message);
-    }
-    notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "onerror": {
-                this.onerror(params);
-                break;
-            }
-            case "onwrite": {
-                this.onwrite(params.result);
-                break;
-            }
-            case "onread": {
-                this.onread(params.data);
-                break;
-            }
-            case "onwritefromremote": {
-                this.onwritefromremote(params.address, params.data);
-                break;
-            }
-            case "onreadfromremote": {
-                this.onreadfromremote(params.address);
-                break;
-            }
-        }
-    }
 }
 exports.default = BleAttributeAbstract;
 
@@ -6146,74 +6874,146 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
-const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+const bleLocalValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js"));
 /**
  * @category Use as Peripheral
  */
-class BleCharacteristic extends bleLocalAttributeAbstract_1.default {
+class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
+    /**
+     * Create Characteristics
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var characteristic = new obniz.ble.characteristic({
+     *      "uuid" : "FFF1",
+     *      "properties" : ["read","write"],  // read, write, notify
+     *      "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
+     *      "descriptors" : [{
+     *          "uuid" : "2901",   //Characteristic User Description
+     *          "text" : "hello world characteristic",    //data for dataArray or  text for string
+     *      }]
+     * });
+     *
+     * var service = new obniz.ble.service({
+     *                "uuid" : "fff0",
+     *                "characteristics" : [ characteristic ]
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * ```
+     *
+     * @param obj
+     */
     constructor(obj) {
         super(obj);
         this._maxValueSize = null;
         this._updateValueCallback = null;
-        this.addDescriptor = this.addChild;
-        this.getDescriptor = this.getChild;
-        this.properties = obj.properties || [];
-        if (!Array.isArray(this.properties)) {
-            this.properties = [this.properties];
+        if (!Array.isArray(obj.properties) && typeof obj.properties === "string") {
+            this.properties = [obj.properties];
         }
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
+        else {
+            this.properties = obj.properties || [];
         }
+        //
+        // this.permissions = obj.permissions || [];
+        // if (!Array.isArray(this.permissions)) {
+        //   this.permissions = [this.permissions];
+        // }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "service";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleDescriptor_1.default;
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "descriptors";
     }
+    /**
+     * Get descriptor array
+     */
     get descriptors() {
         return this.children;
     }
+    /**
+     * Add new descriptor
+     * @param desc
+     */
+    addDescriptor(desc) {
+        return this.addChild(desc);
+    }
+    /**
+     * Get descriptor
+     * @param uuid
+     */
+    getDescriptor(uuid) {
+        return this.getChild(uuid);
+    }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
         if (this.properties.length > 0) {
             obj.properties = this.properties;
         }
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
+        // if (this.permissions.length > 0) {
+        //   obj.permissions = this.permissions;
+        // }
         return obj;
     }
+    /**
+     * @ignore
+     */
     toBufferObj() {
         const obj = super.toBufferObj();
         obj.properties = this.properties;
         obj.secure = [];
         return obj;
     }
+    /**
+     * Add property
+     * @param param
+     */
     addProperty(param) {
         if (!this.properties.includes(param)) {
             this.properties.push(param);
         }
     }
+    /**
+     * Remove property
+     * @param param
+     */
     removeProperty(param) {
         this.properties = this.properties.filter((elm) => {
             return elm !== param;
         });
     }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
+    //
+    // public addPermission(param: any) {
+    //   if (!this.permissions.includes(param)) {
+    //     this.permissions.push(param);
+    //   }
+    // }
+    //
+    // public removePermission(param: any) {
+    //   this.permissions = this.permissions.filter((elm: any) => {
+    //     return elm !== param;
+    //   });
+    // }
+    /**
+     * @ignore
+     * @param name
+     * @param params
+     */
     emit(name, ...params) {
         const result = super.emit(name, ...params);
         if (result) {
@@ -6236,19 +7036,58 @@ class BleCharacteristic extends bleLocalAttributeAbstract_1.default {
                 throw new Error("unknown emit");
         }
     }
+    /**
+     * @ignore
+     * @param maxValueSize
+     * @param updateValueCallback
+     * @private
+     */
     _onSubscribe(maxValueSize, updateValueCallback) {
         // console.log('_onSubscribe');
         this._maxValueSize = maxValueSize;
         this._updateValueCallback = updateValueCallback;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onUnsubscribe() {
         this._maxValueSize = null;
         this._updateValueCallback = null;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onNotify() {
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onIndicate() {
     }
+    /**
+     * This sends notify to the connected central.
+     *
+     * ```javascript
+     * var characteristic = new obniz.ble.characteristic({
+     *   uuid: 'FFF1',
+     *   data: [0x0e, 0x00],
+     *   properties : ["read","write","notify"],  // add notify properties
+     * });
+     *
+     *  var service = new obniz.ble.service({
+     *   uuid: 'FFF0',
+     *   characteristics: [characteristic],
+     * });
+     * obniz.ble.peripheral.addService(service);
+     *
+     *
+     * // after central connected
+     * characteristic.notify();
+     * ```
+     */
     notify() {
         if (this._updateValueCallback) {
             this._updateValueCallback(Buffer.from(this.data));
@@ -6272,40 +7111,69 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+const bleLocalValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js"));
 /**
  * @category Use as Peripheral
  */
-class BleDescriptor extends bleLocalAttributeAbstract_1.default {
+class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
+    // public permissions: any;
+    /**
+     * Create descriptor.
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var descriptor = new obniz.ble.characteristic({
+     *                     "uuid" : "2901",   //Characteristic User Description
+     *                     "text" : "hello world characteristic",
+     *                 });
+     *
+     *  var characteristic = new obniz.ble.characteristic({
+     *                  "uuid" : "FFF1",
+     *                  "text" : "Hi",
+     *                  "descriptors" : [ descriptor ]
+     *                });
+     *
+     * var service = new obniz.ble.service({
+     *                "uuid" : "fff0",
+     *                "characteristics" : [ characteristic ]
+     * });
+     * obniz.ble.peripheral.addService(service);
+     *
+     * ```
+     *
+     * @param obj
+     */
     constructor(obj) {
         super(obj);
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
-        }
+        // this.permissions = obj.permissions || [];
+        // if (!Array.isArray(this.permissions)) {
+        //   this.permissions = [this.permissions];
+        // }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "characteristic";
     }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
+    // public addPermission(param: any) {
+    //   if (!this.permissions.includes(param)) {
+    //     this.permissions.push(param);
+    //   }
+    // }
+    // public removePermission(param: any) {
+    //   this.permissions = this.permissions.filter ((elm: any ) => {
+    //     return elm !== param;
+    //   });
+    // }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
+        // if (this.permissions.length > 0) {
+        //   obj.permissions = this.permissions;
+        // }
         return obj;
     }
 }
@@ -6362,17 +7230,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
+ * @ignore
+ */
+var BleResponseResult;
+(function (BleResponseResult) {
+    BleResponseResult[BleResponseResult["SUCCESS"] = 0] = "SUCCESS";
+    BleResponseResult[BleResponseResult["INVALID_OFFSET"] = 7] = "INVALID_OFFSET";
+    BleResponseResult[BleResponseResult["ATTR_NOT_LONG"] = 11] = "ATTR_NOT_LONG";
+    BleResponseResult[BleResponseResult["INVALID_ATTRIBUTE_LENGTH"] = 13] = "INVALID_ATTRIBUTE_LENGTH";
+    BleResponseResult[BleResponseResult["UNLIKELY_ERROR"] = 14] = "UNLIKELY_ERROR";
+})(BleResponseResult || (BleResponseResult = {}));
+/**
  * @category Use as Peripheral
  */
 class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     constructor(params) {
         super(params);
-        this.RESULT_SUCCESS = 0x00;
-        this.RESULT_INVALID_OFFSET = 0x07;
-        this.RESULT_ATTR_NOT_LONG = 0x0b;
-        this.RESULT_INVALID_ATTRIBUTE_LENGTH = 0x0d;
-        this.RESULT_UNLIKELY_ERROR = 0x0e;
     }
+    /**
+     * @ignore
+     */
     toBufferObj() {
         const obj = {
             uuid: bleHelper_1.default.uuidFilter(this.uuid),
@@ -6384,6 +7261,11 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         obj.emit = this.emit.bind(this);
         return obj;
     }
+    /**
+     * @ignore
+     * @param name
+     * @param params
+     */
     emit(name, ...params) {
         switch (name) {
             case "readRequest":
@@ -6395,9 +7277,15 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         }
         return false;
     }
+    /**
+     * @ignore
+     * @param offset
+     * @param callback
+     * @private
+     */
     _onReadRequest(offset, callback) {
         if (this.data.length >= offset) {
-            callback(this.RESULT_SUCCESS, Buffer.from(this.data.slice(offset)));
+            callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
             let address = null;
             if (this.parentName === "characteristic") {
                 address = this.characteristic.service.peripheral
@@ -6409,13 +7297,21 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
             this.notifyFromServer("onreadfromremote", { address });
         }
         else {
-            callback(this.RESULT_UNLIKELY_ERROR, null);
+            callback(BleResponseResult.UNLIKELY_ERROR, null);
         }
     }
+    /**
+     * @ignore
+     * @param data
+     * @param offset
+     * @param withoutResponse
+     * @param callback
+     * @private
+     */
     _onWriteRequest(data, offset, withoutResponse, callback) {
         // console.log('onWriteRequest');
         this.data = Array.from(data);
-        callback(this.RESULT_SUCCESS);
+        callback(BleResponseResult.SUCCESS);
         let address = null;
         if (this.parentName === "characteristic") {
             address = this.characteristic.service.peripheral
@@ -6426,10 +7322,18 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         }
         this.notifyFromServer("onwritefromremote", { address, data });
     }
+    /**
+     * @ignore
+     * @param dataArray
+     */
     write(dataArray) {
         this.data = dataArray;
         this.notifyFromServer("onwrite", { result: "success" });
     }
+    /**
+     * @ignore
+     * @param dataArray
+     */
     read() {
         this.notifyFromServer("onread", { data: this.data });
     }
@@ -6442,6 +7346,76 @@ exports.default = BleLocalAttributeAbstract;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
+class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default {
+    constructor(params) {
+        super(params);
+    }
+    /**
+     * @ignore
+     * @param dataArray
+     */
+    write(dataArray) {
+        this.data = dataArray;
+        this.notifyFromServer("onwrite", { result: "success" });
+    }
+    /**
+     * @ignore
+     * @param dataArray
+     */
+    read() {
+        this.notifyFromServer("onread", { data: this.data });
+    }
+    /**
+     * This writes dataArray.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await attr.writeWait([0xf0,0x27]);
+     * console.log("write success");
+     * ```
+     *
+     * @param data
+     */
+    writeWait(data) {
+        return super.writeWait(data);
+    }
+    /**
+     * It reads data.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * let data =  await attr.readWait()
+     *  console.log("data: " , data );
+     * ```
+     */
+    readWait() {
+        return super.readWait();
+    }
+}
+exports.default = BleLocalValueAttributeAbstract;
+
+//# sourceMappingURL=bleLocalValueAttributeAbstract.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/bleHci/blePeripheral.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6451,10 +7425,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
 /**
@@ -6466,19 +7436,52 @@ class BlePeripheral {
         this._services = [];
         this.currentConnectedDeviceAddress = null;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _updateServices() {
         const bufData = this._services.map((e) => e.toBufferObj());
         this.obnizBle.peripheralBindings.setServices(bufData);
     }
-    addService(obj) {
+    /**
+     * This starts a service as peripheral.
+     *
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * // Service without characteristics
+     * var service1 = new obniz.ble.service({"uuid" : "fff0"});
+     * obniz.ble.peripheral.addService(service1);
+     *
+     * // Service with characteristics/descriptor
+     * var service2 = new obniz.ble.service({"uuid" : "fff0"});
+     * var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
+     * var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello world characteristic"});
+     *
+     * service2.addCharacteristic(characteristic);
+     * characteristic.addDescriptor(descriptor);
+     *
+     * obniz.ble.peripheral.addService(service2); // call this after all descriptors and characteristics added to service.
+     * ```
+     *
+     * @param service
+     */
+    addService(service) {
         this.obnizBle.warningIfNotInitialize();
-        if (!(obj instanceof bleService_1.default)) {
-            obj = new bleService_1.default(obj);
+        if (!(service instanceof bleService_1.default)) {
+            service = new bleService_1.default(service);
         }
-        this._services.push(obj);
-        obj.peripheral = this;
+        this._services.push(service);
+        service.peripheral = this;
         this._updateServices();
     }
+    /**
+     * @ignore
+     * @private
+     * @param json
+     */
     setJson(json) {
         if (json.services) {
             for (const service of json.services) {
@@ -6486,29 +7489,51 @@ class BlePeripheral {
             }
         }
     }
+    /**
+     * Get service by UUID
+     * @param uuid
+     */
     getService(uuid) {
         uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this._services
+        const result = this._services
             .filter((element) => {
             return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
         })
             .shift();
+        if (!result) {
+            return null;
+        }
+        return result;
     }
+    /**
+     * Terminate service by UUID
+     * @param uuid
+     */
     removeService(uuid) {
         this._services = this._services.filter((element) => {
             return bleHelper_1.default.uuidFilter(element.uuid) !== uuid;
         });
         this._updateServices();
     }
+    /**
+     * @ignore
+     */
     stopAllService() {
         this._services = [];
         this._updateServices();
     }
+    /**
+     * @ignore
+     */
     toJSON() {
         return {
             services: this._services,
         };
     }
+    /**
+     * @ignore
+     * @param param
+     */
     findCharacteristic(param) {
         const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
         const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
@@ -6518,6 +7543,10 @@ class BlePeripheral {
         }
         return null;
     }
+    /**
+     * @ignore
+     * @param param
+     */
     findDescriptor(param) {
         const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
         const c = this.findCharacteristic(param);
@@ -6526,11 +7555,21 @@ class BlePeripheral {
         }
         return null;
     }
+    /**
+     * This ends all the peripheral service
+     *
+     * ```javascript
+     * obniz.ble.peripheral.addService(setting);
+     * obniz.ble.peripheral.end();
+     * ```
+     */
     end() {
         this.stopAllService();
     }
-    onconnectionupdates(param) {
-    }
+    /**
+     * @ignore
+     * @param error
+     */
     onerror(error) {
     }
 }
@@ -6564,6 +7603,9 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         this.isRemote = false;
         this.discoverdOnRemote = false;
     }
+    /**
+     * @ignore
+     */
     get wsChildUuidName() {
         const childrenName = this.childrenName;
         if (!childrenName) {
@@ -6572,8 +7614,14 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
+    /**
+     * @ignore
+     */
     discoverChildren() {
     }
+    /**
+     * @ignore
+     */
     discoverChildrenWait() {
         return new Promise((resolve) => {
             this.emitter.once("discoverfinished", () => {
@@ -6586,12 +7634,22 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         });
     }
     /**
-     * CALLBACKS
+     * @ignore
+     * @param child
      */
     ondiscover(child) {
     }
+    /**
+     * @ignore
+     * @param children
+     */
     ondiscoverfinished(children) {
     }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
@@ -6632,16 +7690,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js"));
+const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
 /**
  * @category Use as Central
  */
-class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
+class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default {
     constructor(params) {
         super(params);
         this.properties = params.properties || [];
@@ -6649,28 +7703,149 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.properties = [this.properties];
         }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "service";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleRemoteDescriptor_1.default;
     }
+    /**
+     * @ignore
+     *
+     */
     get childrenName() {
         return "descriptors";
     }
+    /**
+     * It contains descriptors in a characteristic.
+     * It was discovered when connection automatically.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *    return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   var c = service.getCharacteristic("fff0")
+     *   for (var d of c.descriptors) {
+     *     console.log(d.uuid)
+     *  }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     */
     get descriptors() {
         return this.children;
     }
+    /**
+     * @ignore
+     * @param params
+     */
     addDescriptor(params) {
         return this.addChild(params);
     }
+    /**
+     * It returns a descriptors which having specified uuid in a characteristic.
+     * Return value is null when not matched.
+     *
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *  await peripheral.connectWait();
+     *  console.log("connected");
+     *  var service = peripheral.getService("1800")
+     *  var c = service.getCharacteristic("fff0")
+     *  var d = c.getDescriptor("fff0")
+     *  console.log(d.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
     getDescriptor(uuid) {
         return this.getChild(uuid);
     }
+    /**
+     * This sets a callback function to receive notify when it comes from periperal.
+     * To receive notify, you need to register on CCCD Descriptor(0x2902).
+     *
+     * More infomation of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * char.onregisternotify = function() {
+     *   console.log("register finshed")
+     * }
+     *
+     * char.registerNotify( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * ```
+     *
+     * @param callback
+     */
     registerNotify(callback) {
         this.onnotify = callback;
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, true);
     }
+    /**
+     * This sets a notify callback function and wait to finish register.
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * await char.registerNotifyWait( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * ```
+     *
+     * @param callback
+     *
+     */
     registerNotifyWait(callback) {
         return new Promise((resolve) => {
             this.emitter.once("onregisternotify", () => {
@@ -6679,11 +7854,64 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.registerNotify(callback);
         });
     }
+    /**
+     * unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
+     *
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * char.onregisternotify = function() {
+     *  console.log("register finshed")
+     *  char.unregisterNotify();
+     * }
+     *
+     * char.onunregisternotify = function() {
+     *   console.log("unregistrated")
+     * }
+     *
+     * char.registerNotify( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     *
+     * ```
+     */
     unregisterNotify() {
         this.onnotify = () => {
         };
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, false);
     }
+    /**
+     * Unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
+     * And wait until done.
+     *
+     * ```javascript
+     *
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * await char.registerNotifyWait( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * await char.unregisterNotifyWait();
+     * console.log("unregistrated")
+     * ```
+     *
+     */
     unregisterNotifyWait() {
         return new Promise((resolve) => {
             this.emitter.once("onunregisternotify", () => {
@@ -6692,24 +7920,144 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.unregisterNotify();
         });
     }
+    /**
+     * It reads data from the characteristic.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * The returned value appears in the callback function [[onread]].
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.scan.onfind = function(peripheral){
+     *   if(peripheral.localName == "my peripheral"){
+     *
+     *     peripheral.onconnect = function(){
+     *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+     *       characteristic.read();
+     *       characteristic.onread = function(dataArray){
+     *         console.log("value : " + dataArray);
+     *       }
+     *     }
+     *
+     *     peripheral.connect();
+     *   }
+     * }
+     * obniz.ble.startScan({duration : 10});
+     * ```
+     *
+     *
+     */
     read() {
         this.service.peripheral.obnizBle.centralBindings.read(this.service.peripheral.address, this.service.uuid, this.uuid);
     }
+    /**
+     * This writes dataArray to the characteristic.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *    await peripheral.connectWait();
+     *    console.log("connected");
+     *    await obniz.wait(1000);
+     *
+     *    var dataArray = [0x02, 0xFF];
+     *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
+     * }
+     * ```
+     *
+     * @param array
+     * @param needResponse
+     */
     write(array, needResponse) {
         if (needResponse === undefined) {
             needResponse = true;
         }
         this.service.peripheral.obnizBle.centralBindings.write(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(array), !needResponse);
     }
+    /**
+     * This writes dataArray to the characteristic.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     *  await obniz.ble.initWait();
+     *   var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
+     *   console.log("write success");
+     * }
+     * ```
+     *
+     * @param data
+     * @param needResponse
+     */
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
+    }
+    /**
+     * It reads data from the characteristic.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * The returned value appears in the callback function (onread). If reading succeeds an Array with data will be returned.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+     *   console.log(dataArray);
+     * }
+     * ```
+     */
+    readWait() {
+        return super.readWait();
+    }
+    /**
+     * @ignore
+     */
     discoverChildren() {
         this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(this.service.peripheral.address, this.service.uuid, this.uuid);
     }
+    /**
+     * @ignore
+     */
     discoverAllDescriptors() {
         return this.discoverChildren();
     }
+    /**
+     * @ignore
+     *
+     */
     discoverAllDescriptorsWait() {
         return this.discoverChildrenWait();
     }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
         if (this.properties.length > 0) {
@@ -6717,53 +8065,84 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
         }
         return obj;
     }
+    /**
+     * This characteristics can broadcast or not.
+     */
     canBroadcast() {
         return this.properties.includes("broadcast");
     }
+    /**
+     * This characteristics can notify or not.
+     */
     canNotify() {
         return this.properties.includes("notify");
     }
+    /**
+     * This characteristics can read or not.
+     */
     canRead() {
         return this.properties.includes("read");
     }
+    /**
+     * This characteristics can write or not.
+     */
     canWrite() {
         return this.properties.includes("write");
     }
+    /**
+     * This characteristics can 'write without response' or not.
+     */
     canWriteWithoutResponse() {
         return this.properties.includes("write_without_response");
     }
+    /**
+     * This characteristics can indicate or not.
+     */
     canIndicate() {
         return this.properties.includes("indicate");
     }
+    /**
+     * @ignore
+     * @param descriptor
+     */
     ondiscover(descriptor) {
-        this.ondiscoverdescriptor(descriptor);
+        if (this.ondiscoverdescriptor) {
+            this.ondiscoverdescriptor(descriptor);
+        }
     }
+    /**
+     * @ignore
+     * @param descriptors
+     */
     ondiscoverfinished(descriptors) {
-        this.ondiscoverdescriptorfinished(descriptors);
+        if (this.ondiscoverdescriptorfinished) {
+            this.ondiscoverdescriptorfinished(descriptors);
+        }
     }
-    ondiscoverdescriptor(descriptor) {
-    }
-    ondiscoverdescriptorfinished(descriptors) {
-    }
-    onregisternotify() {
-    }
-    onunregisternotify() {
-    }
-    onnotify(data) {
-    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
             case "onregisternotify": {
-                this.onregisternotify();
+                if (this.onregisternotify) {
+                    this.onregisternotify();
+                }
                 break;
             }
             case "onunregisternotify": {
-                this.onunregisternotify();
+                if (this.onunregisternotify) {
+                    this.onunregisternotify();
+                }
                 break;
             }
             case "onnotify": {
-                this.onnotify(params.data || undefined);
+                if (this.onnotify) {
+                    this.onnotify(params.data || undefined);
+                }
                 break;
             }
         }
@@ -6786,26 +8165,132 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
+const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
 /**
  * @category Use as Central
  */
-class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
+class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     constructor(params) {
         super(params);
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "characteristic";
     }
+    /**
+     * Read data from descriptor.
+     *
+     * The return value appears in the callback function [[onread]].
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   peripheral.getService("FF00").getCharacteristic("FF01").read();
+     *
+     *   peripheral.getService("FF00").getCharacteristic("FF01").onread = (dataArray)=>{
+     *   console.log(dataArray);
+     *
+     *   }
+     * }
+     * ```
+     *
+     */
     read() {
         this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
     }
-    write(array) {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(array));
+    /**
+     * Read data from descriptor.
+     *
+     * The return value appears in the callback function [[onread]].
+     * If reading succeeds an Array with data will be returned.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+     *   console.log(dataArray);
+     * }
+     * ```
+     *
+     */
+    readWait() {
+        return super.readWait();
+    }
+    /**
+     * This writes dataArray to descriptor.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write(dataArray);
+     * }
+     * ```
+     *
+     * @param data
+     */
+    write(data) {
+        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
+    }
+    /**
+     * This writes dataArray to descriptor.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
+     *   console.log("write success");
+     * }
+     * ```
+     *
+     * @param data
+     * @param needResponse
+     */
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
     }
 }
 exports.default = BleRemoteDescriptor;
@@ -6821,6 +8306,10 @@ exports.default = BleRemoteDescriptor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -6834,11 +8323,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteService.js"));
 /**
@@ -6855,6 +8341,8 @@ class BleRemotePeripheral {
         this.rssi = null;
         this.adv_data = null;
         this.scan_resp = null;
+        this.localName = null;
+        this.iBeacon = null;
         this.keys = [
             "device_type",
             "address_type",
@@ -6864,10 +8352,40 @@ class BleRemotePeripheral {
             "scan_resp",
         ];
         this._services = [];
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
     }
     /**
+     * It contains all discovered services in a peripheral as an array. It is discovered when connection automatically.
      *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *     console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   for (var service of peripheral.services) {
+     *       console.log(service.uuid)
+     *   }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    get services() {
+        return this._services;
+    }
+    /**
+     * @ignore
      * @return {String} json value
      */
     toString() {
@@ -6879,6 +8397,10 @@ class BleRemotePeripheral {
             rssi: this.rssi,
         });
     }
+    /**
+     * @ignore
+     * @param dic
+     */
     setParams(dic) {
         this.advertise_data_rows = null;
         for (const key in dic) {
@@ -6887,6 +8409,335 @@ class BleRemotePeripheral {
             }
         }
         this.analyseAdvertisement();
+    }
+    /**
+     * This function will try to connect a peripheral.
+     * [[onconnect]] will be caled when connected or [[ondisconnect]] will be called when failed.
+     *
+     * If ble scanning is undergoing, scan will be terminated immediately.
+     *
+     * when connection established, all service/characteristics/descriptors will be discovered automatically.
+     * [[onconnect]] will be called after all discovery done.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = function(){
+     *          console.log("success");
+     *      }
+     *      peripheral.connect();
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
+     */
+    connect() {
+        this.obnizBle.scan.end();
+        this.obnizBle.centralBindings.connect(this.address);
+    }
+    /**
+     * This connects obniz to the peripheral.
+     * If ble scannning is undergoing, scan will be terminated immidiately.
+     *
+     * It throws when connection establish failed.
+     *
+     * when connection established, all service/characteristics/desriptors will be discovered automatically.
+     * This function will wait until all discovery done.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *    return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     * } catch(e) {
+     *   console.log("can't connect");
+     * }
+     * ```
+     *
+     */
+    connectWait() {
+        return new Promise((resolve, reject) => {
+            // if (this.connected) {
+            //   resolve();
+            //   return;
+            // }
+            this.emitter.once("statusupdate", (params) => {
+                if (params.status === "connected") {
+                    resolve(true); // for compatibility
+                }
+                else {
+                    reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+                }
+            });
+            this.connect();
+        });
+    }
+    /**
+     * This disconnects obniz from peripheral.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     *
+     * peripheral.connect();
+     * peripheral.onconnect = ()=>{
+     *   console.log("connected");
+     *   peripheral.disconnect();
+     * }
+     *
+     * ```
+     */
+    disconnect() {
+        this.obnizBle.centralBindings.disconnect(this.address);
+    }
+    /**
+     * This disconnects obniz from peripheral.
+     *
+     * It throws when failed
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.disconnectWait();
+     *   console.log("disconnected");
+     * } catch(e) {
+     *    console.log("can't connect / can't disconnect");
+     * }
+     * ```
+     */
+    disconnectWait() {
+        return new Promise((resolve, reject) => {
+            // if (!this.connected) {
+            //   resolve();
+            //   return;
+            // }
+            this.emitter.once("statusupdate", (params) => {
+                if (params.status === "disconnected") {
+                    resolve(true); // for compatibility
+                }
+                else {
+                    reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+                }
+            });
+            this.disconnect();
+        });
+    }
+    /**
+     * It returns a service which having specified uuid in [[services]].
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   if (!service) {
+     *     console.log("service not found")
+     *     return;
+     *   }
+     *   console.log(service.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
+    getService(uuid) {
+        uuid = bleHelper_1.default.uuidFilter(uuid);
+        for (const key in this._services) {
+            if (this._services[key].uuid === uuid) {
+                return this._services[key];
+            }
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findService(param) {
+        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
+        return this.getService(serviceUuid);
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findCharacteristic(param) {
+        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
+        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
+        const s = this.getService(serviceUuid);
+        if (s) {
+            return s.getCharacteristic(characteristicUuid);
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findDescriptor(param) {
+        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
+        const c = this.findCharacteristic(param);
+        if (c) {
+            return c.getDescriptor(descriptorUuid);
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     *
+     */
+    discoverAllServices() {
+        this.obnizBle.centralBindings.discoverServices(this.address);
+    }
+    /**
+     * @ignore
+     */
+    discoverAllServicesWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("discoverfinished", () => {
+                const children = this._services.filter((elm) => {
+                    return elm.discoverdOnRemote;
+                });
+                resolve(children);
+            });
+            this.discoverAllServices();
+        });
+    }
+    /**
+     * @ignore
+     */
+    discoverAllHandlesWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ArrayFlat = (array, depth) => {
+                const flattend = [];
+                (function flat(_array, _depth) {
+                    for (const el of _array) {
+                        if (Array.isArray(el) && _depth > 0) {
+                            flat(el, _depth - 1);
+                        }
+                        else {
+                            flattend.push(el);
+                        }
+                    }
+                })(array, Math.floor(depth) || 1);
+                return flattend;
+            };
+            const services = yield this.discoverAllServicesWait();
+            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
+            const chars = ArrayFlat(charsNest);
+            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
+            // eslint-disable-next-line no-unused-vars
+            const descriptors = ArrayFlat(descriptorsNest);
+        });
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "statusupdate": {
+                if (params.status === "connected") {
+                    this.connected = true;
+                    if (this.onconnect) {
+                        this.onconnect();
+                    }
+                }
+                if (params.status === "disconnected") {
+                    this.connected = false;
+                    if (this.ondisconnect) {
+                        this.ondisconnect();
+                    }
+                }
+                break;
+            }
+            case "discover": {
+                const uuid = params.service_uuid;
+                let child = this.getService(uuid);
+                if (!child) {
+                    const newService = new bleRemoteService_1.default({ uuid });
+                    newService.parent = this;
+                    this._services.push(newService);
+                    child = newService;
+                }
+                child.discoverdOnRemote = true;
+                if (this.ondiscoverservice) {
+                    this.ondiscoverservice(child);
+                }
+                break;
+            }
+            case "discoverfinished": {
+                const children = this._services.filter((elm) => {
+                    return elm.discoverdOnRemote;
+                });
+                if (this.ondiscoverservicefinished) {
+                    this.ondiscoverservicefinished(children);
+                }
+                break;
+            }
+        }
+    }
+    /**
+     * @ignore
+     */
+    advertisementServiceUuids() {
+        const results = [];
+        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
+        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
+        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
+        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
+        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
+        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
+        return results;
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {
@@ -6980,180 +8831,8 @@ class BleRemotePeripheral {
         const uuidLength = bit / 4;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
-            results.push(this.obnizBle.constructor._dataArray2uuidHex(one, true));
+            results.push(ble_1.default._dataArray2uuidHex(one, true));
         }
-    }
-    advertisementServiceUuids() {
-        const results = [];
-        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
-        return results;
-    }
-    connect() {
-        this.obnizBle.scan.end();
-        this.obnizBle.centralBindings.connect(this.address);
-    }
-    connectWait() {
-        return new Promise((resolve, reject) => {
-            // if (this.connected) {
-            //   resolve();
-            //   return;
-            // }
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "connected") {
-                    resolve(true); // for compatibility
-                }
-                else {
-                    reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
-                }
-            });
-            this.connect();
-        });
-    }
-    disconnect() {
-        this.obnizBle.centralBindings.disconnect(this.address);
-    }
-    disconnectWait() {
-        return new Promise((resolve, reject) => {
-            // if (!this.connected) {
-            //   resolve();
-            //   return;
-            // }
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "disconnected") {
-                    resolve(true); // for compatibility
-                }
-                else {
-                    reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
-                }
-            });
-            this.disconnect();
-        });
-    }
-    get services() {
-        return this._services;
-    }
-    getService(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        for (const key in this._services) {
-            if (this._services[key].uuid === uuid) {
-                return this._services[key];
-            }
-        }
-        return undefined;
-    }
-    findService(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        return this.getService(serviceUuid);
-    }
-    findCharacteristic(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
-        const s = this.getService(serviceUuid);
-        if (s) {
-            return s.getCharacteristic(characteristicUuid);
-        }
-        return null;
-    }
-    findDescriptor(param) {
-        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
-        const c = this.findCharacteristic(param);
-        if (c) {
-            return c.getDescriptor(descriptorUuid);
-        }
-        return null;
-    }
-    discoverAllServices() {
-        this.obnizBle.centralBindings.discoverServices(this.address);
-    }
-    discoverAllServicesWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverAllServices();
-        });
-    }
-    discoverAllHandlesWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ArrayFlat = (array, depth) => {
-                const flattend = [];
-                (function flat(_array, _depth) {
-                    for (const el of _array) {
-                        if (Array.isArray(el) && _depth > 0) {
-                            flat(el, _depth - 1);
-                        }
-                        else {
-                            flattend.push(el);
-                        }
-                    }
-                })(array, Math.floor(depth) || 1);
-                return flattend;
-            };
-            const services = yield this.discoverAllServicesWait();
-            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-            const chars = ArrayFlat(charsNest);
-            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-            // eslint-disable-next-line no-unused-vars
-            const descriptors = ArrayFlat(descriptorsNest);
-        });
-    }
-    onconnect() {
-    }
-    ondisconnect() {
-    }
-    ondiscoverservice(child) {
-    }
-    ondiscoverservicefinished(children) {
-    }
-    ondiscover() {
-    }
-    ondiscoverfinished() {
-    }
-    notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "statusupdate": {
-                if (params.status === "connected") {
-                    this.connected = true;
-                    this.onconnect();
-                }
-                if (params.status === "disconnected") {
-                    this.connected = false;
-                    this.ondisconnect();
-                }
-                break;
-            }
-            case "discover": {
-                const uuid = params.service_uuid;
-                let child = this.getService(uuid);
-                if (!child) {
-                    const newService = new bleRemoteService_1.default({ uuid });
-                    newService.parent = this;
-                    this._services.push(newService);
-                    child = newService;
-                }
-                child.discoverdOnRemote = true;
-                this.ondiscoverservice(child);
-                break;
-            }
-            case "discoverfinished": {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                this.ondiscoverservicefinished(children);
-                break;
-            }
-        }
-    }
-    onerror() {
     }
 }
 exports.default = BleRemotePeripheral;
@@ -7185,47 +8864,214 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "peripheral";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleRemoteCharacteristic_1.default;
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "characteristics";
     }
+    /**
+     * It contains characteristics in a service.
+     * It was discovered when connection automatically.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *     uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     *  if(!peripheral) {
+     *     console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   for (var c of service.characteristics) {
+     *     console.log(c.uuid)
+     *   }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     */
     get characteristics() {
         return this.children;
     }
-    addCharacteristic(params) {
-        return this.addChild(params);
+    /**
+     * @ignore
+     * @param param
+     */
+    addCharacteristic(param) {
+        return this.addChild(param);
     }
-    getCharacteristic(params) {
-        return this.getChild(params);
+    /**
+     * It returns a characteristic which having specified uuid in a service.
+     * Return value is null when not matched.
+     *
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   var c = service.getCharacteristic("fff0")
+     *   console.log(c.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
+    getCharacteristic(uuid) {
+        return this.getChild(uuid);
     }
+    /**
+     * @ignore
+     */
     discoverAllCharacteristics() {
         return this.discoverChildren();
     }
+    /**
+     * @ignore
+     */
     discoverAllCharacteristicsWait() {
         return this.discoverChildrenWait();
     }
+    /**
+     * @ignore
+     */
     discoverChildren() {
         this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
     }
+    /**
+     * @ignore
+     * @param characteristic
+     */
     ondiscover(characteristic) {
         this.ondiscovercharacteristic(characteristic);
     }
+    /**
+     * @ignore
+     * @param characteristics
+     */
     ondiscoverfinished(characteristics) {
         this.ondiscovercharacteristicfinished(characteristics);
     }
+    /**
+     * @ignore
+     * @param characteristic
+     */
     ondiscovercharacteristic(characteristic) {
     }
+    /**
+     * @ignore
+     * @param characteristics
+     */
     ondiscovercharacteristicfinished(characteristics) {
     }
 }
 exports.default = BleRemoteService;
 
 //# sourceMappingURL=bleRemoteService.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
+class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
+    /**
+     * Wrapper for [[write]] with data converting from number.
+     * @param val
+     * @param needResponse
+     */
+    writeNumber(val, needResponse) {
+        return super.writeNumber(val, needResponse);
+    }
+    /**
+     * Wrapper for [[write]] with data converting from text.
+     * It convert string to UTF-8 and write binary array.
+     *
+     * @param str
+     * @param needResponse
+     */
+    writeText(str, needResponse) {
+        return super.writeText(str, needResponse);
+    }
+    readWait() {
+        return super.readWait();
+    }
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
+    }
+    /**
+     * Wrapper for [[writeWait]] with data converting from text.
+     * It convert string to UTF-8 and write binary array.
+     *
+     * It throws an error when failed.
+     * @param str
+     */
+    writeTextWait(str, needResponse) {
+        return super.writeTextWait(str, needResponse);
+    }
+    /**
+     * Wrapper for [[writeWait]] with data converting from number.
+     * It writes data as 1byte.
+     *
+     * It throws an error when failed.
+     *
+     * @param val
+     */
+    writeNumberWait(val, needResponse) {
+        return super.writeNumberWait(val, needResponse);
+    }
+}
+exports.default = BleRemoteValueAttributeAbstract;
+
+//# sourceMappingURL=bleRemoteValueAttributeAbstract.js.map
 
 
 /***/ }),
@@ -7243,7 +9089,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @category Use as Central
@@ -7253,10 +9099,40 @@ class BleScan {
         this.scanTarget = {};
         this.scanSettings = {};
         this.obnizBle = obnizBle;
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
     }
+    /**
+     * This starts scanning BLE.
+     *
+     * You can filter uuids or localName using the target param.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var target = {
+     *     uuids: ["fff0","FFF1"],     //scan only has uuids "fff0" and "FFF1"
+     *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
+     * };
+     *
+     * var setting = {
+     *    duration : 10  //scan duration time in seconds. default is 30 sec.
+     * }
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.start(target, setting);
+     * ```
+     *
+     * This is also possible without params being valid.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.scan.start();
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
     start(target, settings) {
         this.obnizBle.warningIfNotInitialize();
         if (!settings) {
@@ -7282,6 +9158,24 @@ class BleScan {
             this.end();
         }, timeout * 1000);
     }
+    /**
+     * This scans and returns the first peripheral that was found among the objects specified in the target.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * console.log(peripheral);
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
     startOneWait(target, settings) {
         let state = 0;
         return new Promise((resolve) => {
@@ -7301,6 +9195,33 @@ class BleScan {
             this.start(target, settings);
         });
     }
+    /**
+     * This scans and returns all the peripherals found.
+     *
+     * This function does not return until scanning gets timed out.(default 30sec)
+     * If you want to change the default duration, you can do so with the duration param.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var setting = {
+     *   duration : 10
+     * }
+     *
+     * var peripherals = await obniz.ble.scan.startAllWait(target,setting);
+     *
+     * for(var peripheral of peripherals){
+     *   console.log(peripheral);
+     * }
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
     startAllWait(target, settings) {
         return new Promise((resolve) => {
             this.emitter.once("onfinish", () => {
@@ -7309,9 +9230,53 @@ class BleScan {
             this.start(target, settings);
         });
     }
+    /**
+     * This stops scanning BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.start();
+     * await obniz.wait(5000);
+     * obniz.ble.scan.end();
+     * ```
+     */
     end() {
         this.clearTimeoutTimer();
         this.obnizBle.centralBindings.stopScanning();
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        switch (notifyName) {
+            case "onfind": {
+                if (this.scanSettings.duplicate === false) {
+                    // duplicate filter
+                    if (this.scanedPeripherals.find((e) => e.address === params.address)) {
+                        break;
+                    }
+                }
+                if (this.isTarget(params)) {
+                    this.scanedPeripherals.push(params);
+                    this.emitter.emit(notifyName, params);
+                    if (this.onfind) {
+                        this.onfind(params);
+                    }
+                }
+                break;
+            }
+            case "onfinish": {
+                this.clearTimeoutTimer();
+                this.emitter.emit(notifyName, this.scanedPeripherals);
+                if (this.onfinish) {
+                    this.onfinish(this.scanedPeripherals);
+                }
+                break;
+            }
+        }
     }
     isTarget(peripheral) {
         if (this.scanTarget &&
@@ -7330,34 +9295,6 @@ class BleScan {
             }
         }
         return true;
-    }
-    onfinish(data) {
-    } // dummy
-    onfind(params) {
-    } // dummy
-    notifyFromServer(notifyName, params) {
-        switch (notifyName) {
-            case "onfind": {
-                if (this.scanSettings.duplicate === false) {
-                    // duplicate filter
-                    if (this.scanedPeripherals.find((e) => e.address === params.address)) {
-                        break;
-                    }
-                }
-                if (this.isTarget(params)) {
-                    this.scanedPeripherals.push(params);
-                    this.emitter.emit(notifyName, params);
-                    this.onfind(params);
-                }
-                break;
-            }
-            case "onfinish": {
-                this.clearTimeoutTimer();
-                this.emitter.emit(notifyName, this.scanedPeripherals);
-                this.onfinish(this.scanedPeripherals);
-                break;
-            }
-        }
     }
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
@@ -7378,40 +9315,84 @@ exports.default = BleScan;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+/**
+ * Deprecated class
+ */
 class BleSecurity {
     constructor(Obniz) {
         this.Obniz = Obniz;
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
     }
+    /**
+     * Deprecated function
+     * @param mode
+     * @param level
+     */
     setModeLevel(mode, level) {
         throw new Error("setModeLevel is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param introducedVersion
+     * @param functionName
+     */
     checkIntroducedFirmware(introducedVersion, functionName) {
         throw new Error("checkIntroducedFirmware is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param authTypes
+     */
     setAuth(authTypes) {
         throw new Error("setAuth is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param level
+     */
     setIndicateSecurityLevel(level) {
         throw new Error("setIndicateSecurityLevel is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param keyTypes
+     */
     setEnableKeyTypes(keyTypes) {
         throw new Error("setEnableKeyTypes is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param size
+     */
     setKeyMaxSize(size) {
         throw new Error("setKeyMaxSize is deprecated method");
     }
+    /**
+     * Deprecated function
+     */
     clearBondingDevicesList() {
         throw new Error("clearBondingDevicesList is deprecated method");
     }
+    /**
+     * @ignore
+     * @param params
+     */
     onerror(params) {
     } // dummy
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {
@@ -7452,29 +9433,87 @@ class BleService extends bleLocalAttributeAbstract_1.default {
         this.addCharacteristic = this.addChild;
         this.getCharacteristic = this.getChild;
     }
+    /**
+     * Add new Characteristic
+     * @param child
+     */
+    addCharacteristic(child) {
+        return this.addChild(child);
+    }
+    /**
+     * Get Characteristic
+     * @param uuid
+     */
+    getCharacteristic(uuid) {
+        return this.getChild(uuid);
+    }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "peripheral";
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "characteristics";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleCharacteristic_1.default;
     }
     get characteristics() {
         return this.children;
     }
+    /**
+     * advertisment object for [[BleAdvertisement.setAdvData]]
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var service = new obniz.ble.service({ uuid : "1234" });
+     * var characteristic = new obniz.ble.characteristic({ uuid : "7777", data: [1, 2, 3]});
+     * service.addCharacteristic(characteristic);
+     * obniz.ble.peripheral.addService(service);
+     *
+     * obniz.ble.advertisement.setAdvData(service.advData);
+     * obniz.ble.advertisement.setScanRespData({
+     *    localName : "obniz BLE",
+     * });
+     * obniz.ble.advertisement.start();
+     * ```
+     */
     get advData() {
         return {
             flags: ["general_discoverable_mode", "br_edr_not_supported"],
             serviceUuids: [this.uuid],
         };
     }
+    /**
+     * Terminate created service
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var service = new obniz.ble.service({ uuid : "1234" });
+     * var characteristic = new obniz.ble.characteristic({ uuid : "7777", data: [1, 2, 3]});
+     * service.addCharacteristic(characteristic);
+     * obniz.ble.peripheral.addService(service);
+     *
+     * service.end();
+     * ```
+     */
     end() {
         this.peripheral.removeService(this.uuid);
     }
-    emit(name, ...params) {
-    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notify(notifyName, params) {
         // nothing
     }
@@ -14536,6 +16575,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
+ * LogicAnalyzer records samples read from io periodically.
+ * This is useful for digital bus signal check.
+ *
+ * Only one LogicAnalyzer can be used per obniz Board.
+ *
+ * ### How it works
+ * LogicAnalyzer starts logging by a trigger.
+ * The default trigger is "value change".
+ *
+ * When it occurs, data will be recorded for a desired duration.
+ * After that is done, LogicAnalyzer starts monitoring changes in io (= continue working).
+ * One sample becomes one 1/0.
+ *
+ * ![](media://logiana_0.png)
+ *
+ * Sampling interval and duration can be configured.
+ * For example, if interval is 1 ms and duration is 800ms, you will get 800 arrays of data.
+ * The data will be in multiples of 8.
+ *
  * @category Measurement
  */
 class LogicAnalyzer {
@@ -14543,9 +16601,41 @@ class LogicAnalyzer {
         this.obniz = obniz;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.onmeasured = undefined;
     }
+    /**
+     * This starts the logic analyzer on a given io.
+     *
+     * For example, if you want to collect the data after io0 changes every 2ms for 1sec long, set as below.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 2ms interval and 1sec long.
+     * obniz.logicAnalyzer.onmeasured = function(array) {
+     *   console.log(array);
+     * }
+     * ```
+     *
+     * The trigger is an optional configuration.
+     *
+     * Without this, logicAnalyzer recognizes any io level change as trigger and start. Trigger specifies the start position.
+     * Value means start value, true/false. Samples means how much that value consists.
+     * So, with the below sample code, you will only receive data that start with "0, 0, 0"
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000, triggerValue:false, triggerValueSamples:3});  // start on io0. 2ms interval and 1sec long.
+     * obniz.logicAnalyzer.onmeasured = function(array) {
+     *   console.log(array);
+     * }
+     * ```
+     * @param params
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["io", "interval", "duration"]);
         if (err) {
@@ -14573,12 +16663,25 @@ class LogicAnalyzer {
         this.obniz.send(obj);
         return;
     }
+    /**
+     * This stops the logicAnalyzer.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1ms interval and 1sec long.
+     * obniz.logicAnalyzer.end();
+     * ```
+     */
     end() {
         const obj = {};
         obj.logic_analyzer = null;
         this.obniz.send(obj);
         return;
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (this.onmeasured) {
             this.onmeasured(obj.data);
@@ -14614,6 +16717,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
+ * The measure module provides hardware level measurement.
  * @category Measurement
  */
 class ObnizMeasure {
@@ -14621,9 +16725,38 @@ class ObnizMeasure {
         this.obniz = obniz;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.observers = [];
     }
+    /**
+     * Some electrical parts or circuits accept "pulse" and echo the "pulse" after delay.
+     * This module is best suited for measuring that delay.
+     *
+     * This module generates one pulse shot on an io, then measures the response time.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.measure.echo({
+     *   io_pulse: 0, // io for generate pulse
+     *   io_echo: 1, // io to be measured
+     *   pulse: "positive", // generate pulse pattern
+     *   pulse_width: 0.1,  // generate pulse width
+     *   measure_edges: 3, // 1 to 4. maximum edges to measure
+     *   timeout: 1000, // this is optional. 1000(1sec) is default
+     *   callback: function(edges) {
+     *     // callback function
+     *     console.log(edges);
+     *   }
+     * });
+     * ```
+     *
+     * @param params
+     */
     echo(params) {
         const err = util_1.default._requiredKeys(params, [
             "io_pulse",
@@ -14662,6 +16795,10 @@ class ObnizMeasure {
             this.observers.push(this.params.callback);
         }
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         const callback = this.observers.shift();
         if (callback) {
@@ -16470,12 +18607,18 @@ exports.default = _qrcode;
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
- * @ignore
+ * @module ObnizCore
  */
 class ObnizUtil {
     constructor(obniz) {
         this.obniz = obniz;
     }
+    /**
+     * @ignore
+     * @param params
+     * @param keys
+     * @private
+     */
     static _keyFilter(params, keys) {
         let filterdParams = {};
         if (typeof params !== "object") {
@@ -16490,7 +18633,7 @@ class ObnizUtil {
         return filterdParams;
     }
     /**
-     *
+     * @ignore
      * @return {String} key name of not found.
      */
     static _requiredKeys(params, keys) {
@@ -16504,6 +18647,10 @@ class ObnizUtil {
         }
         return null;
     }
+    /**
+     * convert from data array to string
+     * @param data
+     */
     static dataArray2string(data) {
         let string = null;
         try {
@@ -16517,10 +18664,28 @@ class ObnizUtil {
         }
         return string;
     }
+    /**
+     * convert from string to data array
+     * @param str
+     */
     static string2dataArray(str) {
         const buf = Buffer.from(str);
         return [...buf];
     }
+    /**
+     * This creates a Canvas context.
+     * It will add a canvas dom to body(in html).
+     *
+     * ```javascript
+     * // Example
+     * const ctx = obniz.util.createCanvasContext(128, 64);
+     * ctx.font = "9px sans-serif";
+     * ctx.fillText('Hello', 0, 7);
+     * ```
+     *
+     * @param width
+     * @param height
+     */
     createCanvasContext(width, height) {
         if (this.obniz.isNode) {
             try {
@@ -20333,6 +22498,7 @@ var map = {
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
+	"./Ble/SizukuLED/index.js": "./dist/src/parts/Ble/SizukuLED/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -20828,6 +22994,122 @@ class OMRON_2JCIE {
     }
 }
 exports.default = OMRON_2JCIE;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/SizukuLED/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.ShizukuLED
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class ShizukuLED {
+    constructor() {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+    }
+    static info() {
+        return {
+            name: "ShizukuLED",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+    findWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.obniz.ble.scan.onfind = (peripheral) => {
+                    console.log(peripheral.localName);
+                };
+                this.obniz.ble.scan.start();
+                return this.periperal;
+            });
+        });
+    }
+    omron_uuid(uuid) {
+        return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
+    }
+    connectWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.periperal) {
+                yield this.findWait();
+            }
+            if (!this.periperal) {
+                throw new Error("2JCIE not found");
+            }
+            if (!this.periperal.connected) {
+                yield this.periperal.connectWait();
+            }
+        });
+    }
+    disconnectWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.periperal && this.periperal.connected) {
+                this.periperal.disconnectWait();
+            }
+        });
+    }
+    signedNumberFromBinary(data) {
+        // little adian
+        let val = data[data.length - 1] & 0x7f;
+        for (let i = data.length - 2; i >= 0; i--) {
+            val = val * 256 + data[i];
+        }
+        if ((data[data.length - 1] & 0x80) !== 0) {
+            val = val - Math.pow(2, data.length * 8 - 1);
+        }
+        return val;
+    }
+    unsignedNumberFromBinary(data) {
+        // little adian
+        let val = data[data.length - 1];
+        for (let i = data.length - 2; i >= 0; i--) {
+            val = val * 256 + data[i];
+        }
+        return val;
+    }
+    getLatestData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.connectWait();
+            const c = this.periperal
+                .getService(this.omron_uuid("3000"))
+                .getCharacteristic(this.omron_uuid("3001"));
+            const data = yield c.readWait();
+            const json = {
+                row_number: data[0],
+                temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+                relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+                light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
+                uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
+                barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
+                soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+                discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
+                heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
+                battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+            };
+            return json;
+        });
+    }
+}
+exports.default = ShizukuLED;
 
 //# sourceMappingURL=index.js.map
 

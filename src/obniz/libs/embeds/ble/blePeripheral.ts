@@ -6,6 +6,8 @@ import BleHelper from "./bleHelper";
 import BleService from "./bleService";
 
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
 export default  class BlePeripheral {
