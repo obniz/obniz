@@ -7,10 +7,27 @@ import {ObnizOptions} from "./ObnizOptions";
 import ObnizSystemMethods from "./ObnizSystemMethods";
 
 export default class ObnizUIs extends ObnizSystemMethods {
-  constructor(id: any, options?: ObnizOptions) {
+  constructor(id: string, options?: ObnizOptions) {
     super(id, options);
   }
 
+  /**
+   * This closes the current connection.
+   * You need to set auto_connect to false. Otherwise the connection will be recovered.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678', {
+   *   auto_connect: false,
+   *   reset_obniz_on_ws_disconnection: false
+   * });
+   *
+   * obniz.connect();
+   * obniz.onconnect = async function() {
+   *   obniz.io0.output(true);
+   *   obniz.close();
+   * }
+   * ```
+   */
   public close() {
     super.close();
     this.updateOnlineUI();

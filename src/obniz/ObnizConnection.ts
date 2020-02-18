@@ -3,8 +3,8 @@
  * @module ObnizCore
  */
 
-import emitter = require("eventemitter3");
-import wsClient = require("ws");
+import EventEmitter from "eventemitter3";
+import wsClient from "ws";
 
 // @ts-ignore
 import packageJson from "../../package";  // pakcage.js will be created from package.json on build.
@@ -13,30 +13,141 @@ import {ObnizOptions} from "./ObnizOptions";
 
 export default class ObnizConnection {
 
+  /**
+   * obniz.js version
+   */
   static get version() {
-
     return packageJson.version;
   }
 
+  /**
+   * @ignore
+   * @constructor
+   */
   static get WSCommand() {
     return WSCommand;
   }
 
+  /**
+   * This lets obniz.js to show logs like communicated jsons and connection logs in console.log.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.debugprint = true
+   * obniz.onconnect = async function() {
+   *  obniz.io0.output(true);
+   * }
+   * ```
+   */
   public debugprint: boolean;
-  public debugprintBinary: boolean;
-  public hw: any;
-  public firmware_ver: any;
 
+  /**
+   * @ignore
+   */
+  public debugprintBinary: boolean;
+
+  /**
+   * This variable indicate connected hardware identifier of target device
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.debugprint = true
+   * obniz.onconnect = async function() {
+   *   console.log(obniz.hw) // ex. "obnizb1"
+   * }
+   * ```
+   */
+  public hw?: string;
+
+  /**
+   * This variable indicate installed firmware version of target device
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.debugprint = true
+   * obniz.onconnect = async function() {
+   *   console.log(obniz.firmware_ver) // ex. "2.0.0"
+   * }
+   * ```
+   */
+  public firmware_ver?: string;
+
+  /**
+   * Is node.js environment or not.
+   * @readonly
+   */
   public isNode: boolean;
-  public id: any;
-  public onopen: any;
-  public onclose: any;
-  public onconnect: any;
+
+  /**
+   * obniz id
+   */
+  public id: string;
+
+  /**
+   * @ignore
+   */
+  public onopen?: (obniz: this) => void;
+
+  /**
+   * onclose will be called when disconnected.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *
+   * }
+   * obniz.onclose = async function() {
+   *
+   * }
+   * ```
+   */
+  public onclose?: (obniz: this) => void;
+
+  /**
+   * Once connection is established, onconnect function will be called.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *
+   * }
+   * ```
+   *
+   * Operations like turning on/off an io becomes possible only after connection is established,
+   * so any operations you want obniz Board to undertake must be written in onconnect
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *   obniz.io0.output(true);
+   * }
+   * ```
+   */
+  public onconnect?: (obniz: this) => void;
+
+  /**
+   * This let you know connection state to your obniz Board as string value.
+   *
+   * - 'closed' : not connected.
+   * - 'connecting' : connecting
+   * - 'connected' : connection established
+   * - 'closing' : closing connection.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * console.log(obniz.connectionState) // => === "connecting"
+   * obniz.onconnect = async function() {
+   *  console.log(obniz.connectionState) // => === "connected"
+   * }
+   * ```
+   *
+   *
+   */
+  public connectionState: "closed" | "connecting" | "connected" | "closing";
   protected socket: any;
   protected socket_local: any;
   protected debugs: any;
   protected onConnectCalled: boolean;
-  protected connectionState: "closed" | "connecting" | "connected" | "closing";
   protected bufferdAmoundWarnBytes: number;
   protected emitter: any;
   protected options: any;
@@ -48,7 +159,7 @@ export default class ObnizConnection {
   protected _connectionRetryCount: number;
   protected sendPool: any;
 
-  constructor(id: any, options?: ObnizOptions) {
+  constructor(id: string, options?: ObnizOptions) {
     this.isNode = typeof window === "undefined";
     this.id = id;
     this.socket = null;
@@ -61,7 +172,7 @@ export default class ObnizConnection {
     this.firmware_ver = undefined;
     this.connectionState = "closed"; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-    this.emitter = new emitter();
+    this.emitter = new EventEmitter();
 
     this._connectionRetryCount = 0;
 
@@ -99,43 +210,52 @@ export default class ObnizConnection {
     }
   }
 
-  public prompt(filled: any, callback: any) {
-    const obnizid: any = prompt("Please enter obniz id", filled);
-    if (obnizid) {
-      callback(obnizid);
-    }
-  }
-
-  public wsOnOpen() {
-    this.print_debug("ws connected");
-    this._connectionRetryCount = 0;
-    // wait for {ws:{ready:true}} object
-    if (typeof this.onopen === "function") {
-      this.onopen(this);
-    }
-  }
-
-  public wsOnMessage(data: any) {
-    let json: any;
-    if (typeof data === "string") {
-      json = JSON.parse(data);
-    } else if (this.wscommands) {
-      if (this.debugprintBinary) {
-        console.log("Obniz: binalized: " + new Uint8Array(data).toString());
-      }
-      json = this.binary2Json(data);
-    }
-
-    if (Array.isArray(json)) {
-      for (const i in json) {
-        this.notifyToModule(json[i]);
-      }
-    } else {
-      // invalid json
-    }
-  }
-
-  public connectWait(option: any) {
+  /**
+   * With this you wait until the connection to obniz Board succeeds.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   *
+   * await obniz.connectWait();
+   *
+   * obniz.io0.output(true);
+   * obniz.close();
+   *
+   * ```
+   *
+   *
+   * - with timeout
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   *
+   * await obniz.connectWait({timeout:10});  //timeout 10sec
+   *
+   * if(connected){
+   *    obniz.io0.output(true);
+   *    obniz.close();
+   * }
+   * ```
+   *
+   * - with auto_connect:false
+   *
+   * If the param auto_connect is set as false, it will try to connect only once and, if unsuccessful, return false.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678',{auto_connect: false});
+   *
+   * var connected = await obniz.connectWait();  //try once
+   *
+   * if(connected){
+   *   obniz.io0.output(true);
+   *   obniz.close();
+   * }
+   * ```
+   *
+   * @param option.timeout timeout in seconds
+   * @return False will be returned when connection is not established within a set timeout.
+   */
+  public connectWait(option?: { timeout?: number }): Promise<boolean> {
     option = option || {};
     const timeout: any = option.timeout || null;
 
@@ -161,6 +281,18 @@ export default class ObnizConnection {
     });
   }
 
+  /**
+   * You can connect to obniz Board manually by calling connect() when auto_connect is set to be false.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678', { auto_connect: false });
+   *
+   * obniz.connect();
+   * obniz.onconnect = async function() {
+   *  obniz.io0.output(true);
+   * }
+   * ```
+   */
   public connect() {
     if (this.socket && this.socket.readyState <= 1) {
       return;
@@ -183,7 +315,14 @@ export default class ObnizConnection {
     this.connectionState = "closed";
   }
 
-  public send(obj: any, options?: any) {
+  /**
+   * Send json/binary data to obniz Cloud or device.
+   *
+   * @param obj send data
+   * @param options send option
+   * @param options.local_connect If false, send data via gloval internet.
+   */
+  public send(obj: object | object[], options?: { local_connect?: boolean }) {
     try {
       if (!obj || typeof obj !== "object") {
         console.log("obnizjs. didnt send ", obj);
@@ -248,12 +387,56 @@ export default class ObnizConnection {
     }
   }
 
+  /**
+   * @ignore
+   * @param msg
+   */
   public warning(msg: any) {
     console.log("warning:" + msg);
   }
 
+  /**
+   * @ignore
+   * @param msg
+   */
   public error(msg: any) {
     console.error("error:" + msg);
+  }
+
+  protected prompt(filled: any, callback: any) {
+    const obnizid: any = prompt("Please enter obniz id", filled);
+    if (obnizid) {
+      callback(obnizid);
+    }
+  }
+
+  protected wsOnOpen() {
+    this.print_debug("ws connected");
+    this._connectionRetryCount = 0;
+    // wait for {ws:{ready:true}} object
+    if (typeof this.onopen === "function") {
+      this.onopen(this);
+    }
+  }
+
+  protected wsOnMessage(data: any) {
+    let json: any;
+    if (typeof data === "string") {
+      json = JSON.parse(data);
+    } else if (this.wscommands) {
+      if (this.debugprintBinary) {
+        console.log("Obniz: binalized: " + new Uint8Array(data).toString());
+      }
+      json = this.binary2Json(data);
+    }
+
+    if (Array.isArray(json)) {
+      for (const i in json) {
+        this.notifyToModule(json[i]);
+      }
+    } else {
+      // invalid json
+    }
   }
 
   protected wsOnClose(event: any) {
