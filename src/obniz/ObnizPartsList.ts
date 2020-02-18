@@ -82,9 +82,12 @@ import XBee, {XBeeOptions} from "../parts/Wireless/XBee";
 
 // ColorSensor
 // Ble
+// biological
+import Puls08M5stickcS, {Puls08M5stickcSOptions} from "../parts/Biological/PULSE08-M5STICKC-S";
 import OMRON_2JCIE, {OMRON_2JCIEOptions} from "../parts/Ble/2jcie";
 import PT550, {PT550Options} from "../parts/ColorSensor/PT550";
 import S11059, {S11059Options} from "../parts/ColorSensor/S11059";
+import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
 import Grove_3AxisAccelerometer, {Grove_3AxisAccelerometerOptions} from "../parts/Grove/Grove_3AxisAccelerometer";
 // Grove
 import Grove_Button, {Grove_ButtonOptions} from "../parts/Grove/Grove_Button";
@@ -99,10 +102,7 @@ import Keyestudio_Buzzer, {Keyestudio_BuzzerOptions} from "../parts/Keyestudio/K
 import Keyestudio_MoistureSensor, {Keyestudio_MoistureSensorOptions} from "../parts/Keyestudio/Keyestudio_MoistureSensor";
 import Keyestudio_PIR, {Keyestudio_PIROptions} from "../parts/Keyestudio/Keyestudio_PIR";
 import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
-
-// biological
-import Puls08M5stickcS, {Puls08M5stickcSOptions} from "../parts/Biological/PULSE08-M5STICKC-S";
-import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
+import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/Keyestudio/Keyestudio_TrafficLight";
 import SH200Q, {SH200QOptions} from "../parts/MovementSensor/SH200Q";
 import AXP192, {AXP192Options} from "../parts/Power/AXP192";
 import DPS310, {DPS310Options} from "../parts/PressureSensor/DPS310";
@@ -226,6 +226,7 @@ export interface WiredNameMap {
   "Keyestudio_Buzzer": Keyestudio_Buzzer;
   "Keyestudio_TemperatureSensor": Keyestudio_TemperatureSensor;
   "Keyestudio_PIR": Keyestudio_PIR;
+  "Keyestudio_TrafficLight": Keyestudio_TrafficLight;
   // Ble
   "2JCIE": OMRON_2JCIE;
   // Bioligical
@@ -358,6 +359,7 @@ export interface WiredNameOptionsMap {
   "Keyestudio_Buzzer": Keyestudio_BuzzerOptions;
   "Keyestudio_TemperatureSensor": Keyestudio_TemperatureSensorOptions;
   "Keyestudio_PIR": Keyestudio_PIROptions;
+  "Keyestudio_TrafficLight": Keyestudio_TrafficLightOptions;
   // Ble
 
   "2JCIE": OMRON_2JCIEOptions;

@@ -20227,6 +20227,7 @@ var map = {
 	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
 	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
 	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
+	"./Keyestudio/Keyestudio_TrafficLight/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
@@ -29475,6 +29476,77 @@ class Keyestudio_TemperatureSensor {
     }
 }
 exports.default = Keyestudio_TemperatureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_TrafficLight
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TrafficLight {
+    constructor() {
+        this.keys = ["gnd", "green", "yellow", "red"];
+        this.requiredKeys = ["green", "yellow", "red"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TrafficLight",
+        };
+    }
+    wired(obniz) {
+        function getIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return io;
+                }
+            }
+            return obniz.getIO(io);
+        }
+        this.obniz = obniz;
+        obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.green_io = getIO(this.params.green);
+        this.yellow_io = getIO(this.params.yellow);
+        this.red_io = getIO(this.params.red);
+    }
+    on(led) {
+        if (led === "green") {
+            this.green_io.output(true);
+        }
+        if (led === "yellow") {
+            this.yellow_io.output(true);
+        }
+        if (led === "red") {
+            this.red_io.output(true);
+        }
+    }
+    off(led) {
+        if (led === "green") {
+            this.green_io.output(false);
+        }
+        if (led === "yellow") {
+            this.yellow_io.output(false);
+        }
+        if (led === "red") {
+            this.red_io.output(false);
+        }
+    }
+    exclusive_on(led) {
+        this.green_io.output(false);
+        this.yellow_io.output(false);
+        this.red_io.output(false);
+        this.on(led);
+    }
+}
+exports.default = Keyestudio_TrafficLight;
 
 //# sourceMappingURL=index.js.map
 
