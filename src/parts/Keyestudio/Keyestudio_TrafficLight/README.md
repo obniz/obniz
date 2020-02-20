@@ -20,44 +20,6 @@ gnd | `number(obniz Board io)` | no |  &nbsp; | GND for LED(GND pin of Keyestudi
 var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
 ```
 
-
-## LED Control
-
-[https://obniz.io/sdk/parts/LED/README.md](https://obniz.io/sdk/parts/LED/README.md)
-Specify one of `green`, `yellow` and `red`.  
-
-### on()
-Simply, Turning on a LED.
-It provide 5V to LED.
-
-```javascript
-// JavaScript Example
-var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
-light.green.on();
-light.yellow.on();
-light.red.on();
-```
-
-### off()
-Turning off a LED.
-```javascript
-// JavaScript Example
-var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
-light.green.off();
-light.yellow.off();
-light.red.off();
-```
-
-### blink(interval_ms)
-Start blinking a LED.
-default interval is 100msec
-
-```javascript
-// JavaScript Example
-var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
-light.yellow.blink();
-```
-
 ## single(led)
 turn on a LED exclusively. That is, one LED turns on after turning off the other LEDs.  
 This function is useful when this module is used as the traffic light, because it guarantees that only one LED is lit.  
@@ -81,4 +43,47 @@ while (true){
     await obniz.wait(1000);
 }
 ```
+
+## LED Control
+
+[https://obniz.io/sdk/parts/LED/README.md](https://obniz.io/sdk/parts/LED/README.md)
+
+Specify one of `green`, `yellow` and `red`.  
+
+- on()
+
+Simply, Turning on a LED.
+It provide 5V to LED.
+
+```javascript
+// JavaScript Example
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+light.green.on();
+light.yellow.on();
+light.red.on();
+```
+
+- off()
+
+Turning off a LED.
+```javascript
+// JavaScript Example
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+light.green.off();
+light.yellow.off();
+light.red.off();
+```
+
+- blink(interval_ms)
+
+Start blinking a LED.
+default interval is 100msec
+
+```javascript
+// JavaScript Example
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+light.yellow.blink();
+```
+
+
 
