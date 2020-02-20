@@ -1,7 +1,7 @@
 # Keyestudio_TrafficLight
 Keyestudio traffic light module, which has green, yellow and red LEDs.  
 
-![]()
+![](index.jpg)
 
 
 ## obniz.wired("Keyestudio_TrafficLight", {green, yellow, red [, gnd]})
@@ -17,45 +17,68 @@ gnd | `number(obniz Board io)` | no |  &nbsp; | GND for LED(GND pin of Keyestudi
 
 ```javascript
 // JavaScript Example
-var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, geeen:1, yellow:2, red:3});
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
 ```
 
 
-## on(led)
-turn on a LED.  
-Specify one of `green`, `yellow` and `red` in the `led` argument.  
+## LED Control
+
+[https://obniz.io/sdk/parts/LED/README.md](https://obniz.io/sdk/parts/LED/README.md)
+Specify one of `green`, `yellow` and `red`.  
+
+### on()
+Simply, Turning on a LED.
+It provide 5V to LED.
 
 ```javascript
 // JavaScript Example
-var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, geeen:1, yellow:2, red:3});
-light.on("green");
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+light.green.on();
+light.yellow.on();
+light.red.on();
 ```
 
+### off()
+Turning off a LED.
+```javascript
+// JavaScript Example
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+light.green.off();
+light.yellow.off();
+light.red.off();
+```
 
-## off(led)
-turn off a LED.  
-Specify one of `green`, `yellow` and `red` in the `led` argument.  
+### blink(interval_ms)
+Start blinking a LED.
+default interval is 100msec
 
 ```javascript
 // JavaScript Example
-var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, geeen:1, yellow:2, red:3});
-light.on("green");
-await obniz.wait(1000);
-light.off("green");
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+light.yellow.blink();
 ```
 
-
-## exclusive_on(led)
+## single(led)
 turn on a LED exclusively. That is, one LED turns on after turning off the other LEDs.  
 This function is useful when this module is used as the traffic light, because it guarantees that only one LED is lit.  
 Specify one of `green`, `yellow` and `red` in the `led` argument.  
 
 ```javascript
 // JavaScript Example
-var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, geeen:1, yellow:2, red:3});
-light.exclusive_on("green");
-await obniz.wait(1000);
-light.exclusive_on("yellow");
-await obniz.wait(1000);
-light.exclusive_on("red");
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+light.single("green");
 ```
+
+
+## next()
+Lights in order of blue, yellow, and red.
+
+```javascript
+// JavaScript Example
+var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+while (true){
+    light.next();
+    await obniz.wait(1000);
+}
+```
+

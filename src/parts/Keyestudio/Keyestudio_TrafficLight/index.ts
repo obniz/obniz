@@ -29,15 +29,18 @@ export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
   public requiredKeys: string[];
   public params: any;
 
+  public green!: LED;
+  public yellow!: LED;
+  public red!: LED;
+
   protected obniz!: Obniz;
 
-  private green_io!: PeripheralIO;
-  private yellow_io!: PeripheralIO;
-  private red_io!: PeripheralIO;
+  private state: TrafficLightType;
 
   constructor() {
     this.keys = ["gnd", "green", "yellow", "red"];
     this.requiredKeys = ["green", "yellow", "red"];
+    this.state = "red";
   }
 
   public wired(obniz: Obniz) {
@@ -53,39 +56,43 @@ export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
     this.obniz = obniz;
     obniz.setVccGnd(null, this.params.gnd, "5v");
 
-    this.green_io = getIO(this.params.green);
-    this.yellow_io = getIO(this.params.yellow);
-    this.red_io = getIO(this.params.red);
+    this.green = obniz.wired("LED", {anode: this.params.green});
+    this.yellow = obniz.wired("LED", {anode: this.params.yellow});
+    this.red = obniz.wired("LED", {anode: this.params.red});
   }
 
-  public on(led: TrafficLightType) {
-    if (led === "green") {
-      this.green_io.output(true);
-    }
-    if (led === "yellow") {
-      this.yellow_io.output(true);
-    }
-    if (led === "red") {
-      this.red_io.output(true);
-    }
-  }
-
-  public off(led: TrafficLightType) {
-    if (led === "green") {
-      this.green_io.output(false);
-    }
-    if (led === "yellow") {
-      this.yellow_io.output(false);
-    }
-    if (led === "red") {
-      this.red_io.output(false);
+  public single(led: TrafficLightType) {
+    this.green.off();
+    this.yellow.off();
+    this.red.off();
+    this.state = led;
+    switch (led) {
+      case "green":
+        this.green.on();
+        break;
+      case "yellow":
+        this.yellow.on();
+        break;
+      case "red":
+      default:
+        this.red.on();
+        this.state = "red";
+        break;
     }
   }
 
-  public exclusive_on(led: TrafficLightType) {
-    this.green_io.output(false);
-    this.yellow_io.output(false);
-    this.red_io.output(false);
-    this.on(led);
+  public next() {
+    switch (this.state) {
+      case "green":
+        this.single("yellow");
+        break;
+      case "yellow":
+        this.single("red");
+        break;
+      case "red":
+      default:
+        this.single("green");
+        break;
+    }
   }
 }

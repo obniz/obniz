@@ -1,7 +1,7 @@
 # Temperature Sensor - LM35DZ
 Keyestudio temperature sensor.
 
-![]()
+![](index.jpg)
 
 ## wired(obniz, {vcc, gnd, output})
 

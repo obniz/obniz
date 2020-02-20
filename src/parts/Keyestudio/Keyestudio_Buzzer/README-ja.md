@@ -2,7 +2,7 @@
 
 Keyestudio社製ブザーです。指定した高さの音を鳴らすことができます。
 
-![]()
+![](index.jpg)
 
 ## wired(obniz,  {signal [, vcc, gnd]})
 

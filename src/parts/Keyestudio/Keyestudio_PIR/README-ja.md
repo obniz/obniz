@@ -1,8 +1,8 @@
-# Keyestudio_PIR
+# Keyestudio PIR
 
 Keyestudio社製のモーションセンサ(PIRセンサ)です。人や動物が近くにいるかを検出できます。
 
-![]()
+![](index.jpg)
 
 
 ## wired(obniz, {signal [,vcc, gnd]})

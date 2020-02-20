@@ -2,7 +2,7 @@
 
 Keyestudio buzzer. It make a specified sound.
 
-![]()
+![](index.jpg)
 
 ## wired(obniz,  { signal [, vcc, gnd]});
 

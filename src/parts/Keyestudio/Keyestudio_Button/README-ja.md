@@ -2,7 +2,7 @@
 
 Keyestudio社製ボタンモジュールです。押されたかどうかを検知できます。
 
-![]()
+![](index.jpg)
 
 ## wired(obniz,  {signal [, vcc, gnd]});
 

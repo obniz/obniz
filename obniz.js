@@ -29496,6 +29496,7 @@ class Keyestudio_TrafficLight {
     constructor() {
         this.keys = ["gnd", "green", "yellow", "red"];
         this.requiredKeys = ["green", "yellow", "red"];
+        this.state = "red";
     }
     static info() {
         return {
@@ -29513,37 +29514,42 @@ class Keyestudio_TrafficLight {
         }
         this.obniz = obniz;
         obniz.setVccGnd(null, this.params.gnd, "5v");
-        this.green_io = getIO(this.params.green);
-        this.yellow_io = getIO(this.params.yellow);
-        this.red_io = getIO(this.params.red);
+        this.green = obniz.wired("LED", { anode: this.params.green });
+        this.yellow = obniz.wired("LED", { anode: this.params.yellow });
+        this.red = obniz.wired("LED", { anode: this.params.red });
     }
-    on(led) {
-        if (led === "green") {
-            this.green_io.output(true);
-        }
-        if (led === "yellow") {
-            this.yellow_io.output(true);
-        }
-        if (led === "red") {
-            this.red_io.output(true);
-        }
-    }
-    off(led) {
-        if (led === "green") {
-            this.green_io.output(false);
-        }
-        if (led === "yellow") {
-            this.yellow_io.output(false);
-        }
-        if (led === "red") {
-            this.red_io.output(false);
+    single(led) {
+        this.green.off();
+        this.yellow.off();
+        this.red.off();
+        this.state = led;
+        switch (led) {
+            case "green":
+                this.green.on();
+                break;
+            case "yellow":
+                this.yellow.on();
+                break;
+            case "red":
+            default:
+                this.red.on();
+                this.state = "red";
+                break;
         }
     }
-    exclusive_on(led) {
-        this.green_io.output(false);
-        this.yellow_io.output(false);
-        this.red_io.output(false);
-        this.on(led);
+    next() {
+        switch (this.state) {
+            case "green":
+                this.single("yellow");
+                break;
+            case "yellow":
+                this.single("red");
+                break;
+            case "red":
+            default:
+                this.single("green");
+                break;
+        }
     }
 }
 exports.default = Keyestudio_TrafficLight;
@@ -34648,6 +34654,8 @@ class SHT31 {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
         this.address = this.params.address || 0x44;
+        // tslint:disable-next-line:no-debugger
+        debugger;
         if (this.params.addressmode) {
             this.io_adr = obniz.getIO(this.params.adr);
             if (this.params.addressmode === 4) {
@@ -34675,6 +34683,11 @@ class SHT31 {
     getTempWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getAllWait()).temperature;
+        });
+    }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getHumidWait();
         });
     }
     getHumidWait() {
