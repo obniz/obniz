@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>console.logをつかってみよう</title>
+    <script src="obniz.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="obniz-debug"></div>
+<h2>console.logの使い方２２</h2>
+<script>
+    var obniz = new Obniz("72618310");
+    //var obniz = new Obniz("OBNIZ_ID_HERE");
+    obniz.onconnect = async () => {
+        var light = obniz.wired("Keyestudio_TrafficLight", {gnd:0, green:1, yellow:2, red:3});
+        light.green.on();
+        await obniz.wait(100);
+        light.yellow.on();
+        await obniz.wait(100);
+        light.red.on();
+        await obniz.wait(100);
+        while (true) {
+            light.next();
+            await obniz.wait(1000);
+        }
+    }
+       // let button = obniz.wired("Button", {signal: 3});
+    //     button.onchange = function (pressed) {
+    //         console.log("pressed:" + pressed); // 文字列としてつなげてみる
+    //         console.log(`pressed:${pressed}`); // テンプレートリテラルという記法で表示
+    //     };
+    //     // let sensor = obniz.wired("SHT31", {scl: 0, sda: 1});
+    //     // let data = await sensor.getAllWait();
+    //     // console.log("Sensor" + data); // NG [object Object]と出てしまう
+    //     // console.log(`Sensor:${data}`); // テンプレートリテラルという記法で表示
+    //     // console.log("Sensor", data); // OK センサーのデータを確認できる
+    //     // console.table(data); // Dataをテーブル形式で表示
+    //     let sensor = obniz.wired("SHT31", {vcc:0, sda:1, scl:2, adr:3, gnd:4, addressmode:5});
+    //     var temp = await sensor.getTempWait();
+    //     console.log('temperature:' + temp);
+    // }
+</script>
+</body>
+</html>
+
+
+
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>console.logをつかってみよう</title>-->
+<!--    <script src="obniz.js" crossorigin="anonymous"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div id="obniz-debug"></div>-->
+<!--<h2>console.logの使い方</h2>-->
+<!--<script>-->
+<!--    //var obniz = new Obniz("72618310");-->
+<!--    var obniz = new Obniz("88801217");-->
+<!--    //var obniz = new Obniz("OBNIZ_ID_HERE");-->
+<!--    obniz.onconnect = async () => {-->
+<!--        // let button = obniz.wired("Button", {signal: 3});-->
+<!--        // button.onchange = function (pressed) {-->
+<!--        //     console.log("pressed:" + pressed); // 文字列としてつなげてみる-->
+<!--        //     console.log(`pressed:${pressed}`); // テンプレートリテラルという記法で表示-->
+<!--        // };-->
+<!--        // let sensor = obniz.wired("SHT31", {scl: 0, sda: 1});-->
+<!--        // let data = await sensor.getAllWait();-->
+<!--        // console.log("Sensor" + data); // NG [object Object]と出てしまう-->
+<!--        // console.log("Sensor", data); // OK センサーのデータを確認できる-->
+<!--        // console.table(data); // Dataをテーブル形式で表示-->
+<!--        // let button = obniz.wired("M5StickC_ToF", {sda: 4,scl:2,vcc:6,gnd:0});-->
+<!--        // while (true) {-->
+<!--        //     console.log(await button.getWait())-->
+<!--        // }-->
+<!--        let yun = obniz.wired("YunHat", {sda:0, scl:26});-->
+<!--        while (true) {-->
+<!--            yun.rgb(255,0,0);-->
+<!--            await obniz.wait(1000);-->
+<!--            yun.rgb(0,255,0);-->
+<!--            await obniz.wait(1000);-->
+<!--            yun.rgb(0,0,255);-->
+<!--            await obniz.wait(1000);-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+<!--
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/obniz@3.2.0/obniz.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+
+    <div id="obniz-debug"></div>
+    <h3>ボタンを押したら、新しくWebページが表示されるおもちゃをつくろう</h3>
+
+
+    <script>
+      var obniz = new Obniz("OBNIZ_ID_HERE");
+
+      obniz.onconnect = async function () {
+        var button = obniz.wired("Button",  {signal:0,gnd:2});
+        button.onchange = function(pressed){
+          console.log("pressed:" + pressed)
+          if(pressed){
+            window.open('https://blog.obniz.io/ja/example-2/');
+          }
+        };
+        obniz.switch.onchange = function(state) {
+          if (state === "push") {
+            window.open('https://blog.obniz.io/ja/example-2/');
+          }
+        }
+      }
+
+    </script>
+  </body>
+</html> -->
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>console.logをつかってみよう</title>
+    <script src="https://unpkg.com/obniz@3.2.0/obniz.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="obniz-debug"></div>
+<h2>console.logの使い方</h2>
+<script>
+    var obniz = new Obniz("72618310");
+    //var obniz = new Obniz("OBNIZ_ID_HERE");
+    obniz.onconnect = async () => {
+      console.log("Hello world!");
+        let button = obniz.wired("Button", {signal: 3});
+        button.onchange = function (pressed) {
+//             console.log("pressed:" + pressed); // 文字列としてつなげてみる
+//             console.log(`pressed:${pressed}`); // テンプレートリテラルという記法で表示
+        };
+//         let sensor = obniz.wired("SHT31", {scl: 0, sda: 1});
+//         let data = await sensor.getAllWait();
+     let data = {temperature: 24.3297474631876,
+humidity: 46.89555199511711};
+//          console.log("Sensor" + data); // NG [object Object]と出てしまう
+//         console.log("Sensor", data); // OK センサーのデータを確認できる
+//         console.table(data); // Dataをテーブル形式で表示
+    }
+</script>
+</body>
+</html>
+ -->

@@ -5,6 +5,10 @@
 import emitter = require("eventemitter3");
 import semver = require("semver");
 
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 export default class BleSecurity {
   public Obniz: any;
   public emitter: any;

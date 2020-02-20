@@ -23,10 +23,33 @@ declare global {
   }
 }
 
+/**
+ * obniz class is the abstract version of obniz Board hardware within JavaScript.
+ *
+ * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
+ * without the details of websocket api.
+ *
+ *
+ * ### obnizOS version and obniz.js version
+ *
+ * obniz cloud compare your obniz.js version and target device obnizOS version.
+ * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
+ * It will work somehow but some functions looses compatibility.
+ *
+ * ### one device from two program
+ *
+ * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
+ * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
+ *
+ * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
+ *
+ * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
+ *
+ */
 class Obniz extends ObnizUIs {
 
   /**
-   *
+   * obniz REST api class
    * @returns {ObnizApi}
    */
   static get api() {
@@ -37,16 +60,95 @@ class Obniz extends ObnizUIs {
    * @ignore
    */
   public util: any;
+
+  /**
+   * Receive message. If you want to send message, see [[Obniz.message]]
+   *
+   * ```javascript
+   * // Example
+   * obniz.onconnect = function() {
+   *   var motor = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
+   *
+   *   motor.angle(0);
+   *   obniz.onmessage = function(message, from) {
+   *     if (message === "pressed") {
+   *       motor.angle(85);
+   *     }
+   *   };
+   * }
+   * ```
+   */
+  public onmessage: any;
+
   protected looper: any;
   protected repeatInterval: any;
-  protected onmessage: any;
   protected ondebug: any;
 
-  constructor(id: any, options?: ObnizOptions) {
+  /**
+   * We will now instantiate obniz.
+   *
+   * obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
+   *
+   * ```javascript
+   * new Obniz('1234-5678') // OK
+   * new Obniz('12345678') // OK
+   * new Obniz(12345678) // Can't accept
+   * ```
+   *
+   * If you connect to obniz which has an access token, provide an option like this
+   *
+   * ```javascript
+   * new Obniz('1234-5678', {access_token: 'your token here'})
+   * ```
+   *
+   * If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
+   * In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
+   * It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
+   *
+   * ![](media://obniz_prompt.png)
+   *
+   * When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
+   *
+   * When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
+   * But when cloud connection gets closed, the local connect also gets closed.
+   *
+   * ![](media://local_connect.png)
+   *
+   * The timing onconnect() gets called depends on the availability of local connect.
+   * obniz.js will wait a little to establish connection via local connect as much as possible.
+   * See the flow below.
+   *
+   * ![](media://onconnect_flow.png)
+   *
+   * The second parameter when instantiating obniz Board is an option.
+   *
+   * @param id
+   * @param options
+   */
+  constructor(id: string, options?: ObnizOptions) {
     super(id, options);
     this.util = new ObnizUtil(this);
   }
 
+  /**
+   * Repeat will call the callback function periodically while it is connected to obniz Board.
+   * It will stop calling once it is disconnected from obniz Board.
+   *
+   * ```javascript
+   * // Javascript Example
+   *  obniz.ad0.start();
+   *  obniz.repeat(function(){
+   *    if (obniz.ad0.value > 2.5) {
+   *      obniz.io0.output(true);
+   *    } else {
+   *      obniz.io0.output(false);
+   *    }
+   *  }, 100)
+   * ```
+   *
+   * @param callback
+   * @param interval  default 100. It mean 100ms interval loop.
+   */
   public repeat(callback: any, interval: any) {
     if (this.looper) {
       this.looper = callback;
@@ -61,6 +163,10 @@ class Obniz extends ObnizUIs {
     }
   }
 
+  /**
+   * @ignore
+   * @param msg
+   */
   public warning(msg: any) {
     if (this.isNode) {
       console.error(msg);
@@ -77,6 +183,10 @@ class Obniz extends ObnizUIs {
     }
   }
 
+  /**
+   * @ignore
+   * @param msg
+   */
   public error(msg: any) {
     if (this.isNode) {
       console.error(msg);
@@ -94,6 +204,50 @@ class Obniz extends ObnizUIs {
     }
   }
 
+  /**
+   * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
+   *
+   * ```javascript
+   * // Example
+   * obniz.onconnect = function(){
+   *  var button = obniz.wired("Button",  {signal:0, gnd:1});
+   *
+   *  button.onchange = function(){
+   *    var targets = [
+   *      "1234-1231",
+   *      "1234-1232",
+   *      "1234-1233",
+   *      "1234-1234",
+   *      "1234-1235",
+   *      "1234-1236",
+   *      "1234-1237",
+   *      "1234-1238",
+   *      "1234-1239",
+   *      "1234-1230"];
+   *
+   *    obniz.message(targets, "pressed");
+   *   };
+   * }
+   * ```
+   *
+   * @param target destination obniz id
+   * @param message message data
+   */
+  public message(target: string | string[], message: string) {
+    let targets: any = [];
+    if (typeof target === "string") {
+      targets.push(target);
+    } else {
+      targets = target;
+    }
+    this.send({
+      message: {
+        to: targets,
+        data: message,
+      },
+    });
+  }
+
   protected async loop() {
     if (typeof this.looper === "function" && this.onConnectCalled) {
       const prom: any = this.looper();
@@ -107,21 +261,6 @@ class Obniz extends ObnizUIs {
   protected _callOnConnect() {
     super._callOnConnect();
     this.loop();
-  }
-
-  protected message(target: any, message: any) {
-    let targets: any = [];
-    if (typeof target === "string") {
-      targets.push(target);
-    } else {
-      targets = target;
-    }
-    this.send({
-      message: {
-        to: targets,
-        data: message,
-      },
-    });
   }
 
   protected notifyToModule(obj: any) {
@@ -176,6 +315,9 @@ try {
 /*===================*/
 /* ReadParts */
 /*===================*/
+/**
+ * @ignore
+ */
 import requireContext = require( "./libs/webpackReplace/require-context");
 
 require.context = requireContext.default;
