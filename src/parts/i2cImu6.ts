@@ -6,7 +6,7 @@ export type accelUnit = "g" | "mg" | "m_s2";
 export type gyroUnit = "dps" | "rps";
 
 export interface Xyz { x: number; y: number; z: number; }
-export interface Inertia6 { accel: Xyz; gyro: Xyz; compass?: Xyz; temp?: number; }
+export interface Inertia6 { accelerometer: Xyz; gyroscope: Xyz; compass?: Xyz; temperature?: number; }
 
 export interface I2cImu6AbstractOptions extends I2cPartsAbstractOptions {
 }
@@ -62,6 +62,19 @@ export default abstract class I2cImu6Abstract extends i2cParts {
 
     public abstract setAccelRange(accel_range: accelRange): void;
     public abstract setGyroRange(gyro_range: gyroRange): void;
+
+    public async getAccelerometerWait(): Promise<Xyz> {
+        return await this.getAccelWait();
+    }
+    public async getGyroscopeWait(): Promise<Xyz> {
+        return await this.getGyroWait();
+    }
+    public async getWait(): Promise<Inertia6> {
+        return await this.getAllWait();
+    }
+    public async getAllDataWait(): Promise<Inertia6> {
+        return await this.getAllWait();
+    }
 
     public getAccelRange(): accelRange {
         return this.accel_so;

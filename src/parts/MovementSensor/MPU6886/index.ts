@@ -1,43 +1,11 @@
-import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import i2cParts, { I2cPartsAbstractOptions } from "../../i2cParts";
 
-import I2cIMU6, { accelRange, gyroRange, I2cImu6AbstractOptions, Inertia6, Xyz } from "../../i2cImu6";
-import { I2cInfo } from "../../i2cParts";
+import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import { I2cInfo, Xyz } from "../../i2cParts";
+import MPU6050, { MPU6050Options } from "../MPU6050";
 
-/*
-export interface MPU6886Options_beta extends I2cIMU6AbstractOptions {
+export interface MPU6886Options extends MPU6050Options {
 }
-export class MPU6886_beta extends I2cIMU6 {
-  private static commands = {
-    whoami: 0x75,
-    accelIntelCtrl: 0x69,
-    smplrtDiv: 0x19,
-    intPinCfg: 0x37,
-    intEnable: 0x38,
-    accelXoutH: 0x3b,
-    accelXoutL: 0x3c,
-    accelYoutH: 0x3d,
-    accelYoutL: 0x3e,
-    accelZoutH: 0x3f,
-    accelZoutL: 0x40,
-    tempOutH: 0x41,
-    tempOutL: 0x42,
-    gyroXoutH: 0x43,
-    gyroXoutL: 0x44,
-    gyroYoutH: 0x45,
-    gyroYoutL: 0x46,
-    gyroZoutH: 0x47,
-    gyroZoutL: 0x48,
-    userCtrl: 0x6a,
-    pwrMgmt1: 0x6b,
-    pwrMgmt2: 0x6c,
-    config: 0x1a,
-    gyroConfig: 0x1b,
-    accelConfig: 0x1c,
-    accelConfig2: 0x1d,
-    fifoEn: 0x23,
-  };
+export default class MPU6886 extends MPU6050 {
   public i2cinfo: I2cInfo;
 
   constructor() {
@@ -48,34 +16,24 @@ export class MPU6886_beta extends I2cIMU6 {
       voltage: "3v",
       pull: "3v",
     };
+    MPU6886.commands.accel_intel_ctrl = 0x69;
+    MPU6886.commands.accel_config2 = 0x1d;
+    MPU6886.commands.whoami_result = 0x68;
   }
   public info(): ObnizPartsInfo {
     return {
       name: "MPU6886",
     };
   }
-  public whoamiWait(): Promise<number> {
-    throw new Error("Method not implemented.");
-  } public getAccelWait(): Promise<Xyz> {
-    throw new Error("Method not implemented.");
-  }
-  public getGyroWait(): Promise<Xyz> {
-    throw new Error("Method not implemented.");
-  }
-  public getAllWait(): Promise<Inertia6> {
-    throw new Error("Method not implemented.");
-  }
-  public getTempWait(): Promise<number> {
-    throw new Error("Method not implemented.");
-  }
-  public setAccelRange(accel_range: accelRange): void {
-    throw new Error("Method not implemented.");
-  }
-  public setGyroRange(gyro_range: gyroRange): void {
-    throw new Error("Method not implemented.");
+
+  public init() {
+    super.init();
+    this.obniz.wait(1);
+    this.write(MPU6886.commands.accel_config2, 0x00);
   }
 }
-*/
+
+/*
 export interface MPU6886Options extends I2cPartsAbstractOptions {
 
 }
@@ -277,3 +235,4 @@ export default class MPU6886 extends i2cParts implements ObnizPartsInterface {
     return (await this.getAllDataWait()).gyroscope;
   }
 }
+*/

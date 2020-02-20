@@ -13,11 +13,17 @@ export default class MPU6050 extends I2cImu6 {
     };
   }
 
-  private static commands = {
+  protected static commands: any = {
     whoami: 0x75,
     whoami_result: 0x71,
-    int_pin_config: 0x37,
     pwr_mgmt_1: 0x6b,
+    pwr_mgmt_2: 0x6c,
+    smplrt_div: 0x19,
+    int_pin_cfg: 0x37,
+    int_enable: 0x38,
+    user_ctrl: 0x6a,
+    config: 0x1a,
+    fifo_en: 0x23,
     accel_x_h: 0x3b,
     accel_x_l: 0x3c,
     accel_y_h: 0x3d,
@@ -48,7 +54,7 @@ export default class MPU6050 extends I2cImu6 {
     },
   };
 
-  private static calcTemp(data: number): number {
+  protected static calcTemp(data: number): number {
     return data / 333.87 + 21;
   }
   public i2cinfo: I2cInfo;
@@ -63,8 +69,33 @@ export default class MPU6050 extends I2cImu6 {
     };
   }
 
-  public async initWait() {
-    await this.wakeWait();
+  public wired(obniz: Obniz) {
+    super.wired(obniz);
+    this.init();
+  }
+
+  public init() {
+    this.write(MPU6050.commands.pwr_mgmt_1, 0x00);
+    this.obniz.wait(10);
+    // set dlpf
+    this.obniz.wait(1);
+    this.write(MPU6050.commands.config, 0x01);
+    // set samplerate div
+    this.obniz.wait(1);
+    this.write(MPU6050.commands.smplrt_div, 0x05);
+    // interrupt enable
+    this.obniz.wait(1);
+    this.write(MPU6050.commands.int_enable, 0x00);
+    this.obniz.wait(1);
+    this.write(MPU6050.commands.user_ctrl, 0x00);
+    this.obniz.wait(1);
+    this.write(MPU6050.commands.fifo_en, 0x00);
+    this.obniz.wait(1);
+    this.write(MPU6050.commands.int_pin_cfg, 0x22);
+    this.obniz.wait(1);
+    this.write(MPU6050.commands.int_enable, 0x01);
+    this.obniz.wait(1);
+    this.setConfig(2, 250);
   }
 
   public async sleepWait() {
@@ -79,17 +110,21 @@ export default class MPU6050 extends I2cImu6 {
     await this.writeFlagWait(MPU6050.commands.pwr_mgmt_1, 7);
   }
 
+  public async configDlpfWait() {
+
+  }
+
   public async bypassMagnetometerWait(flag: boolean = true): Promise<void> {
     // Enable I2C bypass to access for MPU9250 magnetometer access.
     if (flag === true) {
-      await this.writeFlagWait(MPU6050.commands.int_pin_config, 1);
+      await this.writeFlagWait(MPU6050.commands.int_pin_cfg, 1);
     } else {
-      await this.clearFlagWait(MPU6050.commands.int_pin_config, 1);
+      await this.clearFlagWait(MPU6050.commands.int_pin_cfg, 1);
     }
-    // this.i2c.write(this.address, [MPU6050.commands.int_pin_config]);
+    // this.i2c.write(this.address, [MPU6050.commands.int_pin_cfg]);
     // const data =  await this.i2c!.readWait(this.address, 1);
     // data[0] |= MPU6050.commands.intPinConfigMask.bypass_en;
-    // this.i2c.write(this.address, [MPU6050.commands.int_pin_config, data[0]]);
+    // this.i2c.write(this.address, [MPU6050.commands.int_pin_cfg, data[0]]);
   }
 
   public async whoamiWait(): Promise<number> {
@@ -107,9 +142,9 @@ export default class MPU6050 extends I2cImu6 {
   public async getAllWait(): Promise<Inertia6> {
     const raw = await this.readWait(MPU6050.commands.accel_x_h, 14);
     return {
-      accel: MPU6050.charArrayToXyz(raw.slice(0, 6), "b", (v: number) => I2cImu6._accelS(v, this.accel_so, this.accel_sf)),
-      gyro: MPU6050.charArrayToXyz(raw.slice(8, 14), "b", (v: number) => I2cImu6._gyroS(v, this.gyro_so, this.gyro_sf)),
-      temp: MPU6050.calcTemp(MPU6050.charArrayToInt16(raw.slice(6, 8) as [number, number], "b")),
+      accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b", (v: number) => I2cImu6._accelS(v, this.accel_so, this.accel_sf)),
+      gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b", (v: number) => I2cImu6._gyroS(v, this.gyro_so, this.gyro_sf)),
+      temperature: MPU6050.calcTemp(MPU6050.charArrayToInt16(raw.slice(6, 8) as [number, number], "b")),
     };
   }
   public async getTempWait(): Promise<number> {
@@ -134,14 +169,7 @@ export default class MPU6050 extends I2cImu6 {
     }
   }
 
-  public async getWait(): Promise<any> {
-    const all = await this.getAllWait();
-    return {
-      accelerometer: all.accel,
-      gyroscope: all.gyro,
-    };
-  }
-  public setConfig(accelerometer_range: number, gyroscope_range: number) {
+  public setConfig(accelerometer_range: number, gyroscope_range: number, ADC_cycle?: any) {
     // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
     switch (accelerometer_range) {
       case 2:
