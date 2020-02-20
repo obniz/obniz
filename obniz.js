@@ -8842,7 +8842,7 @@ class BleRemotePeripheral {
         if (!data) {
             return;
         }
-        const uuidLength = bit / 4;
+        const uuidLength = bit / 8;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
             results.push(ble_1.default._dataArray2uuidHex(one, true));
