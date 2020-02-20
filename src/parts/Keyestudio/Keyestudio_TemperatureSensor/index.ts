@@ -24,11 +24,11 @@ export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface
   public requiredKeys: string[];
   public drive: any;
   public params: any;
-  public temp = 0;
 
   protected obniz!: Obniz;
   protected ad!: PeripheralAD;
 
+  private temp = 0;
   constructor() {
     this.keys = ["vcc", "gnd", "signal"];
     this.requiredKeys = ["signal"];
@@ -57,7 +57,7 @@ export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface
   public onchange(temp: number) {
   }
 
-  public calc(voltage: any) {
+  protected calc(voltage: any) {
     return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
   }
 }
