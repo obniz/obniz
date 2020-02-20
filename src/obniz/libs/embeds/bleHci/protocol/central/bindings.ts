@@ -50,10 +50,10 @@ class NobleBindings extends events.EventEmitter {
     this._gap = new Gap(this._hci);
   }
 
-  public startScanning(serviceUuids: any, allowDuplicates: any) {
+  public startScanning(serviceUuids: any, allowDuplicates: any, activeScan: boolean) {
     this._scanServiceUuids = serviceUuids || [];
 
-    this._gap.startScanning(allowDuplicates);
+    this._gap.startScanning(allowDuplicates, activeScan);
   }
 
   public stopScanning() {

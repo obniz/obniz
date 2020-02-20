@@ -61,7 +61,7 @@ class Gap extends events.EventEmitter {
     );
   }
 
-  public startScanning(allowDuplicates: boolean) {
+  public startScanning(allowDuplicates: boolean, activeScan: boolean) {
     this._scanState = "starting";
     this._scanFilterDuplicates = !allowDuplicates;
     this._discoveries = {};
@@ -71,7 +71,7 @@ class Gap extends events.EventEmitter {
     this._hci.setScanEnabled(false, true);
 
     this._hci.once("leScanEnableSet", (scanStopStatus: number) => {
-      this._hci.setScanParameters();
+      this._hci.setScanParameters(activeScan);
       this._hci.once("leScanParametersSet", (setParamStatus: number) => {
         setTimeout(() => {
           this._hci.setScanEnabled(true, this._scanFilterDuplicates);
@@ -360,7 +360,7 @@ class Gap extends events.EventEmitter {
     };
 
     // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-    if (
+    if ( true ||
       type === 0x04 ||
       !connectable ||
       (discoveryCount > 1 && !hasScanResponse) ||

@@ -6,3 +6,4 @@ basePath: "ble"
 
 "anyOf":
   - {$ref: "/request/ble/hci/write"}
+  - {$ref: "/request/ble/hci/advertisement_filter"}
