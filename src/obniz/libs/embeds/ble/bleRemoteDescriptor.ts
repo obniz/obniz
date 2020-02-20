@@ -5,6 +5,8 @@
 import BleHelper from "./bleHelper";
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 /**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Central
  */
 export default class BleRemoteDescriptor extends BleRemoteAttributeAbstract {

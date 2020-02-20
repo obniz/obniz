@@ -66,5 +66,9 @@ interface obnizBoard extends Obniz {
   ble: ObnizBLE | ObnizBLEHci;
 }
 
+/**
+ * @ignore
+ */
 type ObnizBoard = obnizBoard;
+
 export default ObnizBoard;
