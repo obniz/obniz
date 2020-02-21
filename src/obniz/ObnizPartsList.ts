@@ -94,6 +94,7 @@ import YG1006, {YG1006Options} from "../parts/Infrared/YG1006";
 
 // Ble
 import OMRON_2JCIE, {OMRON_2JCIEOptions} from "../parts/Ble/2jcie";
+import Linking, {LinkingOptions} from "../parts/Ble/linking";
 
 // biological
 import Puls08M5stickcS, {Puls08M5stickcSOptions} from "../parts/Biological/PULSE08-M5STICKC-S";
@@ -217,6 +218,7 @@ export interface WiredNameMap {
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
   // Ble
   "2JCIE": OMRON_2JCIE;
+  "Linking": Linking;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -342,8 +344,8 @@ export interface WiredNameOptionsMap {
   "Grove_GPS": Grove_GPSOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
   // Ble
-
   "2JCIE": OMRON_2JCIEOptions;
+  "Linking": LinkingOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

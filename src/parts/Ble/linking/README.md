@@ -19,7 +19,7 @@ Sizuku 6x [https://codesandbox.io/s/linking-acc-406cj](https://codesandbox.io/s/
 
 ## wired(obniz)
 
-Registrate lining parent class to an obniz device.
+Registrate lining parent class to an obniz device to search and connect linking devices.
 
 ```javascript
 // Javascript Example

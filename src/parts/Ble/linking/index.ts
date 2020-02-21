@@ -14,6 +14,8 @@ import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInte
 import LinkingAdvertising from "./modules/advertising";
 import LinkingDevice from "./modules/device";
 
+export interface  LinkingOptions {}
+
 export default class Linking {
 
   public static info(): ObnizPartsInfo {
