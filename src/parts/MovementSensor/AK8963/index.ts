@@ -1,19 +1,28 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import i2cParts, { I2cInfo, I2cPartsAbstractOptions, Xyz } from "../../i2cParts";
+import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from "../../i2cCompass";
+import { I2cInfo, Xyz } from "../../i2cParts";
 
-export interface AK8963Options extends I2cPartsAbstractOptions {
+export interface AK8963Options extends I2cCompassAbstractOptions {
   adc_cycle?: number;
 }
 
-export default class AK8963 extends i2cParts {
-
+export default class AK8963 extends i2cCompass {
   public static info(): ObnizPartsInfo {
     return {
       name: "AK8963",
     };
   }
+  private static scales = {
+    so_14bit: 4912 / 8190,
+    so_16bit: 4912 / 32760,
+  };
   public i2cinfo: I2cInfo;
+  protected defaultUnit: compassUnit = "uT";
+  protected sf: compassUnit;
+  protected so: number;
+  protected range: string;
+
   constructor() {
     super();
     this.i2cinfo = {
@@ -22,6 +31,9 @@ export default class AK8963 extends i2cParts {
       voltage: "3v",
       pull: "3v",
     };
+    this.sf = this.defaultUnit;
+    this.so = AK8963.scales.so_16bit;
+    this.range = "4912uT";
   }
 
   public wired(obniz: Obniz) {
@@ -32,29 +44,18 @@ export default class AK8963 extends i2cParts {
   public setConfig(ADC_cycle: number) {
     switch (ADC_cycle) {
       case 8:
-        this.write(0x0a, [0x12]);
+        this.write(0x0a, [0x12]); // 16bit
         break;
       case 100:
-        this.write(0x0a, [0x16]);
+        this.write(0x0a, [0x16]); // 16bit
         break;
       default:
         throw new Error("Invalid ADC_cycle value. Valid values are 8,100.");
     }
   }
 
-  public async getWait(): Promise<Xyz> {
+  public async getAdcWait(): Promise<Xyz> {
     const raw = await this.readWait(0x03, 7);
-    return i2cParts.charArrayToXyz(raw, "l", (d) => this.calcMag(d, 16)); // 16bit
-  }
-
-  protected calcMag(data: number, bit: number = 16): number {
-    switch (bit) {
-      case 14:
-        return data * 4912 / 8190;
-      case 16:
-        return data * 4912 / 32760;
-      default:
-        throw new Error("Invalid bit value.");
-    }
+    return AK8963.charArrayToXyz(raw, "l");
   }
 }

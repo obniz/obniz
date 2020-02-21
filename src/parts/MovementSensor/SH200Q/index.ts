@@ -2,29 +2,45 @@ import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
 
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import I2cImu6, { accelRange, gyroRange, Inertia6, Xyz } from "../../i2cImu6";
+
+export type SH200QAccelRange = "4g" | "8g" | "16g";
+export type SH200QGyroRange = "125dps" | "250dps" | "500dps" | "1000dps" | "2000dps";
 
 export interface SH200QOptions extends I2cPartsAbstractOptions {
 }
 
-export default class SH200Q extends i2cParts implements ObnizPartsInterface {
+export default class SH200Q extends I2cImu6 {
   public static commands = {
     whoami: 0x30,
-    accConfig: 0x0e,
-    gyroConfig: 0x0f,
-    gyroDlpf: 0x11,
-    fifoConfig: 0x12,
-    accRange: 0x16,
-    gyroRange: 0x2b,
-    outputAcc: 0x00,
-    outputGyro: 0x06,
-    outputTemp: 0x0c,
-    regSet1: 0xba,
-    regSet2: 0xca,
-    adcReset: 0xc2,
-    softReset: 0x7f,
+    whoami_result: 0x18,
+    acc_config: 0x0e,
+    gyro_config: 0x0f,
+    gyro_dlpf: 0x11,
+    fifo_config: 0x12,
+    acc_range: 0x16,
+    gyro_range: 0x2b,
+    output_acc: 0x00,
+    output_gyro: 0x06,
+    output_temp: 0x0c,
+    reg_set1: 0xba,
+    reg_set2: 0xca,
+    adc_reset: 0xc2,
+    soft_reset: 0x7f,
     reset: 0x75,
+    accel_fs_sel: {
+      "4g": 0b00,
+      "8g": 0b01,
+      "16g": 0b10,
+    },
+    gyro_fs_sel: {
+      "125dps": 0b100,
+      "250dps": 0b011,
+      "500dps": 0b010,
+      "1000dps": 0b001,
+      "2000dps": 0b000,
+    },
   };
-
   public static info(): ObnizPartsInfo {
     return {
       name: "SH200Q",
@@ -37,11 +53,6 @@ export default class SH200Q extends i2cParts implements ObnizPartsInterface {
     voltage: "3v",
     pull: "3v",
   };
-
-  protected obniz!: Obniz;
-
-  private _accel_range: any;
-  private _gyro_range: any;
 
   constructor() {
     super();
@@ -64,140 +75,123 @@ export default class SH200Q extends i2cParts implements ObnizPartsInterface {
     await this.obniz.wait(1);
     await this.clearFlagWait(0xd8, 7);
 
-    await this.write(0x78, 0x61);
+    this.write(0x78, 0x61);
     await this.obniz.wait(1);
-    await this.write(0x78, 0x00);
+    this.write(0x78, 0x00);
 
     // set acc odr 256hz
-    await this.write(SH200Q.commands.accConfig, 0x91);
+    this.write(SH200Q.commands.acc_config, 0x91);
 
     // set gyro odr 500hz
-    await this.write(SH200Q.commands.gyroConfig, 0x13);
+    this.write(SH200Q.commands.gyro_config, 0x13);
 
     // set gyro dlpf 50hz
-    await this.write(SH200Q.commands.gyroDlpf, 0x03);
+    this.write(SH200Q.commands.gyro_dlpf, 0x03);
 
     // set no buffer mode
-    await this.write(SH200Q.commands.fifoConfig, 0x00);
+    this.write(SH200Q.commands.fifo_config, 0x00);
 
     this.setConfig(8, 2000);
 
-    await this.write(SH200Q.commands.regSet1, 0xc0);
+    this.write(SH200Q.commands.reg_set1, 0xc0);
 
     // ADC Reset
-    await this.writeFlagWait(SH200Q.commands.regSet2, 4);
+    await this.writeFlagWait(SH200Q.commands.reg_set2, 4);
     await this.obniz.wait(1);
-    await this.clearFlagWait(SH200Q.commands.regSet2, 4);
+    await this.clearFlagWait(SH200Q.commands.reg_set2, 4);
     await this.obniz.wait(10);
   }
 
   public setConfig(accelerometer_range: number, gyroscope_range: number) {
-    // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
     switch (accelerometer_range) {
       case 4:
-        this.write(SH200Q.commands.accRange, 0x00);
+        this.setAccelRange("4g");
         break;
       case 8:
-        this.write(SH200Q.commands.accRange, 0x01);
+        this.setAccelRange("8g");
         break;
       case 16:
-        this.write(SH200Q.commands.accRange, 0x10);
+        this.setAccelRange("16g");
         break;
       default:
         throw new Error("accel_range variable 4,8,16 setting");
     }
-    // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
     switch (gyroscope_range) {
       case 125:
-        this.write(SH200Q.commands.gyroRange, 0x04);
+        this.setGyroRange("125dps");
         break;
       case 250:
-        this.write(SH200Q.commands.gyroRange, 0x03);
+        this.setGyroRange("250dps");
         break;
       case 500:
-        this.write(SH200Q.commands.gyroRange, 0x02);
+        this.setGyroRange("500dps");
         break;
       case 1000:
-        this.write(SH200Q.commands.gyroRange, 0x01);
+        this.setGyroRange("1000dps");
         break;
       case 2000:
-        this.write(SH200Q.commands.gyroRange, 0x00);
+        this.setGyroRange("2000dps");
         break;
       default:
         throw new Error(
           "gyroscope_range variable 125,250,500,1000,2000 setting",
         );
     }
-    this._accel_range = accelerometer_range;
-    this._gyro_range = gyroscope_range;
   }
 
   public async resetAdcWait() {
     // set 0xC2 bit2 1-->0
-    const tempdata: any = await this.readWait(SH200Q.commands.adcReset, 1);
+    const tempdata: any = await this.readWait(SH200Q.commands.adc_reset, 1);
     tempdata[0] = tempdata[0] | 0x04; // tempdata[0] = 0x0E; //CC
-    this.write(SH200Q.commands.adcReset, tempdata);
+    this.write(SH200Q.commands.adc_reset, tempdata);
     await this.obniz.wait(1);
     tempdata[0] = tempdata[0] & 0xfb; // tempdata[0] = 0x0A; //C8
-    this.write(SH200Q.commands.adcReset, tempdata);
+    this.write(SH200Q.commands.adc_reset, tempdata);
   }
 
-  public async getAllDataWait(): Promise<{
-    accelerometer: {
-      x: number,
-      y: number,
-      z: number,
-    },
-    temperature: number,
-    gyroscope: {
-      x: number,
-      y: number,
-      z: number,
-    },
-  }> {
-    const raw_data: any = await this.readWait(SH200Q.commands.outputAcc, 14); // request all data
-    const ac_scale: any = this._accel_range / 32768;
-    const gy_scale: any = this._gyro_range / 32768;
+  public setAccelRange(accel_range: SH200QAccelRange): void {
+    if (accel_range in SH200Q.commands.accel_fs_sel) {
+      this.write(SH200Q.commands.acc_range, SH200Q.commands.accel_fs_sel[accel_range]);
+      this.accel_so = accel_range;
+    } else {
+      throw new Error(`Invalid accel range. Valid values are: ${Object.keys(SH200Q.commands.accel_fs_sel).join()}`);
+    }
+  }
+  public setGyroRange(gyro_range: SH200QGyroRange): void {
+    if (gyro_range in SH200Q.commands.gyro_fs_sel) {
+      this.write(SH200Q.commands.gyro_range, SH200Q.commands.gyro_fs_sel[gyro_range]);
+      // @ts-ignore
+      this.gyro_so = gyro_range;
+    } else {
+      throw new Error(`Invalid gyro range. Valid values are: ${Object.keys(SH200Q.commands.gyro_fs_sel).join()}`);
+    }
+  }
+  public calcTemp(data?: number | null | undefined): number | null {
+    if (typeof data === "undefined" || data === null) {
+      return null;
+    }
+    return data / 333.87 + 21.0;
+  }
 
-    const accelerometer: any = {
-      x: this.char2short(raw_data[1], raw_data[0]) * ac_scale,
-      y: this.char2short(raw_data[3], raw_data[2]) * ac_scale,
-      z: this.char2short(raw_data[5], raw_data[4]) * ac_scale,
-    };
-    const gyroscope: any = {
-      x: this.char2short(raw_data[7], raw_data[6]) * gy_scale,
-      y: this.char2short(raw_data[9], raw_data[8]) * gy_scale,
-      z: this.char2short(raw_data[11], raw_data[10]) * gy_scale,
-    };
+  public async getAccelAdcWait(): Promise<Xyz> {
+    const raw = await this.readWait(SH200Q.commands.output_acc, 6);
+    return SH200Q.charArrayToXyz(raw, "l");
+  }
+  public async getGyroAdcWait(): Promise<Xyz> {
+    const raw = await this.readWait(SH200Q.commands.output_gyro, 6);
+    return SH200Q.charArrayToXyz(raw, "l");
+  }
+  public async getTempAdcWait(): Promise<number> {
+    const raw = await this.readWait(SH200Q.commands.output_temp, 2);
+    return SH200Q.charArrayToInt16(raw as [number, number], "l");
+  }
 
-    const temperature: any =
-      this.char2short(raw_data[13], raw_data[12]) / 333.87 + 21.0;
-
+  public async getAllAdcWait(): Promise<Inertia6> {
+    const raw = await this.readWait(SH200Q.commands.output_acc, 14); // request all data
     return {
-      accelerometer,
-      temperature,
-      gyroscope,
+      accelerometer: SH200Q.charArrayToXyz(raw.slice(0, 6), "l"),
+      gyroscope: SH200Q.charArrayToXyz(raw.slice(6, 12), "l"),
+      temperature: SH200Q.charArrayToInt16(raw.slice(12, 14) as [number, number], "l"),
     };
-  }
-
-  public async getTempWait(): Promise<number> {
-    const raw_data: any = await this.readWait(SH200Q.commands.outputTemp, 2); // request all data
-    return this.char2short(raw_data[1], raw_data[0]) / 333.87 + 21.0;
-  }
-
-  public async getAccelWait(): Promise<{
-    x: number,
-    y: number,
-    z: number,
-  }> {
-    return (await this.getAllDataWait()).accelerometer;
-  }
-
-  public async getGyroWait(): Promise<{
-    x: number,
-    y: number,
-    z: number,
-  }> {
-    return (await this.getAllDataWait()).gyroscope;
   }
 }

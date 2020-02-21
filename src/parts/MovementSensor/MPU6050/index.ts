@@ -6,7 +6,6 @@ import { I2cInfo } from "../../i2cParts";
 export interface MPU6050Options extends I2cImu6AbstractOptions {
 }
 export default class MPU6050 extends I2cImu6 {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "MPU6050",
@@ -54,9 +53,6 @@ export default class MPU6050 extends I2cImu6 {
     },
   };
 
-  protected static calcTemp(data: number): number {
-    return data / 333.87 + 21;
-  }
   public i2cinfo: I2cInfo;
 
   constructor() {
@@ -67,6 +63,13 @@ export default class MPU6050 extends I2cImu6 {
       voltage: "3v",
       pull: "3v",
     };
+  }
+
+  public calcTemp(data?: number | null): number | null {
+    if (typeof data === "undefined" || data === null) {
+      return null;
+    }
+    return data / 333.87 + 21;
   }
 
   public wired(obniz: Obniz) {
@@ -131,25 +134,26 @@ export default class MPU6050 extends I2cImu6 {
     const result = await this.readWait(MPU6050.commands.whoami, 1);
     return result[0];
   }
-  public async getAccelWait(): Promise<Xyz> {
+
+  public async getAccelAdcWait(): Promise<Xyz> {
     const raw = await this.readWait(MPU6050.commands.accel_x_h, 6);
-    return MPU6050.charArrayToXyz(raw, "b", (v: number) => I2cImu6._accelS(v, this.accel_so, this.accel_sf));
+    return MPU6050.charArrayToXyz(raw, "b");
   }
-  public async getGyroWait(): Promise<Xyz> {
+  public async getGyroAdcWait(): Promise<Xyz> {
     const raw = await this.readWait(MPU6050.commands.gyro_x_h, 6);
-    return MPU6050.charArrayToXyz(raw, "b", (v: number) => I2cImu6._gyroS(v, this.gyro_so, this.gyro_sf));
+    return MPU6050.charArrayToXyz(raw, "b");
   }
-  public async getAllWait(): Promise<Inertia6> {
+  public async getTempAdcWait(): Promise<number> {
+    const raw = await this.readWait(MPU6050.commands.temp_h, 2);
+    return MPU6050.charArrayToInt16(raw as [number, number], "b");
+  }
+  public async getAllAdcWait(): Promise<Inertia6> {
     const raw = await this.readWait(MPU6050.commands.accel_x_h, 14);
     return {
-      accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b", (v: number) => I2cImu6._accelS(v, this.accel_so, this.accel_sf)),
-      gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b", (v: number) => I2cImu6._gyroS(v, this.gyro_so, this.gyro_sf)),
-      temperature: MPU6050.calcTemp(MPU6050.charArrayToInt16(raw.slice(6, 8) as [number, number], "b")),
+      accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b"),
+      gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b"),
+      temperature: MPU6050.charArrayToInt16(raw.slice(6, 8) as [number, number], "b"),
     };
-  }
-  public async getTempWait(): Promise<number> {
-    const raw = await this.readWait(MPU6050.commands.temp_h, 2);
-    return MPU6050.calcTemp(MPU6050.charArrayToInt16(raw as [number, number], "b"));
   }
 
   public setAccelRange(accel_range: accelRange): void {

@@ -42,8 +42,13 @@ export default class MPU9250 extends MPU6500 {
     }
   }
 
+  public async getAllAdcWait(): Promise<Inertia6> {
+    const data = await super.getAllAdcWait();
+    data.compass = await this.getCompassAdcWait();
+    return data;
+  }
   public async getAllWait(): Promise<Inertia6> {
-    const data = await this._get6AxisWait();
+    const data = await super.getAllWait();
     data.compass = await this.getCompassWait();
     return data;
   }
@@ -51,9 +56,20 @@ export default class MPU9250 extends MPU6500 {
   public async getCompassWait(): Promise<Xyz> {
     return await this.ak8963.getWait();
   }
-
-  private async _get6AxisWait(): Promise<Inertia6> {
-    return super.getAllWait();
+  public async getCompassAdcWait(): Promise<Xyz> {
+    return await this.ak8963.getAdcWait();
+  }
+  public async getCompassArrayWait(): Promise<number[]> {
+    return await this.ak8963.getArrayWait();
+  }
+  public async getCompassAdcArrayWait(): Promise<number[]> {
+    return await this.ak8963.getAdcArrayWait();
+  }
+  public getCompassUnit() {
+    return this.ak8963.getUnit();
+  }
+  public getCompassRange() {
+    return this.ak8963.getRange();
   }
 
   private async _getAK8963Wait() {

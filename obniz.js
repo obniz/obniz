@@ -18732,6 +18732,7 @@ var map = {
 	"./Wireless/MFRC522/index.js": "./dist/src/parts/Wireless/MFRC522/index.js",
 	"./Wireless/RN42/index.js": "./dist/src/parts/Wireless/RN42/index.js",
 	"./Wireless/XBee/index.js": "./dist/src/parts/Wireless/XBee/index.js",
+	"./i2cCompass.js": "./dist/src/parts/i2cCompass.js",
 	"./i2cImu6.js": "./dist/src/parts/i2cImu6.js",
 	"./i2cParts.js": "./dist/src/parts/i2cParts.js"
 };
@@ -28320,16 +28321,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class HMC5883L {
+const i2cCompass_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cCompass.js"));
+class HMC5883L extends i2cCompass_1.default {
     constructor() {
-        this.address = {
-            device: 0x1e,
-            reset: [0x02, 0x00],
-            xMSB: [0x03],
+        super();
+        this.defaultUnit = "G";
+        this.i2cinfo = {
+            address: 0x1e,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
         };
-        this.keys = ["gnd", "sda", "scl", "i2c"];
-        this.requiredKeys = [];
+        this.sf = this.defaultUnit;
+        this.so = HMC5883L.scales[1];
+        this.range = "8G";
     }
     static info() {
         return {
@@ -28337,36 +28346,52 @@ class HMC5883L {
         };
     }
     wired(obniz) {
-        this.obniz = obniz;
-        obniz.setVccGnd(null, this.params.gnd, "3v");
-        this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
-        this.i2c = obniz.getI2CWithConfig(this.params);
-        this.obniz.wait(500);
+        super.wired(obniz);
+        // this.obniz.wait(500);
+        this.init();
     }
     init() {
-        this.i2c.write(this.address.device, this.address.reset);
-        this.obniz.wait(500);
+        this.reset();
+        // this.obniz.wait(500);
     }
+    reset() {
+        this.write(HMC5883L.commands.mode, 0x00);
+    }
+    getAdcWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const raw = yield this.readWait(HMC5883L.commands.x_MSB, 6);
+            return HMC5883L.charArrayToXyz(raw, "b");
+        });
+    }
+    setRange(index) {
+        this.write(HMC5883L.commands.config_b, index << 5);
+        this.so = HMC5883L.scales[index];
+    }
+    // legacy
     get() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address.device, this.address.xMSB);
-            const readed = yield this.i2c.readWait(this.address.device, 2 * 3);
-            const obj = {};
-            const keys = ["x", "y", "z"];
-            for (let i = 0; i < 3; i++) {
-                let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
-                if (val & 0x8000) {
-                    val = val - 65536;
-                }
-                obj[keys[i]] = val;
-            }
-            return obj;
+            return yield this.getWait();
         });
     }
 }
 exports.default = HMC5883L;
+HMC5883L.commands = {
+    config_a: 0x00,
+    config_b: 0x01,
+    mode: 0x02,
+    x_MSB: 0x03,
+    status: 0x09,
+};
+HMC5883L.scales = [
+    1 / 1370,
+    1 / 1090,
+    1 / 820,
+    1 / 660,
+    1 / 440,
+    1 / 390,
+    1 / 330,
+    1 / 230,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -28447,16 +28472,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
-class AK8963 extends i2cParts_1.default {
+const i2cCompass_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cCompass.js"));
+class AK8963 extends i2cCompass_1.default {
     constructor() {
         super();
+        this.defaultUnit = "uT";
         this.i2cinfo = {
             address: 0x0c,
             clock: 100000,
             voltage: "3v",
             pull: "3v",
         };
+        this.sf = this.defaultUnit;
+        this.so = AK8963.scales.so_16bit;
+        this.range = "4912uT";
     }
     static info() {
         return {
@@ -28470,33 +28499,27 @@ class AK8963 extends i2cParts_1.default {
     setConfig(ADC_cycle) {
         switch (ADC_cycle) {
             case 8:
-                this.write(0x0a, [0x12]);
+                this.write(0x0a, [0x12]); // 16bit
                 break;
             case 100:
-                this.write(0x0a, [0x16]);
+                this.write(0x0a, [0x16]); // 16bit
                 break;
             default:
                 throw new Error("Invalid ADC_cycle value. Valid values are 8,100.");
         }
     }
-    getWait() {
+    getAdcWait() {
         return __awaiter(this, void 0, void 0, function* () {
             const raw = yield this.readWait(0x03, 7);
-            return i2cParts_1.default.charArrayToXyz(raw, "l", (d) => this.calcMag(d, 16)); // 16bit
+            return AK8963.charArrayToXyz(raw, "l");
         });
-    }
-    calcMag(data, bit = 16) {
-        switch (bit) {
-            case 14:
-                return data * 4912 / 8190;
-            case 16:
-                return data * 4912 / 32760;
-            default:
-                throw new Error("Invalid bit value.");
-        }
     }
 }
 exports.default = AK8963;
+AK8963.scales = {
+    so_14bit: 4912 / 8190,
+    so_16bit: 4912 / 32760,
+};
 
 //# sourceMappingURL=index.js.map
 
@@ -29333,7 +29356,10 @@ class MPU6050 extends i2cImu6_1.default {
             name: "MPU6050",
         };
     }
-    static calcTemp(data) {
+    calcTemp(data) {
+        if (typeof data === "undefined" || data === null) {
+            return null;
+        }
         return data / 333.87 + 21;
     }
     wired(obniz) {
@@ -29403,32 +29429,32 @@ class MPU6050 extends i2cImu6_1.default {
             return result[0];
         });
     }
-    getAccelWait() {
+    getAccelAdcWait() {
         return __awaiter(this, void 0, void 0, function* () {
             const raw = yield this.readWait(MPU6050.commands.accel_x_h, 6);
-            return MPU6050.charArrayToXyz(raw, "b", (v) => i2cImu6_1.default._accelS(v, this.accel_so, this.accel_sf));
+            return MPU6050.charArrayToXyz(raw, "b");
         });
     }
-    getGyroWait() {
+    getGyroAdcWait() {
         return __awaiter(this, void 0, void 0, function* () {
             const raw = yield this.readWait(MPU6050.commands.gyro_x_h, 6);
-            return MPU6050.charArrayToXyz(raw, "b", (v) => i2cImu6_1.default._gyroS(v, this.gyro_so, this.gyro_sf));
+            return MPU6050.charArrayToXyz(raw, "b");
         });
     }
-    getAllWait() {
+    getTempAdcWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const raw = yield this.readWait(MPU6050.commands.temp_h, 2);
+            return MPU6050.charArrayToInt16(raw, "b");
+        });
+    }
+    getAllAdcWait() {
         return __awaiter(this, void 0, void 0, function* () {
             const raw = yield this.readWait(MPU6050.commands.accel_x_h, 14);
             return {
-                accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b", (v) => i2cImu6_1.default._accelS(v, this.accel_so, this.accel_sf)),
-                gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b", (v) => i2cImu6_1.default._gyroS(v, this.gyro_so, this.gyro_sf)),
-                temperature: MPU6050.calcTemp(MPU6050.charArrayToInt16(raw.slice(6, 8), "b")),
+                accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b"),
+                gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b"),
+                temperature: MPU6050.charArrayToInt16(raw.slice(6, 8), "b"),
             };
-        });
-    }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const raw = yield this.readWait(MPU6050.commands.temp_h, 2);
-            return MPU6050.calcTemp(MPU6050.charArrayToInt16(raw, "b"));
         });
     }
     setAccelRange(accel_range) {
@@ -29859,9 +29885,22 @@ class MPU9250 extends MPU6500_1.default {
             this.ak8963.setConfig(ADC_cycle);
         }
     }
-    getAllWait() {
+    getAllAdcWait() {
+        const _super = Object.create(null, {
+            getAllAdcWait: { get: () => super.getAllAdcWait }
+        });
         return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this._get6AxisWait();
+            const data = yield _super.getAllAdcWait.call(this);
+            data.compass = yield this.getCompassAdcWait();
+            return data;
+        });
+    }
+    getAllWait() {
+        const _super = Object.create(null, {
+            getAllWait: { get: () => super.getAllWait }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield _super.getAllWait.call(this);
             data.compass = yield this.getCompassWait();
             return data;
         });
@@ -29871,13 +29910,26 @@ class MPU9250 extends MPU6500_1.default {
             return yield this.ak8963.getWait();
         });
     }
-    _get6AxisWait() {
-        const _super = Object.create(null, {
-            getAllWait: { get: () => super.getAllWait }
-        });
+    getCompassAdcWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            return _super.getAllWait.call(this);
+            return yield this.ak8963.getAdcWait();
         });
+    }
+    getCompassArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ak8963.getArrayWait();
+        });
+    }
+    getCompassAdcArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ak8963.getAdcArrayWait();
+        });
+    }
+    getCompassUnit() {
+        return this.ak8963.getUnit();
+    }
+    getCompassRange() {
+        return this.ak8963.getRange();
     }
     _getAK8963Wait() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29988,8 +30040,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
-class SH200Q extends i2cParts_1.default {
+const i2cImu6_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cImu6.js"));
+class SH200Q extends i2cImu6_1.default {
     constructor() {
         super();
         this.i2cinfo = {
@@ -30019,132 +30071,155 @@ class SH200Q extends i2cParts_1.default {
             yield this.writeFlagWait(0xd8, 7);
             yield this.obniz.wait(1);
             yield this.clearFlagWait(0xd8, 7);
-            yield this.write(0x78, 0x61);
+            this.write(0x78, 0x61);
             yield this.obniz.wait(1);
-            yield this.write(0x78, 0x00);
+            this.write(0x78, 0x00);
             // set acc odr 256hz
-            yield this.write(SH200Q.commands.accConfig, 0x91);
+            this.write(SH200Q.commands.acc_config, 0x91);
             // set gyro odr 500hz
-            yield this.write(SH200Q.commands.gyroConfig, 0x13);
+            this.write(SH200Q.commands.gyro_config, 0x13);
             // set gyro dlpf 50hz
-            yield this.write(SH200Q.commands.gyroDlpf, 0x03);
+            this.write(SH200Q.commands.gyro_dlpf, 0x03);
             // set no buffer mode
-            yield this.write(SH200Q.commands.fifoConfig, 0x00);
+            this.write(SH200Q.commands.fifo_config, 0x00);
             this.setConfig(8, 2000);
-            yield this.write(SH200Q.commands.regSet1, 0xc0);
+            this.write(SH200Q.commands.reg_set1, 0xc0);
             // ADC Reset
-            yield this.writeFlagWait(SH200Q.commands.regSet2, 4);
+            yield this.writeFlagWait(SH200Q.commands.reg_set2, 4);
             yield this.obniz.wait(1);
-            yield this.clearFlagWait(SH200Q.commands.regSet2, 4);
+            yield this.clearFlagWait(SH200Q.commands.reg_set2, 4);
             yield this.obniz.wait(10);
         });
     }
     setConfig(accelerometer_range, gyroscope_range) {
-        // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
         switch (accelerometer_range) {
             case 4:
-                this.write(SH200Q.commands.accRange, 0x00);
+                this.setAccelRange("4g");
                 break;
             case 8:
-                this.write(SH200Q.commands.accRange, 0x01);
+                this.setAccelRange("8g");
                 break;
             case 16:
-                this.write(SH200Q.commands.accRange, 0x10);
+                this.setAccelRange("16g");
                 break;
             default:
                 throw new Error("accel_range variable 4,8,16 setting");
         }
-        // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
         switch (gyroscope_range) {
             case 125:
-                this.write(SH200Q.commands.gyroRange, 0x04);
+                this.setGyroRange("125dps");
                 break;
             case 250:
-                this.write(SH200Q.commands.gyroRange, 0x03);
+                this.setGyroRange("250dps");
                 break;
             case 500:
-                this.write(SH200Q.commands.gyroRange, 0x02);
+                this.setGyroRange("500dps");
                 break;
             case 1000:
-                this.write(SH200Q.commands.gyroRange, 0x01);
+                this.setGyroRange("1000dps");
                 break;
             case 2000:
-                this.write(SH200Q.commands.gyroRange, 0x00);
+                this.setGyroRange("2000dps");
                 break;
             default:
                 throw new Error("gyroscope_range variable 125,250,500,1000,2000 setting");
         }
-        this._accel_range = accelerometer_range;
-        this._gyro_range = gyroscope_range;
     }
     resetAdcWait() {
         return __awaiter(this, void 0, void 0, function* () {
             // set 0xC2 bit2 1-->0
-            const tempdata = yield this.readWait(SH200Q.commands.adcReset, 1);
+            const tempdata = yield this.readWait(SH200Q.commands.adc_reset, 1);
             tempdata[0] = tempdata[0] | 0x04; // tempdata[0] = 0x0E; //CC
-            this.write(SH200Q.commands.adcReset, tempdata);
+            this.write(SH200Q.commands.adc_reset, tempdata);
             yield this.obniz.wait(1);
             tempdata[0] = tempdata[0] & 0xfb; // tempdata[0] = 0x0A; //C8
-            this.write(SH200Q.commands.adcReset, tempdata);
+            this.write(SH200Q.commands.adc_reset, tempdata);
         });
     }
-    getAllDataWait() {
+    setAccelRange(accel_range) {
+        if (accel_range in SH200Q.commands.accel_fs_sel) {
+            this.write(SH200Q.commands.acc_range, SH200Q.commands.accel_fs_sel[accel_range]);
+            this.accel_so = accel_range;
+        }
+        else {
+            throw new Error(`Invalid accel range. Valid values are: ${Object.keys(SH200Q.commands.accel_fs_sel).join()}`);
+        }
+    }
+    setGyroRange(gyro_range) {
+        if (gyro_range in SH200Q.commands.gyro_fs_sel) {
+            this.write(SH200Q.commands.gyro_range, SH200Q.commands.gyro_fs_sel[gyro_range]);
+            // @ts-ignore
+            this.gyro_so = gyro_range;
+        }
+        else {
+            throw new Error(`Invalid gyro range. Valid values are: ${Object.keys(SH200Q.commands.gyro_fs_sel).join()}`);
+        }
+    }
+    calcTemp(data) {
+        if (typeof data === "undefined" || data === null) {
+            return null;
+        }
+        return data / 333.87 + 21.0;
+    }
+    getAccelAdcWait() {
         return __awaiter(this, void 0, void 0, function* () {
-            const raw_data = yield this.readWait(SH200Q.commands.outputAcc, 14); // request all data
-            const ac_scale = this._accel_range / 32768;
-            const gy_scale = this._gyro_range / 32768;
-            const accelerometer = {
-                x: this.char2short(raw_data[1], raw_data[0]) * ac_scale,
-                y: this.char2short(raw_data[3], raw_data[2]) * ac_scale,
-                z: this.char2short(raw_data[5], raw_data[4]) * ac_scale,
-            };
-            const gyroscope = {
-                x: this.char2short(raw_data[7], raw_data[6]) * gy_scale,
-                y: this.char2short(raw_data[9], raw_data[8]) * gy_scale,
-                z: this.char2short(raw_data[11], raw_data[10]) * gy_scale,
-            };
-            const temperature = this.char2short(raw_data[13], raw_data[12]) / 333.87 + 21.0;
+            const raw = yield this.readWait(SH200Q.commands.output_acc, 6);
+            return SH200Q.charArrayToXyz(raw, "l");
+        });
+    }
+    getGyroAdcWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const raw = yield this.readWait(SH200Q.commands.output_gyro, 6);
+            return SH200Q.charArrayToXyz(raw, "l");
+        });
+    }
+    getTempAdcWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const raw = yield this.readWait(SH200Q.commands.output_temp, 2);
+            return SH200Q.charArrayToInt16(raw, "l");
+        });
+    }
+    getAllAdcWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const raw = yield this.readWait(SH200Q.commands.output_acc, 14); // request all data
             return {
-                accelerometer,
-                temperature,
-                gyroscope,
+                accelerometer: SH200Q.charArrayToXyz(raw.slice(0, 6), "l"),
+                gyroscope: SH200Q.charArrayToXyz(raw.slice(6, 12), "l"),
+                temperature: SH200Q.charArrayToInt16(raw.slice(12, 14), "l"),
             };
-        });
-    }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const raw_data = yield this.readWait(SH200Q.commands.outputTemp, 2); // request all data
-            return this.char2short(raw_data[1], raw_data[0]) / 333.87 + 21.0;
-        });
-    }
-    getAccelWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).accelerometer;
-        });
-    }
-    getGyroWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).gyroscope;
         });
     }
 }
 exports.default = SH200Q;
 SH200Q.commands = {
     whoami: 0x30,
-    accConfig: 0x0e,
-    gyroConfig: 0x0f,
-    gyroDlpf: 0x11,
-    fifoConfig: 0x12,
-    accRange: 0x16,
-    gyroRange: 0x2b,
-    outputAcc: 0x00,
-    outputGyro: 0x06,
-    outputTemp: 0x0c,
-    regSet1: 0xba,
-    regSet2: 0xca,
-    adcReset: 0xc2,
-    softReset: 0x7f,
+    whoami_result: 0x18,
+    acc_config: 0x0e,
+    gyro_config: 0x0f,
+    gyro_dlpf: 0x11,
+    fifo_config: 0x12,
+    acc_range: 0x16,
+    gyro_range: 0x2b,
+    output_acc: 0x00,
+    output_gyro: 0x06,
+    output_temp: 0x0c,
+    reg_set1: 0xba,
+    reg_set2: 0xca,
+    adc_reset: 0xc2,
+    soft_reset: 0x7f,
     reset: 0x75,
+    accel_fs_sel: {
+        "4g": 0b00,
+        "8g": 0b01,
+        "16g": 0b10,
+    },
+    gyro_fs_sel: {
+        "125dps": 0b100,
+        "250dps": 0b011,
+        "500dps": 0b010,
+        "1000dps": 0b001,
+        "2000dps": 0b000,
+    },
 };
 
 //# sourceMappingURL=index.js.map
@@ -33696,6 +33771,92 @@ exports.default = XBee;
 
 /***/ }),
 
+/***/ "./dist/src/parts/i2cCompass.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class I2cCompassAbstract extends i2cParts_1.default {
+    static calibrateWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            throw new Error("Method not implemented.");
+        });
+    }
+    static headingWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            throw new Error("Method not implemented.");
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const adc = yield this.getAdcWait();
+            return {
+                x: this.calcMag(adc.x),
+                y: this.calcMag(adc.y),
+                z: this.calcMag(adc.z),
+            };
+        });
+    }
+    getAdcArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const obj = yield this.getAdcWait();
+            return [obj.x, obj.y, obj.z];
+        });
+    }
+    getArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const obj = yield this.getWait();
+            return [obj.x, obj.y, obj.z];
+        });
+    }
+    getUnit() {
+        return this.sf;
+    }
+    getRange() {
+        return this.range;
+    }
+    setUnit(new_unit) {
+        if (Object.keys(I2cCompassAbstract.unitScales).includes(new_unit)) {
+            this.sf = new_unit;
+        }
+        else {
+            throw new Error(`Invalid compass unit. Valid values are ${Object.keys(I2cCompassAbstract.unitScales).join()}`);
+        }
+    }
+    calcMag(data) {
+        return data * this.so * I2cCompassAbstract.unitScales[this.sf] / I2cCompassAbstract.unitScales[this.defaultUnit];
+    }
+}
+exports.default = I2cCompassAbstract;
+I2cCompassAbstract.unitScales = {
+    G: 1,
+    uT: 100,
+    mT: 0.1,
+    T: 0.0001,
+    mG: 1000,
+    kG: 0.001,
+    uG: 1000 * 1000,
+};
+
+//# sourceMappingURL=i2cCompass.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/i2cImu6.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -33728,6 +33889,80 @@ class I2cImu6Abstract extends i2cParts_1.default {
     }
     static _gyroS(value, gyro_so, gyro_sf) {
         return value / I2cImu6Abstract.scales.gyro.so[gyro_so] * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
+    }
+    getAccelWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const adc = yield this.getAccelAdcWait();
+            return this.calcAccel(adc);
+        });
+    }
+    getGyroWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const adc = yield this.getGyroAdcWait();
+            return this.calcGyro(adc);
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const adc = yield this.getTempAdcWait();
+            return this.calcTemp(adc);
+        });
+    }
+    getAllWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const adc = yield this.getAllAdcWait();
+            const ret = {
+                accelerometer: this.calcAccel(adc.accelerometer),
+                gyroscope: this.calcGyro(adc.gyroscope),
+                temperature: this.calcTemp(adc.temperature),
+            };
+            if ("compass" in adc) {
+                ret.compass = adc.compass;
+            }
+            return ret;
+        });
+    }
+    getAccelArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const obj = yield this.getAccelWait();
+            return [obj.x, obj.y, obj.z];
+        });
+    }
+    getGyroArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const obj = yield this.getGyroWait();
+            return [obj.x, obj.y, obj.z];
+        });
+    }
+    getAllArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const obj = yield this.getAllWait();
+            return [
+                [obj.accelerometer.x, obj.accelerometer.y, obj.accelerometer.z],
+                [obj.gyroscope.x, obj.gyroscope.y, obj.gyroscope.z],
+            ];
+        });
+    }
+    getAccelAdcArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const obj = yield this.getAccelAdcWait();
+            return [obj.x, obj.y, obj.z];
+        });
+    }
+    getGyroAdcArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const obj = yield this.getGyroAdcWait();
+            return [obj.x, obj.y, obj.z];
+        });
+    }
+    getAllAdcArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const obj = yield this.getAllAdcWait();
+            return [
+                [obj.accelerometer.x, obj.accelerometer.y, obj.accelerometer.z],
+                [obj.gyroscope.x, obj.gyroscope.y, obj.gyroscope.z],
+            ];
+        });
     }
     getAccelerometerWait() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33776,6 +34011,20 @@ class I2cImu6Abstract extends i2cParts_1.default {
         else {
             throw new Error(`Invalid gyro unit. Valid values are: ${Object.keys(I2cImu6Abstract.scales.gyro.sf).join()}`);
         }
+    }
+    calcAccel(adc) {
+        return {
+            x: I2cImu6Abstract._accelS(adc.x, this.accel_so, this.accel_sf),
+            y: I2cImu6Abstract._accelS(adc.y, this.accel_so, this.accel_sf),
+            z: I2cImu6Abstract._accelS(adc.z, this.accel_so, this.accel_sf),
+        };
+    }
+    calcGyro(adc) {
+        return {
+            x: I2cImu6Abstract._gyroS(adc.x, this.gyro_so, this.gyro_sf),
+            y: I2cImu6Abstract._gyroS(adc.y, this.gyro_so, this.gyro_sf),
+            z: I2cImu6Abstract._gyroS(adc.z, this.gyro_so, this.gyro_sf),
+        };
     }
 }
 exports.default = I2cImu6Abstract;

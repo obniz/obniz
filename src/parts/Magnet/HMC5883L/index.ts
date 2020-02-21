@@ -1,15 +1,12 @@
 import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from "../../i2cCompass";
+import { I2cInfo, Xyz } from "../../i2cParts";
 
-export interface HMC5883LOptions {
-  gnd?: number;
-  sda?: number;
-  scl?: number;
-  i2c?: PeripheralI2C;
+export interface HMC5883LOptions extends I2cCompassAbstractOptions {
 }
 
-export default class HMC5883L implements ObnizPartsInterface {
+export default class HMC5883L extends i2cCompass {
 
   public static info(): ObnizPartsInfo {
     return {
@@ -17,56 +14,72 @@ export default class HMC5883L implements ObnizPartsInterface {
     };
   }
 
-  public keys: string[];
-  public requiredKeys: string[];
-  public params: any;
-
-  public address = {
-    device: 0x1e,
-    reset: [0x02, 0x00], // Continuous Measurment Mode
-    xMSB: [0x03],
+  private static commands = {
+    config_a: 0x00,
+    config_b: 0x01,
+    mode: 0x02,
+    x_MSB: 0x03,
+    status: 0x09,
   };
-  public i2c!: PeripheralI2C;
 
-  protected obniz!: Obniz;
+  private static scales = [
+    1 / 1370,
+    1 / 1090,
+    1 / 820,
+    1 / 660,
+    1 / 440,
+    1 / 390,
+    1 / 330,
+    1 / 230,
+  ];
+  public i2cinfo: I2cInfo;
+  protected so: number;
+  protected sf: compassUnit;
+  protected range: string;
+
+  protected defaultUnit: compassUnit = "G";
 
   constructor() {
-    this.keys = ["gnd", "sda", "scl", "i2c"];
-    this.requiredKeys = [];
+    super();
+    this.i2cinfo = {
+      address: 0x1e,
+      clock: 100000,
+      voltage: "3v",
+      pull: "3v",
+    };
+    this.sf = this.defaultUnit;
+    this.so = HMC5883L.scales[1];
+    this.range = "8G";
+
   }
 
   public wired(obniz: Obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(null, this.params.gnd, "3v");
-
-    this.params.clock = 100000;
-    this.params.pull = "3v";
-    this.params.mode = "master";
-
-    this.i2c = obniz.getI2CWithConfig(this.params);
-
-    this.obniz.wait(500);
+    super.wired(obniz);
+    // this.obniz.wait(500);
+    this.init();
   }
 
   public init() {
-    this.i2c.write(this.address.device, this.address.reset);
-    this.obniz.wait(500);
+    this.reset();
+    // this.obniz.wait(500);
   }
 
+  public reset() {
+    this.write(HMC5883L.commands.mode, 0x00);
+  }
+
+  public async getAdcWait(): Promise<Xyz> {
+    const raw = await this.readWait(HMC5883L.commands.x_MSB, 6);
+    return HMC5883L.charArrayToXyz(raw, "b");
+  }
+
+  public setRange(index: number) {
+    this.write(HMC5883L.commands.config_b, index << 5);
+    this.so = HMC5883L.scales[index];
+  }
+
+  // legacy
   public async get() {
-    this.i2c.write(this.address.device, this.address.xMSB);
-    const readed = await this.i2c.readWait(this.address.device, 2 * 3);
-
-    const obj: any = {};
-    const keys = ["x", "y", "z"];
-    for (let i = 0; i < 3; i++) {
-      let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
-      if (val & 0x8000) {
-        val = val - 65536;
-      }
-      obj[keys[i]] = val;
-    }
-
-    return obj;
+    return await this.getWait();
   }
 }
