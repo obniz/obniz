@@ -71,9 +71,12 @@ export default class ObnizBLE {
    * @ignore
    */
   public peripheralBindings: PeripheralBindings;
-  protected advertisement: any;
 
-  protected Obniz: Obniz;
+  /**
+   * @ignore
+   */
+  public Obniz: Obniz;
+  protected advertisement: any;
   protected hciProtocol: HciProtocol;
   protected _initialized: boolean;
   protected _initializeWarning: boolean;

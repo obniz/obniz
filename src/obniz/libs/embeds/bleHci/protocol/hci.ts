@@ -269,7 +269,7 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public setScanParameters() {
+  public setScanParameters(isActiveScan: boolean) {
     const cmd: any = Buffer.alloc(11);
 
     // header
@@ -280,7 +280,7 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt8(0x07, 3);
 
     // data
-    cmd.writeUInt8(0x01, 4); // type: 0 -> passive, 1 -> active
+    cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 4); // type: 0 -> passive, 1 -> active
     cmd.writeUInt16LE(0x0010, 5); // internal, ms * 1.6
     cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
     cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
@@ -829,7 +829,7 @@ class Hci extends events.EventEmitter {
         this.emit("stateChange", "unsupported");
       } else if (this._state !== "poweredOn") {
         this.setScanEnabled(false, true);
-        this.setScanParameters();
+        this.setScanParameters(false);
       }
 
       this.emit(
