@@ -57,7 +57,7 @@ export interface BleScanSetting {
   /**
    * Timeout seconds of scanning. Default is 30 seconds.
    *
-   * If set null, scan not stop automatically.
+   * If set null, scan don't stop automatically.
    */
   duration?: number | null;
 
