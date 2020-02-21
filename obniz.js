@@ -261,6 +261,7 @@ var map = {
 	"./request/ble/central/scan_start.yml": "./dist/src/json_schema/request/ble/central/scan_start.yml",
 	"./request/ble/central/scan_stop.yml": "./dist/src/json_schema/request/ble/central/scan_stop.yml",
 	"./request/ble/central/service_get.yml": "./dist/src/json_schema/request/ble/central/service_get.yml",
+	"./request/ble/hci/advertisement_filter.yml": "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml",
 	"./request/ble/hci/index.yml": "./dist/src/json_schema/request/ble/hci/index.yml",
 	"./request/ble/hci/write.yml": "./dist/src/json_schema/request/ble/hci/write.yml",
 	"./request/ble/index.yml": "./dist/src/json_schema/request/ble/index.yml",
@@ -558,10 +559,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/advertisement_filter","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["advertisement_filter"],"properties":{"advertisement_filter":{"type":"array","items":{"type":"object","required":["range"],"properties":{"range":{"type":"object","required":["index","length"],"properties":{"index":{"type":"integer","minimum":0,"maximum":255},"length":{"type":"integer","minimum":0,"maximum":255}}},"value":{"$ref":"/dataArray"}}}}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/ble/hci/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"},{"$ref":"/request/ble/hci/advertisement_filter"}]}
 
 /***/ }),
 
@@ -5558,6 +5566,12 @@ class BleScan {
     } // dummy
     onfind(params) {
     } // dummy
+    setAdvertisementFilter() {
+        throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
+    }
+    setScanMode(mode) {
+        throw new Error("setScanMode is not support obnizOS < 3.2.0");
+    }
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onfind": {
@@ -8828,7 +8842,7 @@ class BleRemotePeripheral {
         if (!data) {
             return;
         }
-        const uuidLength = bit / 4;
+        const uuidLength = bit / 8;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
             results.push(ble_1.default._dataArray2uuidHex(one, true));
@@ -9090,6 +9104,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @category Use as Central
@@ -9133,30 +9149,28 @@ class BleScan {
      * @param target
      * @param settings
      */
-    start(target, settings) {
+    start(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
-        if (!settings) {
-            settings = {};
-        }
-        const timeout = settings.duration || 30;
+        const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
+        settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
-        target = target || {};
         this.scanTarget = target;
-        if (this.scanTarget &&
-            this.scanTarget.uuids &&
-            Array.isArray(this.scanTarget.uuids)) {
+        if (this.scanTarget.uuids) {
             this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
         }
         this.scanedPeripherals = [];
-        this.obnizBle.centralBindings.startScanning(null, false);
+        this._setTargetFilterOnDevice();
+        this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
-        this._timeoutTimer = setTimeout(() => {
-            this._timeoutTimer = undefined;
-            this.end();
-        }, timeout * 1000);
+        if (timeout !== null) {
+            this._timeoutTimer = setTimeout(() => {
+                this._timeoutTimer = undefined;
+                this.end();
+            }, timeout * 1000);
+        }
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -9278,29 +9292,191 @@ class BleScan {
             }
         }
     }
-    isTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.localName &&
-            peripheral.localName !== this.scanTarget.localName) {
-            return false;
+    /**
+     * Clear advertisement filter.
+     */
+    clearAdvertisementFilter() {
+        this.obnizBle.Obniz.send({
+            ble: {
+                hci: {
+                    advertisement_filter: [],
+                },
+            },
+        });
+    }
+    _setAdvertisementFilter(filterVals) {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
         }
-        if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
-                return bleHelper_1.default.uuidFilter(e);
+        // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
+        // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
+        const filters = [];
+        filterVals.forEach((filterVal) => {
+            if (filterVal.localNamePrefix) {
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: [0x08, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                });
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: [0x09, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                });
+            }
+            if (filterVal.deviceAddress) {
+                filters.push({
+                    range: {
+                        index: 2,
+                        length: 6,
+                    },
+                    value: util_1.default.hexToBinary(filterVal.deviceAddress, true),
+                });
+            }
+            if (filterVal.uuid) {
+                const binary = util_1.default.hexToBinary(filterVal.uuid, true);
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: binary,
+                });
+            }
+            if (filterVal.binary) {
+                filters.push({
+                    range: {
+                        index: 0,
+                        length: 255,
+                    },
+                    value: filterVal.binary,
+                });
+            }
+        });
+        this.obnizBle.Obniz.send({
+            ble: {
+                hci: {
+                    advertisement_filter: filters,
+                },
+            },
+        });
+    }
+    _arrayWrapper(val) {
+        if (Array.isArray(val)) {
+            return val;
+        }
+        else {
+            return [val];
+        }
+    }
+    _setTargetFilterOnDevice() {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
+        const adFilters = [];
+        if (this.scanTarget.uuids) {
+            this.scanTarget.uuids.map((elm) => {
+                adFilters.push({ uuid: bleHelper_1.default.uuidFilter(elm) });
             });
-            for (const uuid of this.scanTarget.uuids) {
-                if (!uuids.includes(uuid)) {
-                    return false;
-                }
+        }
+        if (this.scanTarget.localName) {
+            this._arrayWrapper(this.scanTarget.localName).forEach((name) => {
+                adFilters.push({ localNamePrefix: name });
+            });
+        }
+        if (this.scanTarget.deviceAddress) {
+            this._arrayWrapper(this.scanTarget.deviceAddress).forEach((address) => {
+                adFilters.push({ deviceAddress: address });
+            });
+        }
+        if (this.scanTarget.localNamePrefix) {
+            this._arrayWrapper(this.scanTarget.localNamePrefix).forEach((name) => {
+                adFilters.push({ localNamePrefix: name });
+            });
+        }
+        if (this.scanTarget.binary) {
+            if (Array.isArray(this.scanTarget.binary[0])) {
+                this.scanTarget.binary.forEach((e) => {
+                    adFilters.push({ binary: e });
+                });
+            }
+            else {
+                adFilters.push({ binary: this.scanTarget.binary });
             }
         }
-        return true;
+        this._setAdvertisementFilter(adFilters);
+    }
+    isTarget(peripheral) {
+        if (this.isLocalNamePrefixTarget(peripheral)
+            || this.isLocalNameTarget(peripheral)
+            || this.isUuidTarget(peripheral)
+            || this.isDeviceAddressTarget(peripheral)
+            || this.isBinaryTarget(peripheral)) {
+            return true;
+        }
+        return false;
     }
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
             this._timeoutTimer = undefined;
         }
+    }
+    isLocalNameTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.localName) {
+            for (const name of this._arrayWrapper(this.scanTarget.localName)) {
+                if (name === peripheral.localName) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isLocalNamePrefixTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.localNamePrefix) {
+            for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
+                if (peripheral.localName && peripheral.localName.startsWith(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isBinaryTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.binary) {
+            return true; // cannot detect on obnizjs
+        }
+        return false;
+    }
+    isUuidTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.uuids) {
+            const uuids = peripheral.advertisementServiceUuids().map((e) => {
+                return bleHelper_1.default.uuidFilter(e);
+            });
+            for (const uuid of this.scanTarget.uuids) {
+                if (uuids.includes(uuid)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isDeviceAddressTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.deviceAddress) {
+            if (this.scanTarget.deviceAddress === peripheral.address) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 exports.default = BleScan;
@@ -9675,9 +9851,9 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
     }
-    startScanning(serviceUuids, allowDuplicates) {
+    startScanning(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = serviceUuids || [];
-        this._gap.startScanning(allowDuplicates);
+        this._gap.startScanning(allowDuplicates, activeScan);
     }
     stopScanning() {
         this._gap.stopScanning();
@@ -10169,7 +10345,7 @@ exports.default = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10206,7 +10382,7 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
         this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
-    startScanning(allowDuplicates) {
+    startScanning(allowDuplicates, activeScan) {
         this._scanState = "starting";
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
@@ -10215,7 +10391,7 @@ class Gap extends events_1.default.EventEmitter {
         // p106 - p107
         this._hci.setScanEnabled(false, true);
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
-            this._hci.setScanParameters();
+            this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
@@ -10450,13 +10626,7 @@ class Gap extends events_1.default.EventEmitter {
             count: discoveryCount,
             hasScanResponse,
         };
-        // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-        if (type === 0x04 ||
-            !connectable ||
-            (discoveryCount > 1 && !hasScanResponse) ||
-            process.env.NOBLE_REPORT_ALL_HCI_EVENTS) {
-            this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
-        }
+        this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     startAdvertising(name, serviceUuids) {
         debug("startAdvertising: name = " +
@@ -10607,7 +10777,7 @@ exports.default = Gap;
 
 //# sourceMappingURL=gap.js.map
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js"), __webpack_require__("./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -11776,7 +11946,7 @@ class Hci extends events.EventEmitter {
         debug("write LE host supported - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
-    setScanParameters() {
+    setScanParameters(isActiveScan) {
         const cmd = Buffer.alloc(11);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -11784,7 +11954,7 @@ class Hci extends events.EventEmitter {
         // length
         cmd.writeUInt8(0x07, 3);
         // data
-        cmd.writeUInt8(0x01, 4); // type: 0 -> passive, 1 -> active
+        cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 4); // type: 0 -> passive, 1 -> active
         cmd.writeUInt16LE(0x0010, 5); // internal, ms * 1.6
         cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
         cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
@@ -12217,7 +12387,7 @@ class Hci extends events.EventEmitter {
             }
             else if (this._state !== "poweredOn") {
                 this.setScanEnabled(false, true);
-                this.setScanParameters();
+                this.setScanParameters(false);
             }
             this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
         }
@@ -18675,6 +18845,22 @@ class ObnizUtil {
         return [...buf];
     }
     /**
+     * @ignore
+     * @param data
+     * @param schema
+     */
+    static hexToBinary(data, reverse = false) {
+        const array = [];
+        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+        for (let i = 0; i < hex.length / 2; i++) {
+            array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
+        }
+        if (reverse) {
+            array.reverse();
+        }
+        return array;
+    }
+    /**
      * This creates a Canvas context.
      * It will add a canvas dom to body(in html).
      *
@@ -20438,14 +20624,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 class WSCommandBleHci {
     constructor(delegate) {
-        this._delegate = delegate;
         this._CommandHCIInit = 41;
         this._CommandHCIDeinit = 42;
         this._CommandHCISend = 43;
         this._CommandHCIRecv = 44;
+        this._CommandHCIAdvertisementFilter = 45;
+        this._delegate = delegate;
     }
     schemaData() {
-        return [{ uri: "/request/ble/hci/write", onValid: this.send.bind(this) }];
+        return [
+            { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
+            { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
+        ];
     }
     notifyFunctionList() {
         const funcList = {};
@@ -20465,6 +20655,16 @@ class WSCommandBleHci {
         objToSend.ble = objToSend.ble || {};
         objToSend.ble.hci = objToSend.ble.hci || {};
         objToSend.ble.hci.read = { data: arr };
+    }
+    advertisementFilter(params) {
+        const sendData = [];
+        params.hci.advertisement_filter.forEach((e) => {
+            const one = [e.range.index, e.range.length, e.value.length, ...e.value];
+            sendData.push(...one);
+        });
+        const buf = new Uint8Array(sendData.length);
+        buf.set(sendData);
+        this._delegate.sendCommand(this._CommandHCIAdvertisementFilter, buf);
     }
 }
 exports.default = WSCommandBleHci;
