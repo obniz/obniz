@@ -9411,7 +9411,8 @@ class BleScan {
         this._setAdvertisementFilter(adFilters);
     }
     isTarget(peripheral) {
-        if (this.isLocalNamePrefixTarget(peripheral)
+        if (Object.keys(this.scanTarget).length === 0
+            || this.isLocalNamePrefixTarget(peripheral)
             || this.isLocalNameTarget(peripheral)
             || this.isUuidTarget(peripheral)
             || this.isDeviceAddressTarget(peripheral)
