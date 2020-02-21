@@ -54,7 +54,17 @@ export interface BleScanAdvertisementFilterParam {
 }
 
 export interface BleScanSetting {
+  /**
+   * Timeout seconds of scanning. Default is 30 seconds.
+   *
+   * If set null, scan not stop automatically.
+   */
   duration?: number | null;
+
+  /**
+   * (obnizOS 3 or later only)
+   * Specifying onfind will be called or not when an advertisement received from already known peripheral. Default is false : never called again.
+   */
   duplicate?: boolean;
 
   /**
@@ -157,7 +167,7 @@ export default class BleScan {
   public start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
     this.obnizBle.warningIfNotInitialize();
 
-    const timeout: number|null = settings.duration === undefined ? 30 : settings.duration;
+    const timeout: number | null = settings.duration === undefined ? 30 : settings.duration;
     settings.duplicate = !!settings.duplicate;
     settings.activeScan = settings.activeScan !== false;
     this.scanSettings = settings;
