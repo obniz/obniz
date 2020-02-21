@@ -5567,10 +5567,10 @@ class BleScan {
     onfind(params) {
     } // dummy
     setAdvertisementFilter() {
-        throw new Error("setAdvertisementFilter is not support obnizOS < 3.3.0");
+        throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
     }
     setScanMode(mode) {
-        throw new Error("setScanMode is not support obnizOS < 3.3.0");
+        throw new Error("setScanMode is not support obnizOS < 3.2.0");
     }
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
@@ -9104,6 +9104,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
@@ -9304,6 +9305,10 @@ class BleScan {
         });
     }
     _setAdvertisementFilter(filterVals) {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
         // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
         // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
         const filters = [];
@@ -9370,6 +9375,10 @@ class BleScan {
         }
     }
     _setTargetFilterOnDevice() {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
         const adFilters = [];
         if (this.scanTarget.uuids) {
             this.scanTarget.uuids.map((elm) => {

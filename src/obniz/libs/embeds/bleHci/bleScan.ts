@@ -3,7 +3,9 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import EventEmitter from "eventemitter3";
+import semver from "semver";
 import Util from "../../utils/util";
+import {ObnizOldBLE} from "../ble";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BlePeripheral from "./blePeripheral";
@@ -16,6 +18,8 @@ export type BleBinary = number[];
 
 /**
  * All parameters are OR. If you set uuid and localName, obniz find uuid match but localName not match device.
+ *
+ * If obnizOS >= 3.2.0, filters are apply on obniz device. So it reduce traffic.
  */
 export interface BleScanTarget {
   uuids?: UUID[];
@@ -179,7 +183,9 @@ export default class BleScan {
       });
     }
     this.scanedPeripherals = [];
+
     this._setTargetFilterOnDevice();
+
     this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
 
     this.clearTimeoutTimer();
@@ -334,6 +340,11 @@ export default class BleScan {
 
   protected _setAdvertisementFilter(filterVals: BleScanAdvertisementFilterParam[]) {
 
+    // < 3.2.0
+    if (semver.lt(this.obnizBle.Obniz.firmware_ver!, "3.2.0")) {
+      return;
+    }
+
     // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
     // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
 
@@ -410,6 +421,12 @@ export default class BleScan {
   }
 
   protected _setTargetFilterOnDevice() {
+
+    // < 3.2.0
+    if (semver.lt(this.obnizBle.Obniz.firmware_ver!, "3.2.0")) {
+      return;
+    }
+
     const adFilters: BleScanAdvertisementFilterParam[] = [];
     if (this.scanTarget.uuids) {
       this.scanTarget.uuids.map((elm: UUID) => {
