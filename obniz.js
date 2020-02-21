@@ -5567,10 +5567,10 @@ class BleScan {
     onfind(params) {
     } // dummy
     setAdvertisementFilter() {
-        throw new Error("setAdvertisementFilter is not support obnizOS < 3.3.0");
+        throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
     }
     setScanMode(mode) {
-        throw new Error("setScanMode is not support obnizOS < 3.3.0");
+        throw new Error("setScanMode is not support obnizOS < 3.2.0");
     }
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
@@ -8842,7 +8842,7 @@ class BleRemotePeripheral {
         if (!data) {
             return;
         }
-        const uuidLength = bit / 4;
+        const uuidLength = bit / 8;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
             results.push(ble_1.default._dataArray2uuidHex(one, true));
@@ -9104,6 +9104,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
@@ -9150,9 +9151,9 @@ class BleScan {
      */
     start(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
-        const timeout = settings.duration || 30;
+        const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
-        settings.isActiveScan = settings.isActiveScan !== false;
+        settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
         this.scanTarget = target;
         if (this.scanTarget.uuids) {
@@ -9162,12 +9163,14 @@ class BleScan {
         }
         this.scanedPeripherals = [];
         this._setTargetFilterOnDevice();
-        this.obnizBle.centralBindings.startScanning(null, false, settings.isActiveScan);
+        this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
-        this._timeoutTimer = setTimeout(() => {
-            this._timeoutTimer = undefined;
-            this.end();
-        }, timeout * 1000);
+        if (timeout !== null) {
+            this._timeoutTimer = setTimeout(() => {
+                this._timeoutTimer = undefined;
+                this.end();
+            }, timeout * 1000);
+        }
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -9302,19 +9305,14 @@ class BleScan {
         });
     }
     _setAdvertisementFilter(filterVals) {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
         // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
         // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
         const filters = [];
         filterVals.forEach((filterVal) => {
-            if (filterVal.deviceAddress) {
-                filters.push({
-                    range: {
-                        index: 2,
-                        length: 6,
-                    },
-                    value: util_1.default.string2dataArray(filterVal.deviceAddress),
-                });
-            }
             if (filterVal.localNamePrefix) {
                 filters.push({
                     range: {
@@ -9377,6 +9375,10 @@ class BleScan {
         }
     }
     _setTargetFilterOnDevice() {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
         const adFilters = [];
         if (this.scanTarget.uuids) {
             this.scanTarget.uuids.map((elm) => {
@@ -10625,10 +10627,7 @@ class Gap extends events_1.default.EventEmitter {
             count: discoveryCount,
             hasScanResponse,
         };
-        // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-        if (true) {
-            this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
-        }
+        this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     startAdvertising(name, serviceUuids) {
         debug("startAdvertising: name = " +

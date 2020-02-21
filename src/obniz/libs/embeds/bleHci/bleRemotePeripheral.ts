@@ -767,7 +767,7 @@ export default class BleRemotePeripheral {
     if (!data) {
       return;
     }
-    const uuidLength: any = bit / 4;
+    const uuidLength: any = bit / 8;
     for (let i = 0; i < data.length; i = i + uuidLength) {
       const one: any = data.slice(i, i + uuidLength);
       results.push(ObnizBLE._dataArray2uuidHex(one, true));

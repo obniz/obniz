@@ -3,7 +3,9 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import EventEmitter from "eventemitter3";
+import semver from "semver";
 import Util from "../../utils/util";
+import {ObnizOldBLE} from "../ble";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BlePeripheral from "./blePeripheral";
@@ -16,6 +18,8 @@ export type BleBinary = number[];
 
 /**
  * All parameters are OR. If you set uuid and localName, obniz find uuid match but localName not match device.
+ *
+ * If obnizOS >= 3.2.0, filters are apply on obniz device. So it reduce traffic.
  */
 export interface BleScanTarget {
   uuids?: UUID[];
@@ -54,7 +58,17 @@ export interface BleScanAdvertisementFilterParam {
 }
 
 export interface BleScanSetting {
-  duration?: number;
+  /**
+   * Timeout seconds of scanning. Default is 30 seconds.
+   *
+   * If set null, scan don't stop automatically.
+   */
+  duration?: number | null;
+
+  /**
+   * (obnizOS 3 or later only)
+   * Specifying onfind will be called or not when an advertisement received from already known peripheral. Default is false : never called again.
+   */
   duplicate?: boolean;
 
   /**
@@ -63,7 +77,7 @@ export interface BleScanSetting {
    * Default is true : activeScan.
    *
    */
-  isActiveScan?: boolean;
+  activeScan?: boolean;
 }
 
 /**
@@ -157,9 +171,9 @@ export default class BleScan {
   public start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
     this.obnizBle.warningIfNotInitialize();
 
-    const timeout: number = settings.duration || 30;
+    const timeout: number | null = settings.duration === undefined ? 30 : settings.duration;
     settings.duplicate = !!settings.duplicate;
-    settings.isActiveScan = settings.isActiveScan !== false;
+    settings.activeScan = settings.activeScan !== false;
     this.scanSettings = settings;
 
     this.scanTarget = target;
@@ -169,15 +183,18 @@ export default class BleScan {
       });
     }
     this.scanedPeripherals = [];
+
     this._setTargetFilterOnDevice();
-    this.obnizBle.centralBindings.startScanning(null, false, settings.isActiveScan);
+
+    this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
 
     this.clearTimeoutTimer();
-    this._timeoutTimer = setTimeout(() => {
-      this._timeoutTimer = undefined;
-      this.end();
-    }, timeout * 1000);
-
+    if (timeout !== null) {
+      this._timeoutTimer = setTimeout(() => {
+        this._timeoutTimer = undefined;
+        this.end();
+      }, timeout * 1000);
+    }
   }
 
   /**
@@ -323,21 +340,16 @@ export default class BleScan {
 
   protected _setAdvertisementFilter(filterVals: BleScanAdvertisementFilterParam[]) {
 
+    // < 3.2.0
+    if (semver.lt(this.obnizBle.Obniz.firmware_ver!, "3.2.0")) {
+      return;
+    }
+
     // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
     // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
 
     const filters: any = [];
     filterVals.forEach((filterVal: BleScanAdvertisementFilterParam) => {
-
-      if (filterVal.deviceAddress) {
-        filters.push({
-          range: {
-            index: 2,
-            length: 6,
-          },
-          value: Util.string2dataArray(filterVal.deviceAddress),
-        });
-      }
 
       if (filterVal.localNamePrefix) {
         filters.push({
@@ -409,6 +421,12 @@ export default class BleScan {
   }
 
   protected _setTargetFilterOnDevice() {
+
+    // < 3.2.0
+    if (semver.lt(this.obnizBle.Obniz.firmware_ver!, "3.2.0")) {
+      return;
+    }
+
     const adFilters: BleScanAdvertisementFilterParam[] = [];
     if (this.scanTarget.uuids) {
       this.scanTarget.uuids.map((elm: UUID) => {

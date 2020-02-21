@@ -359,23 +359,15 @@ class Gap extends events.EventEmitter {
       hasScanResponse,
     };
 
-    // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-    if ( true ||
-      type === 0x04 ||
-      !connectable ||
-      (discoveryCount > 1 && !hasScanResponse) ||
-      process.env.NOBLE_REPORT_ALL_HCI_EVENTS
-    ) {
-      this.emit(
-        "discover",
-        status,
-        address,
-        addressType,
-        connectable,
-        advertisement,
-        rssi,
-      );
-    }
+    this.emit(
+      "discover",
+      status,
+      address,
+      addressType,
+      connectable,
+      advertisement,
+      rssi,
+    );
   }
 
   public startAdvertising(name: any, serviceUuids: any) {
