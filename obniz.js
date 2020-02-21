@@ -9150,9 +9150,9 @@ class BleScan {
      */
     start(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
-        const timeout = settings.duration || 30;
+        const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
-        settings.isActiveScan = settings.isActiveScan !== false;
+        settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
         this.scanTarget = target;
         if (this.scanTarget.uuids) {
@@ -9162,12 +9162,14 @@ class BleScan {
         }
         this.scanedPeripherals = [];
         this._setTargetFilterOnDevice();
-        this.obnizBle.centralBindings.startScanning(null, false, settings.isActiveScan);
+        this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
-        this._timeoutTimer = setTimeout(() => {
-            this._timeoutTimer = undefined;
-            this.end();
-        }, timeout * 1000);
+        if (timeout !== null) {
+            this._timeoutTimer = setTimeout(() => {
+                this._timeoutTimer = undefined;
+                this.end();
+            }, timeout * 1000);
+        }
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -9306,15 +9308,6 @@ class BleScan {
         // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
         const filters = [];
         filterVals.forEach((filterVal) => {
-            if (filterVal.deviceAddress) {
-                filters.push({
-                    range: {
-                        index: 2,
-                        length: 6,
-                    },
-                    value: util_1.default.string2dataArray(filterVal.deviceAddress),
-                });
-            }
             if (filterVal.localNamePrefix) {
                 filters.push({
                     range: {
@@ -10624,10 +10617,7 @@ class Gap extends events_1.default.EventEmitter {
             count: discoveryCount,
             hasScanResponse,
         };
-        // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-        if (true) {
-            this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
-        }
+        this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     startAdvertising(name, serviceUuids) {
         debug("startAdvertising: name = " +

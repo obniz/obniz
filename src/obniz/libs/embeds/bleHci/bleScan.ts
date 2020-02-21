@@ -54,7 +54,7 @@ export interface BleScanAdvertisementFilterParam {
 }
 
 export interface BleScanSetting {
-  duration?: number;
+  duration?: number | null;
   duplicate?: boolean;
 
   /**
@@ -63,7 +63,7 @@ export interface BleScanSetting {
    * Default is true : activeScan.
    *
    */
-  isActiveScan?: boolean;
+  activeScan?: boolean;
 }
 
 /**
@@ -157,9 +157,9 @@ export default class BleScan {
   public start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
     this.obnizBle.warningIfNotInitialize();
 
-    const timeout: number = settings.duration || 30;
+    const timeout: number|null = settings.duration === undefined ? 30 : settings.duration;
     settings.duplicate = !!settings.duplicate;
-    settings.isActiveScan = settings.isActiveScan !== false;
+    settings.activeScan = settings.activeScan !== false;
     this.scanSettings = settings;
 
     this.scanTarget = target;
@@ -170,14 +170,15 @@ export default class BleScan {
     }
     this.scanedPeripherals = [];
     this._setTargetFilterOnDevice();
-    this.obnizBle.centralBindings.startScanning(null, false, settings.isActiveScan);
+    this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
 
     this.clearTimeoutTimer();
-    this._timeoutTimer = setTimeout(() => {
-      this._timeoutTimer = undefined;
-      this.end();
-    }, timeout * 1000);
-
+    if (timeout !== null) {
+      this._timeoutTimer = setTimeout(() => {
+        this._timeoutTimer = undefined;
+        this.end();
+      }, timeout * 1000);
+    }
   }
 
   /**
@@ -328,16 +329,6 @@ export default class BleScan {
 
     const filters: any = [];
     filterVals.forEach((filterVal: BleScanAdvertisementFilterParam) => {
-
-      if (filterVal.deviceAddress) {
-        filters.push({
-          range: {
-            index: 2,
-            length: 6,
-          },
-          value: Util.string2dataArray(filterVal.deviceAddress),
-        });
-      }
 
       if (filterVal.localNamePrefix) {
         filters.push({
