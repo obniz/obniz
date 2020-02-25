@@ -132,6 +132,7 @@ module.exports = {
       "git add"
     ],
     "src/**/*.ts": [
+      "tslint -c tslint.json --fix ",
       "git add"
     ]
   },
