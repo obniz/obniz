@@ -5,17 +5,22 @@
 
 import USB, {USBOptions} from "../parts/Accessory/USB";
 import HX711, {Hx711Options} from "../parts/ADConverter/hx711";
+// Camera
 import ArduCAMMini, {ArduCAMMiniOptions} from "../parts/Camera/ArduCAMMini";
 import JpegSerialCam, {JpegSerialCamOptions} from "../parts/Camera/JpegSerialCam";
+// Display
 import _7SegmentLED, {_7SegmentLEDOptions} from "../parts/Display/7SegmentLED";
 import _7SegmentLED_MAX7219, {_7SegmentLED_MAX7219Options} from "../parts/Display/7SegmentLED_MAX7219";
 import _7SegmentLEDArray, {_7SegmentLEDArrayOptions} from "../parts/Display/7SegmentLEDArray";
+import MatrixLED_HT16K33, {MatrixLED_HT16K33Options} from "../parts/Display/MatrixLED_HT16K33";
 import MatrixLED_MAX7219, {MatrixLED_MAX7219Options} from "../parts/Display/MatrixLED_MAX7219";
 import SainSmartTFT18LCD, {SainSmartTFT18LCDOptions} from "../parts/Display/SainSmartTFT18LCD";
 import SharpMemoryTFT, {SharpMemoryTFTOptions} from "../parts/Display/SharpMemoryTFT";
 import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
+// DistanceSensor
 import GP2Y0A21YK0F, {GP2Y0A21YK0FOptions} from "../parts/DistanceSensor/GP2Y0A21YK0F";
 import HCSR04, {HCSR04Options} from "../parts/DistanceSensor/HC-SR04";
+// GasSensor
 import MQ135, {MQ135Options} from "../parts/GasSensor/MQ135";
 import MQ2, {MQ2Options} from "../parts/GasSensor/MQ2";
 import MQ3, {MQ3Options} from "../parts/GasSensor/MQ3";
@@ -93,6 +98,7 @@ import OMRON_2JCIE, {OMRON_2JCIEOptions} from "../parts/Ble/2jcie";
 import Linking, {LinkingOptions} from "../parts/Ble/linking";
 import PT550, {PT550Options} from "../parts/ColorSensor/PT550";
 import S11059, {S11059Options} from "../parts/ColorSensor/S11059";
+
 import Grove_3AxisAccelerometer, {Grove_3AxisAccelerometerOptions} from "../parts/Grove/Grove_3AxisAccelerometer";
 // Grove
 import Grove_Button, {Grove_ButtonOptions} from "../parts/Grove/Grove_Button";
@@ -241,6 +247,8 @@ export interface WiredNameMap {
   "ADT7410": ADT7410;
   "S5851A": S5851A;
   "DPS310": DPS310;
+  // KeyeStudio
+  "MatrixLED_HT16K33": MatrixLED_HT16K33;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -376,4 +384,6 @@ export interface WiredNameOptionsMap {
   "ADT7410": ADT7410Options;
   "S5851A": S5851AOptions;
   "DPS310": DPS310Options;
+  // KeyeStudio
+  "MatrixLED_HT16K33": MatrixLED_HT16K33Options;
 }

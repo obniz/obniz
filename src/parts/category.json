@@ -122,6 +122,11 @@
           }
         },
         {
+          "name": "MatrixLED_HT16K33",
+          "store": {
+          }
+        },
+        {
           "name": "SharpMemoryTFT",
           "store": {
             "adafruit": "https://www.adafruit.com/product/3502"
