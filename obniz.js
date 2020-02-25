@@ -22746,6 +22746,12 @@ var map = {
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
 	"./Infrared/InfraredLED/index.js": "./dist/src/parts/Infrared/InfraredLED/index.js",
 	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
+	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
+	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
+	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
+	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
+	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
+	"./Keyestudio/Keyestudio_TrafficLight/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
@@ -35838,6 +35844,356 @@ exports.default = YG1006;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Button
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Button {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Button",
+        };
+    }
+    wired(obniz) {
+        this.io_signal = obniz.getIO(this.params.signal);
+        if (obniz.isValidIO(this.params.vcc)) {
+            this.io_vcc = obniz.getIO(this.params.vcc);
+            this.io_vcc.output(true);
+        }
+        if (obniz.isValidIO(this.params.gnd)) {
+            this.io_supply = obniz.getIO(this.params.gnd);
+            this.io_supply.output(false);
+        }
+        this.io_signal.pull("5v");
+        this.io_signal.input((value) => {
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io_signal.inputWait();
+        });
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => {
+                    };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Keyestudio_Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Buzzer
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Buzzer {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Buzzer",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.pwm = obniz.getFreePwm();
+        this.pwm.start({ io: this.params.signal });
+    }
+    play(freq) {
+        if (typeof freq !== "number") {
+            throw new Error("freq must be a number");
+        }
+        freq = Math.floor(freq);
+        if (freq > 0) {
+            this.pwm.freq(freq);
+            this.pwm.pulse((1 / freq / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Keyestudio_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_MoistureSensor
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_MoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "signal", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_MoistureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    getHumidityWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ad.getWait();
+        });
+    }
+}
+exports.default = Keyestudio_MoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_PIR
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_PIR {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_PIR",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_signal = obniz.getIO(this.params.signal);
+        this.io_signal.pull("0v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.input((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+}
+exports.default = Keyestudio_PIR;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TemperatureSensor {
+    constructor() {
+        this.temp = 0;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TemperatureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((voltage) => {
+            this.temp = this.calc(voltage);
+            this.onchange(this.temp);
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const voltage = yield this.ad.getWait();
+            this.temp = this.calc(voltage);
+            return this.temp;
+        });
+    }
+    onchange(temp) {
+    }
+    calc(voltage) {
+        return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
+    }
+}
+exports.default = Keyestudio_TemperatureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_TrafficLight
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TrafficLight {
+    constructor() {
+        this.keys = ["gnd", "green", "yellow", "red"];
+        this.requiredKeys = ["green", "yellow", "red"];
+        this.state = "red";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TrafficLight",
+        };
+    }
+    wired(obniz) {
+        function getIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return io;
+                }
+            }
+            return obniz.getIO(io);
+        }
+        this.obniz = obniz;
+        obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.green = obniz.wired("LED", { anode: this.params.green });
+        this.yellow = obniz.wired("LED", { anode: this.params.yellow });
+        this.red = obniz.wired("LED", { anode: this.params.red });
+    }
+    single(led) {
+        this.green.off();
+        this.yellow.off();
+        this.red.off();
+        this.state = led;
+        switch (led) {
+            case "green":
+                this.green.on();
+                break;
+            case "yellow":
+                this.yellow.on();
+                break;
+            case "red":
+            default:
+                this.red.on();
+                this.state = "red";
+                break;
+        }
+    }
+    next() {
+        switch (this.state) {
+            case "green":
+                this.single("yellow");
+                break;
+            case "yellow":
+                this.single("red");
+                break;
+            case "red":
+            default:
+                this.single("green");
+                break;
+        }
+    }
+}
+exports.default = Keyestudio_TrafficLight;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Light/FullColorLED/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -40960,6 +41316,11 @@ class SHT31 {
     getTempWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getAllWait()).temperature;
+        });
+    }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getHumidWait();
         });
     }
     getHumidWait() {

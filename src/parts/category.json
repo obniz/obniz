@@ -663,6 +663,36 @@
           "store": {}
         }
       ]
+    },
+    {
+      "name": "Keyestudio",
+      "image_url": "https://obniz.io/sdk/parts/Keyestudio_Button/index.jpg",
+      "parts": [
+        {
+          "name": "Keyestudio_Button",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_Buzzer",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_MoistureSensor",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_PIR",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_TemperatureSensor",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_TrafficLight",
+          "store": {}
+        }
+      ]
     }
   ],
   "store": {

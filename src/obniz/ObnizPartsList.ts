@@ -13,6 +13,7 @@ import _7SegmentLEDArray, {_7SegmentLEDArrayOptions} from "../parts/Display/7Seg
 import MatrixLED_MAX7219, {MatrixLED_MAX7219Options} from "../parts/Display/MatrixLED_MAX7219";
 import SainSmartTFT18LCD, {SainSmartTFT18LCDOptions} from "../parts/Display/SainSmartTFT18LCD";
 import SharpMemoryTFT, {SharpMemoryTFTOptions} from "../parts/Display/SharpMemoryTFT";
+import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
 import GP2Y0A21YK0F, {GP2Y0A21YK0FOptions} from "../parts/DistanceSensor/GP2Y0A21YK0F";
 import HCSR04, {HCSR04Options} from "../parts/DistanceSensor/HC-SR04";
 import MQ135, {MQ135Options} from "../parts/GasSensor/MQ135";
@@ -29,6 +30,7 @@ import ENC03R_Module, {ENC03R_ModuleOptions} from "../parts/GyroSensor/ENC03R_Mo
 import InfraredLED, {InfraredLEDOptions} from "../parts/Infrared/InfraredLED";
 import IRModule, {IRModuleOptions} from "../parts/Infrared/IRModule";
 import IRSensor, {IRSensorOptions} from "../parts/Infrared/IRSensor";
+import YG1006, {YG1006Options} from "../parts/Infrared/YG1006";
 import FullColorLED, {FullColorLEDOptions} from "../parts/Light/FullColorLED";
 import LED, {LEDOptions} from "../parts/Light/LED";
 import WS2811, {WS2811Options} from "../parts/Light/WS2811";
@@ -51,11 +53,14 @@ import MPU6886, {MPU6886Options} from "../parts/MovementSensor/MPU6886";
 import MPU9250, {MPU9250Options} from "../parts/MovementSensor/MPU9250";
 import PaPIRsVZ, {PaPIRsVZOptions} from "../parts/MovementSensor/PaPIRsVZ";
 import Potentiometer, {PotentiometerOptions} from "../parts/MovementSensor/Potentiometer";
+import SH200Q, {SH200QOptions} from "../parts/MovementSensor/SH200Q";
 import DCMotor, {DCMotorOptions} from "../parts/Moving/DCMotor";
 import PCA9685, {PCA9685Options} from "../parts/Moving/PCA9685";
 import ServoMotor, {ServoMotorOptions} from "../parts/Moving/ServoMotor";
 import Solenoid, {SolenoidOptions} from "../parts/Moving/Solenoid";
 import StepperMotor, {StepperMotorOptions} from "../parts/Moving/StepperMotor";
+import AXP192, {AXP192Options} from "../parts/Power/AXP192";
+import DPS310, {DPS310Options} from "../parts/PressureSensor/DPS310";
 import FSR40X, {FSR40XOptions} from "../parts/PressureSensor/FSR-40X";
 import SEN0114, {SEN0114Options} from "../parts/SoilSensor/SEN0114";
 import Speaker, {SpeakerOptions} from "../parts/Sound/Speaker";
@@ -81,6 +86,11 @@ import RN42, {RN42Options} from "../parts/Wireless/RN42";
 import XBee, {XBeeOptions} from "../parts/Wireless/XBee";
 
 // ColorSensor
+// biological
+import Puls08M5stickcS, {Puls08M5stickcSOptions} from "../parts/Biological/PULSE08-M5STICKC-S";
+// Ble
+import OMRON_2JCIE, {OMRON_2JCIEOptions} from "../parts/Ble/2jcie";
+import Linking, {LinkingOptions} from "../parts/Ble/linking";
 import PT550, {PT550Options} from "../parts/ColorSensor/PT550";
 import S11059, {S11059Options} from "../parts/ColorSensor/S11059";
 import Grove_3AxisAccelerometer, {Grove_3AxisAccelerometerOptions} from "../parts/Grove/Grove_3AxisAccelerometer";
@@ -90,18 +100,13 @@ import Grove_Buzzer, {Grove_BuzzerOptions} from "../parts/Grove/Grove_Buzzer";
 import Grove_EarHeartRate, {Grove_EarHeartRateOptions} from "../parts/Grove/Grove_EarHeartRate";
 import Grove_GPS, {Grove_GPSOptions} from "../parts/Grove/Grove_GPS";
 import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
-import YG1006, {YG1006Options} from "../parts/Infrared/YG1006";
-
-// Ble
-import OMRON_2JCIE, {OMRON_2JCIEOptions} from "../parts/Ble/2jcie";
-import Linking, {LinkingOptions} from "../parts/Ble/linking";
-
-// biological
-import Puls08M5stickcS, {Puls08M5stickcSOptions} from "../parts/Biological/PULSE08-M5STICKC-S";
-import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
-import SH200Q, {SH200QOptions} from "../parts/MovementSensor/SH200Q";
-import AXP192, {AXP192Options} from "../parts/Power/AXP192";
-import DPS310, {DPS310Options} from "../parts/PressureSensor/DPS310";
+// Keyestudio
+import Keyestudio_Button, {Keyestudio_ButtonOptions} from "../parts/Keyestudio/Keyestudio_Button";
+import Keyestudio_Buzzer, {Keyestudio_BuzzerOptions} from "../parts/Keyestudio/Keyestudio_Buzzer";
+import Keyestudio_MoistureSensor, {Keyestudio_MoistureSensorOptions} from "../parts/Keyestudio/Keyestudio_MoistureSensor";
+import Keyestudio_PIR, {Keyestudio_PIROptions} from "../parts/Keyestudio/Keyestudio_PIR";
+import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
+import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/Keyestudio/Keyestudio_TrafficLight";
 
 export interface WiredNameMap {
   // Light
@@ -216,6 +221,13 @@ export interface WiredNameMap {
   "Grove_MP3": Grove_MP3;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  // Keyestudio
+  "Keyestudio_Button": Keyestudio_Button;
+  "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
+  "Keyestudio_Buzzer": Keyestudio_Buzzer;
+  "Keyestudio_TemperatureSensor": Keyestudio_TemperatureSensor;
+  "Keyestudio_PIR": Keyestudio_PIR;
+  "Keyestudio_TrafficLight": Keyestudio_TrafficLight;
   // Ble
   "2JCIE": OMRON_2JCIE;
   "Linking": Linking;
@@ -343,6 +355,13 @@ export interface WiredNameOptionsMap {
   "Grove_MP3": Grove_MP3Options;
   "Grove_GPS": Grove_GPSOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  // Keyestudio
+  "Keyestudio_Button": Keyestudio_ButtonOptions;
+  "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;
+  "Keyestudio_Buzzer": Keyestudio_BuzzerOptions;
+  "Keyestudio_TemperatureSensor": Keyestudio_TemperatureSensorOptions;
+  "Keyestudio_PIR": Keyestudio_PIROptions;
+  "Keyestudio_TrafficLight": Keyestudio_TrafficLightOptions;
   // Ble
   "2JCIE": OMRON_2JCIEOptions;
   "Linking": LinkingOptions;
