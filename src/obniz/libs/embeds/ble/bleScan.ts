@@ -117,6 +117,14 @@ export default class BleScan {
   public onfind(params: any) {
   } // dummy
 
+  public setAdvertisementFilter() {
+    throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
+  }
+
+  public setScanMode(mode: any) {
+    throw new Error("setScanMode is not support obnizOS < 3.2.0");
+  }
+
   public notifyFromServer(notifyName: any, params: any) {
     switch (notifyName) {
       case "onfind": {
