@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import JsonBinaryConverter from "./jsonBinaryConverter";
 import WSCommand from "./WSCommand";
 import WSCommandBleHci from "./WSCommandBleHci";

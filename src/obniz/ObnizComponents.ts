@@ -1,6 +1,10 @@
-import semver = require("semver");
-import ObnizBLE from "./libs/embeds/ble/ble";
-import ObnizBLEHci from "./libs/embeds/bleHci/ble";
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
+import semver from "semver";
+import {ObnizHciBLE, ObnizOldBLE} from "./libs/embeds/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";
 
@@ -20,91 +24,223 @@ import TCP from "./libs/protocol/tcp";
 import ObnizParts from "./ObnizParts";
 
 import HW from "./libs/hw";
-
-interface ObnizComponentsObnizBoard {
-
-  // onconnect: () => Promise<void>;
-  // onclose: () => Promise<void>;
-  // wired<K extends keyof WiredNameMap>(name: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K];
-  //
-  // // connect
-  // connectionState: ConnectionState;
-  // debugprint: boolean;
-  // connect(): void;
-  // connectWait(options?: ConnectOptions): Promise<boolean>;
-  // close(): void;
-  // resetOnDisconnect(reset: boolean): void;
-  //
-  // // systems
-  // sleepSeconds(sec: number): void;
-  // sleepMinute(sec: number): void;
-  // sleep(date: Date): void;
-  // sleepIoTrigger(trigger: boolean): void;
-  // pingWait(): Promise<void>;
-  //
-  // // utils
-  // util: any;
-  // reset(): void;
-  // repeat(callback: () => void): void;
-  // wait(time: number): Promise<void>;
-  // keepWorkingAtOffline(working: boolean): void;
-  // setVccGnd(vcc: number, gnd: number, drive: DriveType): void;
-  // isValidIO(io: any): io is PeripheralIO;
-
-}
+import {ObnizOptions} from "./ObnizOptions";
 
 export default class ObnizComponents extends ObnizParts {
 
-  public pongObservers: any;
-  public _allComponentKeys: any;
-
   /* board peripherals */
-  public io!: PeripheralDirective;
+
+  /**
+   * @category Peripherals
+   */
+  public io?: PeripheralDirective;
+
+  /**
+   * @category Peripherals
+   */
   public io0?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io1?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io2?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io3?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io4?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io5?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io6?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io7?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io8?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io9?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io10?: PeripheralIO;
+
+  /**
+   * @category Peripherals
+   */
   public io11?: PeripheralIO;
 
+  /**
+   * @category Peripherals
+   */
   public ad0?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad1?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad2?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad3?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad4?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad5?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad6?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad7?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad8?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad9?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad10?: PeripheralAD;
+
+  /**
+   * @category Peripherals
+   */
   public ad11?: PeripheralAD;
 
+  /**
+   * @category Peripherals
+   */
   public pwm0?: PeripheralPWM;
+
+  /**
+   * @category Peripherals
+   */
   public pwm1?: PeripheralPWM;
+
+  /**
+   * @category Peripherals
+   */
   public pwm2?: PeripheralPWM;
+
+  /**
+   * @category Peripherals
+   */
   public pwm3?: PeripheralPWM;
+
+  /**
+   * @category Peripherals
+   */
   public pwm4?: PeripheralPWM;
+
+  /**
+   * @category Peripherals
+   */
   public pwm5?: PeripheralPWM;
 
+  /**
+   * @category Peripherals
+   */
   public uart0?: PeripheralUART;
-  public uart1?: PeripheralUART;
-  public spi0?: PeripheralSPI;
-  public spi1?: PeripheralSPI;
-  public i2c0?: PeripheralI2C;
-  public logicAnalyzer?: LogicAnalyzer;
-  public measure?: ObnizMeasure;
-  public display?: Display;
-  public switch?: ObnizSwitch;
-  public ble?: ObnizBLE | ObnizBLEHci;
 
-  constructor(id: any, options?: any) {
+  /**
+   * @category Peripherals
+   */
+  public uart1?: PeripheralUART;
+
+  /**
+   * @category Peripherals
+   */
+  public spi0?: PeripheralSPI;
+
+  /**
+   * @category Peripherals
+   */
+  public spi1?: PeripheralSPI;
+
+  /**
+   * @category Peripherals
+   */
+  public i2c0?: PeripheralI2C;
+
+  /**
+   * @category Measurement
+   */
+  public logicAnalyzer?: LogicAnalyzer;
+
+  /**
+   * @category Measurement
+   */
+  public measure?: ObnizMeasure;
+
+  /**
+   * @category Embeds
+   */
+  public display?: Display;
+
+  /**
+   * @category Embeds
+   */
+  public switch?: ObnizSwitch;
+
+  /**
+   * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
+   * and obnizOS ver < 3.0.0 load [[ObnizCore.Components.Ble.old.ObnizBLE|ObnizOldBLE]],
+   * @category Embeds
+   */
+  public ble?: ObnizOldBLE.default | ObnizHciBLE.default;
+
+  protected pongObservers: any;
+  protected _allComponentKeys: any;
+
+  constructor(id: string, options?: ObnizOptions) {
     super(id, options);
     this.pongObservers = [];
     this._allComponentKeys = [];
@@ -117,12 +253,123 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
-  public _callOnConnect() {
+  /**
+   * Output pin Vcc and Gnd
+   * @param vcc
+   * @param gnd
+   * @param drive
+   */
+  public setVccGnd(vcc: number | null, gnd: number | null, drive: DriveType) {
+    if (this.isValidIO(vcc)) {
+      if (drive) {
+        this.getIO(vcc!).drive(drive);
+      }
+      this.getIO(vcc!).output(true);
+    }
+
+    if (this.isValidIO(gnd)) {
+      if (drive) {
+        this.getIO(gnd!).drive(drive);
+      }
+      this.getIO(gnd!).output(false);
+    }
+  }
+
+  /**
+   * Get IO module from pin no
+   * @param io
+   */
+  public getIO(io: number): PeripheralIO {
+    if (!this.isValidIO(io)) {
+      throw new Error("io " + io + " is not valid io");
+    }
+    return (this as any)["io" + io];
+  }
+
+  /**
+   * GET AD module from pin no
+   * @param io
+   */
+  public getAD(io: number): PeripheralAD {
+    if (!this.isValidIO(io)) {
+      throw new Error("ad " + io + " is not valid io");
+    }
+    return (this as any)["ad" + io];
+  }
+
+  /**
+   * It returns unused PWM module.
+   */
+  public getFreePwm(): PeripheralPWM {
+    return this._getFreePeripheralUnit("pwm");
+  }
+
+  /**
+   * It returns unused I2C module.
+   */
+  public getFreeI2C(): PeripheralI2C {
+    return this._getFreePeripheralUnit("i2c");
+  }
+
+  /**
+   * It returns setuped I2C module .
+   * @param config
+   */
+  public getI2CWithConfig(config: any): PeripheralI2C {
+    if (typeof config !== "object") {
+      throw new Error("getI2CWithConfig need config arg");
+    }
+    if (config.i2c) {
+      return config.i2c;
+    }
+    const i2c: any = this.getFreeI2C();
+    i2c.start(config);
+    return i2c;
+  }
+
+  /**
+   * It returns unused SPI module.
+   */
+  public getFreeSpi(): PeripheralSPI {
+    return this._getFreePeripheralUnit("spi");
+  }
+
+  /**
+   * It returns setuped SPI module.
+   * @param config
+   */
+  public getSpiWithConfig(config: any): PeripheralSPI {
+    if (typeof config !== "object") {
+      throw new Error("getSpiWithConfig need config arg");
+    }
+    if (config.spi) {
+      return config.spi;
+    }
+    const spi: any = this.getFreeSpi();
+    spi.start(config);
+    return spi;
+  }
+
+  /**
+   * It returns unused UART module.
+   */
+  public getFreeUart(): PeripheralUART {
+    return this._getFreePeripheralUnit("uart");
+  }
+
+  /**
+   * It returns unused TCP module.
+   */
+  public getFreeTcp() {
+    return this._getFreePeripheralUnit("tcp");
+  }
+
+  protected _callOnConnect() {
     this._prepareComponents();
     super._callOnConnect();
   }
 
-  public _prepareComponents() {
+  protected _prepareComponents() {
     if (this._allComponentKeys.length !== 0) {
       return;
     }
@@ -151,11 +398,11 @@ export default class ObnizComponents extends ObnizParts {
       pwm: PeripheralPWM,
     };
 
-    let ble: any = ObnizBLEHci;
+    let ble: any = ObnizHciBLE.default;
 
     // < 3.0.0-beta
-    if (semver.lt(this.firmware_ver, "3.0.0-beta")) {
-      ble = ObnizBLE;
+    if (semver.lt(this.firmware_ver!, "3.0.0-beta")) {
+      ble = ObnizOldBLE.default;
     }
 
     const embeds_map: any = {
@@ -192,7 +439,7 @@ export default class ObnizComponents extends ObnizParts {
       for (const key in embeds_map) {
         if (hw_embeds[key]) {
           const Class: any = embeds_map[key];
-          (this as any)[key] = new Class(this);
+          (this as any)[key] = new Class(this, hw_embeds[key]);
           this._allComponentKeys.push(key);
         }
       }
@@ -213,14 +460,14 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
-  public _resetComponents() {
+  protected _resetComponents() {
     this.print_debug("components state resets");
     for (const key of this._allComponentKeys) {
       (this as any)[key]._reset();
     }
   }
 
-  public notifyToModule(obj: any) {
+  protected notifyToModule(obj: any) {
     super.notifyToModule(obj);
     for (const key of this._allComponentKeys) {
       if (key === "logicAnalyzer") {
@@ -236,7 +483,7 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
-  public handleSystemCommand(wsObj: any) {
+  protected handleSystemCommand(wsObj: any) {
     super.handleSystemCommand(wsObj);
     // ping pong
     if (wsObj.pong) {
@@ -246,50 +493,20 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
-  public addPongObserver(callback: any) {
+  protected addPongObserver(callback: any) {
     if (callback) {
       this.pongObservers.push(callback);
     }
   }
 
-  public removePongObserver(callback: any) {
+  protected removePongObserver(callback: any) {
     if (this.pongObservers.includes(callback)) {
       const index: any = this.pongObservers.indexOf(callback);
       this.pongObservers.splice(index, 1);
     }
   }
 
-  public setVccGnd(vcc: number | null, gnd: number | null, drive: DriveType) {
-    if (this.isValidIO(vcc)) {
-      if (drive) {
-        this.getIO(vcc!).drive(drive);
-      }
-      this.getIO(vcc!).output(true);
-    }
-
-    if (this.isValidIO(gnd)) {
-      if (drive) {
-        this.getIO(gnd!).drive(drive);
-      }
-      this.getIO(gnd!).output(false);
-    }
-  }
-
-  public getIO(io: number): PeripheralIO {
-    if (!this.isValidIO(io)) {
-      throw new Error("io " + io + " is not valid io");
-    }
-    return (this as any)["io" + io];
-  }
-
-  public getAD(io: number): PeripheralAD {
-    if (!this.isValidIO(io)) {
-      throw new Error("ad " + io + " is not valid io");
-    }
-    return (this as any)["ad" + io];
-  }
-
-  public _getFreePeripheralUnit(peripheral: any): any {
+  protected _getFreePeripheralUnit(peripheral: any): any {
     for (const key of this._allComponentKeys) {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */
@@ -301,49 +518,5 @@ export default class ObnizComponents extends ObnizParts {
       }
     }
     throw new Error(`No More ${peripheral} Available.`);
-  }
-
-  public getFreePwm(): PeripheralPWM {
-    return this._getFreePeripheralUnit("pwm");
-  }
-
-  public getFreeI2C(): PeripheralI2C {
-    return this._getFreePeripheralUnit("i2c");
-  }
-
-  public getI2CWithConfig(config: any): PeripheralI2C {
-    if (typeof config !== "object") {
-      throw new Error("getI2CWithConfig need config arg");
-    }
-    if (config.i2c) {
-      return config.i2c;
-    }
-    const i2c: any = this.getFreeI2C();
-    i2c.start(config);
-    return i2c;
-  }
-
-  public getFreeSpi(): PeripheralSPI {
-    return this._getFreePeripheralUnit("spi");
-  }
-
-  public getSpiWithConfig(config: any): PeripheralSPI {
-    if (typeof config !== "object") {
-      throw new Error("getSpiWithConfig need config arg");
-    }
-    if (config.spi) {
-      return config.spi;
-    }
-    const spi: any = this.getFreeSpi();
-    spi.start(config);
-    return spi;
-  }
-
-  public getFreeUart(): PeripheralUART {
-    return this._getFreePeripheralUnit("uart");
-  }
-
-  public getFreeTcp() {
-    return this._getFreePeripheralUnit("tcp");
   }
 }

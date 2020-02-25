@@ -1,5 +1,5 @@
 {
-  "rev": "1",
+  "rev": "2",
   "hw": "encored",
   "peripherals": {
     "io": {
@@ -42,9 +42,7 @@
     }
   },
   "embeds": {
-    "ble": {},
-    "display": {},
-    "switch": {}
+    "ble": {}
   },
   "protocol": {
     "tcp": {

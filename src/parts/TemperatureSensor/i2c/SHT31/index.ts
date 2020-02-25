@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.SHT31
+ */
+
 import Obniz from "../../../../obniz";
 import {PullType} from "../../../../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
@@ -5,7 +10,7 @@ import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 import {I2cPartsAbstructOptions} from "../../../i2cParts";
 
-export interface SHT31Options extends I2cPartsAbstructOptions {
+export interface  SHT31Options extends I2cPartsAbstructOptions {
   adr: number;
   addressmode: number;
   pull?: PullType;
@@ -98,6 +103,10 @@ export default class SHT31 implements ObnizPartsInterface {
 
   public async getTempWait(): Promise<number> {
     return (await this.getAllWait()).temperature;
+  }
+
+  public async getHumdWait(): Promise<number> {
+    return await this.getHumidWait();
   }
 
   public async getHumidWait(): Promise<number> {

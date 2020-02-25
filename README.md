@@ -90,7 +90,7 @@ and import it to js file.
 
 ## Connect
 
-The details are on [doc/connection](./doc/connection.md) ([ja](./doc/connection-ja.md))
+The details are on [doc/connection](docs/connection.md) ([ja](docs/connection-ja.md))
 
 To use obniz, instantiate obniz with obniz id, and set onconnect callback function. It will be called when connected to obniz successfully.
 ```javascript

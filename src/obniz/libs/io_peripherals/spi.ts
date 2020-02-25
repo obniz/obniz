@@ -1,25 +1,67 @@
-import semver = require("semver");
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
+import semver from "semver";
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 import {DriveType, PullType} from "./common";
 
 interface PeripheralSPIOptions {
+
+  /**
+   * SPI mode
+   *
+   * currently only "master" is supported
+   */
   mode: "master";
+
+  /**
+   * clock pin no
+   */
   clk?: number;
+
+  /**
+   * mosi pin no
+   */
   mosi?: number;
+
+  /**
+   * miso pin no
+   */
   miso?: number;
+
+  /**
+   * frequency (Hz)
+   */
   frequency: number;
+
   drive?: DriveType;
+
   pull?: PullType;
+
+  /**
+   * gnd pin no
+   */
   gnd?: number;
 }
 
-class PeripheralSPI {
-  public Obniz: Obniz;
-  public id: number;
-  public observers!: any[];
+/**
+ * It is General Purpose SPI
+ * @category Peripherals
+ */
+export default class PeripheralSPI {
+
+  /**
+   * @ignore
+   */
   public used!: boolean;
-  public params!: PeripheralSPIOptions | null;
+  private Obniz: Obniz;
+  private id: number;
+  private observers!: any[];
+
+  private params!: PeripheralSPIOptions | null;
 
   constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
@@ -27,18 +69,26 @@ class PeripheralSPI {
     this._reset();
   }
 
-  public _reset() {
-    this.observers = [];
-    this.used = false;
-    this.params = null;
-  }
-
-  public addObserver(callback: any) {
-    if (callback) {
-      this.observers.push(callback);
-    }
-  }
-
+  /**
+   * It starts spi. Now the mode is only "master".
+   *
+   *
+   * drive and pull are optional settings for io output.
+   * Default settings are drive:5v, pull:null.
+   * See more using obniz.io.drive() or pull().
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+   * var ret = await obniz.spi0.writeWait([0x12, 0x98]);
+   * console.log("received: "+ret);
+   *
+   * // drive and pull is optional
+   * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, drive: "5v", pull:null});
+   * ```
+   *
+   * @param params spi parameters
+   */
   public start(params: PeripheralSPIOptions) {
     const err: any = ObnizUtil._requiredKeys(params, ["mode", "frequency"]);
     if (err) {
@@ -133,11 +183,26 @@ class PeripheralSPI {
     this.Obniz.send(obj);
   }
 
+  /**
+   * It sends data to spi and wait until data are received.
+   * The received data length is the same as the sent data.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+   * var ret = await obniz.spi0.writeWait([0x12, 0x98]);
+   * console.log("received: "+ret);
+   * ```
+   *
+   *
+   * @param data Max length is 1024 bytes.
+   * @return received data
+   */
   public writeWait(data: number[]): Promise<number[]> {
     if (!this.used) {
       throw new Error(`spi${this.id} is not started`);
     }
-    if (semver.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+    if (semver.lte(this.Obniz.firmware_ver!, "1.0.2") && data.length > 32) {
       throw new Error(
         `with your obniz ${
           this.Obniz.firmware_ver
@@ -159,11 +224,22 @@ class PeripheralSPI {
     });
   }
 
+  /**
+   * It only sends data to spi and does not receive it.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+   * obniz.spi0.write([0x12, 0x98]);
+   * ```
+   *
+   * @param data Max length is 1024 bytes.
+   */
   public write(data: number[]) {
     if (!this.used) {
       throw new Error(`spi${this.id} is not started`);
     }
-    if (semver.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+    if (semver.lte(this.Obniz.firmware_ver!, "1.0.2") && data.length > 32) {
       throw new Error(
         `with your obniz ${
           this.Obniz.firmware_ver
@@ -182,6 +258,10 @@ class PeripheralSPI {
     self.Obniz.send(obj);
   }
 
+  /**
+   * @ignore
+   * @param obj
+   */
   public notified(obj: any) {
     // TODO: we should compare byte length from sent
     const callback: any = this.observers.shift();
@@ -190,11 +270,28 @@ class PeripheralSPI {
     }
   }
 
+  /**
+   * @ignore
+   */
   public isUsed() {
     return this.used;
   }
 
-  public end(reuse?: any) {
+  /**
+   * It ends spi
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, clock:1000000});
+   * obniz.spi0.write([0x12, 0x98]);
+   * obniz.spi0.end();
+   * ```
+   *
+   * @param reuse
+   * - True : getFreeSpi will not return this object
+   * - False : getFreeSpi will return this object
+   */
+  public end(reuse?: boolean) {
     const self: any = this;
     const obj: any = {};
     obj["spi" + self.id] = null;
@@ -204,6 +301,16 @@ class PeripheralSPI {
       this.used = false;
     }
   }
-}
 
-export default PeripheralSPI;
+  private _reset() {
+    this.observers = [];
+    this.used = false;
+    this.params = null;
+  }
+
+  private addObserver(callback: any) {
+    if (callback) {
+      this.observers.push(callback);
+    }
+  }
+}

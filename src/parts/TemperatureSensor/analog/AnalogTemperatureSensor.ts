@@ -1,9 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module Parts.AnalogTemperatureSensor
+ */
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface AnalogTemperatureSensorOptions {
+export interface  AnalogTemperatureSensorOptions {
   vcc?: number;
   output: number;
   gnd?: number;

@@ -1,10 +1,14 @@
-import {createSocket} from "dgram";
+/**
+ * @packageDocumentation
+ * @module Parts.FullColorLED
+ */
 
 import Obniz from "../../../obniz";
+
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface FullColorLEDOptions {
+export interface  FullColorLEDOptions {
   r: number;
   g: number;
   b: number;

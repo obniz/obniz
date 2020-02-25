@@ -1,9 +1,17 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('acl-att-stream');
 
 import events from "events";
 
 import Smp from "./smp";
 
+/**
+ * @ignore
+ */
 export  default  class AclStream extends events.EventEmitter {
   public _hci: any;
   public _handle: any;

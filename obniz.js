@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.3.0-beta.1",
+  "version": "3.3.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -116,14 +116,15 @@ module.exports = {
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
-    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build && npm run doc",
+    "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
     "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
-    "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -131,7 +132,6 @@ module.exports = {
       "git add"
     ],
     "src/**/*.ts": [
-      "tslint -c tslint.json --fix ",
       "git add"
     ]
   },
@@ -195,6 +195,8 @@ module.exports = {
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
     "typescript": "^3.7.5",
+    "typedoc": "^0.16.9",
+    "typedoc-plugin-external-module-name": "^3.0.0",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
@@ -218,6 +220,7 @@ module.exports = {
     "semver": "^5.7.0",
     "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
+    "typedoc-plugin-internal-external": "^2.1.1",
     "ws": "^6.1.4"
   },
   "bugs": {
@@ -257,6 +260,7 @@ var map = {
 	"./request/ble/central/scan_start.yml": "./dist/src/json_schema/request/ble/central/scan_start.yml",
 	"./request/ble/central/scan_stop.yml": "./dist/src/json_schema/request/ble/central/scan_stop.yml",
 	"./request/ble/central/service_get.yml": "./dist/src/json_schema/request/ble/central/service_get.yml",
+	"./request/ble/hci/advertisement_filter.yml": "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml",
 	"./request/ble/hci/index.yml": "./dist/src/json_schema/request/ble/hci/index.yml",
 	"./request/ble/hci/write.yml": "./dist/src/json_schema/request/ble/hci/write.yml",
 	"./request/ble/index.yml": "./dist/src/json_schema/request/ble/index.yml",
@@ -431,7 +435,7 @@ webpackContext.id = "./dist/src/json_schema sync recursive \\.yml$";
 /***/ "./dist/src/json_schema/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageDataArray":{"id":"imageDataArray","type":"array","minItems":0,"items":{"type":"integer","minimum":0}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
 
 /***/ }),
 
@@ -554,10 +558,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/advertisement_filter","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["advertisement_filter"],"properties":{"advertisement_filter":{"type":"array","items":{"type":"object","required":["range"],"properties":{"range":{"type":"object","required":["index","length"],"properties":{"index":{"type":"integer","minimum":0,"maximum":255},"length":{"type":"integer","minimum":0,"maximum":255}}},"value":{"$ref":"/dataArray"}}}}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/ble/hci/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"},{"$ref":"/request/ble/hci/advertisement_filter"}]}
 
 /***/ }),
 
@@ -725,7 +736,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/display/raw.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageData128x64"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageDataArray"},"color_depth":{"type":"integer","enum":[1,4,16],"default":1}}}
 
 /***/ }),
 
@@ -1603,13 +1614,17 @@ webpackEmptyContext.id = "./dist/src/obniz sync recursive";
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = __importDefault(__webpack_require__("./node_modules/node-fetch/browser.js"));
 // @ts-ignore
-const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
+const package_1 = __importDefault(__webpack_require__("./dist/package.js"));
 class ObnizApi {
     constructor(obnizId, options) {
         this.id = obnizId;
@@ -1620,9 +1635,27 @@ class ObnizApi {
         };
         this.urlBase = this.options.obniz_server + "/obniz/" + this.id;
     }
+    /**
+     * obniz.js major version string
+     */
     get apiVersion() {
         const versionString = package_1.default.version;
         return versionString.split(".").shift();
+    }
+    /**
+     * Get device is online or offline
+     * @param callback with result
+     */
+    getState(callback) {
+        return this.post("/state", null, callback);
+    }
+    /**
+     * post data via obniz REST api
+     * @param json
+     * @param callback
+     */
+    postJson(json, callback) {
+        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
     }
     post(path, params, callback) {
         const url = this.urlBase + path;
@@ -1656,12 +1689,6 @@ class ObnizApi {
             });
         });
     }
-    getState(callback) {
-        return this.post("/state", null, callback);
-    }
-    postJson(json, callback) {
-        return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
-    }
 }
 exports.default = ObnizApi;
 
@@ -1675,13 +1702,16 @@ exports.default = ObnizApi;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver = __webpack_require__("./node_modules/semver/semver.js");
-const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
-const ble_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/ble.js");
 const display_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/display.js"));
 const switch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/switch.js"));
 const ad_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/ad.js"));
@@ -1707,6 +1737,106 @@ class ObnizComponents extends ObnizParts_1.default {
         if (this.options.reset_obniz_on_ws_disconnection) {
             this._resetComponents();
         }
+    }
+    /**
+     * Output pin Vcc and Gnd
+     * @param vcc
+     * @param gnd
+     * @param drive
+     */
+    setVccGnd(vcc, gnd, drive) {
+        if (this.isValidIO(vcc)) {
+            if (drive) {
+                this.getIO(vcc).drive(drive);
+            }
+            this.getIO(vcc).output(true);
+        }
+        if (this.isValidIO(gnd)) {
+            if (drive) {
+                this.getIO(gnd).drive(drive);
+            }
+            this.getIO(gnd).output(false);
+        }
+    }
+    /**
+     * Get IO module from pin no
+     * @param io
+     */
+    getIO(io) {
+        if (!this.isValidIO(io)) {
+            throw new Error("io " + io + " is not valid io");
+        }
+        return this["io" + io];
+    }
+    /**
+     * GET AD module from pin no
+     * @param io
+     */
+    getAD(io) {
+        if (!this.isValidIO(io)) {
+            throw new Error("ad " + io + " is not valid io");
+        }
+        return this["ad" + io];
+    }
+    /**
+     * It returns unused PWM module.
+     */
+    getFreePwm() {
+        return this._getFreePeripheralUnit("pwm");
+    }
+    /**
+     * It returns unused I2C module.
+     */
+    getFreeI2C() {
+        return this._getFreePeripheralUnit("i2c");
+    }
+    /**
+     * It returns setuped I2C module .
+     * @param config
+     */
+    getI2CWithConfig(config) {
+        if (typeof config !== "object") {
+            throw new Error("getI2CWithConfig need config arg");
+        }
+        if (config.i2c) {
+            return config.i2c;
+        }
+        const i2c = this.getFreeI2C();
+        i2c.start(config);
+        return i2c;
+    }
+    /**
+     * It returns unused SPI module.
+     */
+    getFreeSpi() {
+        return this._getFreePeripheralUnit("spi");
+    }
+    /**
+     * It returns setuped SPI module.
+     * @param config
+     */
+    getSpiWithConfig(config) {
+        if (typeof config !== "object") {
+            throw new Error("getSpiWithConfig need config arg");
+        }
+        if (config.spi) {
+            return config.spi;
+        }
+        const spi = this.getFreeSpi();
+        spi.start(config);
+        return spi;
+    }
+    /**
+     * It returns unused UART module.
+     */
+    getFreeUart() {
+        return this._getFreePeripheralUnit("uart");
+    }
+    /**
+     * It returns unused TCP module.
+     */
+    getFreeTcp() {
+        return this._getFreePeripheralUnit("tcp");
     }
     _callOnConnect() {
         this._prepareComponents();
@@ -1736,10 +1866,10 @@ class ObnizComponents extends ObnizParts_1.default {
             i2c: i2c_1.default,
             pwm: pwm_1.default,
         };
-        let ble = ble_2.default;
+        let ble = ble_1.ObnizHciBLE.default;
         // < 3.0.0-beta
-        if (semver.lt(this.firmware_ver, "3.0.0-beta")) {
-            ble = ble_1.default;
+        if (semver_1.default.lt(this.firmware_ver, "3.0.0-beta")) {
+            ble = ble_1.ObnizOldBLE.default;
         }
         const embeds_map = {
             display: display_1.default,
@@ -1771,7 +1901,7 @@ class ObnizComponents extends ObnizParts_1.default {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
-                    this[key] = new Class(this);
+                    this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                 }
             }
@@ -1831,32 +1961,6 @@ class ObnizComponents extends ObnizParts_1.default {
             this.pongObservers.splice(index, 1);
         }
     }
-    setVccGnd(vcc, gnd, drive) {
-        if (this.isValidIO(vcc)) {
-            if (drive) {
-                this.getIO(vcc).drive(drive);
-            }
-            this.getIO(vcc).output(true);
-        }
-        if (this.isValidIO(gnd)) {
-            if (drive) {
-                this.getIO(gnd).drive(drive);
-            }
-            this.getIO(gnd).output(false);
-        }
-    }
-    getIO(io) {
-        if (!this.isValidIO(io)) {
-            throw new Error("io " + io + " is not valid io");
-        }
-        return this["io" + io];
-    }
-    getAD(io) {
-        if (!this.isValidIO(io)) {
-            throw new Error("ad " + io + " is not valid io");
-        }
-        return this["ad" + io];
-    }
     _getFreePeripheralUnit(peripheral) {
         for (const key of this._allComponentKeys) {
             if (key.indexOf(peripheral) === 0) {
@@ -1869,43 +1973,6 @@ class ObnizComponents extends ObnizParts_1.default {
             }
         }
         throw new Error(`No More ${peripheral} Available.`);
-    }
-    getFreePwm() {
-        return this._getFreePeripheralUnit("pwm");
-    }
-    getFreeI2C() {
-        return this._getFreePeripheralUnit("i2c");
-    }
-    getI2CWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getI2CWithConfig need config arg");
-        }
-        if (config.i2c) {
-            return config.i2c;
-        }
-        const i2c = this.getFreeI2C();
-        i2c.start(config);
-        return i2c;
-    }
-    getFreeSpi() {
-        return this._getFreePeripheralUnit("spi");
-    }
-    getSpiWithConfig(config) {
-        if (typeof config !== "object") {
-            throw new Error("getSpiWithConfig need config arg");
-        }
-        if (config.spi) {
-            return config.spi;
-        }
-        const spi = this.getFreeSpi();
-        spi.start(config);
-        return spi;
-    }
-    getFreeUart() {
-        return this._getFreePeripheralUnit("uart");
-    }
-    getFreeTcp() {
-        return this._getFreePeripheralUnit("tcp");
     }
 }
 exports.default = ObnizComponents;
@@ -1920,19 +1987,22 @@ exports.default = ObnizComponents;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const wsClient = __webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ws_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackReplace/ws.js"));
 // @ts-ignore
 const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/index.js"));
-const isNode = typeof window === "undefined";
 class ObnizConnection {
     constructor(id, options) {
-        this.isNode = isNode;
+        this.isNode = typeof window === "undefined";
         this.id = id;
         this.socket = null;
         this.socket_local = null;
@@ -1944,7 +2014,7 @@ class ObnizConnection {
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
         this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
         this._connectionRetryCount = 0;
         if (!options) {
             options = {};
@@ -1976,14 +2046,204 @@ class ObnizConnection {
             this.wsconnect();
         }
     }
+    /**
+     * obniz.js version
+     */
+    static get version() {
+        return package_1.default.version;
+    }
+    /**
+     * @ignore
+     * @constructor
+     */
+    static get WSCommand() {
+        return wscommand_1.default;
+    }
+    /**
+     * With this you wait until the connection to obniz Board succeeds.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     *
+     * await obniz.connectWait();
+     *
+     * obniz.io0.output(true);
+     * obniz.close();
+     *
+     * ```
+     *
+     *
+     * - with timeout
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     *
+     * await obniz.connectWait({timeout:10});  //timeout 10sec
+     *
+     * if(connected){
+     *    obniz.io0.output(true);
+     *    obniz.close();
+     * }
+     * ```
+     *
+     * - with auto_connect:false
+     *
+     * If the param auto_connect is set as false, it will try to connect only once and, if unsuccessful, return false.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678',{auto_connect: false});
+     *
+     * var connected = await obniz.connectWait();  //try once
+     *
+     * if(connected){
+     *   obniz.io0.output(true);
+     *   obniz.close();
+     * }
+     * ```
+     *
+     * @param option.timeout timeout in seconds
+     * @return False will be returned when connection is not established within a set timeout.
+     */
+    connectWait(option) {
+        option = option || {};
+        const timeout = option.timeout || null;
+        return new Promise((resolve, reject) => {
+            if (this.onConnectCalled) {
+                resolve(true);
+                return;
+            }
+            this.emitter.once("connected", () => {
+                resolve(true);
+            });
+            if (!this.options.auto_connect) {
+                this.emitter.once("closed", () => {
+                    resolve(false);
+                });
+            }
+            if (timeout) {
+                setTimeout(() => {
+                    resolve(false);
+                }, timeout * 1000);
+            }
+            this.connect();
+        });
+    }
+    /**
+     * You can connect to obniz Board manually by calling connect() when auto_connect is set to be false.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678', { auto_connect: false });
+     *
+     * obniz.connect();
+     * obniz.onconnect = async function() {
+     *  obniz.io0.output(true);
+     * }
+     * ```
+     */
+    connect() {
+        if (this.socket && this.socket.readyState <= 1) {
+            return;
+        }
+        this.wsconnect();
+    }
+    close() {
+        this._drainQueued();
+        this._disconnectLocal();
+        if (this.socket) {
+            if (this.socket.readyState <= 1) {
+                // Connecting & Connected
+                this.connectionState = "closing";
+                this.socket.close(1000, "close");
+            }
+            this.clearSocket(this.socket);
+            delete this.socket;
+        }
+        this.connectionState = "closed";
+    }
+    /**
+     * Send json/binary data to obniz Cloud or device.
+     *
+     * @param obj send data
+     * @param options send option
+     * @param options.local_connect If false, send data via gloval internet.
+     */
+    send(obj, options) {
+        try {
+            if (!obj || typeof obj !== "object") {
+                console.log("obnizjs. didnt send ", obj);
+                return;
+            }
+            if (Array.isArray(obj)) {
+                for (let i = 0; i < obj.length; i++) {
+                    this.send(obj[i]);
+                }
+                return;
+            }
+            if (this.sendPool) {
+                this.sendPool.push(obj);
+                return;
+            }
+            let sendData = JSON.stringify([obj]);
+            if (this.debugprint) {
+                this.print_debug("send: " + sendData);
+            }
+            /* compress */
+            if (this.wscommand &&
+                (typeof options !== "object" || options.local_connect !== false)) {
+                let compressed;
+                try {
+                    compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
+                    if (compressed) {
+                        sendData = compressed;
+                        if (this.debugprintBinary) {
+                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
+                        }
+                    }
+                }
+                catch (e) {
+                    this.error("------ errored json -------");
+                    this.error(sendData);
+                    throw e;
+                }
+            }
+            /* queue sending */
+            if (typeof sendData === "string") {
+                this._drainQueued();
+                this._sendRouted(sendData);
+            }
+            else {
+                if (this._sendQueue) {
+                    this._sendQueue.push(sendData);
+                }
+                else {
+                    this._sendQueue = [sendData];
+                    this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+                }
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    /**
+     * @ignore
+     * @param msg
+     */
+    warning(msg) {
+        console.log("warning:" + msg);
+    }
+    /**
+     * @ignore
+     * @param msg
+     */
+    error(msg) {
+        console.error("error:" + msg);
+    }
     prompt(filled, callback) {
         const obnizid = prompt("Please enter obniz id", filled);
         if (obnizid) {
             callback(obnizid);
         }
-    }
-    static get version() {
-        return package_1.default.version;
     }
     wsOnOpen() {
         this.print_debug("ws connected");
@@ -2023,36 +2283,12 @@ class ObnizConnection {
         this.onConnectCalled = false;
         this._reconnect();
     }
-    connectWait(option) {
-        option = option || {};
-        const timeout = option.timeout || null;
-        return new Promise((resolve, reject) => {
-            if (this.onConnectCalled) {
-                resolve(true);
-                return;
-            }
-            this.emitter.once("connected", () => {
-                resolve(true);
-            });
-            if (!this.options.auto_connect) {
-                this.emitter.once("closed", () => {
-                    resolve(false);
-                });
-            }
-            if (timeout) {
-                setTimeout(() => {
-                    resolve(false);
-                }, timeout * 1000);
-            }
-            this.connect();
-        });
-    }
     _reconnect() {
         this._connectionRetryCount++;
         let tryAfter = 1000;
         if (this._connectionRetryCount > 15) {
             tryAfter = (this._connectionRetryCount - 15) * 1000;
-            const Limit = isNode ? 60 * 1000 : 10 * 1000;
+            const Limit = this.isNode ? 60 * 1000 : 10 * 1000;
             if (tryAfter > Limit) {
                 tryAfter = Limit;
             }
@@ -2102,7 +2338,7 @@ class ObnizConnection {
         this.print_debug("connecting to " + url);
         let socket;
         if (this.isNode) {
-            socket = new wsClient(url);
+            socket = new ws_1.default(url);
             socket.on("open", this.wsOnOpen.bind(this));
             socket.on("message", this.wsOnMessage.bind(this));
             socket.on("close", this.wsOnClose.bind(this));
@@ -2127,7 +2363,7 @@ class ObnizConnection {
         this.print_debug("local connect to " + url);
         let ws;
         if (this.isNode) {
-            ws = new wsClient(url);
+            ws = new ws_1.default(url);
             ws.on("open", () => {
                 this.print_debug("connected to " + url);
                 this._callOnConnect();
@@ -2215,26 +2451,6 @@ class ObnizConnection {
             socket.onerror = null;
         }
     }
-    connect() {
-        if (this.socket && this.socket.readyState <= 1) {
-            return;
-        }
-        this.wsconnect();
-    }
-    close() {
-        this._drainQueued();
-        this._disconnectLocal();
-        if (this.socket) {
-            if (this.socket.readyState <= 1) {
-                // Connecting & Connected
-                this.connectionState = "closing";
-                this.socket.close(1000, "close");
-            }
-            this.clearSocket(this.socket);
-            delete this.socket;
-        }
-        this.connectionState = "closed";
-    }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -2269,64 +2485,6 @@ class ObnizConnection {
     print_debug(str) {
         if (this.debugprint) {
             console.log("Obniz: " + str);
-        }
-    }
-    send(obj, options) {
-        try {
-            if (!obj || typeof obj !== "object") {
-                console.log("obnizjs. didnt send ", obj);
-                return;
-            }
-            if (Array.isArray(obj)) {
-                for (let i = 0; i < obj.length; i++) {
-                    this.send(obj[i]);
-                }
-                return;
-            }
-            if (this.sendPool) {
-                this.sendPool.push(obj);
-                return;
-            }
-            let sendData = JSON.stringify([obj]);
-            if (this.debugprint) {
-                this.print_debug("send: " + sendData);
-            }
-            /* compress */
-            if (this.wscommand &&
-                (typeof options !== "object" || options.local_connect !== false)) {
-                let compressed;
-                try {
-                    compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
-                    if (compressed) {
-                        sendData = compressed;
-                        if (this.debugprintBinary) {
-                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
-                        }
-                    }
-                }
-                catch (e) {
-                    this.error("------ errored json -------");
-                    this.error(sendData);
-                    throw e;
-                }
-            }
-            /* queue sending */
-            if (typeof sendData === "string") {
-                this._drainQueued();
-                this._sendRouted(sendData);
-            }
-            else {
-                if (this._sendQueue) {
-                    this._sendQueue.push(sendData);
-                }
-                else {
-                    this._sendQueue = [sendData];
-                    this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
-                }
-            }
-        }
-        catch (e) {
-            console.log(e);
         }
     }
     _sendRouted(data) {
@@ -2435,9 +2593,6 @@ class ObnizConnection {
     }
     handleSystemCommand(wsObj) {
     }
-    static get WSCommand() {
-        return wscommand_1.default;
-    }
     binary2Json(binary) {
         let data = new Uint8Array(binary);
         const json = [];
@@ -2459,12 +2614,6 @@ class ObnizConnection {
         }
         return json;
     }
-    warning(msg) {
-        console.log("warning:" + msg);
-    }
-    error(msg) {
-        console.error("error:" + msg);
-    }
 }
 exports.default = ObnizConnection;
 
@@ -2478,17 +2627,32 @@ exports.default = ObnizConnection;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const ObnizConnection_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizConnection.js"));
+/**
+ * @ignore
+ */
 const _parts = {};
 class ObnizParts extends ObnizConnection_1.default {
+    /**
+     * @ignore
+     * @private
+     */
     static _parts() {
         return _parts;
     }
+    /**
+     * Register Parts class
+     * @param arg0 Parts class
+     */
     static PartsRegistrate(arg0, arg1) {
         if (arg0 &&
             typeof arg0.info === "function" &&
@@ -2499,6 +2663,11 @@ class ObnizParts extends ObnizConnection_1.default {
             _parts[arg0] = arg1;
         }
     }
+    /**
+     * @ignore
+     * @param name
+     * @constructor
+     */
     static Parts(name) {
         if (!_parts[name]) {
             throw new Error(`unknown parts [${name}]`);
@@ -2508,9 +2677,19 @@ class ObnizParts extends ObnizConnection_1.default {
     constructor(id, options) {
         super(id, options);
     }
+    /**
+     * Check the param is valid io pin no.
+     * @param io
+     */
     isValidIO(io) {
         return typeof io === "number" && this["io" + io] !== null;
     }
+    /**
+     * Setup Parts of parts library
+     *
+     * @param partsname
+     * @param options
+     */
     wired(partsname, options) {
         const parts = ObnizParts.Parts(partsname);
         if (!parts) {
@@ -2564,6 +2743,10 @@ exports.default = ObnizParts;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -2573,6 +2756,39 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
     constructor(id, options) {
         super(id, options);
     }
+    /**
+     * This pauses obniz Board for a period given in terms of ms (millisecond).
+     *
+     * ```javascript
+     * // Javascript Example
+     * led.on();
+     * obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * ```
+     *
+     * This method pauses only obniz Board, not JavaScript.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var time = new Date();
+     * led.on();
+     * obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * console.log((new Date()).getTime() - time.getTime()) // 0 or very few ms. not 1000ms.
+     * ```
+     *
+     * However, when you call this method together with the await function, JavaScript will pause for the given period in ms.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var time = new Date();
+     * led.on();
+     * await obniz.wait(1000); // led ON 1sec.
+     * led.off();
+     * console.log((new Date()).getTime() - time.getTime()) // => about 1000
+     * ```
+     * @param msec
+     */
     wait(msec) {
         if (msec < 0) {
             msec = 0;
@@ -2583,22 +2799,85 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         this.send({ system: { wait: msec } });
         return new Promise((resolve) => setTimeout(resolve, msec));
     }
+    /**
+     * This forces the obniz Board to go back to the initial state when the power was just turned on.
+     *
+     * ```javascript
+     * // Example
+     * obniz = new Obniz("1234-5678");
+     * obniz.onconnect = function() {
+     *   obniz.reset();
+     * }
+     * ```
+     */
     reset() {
         this.send({ system: { reset: true } });
         this._resetComponents();
     }
+    /**
+     * reboot device
+     *
+     * ```javascript
+     * obniz.reboot();
+     * ```
+     */
     reboot() {
         this.send({ system: { reboot: true } });
     }
+    /**
+     * @ignore
+     */
     selfCheck() {
         this.send({ system: { self_check: true } });
     }
+    /**
+     * By default, obniz Board resets after disconnection from the cloud.
+     * It means the output value and pwm will all stop at that point.
+     * But the above function with the argument true can nullify that default setting and change it to "do not reset when offline".
+     * This configuration remains as long as obniz Board is on.
+     *
+     * ```javascript
+     * // Example
+     * obniz.keepWorkingAtOffline(true);
+     * ```
+     * @param working
+     */
     keepWorkingAtOffline(working) {
         this.send({ system: { keep_working_at_offline: working } });
     }
+    /**
+     *
+     * This lets you change the setting of `reset_obniz_on_ws_disconnection` after connection is established.
+     *
+     * By default, obniz cloud resets target obniz Board when the all websocket to obniz cloud was closed.
+     * It means the output value and pwm will all stop at that point.
+     * With the above function, you can nullify these resetting activities.
+     * This configuration will remain until target obniz Board gets disconnected.
+     * Set this function to false to keep working without any of the websocket connections.
+     *
+     *
+     * ```javascript
+     * // Example
+     * obniz.resetOnDisconnect(false);
+     * ```
+     *
+     * @param reset
+     */
     resetOnDisconnect(reset) {
         this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in seconds.
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepSeconds (60); // 60 seconds
+     * ```
+     *
+     * @param sec up to 64800 seconds (18 hours).
+     */
     sleepSeconds(sec) {
         if (sec < 1) {
             // min 1s
@@ -2610,6 +2889,19 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         this.send({ system: { sleep_seconds: sec } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in minutes.
+     *
+     *
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepMinute （60）; // 60 minutes
+     * ```
+     * @param minute up to 64800 minutes(45 days ).
+     */
     sleepMinute(minute) {
         if (minute < 1) {
             // min 1m
@@ -2621,6 +2913,21 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         }
         this.send({ system: { sleep_minute: minute } });
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * Obniz Board sleeps for the value specified in Date type.
+     * Sleep for up to 45 days (64800 minutes).
+     *
+     * ```javascript
+     * // JavaScript example
+     * let dt = new Date();
+     * dt.setHours(dt.getHours () + 1,0,0,0);
+     * obniz.sleep(dt);
+     * ```
+     *
+     * @param date
+     */
     sleep(date) {
         if (!(date instanceof Date)) {
             throw new Error("Date instance argument required");
@@ -2643,12 +2950,41 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
             throw new Error(`over max sleep time : ${sleepTime}m`);
         }
     }
+    /**
+     * Action only with obniz Board 1Y.
+     *
+     * It returns from sleep depending on the pin state of IO0.
+     *
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.sleepIoTrigger (true);
+     * ```
+     *
+     * @param trigger
+     *
+     *  - true: Rise （LOW -> HIGH）
+     *  - false: Falling （HIGH -> LOW）
+     */
     sleepIoTrigger(trigger) {
         if (typeof trigger !== "boolean") {
             throw new Error("sleepIoTrigger need boolean arg");
         }
         this.send({ system: { sleep_io_trigger: trigger } });
     }
+    /**
+     * Ping to obniz device and wait pong response.
+     *
+     * If debugprint option enabled, it display ping/pong response time on console.
+     *
+     * ```javascript
+     * await obniz.pingWait(); //waiting pong.
+     * ```
+     *
+     * @param unixtime start time of measure response time
+     * @param rand Unique identifier of ping data
+     * @param forceGlobalNetwork
+     */
     pingWait(unixtime, rand, forceGlobalNetwork) {
         unixtime = unixtime || new Date().getTime();
         const upper = Math.floor(unixtime / Math.pow(2, 32));
@@ -2718,6 +3054,10 @@ exports.default = ObnizSystemMethods;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -2726,6 +3066,27 @@ const ObnizSystemMethods_1 = __importDefault(__webpack_require__("./dist/src/obn
 class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
+    }
+    /**
+     * This closes the current connection.
+     * You need to set auto_connect to false. Otherwise the connection will be recovered.
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678', {
+     *   auto_connect: false,
+     *   reset_obniz_on_ws_disconnection: false
+     * });
+     *
+     * obniz.connect();
+     * obniz.onconnect = async function() {
+     *   obniz.io0.output(true);
+     *   obniz.close();
+     * }
+     * ```
+     */
+    close() {
+        super.close();
+        this.updateOnlineUI();
     }
     isValidObnizId(str) {
         if (typeof str !== "string" || str.length < 8) {
@@ -2787,10 +3148,6 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         this.updateOnlineUI();
         super._callOnConnect();
     }
-    close() {
-        super.close();
-        this.updateOnlineUI();
-    }
     _disconnectLocal() {
         super._disconnectLocal();
         this.updateOnlineUI();
@@ -2845,6 +3202,10 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     }
 }
 exports.default = ObnizUIs;
+/**
+ *
+ * @ignore
+ */
 function _ReadCookie(name) {
     const nameEQ = name + "=";
     const ca = document.cookie.split(";");
@@ -2870,6 +3231,10 @@ function _ReadCookie(name) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -2885,12 +3250,101 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
-const isNode = typeof window === "undefined";
+/**
+ * obniz class is the abstract version of obniz Board hardware within JavaScript.
+ *
+ * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
+ * without the details of websocket api.
+ *
+ *
+ * ### obnizOS version and obniz.js version
+ *
+ * obniz cloud compare your obniz.js version and target device obnizOS version.
+ * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
+ * It will work somehow but some functions looses compatibility.
+ *
+ * ### one device from two program
+ *
+ * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
+ * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
+ *
+ * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
+ *
+ * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
+ *
+ */
 class Obniz extends ObnizUIs_1.default {
+    /**
+     * We will now instantiate obniz.
+     *
+     * obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
+     *
+     * ```javascript
+     * new Obniz('1234-5678') // OK
+     * new Obniz('12345678') // OK
+     * new Obniz(12345678) // Can't accept
+     * ```
+     *
+     * If you connect to obniz which has an access token, provide an option like this
+     *
+     * ```javascript
+     * new Obniz('1234-5678', {access_token: 'your token here'})
+     * ```
+     *
+     * If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
+     * In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
+     * It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
+     *
+     * ![](media://obniz_prompt.png)
+     *
+     * When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
+     *
+     * When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
+     * But when cloud connection gets closed, the local connect also gets closed.
+     *
+     * ![](media://local_connect.png)
+     *
+     * The timing onconnect() gets called depends on the availability of local connect.
+     * obniz.js will wait a little to establish connection via local connect as much as possible.
+     * See the flow below.
+     *
+     * ![](media://onconnect_flow.png)
+     *
+     * The second parameter when instantiating obniz Board is an option.
+     *
+     * @param id
+     * @param options
+     */
     constructor(id, options) {
         super(id, options);
         this.util = new util_1.default(this);
     }
+    /**
+     * obniz REST api class
+     * @returns {ObnizApi}
+     */
+    static get api() {
+        return ObnizApi_1.default;
+    }
+    /**
+     * Repeat will call the callback function periodically while it is connected to obniz Board.
+     * It will stop calling once it is disconnected from obniz Board.
+     *
+     * ```javascript
+     * // Javascript Example
+     *  obniz.ad0.start();
+     *  obniz.repeat(function(){
+     *    if (obniz.ad0.value > 2.5) {
+     *      obniz.io0.output(true);
+     *    } else {
+     *      obniz.io0.output(false);
+     *    }
+     *  }, 100)
+     * ```
+     *
+     * @param callback
+     * @param interval  default 100. It mean 100ms interval loop.
+     */
     repeat(callback, interval) {
         if (this.looper) {
             this.looper = callback;
@@ -2902,6 +3356,92 @@ class Obniz extends ObnizUIs_1.default {
         if (this.onConnectCalled) {
             this.loop();
         }
+    }
+    /**
+     * @ignore
+     * @param msg
+     */
+    warning(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                console.log(msg.message);
+                return;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+            }
+            console.log(`Warning: ${msg}`);
+        }
+    }
+    /**
+     * @ignore
+     * @param msg
+     */
+    error(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                msg = msg.message;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+                console.error(new Error(msg));
+            }
+            else {
+                throw new Error(msg);
+            }
+        }
+    }
+    /**
+     * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
+     *
+     * ```javascript
+     * // Example
+     * obniz.onconnect = function(){
+     *  var button = obniz.wired("Button",  {signal:0, gnd:1});
+     *
+     *  button.onchange = function(){
+     *    var targets = [
+     *      "1234-1231",
+     *      "1234-1232",
+     *      "1234-1233",
+     *      "1234-1234",
+     *      "1234-1235",
+     *      "1234-1236",
+     *      "1234-1237",
+     *      "1234-1238",
+     *      "1234-1239",
+     *      "1234-1230"];
+     *
+     *    obniz.message(targets, "pressed");
+     *   };
+     * }
+     * ```
+     *
+     * @param target destination obniz id
+     * @param message message data
+     */
+    message(target, message) {
+        let targets = [];
+        if (typeof target === "string") {
+            targets.push(target);
+        }
+        else {
+            targets = target;
+        }
+        this.send({
+            message: {
+                to: targets,
+                data: message,
+            },
+        });
     }
     loop() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -2917,21 +3457,6 @@ class Obniz extends ObnizUIs_1.default {
     _callOnConnect() {
         super._callOnConnect();
         this.loop();
-    }
-    message(target, message) {
-        let targets = [];
-        if (typeof target === "string") {
-            targets.push(target);
-        }
-        else {
-            targets = target;
-        }
-        this.send({
-            message: {
-                to: targets,
-                data: message,
-            },
-        });
     }
     notifyToModule(obj) {
         super.notifyToModule(obj);
@@ -2954,53 +3479,12 @@ class Obniz extends ObnizUIs_1.default {
             }
         }
     }
-    warning(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                console.log(msg.message);
-                return;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-            }
-            console.log(`Warning: ${msg}`);
-        }
-    }
-    error(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                msg = msg.message;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-                console.error(new Error(msg));
-            }
-            else {
-                throw new Error(msg);
-            }
-        }
-    }
-    /**
-     *
-     * @returns {ObnizApi}
-     */
-    static get api() {
-        return ObnizApi_1.default;
-    }
 }
 /*===================*/
 /* Utils */
 /*===================*/
 try {
-    if (!isNode) {
+    if (typeof window !== "undefined") {
         if (window && window.parent && window.parent.userAppLoaded) {
             window.parent.userAppLoaded(window);
         }
@@ -3022,11 +3506,17 @@ catch (e) {
 /*===================*/
 /* ReadParts */
 /*===================*/
+/**
+ * @ignore
+ */
 const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
 __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
 if (requireContext.setBaseDir) {
     requireContext.setBaseDir(__dirname);
 }
+/**
+ * @ignore
+ */
 const context = __webpack_require__("./dist/src/parts sync recursive \\.js$");
 /* webpack loader */
 for (const path of context.keys()) {
@@ -3046,11 +3536,45 @@ module.exports = Obniz;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/ble.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Obniz BLE are switches automatically. <br/>
+ * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
+ * obnizOS ver < 3.0.0   : [[ObnizCore.Components.Ble.old | old]] <br/>
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble
+ */
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizOldBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
+exports.ObnizOldBLE = ObnizOldBLE;
+const ObnizHciBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
+exports.ObnizHciBLE = ObnizHciBLE;
+
+//# sourceMappingURL=ble.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/ble/ble.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -3072,6 +3596,10 @@ const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/ob
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleScan.js"));
 const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleSecurity.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class ObnizBLE {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -3325,11 +3853,20 @@ exports.default = ObnizBLE;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisementBuilder.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
 class BleAdvertisement {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -3385,11 +3922,20 @@ exports.default = BleAdvertisement;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
 class BleAdvertisementBuilder {
     constructor(Obniz, json) {
         this.Obniz = Obniz;
@@ -3548,6 +4094,10 @@ exports.default = BleAdvertisementBuilder;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -3555,6 +4105,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class BleAttributeAbstract {
     constructor(params) {
         this.uuid = bleHelper_1.default.uuidFilter(params.uuid);
@@ -3774,9 +4328,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Peripheral
+ */
 class BleCharacteristic extends bleAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -3887,8 +4450,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Peripheral
+ */
 class BleDescriptor extends bleAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -3958,6 +4530,10 @@ exports.default = BleDescriptor;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const BleHelper = {
     uuidFilter(uuid) {
         return uuid.toLowerCase().replace(/[^0-9abcdef]/g, "");
@@ -3979,8 +4555,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Peripheral
+ */
 class BlePeripheral {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -4071,7 +4656,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
 class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -4155,9 +4749,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteDescriptor.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
 class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -4357,8 +4960,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
 class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
     constructor(params) {
         super(params);
@@ -4423,9 +5035,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteService.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
 class BleRemotePeripheral {
     constructor(Obniz, address) {
         this.Obniz = Obniz;
@@ -4771,9 +5392,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
 const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteCharacteristic.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
 class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -4840,8 +5470,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
 class BleScan {
     constructor(Obniz) {
         this.scanTarget = null;
@@ -4926,6 +5565,12 @@ class BleScan {
     } // dummy
     onfind(params) {
     } // dummy
+    setAdvertisementFilter() {
+        throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
+    }
+    setScanMode(mode) {
+        throw new Error("setScanMode is not support obnizOS < 3.2.0");
+    }
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onfind": {
@@ -4957,8 +5602,16 @@ exports.default = BleScan;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const semver = __webpack_require__("./node_modules/semver/semver.js");
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 class BleSecurity {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -5127,9 +5780,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Peripheral
+ */
 class BleService extends bleAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
@@ -5179,6 +5841,10 @@ exports.default = BleService;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -5205,6 +5871,10 @@ const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/ob
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js"));
 const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleSecurity.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+/**
+ * Use a obniz device as a BLE device.
+ * Peripheral and Central mode are supported
+ */
 class ObnizBLE {
     constructor(obniz) {
         this.Obniz = obniz;
@@ -5230,6 +5900,13 @@ class ObnizBLE {
         this._bind();
         this._reset();
     }
+    /**
+     * @ignore
+     *
+     * @param data
+     * @param reverse
+     * @private
+     */
     static _dataArray2uuidHex(data, reverse) {
         let uuid = [];
         for (let i = 0; i < data.length; i++) {
@@ -5253,6 +5930,14 @@ class ObnizBLE {
         }
         return str;
     }
+    /**
+     * Initialize BLE module. You need call this first everything before.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * ```
+     */
     initWait() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._initialized) {
@@ -5261,22 +5946,38 @@ class ObnizBLE {
             }
         });
     }
-    warningIfNotInitialize() {
-        if (!this._initialized && this._initializeWarning) {
-            this._initializeWarning = true;
-            this.Obniz.warning({
-                alert: "warning",
-                message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
-            });
-        }
-    }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.hci) {
             this.hci.notified(obj.hci);
         }
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
     }
+    /**
+     * Connect to peripheral without scanning.
+     * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var peripheral = obniz.ble.directConnect("e4b9efb29218","random");
+     * peripheral.onconnect = ()=>{
+     *   console.log("connected");
+     * }
+     * ```
+     *
+     * @param uuid peripheral device address
+     * @param addressType "random" or "public"
+     */
     directConnect(uuid, addressType) {
         let peripheral = this.findPeripheral(uuid);
         if (!peripheral) {
@@ -5292,12 +5993,46 @@ class ObnizBLE {
         peripheral.connect();
         return peripheral;
     }
-    directConnectWait(uuid, addressType) {
+    /**
+     * Connect to peripheral without scanning, and wait to finish connecting.
+     *
+     * It throws when connection establish failed.
+     * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * try {
+     *   var peripheral = await obniz.ble.directConnectWait("e4b9efb29218","random");
+     *   console.log("connected");
+     * } catch(e) {
+     *   console.log("can't connect");
+     * }
+     * ```
+     *
+     * @param address peripheral device address
+     * @param addressType "random" or "public"
+     */
+    directConnectWait(address, addressType) {
         return __awaiter(this, void 0, void 0, function* () {
-            const peripheral = this.directConnect(uuid, addressType);
+            const peripheral = this.directConnect(address, addressType);
             yield peripheral.connectWait();
             return peripheral;
         });
+    }
+    /**
+     * @ignore
+     */
+    warningIfNotInitialize() {
+        if (!this._initialized && this._initializeWarning) {
+            this._initializeWarning = true;
+            this.Obniz.warning({
+                alert: "warning",
+                message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
+            });
+        }
+    }
+    onStateChange() {
     }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
@@ -5306,8 +6041,6 @@ class ObnizBLE {
             }
         }
         return null;
-    }
-    onStateChange() {
     }
     onAddressChange() {
     }
@@ -5485,20 +6218,24 @@ class ObnizBLE {
     }
     onPeripheralAccept(clientAddress) {
         this.peripheral.currentConnectedDeviceAddress = clientAddress;
-        this.peripheral.onconnectionupdates({
-            address: clientAddress,
-            status: "connected",
-        });
+        if (this.peripheral.onconnectionupdates) {
+            this.peripheral.onconnectionupdates({
+                address: clientAddress,
+                status: "connected",
+            });
+        }
     }
     onPeripheralMtuChange(mtu) {
         // console.error("onPeripheralMtuChange")
     }
     onPeripheralDisconnect(clientAddress) {
         this.peripheral.currentConnectedDeviceAddress = null;
-        this.peripheral.onconnectionupdates({
-            address: clientAddress,
-            status: "disconnected",
-        });
+        if (this.peripheral.onconnectionupdates) {
+            this.peripheral.onconnectionupdates({
+                address: clientAddress,
+                status: "disconnected",
+            });
+        }
     }
     onPeripheralRssiUpdate(rssi) {
         // console.error("onPeripheralRssiUpdate")
@@ -5554,37 +6291,131 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleAdvertisement {
     constructor(obnizBle) {
         this.obnizBle = obnizBle;
         this.adv_data = [];
         this.scan_resp = [];
     }
+    /**
+     * This starts advertisement of BLE.
+     *
+     * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.
+     * advertisement interval is 1.28sec fixed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     *   var service = new obniz.ble.service({
+     *  uuid : "fff0"
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * obniz.ble.advertisement.setAdvData(service.advData);
+     * obniz.ble.advertisement.start();
+     * ```
+     */
     start() {
         this.obnizBle.warningIfNotInitialize();
         this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
+    /**
+     * This stops advertisement of BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.start();
+     * obniz.ble.advertisement.end();
+     * ```
+     *
+     */
     end() {
         this.obnizBle.peripheralBindings.stopAdvertising();
     }
+    /**
+     * This sets advertise data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x02, 0x01, 0x1A  => BLE type for
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param adv_data
+     */
     setAdvDataRaw(adv_data) {
         this.adv_data = adv_data;
     }
+    /**
+     * This sets advertise data from json.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setAdvData({
+     *   flags: ["general_discoverable_mode","br_edr_not_supported"],
+     *   manufacturerData:{
+     *     companyCode : 0x004C,
+     *     serviceUuids: ["fff0"],
+     *     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
+     *   }
+     * });
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     * @param json
+     */
     setAdvData(json) {
         const builder = this.advDataBulider(json);
         this.setAdvDataRaw(builder.build());
     }
-    advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, jsonVal);
-    }
-    scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, json);
-    }
+    /**
+     * This sets scan response data from data array.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
+     * //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     *
+     * @param scan_resp
+     */
     setScanRespDataRaw(scan_resp) {
         this.scan_resp = scan_resp;
     }
+    /**
+     * This sets scan response data from json data.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.advertisement.setScanRespData({
+     *   localName : "obniz BLE",
+     * });
+     *
+     * obniz.ble.advertisement.start();
+     * ```
+     * @param json
+     */
     setScanRespData(json) {
         this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+    }
+    advDataBulider(jsonVal) {
+        return new bleAdvertisementBuilder_1.default(jsonVal);
+    }
+    scanRespDataBuilder(json) {
+        return new bleAdvertisementBuilder_1.default(json);
     }
 }
 exports.default = BleAdvertisement;
@@ -5604,10 +6435,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleAdvertisementBuilder {
-    constructor(Obniz, json) {
-        this.Obniz = Obniz;
+    constructor(json) {
         this.rows = {};
         if (json) {
             if (json.localName) {
@@ -5645,7 +6482,7 @@ class BleAdvertisementBuilder {
             Array.prototype.push.apply(data, this.rows[key]);
         }
         if (data.length > 31) {
-            this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
+            throw new Error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
         }
         return data;
     }
@@ -5679,7 +6516,7 @@ class BleAdvertisementBuilder {
         if (uuidNumeric.length !== 32 &&
             uuidNumeric.length !== 8 &&
             uuidNumeric.length !== 4) {
-            this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+            throw new Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
         }
         const data = [];
         for (let i = uuidNumeric.length; i > 1; i -= 2) {
@@ -5699,6 +6536,21 @@ class BleAdvertisementBuilder {
         data.push((txPower >> 0) & 0xff);
         this.setManufacturerSpecificData(0x004c, data);
         return;
+    }
+    setLeLimitedDiscoverableModeFlag() {
+        this.setFlags(0x01);
+    }
+    setLeGeneralDiscoverableModeFlag() {
+        this.setFlags(0x02);
+    }
+    setBrEdrNotSupportedFlag() {
+        this.setFlags(0x04);
+    }
+    setLeBrEdrControllerFlag() {
+        this.setFlags(0x08);
+    }
+    setLeBrEdrHostFlag() {
+        this.setFlags(0x10);
     }
     extendEvalJson(json) {
         if (json) {
@@ -5726,21 +6578,6 @@ class BleAdvertisementBuilder {
         data[0] = (data[0] || 0) | flag;
         this.setRow(0x01, data);
     }
-    setLeLimitedDiscoverableModeFlag() {
-        this.setFlags(0x01);
-    }
-    setLeGeneralDiscoverableModeFlag() {
-        this.setFlags(0x02);
-    }
-    setBrEdrNotSupportedFlag() {
-        this.setFlags(0x04);
-    }
-    setLeBrEdrControllerFlag() {
-        this.setFlags(0x08);
-    }
-    setLeBrEdrHostFlag() {
-        this.setFlags(0x10);
-    }
 }
 exports.default = BleAdvertisementBuilder;
 
@@ -5758,7 +6595,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 class BleAttributeAbstract {
@@ -5781,7 +6622,225 @@ class BleAttributeAbstract {
             }
         }
         this.setFunctions();
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
+    }
+    /**
+     * @ignore
+     */
+    get childrenClass() {
+        return Object;
+    }
+    /**
+     * @ignore
+     */
+    get childrenName() {
+        return null;
+    }
+    /**
+     * @ignore
+     */
+    get parentName() {
+        return null;
+    }
+    /**
+     * @ignore
+     * @param child
+     */
+    addChild(child) {
+        if (!(child instanceof this.childrenClass)) {
+            const childrenClass = this.childrenClass;
+            child = new childrenClass(child);
+        }
+        const childobj = child;
+        childobj.parent = this;
+        this.children.push(childobj);
+        return childobj;
+    }
+    /**
+     * @ignore
+     * @param uuid
+     */
+    getChild(uuid) {
+        uuid = bleHelper_1.default.uuidFilter(uuid);
+        const result = this.children
+            .filter((element) => {
+            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
+        })
+            .shift();
+        if (!result) {
+            return null;
+        }
+        return result;
+    }
+    /**
+     * @ignore
+     */
+    toJSON() {
+        const obj = {
+            uuid: bleHelper_1.default.uuidFilter(this.uuid),
+        };
+        if (this.childrenName) {
+            const key = this.childrenName;
+            obj[key] = this.children;
+        }
+        if (this.data) {
+            obj.data = this.data;
+        }
+        return obj;
+    }
+    /**
+     * WS COMMANDS
+     */
+    /**
+     * @ignore
+     */
+    read() {
+    }
+    /**
+     * @ignore
+     */
+    write(data, needResponse) {
+    }
+    /**
+     * @ignore
+     */
+    writeNumber(val, needResponse) {
+        this.write([val], needResponse);
+    }
+    /**
+     * @ignore
+     */
+    writeText(str, needResponse) {
+        this.write(util_1.default.string2dataArray(str), needResponse);
+    }
+    /**
+     * @ignore
+     */
+    readWait() {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onread", (params) => {
+                if (params.result === "success") {
+                    resolve(params.data);
+                }
+                else {
+                    reject(new Error("readWait failed"));
+                }
+            });
+            this.read();
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeWait(data, needResponse) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeWait failed"));
+                }
+            });
+            this.write(data, needResponse);
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeTextWait(data, needResponse) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeTextWait failed"));
+                }
+            });
+            this.writeText(data, needResponse);
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeNumberWait(data, needResponse) {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeNumberWait failed"));
+                }
+            });
+            this.writeNumber(data, needResponse);
+        });
+    }
+    /**
+     * @ignore
+     */
+    readFromRemoteWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("onreadfromremote", () => {
+                resolve();
+            });
+        });
+    }
+    /**
+     * @ignore
+     */
+    writeFromRemoteWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("onreadfromremote", (params) => {
+                resolve(params.data);
+            });
+        });
+    }
+    /**
+     * @ignore
+     * @param err
+     */
+    onerror(err) {
+        console.error(err.message);
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "onerror": {
+                this.onerror(params);
+                break;
+            }
+            case "onwrite": {
+                if (this.onwrite) {
+                    this.onwrite(params.result);
+                }
+                break;
+            }
+            case "onread": {
+                if (this.onread) {
+                    this.onread(params.data);
+                }
+                break;
+            }
+            case "onwritefromremote": {
+                if (this.onwritefromremote) {
+                    this.onwritefromremote(params.address, params.data);
+                }
+                break;
+            }
+            case "onreadfromremote": {
+                if (this.onreadfromremote) {
+                    this.onreadfromremote(params.address);
+                }
+                break;
+            }
+        }
     }
     setFunctions() {
         let childrenName = this.childrenName;
@@ -5806,163 +6865,6 @@ class BleAttributeAbstract {
             });
         }
     }
-    get childrenClass() {
-        return Object;
-    }
-    get childrenName() {
-        return null;
-    }
-    get parentName() {
-        return null;
-    }
-    addChild(child) {
-        if (!(child instanceof this.childrenClass)) {
-            const childrenClass = this.childrenClass;
-            child = new childrenClass(child);
-        }
-        child.parent = this;
-        this.children.push(child);
-        return child;
-    }
-    getChild(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this.children
-            .filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
-        })
-            .shift();
-    }
-    toJSON() {
-        const obj = {
-            uuid: bleHelper_1.default.uuidFilter(this.uuid),
-        };
-        if (this.childrenName) {
-            const key = this.childrenName;
-            obj[key] = this.children;
-        }
-        if (this.data) {
-            obj.data = this.data;
-        }
-        return obj;
-    }
-    /**
-     * WS COMMANDS
-     */
-    read() {
-    }
-    write(data, needResponse) {
-    }
-    writeNumber(val, needResponse) {
-        this.write([val], needResponse);
-    }
-    writeText(str, needResponse) {
-        this.write(util_1.default.string2dataArray(str), needResponse);
-    }
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
-    }
-    writeWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data, needResponse);
-        });
-    }
-    writeTextWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeTextWait failed"));
-                }
-            });
-            this.writeText(data);
-        });
-    }
-    writeNumberWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeNumberWait failed"));
-                }
-            });
-            this.writeNumber(data);
-        });
-    }
-    readFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", () => {
-                resolve();
-            });
-        });
-    }
-    writeFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", (params) => {
-                resolve(params.data);
-            });
-        });
-    }
-    /**
-     * CALLBACKS
-     */
-    onwrite(result) {
-    }
-    onread(data) {
-    }
-    onwritefromremote(address, data) {
-    }
-    onreadfromremote(address) {
-    }
-    onerror(err) {
-        console.error(err.message);
-    }
-    notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "onerror": {
-                this.onerror(params);
-                break;
-            }
-            case "onwrite": {
-                this.onwrite(params.result);
-                break;
-            }
-            case "onread": {
-                this.onread(params.data);
-                break;
-            }
-            case "onwritefromremote": {
-                this.onwritefromremote(params.address, params.data);
-                break;
-            }
-            case "onreadfromremote": {
-                this.onreadfromremote(params.address);
-                break;
-            }
-        }
-    }
 }
 exports.default = BleAttributeAbstract;
 
@@ -5980,72 +6882,151 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
-const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
-class BleCharacteristic extends bleLocalAttributeAbstract_1.default {
+const bleLocalValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
+class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
+    /**
+     * Create Characteristics
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var characteristic = new obniz.ble.characteristic({
+     *      "uuid" : "FFF1",
+     *      "properties" : ["read","write"],  // read, write, notify
+     *      "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
+     *      "descriptors" : [{
+     *          "uuid" : "2901",   //Characteristic User Description
+     *          "text" : "hello world characteristic",    //data for dataArray or  text for string
+     *      }]
+     * });
+     *
+     * var service = new obniz.ble.service({
+     *                "uuid" : "fff0",
+     *                "characteristics" : [ characteristic ]
+     * });
+     * obniz.ble.peripheral.addService(service);
+     * ```
+     *
+     * @param obj
+     */
     constructor(obj) {
         super(obj);
         this._maxValueSize = null;
         this._updateValueCallback = null;
-        this.addDescriptor = this.addChild;
-        this.getDescriptor = this.getChild;
-        this.properties = obj.properties || [];
-        if (!Array.isArray(this.properties)) {
-            this.properties = [this.properties];
+        if (!Array.isArray(obj.properties) && typeof obj.properties === "string") {
+            this.properties = [obj.properties];
         }
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
+        else {
+            this.properties = obj.properties || [];
         }
+        //
+        // this.permissions = obj.permissions || [];
+        // if (!Array.isArray(this.permissions)) {
+        //   this.permissions = [this.permissions];
+        // }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "service";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleDescriptor_1.default;
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "descriptors";
     }
+    /**
+     * Get descriptor array
+     */
     get descriptors() {
         return this.children;
     }
+    /**
+     * Add new descriptor
+     * @param desc
+     */
+    addDescriptor(desc) {
+        return this.addChild(desc);
+    }
+    /**
+     * Get descriptor
+     * @param uuid
+     */
+    getDescriptor(uuid) {
+        return this.getChild(uuid);
+    }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
         if (this.properties.length > 0) {
             obj.properties = this.properties;
         }
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
+        // if (this.permissions.length > 0) {
+        //   obj.permissions = this.permissions;
+        // }
         return obj;
     }
+    /**
+     * @ignore
+     */
     toBufferObj() {
         const obj = super.toBufferObj();
         obj.properties = this.properties;
         obj.secure = [];
         return obj;
     }
+    /**
+     * Add property
+     * @param param
+     */
     addProperty(param) {
         if (!this.properties.includes(param)) {
             this.properties.push(param);
         }
     }
+    /**
+     * Remove property
+     * @param param
+     */
     removeProperty(param) {
         this.properties = this.properties.filter((elm) => {
             return elm !== param;
         });
     }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
+    //
+    // public addPermission(param: any) {
+    //   if (!this.permissions.includes(param)) {
+    //     this.permissions.push(param);
+    //   }
+    // }
+    //
+    // public removePermission(param: any) {
+    //   this.permissions = this.permissions.filter((elm: any) => {
+    //     return elm !== param;
+    //   });
+    // }
+    /**
+     * @ignore
+     * @param name
+     * @param params
+     */
     emit(name, ...params) {
         const result = super.emit(name, ...params);
         if (result) {
@@ -6068,19 +7049,58 @@ class BleCharacteristic extends bleLocalAttributeAbstract_1.default {
                 throw new Error("unknown emit");
         }
     }
+    /**
+     * @ignore
+     * @param maxValueSize
+     * @param updateValueCallback
+     * @private
+     */
     _onSubscribe(maxValueSize, updateValueCallback) {
         // console.log('_onSubscribe');
         this._maxValueSize = maxValueSize;
         this._updateValueCallback = updateValueCallback;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onUnsubscribe() {
         this._maxValueSize = null;
         this._updateValueCallback = null;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onNotify() {
     }
+    /**
+     * @ignore
+     * @private
+     */
     _onIndicate() {
     }
+    /**
+     * This sends notify to the connected central.
+     *
+     * ```javascript
+     * var characteristic = new obniz.ble.characteristic({
+     *   uuid: 'FFF1',
+     *   data: [0x0e, 0x00],
+     *   properties : ["read","write","notify"],  // add notify properties
+     * });
+     *
+     *  var service = new obniz.ble.service({
+     *   uuid: 'FFF0',
+     *   characteristics: [characteristic],
+     * });
+     * obniz.ble.peripheral.addService(service);
+     *
+     *
+     * // after central connected
+     * characteristic.notify();
+     * ```
+     */
     notify() {
         if (this._updateValueCallback) {
             this._updateValueCallback(Buffer.from(this.data));
@@ -6104,33 +7124,69 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
-class BleDescriptor extends bleLocalAttributeAbstract_1.default {
+const bleLocalValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
+class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
+    // public permissions: any;
+    /**
+     * Create descriptor.
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var descriptor = new obniz.ble.characteristic({
+     *                     "uuid" : "2901",   //Characteristic User Description
+     *                     "text" : "hello world characteristic",
+     *                 });
+     *
+     *  var characteristic = new obniz.ble.characteristic({
+     *                  "uuid" : "FFF1",
+     *                  "text" : "Hi",
+     *                  "descriptors" : [ descriptor ]
+     *                });
+     *
+     * var service = new obniz.ble.service({
+     *                "uuid" : "fff0",
+     *                "characteristics" : [ characteristic ]
+     * });
+     * obniz.ble.peripheral.addService(service);
+     *
+     * ```
+     *
+     * @param obj
+     */
     constructor(obj) {
         super(obj);
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
-        }
+        // this.permissions = obj.permissions || [];
+        // if (!Array.isArray(this.permissions)) {
+        //   this.permissions = [this.permissions];
+        // }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "characteristic";
     }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
+    // public addPermission(param: any) {
+    //   if (!this.permissions.includes(param)) {
+    //     this.permissions.push(param);
+    //   }
+    // }
+    // public removePermission(param: any) {
+    //   this.permissions = this.permissions.filter ((elm: any ) => {
+    //     return elm !== param;
+    //   });
+    // }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
+        // if (this.permissions.length > 0) {
+        //   obj.permissions = this.permissions;
+        // }
         return obj;
     }
 }
@@ -6180,17 +7236,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+/**
+ * @ignore
+ */
+var BleResponseResult;
+(function (BleResponseResult) {
+    BleResponseResult[BleResponseResult["SUCCESS"] = 0] = "SUCCESS";
+    BleResponseResult[BleResponseResult["INVALID_OFFSET"] = 7] = "INVALID_OFFSET";
+    BleResponseResult[BleResponseResult["ATTR_NOT_LONG"] = 11] = "ATTR_NOT_LONG";
+    BleResponseResult[BleResponseResult["INVALID_ATTRIBUTE_LENGTH"] = 13] = "INVALID_ATTRIBUTE_LENGTH";
+    BleResponseResult[BleResponseResult["UNLIKELY_ERROR"] = 14] = "UNLIKELY_ERROR";
+})(BleResponseResult || (BleResponseResult = {}));
+/**
+ * @category Use as Peripheral
+ */
 class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     constructor(params) {
         super(params);
-        this.RESULT_SUCCESS = 0x00;
-        this.RESULT_INVALID_OFFSET = 0x07;
-        this.RESULT_ATTR_NOT_LONG = 0x0b;
-        this.RESULT_INVALID_ATTRIBUTE_LENGTH = 0x0d;
-        this.RESULT_UNLIKELY_ERROR = 0x0e;
     }
+    /**
+     * @ignore
+     */
     toBufferObj() {
         const obj = {
             uuid: bleHelper_1.default.uuidFilter(this.uuid),
@@ -6202,6 +7274,11 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         obj.emit = this.emit.bind(this);
         return obj;
     }
+    /**
+     * @ignore
+     * @param name
+     * @param params
+     */
     emit(name, ...params) {
         switch (name) {
             case "readRequest":
@@ -6213,9 +7290,15 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         }
         return false;
     }
+    /**
+     * @ignore
+     * @param offset
+     * @param callback
+     * @private
+     */
     _onReadRequest(offset, callback) {
         if (this.data.length >= offset) {
-            callback(this.RESULT_SUCCESS, Buffer.from(this.data.slice(offset)));
+            callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
             let address = null;
             if (this.parentName === "characteristic") {
                 address = this.characteristic.service.peripheral
@@ -6227,13 +7310,21 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
             this.notifyFromServer("onreadfromremote", { address });
         }
         else {
-            callback(this.RESULT_UNLIKELY_ERROR, null);
+            callback(BleResponseResult.UNLIKELY_ERROR, null);
         }
     }
+    /**
+     * @ignore
+     * @param data
+     * @param offset
+     * @param withoutResponse
+     * @param callback
+     * @private
+     */
     _onWriteRequest(data, offset, withoutResponse, callback) {
         // console.log('onWriteRequest');
         this.data = Array.from(data);
-        callback(this.RESULT_SUCCESS);
+        callback(BleResponseResult.SUCCESS);
         let address = null;
         if (this.parentName === "characteristic") {
             address = this.characteristic.service.peripheral
@@ -6244,10 +7335,18 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         }
         this.notifyFromServer("onwritefromremote", { address, data });
     }
+    /**
+     * @ignore
+     * @param dataArray
+     */
     write(dataArray) {
         this.data = dataArray;
         this.notifyFromServer("onwrite", { result: "success" });
     }
+    /**
+     * @ignore
+     * @param dataArray
+     */
     read() {
         this.notifyFromServer("onread", { data: this.data });
     }
@@ -6257,6 +7356,76 @@ exports.default = BleLocalAttributeAbstract;
 //# sourceMappingURL=bleLocalAttributeAbstract.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleLocalValueAttributeAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
+class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default {
+    constructor(params) {
+        super(params);
+    }
+    /**
+     * @ignore
+     * @param dataArray
+     */
+    write(dataArray) {
+        this.data = dataArray;
+        this.notifyFromServer("onwrite", { result: "success" });
+    }
+    /**
+     * @ignore
+     * @param dataArray
+     */
+    read() {
+        this.notifyFromServer("onread", { data: this.data });
+    }
+    /**
+     * This writes dataArray.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await attr.writeWait([0xf0,0x27]);
+     * console.log("write success");
+     * ```
+     *
+     * @param data
+     */
+    writeWait(data) {
+        return super.writeWait(data);
+    }
+    /**
+     * It reads data.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * let data =  await attr.readWait()
+     *  console.log("data: " , data );
+     * ```
+     */
+    readWait() {
+        return super.readWait();
+    }
+}
+exports.default = BleLocalValueAttributeAbstract;
+
+//# sourceMappingURL=bleLocalValueAttributeAbstract.js.map
+
 
 /***/ }),
 
@@ -6271,25 +7440,61 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BlePeripheral {
     constructor(obnizBle) {
         this.obnizBle = obnizBle;
         this._services = [];
         this.currentConnectedDeviceAddress = null;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _updateServices() {
         const bufData = this._services.map((e) => e.toBufferObj());
         this.obnizBle.peripheralBindings.setServices(bufData);
     }
-    addService(obj) {
+    /**
+     * This starts a service as peripheral.
+     *
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * // Service without characteristics
+     * var service1 = new obniz.ble.service({"uuid" : "fff0"});
+     * obniz.ble.peripheral.addService(service1);
+     *
+     * // Service with characteristics/descriptor
+     * var service2 = new obniz.ble.service({"uuid" : "fff0"});
+     * var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
+     * var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello world characteristic"});
+     *
+     * service2.addCharacteristic(characteristic);
+     * characteristic.addDescriptor(descriptor);
+     *
+     * obniz.ble.peripheral.addService(service2); // call this after all descriptors and characteristics added to service.
+     * ```
+     *
+     * @param service
+     */
+    addService(service) {
         this.obnizBle.warningIfNotInitialize();
-        if (!(obj instanceof bleService_1.default)) {
-            obj = new bleService_1.default(obj);
+        if (!(service instanceof bleService_1.default)) {
+            service = new bleService_1.default(service);
         }
-        this._services.push(obj);
-        obj.peripheral = this;
+        this._services.push(service);
+        service.peripheral = this;
         this._updateServices();
     }
+    /**
+     * @ignore
+     * @private
+     * @param json
+     */
     setJson(json) {
         if (json.services) {
             for (const service of json.services) {
@@ -6297,29 +7502,51 @@ class BlePeripheral {
             }
         }
     }
+    /**
+     * Get service by UUID
+     * @param uuid
+     */
     getService(uuid) {
         uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this._services
+        const result = this._services
             .filter((element) => {
             return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
         })
             .shift();
+        if (!result) {
+            return null;
+        }
+        return result;
     }
+    /**
+     * Terminate service by UUID
+     * @param uuid
+     */
     removeService(uuid) {
         this._services = this._services.filter((element) => {
             return bleHelper_1.default.uuidFilter(element.uuid) !== uuid;
         });
         this._updateServices();
     }
+    /**
+     * @ignore
+     */
     stopAllService() {
         this._services = [];
         this._updateServices();
     }
+    /**
+     * @ignore
+     */
     toJSON() {
         return {
             services: this._services,
         };
     }
+    /**
+     * @ignore
+     * @param param
+     */
     findCharacteristic(param) {
         const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
         const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
@@ -6329,6 +7556,10 @@ class BlePeripheral {
         }
         return null;
     }
+    /**
+     * @ignore
+     * @param param
+     */
     findDescriptor(param) {
         const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
         const c = this.findCharacteristic(param);
@@ -6337,11 +7568,21 @@ class BlePeripheral {
         }
         return null;
     }
+    /**
+     * This ends all the peripheral service
+     *
+     * ```javascript
+     * obniz.ble.peripheral.addService(setting);
+     * obniz.ble.peripheral.end();
+     * ```
+     */
     end() {
         this.stopAllService();
     }
-    onconnectionupdates(param) {
-    }
+    /**
+     * @ignore
+     * @param error
+     */
     onerror(error) {
     }
 }
@@ -6361,13 +7602,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     constructor(params) {
         super(params);
         this.isRemote = false;
         this.discoverdOnRemote = false;
     }
+    /**
+     * @ignore
+     */
     get wsChildUuidName() {
         const childrenName = this.childrenName;
         if (!childrenName) {
@@ -6376,8 +7627,14 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
+    /**
+     * @ignore
+     */
     discoverChildren() {
     }
+    /**
+     * @ignore
+     */
     discoverChildrenWait() {
         return new Promise((resolve) => {
             this.emitter.once("discoverfinished", () => {
@@ -6390,12 +7647,22 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         });
     }
     /**
-     * CALLBACKS
+     * @ignore
+     * @param child
      */
     ondiscover(child) {
     }
+    /**
+     * @ignore
+     * @param children
+     */
     ondiscoverfinished(children) {
     }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
@@ -6436,9 +7703,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js"));
-class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
+const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
+class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default {
     constructor(params) {
         super(params);
         this.properties = params.properties || [];
@@ -6446,28 +7716,149 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.properties = [this.properties];
         }
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "service";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleRemoteDescriptor_1.default;
     }
+    /**
+     * @ignore
+     *
+     */
     get childrenName() {
         return "descriptors";
     }
+    /**
+     * It contains descriptors in a characteristic.
+     * It was discovered when connection automatically.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *    return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   var c = service.getCharacteristic("fff0")
+     *   for (var d of c.descriptors) {
+     *     console.log(d.uuid)
+     *  }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     */
     get descriptors() {
         return this.children;
     }
+    /**
+     * @ignore
+     * @param params
+     */
     addDescriptor(params) {
         return this.addChild(params);
     }
+    /**
+     * It returns a descriptors which having specified uuid in a characteristic.
+     * Return value is null when not matched.
+     *
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *  await peripheral.connectWait();
+     *  console.log("connected");
+     *  var service = peripheral.getService("1800")
+     *  var c = service.getCharacteristic("fff0")
+     *  var d = c.getDescriptor("fff0")
+     *  console.log(d.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
     getDescriptor(uuid) {
         return this.getChild(uuid);
     }
+    /**
+     * This sets a callback function to receive notify when it comes from periperal.
+     * To receive notify, you need to register on CCCD Descriptor(0x2902).
+     *
+     * More infomation of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
+     *
+     * ```javascript
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * char.onregisternotify = function() {
+     *   console.log("register finshed")
+     * }
+     *
+     * char.registerNotify( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * ```
+     *
+     * @param callback
+     */
     registerNotify(callback) {
         this.onnotify = callback;
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, true);
     }
+    /**
+     * This sets a notify callback function and wait to finish register.
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * await char.registerNotifyWait( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * ```
+     *
+     * @param callback
+     *
+     */
     registerNotifyWait(callback) {
         return new Promise((resolve) => {
             this.emitter.once("onregisternotify", () => {
@@ -6476,11 +7867,64 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.registerNotify(callback);
         });
     }
+    /**
+     * unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
+     *
+     *
+     * ```javascript
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * char.onregisternotify = function() {
+     *  console.log("register finshed")
+     *  char.unregisterNotify();
+     * }
+     *
+     * char.onunregisternotify = function() {
+     *   console.log("unregistrated")
+     * }
+     *
+     * char.registerNotify( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     *
+     * ```
+     */
     unregisterNotify() {
         this.onnotify = () => {
         };
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, false);
     }
+    /**
+     * Unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
+     * And wait until done.
+     *
+     * ```javascript
+     *
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  localName: "obniz-notify"
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * await peripheral.connectWait();
+     * let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+     *
+     * await char.registerNotifyWait( function(data){
+     *   console.log("notify with data " + data.join(','));
+     * });
+     * await char.unregisterNotifyWait();
+     * console.log("unregistrated")
+     * ```
+     *
+     */
     unregisterNotifyWait() {
         return new Promise((resolve) => {
             this.emitter.once("onunregisternotify", () => {
@@ -6489,24 +7933,144 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
             this.unregisterNotify();
         });
     }
+    /**
+     * It reads data from the characteristic.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * The returned value appears in the callback function [[onread]].
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.scan.onfind = function(peripheral){
+     *   if(peripheral.localName == "my peripheral"){
+     *
+     *     peripheral.onconnect = function(){
+     *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+     *       characteristic.read();
+     *       characteristic.onread = function(dataArray){
+     *         console.log("value : " + dataArray);
+     *       }
+     *     }
+     *
+     *     peripheral.connect();
+     *   }
+     * }
+     * obniz.ble.startScan({duration : 10});
+     * ```
+     *
+     *
+     */
     read() {
         this.service.peripheral.obnizBle.centralBindings.read(this.service.peripheral.address, this.service.uuid, this.uuid);
     }
+    /**
+     * This writes dataArray to the characteristic.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *    await peripheral.connectWait();
+     *    console.log("connected");
+     *    await obniz.wait(1000);
+     *
+     *    var dataArray = [0x02, 0xFF];
+     *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
+     * }
+     * ```
+     *
+     * @param array
+     * @param needResponse
+     */
     write(array, needResponse) {
         if (needResponse === undefined) {
             needResponse = true;
         }
         this.service.peripheral.obnizBle.centralBindings.write(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(array), !needResponse);
     }
+    /**
+     * This writes dataArray to the characteristic.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     *  await obniz.ble.initWait();
+     *   var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
+     *   console.log("write success");
+     * }
+     * ```
+     *
+     * @param data
+     * @param needResponse
+     */
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
+    }
+    /**
+     * It reads data from the characteristic.
+     *
+     * Even you wrote string or number, it returns binary array.
+     * The returned value appears in the callback function (onread). If reading succeeds an Array with data will be returned.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+     *   console.log(dataArray);
+     * }
+     * ```
+     */
+    readWait() {
+        return super.readWait();
+    }
+    /**
+     * @ignore
+     */
     discoverChildren() {
         this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(this.service.peripheral.address, this.service.uuid, this.uuid);
     }
+    /**
+     * @ignore
+     */
     discoverAllDescriptors() {
         return this.discoverChildren();
     }
+    /**
+     * @ignore
+     *
+     */
     discoverAllDescriptorsWait() {
         return this.discoverChildrenWait();
     }
+    /**
+     * @ignore
+     */
     toJSON() {
         const obj = super.toJSON();
         if (this.properties.length > 0) {
@@ -6514,53 +8078,84 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
         }
         return obj;
     }
+    /**
+     * This characteristics can broadcast or not.
+     */
     canBroadcast() {
         return this.properties.includes("broadcast");
     }
+    /**
+     * This characteristics can notify or not.
+     */
     canNotify() {
         return this.properties.includes("notify");
     }
+    /**
+     * This characteristics can read or not.
+     */
     canRead() {
         return this.properties.includes("read");
     }
+    /**
+     * This characteristics can write or not.
+     */
     canWrite() {
         return this.properties.includes("write");
     }
+    /**
+     * This characteristics can 'write without response' or not.
+     */
     canWriteWithoutResponse() {
         return this.properties.includes("write_without_response");
     }
+    /**
+     * This characteristics can indicate or not.
+     */
     canIndicate() {
         return this.properties.includes("indicate");
     }
+    /**
+     * @ignore
+     * @param descriptor
+     */
     ondiscover(descriptor) {
-        this.ondiscoverdescriptor(descriptor);
+        if (this.ondiscoverdescriptor) {
+            this.ondiscoverdescriptor(descriptor);
+        }
     }
+    /**
+     * @ignore
+     * @param descriptors
+     */
     ondiscoverfinished(descriptors) {
-        this.ondiscoverdescriptorfinished(descriptors);
+        if (this.ondiscoverdescriptorfinished) {
+            this.ondiscoverdescriptorfinished(descriptors);
+        }
     }
-    ondiscoverdescriptor(descriptor) {
-    }
-    ondiscoverdescriptorfinished(descriptors) {
-    }
-    onregisternotify() {
-    }
-    onunregisternotify() {
-    }
-    onnotify(data) {
-    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
             case "onregisternotify": {
-                this.onregisternotify();
+                if (this.onregisternotify) {
+                    this.onregisternotify();
+                }
                 break;
             }
             case "onunregisternotify": {
-                this.onunregisternotify();
+                if (this.onunregisternotify) {
+                    this.onunregisternotify();
+                }
                 break;
             }
             case "onnotify": {
-                this.onnotify(params.data || undefined);
+                if (this.onnotify) {
+                    this.onnotify(params.data || undefined);
+                }
                 break;
             }
         }
@@ -6583,19 +8178,132 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
-class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
+const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
+class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     constructor(params) {
         super(params);
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "characteristic";
     }
+    /**
+     * Read data from descriptor.
+     *
+     * The return value appears in the callback function [[onread]].
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   peripheral.getService("FF00").getCharacteristic("FF01").read();
+     *
+     *   peripheral.getService("FF00").getCharacteristic("FF01").onread = (dataArray)=>{
+     *   console.log(dataArray);
+     *
+     *   }
+     * }
+     * ```
+     *
+     */
     read() {
         this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
     }
-    write(array) {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(array));
+    /**
+     * Read data from descriptor.
+     *
+     * The return value appears in the callback function [[onread]].
+     * If reading succeeds an Array with data will be returned.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+     *   console.log(dataArray);
+     * }
+     * ```
+     *
+     */
+    readWait() {
+        return super.readWait();
+    }
+    /**
+     * This writes dataArray to descriptor.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write(dataArray);
+     * }
+     * ```
+     *
+     * @param data
+     */
+    write(data) {
+        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
+    }
+    /**
+     * This writes dataArray to descriptor.
+     * It throws an error when failed.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(peripheral){
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await obniz.wait(1000);
+     *
+     *   var dataArray = [0x02, 0xFF];
+     *   await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
+     *   console.log("write success");
+     * }
+     * ```
+     *
+     * @param data
+     * @param needResponse
+     */
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
     }
 }
 exports.default = BleRemoteDescriptor;
@@ -6611,6 +8319,10 @@ exports.default = BleRemoteDescriptor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -6624,9 +8336,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteService.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
         this.obnizBle = obnizBle;
@@ -6638,6 +8354,8 @@ class BleRemotePeripheral {
         this.rssi = null;
         this.adv_data = null;
         this.scan_resp = null;
+        this.localName = null;
+        this.iBeacon = null;
         this.keys = [
             "device_type",
             "address_type",
@@ -6647,10 +8365,40 @@ class BleRemotePeripheral {
             "scan_resp",
         ];
         this._services = [];
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
     }
     /**
+     * It contains all discovered services in a peripheral as an array. It is discovered when connection automatically.
      *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *     console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   for (var service of peripheral.services) {
+     *       console.log(service.uuid)
+     *   }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     *
+     */
+    get services() {
+        return this._services;
+    }
+    /**
+     * @ignore
      * @return {String} json value
      */
     toString() {
@@ -6662,6 +8410,10 @@ class BleRemotePeripheral {
             rssi: this.rssi,
         });
     }
+    /**
+     * @ignore
+     * @param dic
+     */
     setParams(dic) {
         this.advertise_data_rows = null;
         for (const key in dic) {
@@ -6670,6 +8422,335 @@ class BleRemotePeripheral {
             }
         }
         this.analyseAdvertisement();
+    }
+    /**
+     * This function will try to connect a peripheral.
+     * [[onconnect]] will be caled when connected or [[ondisconnect]] will be called when failed.
+     *
+     * If ble scanning is undergoing, scan will be terminated immediately.
+     *
+     * when connection established, all service/characteristics/descriptors will be discovered automatically.
+     * [[onconnect]] will be called after all discovery done.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = function(){
+     *          console.log("success");
+     *      }
+     *      peripheral.connect();
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
+     */
+    connect() {
+        this.obnizBle.scan.end();
+        this.obnizBle.centralBindings.connect(this.address);
+    }
+    /**
+     * This connects obniz to the peripheral.
+     * If ble scannning is undergoing, scan will be terminated immidiately.
+     *
+     * It throws when connection establish failed.
+     *
+     * when connection established, all service/characteristics/desriptors will be discovered automatically.
+     * This function will wait until all discovery done.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *    return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     * } catch(e) {
+     *   console.log("can't connect");
+     * }
+     * ```
+     *
+     */
+    connectWait() {
+        return new Promise((resolve, reject) => {
+            // if (this.connected) {
+            //   resolve();
+            //   return;
+            // }
+            this.emitter.once("statusupdate", (params) => {
+                if (params.status === "connected") {
+                    resolve(true); // for compatibility
+                }
+                else {
+                    reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+                }
+            });
+            this.connect();
+        });
+    }
+    /**
+     * This disconnects obniz from peripheral.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     *
+     * peripheral.connect();
+     * peripheral.onconnect = ()=>{
+     *   console.log("connected");
+     *   peripheral.disconnect();
+     * }
+     *
+     * ```
+     */
+    disconnect() {
+        this.obnizBle.centralBindings.disconnect(this.address);
+    }
+    /**
+     * This disconnects obniz from peripheral.
+     *
+     * It throws when failed
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   await peripheral.disconnectWait();
+     *   console.log("disconnected");
+     * } catch(e) {
+     *    console.log("can't connect / can't disconnect");
+     * }
+     * ```
+     */
+    disconnectWait() {
+        return new Promise((resolve, reject) => {
+            // if (!this.connected) {
+            //   resolve();
+            //   return;
+            // }
+            this.emitter.once("statusupdate", (params) => {
+                if (params.status === "disconnected") {
+                    resolve(true); // for compatibility
+                }
+                else {
+                    reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+                }
+            });
+            this.disconnect();
+        });
+    }
+    /**
+     * It returns a service which having specified uuid in [[services]].
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *   console.log('no such peripheral')
+     *   return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   if (!service) {
+     *     console.log("service not found")
+     *     return;
+     *   }
+     *   console.log(service.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
+    getService(uuid) {
+        uuid = bleHelper_1.default.uuidFilter(uuid);
+        for (const key in this._services) {
+            if (this._services[key].uuid === uuid) {
+                return this._services[key];
+            }
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findService(param) {
+        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
+        return this.getService(serviceUuid);
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findCharacteristic(param) {
+        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
+        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
+        const s = this.getService(serviceUuid);
+        if (s) {
+            return s.getCharacteristic(characteristicUuid);
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    findDescriptor(param) {
+        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
+        const c = this.findCharacteristic(param);
+        if (c) {
+            return c.getDescriptor(descriptorUuid);
+        }
+        return null;
+    }
+    /**
+     * @ignore
+     *
+     */
+    discoverAllServices() {
+        this.obnizBle.centralBindings.discoverServices(this.address);
+    }
+    /**
+     * @ignore
+     */
+    discoverAllServicesWait() {
+        return new Promise((resolve) => {
+            this.emitter.once("discoverfinished", () => {
+                const children = this._services.filter((elm) => {
+                    return elm.discoverdOnRemote;
+                });
+                resolve(children);
+            });
+            this.discoverAllServices();
+        });
+    }
+    /**
+     * @ignore
+     */
+    discoverAllHandlesWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ArrayFlat = (array, depth) => {
+                const flattend = [];
+                (function flat(_array, _depth) {
+                    for (const el of _array) {
+                        if (Array.isArray(el) && _depth > 0) {
+                            flat(el, _depth - 1);
+                        }
+                        else {
+                            flattend.push(el);
+                        }
+                    }
+                })(array, Math.floor(depth) || 1);
+                return flattend;
+            };
+            const services = yield this.discoverAllServicesWait();
+            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
+            const chars = ArrayFlat(charsNest);
+            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
+            // eslint-disable-next-line no-unused-vars
+            const descriptors = ArrayFlat(descriptorsNest);
+        });
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "statusupdate": {
+                if (params.status === "connected") {
+                    this.connected = true;
+                    if (this.onconnect) {
+                        this.onconnect();
+                    }
+                }
+                if (params.status === "disconnected") {
+                    this.connected = false;
+                    if (this.ondisconnect) {
+                        this.ondisconnect();
+                    }
+                }
+                break;
+            }
+            case "discover": {
+                const uuid = params.service_uuid;
+                let child = this.getService(uuid);
+                if (!child) {
+                    const newService = new bleRemoteService_1.default({ uuid });
+                    newService.parent = this;
+                    this._services.push(newService);
+                    child = newService;
+                }
+                child.discoverdOnRemote = true;
+                if (this.ondiscoverservice) {
+                    this.ondiscoverservice(child);
+                }
+                break;
+            }
+            case "discoverfinished": {
+                const children = this._services.filter((elm) => {
+                    return elm.discoverdOnRemote;
+                });
+                if (this.ondiscoverservicefinished) {
+                    this.ondiscoverservicefinished(children);
+                }
+                break;
+            }
+        }
+    }
+    /**
+     * @ignore
+     */
+    advertisementServiceUuids() {
+        const results = [];
+        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
+        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
+        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
+        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
+        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
+        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
+        return results;
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {
@@ -6760,183 +8841,11 @@ class BleRemotePeripheral {
         if (!data) {
             return;
         }
-        const uuidLength = bit / 4;
+        const uuidLength = bit / 8;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
-            results.push(this.obnizBle.constructor._dataArray2uuidHex(one, true));
+            results.push(ble_1.default._dataArray2uuidHex(one, true));
         }
-    }
-    advertisementServiceUuids() {
-        const results = [];
-        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
-        return results;
-    }
-    connect() {
-        this.obnizBle.scan.end();
-        this.obnizBle.centralBindings.connect(this.address);
-    }
-    connectWait() {
-        return new Promise((resolve, reject) => {
-            // if (this.connected) {
-            //   resolve();
-            //   return;
-            // }
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "connected") {
-                    resolve(true); // for compatibility
-                }
-                else {
-                    reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
-                }
-            });
-            this.connect();
-        });
-    }
-    disconnect() {
-        this.obnizBle.centralBindings.disconnect(this.address);
-    }
-    disconnectWait() {
-        return new Promise((resolve, reject) => {
-            // if (!this.connected) {
-            //   resolve();
-            //   return;
-            // }
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "disconnected") {
-                    resolve(true); // for compatibility
-                }
-                else {
-                    reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
-                }
-            });
-            this.disconnect();
-        });
-    }
-    get services() {
-        return this._services;
-    }
-    getService(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        for (const key in this._services) {
-            if (this._services[key].uuid === uuid) {
-                return this._services[key];
-            }
-        }
-        return undefined;
-    }
-    findService(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        return this.getService(serviceUuid);
-    }
-    findCharacteristic(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
-        const s = this.getService(serviceUuid);
-        if (s) {
-            return s.getCharacteristic(characteristicUuid);
-        }
-        return null;
-    }
-    findDescriptor(param) {
-        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
-        const c = this.findCharacteristic(param);
-        if (c) {
-            return c.getDescriptor(descriptorUuid);
-        }
-        return null;
-    }
-    discoverAllServices() {
-        this.obnizBle.centralBindings.discoverServices(this.address);
-    }
-    discoverAllServicesWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverAllServices();
-        });
-    }
-    discoverAllHandlesWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ArrayFlat = (array, depth) => {
-                const flattend = [];
-                (function flat(_array, _depth) {
-                    for (const el of _array) {
-                        if (Array.isArray(el) && _depth > 0) {
-                            flat(el, _depth - 1);
-                        }
-                        else {
-                            flattend.push(el);
-                        }
-                    }
-                })(array, Math.floor(depth) || 1);
-                return flattend;
-            };
-            const services = yield this.discoverAllServicesWait();
-            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-            const chars = ArrayFlat(charsNest);
-            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-            // eslint-disable-next-line no-unused-vars
-            const descriptors = ArrayFlat(descriptorsNest);
-        });
-    }
-    onconnect() {
-    }
-    ondisconnect() {
-    }
-    ondiscoverservice(child) {
-    }
-    ondiscoverservicefinished(children) {
-    }
-    ondiscover() {
-    }
-    ondiscoverfinished() {
-    }
-    notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "statusupdate": {
-                if (params.status === "connected") {
-                    this.connected = true;
-                    this.onconnect();
-                }
-                if (params.status === "disconnected") {
-                    this.connected = false;
-                    this.ondisconnect();
-                }
-                break;
-            }
-            case "discover": {
-                const uuid = params.service_uuid;
-                let child = this.getService(uuid);
-                if (!child) {
-                    const newService = new bleRemoteService_1.default({ uuid });
-                    newService.parent = this;
-                    this._services.push(newService);
-                    child = newService;
-                }
-                child.discoverdOnRemote = true;
-                this.ondiscoverservice(child);
-                break;
-            }
-            case "discoverfinished": {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                this.ondiscoverservicefinished(children);
-                break;
-            }
-        }
-    }
-    onerror() {
     }
 }
 exports.default = BleRemotePeripheral;
@@ -6955,53 +8864,227 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
 const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js"));
+/**
+ * @category Use as Central
+ */
 class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
     }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "peripheral";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleRemoteCharacteristic_1.default;
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "characteristics";
     }
+    /**
+     * It contains characteristics in a service.
+     * It was discovered when connection automatically.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *     uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     *  if(!peripheral) {
+     *     console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   for (var c of service.characteristics) {
+     *     console.log(c.uuid)
+     *   }
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     */
     get characteristics() {
         return this.children;
     }
-    addCharacteristic(params) {
-        return this.addChild(params);
+    /**
+     * @ignore
+     * @param param
+     */
+    addCharacteristic(param) {
+        return this.addChild(param);
     }
-    getCharacteristic(params) {
-        return this.getChild(params);
+    /**
+     * It returns a characteristic which having specified uuid in a service.
+     * Return value is null when not matched.
+     *
+     * Case is ignored. So aa00 and AA00 are the same.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *     return;
+     * }
+     * try {
+     *   await peripheral.connectWait();
+     *   console.log("connected");
+     *   var service = peripheral.getService("1800")
+     *   var c = service.getCharacteristic("fff0")
+     *   console.log(c.uuid)
+     * } catch(e) {
+     *   console.error(e);
+     * }
+     * ```
+     * @param uuid
+     */
+    getCharacteristic(uuid) {
+        return this.getChild(uuid);
     }
+    /**
+     * @ignore
+     */
     discoverAllCharacteristics() {
         return this.discoverChildren();
     }
+    /**
+     * @ignore
+     */
     discoverAllCharacteristicsWait() {
         return this.discoverChildrenWait();
     }
+    /**
+     * @ignore
+     */
     discoverChildren() {
         this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
     }
+    /**
+     * @ignore
+     * @param characteristic
+     */
     ondiscover(characteristic) {
         this.ondiscovercharacteristic(characteristic);
     }
+    /**
+     * @ignore
+     * @param characteristics
+     */
     ondiscoverfinished(characteristics) {
         this.ondiscovercharacteristicfinished(characteristics);
     }
+    /**
+     * @ignore
+     * @param characteristic
+     */
     ondiscovercharacteristic(characteristic) {
     }
+    /**
+     * @ignore
+     * @param characteristics
+     */
     ondiscovercharacteristicfinished(characteristics) {
     }
 }
 exports.default = BleRemoteService;
 
 //# sourceMappingURL=bleRemoteService.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
+/**
+ * @category Use as Central
+ */
+class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
+    /**
+     * Wrapper for [[write]] with data converting from number.
+     * @param val
+     * @param needResponse
+     */
+    writeNumber(val, needResponse) {
+        return super.writeNumber(val, needResponse);
+    }
+    /**
+     * Wrapper for [[write]] with data converting from text.
+     * It convert string to UTF-8 and write binary array.
+     *
+     * @param str
+     * @param needResponse
+     */
+    writeText(str, needResponse) {
+        return super.writeText(str, needResponse);
+    }
+    readWait() {
+        return super.readWait();
+    }
+    writeWait(data, needResponse) {
+        return super.writeWait(data, needResponse);
+    }
+    /**
+     * Wrapper for [[writeWait]] with data converting from text.
+     * It convert string to UTF-8 and write binary array.
+     *
+     * It throws an error when failed.
+     * @param str
+     */
+    writeTextWait(str, needResponse) {
+        return super.writeTextWait(str, needResponse);
+    }
+    /**
+     * Wrapper for [[writeWait]] with data converting from number.
+     * It writes data as 1byte.
+     *
+     * It throws an error when failed.
+     *
+     * @param val
+     */
+    writeNumberWait(val, needResponse) {
+        return super.writeNumberWait(val, needResponse);
+    }
+}
+exports.default = BleRemoteValueAttributeAbstract;
+
+//# sourceMappingURL=bleRemoteValueAttributeAbstract.js.map
 
 
 /***/ }),
@@ -7015,42 +9098,97 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
+/**
+ * @category Use as Central
+ */
 class BleScan {
     constructor(obnizBle) {
         this.scanTarget = {};
         this.scanSettings = {};
         this.obnizBle = obnizBle;
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
     }
-    start(target, settings) {
+    /**
+     * This starts scanning BLE.
+     *
+     * You can filter uuids or localName using the target param.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var target = {
+     *     uuids: ["fff0","FFF1"],     //scan only has uuids "fff0" and "FFF1"
+     *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
+     * };
+     *
+     * var setting = {
+     *    duration : 10  //scan duration time in seconds. default is 30 sec.
+     * }
+     *
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.start(target, setting);
+     * ```
+     *
+     * This is also possible without params being valid.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.scan.start();
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
+    start(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
-        if (!settings) {
-            settings = {};
-        }
-        const timeout = settings.duration || 30;
+        const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
+        settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
-        target = target || {};
         this.scanTarget = target;
-        if (this.scanTarget &&
-            this.scanTarget.uuids &&
-            Array.isArray(this.scanTarget.uuids)) {
+        if (this.scanTarget.uuids) {
             this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
         }
         this.scanedPeripherals = [];
-        this.obnizBle.centralBindings.startScanning(null, false);
+        this._setTargetFilterOnDevice();
+        this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
-        this._timeoutTimer = setTimeout(() => {
-            this._timeoutTimer = undefined;
-            this.end();
-        }, timeout * 1000);
+        if (timeout !== null) {
+            this._timeoutTimer = setTimeout(() => {
+                this._timeoutTimer = undefined;
+                this.end();
+            }, timeout * 1000);
+        }
     }
+    /**
+     * This scans and returns the first peripheral that was found among the objects specified in the target.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *   uuids: ["fff0"],
+     * };
+     *
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * console.log(peripheral);
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
     startOneWait(target, settings) {
         let state = 0;
         return new Promise((resolve) => {
@@ -7070,6 +9208,33 @@ class BleScan {
             this.start(target, settings);
         });
     }
+    /**
+     * This scans and returns all the peripherals found.
+     *
+     * This function does not return until scanning gets timed out.(default 30sec)
+     * If you want to change the default duration, you can do so with the duration param.
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *  uuids: ["fff0"],
+     * };
+     * var setting = {
+     *   duration : 10
+     * }
+     *
+     * var peripherals = await obniz.ble.scan.startAllWait(target,setting);
+     *
+     * for(var peripheral of peripherals){
+     *   console.log(peripheral);
+     * }
+     * ```
+     *
+     * @param target
+     * @param settings
+     */
     startAllWait(target, settings) {
         return new Promise((resolve) => {
             this.emitter.once("onfinish", () => {
@@ -7078,32 +9243,26 @@ class BleScan {
             this.start(target, settings);
         });
     }
+    /**
+     * This stops scanning BLE.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * obniz.ble.scan.start();
+     * await obniz.wait(5000);
+     * obniz.ble.scan.end();
+     * ```
+     */
     end() {
         this.clearTimeoutTimer();
         this.obnizBle.centralBindings.stopScanning();
     }
-    isTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.localName &&
-            peripheral.localName !== this.scanTarget.localName) {
-            return false;
-        }
-        if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
-                return bleHelper_1.default.uuidFilter(e);
-            });
-            for (const uuid of this.scanTarget.uuids) {
-                if (!uuids.includes(uuid)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    onfinish(data) {
-    } // dummy
-    onfind(params) {
-    } // dummy
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onfind": {
@@ -7116,23 +9275,208 @@ class BleScan {
                 if (this.isTarget(params)) {
                     this.scanedPeripherals.push(params);
                     this.emitter.emit(notifyName, params);
-                    this.onfind(params);
+                    if (this.onfind) {
+                        this.onfind(params);
+                    }
                 }
                 break;
             }
             case "onfinish": {
                 this.clearTimeoutTimer();
                 this.emitter.emit(notifyName, this.scanedPeripherals);
-                this.onfinish(this.scanedPeripherals);
+                if (this.onfinish) {
+                    this.onfinish(this.scanedPeripherals);
+                }
                 break;
             }
         }
+    }
+    /**
+     * Clear advertisement filter.
+     */
+    clearAdvertisementFilter() {
+        this.obnizBle.Obniz.send({
+            ble: {
+                hci: {
+                    advertisement_filter: [],
+                },
+            },
+        });
+    }
+    _setAdvertisementFilter(filterVals) {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
+        // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
+        // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
+        const filters = [];
+        filterVals.forEach((filterVal) => {
+            if (filterVal.localNamePrefix) {
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: [0x08, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                });
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: [0x09, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                });
+            }
+            if (filterVal.deviceAddress) {
+                filters.push({
+                    range: {
+                        index: 2,
+                        length: 6,
+                    },
+                    value: util_1.default.hexToBinary(filterVal.deviceAddress, true),
+                });
+            }
+            if (filterVal.uuid) {
+                const binary = util_1.default.hexToBinary(filterVal.uuid, true);
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: binary,
+                });
+            }
+            if (filterVal.binary) {
+                filters.push({
+                    range: {
+                        index: 0,
+                        length: 255,
+                    },
+                    value: filterVal.binary,
+                });
+            }
+        });
+        this.obnizBle.Obniz.send({
+            ble: {
+                hci: {
+                    advertisement_filter: filters,
+                },
+            },
+        });
+    }
+    _arrayWrapper(val) {
+        if (Array.isArray(val)) {
+            return val;
+        }
+        else {
+            return [val];
+        }
+    }
+    _setTargetFilterOnDevice() {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
+        const adFilters = [];
+        if (this.scanTarget.uuids) {
+            this.scanTarget.uuids.map((elm) => {
+                adFilters.push({ uuid: bleHelper_1.default.uuidFilter(elm) });
+            });
+        }
+        if (this.scanTarget.localName) {
+            this._arrayWrapper(this.scanTarget.localName).forEach((name) => {
+                adFilters.push({ localNamePrefix: name });
+            });
+        }
+        if (this.scanTarget.deviceAddress) {
+            this._arrayWrapper(this.scanTarget.deviceAddress).forEach((address) => {
+                adFilters.push({ deviceAddress: address });
+            });
+        }
+        if (this.scanTarget.localNamePrefix) {
+            this._arrayWrapper(this.scanTarget.localNamePrefix).forEach((name) => {
+                adFilters.push({ localNamePrefix: name });
+            });
+        }
+        if (this.scanTarget.binary) {
+            if (Array.isArray(this.scanTarget.binary[0])) {
+                this.scanTarget.binary.forEach((e) => {
+                    adFilters.push({ binary: e });
+                });
+            }
+            else {
+                adFilters.push({ binary: this.scanTarget.binary });
+            }
+        }
+        this._setAdvertisementFilter(adFilters);
+    }
+    isTarget(peripheral) {
+        if (Object.keys(this.scanTarget).length === 0
+            || this.isLocalNamePrefixTarget(peripheral)
+            || this.isLocalNameTarget(peripheral)
+            || this.isUuidTarget(peripheral)
+            || this.isDeviceAddressTarget(peripheral)
+            || this.isBinaryTarget(peripheral)) {
+            return true;
+        }
+        return false;
     }
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
             this._timeoutTimer = undefined;
         }
+    }
+    isLocalNameTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.localName) {
+            for (const name of this._arrayWrapper(this.scanTarget.localName)) {
+                if (name === peripheral.localName) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isLocalNamePrefixTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.localNamePrefix) {
+            for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
+                if (peripheral.localName && peripheral.localName.startsWith(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isBinaryTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.binary) {
+            return true; // cannot detect on obnizjs
+        }
+        return false;
+    }
+    isUuidTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.uuids) {
+            const uuids = peripheral.advertisementServiceUuids().map((e) => {
+                return bleHelper_1.default.uuidFilter(e);
+            });
+            for (const uuid of this.scanTarget.uuids) {
+                if (uuids.includes(uuid)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isDeviceAddressTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.deviceAddress) {
+            if (this.scanTarget.deviceAddress === peripheral.address) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 exports.default = BleScan;
@@ -7147,36 +9491,84 @@ exports.default = BleScan;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+/**
+ * Deprecated class
+ */
 class BleSecurity {
     constructor(Obniz) {
         this.Obniz = Obniz;
-        this.emitter = new emitter();
+        this.emitter = new eventemitter3_1.default();
     }
+    /**
+     * Deprecated function
+     * @param mode
+     * @param level
+     */
     setModeLevel(mode, level) {
         throw new Error("setModeLevel is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param introducedVersion
+     * @param functionName
+     */
     checkIntroducedFirmware(introducedVersion, functionName) {
         throw new Error("checkIntroducedFirmware is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param authTypes
+     */
     setAuth(authTypes) {
         throw new Error("setAuth is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param level
+     */
     setIndicateSecurityLevel(level) {
         throw new Error("setIndicateSecurityLevel is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param keyTypes
+     */
     setEnableKeyTypes(keyTypes) {
         throw new Error("setEnableKeyTypes is deprecated method");
     }
+    /**
+     * Deprecated function
+     * @param size
+     */
     setKeyMaxSize(size) {
         throw new Error("setKeyMaxSize is deprecated method");
     }
+    /**
+     * Deprecated function
+     */
     clearBondingDevicesList() {
         throw new Error("clearBondingDevicesList is deprecated method");
     }
+    /**
+     * @ignore
+     * @param params
+     */
     onerror(params) {
     } // dummy
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {
@@ -7202,37 +9594,102 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
 const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
+/**
+ * @category Use as Peripheral
+ */
 class BleService extends bleLocalAttributeAbstract_1.default {
     constructor(obj) {
         super(obj);
         this.addCharacteristic = this.addChild;
         this.getCharacteristic = this.getChild;
     }
+    /**
+     * Add new Characteristic
+     * @param child
+     */
+    addCharacteristic(child) {
+        return this.addChild(child);
+    }
+    /**
+     * Get Characteristic
+     * @param uuid
+     */
+    getCharacteristic(uuid) {
+        return this.getChild(uuid);
+    }
+    /**
+     * @ignore
+     */
     get parentName() {
         return "peripheral";
     }
+    /**
+     * @ignore
+     */
     get childrenName() {
         return "characteristics";
     }
+    /**
+     * @ignore
+     */
     get childrenClass() {
         return bleCharacteristic_1.default;
     }
     get characteristics() {
         return this.children;
     }
+    /**
+     * advertisment object for [[BleAdvertisement.setAdvData]]
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var service = new obniz.ble.service({ uuid : "1234" });
+     * var characteristic = new obniz.ble.characteristic({ uuid : "7777", data: [1, 2, 3]});
+     * service.addCharacteristic(characteristic);
+     * obniz.ble.peripheral.addService(service);
+     *
+     * obniz.ble.advertisement.setAdvData(service.advData);
+     * obniz.ble.advertisement.setScanRespData({
+     *    localName : "obniz BLE",
+     * });
+     * obniz.ble.advertisement.start();
+     * ```
+     */
     get advData() {
         return {
             flags: ["general_discoverable_mode", "br_edr_not_supported"],
             serviceUuids: [this.uuid],
         };
     }
+    /**
+     * Terminate created service
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait();
+     * var service = new obniz.ble.service({ uuid : "1234" });
+     * var characteristic = new obniz.ble.characteristic({ uuid : "7777", data: [1, 2, 3]});
+     * service.addCharacteristic(characteristic);
+     * obniz.ble.peripheral.addService(service);
+     *
+     * service.end();
+     * ```
+     */
     end() {
         this.peripheral.removeService(this.uuid);
     }
-    emit(name, ...params) {
-    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
     notify(notifyName, params) {
         // nothing
     }
@@ -7250,6 +9707,10 @@ exports.default = BleService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 class ObnizBLEHci {
     constructor(Obniz) {
         this.Obniz = Obniz;
@@ -7283,6 +9744,11 @@ exports.default = ObnizBLEHci;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('acl-att-stream');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -7290,6 +9756,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/smp.js"));
+/**
+ * @ignore
+ */
 class AclStream extends events_1.default.EventEmitter {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
@@ -7347,18 +9816,26 @@ exports.default = AclStream;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('bindings');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const events = __webpack_require__("./node_modules/events/events.js");
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js"));
 const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js"));
 const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gatt.js"));
 const signaling_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/signaling.js"));
-class NobleBindings extends events.EventEmitter {
+/**
+ * @ignore
+ */
+class NobleBindings extends events_1.default.EventEmitter {
     constructor(hciProtocol) {
         super();
         this._state = null;
@@ -7374,9 +9851,9 @@ class NobleBindings extends events.EventEmitter {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
     }
-    startScanning(serviceUuids, allowDuplicates) {
+    startScanning(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = serviceUuids || [];
-        this._gap.startScanning(allowDuplicates);
+        this._gap.startScanning(allowDuplicates, activeScan);
     }
     stopScanning() {
         this._gap.stopScanning();
@@ -7803,10 +10280,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
+/**
+ * @ignore
+ */
 function r() {
     return crypto_1.default.randomBytes(16);
 }
+/**
+ * @ignore
+ */
 function c1(k, _r, pres, preq, iat, ia, rat, ra) {
     const p1 = Buffer.concat([iat, rat, preq, pres]);
     const p2 = Buffer.concat([ra, ia, Buffer.from("00000000", "hex")]);
@@ -7857,16 +10345,26 @@ exports.default = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('gap');
-const debug = () => {
-};
+/**
+ * @ignore
+ */
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
+/**
+ * @ignore
+ */
 class Gap extends events_1.default.EventEmitter {
     constructor(hci) {
         super();
@@ -7884,7 +10382,7 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
         this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
-    startScanning(allowDuplicates) {
+    startScanning(allowDuplicates, activeScan) {
         this._scanState = "starting";
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
@@ -7893,7 +10391,7 @@ class Gap extends events_1.default.EventEmitter {
         // p106 - p107
         this._hci.setScanEnabled(false, true);
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
-            this._hci.setScanParameters();
+            this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
@@ -8128,13 +10626,7 @@ class Gap extends events_1.default.EventEmitter {
             count: discoveryCount,
             hasScanResponse,
         };
-        // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-        if (type === 0x04 ||
-            !connectable ||
-            (discoveryCount > 1 && !hasScanResponse) ||
-            process.env.NOBLE_REPORT_ALL_HCI_EVENTS) {
-            this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
-        }
+        this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     startAdvertising(name, serviceUuids) {
         debug("startAdvertising: name = " +
@@ -8285,7 +10777,7 @@ exports.default = Gap;
 
 //# sourceMappingURL=gap.js.map
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js"), __webpack_require__("./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -8298,59 +10790,79 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('att');
 const debug = () => {
 };
 /* eslint-disable no-unused-vars */
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
-const ATT_OP_ERROR = 0x01;
-const ATT_OP_MTU_REQ = 0x02;
-const ATT_OP_MTU_RESP = 0x03;
-const ATT_OP_FIND_INFO_REQ = 0x04;
-const ATT_OP_FIND_INFO_RESP = 0x05;
-const ATT_OP_READ_BY_TYPE_REQ = 0x08;
-const ATT_OP_READ_BY_TYPE_RESP = 0x09;
-const ATT_OP_READ_REQ = 0x0a;
-const ATT_OP_READ_RESP = 0x0b;
-const ATT_OP_READ_BLOB_REQ = 0x0c;
-const ATT_OP_READ_BLOB_RESP = 0x0d;
-const ATT_OP_READ_BY_GROUP_REQ = 0x10;
-const ATT_OP_READ_BY_GROUP_RESP = 0x11;
-const ATT_OP_WRITE_REQ = 0x12;
-const ATT_OP_WRITE_RESP = 0x13;
-const ATT_OP_PREPARE_WRITE_REQ = 0x16;
-const ATT_OP_PREPARE_WRITE_RESP = 0x17;
-const ATT_OP_EXECUTE_WRITE_REQ = 0x18;
-const ATT_OP_EXECUTE_WRITE_RESP = 0x19;
-const ATT_OP_HANDLE_NOTIFY = 0x1b;
-const ATT_OP_HANDLE_IND = 0x1d;
-const ATT_OP_HANDLE_CNF = 0x1e;
-const ATT_OP_WRITE_CMD = 0x52;
-const ATT_ECODE_SUCCESS = 0x00;
-const ATT_ECODE_INVALID_HANDLE = 0x01;
-const ATT_ECODE_READ_NOT_PERM = 0x02;
-const ATT_ECODE_WRITE_NOT_PERM = 0x03;
-const ATT_ECODE_INVALID_PDU = 0x04;
-const ATT_ECODE_AUTHENTICATION = 0x05;
-const ATT_ECODE_REQ_NOT_SUPP = 0x06;
-const ATT_ECODE_INVALID_OFFSET = 0x07;
-const ATT_ECODE_AUTHORIZATION = 0x08;
-const ATT_ECODE_PREP_QUEUE_FULL = 0x09;
-const ATT_ECODE_ATTR_NOT_FOUND = 0x0a;
-const ATT_ECODE_ATTR_NOT_LONG = 0x0b;
-const ATT_ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
-const ATT_ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
-const ATT_ECODE_UNLIKELY = 0x0e;
-const ATT_ECODE_INSUFF_ENC = 0x0f;
-const ATT_ECODE_UNSUPP_GRP_TYPE = 0x10;
-const ATT_ECODE_INSUFF_RESOURCES = 0x11;
-const GATT_PRIM_SVC_UUID = 0x2800;
-const GATT_INCLUDE_UUID = 0x2802;
-const GATT_CHARAC_UUID = 0x2803;
-const GATT_CLIENT_CHARAC_CFG_UUID = 0x2902;
-const GATT_SERVER_CHARAC_CFG_UUID = 0x2903;
-const ATT_CID = 0x0004;
+/**
+ * @ignore
+ */
+var ATT;
+(function (ATT) {
+    ATT.OP_ERROR = 0x01;
+    ATT.OP_MTU_REQ = 0x02;
+    ATT.OP_MTU_RESP = 0x03;
+    ATT.OP_FIND_INFO_REQ = 0x04;
+    ATT.OP_FIND_INFO_RESP = 0x05;
+    ATT.OP_READ_BY_TYPE_REQ = 0x08;
+    ATT.OP_READ_BY_TYPE_RESP = 0x09;
+    ATT.OP_READ_REQ = 0x0a;
+    ATT.OP_READ_RESP = 0x0b;
+    ATT.OP_READ_BLOB_REQ = 0x0c;
+    ATT.OP_READ_BLOB_RESP = 0x0d;
+    ATT.OP_READ_BY_GROUP_REQ = 0x10;
+    ATT.OP_READ_BY_GROUP_RESP = 0x11;
+    ATT.OP_WRITE_REQ = 0x12;
+    ATT.OP_WRITE_RESP = 0x13;
+    ATT.OP_PREPARE_WRITE_REQ = 0x16;
+    ATT.OP_PREPARE_WRITE_RESP = 0x17;
+    ATT.OP_EXECUTE_WRITE_REQ = 0x18;
+    ATT.OP_EXECUTE_WRITE_RESP = 0x19;
+    ATT.OP_HANDLE_NOTIFY = 0x1b;
+    ATT.OP_HANDLE_IND = 0x1d;
+    ATT.OP_HANDLE_CNF = 0x1e;
+    ATT.OP_WRITE_CMD = 0x52;
+    ATT.ECODE_SUCCESS = 0x00;
+    ATT.ECODE_INVALID_HANDLE = 0x01;
+    ATT.ECODE_READ_NOT_PERM = 0x02;
+    ATT.ECODE_WRITE_NOT_PERM = 0x03;
+    ATT.ECODE_INVALID_PDU = 0x04;
+    ATT.ECODE_AUTHENTICATION = 0x05;
+    ATT.ECODE_REQ_NOT_SUPP = 0x06;
+    ATT.ECODE_INVALID_OFFSET = 0x07;
+    ATT.ECODE_AUTHORIZATION = 0x08;
+    ATT.ECODE_PREP_QUEUE_FULL = 0x09;
+    ATT.ECODE_ATTR_NOT_FOUND = 0x0a;
+    ATT.ECODE_ATTR_NOT_LONG = 0x0b;
+    ATT.ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
+    ATT.ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
+    ATT.ECODE_UNLIKELY = 0x0e;
+    ATT.ECODE_INSUFF_ENC = 0x0f;
+    ATT.ECODE_UNSUPP_GRP_TYPE = 0x10;
+    ATT.ECODE_INSUFF_RESOURCES = 0x11;
+    ATT.CID = 0x0004;
+})(ATT || (ATT = {}));
+/**
+ * @ignore
+ */
+var GATT;
+(function (GATT) {
+    GATT.PRIM_SVC_UUID = 0x2800;
+    GATT.INCLUDE_UUID = 0x2802;
+    GATT.CHARAC_UUID = 0x2803;
+    GATT.CLIENT_CHARAC_CFG_UUID = 0x2902;
+    GATT.SERVER_CHARAC_CFG_UUID = 0x2903;
+})(GATT || (GATT = {}));
 /* eslint-enable no-unused-vars */
+/**
+ * @ignore
+ */
 class Gatt extends events_1.default.EventEmitter {
     constructor(address, aclStream) {
         super();
@@ -8373,7 +10885,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
-        if (cid !== ATT_CID) {
+        if (cid !== ATT.CID) {
             return;
         }
         if (this._currentCommand &&
@@ -8390,15 +10902,15 @@ class Gatt extends events_1.default.EventEmitter {
                 debug(this._address +
                     ": replying with REQ_NOT_SUPP to 0x" +
                     requestType.toString(16));
-                this.writeAtt(this.errorResponse(requestType, 0x0000, ATT_ECODE_REQ_NOT_SUPP));
+                this.writeAtt(this.errorResponse(requestType, 0x0000, ATT.ECODE_REQ_NOT_SUPP));
             }
         }
-        else if (data[0] === ATT_OP_HANDLE_NOTIFY ||
-            data[0] === ATT_OP_HANDLE_IND) {
+        else if (data[0] === ATT.OP_HANDLE_NOTIFY ||
+            data[0] === ATT.OP_HANDLE_IND) {
             const valueHandle = data.readUInt16LE(1);
             const valueData = data.slice(3);
             this.emit("handleNotify", this._address, valueHandle, valueData);
-            if (data[0] === ATT_OP_HANDLE_IND) {
+            if (data[0] === ATT.OP_HANDLE_IND) {
                 this._queueCommand(this.handleConfirmation(), null, () => {
                     this.emit("handleConfirmation", this._address, valueHandle);
                 });
@@ -8416,10 +10928,10 @@ class Gatt extends events_1.default.EventEmitter {
             debug(this._address + ": uh oh, no current command");
         }
         else {
-            if (data[0] === ATT_OP_ERROR &&
-                (data[4] === ATT_ECODE_AUTHENTICATION ||
-                    data[4] === ATT_ECODE_AUTHORIZATION ||
-                    data[4] === ATT_ECODE_INSUFF_ENC) &&
+            if (data[0] === ATT.OP_ERROR &&
+                (data[4] === ATT.ECODE_AUTHENTICATION ||
+                    data[4] === ATT.ECODE_AUTHORIZATION ||
+                    data[4] === ATT.ECODE_INSUFF_ENC) &&
                 this._security !== "medium") {
                 this._aclStream.encrypt();
                 return;
@@ -8456,11 +10968,11 @@ class Gatt extends events_1.default.EventEmitter {
     }
     writeAtt(data) {
         debug(this._address + ": write: " + data.toString("hex"));
-        this._aclStream.write(ATT_CID, data);
+        this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
         const buf = Buffer.alloc(5);
-        buf.writeUInt8(ATT_OP_ERROR, 0);
+        buf.writeUInt8(ATT.OP_ERROR, 0);
         buf.writeUInt8(opcode, 1);
         buf.writeUInt16LE(handle, 2);
         buf.writeUInt8(status, 4);
@@ -8488,13 +11000,13 @@ class Gatt extends events_1.default.EventEmitter {
     }
     mtuRequest(mtu) {
         const buf = Buffer.alloc(3);
-        buf.writeUInt8(ATT_OP_MTU_REQ, 0);
+        buf.writeUInt8(ATT.OP_MTU_REQ, 0);
         buf.writeUInt16LE(mtu, 1);
         return buf;
     }
     readByGroupRequest(startHandle, endHandle, groupUuid) {
         const buf = Buffer.alloc(7);
-        buf.writeUInt8(ATT_OP_READ_BY_GROUP_REQ, 0);
+        buf.writeUInt8(ATT.OP_READ_BY_GROUP_REQ, 0);
         buf.writeUInt16LE(startHandle, 1);
         buf.writeUInt16LE(endHandle, 3);
         buf.writeUInt16LE(groupUuid, 5);
@@ -8502,7 +11014,7 @@ class Gatt extends events_1.default.EventEmitter {
     }
     readByTypeRequest(startHandle, endHandle, groupUuid) {
         const buf = Buffer.alloc(7);
-        buf.writeUInt8(ATT_OP_READ_BY_TYPE_REQ, 0);
+        buf.writeUInt8(ATT.OP_READ_BY_TYPE_REQ, 0);
         buf.writeUInt16LE(startHandle, 1);
         buf.writeUInt16LE(endHandle, 3);
         buf.writeUInt16LE(groupUuid, 5);
@@ -8510,27 +11022,27 @@ class Gatt extends events_1.default.EventEmitter {
     }
     readRequest(handle) {
         const buf = Buffer.alloc(3);
-        buf.writeUInt8(ATT_OP_READ_REQ, 0);
+        buf.writeUInt8(ATT.OP_READ_REQ, 0);
         buf.writeUInt16LE(handle, 1);
         return buf;
     }
     readBlobRequest(handle, offset) {
         const buf = Buffer.alloc(5);
-        buf.writeUInt8(ATT_OP_READ_BLOB_REQ, 0);
+        buf.writeUInt8(ATT.OP_READ_BLOB_REQ, 0);
         buf.writeUInt16LE(handle, 1);
         buf.writeUInt16LE(offset, 3);
         return buf;
     }
     findInfoRequest(startHandle, endHandle) {
         const buf = Buffer.alloc(5);
-        buf.writeUInt8(ATT_OP_FIND_INFO_REQ, 0);
+        buf.writeUInt8(ATT.OP_FIND_INFO_REQ, 0);
         buf.writeUInt16LE(startHandle, 1);
         buf.writeUInt16LE(endHandle, 3);
         return buf;
     }
     writeRequest(handle, data, withoutResponse) {
         const buf = Buffer.alloc(3 + data.length);
-        buf.writeUInt8(withoutResponse ? ATT_OP_WRITE_CMD : ATT_OP_WRITE_REQ, 0);
+        buf.writeUInt8(withoutResponse ? ATT.OP_WRITE_CMD : ATT.OP_WRITE_REQ, 0);
         buf.writeUInt16LE(handle, 1);
         for (let i = 0; i < data.length; i++) {
             buf.writeUInt8(data.readUInt8(i), i + 3);
@@ -8539,7 +11051,7 @@ class Gatt extends events_1.default.EventEmitter {
     }
     prepareWriteRequest(handle, offset, data) {
         const buf = Buffer.alloc(5 + data.length);
-        buf.writeUInt8(ATT_OP_PREPARE_WRITE_REQ, 0);
+        buf.writeUInt8(ATT.OP_PREPARE_WRITE_REQ, 0);
         buf.writeUInt16LE(handle, 1);
         buf.writeUInt16LE(offset, 3);
         for (let i = 0; i < data.length; i++) {
@@ -8549,19 +11061,19 @@ class Gatt extends events_1.default.EventEmitter {
     }
     executeWriteRequest(handle, cancelPreparedWrites) {
         const buf = Buffer.alloc(2);
-        buf.writeUInt8(ATT_OP_EXECUTE_WRITE_REQ, 0);
+        buf.writeUInt8(ATT.OP_EXECUTE_WRITE_REQ, 0);
         buf.writeUInt8(cancelPreparedWrites ? 0 : 1, 1);
         return buf;
     }
     handleConfirmation() {
         const buf = Buffer.alloc(1);
-        buf.writeUInt8(ATT_OP_HANDLE_CNF, 0);
+        buf.writeUInt8(ATT.OP_HANDLE_CNF, 0);
         return buf;
     }
     exchangeMtu(mtu) {
         this._queueCommand(this.mtuRequest(mtu), (data) => {
             const opcode = data[0];
-            if (opcode === ATT_OP_MTU_RESP) {
+            if (opcode === ATT.OP_MTU_RESP) {
                 const newMtu = data.readUInt16LE(1);
                 debug(this._address + ": new MTU is " + newMtu);
                 this._mtu = newMtu;
@@ -8574,7 +11086,7 @@ class Gatt extends events_1.default.EventEmitter {
         const callback = (data) => {
             const opcode = data[0];
             let i = 0;
-            if (opcode === ATT_OP_READ_BY_GROUP_RESP) {
+            if (opcode === ATT.OP_READ_BY_GROUP_RESP) {
                 const type = data[1];
                 const num = (data.length - 2) / type;
                 for (i = 0; i < num; i++) {
@@ -8593,7 +11105,7 @@ class Gatt extends events_1.default.EventEmitter {
                     });
                 }
             }
-            if (opcode !== ATT_OP_READ_BY_GROUP_RESP ||
+            if (opcode !== ATT.OP_READ_BY_GROUP_RESP ||
                 services[services.length - 1].endHandle === 0xffff) {
                 const serviceUuids = [];
                 for (i = 0; i < services.length; i++) {
@@ -8605,10 +11117,10 @@ class Gatt extends events_1.default.EventEmitter {
                 this.emit("servicesDiscover", this._address, serviceUuids);
             }
             else {
-                this._queueCommand(this.readByGroupRequest(services[services.length - 1].endHandle + 1, 0xffff, GATT_PRIM_SVC_UUID), callback);
+                this._queueCommand(this.readByGroupRequest(services[services.length - 1].endHandle + 1, 0xffff, GATT.PRIM_SVC_UUID), callback);
             }
         };
-        this._queueCommand(this.readByGroupRequest(0x0001, 0xffff, GATT_PRIM_SVC_UUID), callback);
+        this._queueCommand(this.readByGroupRequest(0x0001, 0xffff, GATT.PRIM_SVC_UUID), callback);
     }
     discoverIncludedServices(serviceUuid, uuids) {
         const service = this._services[serviceUuid];
@@ -8616,7 +11128,7 @@ class Gatt extends events_1.default.EventEmitter {
         const callback = (data) => {
             const opcode = data[0];
             let i = 0;
-            if (opcode === ATT_OP_READ_BY_TYPE_RESP) {
+            if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
                 const type = data[1];
                 const num = (data.length - 2) / type;
                 for (i = 0; i < num; i++) {
@@ -8635,7 +11147,7 @@ class Gatt extends events_1.default.EventEmitter {
                     });
                 }
             }
-            if (opcode !== ATT_OP_READ_BY_TYPE_RESP ||
+            if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
                 includedServices[includedServices.length - 1].endHandle ===
                     service.endHandle) {
                 const includedServiceUuids = [];
@@ -8648,10 +11160,10 @@ class Gatt extends events_1.default.EventEmitter {
                 this.emit("includedServicesDiscover", this._address, service.uuid, includedServiceUuids);
             }
             else {
-                this._queueCommand(this.readByTypeRequest(includedServices[includedServices.length - 1].endHandle + 1, service.endHandle, GATT_INCLUDE_UUID), callback);
+                this._queueCommand(this.readByTypeRequest(includedServices[includedServices.length - 1].endHandle + 1, service.endHandle, GATT.INCLUDE_UUID), callback);
             }
         };
-        this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT_INCLUDE_UUID), callback);
+        this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.INCLUDE_UUID), callback);
     }
     discoverCharacteristics(serviceUuid, characteristicUuids) {
         const service = this._services[serviceUuid];
@@ -8662,7 +11174,7 @@ class Gatt extends events_1.default.EventEmitter {
         const callback = (data) => {
             const opcode = data[0];
             let i = 0;
-            if (opcode === ATT_OP_READ_BY_TYPE_RESP) {
+            if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
                 const type = data[1];
                 const num = (data.length - 2) / type;
                 for (i = 0; i < num; i++) {
@@ -8682,7 +11194,7 @@ class Gatt extends events_1.default.EventEmitter {
                     });
                 }
             }
-            if (opcode !== ATT_OP_READ_BY_TYPE_RESP ||
+            if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
                 characteristics[characteristics.length - 1].valueHandle ===
                     service.endHandle) {
                 const characteristicsDiscovered = [];
@@ -8733,10 +11245,10 @@ class Gatt extends events_1.default.EventEmitter {
                 this.emit("characteristicsDiscover", this._address, serviceUuid, characteristicsDiscovered);
             }
             else {
-                this._queueCommand(this.readByTypeRequest(characteristics[characteristics.length - 1].valueHandle + 1, service.endHandle, GATT_CHARAC_UUID), callback);
+                this._queueCommand(this.readByTypeRequest(characteristics[characteristics.length - 1].valueHandle + 1, service.endHandle, GATT.CHARAC_UUID), callback);
             }
         };
-        this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT_CHARAC_UUID), callback);
+        this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.CHARAC_UUID), callback);
     }
     read(serviceUuid, characteristicUuid) {
         if (!this._characteristics[serviceUuid] ||
@@ -8748,7 +11260,7 @@ class Gatt extends events_1.default.EventEmitter {
         let readData = Buffer.alloc(0);
         const callback = (data) => {
             const opcode = data[0];
-            if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_READ_BLOB_RESP) {
+            if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_READ_BLOB_RESP) {
                 readData = Buffer.from(readData.toString("hex") + data.slice(1).toString("hex"), "hex");
                 if (data.length === this._mtu) {
                     this._queueCommand(this.readBlobRequest(characteristic.valueHandle, readData.length), callback);
@@ -8757,7 +11269,7 @@ class Gatt extends events_1.default.EventEmitter {
                     this.emit("read", this._address, serviceUuid, characteristicUuid, readData, true);
                 }
             }
-            else if (opcode === ATT_OP_ERROR) {
+            else if (opcode === ATT.OP_ERROR) {
                 this.emit("read", this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
             }
             else {
@@ -8784,8 +11296,8 @@ class Gatt extends events_1.default.EventEmitter {
         else {
             this._queueCommand(this.writeRequest(characteristic.valueHandle, data, false), (_data) => {
                 const opcode = _data[0];
-                if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
-                    this.emit("write", this._address, serviceUuid, characteristicUuid, opcode === ATT_OP_WRITE_RESP);
+                if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
+                    this.emit("write", this._address, serviceUuid, characteristicUuid, opcode === ATT.OP_WRITE_RESP);
                 }
             });
         }
@@ -8797,9 +11309,9 @@ class Gatt extends events_1.default.EventEmitter {
         const prepareWriteCallback = (data_chunk) => {
             return (resp) => {
                 const opcode = resp[0];
-                if (opcode !== ATT_OP_PREPARE_WRITE_RESP) {
+                if (opcode !== ATT.OP_PREPARE_WRITE_RESP) {
                     debug(this._address +
-                        ": unexpected reply opcode %d (expecting ATT_OP_PREPARE_WRITE_RESP)", opcode);
+                        ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)", opcode);
                 }
                 else {
                     const expected_length = data_chunk.length + 5;
@@ -8822,16 +11334,16 @@ class Gatt extends events_1.default.EventEmitter {
         /* queue the execute command with a callback to emit the write signal when done */
         this._queueCommand(this.executeWriteRequest(characteristic.valueHandle), (resp) => {
             const opcode = resp[0];
-            if (opcode === ATT_OP_EXECUTE_WRITE_RESP && !withoutResponse) {
+            if (opcode === ATT.OP_EXECUTE_WRITE_RESP && !withoutResponse) {
                 this.emit("write", this._address, serviceUuid, characteristicUuid);
             }
         });
     }
     broadcast(serviceUuid, characteristicUuid, broadcast) {
         const characteristic = this._characteristics[serviceUuid][characteristicUuid];
-        this._queueCommand(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT_SERVER_CHARAC_CFG_UUID), (data) => {
+        this._queueCommand(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.SERVER_CHARAC_CFG_UUID), (data) => {
             const opcode = data[0];
-            if (opcode === ATT_OP_READ_BY_TYPE_RESP) {
+            if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
                 // let type = data[1];
                 const handle = data.readUInt16LE(2);
                 let value = data.readUInt16LE(4);
@@ -8845,7 +11357,7 @@ class Gatt extends events_1.default.EventEmitter {
                 valueBuffer.writeUInt16LE(value, 0);
                 this._queueCommand(this.writeRequest(handle, valueBuffer, false), (_data) => {
                     const _opcode = _data[0];
-                    if (_opcode === ATT_OP_WRITE_RESP) {
+                    if (_opcode === ATT.OP_WRITE_RESP) {
                         this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
                     }
                 });
@@ -8854,9 +11366,9 @@ class Gatt extends events_1.default.EventEmitter {
     }
     notify(serviceUuid, characteristicUuid, notify) {
         const characteristic = this._characteristics[serviceUuid][characteristicUuid];
-        this._queueCommand(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT_CLIENT_CHARAC_CFG_UUID), (data) => {
+        this._queueCommand(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID), (data) => {
             const opcode = data[0];
-            if (opcode === ATT_OP_READ_BY_TYPE_RESP) {
+            if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
                 // let type = data[1];
                 const handle = data.readUInt16LE(2);
                 let value = data.readUInt16LE(4);
@@ -8882,8 +11394,8 @@ class Gatt extends events_1.default.EventEmitter {
                 valueBuffer.writeUInt16LE(value, 0);
                 this._queueCommand(this.writeRequest(handle, valueBuffer, false), (_data) => {
                     const _opcode = _data[0];
-                    debug("set notify write results: " + (_opcode === ATT_OP_WRITE_RESP));
-                    // if (opcode === ATT_OP_WRITE_RESP) {
+                    debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
+                    // if (opcode === ATT.OP_WRITE_RESP) {
                     this.emit("notify", this._address, serviceUuid, characteristicUuid, notify);
                     // }
                 });
@@ -8897,7 +11409,7 @@ class Gatt extends events_1.default.EventEmitter {
         const callback = (data) => {
             const opcode = data[0];
             let i = 0;
-            if (opcode === ATT_OP_FIND_INFO_RESP) {
+            if (opcode === ATT.OP_FIND_INFO_RESP) {
                 const num = data[1];
                 for (i = 0; i < num; i++) {
                     descriptors.push({
@@ -8906,7 +11418,7 @@ class Gatt extends events_1.default.EventEmitter {
                     });
                 }
             }
-            if (opcode !== ATT_OP_FIND_INFO_RESP ||
+            if (opcode !== ATT.OP_FIND_INFO_RESP ||
                 descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
                 const descriptorUuids = [];
                 for (i = 0; i < descriptors.length; i++) {
@@ -8931,8 +11443,8 @@ class Gatt extends events_1.default.EventEmitter {
         const descriptor = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
         this._queueCommand(this.readRequest(descriptor.handle), (data) => {
             const opcode = data[0];
-            if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_ERROR) {
-                this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1), opcode === ATT_OP_READ_RESP);
+            if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_ERROR) {
+                this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1), opcode === ATT.OP_READ_RESP);
             }
         });
     }
@@ -8946,15 +11458,15 @@ class Gatt extends events_1.default.EventEmitter {
         const descriptor = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
         this._queueCommand(this.writeRequest(descriptor.handle, data, false), (_data) => {
             const opcode = _data[0];
-            if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
-                this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, opcode === ATT_OP_WRITE_RESP);
+            if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
+                this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, opcode === ATT.OP_WRITE_RESP);
             }
         });
     }
     readHandle(handle) {
         this._queueCommand(this.readRequest(handle), (data) => {
             const opcode = data[0];
-            if (opcode === ATT_OP_READ_RESP) {
+            if (opcode === ATT.OP_READ_RESP) {
                 this.emit("handleRead", this._address, handle, data.slice(1));
             }
         });
@@ -8968,7 +11480,7 @@ class Gatt extends events_1.default.EventEmitter {
         else {
             this._queueCommand(this.writeRequest(handle, data, false), (_data) => {
                 const opcode = _data[0];
-                if (opcode === ATT_OP_WRITE_RESP) {
+                if (opcode === ATT.OP_WRITE_RESP) {
                     this.emit("handleWrite", this._address, handle);
                 }
             });
@@ -8992,13 +11504,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('signaling');
 const debug = () => {
 };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+/**
+ * @ignore
+ */
 const CONNECTION_PARAMETER_UPDATE_REQUEST = 0x12;
+/**
+ * @ignore
+ */
 const CONNECTION_PARAMETER_UPDATE_RESPONSE = 0x13;
+/**
+ * @ignore
+ */
 const SIGNALING_CID = 0x0005;
+/**
+ * @ignore
+ */
 class Signaling extends events_1.default.EventEmitter {
     constructor(handle, aclStream) {
         super();
@@ -9064,16 +11593,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
-const SMP_CID = 0x0006;
-const SMP_PAIRING_REQUEST = 0x01;
-const SMP_PAIRING_RESPONSE = 0x02;
-const SMP_PAIRING_CONFIRM = 0x03;
-const SMP_PAIRING_RANDOM = 0x04;
-const SMP_PAIRING_FAILED = 0x05;
-const SMP_ENCRYPT_INFO = 0x06;
-const SMP_MASTER_IDENT = 0x07;
+/**
+ * @ignore
+ */
+var SMP;
+(function (SMP) {
+    SMP.CID = 0x0006;
+    SMP.PAIRING_REQUEST = 0x01;
+    SMP.PAIRING_RESPONSE = 0x02;
+    SMP.PAIRING_CONFIRM = 0x03;
+    SMP.PAIRING_RANDOM = 0x04;
+    SMP.PAIRING_FAILED = 0x05;
+    SMP.ENCRYPT_INFO = 0x06;
+    SMP.MASTER_IDENT = 0x07;
+})(SMP || (SMP = {}));
+/**
+ * @ignore
+ */
 class Smp extends events_1.default.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
@@ -9095,7 +11638,7 @@ class Smp extends events_1.default.EventEmitter {
     }
     sendPairingRequest() {
         this._preq = Buffer.from([
-            SMP_PAIRING_REQUEST,
+            SMP.PAIRING_REQUEST,
             0x03,
             0x00,
             0x01,
@@ -9106,26 +11649,26 @@ class Smp extends events_1.default.EventEmitter {
         this.write(this._preq);
     }
     onAclStreamData(cid, data) {
-        if (cid !== SMP_CID) {
+        if (cid !== SMP.CID) {
             return;
         }
         const code = data.readUInt8(0);
-        if (SMP_PAIRING_RESPONSE === code) {
+        if (SMP.PAIRING_RESPONSE === code) {
             this.handlePairingResponse(data);
         }
-        else if (SMP_PAIRING_CONFIRM === code) {
+        else if (SMP.PAIRING_CONFIRM === code) {
             this.handlePairingConfirm(data);
         }
-        else if (SMP_PAIRING_RANDOM === code) {
+        else if (SMP.PAIRING_RANDOM === code) {
             this.handlePairingRandom(data);
         }
-        else if (SMP_PAIRING_FAILED === code) {
+        else if (SMP.PAIRING_FAILED === code) {
             this.handlePairingFailed(data);
         }
-        else if (SMP_ENCRYPT_INFO === code) {
+        else if (SMP.ENCRYPT_INFO === code) {
             this.handleEncryptInfo(data);
         }
-        else if (SMP_MASTER_IDENT === code) {
+        else if (SMP.MASTER_IDENT === code) {
             this.handleMasterIdent(data);
         }
     }
@@ -9139,18 +11682,18 @@ class Smp extends events_1.default.EventEmitter {
         this._tk = Buffer.from("00000000000000000000000000000000", "hex");
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
-            Buffer.from([SMP_PAIRING_CONFIRM]),
+            Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
     handlePairingConfirm(data) {
         this._pcnf = data;
-        this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
+        this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
     }
     handlePairingRandom(data) {
         const r = data.slice(1);
         const pcnf = Buffer.concat([
-            Buffer.from([SMP_PAIRING_CONFIRM]),
+            Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
@@ -9158,7 +11701,7 @@ class Smp extends events_1.default.EventEmitter {
             this.emit("stk", stk);
         }
         else {
-            this.write(Buffer.from([SMP_PAIRING_RANDOM, SMP_PAIRING_CONFIRM]));
+            this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
             this.emit("fail");
         }
     }
@@ -9175,7 +11718,7 @@ class Smp extends events_1.default.EventEmitter {
         this.emit("masterIdent", ediv, rand);
     }
     write(data) {
-        this._aclStream.write(SMP_CID, data);
+        this._aclStream.write(SMP.CID, data);
     }
 }
 exports.default = Smp;
@@ -9198,6 +11741,10 @@ module.exports = JSON.parse("[\"Success\",\"Unknown HCI Command\",\"Unknown Conn
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer, process) {
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9212,70 +11759,79 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = () => {
 };
 const events = __webpack_require__("./node_modules/events/events.js");
-const HCI_COMMAND_PKT = 0x01;
-const HCI_ACLDATA_PKT = 0x02;
-const HCI_EVENT_PKT = 0x04;
-const ACL_START_NO_FLUSH = 0x00;
-const ACL_CONT = 0x01;
-const ACL_START = 0x02;
-const EVT_DISCONN_COMPLETE = 0x05;
-const EVT_ENCRYPT_CHANGE = 0x08;
-const EVT_CMD_COMPLETE = 0x0e;
-const EVT_CMD_STATUS = 0x0f;
-const EVT_NUMBER_OF_COMPLETED_PACKETS = 0x13;
-const EVT_LE_META_EVENT = 0x3e;
-const EVT_LE_CONN_COMPLETE = 0x01;
-const EVT_LE_ADVERTISING_REPORT = 0x02;
-const EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
-const OGF_LINK_CTL = 0x01;
-const OCF_DISCONNECT = 0x0006;
-const OGF_HOST_CTL = 0x03;
-const OCF_SET_EVENT_MASK = 0x0001;
-const OCF_RESET = 0x0003;
-const OCF_READ_LE_HOST_SUPPORTED = 0x006c;
-const OCF_WRITE_LE_HOST_SUPPORTED = 0x006d;
-const OGF_INFO_PARAM = 0x04;
-const OCF_READ_LOCAL_VERSION = 0x0001;
-const OCF_READ_BUFFER_SIZE = 0x0005;
-const OCF_READ_BD_ADDR = 0x0009;
-const OGF_STATUS_PARAM = 0x05;
-const OCF_READ_RSSI = 0x0005;
-const OGF_LE_CTL = 0x08;
-const OCF_LE_SET_EVENT_MASK = 0x0001;
-const OCF_LE_READ_BUFFER_SIZE = 0x0002;
-const OCF_LE_SET_ADVERTISING_PARAMETERS = 0x0006;
-const OCF_LE_SET_ADVERTISING_DATA = 0x0008;
-const OCF_LE_SET_SCAN_RESPONSE_DATA = 0x0009;
-const OCF_LE_SET_ADVERTISE_ENABLE = 0x000a;
-const OCF_LE_SET_SCAN_PARAMETERS = 0x000b;
-const OCF_LE_SET_SCAN_ENABLE = 0x000c;
-const OCF_LE_CREATE_CONN = 0x000d;
-const OCF_LE_CONN_UPDATE = 0x0013;
-const OCF_LE_START_ENCRYPTION = 0x0019;
-const OCF_LE_LTK_NEG_REPLY = 0x001b;
-const DISCONNECT_CMD = OCF_DISCONNECT | (OGF_LINK_CTL << 10);
-const SET_EVENT_MASK_CMD = OCF_SET_EVENT_MASK | (OGF_HOST_CTL << 10);
-const RESET_CMD = OCF_RESET | (OGF_HOST_CTL << 10);
-const READ_LE_HOST_SUPPORTED_CMD = OCF_READ_LE_HOST_SUPPORTED | (OGF_HOST_CTL << 10);
-const WRITE_LE_HOST_SUPPORTED_CMD = OCF_WRITE_LE_HOST_SUPPORTED | (OGF_HOST_CTL << 10);
-const READ_LOCAL_VERSION_CMD = OCF_READ_LOCAL_VERSION | (OGF_INFO_PARAM << 10);
-const READ_BUFFER_SIZE_CMD = OCF_READ_BUFFER_SIZE | (OGF_INFO_PARAM << 10);
-const READ_BD_ADDR_CMD = OCF_READ_BD_ADDR | (OGF_INFO_PARAM << 10);
-const READ_RSSI_CMD = OCF_READ_RSSI | (OGF_STATUS_PARAM << 10);
-const LE_SET_EVENT_MASK_CMD = OCF_LE_SET_EVENT_MASK | (OGF_LE_CTL << 10);
-const LE_READ_BUFFER_SIZE_CMD = OCF_LE_READ_BUFFER_SIZE | (OGF_LE_CTL << 10);
-const LE_SET_SCAN_PARAMETERS_CMD = OCF_LE_SET_SCAN_PARAMETERS | (OGF_LE_CTL << 10);
-const LE_SET_SCAN_ENABLE_CMD = OCF_LE_SET_SCAN_ENABLE | (OGF_LE_CTL << 10);
-const LE_CREATE_CONN_CMD = OCF_LE_CREATE_CONN | (OGF_LE_CTL << 10);
-const LE_CONN_UPDATE_CMD = OCF_LE_CONN_UPDATE | (OGF_LE_CTL << 10);
-const LE_START_ENCRYPTION_CMD = OCF_LE_START_ENCRYPTION | (OGF_LE_CTL << 10);
-const LE_SET_ADVERTISING_PARAMETERS_CMD = OCF_LE_SET_ADVERTISING_PARAMETERS | (OGF_LE_CTL << 10);
-const LE_SET_ADVERTISING_DATA_CMD = OCF_LE_SET_ADVERTISING_DATA | (OGF_LE_CTL << 10);
-const LE_SET_SCAN_RESPONSE_DATA_CMD = OCF_LE_SET_SCAN_RESPONSE_DATA | (OGF_LE_CTL << 10);
-const LE_SET_ADVERTISE_ENABLE_CMD = OCF_LE_SET_ADVERTISE_ENABLE | (OGF_LE_CTL << 10);
-const LE_LTK_NEG_REPLY_CMD = OCF_LE_LTK_NEG_REPLY | (OGF_LE_CTL << 10);
-const HCI_OE_USER_ENDED_CONNECTION = 0x13;
+var COMMANDS;
+(function (COMMANDS) {
+    COMMANDS.HCI_COMMAND_PKT = 0x01;
+    COMMANDS.HCI_ACLDATA_PKT = 0x02;
+    COMMANDS.HCI_EVENT_PKT = 0x04;
+    COMMANDS.ACL_START_NO_FLUSH = 0x00;
+    COMMANDS.ACL_CONT = 0x01;
+    COMMANDS.ACL_START = 0x02;
+    COMMANDS.EVT_DISCONN_COMPLETE = 0x05;
+    COMMANDS.EVT_ENCRYPT_CHANGE = 0x08;
+    COMMANDS.EVT_CMD_COMPLETE = 0x0e;
+    COMMANDS.EVT_CMD_STATUS = 0x0f;
+    COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS = 0x13;
+    COMMANDS.EVT_LE_META_EVENT = 0x3e;
+    COMMANDS.EVT_LE_CONN_COMPLETE = 0x01;
+    COMMANDS.EVT_LE_ADVERTISING_REPORT = 0x02;
+    COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE = 0x03;
+    COMMANDS.OGF_LINK_CTL = 0x01;
+    COMMANDS.OCF_DISCONNECT = 0x0006;
+    COMMANDS.OGF_HOST_CTL = 0x03;
+    COMMANDS.OCF_SET_EVENT_MASK = 0x0001;
+    COMMANDS.OCF_RESET = 0x0003;
+    COMMANDS.OCF_READ_LE_HOST_SUPPORTED = 0x006c;
+    COMMANDS.OCF_WRITE_LE_HOST_SUPPORTED = 0x006d;
+    COMMANDS.OGF_INFO_PARAM = 0x04;
+    COMMANDS.OCF_READ_LOCAL_VERSION = 0x0001;
+    COMMANDS.OCF_READ_BUFFER_SIZE = 0x0005;
+    COMMANDS.OCF_READ_BD_ADDR = 0x0009;
+    COMMANDS.OGF_STATUS_PARAM = 0x05;
+    COMMANDS.OCF_READ_RSSI = 0x0005;
+    COMMANDS.OGF_LE_CTL = 0x08;
+    COMMANDS.OCF_LE_SET_EVENT_MASK = 0x0001;
+    COMMANDS.OCF_LE_READ_BUFFER_SIZE = 0x0002;
+    COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS = 0x0006;
+    COMMANDS.OCF_LE_SET_ADVERTISING_DATA = 0x0008;
+    COMMANDS.OCF_LE_SET_SCAN_RESPONSE_DATA = 0x0009;
+    COMMANDS.OCF_LE_SET_ADVERTISE_ENABLE = 0x000a;
+    COMMANDS.OCF_LE_SET_SCAN_PARAMETERS = 0x000b;
+    COMMANDS.OCF_LE_SET_SCAN_ENABLE = 0x000c;
+    COMMANDS.OCF_LE_CREATE_CONN = 0x000d;
+    COMMANDS.OCF_LE_CONN_UPDATE = 0x0013;
+    COMMANDS.OCF_LE_START_ENCRYPTION = 0x0019;
+    COMMANDS.OCF_LE_LTK_NEG_REPLY = 0x001b;
+    COMMANDS.DISCONNECT_CMD = COMMANDS.OCF_DISCONNECT | (COMMANDS.OGF_LINK_CTL << 10);
+    COMMANDS.SET_EVENT_MASK_CMD = COMMANDS.OCF_SET_EVENT_MASK | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.RESET_CMD = COMMANDS.OCF_RESET | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.READ_LE_HOST_SUPPORTED_CMD = COMMANDS.OCF_READ_LE_HOST_SUPPORTED | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.WRITE_LE_HOST_SUPPORTED_CMD = COMMANDS.OCF_WRITE_LE_HOST_SUPPORTED | (COMMANDS.OGF_HOST_CTL << 10);
+    COMMANDS.READ_LOCAL_VERSION_CMD = COMMANDS.OCF_READ_LOCAL_VERSION | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_BUFFER_SIZE_CMD = COMMANDS.OCF_READ_BUFFER_SIZE | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_BD_ADDR_CMD = COMMANDS.OCF_READ_BD_ADDR | (COMMANDS.OGF_INFO_PARAM << 10);
+    COMMANDS.READ_RSSI_CMD = COMMANDS.OCF_READ_RSSI | (COMMANDS.OGF_STATUS_PARAM << 10);
+    COMMANDS.LE_SET_EVENT_MASK_CMD = COMMANDS.OCF_LE_SET_EVENT_MASK | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_READ_BUFFER_SIZE_CMD = COMMANDS.OCF_LE_READ_BUFFER_SIZE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_SCAN_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_SCAN_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_SCAN_ENABLE_CMD = COMMANDS.OCF_LE_SET_SCAN_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CREATE_CONN_CMD = COMMANDS.OCF_LE_CREATE_CONN | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CONN_UPDATE_CMD = COMMANDS.OCF_LE_CONN_UPDATE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_START_ENCRYPTION_CMD = COMMANDS.OCF_LE_START_ENCRYPTION | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISING_DATA_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD = COMMANDS.OCF_LE_SET_SCAN_RESPONSE_DATA | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD = COMMANDS.OCF_LE_SET_ADVERTISE_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_LTK_NEG_REPLY_CMD = COMMANDS.OCF_LE_LTK_NEG_REPLY | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.HCI_OE_USER_ENDED_CONNECTION = 0x13;
+})(COMMANDS || (COMMANDS = {}));
+/**
+ * @ignore
+ */
 const STATUS_MAPPER = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci-status.json");
+/**
+ * @ignore
+ */
 class Hci extends events.EventEmitter {
     constructor(obnizHci) {
         super();
@@ -9312,8 +11868,8 @@ class Hci extends events.EventEmitter {
         const cmd = Buffer.alloc(12);
         const eventMask = Buffer.from("fffffbff07f8bf3d", "hex");
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(SET_EVENT_MASK_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.SET_EVENT_MASK_CMD, 1);
         // length
         cmd.writeUInt8(eventMask.length, 3);
         eventMask.copy(cmd, 4);
@@ -9323,8 +11879,8 @@ class Hci extends events.EventEmitter {
     reset() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(OCF_RESET | (OGF_HOST_CTL << 10), 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.OCF_RESET | (COMMANDS.OGF_HOST_CTL << 10), 1);
         // length
         cmd.writeUInt8(0x00, 3);
         debug("reset - writing: " + cmd.toString("hex"));
@@ -9338,8 +11894,8 @@ class Hci extends events.EventEmitter {
     readLocalVersion() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_LOCAL_VERSION_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_LOCAL_VERSION_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
         debug("read local version - writing: " + cmd.toString("hex"));
@@ -9348,8 +11904,8 @@ class Hci extends events.EventEmitter {
     readBdAddr() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_BD_ADDR_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_BD_ADDR_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
         debug("read bd addr - writing: " + cmd.toString("hex"));
@@ -9359,8 +11915,8 @@ class Hci extends events.EventEmitter {
         const cmd = Buffer.alloc(12);
         const leEventMask = Buffer.from("1f00000000000000", "hex");
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_EVENT_MASK_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_EVENT_MASK_CMD, 1);
         // length
         cmd.writeUInt8(leEventMask.length, 3);
         leEventMask.copy(cmd, 4);
@@ -9370,8 +11926,8 @@ class Hci extends events.EventEmitter {
     readLeHostSupported() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_LE_HOST_SUPPORTED_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_LE_HOST_SUPPORTED_CMD, 1);
         // length
         cmd.writeUInt8(0x00, 3);
         debug("read LE host supported - writing: " + cmd.toString("hex"));
@@ -9380,8 +11936,8 @@ class Hci extends events.EventEmitter {
     writeLeHostSupported() {
         const cmd = Buffer.alloc(6);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(WRITE_LE_HOST_SUPPORTED_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.WRITE_LE_HOST_SUPPORTED_CMD, 1);
         // length
         cmd.writeUInt8(0x02, 3);
         // data
@@ -9390,15 +11946,15 @@ class Hci extends events.EventEmitter {
         debug("write LE host supported - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
-    setScanParameters() {
+    setScanParameters(isActiveScan) {
         const cmd = Buffer.alloc(11);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_SCAN_PARAMETERS_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD, 1);
         // length
         cmd.writeUInt8(0x07, 3);
         // data
-        cmd.writeUInt8(0x01, 4); // type: 0 -> passive, 1 -> active
+        cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 4); // type: 0 -> passive, 1 -> active
         cmd.writeUInt16LE(0x0010, 5); // internal, ms * 1.6
         cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
         cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
@@ -9409,8 +11965,8 @@ class Hci extends events.EventEmitter {
     setScanEnabled(enabled, filterDuplicates) {
         const cmd = Buffer.alloc(6);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_SCAN_ENABLE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_SCAN_ENABLE_CMD, 1);
         // length
         cmd.writeUInt8(0x02, 3);
         // data
@@ -9422,8 +11978,8 @@ class Hci extends events.EventEmitter {
     createLeConn(address, addressType) {
         const cmd = Buffer.alloc(29);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_CREATE_CONN_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CMD, 1);
         // length
         cmd.writeUInt8(0x19, 3);
         // data
@@ -9448,8 +12004,8 @@ class Hci extends events.EventEmitter {
     connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         const cmd = Buffer.alloc(18);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_CONN_UPDATE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_CONN_UPDATE_CMD, 1);
         // length
         cmd.writeUInt8(0x0e, 3);
         // data
@@ -9466,8 +12022,8 @@ class Hci extends events.EventEmitter {
     startLeEncryption(handle, random, diversifier, key) {
         const cmd = Buffer.alloc(32);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_START_ENCRYPTION_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_START_ENCRYPTION_CMD, 1);
         // length
         cmd.writeUInt8(0x1c, 3);
         // data
@@ -9480,10 +12036,10 @@ class Hci extends events.EventEmitter {
     }
     disconnect(handle, reason) {
         const cmd = Buffer.alloc(7);
-        reason = reason || HCI_OE_USER_ENDED_CONNECTION;
+        reason = reason || COMMANDS.HCI_OE_USER_ENDED_CONNECTION;
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(DISCONNECT_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.DISCONNECT_CMD, 1);
         // length
         cmd.writeUInt8(0x03, 3);
         // data
@@ -9495,8 +12051,8 @@ class Hci extends events.EventEmitter {
     readRssi(handle) {
         const cmd = Buffer.alloc(6);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_RSSI_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_RSSI_CMD, 1);
         // length
         cmd.writeUInt8(0x02, 3);
         // data
@@ -9507,8 +12063,8 @@ class Hci extends events.EventEmitter {
     writeAclDataPkt(handle, cid, data) {
         const pkt = Buffer.alloc(9 + data.length);
         // header
-        pkt.writeUInt8(HCI_ACLDATA_PKT, 0);
-        pkt.writeUInt16LE(handle | (ACL_START_NO_FLUSH << 12), 1);
+        pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
+        pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
         pkt.writeUInt16LE(data.length + 4, 3); // data length 1
         pkt.writeUInt16LE(data.length, 5); // data length 2
         pkt.writeUInt16LE(cid, 7);
@@ -9519,8 +12075,8 @@ class Hci extends events.EventEmitter {
     setAdvertisingParameters() {
         const cmd = Buffer.alloc(19);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_ADVERTISING_PARAMETERS_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD, 1);
         // length
         cmd.writeUInt8(15, 3);
         const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL
@@ -9542,8 +12098,8 @@ class Hci extends events.EventEmitter {
         const cmd = Buffer.alloc(36);
         cmd.fill(0x00);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_ADVERTISING_DATA_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISING_DATA_CMD, 1);
         // length
         cmd.writeUInt8(32, 3);
         // data
@@ -9556,8 +12112,8 @@ class Hci extends events.EventEmitter {
         const cmd = Buffer.alloc(36);
         cmd.fill(0x00);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_SCAN_RESPONSE_DATA_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD, 1);
         // length
         cmd.writeUInt8(32, 3);
         // data
@@ -9569,8 +12125,8 @@ class Hci extends events.EventEmitter {
     setAdvertiseEnable(enabled) {
         const cmd = Buffer.alloc(5);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_SET_ADVERTISE_ENABLE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD, 1);
         // length
         cmd.writeUInt8(0x01, 3);
         // data
@@ -9581,8 +12137,8 @@ class Hci extends events.EventEmitter {
     leReadBufferSize() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(LE_READ_BUFFER_SIZE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_READ_BUFFER_SIZE_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
         debug("le read buffer size - writing: " + cmd.toString("hex"));
@@ -9591,15 +12147,15 @@ class Hci extends events.EventEmitter {
     readBufferSize() {
         const cmd = Buffer.alloc(4);
         // header
-        cmd.writeUInt8(HCI_COMMAND_PKT, 0);
-        cmd.writeUInt16LE(READ_BUFFER_SIZE_CMD, 1);
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.READ_BUFFER_SIZE_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
         debug("read buffer size - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
     queueAclDataPkt(handle, cid, data) {
-        let hf = handle | (ACL_START_NO_FLUSH << 12);
+        let hf = handle | (COMMANDS.ACL_START_NO_FLUSH << 12);
         // l2cap pdu may be fragmented on hci level
         let l2capPdu = Buffer.alloc(4 + data.length);
         l2capPdu.writeUInt16LE(data.length, 0);
@@ -9611,9 +12167,9 @@ class Hci extends events.EventEmitter {
             l2capPdu = l2capPdu.slice(frag.length);
             const pkt = Buffer.alloc(5 + frag.length);
             // hci header
-            pkt.writeUInt8(HCI_ACLDATA_PKT, 0);
+            pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
             pkt.writeUInt16LE(hf, 1);
-            hf |= ACL_CONT << 12;
+            hf |= COMMANDS.ACL_CONT << 12;
             pkt.writeUInt16LE(frag.length, 3); // hci pdu length
             frag.copy(pkt, 5);
             this._aclOutQueue.push({
@@ -9658,10 +12214,10 @@ class Hci extends events.EventEmitter {
         debug("onSocketData: " + data.toString("hex"));
         const eventType = data.readUInt8(0);
         debug("\tevent type = " + eventType);
-        if (HCI_EVENT_PKT === eventType) {
+        if (COMMANDS.HCI_EVENT_PKT === eventType) {
             const subEventType = data.readUInt8(1);
             debug("\tsub event type = " + subEventType);
-            if (subEventType === EVT_DISCONN_COMPLETE) {
+            if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
                 const handle = data.readUInt16LE(4);
                 const reason = data.readUInt8(6);
                 debug("\t\thandle = " + handle);
@@ -9684,14 +12240,14 @@ class Hci extends events.EventEmitter {
                 this.pushAclOutQueue();
                 this.emit("disconnComplete", handle, reason);
             }
-            else if (subEventType === EVT_ENCRYPT_CHANGE) {
+            else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
                 const handle = data.readUInt16LE(4);
                 const encrypt = data.readUInt8(6);
                 debug("\t\thandle = " + handle);
                 debug("\t\tencrypt = " + encrypt);
                 this.emit("encryptChange", handle, encrypt);
             }
-            else if (subEventType === EVT_CMD_COMPLETE) {
+            else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
                 const ncmd = data.readUInt8(3);
                 const cmd = data.readUInt16LE(4);
                 const status = data.readUInt8(6);
@@ -9702,14 +12258,14 @@ class Hci extends events.EventEmitter {
                 debug("\t\tresult = " + result.toString("hex"));
                 this.processCmdCompleteEvent(cmd, status, result);
             }
-            else if (subEventType === EVT_CMD_STATUS) {
+            else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
                 const status = data.readUInt8(3);
                 const cmd = data.readUInt16LE(5);
                 debug("\t\tstatus = " + status);
                 debug("\t\tcmd = " + cmd);
                 this.processCmdStatusEvent(cmd, status);
             }
-            else if (subEventType === EVT_LE_META_EVENT) {
+            else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
                 const leMetaEventType = data.readUInt8(3);
                 const leMetaEventStatus = data.readUInt8(4);
                 const leMetaEventData = data.slice(5);
@@ -9718,7 +12274,7 @@ class Hci extends events.EventEmitter {
                 debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
                 this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
             }
-            else if (subEventType === EVT_NUMBER_OF_COMPLETED_PACKETS) {
+            else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
                 const handles = data.readUInt8(3);
                 for (let i = 0; i < handles; i++) {
                     const handle = data.readUInt16LE(4 + i * 4);
@@ -9741,10 +12297,10 @@ class Hci extends events.EventEmitter {
                 this.pushAclOutQueue();
             }
         }
-        else if (HCI_ACLDATA_PKT === eventType) {
+        else if (COMMANDS.HCI_ACLDATA_PKT === eventType) {
             const flags = data.readUInt16LE(1) >> 12;
             const handle = data.readUInt16LE(1) & 0x0fff;
-            if (ACL_START === flags) {
+            if (COMMANDS.ACL_START === flags) {
                 const cid = data.readUInt16LE(7);
                 const length = data.readUInt16LE(5);
                 const pktData = data.slice(9);
@@ -9762,7 +12318,7 @@ class Hci extends events.EventEmitter {
                     };
                 }
             }
-            else if (ACL_CONT === flags) {
+            else if (COMMANDS.ACL_CONT === flags) {
                 if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
                     return;
                 }
@@ -9777,12 +12333,12 @@ class Hci extends events.EventEmitter {
                 }
             }
         }
-        else if (HCI_COMMAND_PKT === eventType) {
+        else if (COMMANDS.HCI_COMMAND_PKT === eventType) {
             const cmd = data.readUInt16LE(1);
             const len = data.readUInt8(3);
             debug("\t\tcmd = " + cmd);
             debug("\t\tdata len = " + len);
-            if (cmd === LE_SET_SCAN_ENABLE_CMD) {
+            if (cmd === COMMANDS.LE_SET_SCAN_ENABLE_CMD) {
                 const enable = data.readUInt8(4) === 0x1;
                 const filterDuplicates = data.readUInt8(5) === 0x1;
                 debug("\t\t\tLE enable scan command");
@@ -9802,7 +12358,7 @@ class Hci extends events.EventEmitter {
         }
     }
     processCmdCompleteEvent(cmd, status, result) {
-        if (cmd === RESET_CMD) {
+        if (cmd === COMMANDS.RESET_CMD) {
             this.resetBuffers();
             this.setEventMask();
             this.setLeEventMask();
@@ -9812,7 +12368,7 @@ class Hci extends events.EventEmitter {
             this.readLeHostSupported();
             this.leReadBufferSize();
         }
-        else if (cmd === READ_LE_HOST_SUPPORTED_CMD) {
+        else if (cmd === COMMANDS.READ_LE_HOST_SUPPORTED_CMD) {
             if (status === 0) {
                 const le = result.readUInt8(0);
                 const simul = result.readUInt8(1);
@@ -9820,7 +12376,7 @@ class Hci extends events.EventEmitter {
                 debug("\t\t\tsimul = " + simul);
             }
         }
-        else if (cmd === READ_LOCAL_VERSION_CMD) {
+        else if (cmd === COMMANDS.READ_LOCAL_VERSION_CMD) {
             const hciVer = result.readUInt8(0);
             const hciRev = result.readUInt16LE(1);
             const lmpVer = result.readInt8(3);
@@ -9831,11 +12387,11 @@ class Hci extends events.EventEmitter {
             }
             else if (this._state !== "poweredOn") {
                 this.setScanEnabled(false, true);
-                this.setScanParameters();
+                this.setScanParameters(false);
             }
             this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
         }
-        else if (cmd === READ_BD_ADDR_CMD) {
+        else if (cmd === COMMANDS.READ_BD_ADDR_CMD) {
             this.addressType = "public";
             this.address = result
                 .toString("hex")
@@ -9845,44 +12401,44 @@ class Hci extends events.EventEmitter {
             debug("address = " + this.address);
             this.emit("addressChange", this.address);
         }
-        else if (cmd === LE_SET_SCAN_PARAMETERS_CMD) {
+        else if (cmd === COMMANDS.LE_SET_SCAN_PARAMETERS_CMD) {
             this.emit("stateChange", "poweredOn");
             this.emit("leScanParametersSet", status);
         }
-        else if (cmd === LE_SET_SCAN_ENABLE_CMD) {
+        else if (cmd === COMMANDS.LE_SET_SCAN_ENABLE_CMD) {
             this.emit("leScanEnableSet", status);
         }
-        else if (cmd === LE_SET_ADVERTISING_PARAMETERS_CMD) {
+        else if (cmd === COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD) {
             this.emit("stateChange", "poweredOn");
             this.emit("leAdvertisingParametersSet", status);
         }
-        else if (cmd === LE_SET_ADVERTISING_DATA_CMD) {
+        else if (cmd === COMMANDS.LE_SET_ADVERTISING_DATA_CMD) {
             this.emit("leAdvertisingDataSet", status);
         }
-        else if (cmd === LE_SET_SCAN_RESPONSE_DATA_CMD) {
+        else if (cmd === COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD) {
             this.emit("leScanResponseDataSet", status);
         }
-        else if (cmd === LE_SET_ADVERTISE_ENABLE_CMD) {
+        else if (cmd === COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD) {
             this.emit("leAdvertiseEnableSet", status);
         }
-        else if (cmd === READ_RSSI_CMD) {
+        else if (cmd === COMMANDS.READ_RSSI_CMD) {
             const handle = result.readUInt16LE(0);
             const rssi = result.readInt8(2);
             debug("\t\t\thandle = " + handle);
             debug("\t\t\trssi = " + rssi);
             this.emit("rssiRead", handle, rssi);
         }
-        else if (cmd === LE_LTK_NEG_REPLY_CMD) {
+        else if (cmd === COMMANDS.LE_LTK_NEG_REPLY_CMD) {
             const handle = result.readUInt16LE(0);
             debug("\t\t\thandle = " + handle);
             this.emit("leLtkNegReply", handle);
         }
-        else if (cmd === LE_READ_BUFFER_SIZE_CMD) {
+        else if (cmd === COMMANDS.LE_READ_BUFFER_SIZE_CMD) {
             if (!status) {
                 this.processLeReadBufferSize(result);
             }
         }
-        else if (cmd === READ_BUFFER_SIZE_CMD) {
+        else if (cmd === COMMANDS.READ_BUFFER_SIZE_CMD) {
             if (!status) {
                 const aclMtu = result.readUInt16LE(0);
                 const aclMaxInProgress = result.readUInt16LE(3);
@@ -9897,13 +12453,13 @@ class Hci extends events.EventEmitter {
         }
     }
     processLeMetaEvent(eventType, status, data) {
-        if (eventType === EVT_LE_CONN_COMPLETE) {
+        if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
             this.processLeConnComplete(status, data);
         }
-        else if (eventType === EVT_LE_ADVERTISING_REPORT) {
+        else if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
             this.processLeAdvertisingReport(status, data);
         }
-        else if (eventType === EVT_LE_CONN_UPDATE_COMPLETE) {
+        else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             this.processLeConnUpdateComplete(status, data);
         }
     }
@@ -9966,7 +12522,7 @@ class Hci extends events.EventEmitter {
         this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
     }
     processCmdStatusEvent(cmd, status) {
-        if (cmd === LE_CREATE_CONN_CMD) {
+        if (cmd === COMMANDS.LE_CREATE_CONN_CMD) {
             if (status !== 0) {
                 this.emit("leConnComplete", status);
             }
@@ -10009,8 +12565,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/smp.js"));
+/**
+ * @ignore
+ */
 class AclStream extends events_1.default.EventEmitter {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
@@ -10050,11 +12614,19 @@ exports.default = AclStream;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+// var debug = require('debug')('bindings');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// var debug = require('debug')('bindings');
+/**
+ * @ignore
+ */
 const debug = () => {
 };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
@@ -10062,6 +12634,9 @@ const os_1 = __importDefault(__webpack_require__("./node_modules/os-browserify/b
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js"));
 const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gap.js"));
 const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js"));
+/**
+ * @ignore
+ */
 class BlenoBindings extends events_1.default.EventEmitter {
     constructor(hciProtocol) {
         super();
@@ -10219,10 +12794,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
+/**
+ * @ignore
+ */
 function r() {
     return crypto_1.default.randomBytes(16);
 }
+/**
+ * @ignore
+ */
 function c1(k, _r, pres, preq, iat, ia, rat, ra) {
     const p1 = Buffer.concat([iat, rat, preq, pres]);
     const p2 = Buffer.concat([ra, ia, Buffer.from("00000000", "hex")]);
@@ -10274,18 +12860,26 @@ exports.default = {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+// var debug = require('debug')('gap');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// var debug = require('debug')('gap');
+/**
+ * @ignore
+ */
 const debug = () => {
 };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
-const isLinux = false;
-const isIntelEdison = false;
-const isYocto = false;
+/**
+ * @ignore
+ */
 class Gap extends events_1.default.EventEmitter {
     constructor(hci) {
         super();
@@ -10405,14 +12999,8 @@ class Gap extends events_1.default.EventEmitter {
         }
         else {
             this._advertiseState = "starting";
-            if (isIntelEdison || isYocto) {
-                // work around for Intel Edison
-                debug("skipping first set of scan response and advertisement data");
-            }
-            else {
-                this._hci.setScanResponseData(scanData);
-                this._hci.setAdvertisingData(advertisementData);
-            }
+            this._hci.setScanResponseData(scanData);
+            this._hci.setAdvertisingData(advertisementData);
             this._hci.setAdvertiseEnable(true);
             this._hci.setScanResponseData(scanData);
             this._hci.setAdvertisingData(advertisementData);
@@ -10466,64 +13054,84 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('gatt');
 const debug = () => {
 };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 /* eslint-disable no-unused-vars */
-const ATT_OP_ERROR = 0x01;
-const ATT_OP_MTU_REQ = 0x02;
-const ATT_OP_MTU_RESP = 0x03;
-const ATT_OP_FIND_INFO_REQ = 0x04;
-const ATT_OP_FIND_INFO_RESP = 0x05;
-const ATT_OP_FIND_BY_TYPE_REQ = 0x06;
-const ATT_OP_FIND_BY_TYPE_RESP = 0x07;
-const ATT_OP_READ_BY_TYPE_REQ = 0x08;
-const ATT_OP_READ_BY_TYPE_RESP = 0x09;
-const ATT_OP_READ_REQ = 0x0a;
-const ATT_OP_READ_RESP = 0x0b;
-const ATT_OP_READ_BLOB_REQ = 0x0c;
-const ATT_OP_READ_BLOB_RESP = 0x0d;
-const ATT_OP_READ_MULTI_REQ = 0x0e;
-const ATT_OP_READ_MULTI_RESP = 0x0f;
-const ATT_OP_READ_BY_GROUP_REQ = 0x10;
-const ATT_OP_READ_BY_GROUP_RESP = 0x11;
-const ATT_OP_WRITE_REQ = 0x12;
-const ATT_OP_WRITE_RESP = 0x13;
-const ATT_OP_WRITE_CMD = 0x52;
-const ATT_OP_PREP_WRITE_REQ = 0x16;
-const ATT_OP_PREP_WRITE_RESP = 0x17;
-const ATT_OP_EXEC_WRITE_REQ = 0x18;
-const ATT_OP_EXEC_WRITE_RESP = 0x19;
-const ATT_OP_HANDLE_NOTIFY = 0x1b;
-const ATT_OP_HANDLE_IND = 0x1d;
-const ATT_OP_HANDLE_CNF = 0x1e;
-const ATT_OP_SIGNED_WRITE_CMD = 0xd2;
-const GATT_PRIM_SVC_UUID = 0x2800;
-const GATT_INCLUDE_UUID = 0x2802;
-const GATT_CHARAC_UUID = 0x2803;
-const GATT_CLIENT_CHARAC_CFG_UUID = 0x2902;
-const GATT_SERVER_CHARAC_CFG_UUID = 0x2903;
-const ATT_ECODE_SUCCESS = 0x00;
-const ATT_ECODE_INVALID_HANDLE = 0x01;
-const ATT_ECODE_READ_NOT_PERM = 0x02;
-const ATT_ECODE_WRITE_NOT_PERM = 0x03;
-const ATT_ECODE_INVALID_PDU = 0x04;
-const ATT_ECODE_AUTHENTICATION = 0x05;
-const ATT_ECODE_REQ_NOT_SUPP = 0x06;
-const ATT_ECODE_INVALID_OFFSET = 0x07;
-const ATT_ECODE_AUTHORIZATION = 0x08;
-const ATT_ECODE_PREP_QUEUE_FULL = 0x09;
-const ATT_ECODE_ATTR_NOT_FOUND = 0x0a;
-const ATT_ECODE_ATTR_NOT_LONG = 0x0b;
-const ATT_ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
-const ATT_ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
-const ATT_ECODE_UNLIKELY = 0x0e;
-const ATT_ECODE_INSUFF_ENC = 0x0f;
-const ATT_ECODE_UNSUPP_GRP_TYPE = 0x10;
-const ATT_ECODE_INSUFF_RESOURCES = 0x11;
+/**
+ * @ignore
+ */
+var ATT;
+(function (ATT) {
+    ATT.OP_ERROR = 0x01;
+    ATT.OP_MTU_REQ = 0x02;
+    ATT.OP_MTU_RESP = 0x03;
+    ATT.OP_FIND_INFO_REQ = 0x04;
+    ATT.OP_FIND_INFO_RESP = 0x05;
+    ATT.OP_FIND_BY_TYPE_REQ = 0x06;
+    ATT.OP_FIND_BY_TYPE_RESP = 0x07;
+    ATT.OP_READ_BY_TYPE_REQ = 0x08;
+    ATT.OP_READ_BY_TYPE_RESP = 0x09;
+    ATT.OP_READ_REQ = 0x0a;
+    ATT.OP_READ_RESP = 0x0b;
+    ATT.OP_READ_BLOB_REQ = 0x0c;
+    ATT.OP_READ_BLOB_RESP = 0x0d;
+    ATT.OP_READ_MULTI_REQ = 0x0e;
+    ATT.OP_READ_MULTI_RESP = 0x0f;
+    ATT.OP_READ_BY_GROUP_REQ = 0x10;
+    ATT.OP_READ_BY_GROUP_RESP = 0x11;
+    ATT.OP_WRITE_REQ = 0x12;
+    ATT.OP_WRITE_RESP = 0x13;
+    ATT.OP_WRITE_CMD = 0x52;
+    ATT.OP_PREP_WRITE_REQ = 0x16;
+    ATT.OP_PREP_WRITE_RESP = 0x17;
+    ATT.OP_EXEC_WRITE_REQ = 0x18;
+    ATT.OP_EXEC_WRITE_RESP = 0x19;
+    ATT.OP_HANDLE_NOTIFY = 0x1b;
+    ATT.OP_HANDLE_IND = 0x1d;
+    ATT.OP_HANDLE_CNF = 0x1e;
+    ATT.OP_SIGNED_WRITE_CMD = 0xd2;
+    ATT.ECODE_SUCCESS = 0x00;
+    ATT.ECODE_INVALID_HANDLE = 0x01;
+    ATT.ECODE_READ_NOT_PERM = 0x02;
+    ATT.ECODE_WRITE_NOT_PERM = 0x03;
+    ATT.ECODE_INVALID_PDU = 0x04;
+    ATT.ECODE_AUTHENTICATION = 0x05;
+    ATT.ECODE_REQ_NOT_SUPP = 0x06;
+    ATT.ECODE_INVALID_OFFSET = 0x07;
+    ATT.ECODE_AUTHORIZATION = 0x08;
+    ATT.ECODE_PREP_QUEUE_FULL = 0x09;
+    ATT.ECODE_ATTR_NOT_FOUND = 0x0a;
+    ATT.ECODE_ATTR_NOT_LONG = 0x0b;
+    ATT.ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
+    ATT.ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
+    ATT.ECODE_UNLIKELY = 0x0e;
+    ATT.ECODE_INSUFF_ENC = 0x0f;
+    ATT.ECODE_UNSUPP_GRP_TYPE = 0x10;
+    ATT.ECODE_INSUFF_RESOURCES = 0x11;
+    ATT.CID = 0x0004;
+})(ATT || (ATT = {}));
+/**
+ * @ignore
+ */
+var GATT;
+(function (GATT) {
+    GATT.PRIM_SVC_UUID = 0x2800;
+    GATT.INCLUDE_UUID = 0x2802;
+    GATT.CHARAC_UUID = 0x2803;
+    GATT.CLIENT_CHARAC_CFG_UUID = 0x2902;
+    GATT.SERVER_CHARAC_CFG_UUID = 0x2903;
+})(GATT || (GATT = {}));
 /* eslint-enable no-unused-vars */
-const ATT_CID = 0x0004;
+/**
+ * @ignore
+ */
 class Gatt extends events_1.default.EventEmitter {
     constructor() {
         super();
@@ -10697,7 +13305,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
-        if (cid !== ATT_CID) {
+        if (cid !== ATT.CID) {
             return;
         }
         this.handleRequest(data);
@@ -10719,11 +13327,11 @@ class Gatt extends events_1.default.EventEmitter {
     }
     send(data) {
         debug("send: " + data.toString("hex"));
-        this._aclStream.write(ATT_CID, data);
+        this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
         const buf = Buffer.alloc(5);
-        buf.writeUInt8(ATT_OP_ERROR, 0);
+        buf.writeUInt8(ATT.OP_ERROR, 0);
         buf.writeUInt8(opcode, 1);
         buf.writeUInt16LE(handle, 2);
         buf.writeUInt8(status, 4);
@@ -10734,42 +13342,42 @@ class Gatt extends events_1.default.EventEmitter {
         const requestType = request[0];
         let response = null;
         switch (requestType) {
-            case ATT_OP_MTU_REQ:
+            case ATT.OP_MTU_REQ:
                 response = this.handleMtuRequest(request);
                 break;
-            case ATT_OP_FIND_INFO_REQ:
+            case ATT.OP_FIND_INFO_REQ:
                 response = this.handleFindInfoRequest(request);
                 break;
-            case ATT_OP_FIND_BY_TYPE_REQ:
+            case ATT.OP_FIND_BY_TYPE_REQ:
                 response = this.handleFindByTypeRequest(request);
                 break;
-            case ATT_OP_READ_BY_TYPE_REQ:
+            case ATT.OP_READ_BY_TYPE_REQ:
                 response = this.handleReadByTypeRequest(request);
                 break;
-            case ATT_OP_READ_REQ:
-            case ATT_OP_READ_BLOB_REQ:
+            case ATT.OP_READ_REQ:
+            case ATT.OP_READ_BLOB_REQ:
                 response = this.handleReadOrReadBlobRequest(request);
                 break;
-            case ATT_OP_READ_BY_GROUP_REQ:
+            case ATT.OP_READ_BY_GROUP_REQ:
                 response = this.handleReadByGroupRequest(request);
                 break;
-            case ATT_OP_WRITE_REQ:
-            case ATT_OP_WRITE_CMD:
+            case ATT.OP_WRITE_REQ:
+            case ATT.OP_WRITE_CMD:
                 response = this.handleWriteRequestOrCommand(request);
                 break;
-            case ATT_OP_PREP_WRITE_REQ:
+            case ATT.OP_PREP_WRITE_REQ:
                 response = this.handlePrepareWriteRequest(request);
                 break;
-            case ATT_OP_EXEC_WRITE_REQ:
+            case ATT.OP_EXEC_WRITE_REQ:
                 response = this.handleExecuteWriteRequest(request);
                 break;
-            case ATT_OP_HANDLE_CNF:
+            case ATT.OP_HANDLE_CNF:
                 response = this.handleConfirmation(request);
                 break;
             default:
-            case ATT_OP_READ_MULTI_REQ:
-            case ATT_OP_SIGNED_WRITE_CMD:
-                response = this.errorResponse(requestType, 0x0000, ATT_ECODE_REQ_NOT_SUPP);
+            case ATT.OP_READ_MULTI_REQ:
+            case ATT.OP_SIGNED_WRITE_CMD:
+                response = this.errorResponse(requestType, 0x0000, ATT.ECODE_REQ_NOT_SUPP);
                 break;
         }
         if (response) {
@@ -10788,7 +13396,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._mtu = mtu;
         this.emit("mtuChange", this._mtu);
         const response = Buffer.alloc(3);
-        response.writeUInt8(ATT_OP_MTU_RESP, 0);
+        response.writeUInt8(ATT.OP_MTU_RESP, 0);
         response.writeUInt16LE(mtu, 1);
         return response;
     }
@@ -10840,7 +13448,7 @@ class Gatt extends events_1.default.EventEmitter {
             const maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
             numInfo = Math.min(numInfo, maxInfo);
             response = Buffer.alloc(2 + numInfo * lengthPerInfo);
-            response[0] = ATT_OP_FIND_INFO_RESP;
+            response[0] = ATT.OP_FIND_INFO_RESP;
             response[1] = uuidSize === 2 ? 0x01 : 0x2;
             for (i = 0; i < numInfo; i++) {
                 const info = infos[i];
@@ -10855,7 +13463,7 @@ class Gatt extends events_1.default.EventEmitter {
             }
         }
         else {
-            response = this.errorResponse(ATT_OP_FIND_INFO_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+            response = this.errorResponse(ATT.OP_FIND_INFO_REQ, startHandle, ATT.ECODE_ATTR_NOT_FOUND);
         }
         return response;
     }
@@ -10897,7 +13505,7 @@ class Gatt extends events_1.default.EventEmitter {
             const maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
             numHandles = Math.min(numHandles, maxHandles);
             response = Buffer.alloc(1 + numHandles * lengthPerHandle);
-            response[0] = ATT_OP_FIND_BY_TYPE_RESP;
+            response[0] = ATT.OP_FIND_BY_TYPE_RESP;
             for (let i = 0; i < numHandles; i++) {
                 handle = handles[i];
                 response.writeUInt16LE(handle.start, 1 + i * lengthPerHandle);
@@ -10905,7 +13513,7 @@ class Gatt extends events_1.default.EventEmitter {
             }
         }
         else {
-            response = this.errorResponse(ATT_OP_FIND_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+            response = this.errorResponse(ATT.OP_FIND_BY_TYPE_REQ, startHandle, ATT.ECODE_ATTR_NOT_FOUND);
         }
         return response;
     }
@@ -10951,7 +13559,7 @@ class Gatt extends events_1.default.EventEmitter {
                 const maxServices = Math.floor((this._mtu - 2) / lengthPerService);
                 numServices = Math.min(numServices, maxServices);
                 response = Buffer.alloc(2 + numServices * lengthPerService);
-                response[0] = ATT_OP_READ_BY_GROUP_RESP;
+                response[0] = ATT.OP_READ_BY_GROUP_RESP;
                 response[1] = lengthPerService;
                 for (i = 0; i < numServices; i++) {
                     const service = services[i];
@@ -10967,11 +13575,11 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             }
             else {
-                response = this.errorResponse(ATT_OP_READ_BY_GROUP_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+                response = this.errorResponse(ATT.OP_READ_BY_GROUP_REQ, startHandle, ATT.ECODE_ATTR_NOT_FOUND);
             }
         }
         else {
-            response = this.errorResponse(ATT_OP_READ_BY_GROUP_REQ, startHandle, ATT_ECODE_UNSUPP_GRP_TYPE);
+            response = this.errorResponse(ATT.OP_READ_BY_GROUP_REQ, startHandle, ATT.ECODE_UNSUPP_GRP_TYPE);
         }
         return response;
     }
@@ -11018,7 +13626,7 @@ class Gatt extends events_1.default.EventEmitter {
                 const maxCharacteristics = Math.floor((this._mtu - 2) / lengthPerCharacteristic);
                 numCharacteristics = Math.min(numCharacteristics, maxCharacteristics);
                 response = Buffer.alloc(2 + numCharacteristics * lengthPerCharacteristic);
-                response[0] = ATT_OP_READ_BY_TYPE_RESP;
+                response[0] = ATT.OP_READ_BY_TYPE_RESP;
                 response[1] = lengthPerCharacteristic;
                 for (i = 0; i < numCharacteristics; i++) {
                     const characteristic = characteristics[i];
@@ -11036,7 +13644,7 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             }
             else {
-                response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+                response = this.errorResponse(ATT.OP_READ_BY_TYPE_REQ, startHandle, ATT.ECODE_ATTR_NOT_FOUND);
             }
         }
         else {
@@ -11061,16 +13669,16 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             }
             if (secure && !this._aclStream.encrypted) {
-                response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_AUTHENTICATION);
+                response = this.errorResponse(ATT.OP_READ_BY_TYPE_REQ, startHandle, ATT.ECODE_AUTHENTICATION);
             }
             else if (valueHandle) {
                 const callback = ((_valueHandle) => {
                     return (result, _data) => {
                         let callbackResponse = null;
-                        if (ATT_ECODE_SUCCESS === result) {
+                        if (ATT.ECODE_SUCCESS === result) {
                             const dataLength = Math.min(_data.length, this._mtu - 4);
                             callbackResponse = Buffer.alloc(4 + dataLength);
-                            callbackResponse[0] = ATT_OP_READ_BY_TYPE_RESP;
+                            callbackResponse[0] = ATT.OP_READ_BY_TYPE_RESP;
                             callbackResponse[1] = dataLength + 2;
                             callbackResponse.writeUInt16LE(_valueHandle, 2);
                             for (i = 0; i < dataLength; i++) {
@@ -11086,17 +13694,17 @@ class Gatt extends events_1.default.EventEmitter {
                 })(valueHandle);
                 const data = this._handles[valueHandle].value;
                 if (data) {
-                    callback(ATT_ECODE_SUCCESS, data);
+                    callback(ATT.ECODE_SUCCESS, data);
                 }
                 else if (handleAttribute) {
                     handleAttribute.emit("readRequest", 0, callback);
                 }
                 else {
-                    callback(ATT_ECODE_UNLIKELY);
+                    callback(ATT.ECODE_UNLIKELY);
                 }
             }
             else {
-                response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+                response = this.errorResponse(ATT.OP_READ_BY_TYPE_REQ, startHandle, ATT.ECODE_ATTR_NOT_FOUND);
             }
         }
         return response;
@@ -11105,7 +13713,7 @@ class Gatt extends events_1.default.EventEmitter {
         let response = null;
         const requestType = request[0];
         const valueHandle = request.readUInt16LE(1);
-        const offset = requestType === ATT_OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
+        const offset = requestType === ATT.OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
         const handle = this._handles[valueHandle];
         let i;
         if (handle) {
@@ -11115,13 +13723,13 @@ class Gatt extends events_1.default.EventEmitter {
             const callback = ((_requestType, _valueHandle) => {
                 return (_result, _data) => {
                     let callbackResponse = null;
-                    if (ATT_ECODE_SUCCESS === _result) {
+                    if (ATT.ECODE_SUCCESS === _result) {
                         const dataLength = Math.min(_data.length, this._mtu - 1);
                         callbackResponse = Buffer.alloc(1 + dataLength);
                         callbackResponse[0] =
-                            _requestType === ATT_OP_READ_BLOB_REQ
-                                ? ATT_OP_READ_BLOB_RESP
-                                : ATT_OP_READ_RESP;
+                            _requestType === ATT.OP_READ_BLOB_REQ
+                                ? ATT.OP_READ_BLOB_RESP
+                                : ATT.OP_READ_RESP;
                         for (i = 0; i < dataLength; i++) {
                             callbackResponse[1 + i] = _data[i];
                         }
@@ -11134,7 +13742,7 @@ class Gatt extends events_1.default.EventEmitter {
                 };
             })(requestType, valueHandle);
             if (handleType === "service" || handleType === "includedService") {
-                result = ATT_ECODE_SUCCESS;
+                result = ATT.ECODE_SUCCESS;
                 data = Buffer.from(handle.uuid
                     .match(/.{1,2}/g)
                     .reverse()
@@ -11145,7 +13753,7 @@ class Gatt extends events_1.default.EventEmitter {
                     .match(/.{1,2}/g)
                     .reverse()
                     .join(""), "hex");
-                result = ATT_ECODE_SUCCESS;
+                result = ATT.ECODE_SUCCESS;
                 data = Buffer.alloc(3 + uuid.length);
                 data.writeUInt8(handle.properties, 0);
                 data.writeUInt16LE(handle.valueHandle, 1);
@@ -11165,12 +13773,12 @@ class Gatt extends events_1.default.EventEmitter {
                 }
                 if (handleProperties & 0x02) {
                     if (handleSecure & 0x02 && !this._aclStream.encrypted) {
-                        result = ATT_ECODE_AUTHENTICATION;
+                        result = ATT.ECODE_AUTHENTICATION;
                     }
                     else {
                         data = handle.value;
                         if (data) {
-                            result = ATT_ECODE_SUCCESS;
+                            result = ATT.ECODE_SUCCESS;
                         }
                         else {
                             handleAttribute.emit("readRequest", offset, callback);
@@ -11178,15 +13786,15 @@ class Gatt extends events_1.default.EventEmitter {
                     }
                 }
                 else {
-                    result = ATT_ECODE_READ_NOT_PERM; // non-readable
+                    result = ATT.ECODE_READ_NOT_PERM; // non-readable
                 }
             }
             if (data && typeof data === "string") {
                 data = Buffer.from(data);
             }
-            if (result === ATT_ECODE_SUCCESS && data && offset) {
+            if (result === ATT.ECODE_SUCCESS && data && offset) {
                 if (data.length < offset) {
-                    result = ATT_ECODE_INVALID_OFFSET;
+                    result = ATT.ECODE_INVALID_OFFSET;
                     data = null;
                 }
                 else {
@@ -11198,14 +13806,14 @@ class Gatt extends events_1.default.EventEmitter {
             }
         }
         else {
-            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+            response = this.errorResponse(requestType, valueHandle, ATT.ECODE_INVALID_HANDLE);
         }
         return response;
     }
     handleWriteRequestOrCommand(request) {
         let response = null;
         const requestType = request[0];
-        const withoutResponse = requestType === ATT_OP_WRITE_CMD;
+        const withoutResponse = requestType === ATT.OP_WRITE_CMD;
         const valueHandle = request.readUInt16LE(1);
         const data = request.slice(3);
         const offset = 0;
@@ -11222,8 +13830,8 @@ class Gatt extends events_1.default.EventEmitter {
                     return (result) => {
                         if (!_withoutResponse) {
                             let callbackResponse = null;
-                            if (ATT_ECODE_SUCCESS === result) {
-                                callbackResponse = Buffer.from([ATT_OP_WRITE_RESP]);
+                            if (ATT.ECODE_SUCCESS === result) {
+                                callbackResponse = Buffer.from([ATT.OP_WRITE_RESP]);
                             }
                             else {
                                 callbackResponse = this.errorResponse(_requestType, _valueHandle, result);
@@ -11235,12 +13843,12 @@ class Gatt extends events_1.default.EventEmitter {
                 })(requestType, valueHandle, withoutResponse);
                 if (handleSecure & (withoutResponse ? 0x04 : 0x08) &&
                     !this._aclStream.encrypted) {
-                    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_AUTHENTICATION);
+                    response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                 }
                 else if (handle.type === "descriptor" || handle.uuid === "2902") {
                     let result = null;
                     if (data.length !== 2) {
-                        result = ATT_ECODE_INVAL_ATTR_VALUE_LEN;
+                        result = ATT.ECODE_INVAL_ATTR_VALUE_LEN;
                     }
                     else {
                         const value = data.readUInt16LE(0);
@@ -11255,7 +13863,7 @@ class Gatt extends events_1.default.EventEmitter {
                                     let i;
                                     if (useNotify) {
                                         const notifyMessage = Buffer.alloc(3 + dataLength);
-                                        notifyMessage.writeUInt8(ATT_OP_HANDLE_NOTIFY, 0);
+                                        notifyMessage.writeUInt8(ATT.OP_HANDLE_NOTIFY, 0);
                                         notifyMessage.writeUInt16LE(_valueHandle, 1);
                                         for (i = 0; i < dataLength; i++) {
                                             notifyMessage[3 + i] = _data[i];
@@ -11266,7 +13874,7 @@ class Gatt extends events_1.default.EventEmitter {
                                     }
                                     else if (useIndicate) {
                                         const indicateMessage = Buffer.alloc(3 + dataLength);
-                                        indicateMessage.writeUInt8(ATT_OP_HANDLE_IND, 0);
+                                        indicateMessage.writeUInt8(ATT.OP_HANDLE_IND, 0);
                                         indicateMessage.writeUInt16LE(_valueHandle, 1);
                                         for (i = 0; i < dataLength; i++) {
                                             indicateMessage[3 + i] = _data[i];
@@ -11284,7 +13892,7 @@ class Gatt extends events_1.default.EventEmitter {
                         else {
                             handleAttribute.emit("unsubscribe");
                         }
-                        result = ATT_ECODE_SUCCESS;
+                        result = ATT.ECODE_SUCCESS;
                     }
                     callback(result);
                 }
@@ -11293,11 +13901,11 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             }
             else {
-                response = this.errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
+                response = this.errorResponse(requestType, valueHandle, ATT.ECODE_WRITE_NOT_PERM);
             }
         }
         else {
-            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+            response = this.errorResponse(requestType, valueHandle, ATT.ECODE_INVALID_HANDLE);
         }
         return response;
     }
@@ -11315,11 +13923,11 @@ class Gatt extends events_1.default.EventEmitter {
                 const handleSecure = handle.secure;
                 if (handleProperties && handleProperties & 0x08) {
                     if (handleSecure & 0x08 && !this._aclStream.encrypted) {
-                        response = this.errorResponse(requestType, valueHandle, ATT_ECODE_AUTHENTICATION);
+                        response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                     }
                     else if (this._preparedWriteRequest) {
                         if (this._preparedWriteRequest.handle !== handle) {
-                            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_UNLIKELY);
+                            response = this.errorResponse(requestType, valueHandle, ATT.ECODE_UNLIKELY);
                         }
                         else if (offset ===
                             this._preparedWriteRequest.offset +
@@ -11330,10 +13938,10 @@ class Gatt extends events_1.default.EventEmitter {
                             ]);
                             response = Buffer.alloc(request.length);
                             request.copy(response);
-                            response[0] = ATT_OP_PREP_WRITE_RESP;
+                            response[0] = ATT.OP_PREP_WRITE_RESP;
                         }
                         else {
-                            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_OFFSET);
+                            response = this.errorResponse(requestType, valueHandle, ATT.ECODE_INVALID_OFFSET);
                         }
                     }
                     else {
@@ -11345,19 +13953,19 @@ class Gatt extends events_1.default.EventEmitter {
                         };
                         response = Buffer.alloc(request.length);
                         request.copy(response);
-                        response[0] = ATT_OP_PREP_WRITE_RESP;
+                        response[0] = ATT.OP_PREP_WRITE_RESP;
                     }
                 }
                 else {
-                    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
+                    response = this.errorResponse(requestType, valueHandle, ATT.ECODE_WRITE_NOT_PERM);
                 }
             }
             else {
-                response = this.errorResponse(requestType, valueHandle, ATT_ECODE_ATTR_NOT_LONG);
+                response = this.errorResponse(requestType, valueHandle, ATT.ECODE_ATTR_NOT_LONG);
             }
         }
         else {
-            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+            response = this.errorResponse(requestType, valueHandle, ATT.ECODE_INVALID_HANDLE);
         }
         return response;
     }
@@ -11367,14 +13975,14 @@ class Gatt extends events_1.default.EventEmitter {
         const flag = request[1];
         if (this._preparedWriteRequest) {
             if (flag === 0x00) {
-                response = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
+                response = Buffer.from([ATT.OP_EXEC_WRITE_RESP]);
             }
             else if (flag === 0x01) {
                 const callback = ((_requestType, _valueHandle) => {
                     return (result) => {
                         let callbackResponse = null;
-                        if (ATT_ECODE_SUCCESS === result) {
-                            callbackResponse = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
+                        if (ATT.ECODE_SUCCESS === result) {
+                            callbackResponse = Buffer.from([ATT.OP_EXEC_WRITE_RESP]);
                         }
                         else {
                             callbackResponse = this.errorResponse(_requestType, _valueHandle, result);
@@ -11386,12 +13994,12 @@ class Gatt extends events_1.default.EventEmitter {
                 this._preparedWriteRequest.handle.attribute.emit("writeRequest", this._preparedWriteRequest.data, this._preparedWriteRequest.offset, false, callback);
             }
             else {
-                response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
+                response = this.errorResponse(requestType, 0x0000, ATT.ECODE_UNLIKELY);
             }
             this._preparedWriteRequest = null;
         }
         else {
-            response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
+            response = this.errorResponse(requestType, 0x0000, ATT.ECODE_UNLIKELY);
         }
         return response;
     }
@@ -11418,11 +14026,28 @@ exports.default = Gatt;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('mgmt');
+/**
+ * @ignore
+ */
 const debug = () => {
 };
+/**
+ * @ignore
+ */
 const LTK_INFO_SIZE = 36;
+/**
+ * @ignore
+ */
 const MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
+/**
+ * @ignore
+ */
 class Mgmt {
     constructor(hciProtocol) {
         this._ltkInfos = [];
@@ -11493,18 +14118,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const events = __webpack_require__("./node_modules/events/events.js");
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js"));
 const mgmt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js"));
-const SMP_CID = 0x0006;
-const SMP_PAIRING_REQUEST = 0x01;
-const SMP_PAIRING_RESPONSE = 0x02;
-const SMP_PAIRING_CONFIRM = 0x03;
-const SMP_PAIRING_RANDOM = 0x04;
-const SMP_PAIRING_FAILED = 0x05;
-const SMP_ENCRYPT_INFO = 0x06;
-const SMP_MASTER_IDENT = 0x07;
-const SMP_UNSPECIFIED = 0x08;
+var SMP;
+(function (SMP) {
+    SMP.CID = 0x0006;
+    SMP.PAIRING_REQUEST = 0x01;
+    SMP.PAIRING_RESPONSE = 0x02;
+    SMP.PAIRING_CONFIRM = 0x03;
+    SMP.PAIRING_RANDOM = 0x04;
+    SMP.PAIRING_FAILED = 0x05;
+    SMP.ENCRYPT_INFO = 0x06;
+    SMP.MASTER_IDENT = 0x07;
+    SMP.UNSPECIFIED = 0x08;
+})(SMP || (SMP = {}));
+/**
+ * @ignore
+ */
 class Smp extends events.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress, hciProtocol) {
         super();
@@ -11533,29 +14169,29 @@ class Smp extends events.EventEmitter {
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
-        if (cid !== SMP_CID) {
+        if (cid !== SMP.CID) {
             return;
         }
         const code = data.readUInt8(0);
-        if (SMP_PAIRING_REQUEST === code) {
+        if (SMP.PAIRING_REQUEST === code) {
             this.handlePairingRequest(data);
         }
-        else if (SMP_PAIRING_CONFIRM === code) {
+        else if (SMP.PAIRING_CONFIRM === code) {
             this.handlePairingConfirm(data);
         }
-        else if (SMP_PAIRING_RANDOM === code) {
+        else if (SMP.PAIRING_RANDOM === code) {
             this.handlePairingRandom(data);
         }
-        else if (SMP_PAIRING_FAILED === code) {
+        else if (SMP.PAIRING_FAILED === code) {
             this.handlePairingFailed(data);
         }
     }
     onAclStreamEncryptChange(encrypted) {
         if (encrypted) {
             if (this._stk && this._diversifier && this._random) {
-                this.write(Buffer.concat([Buffer.from([SMP_ENCRYPT_INFO]), this._stk]));
+                this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
                 this.write(Buffer.concat([
-                    Buffer.from([SMP_MASTER_IDENT]),
+                    Buffer.from([SMP.MASTER_IDENT]),
                     this._diversifier,
                     this._random,
                 ]));
@@ -11563,7 +14199,7 @@ class Smp extends events.EventEmitter {
         }
     }
     onAclStreamLtkNegReply() {
-        this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_UNSPECIFIED]));
+        this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.UNSPECIFIED]));
         this.emit("fail");
     }
     onAclStreamEnd() {
@@ -11575,7 +14211,7 @@ class Smp extends events.EventEmitter {
     handlePairingRequest(data) {
         this._preq = data;
         this._pres = Buffer.from([
-            SMP_PAIRING_RESPONSE,
+            SMP.PAIRING_RESPONSE,
             0x03,
             0x00,
             0x01,
@@ -11590,14 +14226,14 @@ class Smp extends events.EventEmitter {
         this._tk = Buffer.from("00000000000000000000000000000000", "hex");
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
-            Buffer.from([SMP_PAIRING_CONFIRM]),
+            Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]));
     }
     handlePairingRandom(data) {
         const r = data.slice(1);
         const pcnf = Buffer.concat([
-            Buffer.from([SMP_PAIRING_CONFIRM]),
+            Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
@@ -11605,10 +14241,10 @@ class Smp extends events.EventEmitter {
             this._random = Buffer.from("0000000000000000", "hex");
             this._stk = crypto_1.default.s1(this._tk, this._r, r);
             this._mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
-            this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
+            this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
         }
         else {
-            this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_PAIRING_CONFIRM]));
+            this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.PAIRING_CONFIRM]));
             this.emit("fail");
         }
     }
@@ -11616,7 +14252,7 @@ class Smp extends events.EventEmitter {
         this.emit("fail");
     }
     write(data) {
-        this._aclStream.write(SMP_CID, data);
+        this._aclStream.write(SMP.CID, data);
     }
 }
 exports.default = Smp;
@@ -11632,18 +14268,488 @@ exports.default = Smp;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Here we will show letters and pictures on display on obniz Board.
+ * ![](media://obniz_display_sphere.gif)
+ * @category Embeds
+ */
 class Display {
-    constructor(obniz) {
+    constructor(obniz, info) {
+        this.autoFlush = true;
+        this.fontSize = 16;
+        this._pos = { x: 0, y: 0 };
+        this._colorDepthCapabilities = [1];
+        this._colorDepth = 1;
+        this._color = "#000";
+        this._paper_white = true;
+        this._raw_alternate = false;
         this.Obniz = obniz;
-        this.width = 128;
-        this.height = 64;
+        this.width = info.width;
+        this.height = info.height;
+        this._colorDepthCapabilities = info.color_depth;
+        this._paper_white = info.paper_white;
+        this._raw_alternate = info.raw_alternate;
         this._canvas = undefined;
         this._reset();
     }
-    _reset() {
-        this._pos = { x: 0, y: 0 };
-        this.autoFlush = true;
+    /**
+     * (It does not work with node.js. Please use display.draw())
+     *
+     * This changes the font.
+     * The options for fontFamily and fontSize depend on your browser.
+     *
+     * The default font is Arial 16px.
+     * If you set the parameter to null, you will be using the default font.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.font('Avenir',30)
+     * obniz.display.print("Avenir")
+     *
+     * obniz.display.font(null,30) //default font(Arial) 30px
+     * obniz.display.font('Avenir') //Avenir with default size(16px)
+     * ```
+     * ![](media://obniz_display_samples3.jpg)
+     * ![](media://obniz_display_samples2.jpg)
+     * ![](media://obniz_display_samples1.jpg)
+     *
+     * @param font font name
+     * @param size size of font
+     */
+    font(font, size) {
+        const ctx = this._ctx();
+        if (typeof size !== "number") {
+            size = 16;
+        }
+        if (typeof font !== "string") {
+            font = "Arial";
+        }
+        this.fontSize = size;
+        ctx.font = "" + +" " + size + "px " + font;
+    }
+    /**
+     * Setting color for fill/stroke style for further rendering.
+     *
+     * ```javascript
+     * obniz.display.color('#FF0000');
+     * obniz.display.rect(0, 0, 10, 10, false)
+     * obniz.display.color('blue');
+     * obniz.display.rect(0, 10, 10, 10, false)
+     * ```
+     *
+     * @param depth css acceptable color definition
+     */
+    setColor(color) {
+        this._color = color;
+        const ctx = this._ctx();
+        ctx.fillStyle = this._color;
+        ctx.strokeStyle = this._color;
+    }
+    /**
+     * Getting color for fill/stroke style for further rendering.
+     *
+     * ```javascript
+     * const current = obniz.display.getColor();
+     * ```
+     *
+     */
+    getColor() {
+        return this._color;
+    }
+    /**
+     * Clear the display.
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.clear();
+     * ```
+     */
+    clear() {
+        const ctx = this._ctx();
+        this._pos.x = 0;
+        this._pos.y = 0;
+        if (ctx) {
+            const currentFillStyle = ctx.fillStyle;
+            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.fillStyle = currentFillStyle;
+            this.draw(ctx);
+        }
+        else {
+            const obj = {};
+            obj.display = {
+                clear: true,
+            };
+            this.Obniz.send(obj);
+        }
+    }
+    /**
+     * (This does not work with node.js. Please use display.draw())
+     * It changes the display position of a text. If you are using print() to display a text, position it to top left.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.pos(0,30);
+     * obniz.display.print("YES. こんにちは");
+     * ```
+     * ![](media://obniz_display_pos.jpg)
+     *  @param x
+     *  @param y
+     */
+    pos(x, y) {
+        this._ctx(); // crete first
+        if (typeof x === "number") {
+            this._pos.x = x;
+        }
+        if (typeof y === "number") {
+            this._pos.y = y;
+        }
+        return this._pos;
+    }
+    /**
+     * Print text on display.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.print("Hello!");
+     * ```
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.font('Serif',18)
+     * obniz.display.print("Hello World🧡")
+     * ```
+     * ![](media://obniz_display_print.jpg)
+     *
+     *  @param text Text to display. With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
+     */
+    print(text) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
+            this.draw(ctx);
+            this._pos.y += this.fontSize;
+        }
+        else {
+            const obj = {};
+            obj.display = {
+                text: "" + text,
+            };
+            this.Obniz.send(obj);
+        }
+    }
+    /**
+     * (It does not work with node.js. Please use display.draw())
+     *
+     *
+     * Now we draw a line between two points.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.line(30, 30, 100, 30);
+     * obniz.display.rect(20, 20, 20, 20);
+     * obniz.display.circle(100, 30, 20);
+     *
+     * obniz.display.line(60, 50, 100, 30);
+     * obniz.display.rect(50, 40, 20, 20, true);
+     * obniz.display.line(50, 10, 100, 30);
+     * obniz.display.circle(50, 10, 10, true);
+     * ```
+     *
+     * ![](media://obniz_display_draws.jpg)
+     *
+     * @param x_0
+     * @param y_0
+     * @param x_1
+     * @param y_1
+     */
+    line(x_0, y_0, x_1, y_1) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(x_0, y_0);
+            ctx.lineTo(x_1, y_1);
+            ctx.stroke();
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    /**
+     * (It does not work with node.js. Please use display.draw())
+     *
+     *
+     * This draws a rectangle.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.rect(10, 10, 20, 20);
+     * obniz.display.rect(20, 20, 20, 20, true); // filled rect
+     * ```
+     *
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param mustFill
+     */
+    rect(x, y, width, height, mustFill) {
+        const ctx = this._ctx();
+        if (ctx) {
+            if (mustFill) {
+                ctx.fillRect(x, y, width, height);
+            }
+            else {
+                ctx.strokeRect(x, y, width, height);
+            }
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    /**
+     * (It does not work with node.js. Please use display.draw())
+     *
+     * This draws a circle.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.circle(40, 30, 20);
+     * obniz.display.circle(90, 30, 20, true); // filled circle
+     * ```
+     *
+     * @param x
+     * @param y
+     * @param r
+     * @param mustFill
+     */
+    circle(x, y, r, mustFill) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            if (mustFill) {
+                ctx.fill();
+            }
+            else {
+                ctx.stroke();
+            }
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    /**
+     * This shows QR code with given text and correction level.
+     * The correction level can be
+     *
+     * - L
+     * - M(default)
+     * - Q
+     * - H
+     *
+     * H is the strongest error correction.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.qr("https://obniz.io")
+     * ```
+     * @param text
+     * @param correction
+     */
+    qr(text, correction) {
+        const obj = {};
+        obj.display = {
+            qr: {
+                text,
+            },
+        };
+        if (correction) {
+            obj.display.qr.correction = correction;
+        }
+        this.Obniz.send(obj);
+    }
+    /**
+     * Draw BMP image
+     *
+     * ```javascript
+     * obniz.display.raw([255, 255,,,,,])
+     * ```
+     *
+     * You should care about colorDepth before sending raw datas.
+     *
+     * @param data data array.
+     * The order is as below.
+     * {1byte} {2byte} {3byte}...{16byte}
+     * {17byte} {18byte} {19byte}...
+     * .....
+     * .....................
+     */
+    raw(data) {
+        const obj = {};
+        obj.display = {
+            raw: data,
+        };
+        if (this._colorDepth > 1) {
+            obj.display.color_depth = this._colorDepth;
+        }
+        this.Obniz.send(obj);
+    }
+    /**
+     * Setting color depth for all communication for the display
+     * higher number will get more beautiful colors and lowest number 1 is just monochrome.
+     * But 16 bit color mode is 16 times data bytes needed for same size rendering.
+     *
+     * ```javascript
+     * obniz.display.colorDepth(4); // => 4bit color mode.
+     * ```
+     *
+     * @param depth monochrome display always 1. For color display 1(monochrome) and 4 and 16 can be selected.
+     * default value is highest color depth for your display.
+     * If you call just
+     */
+    setColorDepth(depth) {
+        const found = this._colorDepthCapabilities.find((element) => element === depth);
+        if (found) {
+            this._colorDepth = depth;
+        }
+        else {
+            throw new Error(`This device can't accept depth ${depth}. availables are ${JSON.stringify(this._colorDepthCapabilities)}`);
+        }
+    }
+    /**
+     * Getting color depth for all communication for the display
+     *
+     * ```javascript
+     * const current = obniz.display.getColorDepth(); // => return current depth. 1 or higher
+     * ```
+     */
+    getColorDepth() {
+        return this._colorDepth;
+    }
+    /**
+     * @ignore
+     * @param io
+     * @param moduleName
+     * @param funcName
+     */
+    setPinName(io, moduleName, funcName) {
+        const obj = {};
+        obj.display = {};
+        obj.display.pin_assign = {};
+        obj.display.pin_assign[io] = {
+            module_name: moduleName,
+            pin_name: funcName,
+        };
+        this.Obniz.send(obj);
+    }
+    /**
+     * @ignore
+     * @param moduleName
+     * @param data
+     */
+    setPinNames(moduleName, data) {
+        const obj = {};
+        obj.display = {};
+        obj.display.pin_assign = {};
+        let noAssignee = true;
+        for (const key in data) {
+            noAssignee = false;
+            obj.display.pin_assign[key] = {
+                module_name: moduleName,
+                pin_name: data[key],
+            };
+        }
+        if (!noAssignee) {
+            this.Obniz.send(obj);
+        }
+    }
+    /**
+     * Draw Display from HTML5 Canvas context.
+     * With node-canvas, this works with node.js.
+     *
+     * - on HTML, load ctx from existing
+     *
+     * ```javascript
+     * let ctx = $("#canvas")[0].getContext('2d');
+     *
+     * ctx.fillStyle = "white";
+     * ctx.font = "30px Avenir";
+     * ctx.fillText('Avenir', 0, 40);
+     *
+     * obniz.display.draw(ctx);
+     * ```
+     *
+     * - on HTML, create new canvas dom and load it.
+     *
+     * ```javascript
+     *
+     * let ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
+     *
+     * ctx.fillStyle = "white";
+     * ctx.font = "30px Avenir";
+     * ctx.fillText('Avenir', 0, 40);
+     *
+     * obniz.display.draw(ctx);
+     * ```
+     *
+     * - running with node.js
+     *
+     * ```javascript
+     * //    npm install canvas. ( version 2.0.0 or later required )
+     * const { createCanvas } = require('canvas');
+     * const canvas = createCanvas(128, 64);
+     * const ctx = canvas.getContext('2d');
+     *
+     * ctx.fillStyle = "white";
+     * ctx.font = "30px Avenir";
+     * ctx.fillText('Avenir', 0, 40);
+     *
+     * obniz.display.draw(ctx);
+     * ```
+     *
+     *
+     * @param ctx
+     */
+    draw(ctx) {
+        if (this.autoFlush) {
+            this._draw(ctx);
+        }
+    }
+    /**
+     * You can specify to transfer the displayed data or not.
+     * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+     *
+     * Use false to stop updating display and true to restart updating.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.drawing(false);
+     * for (var i=0;i<100; i++) {
+     *   var x0 = Math.random() * 128;
+     *   var y0 = Math.random() * 64;
+     *   var x1 = Math.random() * 128;
+     *   var y1 = Math.random() * 64;
+     *   obniz.display.clear();
+     *   obniz.display.line(x0, y0, x1, y1);
+     * }
+     * obniz.display.drawing(true);
+     * ```
+     * @param autoFlush
+     */
+    drawing(autoFlush) {
+        this.autoFlush = !!autoFlush;
+        const ctx = this._ctx();
+        if (ctx) {
+            this.draw(ctx);
+        }
     }
     warnCanvasAvailability() {
         if (this.Obniz.isNode) {
@@ -11652,6 +14758,26 @@ class Display {
         else {
             throw new Error("obniz.js cant create canvas element to body");
         }
+    }
+    _reset_canvas() {
+        // reset canvas
+        if (this._canvas) {
+            const ctx = this._canvas.getContext("2d");
+            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.fillStyle = this._color;
+            ctx.strokeStyle = this._color;
+            ctx.font = `${this.fontSize}px Arial`;
+        }
+    }
+    _reset() {
+        this.autoFlush = true;
+        // reset to default
+        this._pos = { x: 0, y: 0 };
+        this._color = this._paper_white ? "#000" : "#FFF";
+        this.fontSize = this.height > 200 ? 32 : 16;
+        this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+        this._reset_canvas();
     }
     _preparedCanvas() {
         if (this._canvas) {
@@ -11670,27 +14796,25 @@ class Display {
         else {
             const identifier = "obnizcanvas-" + this.Obniz.id;
             let canvas = document.getElementById(identifier);
-            if (!canvas) {
+            if (canvas) {
+                this._canvas = canvas;
+            }
+            else {
                 canvas = document.createElement("canvas");
                 canvas.setAttribute("id", identifier);
                 canvas.style.visibility = "hidden";
                 canvas.width = this.width;
                 canvas.height = this.height;
-                canvas.style["-webkit-font-smoothing"] = "none";
+                if (this._colorDepthCapabilities.length === 1) {
+                    // for monochro display
+                    canvas.style["-webkit-font-smoothing"] = "none";
+                }
                 const body = document.getElementsByTagName("body")[0];
                 body.appendChild(canvas);
+                this._canvas = canvas;
+                this._reset_canvas();
             }
-            this._canvas = canvas;
         }
-        const ctx = this._canvas.getContext("2d");
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, this.width, this.height);
-        ctx.fillStyle = "#FFF";
-        ctx.strokeStyle = "#FFF";
-        this._pos.x = 0;
-        this._pos.y = 0;
-        this.fontSize = 16;
-        ctx.font = `${this.fontSize}px Arial`;
         return this._canvas;
     }
     _ctx() {
@@ -11699,182 +14823,75 @@ class Display {
             return canvas.getContext("2d");
         }
     }
-    font(font, size) {
-        const ctx = this._ctx();
-        if (typeof size !== "number") {
-            size = 16;
-        }
-        if (typeof font !== "string") {
-            font = "Arial";
-        }
-        this.fontSize = size;
-        ctx.font = "" + +" " + size + "px " + font;
-    }
-    clear() {
-        const ctx = this._ctx();
-        this._pos.x = 0;
-        this._pos.y = 0;
-        if (ctx) {
-            ctx.fillStyle = "#000";
-            ctx.fillRect(0, 0, this.width, this.height);
-            ctx.fillStyle = "#FFF";
-            ctx.strokeStyle = "#FFF";
-            this.draw(ctx);
-        }
-        else {
-            const obj = {};
-            obj.display = {
-                clear: true,
-            };
-            this.Obniz.send(obj);
-        }
-    }
-    pos(x, y) {
-        this._ctx(); // crete first
-        if (typeof x === "number") {
-            this._pos.x = x;
-        }
-        if (typeof y === "number") {
-            this._pos.y = y;
-        }
-        return this._pos;
-    }
-    print(text) {
-        const ctx = this._ctx();
-        if (ctx) {
-            ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
-            this.draw(ctx);
-            this._pos.y += this.fontSize;
-        }
-        else {
-            const obj = {};
-            obj.display = {
-                text: "" + text,
-            };
-            this.Obniz.send(obj);
-        }
-    }
-    line(x_0, y_0, x_1, y_1) {
-        const ctx = this._ctx();
-        if (ctx) {
-            ctx.beginPath();
-            ctx.moveTo(x_0, y_0);
-            ctx.lineTo(x_1, y_1);
-            ctx.stroke();
-            this.draw(ctx);
-        }
-        else {
-            this.warnCanvasAvailability();
-        }
-    }
-    rect(x, y, width, height, mustFill) {
-        const ctx = this._ctx();
-        if (ctx) {
-            if (mustFill) {
-                ctx.fillRect(x, y, width, height);
-            }
-            else {
-                ctx.strokeRect(x, y, width, height);
-            }
-            this.draw(ctx);
-        }
-        else {
-            this.warnCanvasAvailability();
-        }
-    }
-    circle(x, y, r, mustFill) {
-        const ctx = this._ctx();
-        if (ctx) {
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            if (mustFill) {
-                ctx.fill();
-            }
-            else {
-                ctx.stroke();
-            }
-            this.draw(ctx);
-        }
-        else {
-            this.warnCanvasAvailability();
-        }
-    }
-    qr(text, correction) {
-        const obj = {};
-        obj.display = {
-            qr: {
-                text,
-            },
-        };
-        if (correction) {
-            obj.display.qr.correction = correction;
-        }
-        this.Obniz.send(obj);
-    }
-    raw(data) {
-        const obj = {};
-        obj.display = {
-            raw: data,
-        };
-        this.Obniz.send(obj);
-    }
-    setPinName(io, moduleName, funcName) {
-        const obj = {};
-        obj.display = {};
-        obj.display.pin_assign = {};
-        obj.display.pin_assign[io] = {
-            module_name: moduleName,
-            pin_name: funcName,
-        };
-        this.Obniz.send(obj);
-    }
-    setPinNames(moduleName, data) {
-        const obj = {};
-        obj.display = {};
-        obj.display.pin_assign = {};
-        let noAssignee = true;
-        for (const key in data) {
-            noAssignee = false;
-            obj.display.pin_assign[key] = {
-                module_name: moduleName,
-                pin_name: data[key],
-            };
-        }
-        if (!noAssignee) {
-            this.Obniz.send(obj);
-        }
-    }
     _draw(ctx) {
-        const stride = this.width / 8;
-        const vram = new Array(stride * 64);
+        const raw = new Array(this.width * this.height * this._colorDepth / 8);
         const imageData = ctx.getImageData(0, 0, this.width, this.height);
         const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-            const index = Math.floor(i / 4);
-            const line = Math.floor(index / this.width);
-            const col = Math.floor((index - line * this.width) / 8);
-            const bits = Math.floor(index - line * this.width) % 8;
-            if (bits === 0) {
-                vram[line * stride + col] = 0x00;
-            }
-            if (brightness > 0x7f) {
-                vram[line * stride + col] |= 0x80 >> bits;
+        if (this._colorDepth === 16) {
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
+                raw[pixel_index * 2] = (hexColor >> 8) & 0xFF;
+                raw[pixel_index * 2 + 1] = hexColor & 0xFF;
             }
         }
-        this.raw(vram);
-    }
-    draw(ctx) {
-        if (this.autoFlush) {
-            this._draw(ctx);
+        else if (this._colorDepth === 4) {
+            const stride = this.width / 2;
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+                const line = Math.floor(pixel_index / this.width);
+                const col = Math.floor((pixel_index - line * this.width) / 2);
+                const bits = Math.floor(pixel_index - line * this.width) % 2;
+                let pixel = 0b0000;
+                if (red > 0x7F) {
+                    pixel |= 0b1000;
+                }
+                if (green > 0x7F) {
+                    pixel |= 0b0100;
+                }
+                if (blue > 0x7F) {
+                    pixel |= 0b0010;
+                }
+                if (brightness > 0x7F) {
+                    pixel |= 0b0001;
+                }
+                if (bits === 0) {
+                    raw[line * stride + col] = pixel << 4;
+                }
+                if (brightness > 0x7f) {
+                    raw[line * stride + col] |= pixel;
+                }
+            }
         }
-    }
-    drawing(autoFlush) {
-        this.autoFlush = !!autoFlush;
-        const ctx = this._ctx();
-        if (ctx) {
-            this.draw(ctx);
+        else {
+            const stride = this.width / 8;
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+                const row = Math.floor(pixel_index / this.width);
+                const col = Math.floor((pixel_index - row * this.width) / 8);
+                const bits = Math.floor(pixel_index - row * this.width) % 8;
+                if (bits === 0) {
+                    raw[row * stride + col] = 0x00;
+                }
+                if (brightness > 0x7f) {
+                    raw[row * stride + col] |= 0x80 >> bits;
+                }
+            }
         }
+        if (this._raw_alternate) {
+            for (let i = 0; i < raw.length; i++) {
+                raw[i] = (~raw[i]) & 0xFF;
+            }
+        }
+        this.raw(raw);
     }
 }
 exports.default = Display;
@@ -11889,22 +14906,33 @@ exports.default = Display;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * The embedded switch on obniz Board.
+ * @category Embeds
+ */
 class ObnizSwitch {
-    constructor(Obniz) {
+    constructor(Obniz, info) {
         this.Obniz = Obniz;
         this._reset();
     }
-    _reset() {
-        this.observers = [];
-        this.onChangeForStateWait = () => {
-        };
-    }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * This determines the current status of the switch.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.display.clear();
+     * var state = await obniz.switch.getWait();
+     * if (state === "push") {
+     *   obniz.display.print("Now Pressed");
+     * }
+     * ```
+     *
+     */
     getWait() {
         const self = this;
         return new Promise((resolve, reject) => {
@@ -11914,11 +14942,31 @@ class ObnizSwitch {
             self.addObserver(resolve);
         });
     }
-    stateWait(isPressed) {
+    /**
+     * With this you wait until the switch status changes to state.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.switch.stateWait("push");
+     * console.log("switch pushed");
+     *
+     * await obniz.switch.stateWait("left");
+     * console.log("switch left");
+     *
+     * await obniz.switch.stateWait("right");
+     * console.log("switch right");
+     *
+     * await obniz.switch.stateWait("none");
+     * console.log("switch none");
+     * ```
+     *
+     * @param state state for wait
+     */
+    stateWait(state) {
         const self = this;
         return new Promise((resolve, reject) => {
             self.onChangeForStateWait = (pressed) => {
-                if (isPressed === pressed) {
+                if (state === pressed) {
                     self.onChangeForStateWait = () => {
                     };
                     resolve();
@@ -11926,6 +14974,10 @@ class ObnizSwitch {
             };
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         this.state = obj.state;
         if (this.onchange) {
@@ -11935,6 +14987,17 @@ class ObnizSwitch {
         const callback = this.observers.shift();
         if (callback) {
             callback(this.state);
+        }
+    }
+    _reset() {
+        this.state = "none";
+        this.observers = [];
+        this.onChangeForStateWait = () => {
+        };
+    }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
         }
     }
 }
@@ -11948,21 +15011,21 @@ exports.default = ObnizSwitch;
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -11971,6 +15034,10 @@ module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class HW {
     static getDefinitionFor(hw) {
@@ -12002,14 +15069,14 @@ exports.default = HW;
 /***/ "./dist/src/obniz/libs/hw/obnizb1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -12018,22 +15085,37 @@ module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb2\",\"peripherals\":{
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Peripherals
+ */
 class PeripheralAD {
     constructor(obniz, id) {
         this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
+    /**
+     * @ignore
+     */
     _reset() {
         this.value = 0.0;
         this.observers = [];
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * This starts measuring voltage on ioX until end() is called.
+     * ```Javascript
+     * obniz.ad0.start(function(voltage){
+     *  console.log("changed to "+voltage+" v")
+     * });
+     * ```
+     * @param callback  called when voltage gets changed.
+     * @param callback.voltage  voltage
+     */
     start(callback) {
         this.onchange = callback;
         const obj = {};
@@ -12043,6 +15125,20 @@ class PeripheralAD {
         this.Obniz.send(obj);
         return this.value;
     }
+    /**
+     * This measures the voltage just once and returns its value.
+     * This function will pause until ad result arrives to your js.
+     *
+     * ```javascript
+     * obniz.io0.output(true)
+     * var voltage = await obniz.ad0.getWait();
+     * obniz.io0.output(false)
+     * console.log(""+voltage+" should be closed to 5.00");
+     * ```
+     *
+     * @return measured voltage
+     *
+     */
     getWait() {
         const self = this;
         return new Promise((resolve, reject) => {
@@ -12054,6 +15150,13 @@ class PeripheralAD {
             self.Obniz.send(obj);
         });
     }
+    /**
+     * This stops measuring voltage on ioX.
+     * ```javascript
+     * obniz.ad0.start();
+     * obniz.ad0.end();
+     * ```
+     */
     end() {
         this.onchange = undefined;
         const obj = {};
@@ -12061,6 +15164,10 @@ class PeripheralAD {
         this.Obniz.send(obj);
         return;
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         this.value = obj;
         if (this.onchange) {
@@ -12069,6 +15176,11 @@ class PeripheralAD {
         const callback = this.observers.shift();
         if (callback) {
             callback(obj);
+        }
+    }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
         }
     }
 }
@@ -12084,8 +15196,18 @@ exports.default = PeripheralAD;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver = __webpack_require__("./node_modules/semver/semver.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+/**
+ * @category Peripherals
+ */
 class Directive {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -12093,6 +15215,9 @@ class Directive {
         this._animationIdentifier = 0;
         this._reset();
     }
+    /**
+     * @ignore
+     */
     _reset() {
         for (let i = 0; i < this.observers.length; i++) {
             this.observers[i].reject(new Error("reset called"));
@@ -12100,18 +15225,66 @@ class Directive {
         this.observers = [];
         this._animationIdentifier = 0;
     }
-    addObserver(name, resolve, reject) {
-        if (name && resolve && reject) {
-            this.observers.push({
-                name,
-                resolve,
-                reject,
-            });
-        }
-    }
-    animation(name, status, array, repeat) {
+    /**
+     * io animation is used when you wish to accelerate the serial sequence change of io.
+     *
+     * "Loop" animation can be used.
+     * io changes repeatedly in a sequential manner according to json array.
+     * io and pwm json commands can only be used.
+     *
+     *
+     * obnizOS ver >= 2.0.0 required.
+     *
+     * ```javascript
+     * //javascript
+     * // Javascript Example
+     * obniz.io.animation("animation-1", "loop", [
+     *  {
+     *   duration: 10,
+     *   state: function(index){ // index = 0
+     *     obniz.io0.output(false)
+     *     obniz.io1.output(true)
+     *   }
+     *  },{
+     *    duration: 10,
+     *    state: function(index){ // index = 1
+     *      obniz.io0.output(true)
+     *      obniz.io1.output(false)
+     *    }
+     *  }
+     * ])
+     * ```
+     *
+     * It will generate signals likes below
+     *
+     *  ![](media://ioanimation.png)
+     *
+     * - Remove animation
+     *
+     * ```javascript
+     * obniz.io.animation("animation-1", "loop")
+     * ```
+     *
+     * - Pause animation
+     *
+     * ```javascript
+     * obniz.io.animation("animation-1", "pause")
+     * ```
+     *
+     * - Resume paused animation
+     *
+     * ```javascript
+     * obniz.io.animation("animation-1", "resume")
+     * ```
+     *
+     * @param name name of animation
+     * @param status status of animation
+     * @param animations instructions. This is optional when status is pause``resume.
+     * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
+     */
+    animation(name, status, animations, repeat) {
         if ((typeof repeat === "number" || status === "registrate") &&
-            semver.lt(this.Obniz.firmware_ver, "2.0.0")) {
+            semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
         const obj = {};
@@ -12124,12 +15297,12 @@ class Directive {
         if (typeof repeat === "number") {
             obj.io.animation.repeat = repeat;
         }
-        if (!array) {
-            array = [];
+        if (!animations) {
+            animations = [];
         }
         const states = [];
-        for (let i = 0; i < array.length; i++) {
-            const state = array[i];
+        for (let i = 0; i < animations.length; i++) {
+            const state = animations[i];
             const duration = state.duration;
             const operation = state.state;
             // dry run. and get json commands
@@ -12147,8 +15320,31 @@ class Directive {
         }
         this.Obniz.send(obj);
     }
-    repeatWait(array, repeat) {
-        if (semver.lt(this.Obniz.firmware_ver, "2.0.0")) {
+    /**
+     * It start io aniomation with limited repeat count. And It wait until done.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.io.repeatWait([
+     *   {
+     *     duration: 1000,
+     *     state: function(index){
+     *       obniz.io0.output(true)
+     *     }
+     *   },{
+     *     duration: 1000,
+     *     state: function(index){
+     *       obniz.io0.output(false)
+     *    }
+     *   }
+     * ], 4)
+     * ```
+     *
+     * @param animations instructions
+     * @param repeat 	The number of repeat count of animation.
+     */
+    repeatWait(animations, repeat) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
         if (typeof repeat !== "number" || repeat < 1) {
@@ -12162,10 +15358,14 @@ class Directive {
             if (++this._animationIdentifier > 1000) {
                 this._animationIdentifier = 0;
             }
-            this.animation(name, "loop", array, repeat);
+            this.animation(name, "loop", animations, repeat);
             this.addObserver(name, resolve, reject);
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.animation.status === "finish") {
             for (let i = this.observers.length - 1; i >= 0; i--) {
@@ -12174,6 +15374,15 @@ class Directive {
                     this.observers.splice(i, 1);
                 }
             }
+        }
+    }
+    addObserver(name, resolve, reject) {
+        if (name && resolve && reject) {
+            this.observers.push({
+                name,
+                resolve,
+                reject,
+            });
         }
     }
 }
@@ -12189,11 +15398,21 @@ exports.default = Directive;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * i2c can be used.
+ *  Master/Slave mode.
+ *  But slave mode only works with "written" events. You can't set data to be read.
+ * @category Peripherals
+ */
 class PeripheralI2C {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -12201,16 +15420,50 @@ class PeripheralI2C {
         this._reset();
         this.onerror = undefined;
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.observers = [];
         this.used = false;
         this.onwritten = undefined;
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * It starts i2c on given io sda, scl.
+     *
+     *
+     * Internal pull up is optional for io output setting.
+     * By default it is pull:null.
+     * See more on obniz.ioX.pull().
+     *
+     * For using internal-pull-up, you should specify "3v" to connect to 3.3v targets, and "5v" for 5v targets.
+     * When you choose internal pull up, speed is limited to up to 100khz, because internal pull up is not so tough.
+     * Please add external pull-up resistor on scl/sda and choose pull:null when you need more speed.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000});
+     * obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
+     * var ret = await obniz.i2c0.readWait(0x50, 1);
+     * console.log("read "+ret);
+     * ```
+     *
+     * - use internal pull up
+     *
+     * ```javascript
+     * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000, pull:"5v"});
+     * ```
+     *
+     * - save mode
+     *
+     * ```javascript
+     * obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
+     * ```
+     *
+     * @param arg
+     */
     start(arg) {
         const err = util_1.default._requiredKeys(arg, ["mode", "sda", "scl"]);
         if (err) {
@@ -12301,6 +15554,17 @@ class PeripheralI2C {
         this.used = true;
         this.Obniz.send(obj);
     }
+    /**
+     * It sends data to device which has the address
+     *
+     * ```
+     * // Javascript Example
+     * obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null});
+     * obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
+     * ```
+     * @param address 7bit address only.
+     * @param data Max length is 1024;
+     */
     write(address, data) {
         if (!this.used) {
             throw new Error(`i2c${this.id} is not started`);
@@ -12325,6 +15589,20 @@ class PeripheralI2C {
         };
         this.Obniz.send(obj);
     }
+    /**
+     * It reads data from the device. length defines the length of bytes. The treatment of address is same as write() function.
+     * This function will wait until data is received.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null});
+     * var ret = await obniz.i2c0.readWait(0x50, 1);
+     * console.log("read "+ret);
+     * ```
+     *
+     * @param address
+     * @param length Max is 1024;
+     */
     readWait(address, length) {
         if (!this.used) {
             throw new Error(`i2c${this.id} is not started`);
@@ -12354,6 +15632,10 @@ class PeripheralI2C {
             self.Obniz.send(obj);
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj && typeof obj === "object") {
             if (obj.data) {
@@ -12388,14 +15670,31 @@ class PeripheralI2C {
             }
         }
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
     }
+    /**
+     * end i2c .
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000});
+     * obniz.i2c0.end();
+     * ```
+     */
     end() {
         const obj = {};
         obj["i2c" + this.id] = null;
         this.Obniz.send(obj);
         this.used = false;
+    }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
+        }
     }
 }
 exports.default = PeripheralI2C;
@@ -12410,22 +15709,43 @@ exports.default = PeripheralI2C;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * General purpose IO
+ * This is available on each io (for obniz Board series, it's io0 to io11)
+ * @category Peripherals
+ */
 class PeripheralIO {
     constructor(obniz, id) {
         this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.value = false;
         this.observers = [];
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * Make ioX to output mode and put out 1 or 0.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.io1.output(true); // io1 is 5v
+     * obniz.io2.output(1); //  io2 is 5v
+     * obniz.io3.drive("3v");
+     * obniz.io3.output(1); // io3 is around 3v.
+     * ```
+     *
+     * @param value output value
+     */
     output(value) {
         value = !!value;
         const obj = {};
@@ -12433,6 +15753,25 @@ class PeripheralIO {
         this.value = value;
         this.Obniz.send(obj);
     }
+    /**
+     * This allows you to change output drive method.
+     * By default, it is set as push-pull 5v.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.io0.output(true); // output push-pull 5v
+     *
+     * obniz.io1.drive("3v");
+     * obniz.io1.output(true); // output push-pull 3v
+     *
+     * obniz.io2.pull("5v");
+     * obniz.io2.drive("open-drain");
+     * obniz.io2.output(true); // output open-drain with 5v pull-up
+     * ```
+     *
+     * @param drive
+     *
+     */
     drive(drive) {
         if (typeof drive !== "string") {
             throw new Error("please specify drive methods in string");
@@ -12457,6 +15796,19 @@ class PeripheralIO {
         };
         this.Obniz.send(obj);
     }
+    /**
+     * This enables/disables internal weak pull up/down resistors.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.io0.pull("3v");
+     * obniz.io0.drive("open-drain"); // output open-drain
+     * obniz.io0.output(false);
+     * ```
+     *
+     * @param updown
+     *
+     */
     pull(updown) {
         if (typeof updown !== "string" && updown !== null) {
             throw new Error("please specify pull methods in string");
@@ -12484,6 +15836,13 @@ class PeripheralIO {
         };
         this.Obniz.send(obj);
     }
+    /**
+     * Make ioX to input mode.
+     * Callback function will be called when io changes its input value.
+     *
+     *
+     * @param callback
+     */
     input(callback) {
         this.onchange = callback;
         const obj = {};
@@ -12494,6 +15853,18 @@ class PeripheralIO {
         this.Obniz.send(obj);
         return this.value;
     }
+    /**
+     * Make ioX to input mode.
+     *
+     * And this will return the current input value.
+     * It pauses the process until the value is returned.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var value = await obniz.io0.inputWait();
+     * console.log(value);
+     * ```
+     */
     inputWait() {
         const self = this;
         return new Promise((resolve, reject) => {
@@ -12506,11 +15877,30 @@ class PeripheralIO {
             self.Obniz.send(obj);
         });
     }
+    /**
+     * This ends output/input on ioX.
+     *
+     *
+     * This function is effective only when using ioX.output() or ioX.input().
+     * This won't be called when AD/UART/etc are used.
+     * Pull-up down also will not affected.
+     *
+     * ```
+     * // Javascript Example
+     * obniz.io0.output(true)
+     * obniz.io0.end();
+     * ```
+     *
+     */
     end() {
         const obj = {};
         obj["io" + this.id] = null;
         this.Obniz.send(obj);
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (typeof obj === "boolean") {
             this.value = obj;
@@ -12537,6 +15927,11 @@ class PeripheralIO {
             }
         }
     }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
+        }
+    }
 }
 exports.default = PeripheralIO;
 
@@ -12550,26 +15945,45 @@ exports.default = PeripheralIO;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * We will now generate PWM.
+ * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
+ * @category Peripherals
+ */
 class PeripheralPWM {
     constructor(obniz, id) {
         this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
-    _reset() {
-        this.state = {};
-        this.used = false;
-    }
-    sendWS(obj) {
-        const wsObj = {};
-        wsObj["pwm" + this.id] = obj;
-        this.Obniz.send(wsObj);
-    }
+    /**
+     * This starts a pwm on a given io.
+     * freq=1khz, duty=0% at start.
+     *
+     * io drive and pull can be configured. See more details on [[PeripheralIO|io]]
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0}); // start pwm. output at io0
+     * pwm.freq(1000);
+     * pwm.duty(50);
+     *
+     * var pwm2 = obniz.getFreePwm();
+     * pwm2.start({io:1, drive:"open-drain", pull:"5v"});
+     * ```
+     *
+     * @param params
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["io"]);
         if (err) {
@@ -12589,6 +16003,21 @@ class PeripheralPWM {
         });
         this.used = true;
     }
+    /**
+     * Set frequency, not pulse duration.
+     *
+     *
+     * For example, this value will be 1khz with DC motor.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0});
+     * pwm.freq(1000); // set pwm. frequency to 1khz
+     * ```
+     *
+     * @param freq frequency (Hz)
+     */
     freq(freq) {
         if (!this.used) {
             throw new Error(`pwm${this.id} is not started`);
@@ -12605,6 +16034,19 @@ class PeripheralPWM {
             this.duty(this.state.duty);
         }
     }
+    /**
+     * Set pulse duty
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0});
+     * pwm.freq(2000); // set pwm frequency to 2khz
+     * pwm.pulse(0.5) // set pwm pulse 0.5ms.  so this is  25% ratio.
+     * ```
+     *
+     * @param pulse_width pulse time (ms).
+     */
     pulse(pulse_width) {
         if (!this.used) {
             throw new Error(`pwm${this.id} is not started`);
@@ -12615,6 +16057,19 @@ class PeripheralPWM {
             pulse: pulse_width,
         });
     }
+    /**
+     * Set pulse duty in terms of ratio.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0});
+     * pwm.freq(2000); // set pwm frequency to 2khz
+     * pwm.duty(50) // set pwm pulse width 50%
+     * ```
+     *
+     * @param duty
+     */
     duty(duty) {
         if (!this.used) {
             throw new Error(`pwm${this.id} is not started`);
@@ -12638,14 +16093,49 @@ class PeripheralPWM {
             pulse: pulse_width,
         });
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
     }
+    /**
+     * It stops pwm and releases io.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var pwm = obniz.getFreePwm();
+     * pwm.start({io:0});
+     * pwm.end();
+     * ```
+     */
     end() {
         this.state = {};
         this.sendWS(null);
         this.used = false;
     }
+    /**
+     * This modulates pwm with data.
+     *
+     * Modulation can be chosen from below.
+     *
+     * 1. "am"
+     *
+     * ### am modulation
+     * data "1" means put out the pwm with duty ratio of 50%. "0" means stop pwm. io will be 0.
+     * Interval defines the symbol baud rate.
+     * Duty is fixed at 50%.
+     *
+     *
+     * ![](media://pwm_modu.png)
+     *
+     * This is useful to generate IR signal (Remote control).
+     * Frequency of 38kHz gets modulated with signals.
+     *
+     * @param type
+     * @param symbol_length
+     * @param data data array. All data[index] is 0 or 1.
+     */
     modulate(type, symbol_length, data) {
         if (!this.used) {
             throw new Error(`pwm${this.id} is not started`);
@@ -12657,6 +16147,15 @@ class PeripheralPWM {
                 data,
             },
         });
+    }
+    _reset() {
+        this.state = {};
+        this.used = false;
+    }
+    sendWS(obj) {
+        const wsObj = {};
+        wsObj["pwm" + this.id] = obj;
+        this.Obniz.send(wsObj);
     }
 }
 exports.default = PeripheralPWM;
@@ -12671,28 +16170,46 @@ exports.default = PeripheralPWM;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver = __webpack_require__("./node_modules/semver/semver.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * It is General Purpose SPI
+ * @category Peripherals
+ */
 class PeripheralSPI {
     constructor(obniz, id) {
         this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
-    _reset() {
-        this.observers = [];
-        this.used = false;
-        this.params = null;
-    }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
-    }
+    /**
+     * It starts spi. Now the mode is only "master".
+     *
+     *
+     * drive and pull are optional settings for io output.
+     * Default settings are drive:5v, pull:null.
+     * See more using obniz.io.drive() or pull().
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+     * var ret = await obniz.spi0.writeWait([0x12, 0x98]);
+     * console.log("received: "+ret);
+     *
+     * // drive and pull is optional
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, drive: "5v", pull:null});
+     * ```
+     *
+     * @param params spi parameters
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["mode", "frequency"]);
         if (err) {
@@ -12783,11 +16300,26 @@ class PeripheralSPI {
         this.used = true;
         this.Obniz.send(obj);
     }
+    /**
+     * It sends data to spi and wait until data are received.
+     * The received data length is the same as the sent data.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+     * var ret = await obniz.spi0.writeWait([0x12, 0x98]);
+     * console.log("received: "+ret);
+     * ```
+     *
+     *
+     * @param data Max length is 1024 bytes.
+     * @return received data
+     */
     writeWait(data) {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
-        if (semver.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+        if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
         const self = this;
@@ -12801,11 +16333,22 @@ class PeripheralSPI {
             self.Obniz.send(obj);
         });
     }
+    /**
+     * It only sends data to spi and does not receive it.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000});
+     * obniz.spi0.write([0x12, 0x98]);
+     * ```
+     *
+     * @param data Max length is 1024 bytes.
+     */
     write(data) {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
-        if (semver.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+        if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
         const self = this;
@@ -12816,6 +16359,10 @@ class PeripheralSPI {
         };
         self.Obniz.send(obj);
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         // TODO: we should compare byte length from sent
         const callback = this.observers.shift();
@@ -12823,9 +16370,26 @@ class PeripheralSPI {
             callback(obj.data);
         }
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
     }
+    /**
+     * It ends spi
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, clock:1000000});
+     * obniz.spi0.write([0x12, 0x98]);
+     * obniz.spi0.end();
+     * ```
+     *
+     * @param reuse
+     * - True : getFreeSpi will not return this object
+     * - False : getFreeSpi will return this object
+     */
     end(reuse) {
         const self = this;
         const obj = {};
@@ -12834,6 +16398,16 @@ class PeripheralSPI {
         self.Obniz.send(obj);
         if (!reuse) {
             this.used = false;
+        }
+    }
+    _reset() {
+        this.observers = [];
+        this.used = false;
+        this.params = null;
+    }
+    addObserver(callback) {
+        if (callback) {
+            this.observers.push(callback);
         }
     }
 }
@@ -12849,22 +16423,39 @@ exports.default = PeripheralSPI;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
-const isNode = typeof window === "undefined";
+/**
+ * Uart module
+ * @category Peripherals
+ */
 class PeripheralUART {
     constructor(obniz, id) {
         this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.received = new Uint8Array([]);
         this.used = false;
     }
+    /**
+     * It starts uart on io tx, rx.
+     *
+     * You can start uart without much configuration. Just use as below.
+     * @param params
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["tx", "rx"]);
         if (err) {
@@ -12931,6 +16522,33 @@ class PeripheralUART {
         this.received = [];
         this.used = true;
     }
+    /**
+     * This sends data.
+     *
+     * Available formats are
+     *
+     * - string
+     * utf8 encoded byte array. Does not include null terminate
+     *
+     * - number
+     * will be one byte data
+     *
+     * - array of number
+     * array of bytes
+     *
+     * - Buffer
+     * array of bytes
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     * obniz.uart0.send("Hi");
+     * obniz.uart0.send(0x11);
+     * obniz.uart0.send([0x11, 0x45, 0x44]);
+     * ```
+     * @param data
+     */
     send(data) {
         if (!this.used) {
             throw new Error(`uart${this.id} is not started`);
@@ -12942,7 +16560,7 @@ class PeripheralUART {
         if (typeof data === "number") {
             data = [data];
         }
-        if (isNode && data instanceof Buffer) {
+        if (this.Obniz.isNode && data instanceof Buffer) {
             send_data = [...data];
         }
         else if (data.constructor === Array) {
@@ -12958,9 +16576,44 @@ class PeripheralUART {
         //  console.log(obj);
         this.Obniz.send(obj);
     }
+    /**
+     * It checks if there are data received but not yet used.
+     * If there are, it returns true.
+     *
+     * If you are using onreceive callback, it will always be false because you receive the data with the callback function as the data arrives.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     *
+     * while(1){
+     *   if(obniz.uart0.isDataExists()){
+     *      console.log(obniz.uart0.readText());
+     *   }
+     *   await obniz.wait(10);  //wait for 10ms
+     * }
+     * ```
+     *
+     */
     isDataExists() {
         return this.received && this.received.length > 0;
     }
+    /**
+     * It returns the data array that are received but not yet used.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     *
+     * while(1){
+     *   if(obniz.uart0.isDataExists()){
+     *      console.log(obniz.uart0.readBytes());
+     *   }
+     *   await obniz.wait(10);  //wait for 10ms
+     * }
+     * ```
+     * @return received data. If not exist data, return [].
+     */
     readBytes() {
         const results = [];
         if (this.isDataExists()) {
@@ -12971,6 +16624,23 @@ class PeripheralUART {
         this.received = [];
         return results;
     }
+    /**
+     * It returns the one byte that are received but not yet used.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     *
+     * while(1){
+     *    if(obniz.uart0.isDataExists()){
+     *      console.log(obniz.uart0.readBytes());
+     *    }
+     *    await obniz.wait(10);  //wait for 10ms
+     * }
+     * ```
+     *
+     * @return received data. If not exist data, return null.
+     */
     readByte() {
         const results = [];
         if (this.isDataExists()) {
@@ -12978,6 +16648,23 @@ class PeripheralUART {
         }
         return null;
     }
+    /**
+     * It returns the data that are received but not yet used as string.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     *
+     * while(1){
+     *   if(obniz.uart0.isDataExists()){
+     *     console.log(obniz.uart0.readText());
+     *   }
+     *   await obniz.wait(10);  //wait for 10ms
+     * }
+     * ```
+     *
+     * @return received text data. If not exist data, return null.
+     */
     readText() {
         let string = null;
         if (this.isDataExists()) {
@@ -12987,9 +16674,10 @@ class PeripheralUART {
         this.received = [];
         return string;
     }
-    tryConvertString(data) {
-        return util_1.default.dataArray2string(data);
-    }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (this.onreceive) {
             const string = this.tryConvertString(obj.data);
@@ -13002,15 +16690,38 @@ class PeripheralUART {
             this.received.push.apply(this.received, obj.data);
         }
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
     }
+    /**
+     * It stops uart and releases io.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.uart0.start({tx:0, rx:1})
+     * obniz.uart0.send("Hi");
+     * obniz.uart0.end();
+     * ```
+     */
     end() {
         const obj = {};
         obj["uart" + this.id] = null;
         this.params = null;
         this.Obniz.send(obj);
         this.used = false;
+    }
+    /**
+     * Convert data array to string.
+     *
+     * @param data data array
+     *
+     * @return converted string. If convert failed, return null.
+     */
+    tryConvertString(data) {
+        return util_1.default.dataArray2string(data);
     }
 }
 exports.default = PeripheralUART;
@@ -13026,19 +16737,77 @@ exports.default = PeripheralUART;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * LogicAnalyzer records samples read from io periodically.
+ * This is useful for digital bus signal check.
+ *
+ * Only one LogicAnalyzer can be used per obniz Board.
+ *
+ * ### How it works
+ * LogicAnalyzer starts logging by a trigger.
+ * The default trigger is "value change".
+ *
+ * When it occurs, data will be recorded for a desired duration.
+ * After that is done, LogicAnalyzer starts monitoring changes in io (= continue working).
+ * One sample becomes one 1/0.
+ *
+ * ![](media://logiana_0.png)
+ *
+ * Sampling interval and duration can be configured.
+ * For example, if interval is 1 ms and duration is 800ms, you will get 800 arrays of data.
+ * The data will be in multiples of 8.
+ *
+ * @category Measurement
+ */
 class LogicAnalyzer {
     constructor(obniz) {
         this.obniz = obniz;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.onmeasured = undefined;
     }
+    /**
+     * This starts the logic analyzer on a given io.
+     *
+     * For example, if you want to collect the data after io0 changes every 2ms for 1sec long, set as below.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 2ms interval and 1sec long.
+     * obniz.logicAnalyzer.onmeasured = function(array) {
+     *   console.log(array);
+     * }
+     * ```
+     *
+     * The trigger is an optional configuration.
+     *
+     * Without this, logicAnalyzer recognizes any io level change as trigger and start. Trigger specifies the start position.
+     * Value means start value, true/false. Samples means how much that value consists.
+     * So, with the below sample code, you will only receive data that start with "0, 0, 0"
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000, triggerValue:false, triggerValueSamples:3});  // start on io0. 2ms interval and 1sec long.
+     * obniz.logicAnalyzer.onmeasured = function(array) {
+     *   console.log(array);
+     * }
+     * ```
+     * @param params
+     */
     start(params) {
         const err = util_1.default._requiredKeys(params, ["io", "interval", "duration"]);
         if (err) {
@@ -13066,12 +16835,25 @@ class LogicAnalyzer {
         this.obniz.send(obj);
         return;
     }
+    /**
+     * This stops the logicAnalyzer.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1ms interval and 1sec long.
+     * obniz.logicAnalyzer.end();
+     * ```
+     */
     end() {
         const obj = {};
         obj.logic_analyzer = null;
         this.obniz.send(obj);
         return;
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (this.onmeasured) {
             this.onmeasured(obj.data);
@@ -13097,19 +16879,56 @@ exports.default = LogicAnalyzer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+/**
+ * The measure module provides hardware level measurement.
+ * @category Measurement
+ */
 class ObnizMeasure {
     constructor(obniz) {
         this.obniz = obniz;
         this._reset();
     }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.observers = [];
     }
+    /**
+     * Some electrical parts or circuits accept "pulse" and echo the "pulse" after delay.
+     * This module is best suited for measuring that delay.
+     *
+     * This module generates one pulse shot on an io, then measures the response time.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.measure.echo({
+     *   io_pulse: 0, // io for generate pulse
+     *   io_echo: 1, // io to be measured
+     *   pulse: "positive", // generate pulse pattern
+     *   pulse_width: 0.1,  // generate pulse width
+     *   measure_edges: 3, // 1 to 4. maximum edges to measure
+     *   timeout: 1000, // this is optional. 1000(1sec) is default
+     *   callback: function(edges) {
+     *     // callback function
+     *     console.log(edges);
+     *   }
+     * });
+     * ```
+     *
+     * @param params
+     */
     echo(params) {
         const err = util_1.default._requiredKeys(params, [
             "io_pulse",
@@ -13148,6 +16967,10 @@ class ObnizMeasure {
             this.observers.push(this.params.callback);
         }
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         const callback = this.observers.shift();
         if (callback) {
@@ -13167,32 +16990,40 @@ exports.default = ObnizMeasure;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const isNode = typeof window === "undefined";
-const semver = __webpack_require__("./node_modules/semver/semver.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+/**
+ * Create a TCP connection from a device throught the network the device is currently connected to.
+ *
+ * @category Protocol
+ */
 class Tcp {
     constructor(obniz, id) {
         this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
-    _reset() {
-        this.connectObservers = [];
-        this.readObservers = [];
-        this.used = false;
-    }
-    _addConnectObserver(callback) {
-        if (callback) {
-            this.connectObservers.push(callback);
-        }
-    }
-    _addReadObserver(callback) {
-        if (callback) {
-            this.readObservers.push(callback);
-        }
-    }
+    /**
+     * Starts a connection on the port and domain for which TCP is specified.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var tcp = obniz.getFreeTcp();
+     * tcp.connectWait(80,"obniz.io");
+     * ```
+     *
+     * @param port
+     * @param domain
+     */
     connectWait(port, domain) {
-        if (semver.lt(this.Obniz.firmware_ver, "2.1.0")) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, "2.1.0")) {
             throw new Error(`Please update obniz firmware >= 2.1.0`);
         }
         // TODO
@@ -13219,16 +17050,24 @@ class Tcp {
             this.Obniz.send(obj);
         });
     }
-    close() {
-        if (!this.used) {
-            throw new Error(`tcp${this.id} is not used`);
-        }
-        const obj = {};
-        obj["tcp" + this.id] = {
-            disconnect: true,
-        };
-        this.Obniz.send(obj);
-    }
+    /**
+     * The argument data is sent by TCP.
+     *
+     * If you pass a string or Array type argument, the data will be sent.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var tcp = obniz.getFreeTcp();
+     * tcp.connectWait(80,"obniz.io");
+     *
+     * // Array
+     * tcp.write([0,1,2,3,4]);
+     *
+     * // Text
+     * tcp.write('hello');
+     * ```
+     * @param data
+     */
     write(data) {
         if (!this.used) {
             throw new Error(`tcp${this.id} is not started`);
@@ -13240,7 +17079,7 @@ class Tcp {
             data = [data];
         }
         let send_data = null;
-        if (isNode && data instanceof Buffer) {
+        if (this.Obniz.isNode && data instanceof Buffer) {
             send_data = [...data];
         }
         else if (data.constructor === Array) {
@@ -13258,6 +17097,18 @@ class Tcp {
         };
         this.Obniz.send(obj);
     }
+    /**
+     * Wait for TCP reception.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var tcp = obniz.getFreeTcp();
+     * tcp.connectWait(80,"obniz.io");
+     *
+     * let data = await tcp.readWait();
+     * console.log(data);
+     * ```
+     */
     readWait() {
         if (!this.used) {
             throw new Error(`tcp${this.id} is not started`);
@@ -13266,9 +17117,22 @@ class Tcp {
             this._addReadObserver(resolve);
         });
     }
+    /**
+     * Terminates the TCP session.
+     *
+     * ```javascript
+     * // Javascript Example
+     * var tcp = obniz.getFreeTcp();
+     * tcp.end();
+     * ```
+     */
     end() {
         this.close();
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.connection) {
             /* Connectino state update. response of connect(), close from destination, response from */
@@ -13302,8 +17166,36 @@ class Tcp {
             }
         }
     }
+    /**
+     * @ignore
+     */
     isUsed() {
         return this.used;
+    }
+    close() {
+        if (!this.used) {
+            throw new Error(`tcp${this.id} is not used`);
+        }
+        const obj = {};
+        obj["tcp" + this.id] = {
+            disconnect: true,
+        };
+        this.Obniz.send(obj);
+    }
+    _reset() {
+        this.connectObservers = [];
+        this.readObservers = [];
+        this.used = false;
+    }
+    _addConnectObserver(callback) {
+        if (callback) {
+            this.connectObservers.push(callback);
+        }
+    }
+    _addReadObserver(callback) {
+        if (callback) {
+            this.readObservers.push(callback);
+        }
     }
 }
 exports.default = Tcp;
@@ -13319,8 +17211,12 @@ exports.default = Tcp;
 
 "use strict";
 
-/* eslint-disable */
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable */
 /* Thanks Kazuhiko Arase */
 /* https://github.com/kazuhikoarase/qrcode-generator/tree/master/js */
 // ---------------------------------------------------------------------
@@ -14881,10 +18777,20 @@ exports.default = _qrcode;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 class ObnizUtil {
     constructor(obniz) {
         this.obniz = obniz;
     }
+    /**
+     * @ignore
+     * @param params
+     * @param keys
+     * @private
+     */
     static _keyFilter(params, keys) {
         let filterdParams = {};
         if (typeof params !== "object") {
@@ -14899,7 +18805,7 @@ class ObnizUtil {
         return filterdParams;
     }
     /**
-     *
+     * @ignore
      * @return {String} key name of not found.
      */
     static _requiredKeys(params, keys) {
@@ -14913,6 +18819,10 @@ class ObnizUtil {
         }
         return null;
     }
+    /**
+     * convert from data array to string
+     * @param data
+     */
     static dataArray2string(data) {
         let string = null;
         try {
@@ -14926,10 +18836,44 @@ class ObnizUtil {
         }
         return string;
     }
+    /**
+     * convert from string to data array
+     * @param str
+     */
     static string2dataArray(str) {
         const buf = Buffer.from(str);
         return [...buf];
     }
+    /**
+     * @ignore
+     * @param data
+     * @param schema
+     */
+    static hexToBinary(data, reverse = false) {
+        const array = [];
+        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+        for (let i = 0; i < hex.length / 2; i++) {
+            array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
+        }
+        if (reverse) {
+            array.reverse();
+        }
+        return array;
+    }
+    /**
+     * This creates a Canvas context.
+     * It will add a canvas dom to body(in html).
+     *
+     * ```javascript
+     * // Example
+     * const ctx = obniz.util.createCanvasContext(128, 64);
+     * ctx.font = "9px sans-serif";
+     * ctx.fillText('Hello', 0, 7);
+     * ```
+     *
+     * @param width
+     * @param height
+     */
     createCanvasContext(width, height) {
         if (this.obniz.isNode) {
             try {
@@ -14965,6 +18909,10 @@ exports.default = ObnizUtil;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 // load from webpack
 Object.defineProperty(exports, "__esModule", { value: true });
 const canvas = "canvas";
@@ -14981,6 +18929,10 @@ exports.default = canvas;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 exports.default = {};
 
 //# sourceMappingURL=require-context-browser.js.map
@@ -14993,6 +18945,10 @@ exports.default = {};
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 // load from webpack
 Object.defineProperty(exports, "__esModule", { value: true });
 let ws;
@@ -15032,6 +18988,10 @@ webpackEmptyContext.id = "./dist/src/obniz/libs/wscommand sync recursive";
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -15311,7 +19271,7 @@ class WSCommand {
     }
 }
 exports.default = WSCommand;
-// tslint:disable-next-line:max-classes-per-file
+// tslint:disable:max-classes-per-file
 class WSCommandNotFoundError extends Error {
 }
 
@@ -15329,6 +19289,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandAD extends WSCommand_1.default {
     constructor() {
@@ -15414,6 +19378,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const jsonBinaryConverter_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js"));
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const WSCommandBleHci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBleHci.js"));
@@ -16650,16 +20618,24 @@ exports.default = WSCommandBle;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 class WSCommandBleHci {
     constructor(delegate) {
-        this._delegate = delegate;
         this._CommandHCIInit = 41;
         this._CommandHCIDeinit = 42;
         this._CommandHCISend = 43;
         this._CommandHCIRecv = 44;
+        this._CommandHCIAdvertisementFilter = 45;
+        this._delegate = delegate;
     }
     schemaData() {
-        return [{ uri: "/request/ble/hci/write", onValid: this.send.bind(this) }];
+        return [
+            { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
+            { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
+        ];
     }
     notifyFunctionList() {
         const funcList = {};
@@ -16680,6 +20656,16 @@ class WSCommandBleHci {
         objToSend.ble.hci = objToSend.ble.hci || {};
         objToSend.ble.hci.read = { data: arr };
     }
+    advertisementFilter(params) {
+        const sendData = [];
+        params.hci.advertisement_filter.forEach((e) => {
+            const one = [e.range.index, e.range.length, e.value.length, ...e.value];
+            sendData.push(...one);
+        });
+        const buf = new Uint8Array(sendData.length);
+        buf.set(sendData);
+        this._delegate.sendCommand(this._CommandHCIAdvertisementFilter, buf);
+    }
 }
 exports.default = WSCommandBleHci;
 
@@ -16697,6 +20683,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const semver = __webpack_require__("./node_modules/semver/semver.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
@@ -16885,11 +20875,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const qr_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/qr.js"));
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandDisplay extends WSCommand_1.default {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 8;
         this._CommandClear = 0;
         this._CommandPrint = 1;
@@ -16897,6 +20891,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         this._CommandDrawCampusHorizonalBytes = 3;
         this._CommandDrawIOState = 4;
         this._CommandSetPinName = 5;
+        this._CommandDrawCampusRawColors = 6;
     }
     // Commands
     clear(params) {
@@ -16906,16 +20901,20 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.sendCommand(this._CommandPrint, buf);
     }
     printText(text) {
-        let result;
         const buf = Buffer.from(text, "utf8");
-        result = new Uint8Array(buf);
+        const result = new Uint8Array(buf);
         this.print(result);
     }
     text(params) {
         this.printText(params.text);
     }
     raw(params) {
-        this.drawHorizonally(new Uint8Array(params.raw));
+        if (typeof params.color_depth === "number" && params.color_depth > 1) {
+            this.drawRawColors(params.raw, params.color_depth);
+        }
+        else {
+            this.drawHorizonally(new Uint8Array(params.raw));
+        }
     }
     qr(params) {
         const text = params.qr.text;
@@ -16983,6 +20982,12 @@ class WSCommandDisplay extends WSCommand_1.default {
         combined.set(stringarray, 1);
         this.sendCommand(this._CommandSetPinName, combined);
     }
+    drawRawColors(raw, colorDepth) {
+        const buf = new Uint8Array(1 + raw.length);
+        buf[0] = colorDepth;
+        buf.set(raw, 1);
+        this.sendCommand(this._CommandDrawCampusRawColors, buf);
+    }
     parseFromJson(json) {
         const module = json.display;
         if (module === undefined) {
@@ -17023,6 +21028,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandI2C extends WSCommand_1.default {
     constructor() {
@@ -17204,6 +21213,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
@@ -17375,6 +21388,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandLogicAnalyzer extends WSCommand_1.default {
     constructor() {
@@ -17465,6 +21482,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandMeasurement extends WSCommand_1.default {
     constructor() {
@@ -17556,6 +21577,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandPWM extends WSCommand_1.default {
     constructor() {
@@ -17672,6 +21697,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandSPI extends WSCommand_1.default {
     constructor() {
@@ -17790,6 +21819,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandSwitch extends WSCommand_1.default {
     constructor() {
@@ -17852,6 +21885,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandSystem extends WSCommand_1.default {
     constructor() {
@@ -18019,6 +22056,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandTcp extends WSCommand_1.default {
     constructor() {
@@ -18160,6 +22201,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandUart extends WSCommand_1.default {
     constructor() {
@@ -18285,6 +22330,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const tv4 = __webpack_require__("./node_modules/tv4/tv4.js");
 tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
 // @ts-ignore
@@ -18341,6 +22390,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 const WSCommandAD_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAD.js"));
 const WSCommandBle_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandBle.js"));
@@ -18384,6 +22437,10 @@ exports.default = WSCommand_1.default;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 class JsonBinaryConverter {
     static convertFromBinaryToJson(schema, binary) {
         const types = {
@@ -18643,6 +22700,16 @@ var map = {
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
+	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
+	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
+	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
+	"./Ble/linking/modules/ieee754.js": "./dist/src/parts/Ble/linking/modules/ieee754.js",
+	"./Ble/linking/modules/service-notification.js": "./dist/src/parts/Ble/linking/modules/service-notification.js",
+	"./Ble/linking/modules/service-operation.js": "./dist/src/parts/Ble/linking/modules/service-operation.js",
+	"./Ble/linking/modules/service-property.js": "./dist/src/parts/Ble/linking/modules/service-property.js",
+	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
+	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
+	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -18650,6 +22717,7 @@ var map = {
 	"./Display/7SegmentLED/index.js": "./dist/src/parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./dist/src/parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./dist/src/parts/Display/7SegmentLED_MAX7219/index.js",
+	"./Display/MatrixLED_HT16K33/index.js": "./dist/src/parts/Display/MatrixLED_HT16K33/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./dist/src/parts/Display/MatrixLED_MAX7219/index.js",
 	"./Display/ST7735S/index.js": "./dist/src/parts/Display/ST7735S/index.js",
 	"./Display/SainSmartTFT18LCD/index.js": "./dist/src/parts/Display/SainSmartTFT18LCD/index.js",
@@ -18678,7 +22746,12 @@ var map = {
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
 	"./Infrared/InfraredLED/index.js": "./dist/src/parts/Infrared/InfraredLED/index.js",
 	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
-	"./KeyeStudio/MatrixLED_HT16K33/index.js": "./dist/src/parts/KeyeStudio/MatrixLED_HT16K33/index.js",
+	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
+	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
+	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
+	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
+	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
+	"./Keyestudio/Keyestudio_TrafficLight/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
@@ -18763,6 +22836,10 @@ webpackContext.id = "./dist/src/parts sync recursive \\.js$";
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.hx711
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -18943,6 +23020,10 @@ exports.default = USB;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Puls08M5stickcS
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Puls08M5stickcS {
     constructor() {
@@ -19028,6 +23109,10 @@ exports.default = Puls08M5stickcS;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.OMRON_2JCIE
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19057,6 +23142,7 @@ class OMRON_2JCIE {
             const target = {
                 localName: "Env",
             };
+            yield this.obniz.ble.initWait();
             this.periperal = yield this.obniz.ble.scan.startOneWait(target);
             return this.periperal;
         });
@@ -19133,11 +23219,4125 @@ exports.default = OMRON_2JCIE;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/linking/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* ------------------------------------------------------------------
+ * node-linking - linking.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
+const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
+class Linking {
+    constructor(params) {
+        this.PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+        this.initialized = false;
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+        this.onadvertisement = null;
+        this.ondiscover = null;
+        // Private properties
+        this._discover_status = false;
+        this._discover_wait = 3000; // ms
+        this._discover_timer = null;
+        this._peripherals = {};
+    }
+    static info() {
+        return {
+            name: "Linking",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.obniz.ble.initWait();
+            this.initialized = true;
+        });
+    }
+    discover(p) {
+        this._checkInitialized();
+        let duration = 5000;
+        let name_filter = "";
+        let id_filter = "";
+        let quick = false;
+        if (p && typeof p === "object") {
+            if ("duration" in p && typeof p.duration === "number") {
+                duration = p.duration;
+                if (duration < 1000) {
+                    duration = 1000;
+                }
+            }
+            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+                name_filter = p.nameFilter;
+            }
+            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+                id_filter = p.idFilter;
+            }
+            if ("quick" in p && typeof (p.quick === "boolean")) {
+                quick = p.quick;
+            }
+        }
+        return new Promise((resolve, reject) => {
+            let timer = null;
+            const finishDiscovery = () => {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+                this.stopScan();
+                const device_list = [];
+                for (const addr in this._peripherals) {
+                    device_list.push(this._peripherals[addr]);
+                }
+                resolve(device_list);
+            };
+            this._peripherals = {};
+            this.obniz.ble.scan.onfind = (peripheral) => {
+                const dev = this._discoveredDevice(peripheral, name_filter, id_filter);
+                if (quick && dev) {
+                    finishDiscovery();
+                    return;
+                }
+            };
+            this._scanDevices();
+            this._discover_status = true;
+            timer = setTimeout(() => {
+                finishDiscovery();
+            }, duration);
+        });
+    }
+    _checkInitialized() {
+        if (this.initialized === false) {
+            throw new Error("The `init()` method has not been called yet.");
+            return;
+        }
+        if (this._discover_status === true) {
+            throw new Error("The `discover()` or the `startScan()` method is in progress.");
+            return;
+        }
+    }
+    _discoveredDevice(peripheral, name_filter, id_filter) {
+        if (!peripheral.localName) {
+            return null;
+        }
+        // if (!peripheral.id) {
+        //   return null;
+        // }
+        if (name_filter && peripheral.localName.indexOf(name_filter) !== 0) {
+            return null;
+        }
+        // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
+        //   return null;
+        // }
+        const addr = peripheral.address;
+        if (this._peripherals[addr]) {
+            return null;
+        }
+        const device = new device_1.default(peripheral);
+        if (this.ondiscover && typeof this.ondiscover === "function") {
+            this.ondiscover(device);
+        }
+        this._peripherals[addr] = device;
+        return device;
+    }
+    _scanDevices() {
+        this.obniz.ble.scan.onfinish = () => {
+            // console.log("scan timeout!")
+            this._discover_status = false;
+        };
+        // var target = {
+        //   uuids: this.PRIMARY_SERVICE_UUID_LIST
+        // };
+        this.obniz.ble.scan.start();
+        this._discover_status = true;
+    }
+    stopScan() {
+        if (this._discover_status === true) {
+            this._discover_status = false;
+            if (this._discover_timer !== null) {
+                clearTimeout(this._discover_timer);
+                this._discover_timer = null;
+            }
+            this.obniz.ble.scan.end();
+        }
+    }
+    startScan(p) {
+        this._checkInitialized();
+        let name_filter = "";
+        let id_filter = "";
+        if (p && typeof p === "object") {
+            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+                name_filter = p.nameFilter;
+            }
+            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+                id_filter = p.idFilter;
+            }
+        }
+        this.obniz.ble.scan.onfind = function (peripheral) {
+            if (!peripheral.localName) {
+                return;
+            }
+            if (name_filter && peripheral.localName.indexOf(name_filter) !== 0) {
+                return;
+            }
+            // TODO
+            // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
+            //   return;
+            // }
+            if (this.onadvertisement && typeof this.onadvertisement === "function") {
+                const parsed = advertising_1.default.parse(peripheral);
+                if (parsed) {
+                    this.onadvertisement(parsed);
+                }
+            }
+        };
+        this._scanDevices();
+    }
+}
+exports.default = Linking;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/advertising.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - advertising.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/ieee754.js"));
+class LinkingAdvertising {
+    static parse(peripheral) {
+        const ad = peripheral;
+        const manu = ad.manufacturerData;
+        if (!manu || manu.length < 8) {
+            return null;
+        }
+        // Company identifier
+        const company_id = manu.readUInt16LE(0);
+        let company_name = "Unknown";
+        if (company_id === 0x02E2) {
+            company_name = "NTT docomo";
+        }
+        // Version
+        const version = (manu.readUInt8(2) >>> 4);
+        // Vendor identifier
+        const vendor_id = ((manu.readUInt16BE(2) >>> 4) & 0b11111111);
+        // Individual number
+        const indi_num = ((manu.readUInt32BE(3) >>> 8) & (Math.pow(2, 20) - 1));
+        // Beacon Data
+        const beacon_data_list = [];
+        for (let offset = 6; offset < manu.length; offset += 2) {
+            const beacon_buf = manu.slice(offset, offset + 2);
+            // Beacon service data
+            if (beacon_buf.length === 2) {
+                const beacon_data = this._parseBeaconServiceData(beacon_buf);
+                beacon_data_list.push(beacon_data);
+            }
+        }
+        return {
+            id: peripheral.id,
+            uuid: peripheral.uuid,
+            address: peripheral.address,
+            localName: ad.localName,
+            serviceUuids: ad.serviceUuids,
+            txPowerLevel: 0,
+            rssi: peripheral.rssi,
+            distance: Math.pow(10, (ad.txPowerLevel - peripheral.rssi) / 20),
+            companyId: company_id,
+            companyName: company_name,
+            version,
+            vendorId: vendor_id,
+            individualNumber: indi_num,
+            beaconDataList: beacon_data_list,
+        };
+    }
+    static _parseBeaconServiceData(buf) {
+        const bufn = buf.readUInt16BE(0);
+        const service_id = (bufn >>> 12);
+        const n = bufn & 0b0000111111111111;
+        let res = {};
+        if (service_id === 0) {
+            res = {
+                name: "General",
+            };
+        }
+        else if (service_id === 1) {
+            res = {
+                name: "Temperature (°C)",
+                temperature: ieee754_1.default.read(n, 1, 4, 7),
+            };
+        }
+        else if (service_id === 2) {
+            res = {
+                name: "Humidity (%)",
+                humidity: ieee754_1.default.read(n, 0, 4, 8),
+            };
+        }
+        else if (service_id === 3) {
+            res = {
+                name: "Air pressure (hPa)",
+                pressure: ieee754_1.default.read(n, 0, 5, 7),
+            };
+        }
+        else if (service_id === 4) {
+            res = {
+                name: "Remaining battery power (Threshold value or less)",
+                chargeRequired: (n & 0b0000100000000000) ? true : false,
+                chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (service_id === 5) {
+            const code = n & 0b0000111111111111;
+            let text = "";
+            if (code === 0x00) {
+                text = "Power";
+            }
+            else if (code === 0x01) {
+                text = "Return";
+            }
+            else if (code === 0x02) {
+                text = "SingleClick";
+            }
+            else if (code === 0x03) {
+                text = "Home";
+            }
+            else if (code === 0x04) {
+                text = "DoubleClick";
+            }
+            else if (code === 0x05) {
+                text = "VolumeUp";
+            }
+            else if (code === 0x06) {
+                text = "VolumeDown";
+            }
+            else if (code === 0x07) {
+                text = "LongPress";
+            }
+            else if (code === 0x08) {
+                text = "Pause";
+            }
+            else if (code === 0x09) {
+                text = "LongPressRelease";
+            }
+            else if (code === 0x0A) {
+                text = "FastForward";
+            }
+            else if (code === 0x0B) {
+                text = "ReWind";
+            }
+            else if (code === 0x0C) {
+                text = "Shutter";
+            }
+            else if (code === 0x0D) {
+                text = "Up";
+            }
+            else if (code === 0x0E) {
+                text = "Down";
+            }
+            else if (code === 0x0F) {
+                text = "Left";
+            }
+            else if (code === 0x10) {
+                text = "Right";
+            }
+            else if (code === 0x11) {
+                text = "Enter";
+            }
+            else if (code === 0x12) {
+                text = "Menu";
+            }
+            else if (code === 0x13) {
+                text = "Play";
+            }
+            else if (code === 0x14) {
+                text = "Stop";
+            }
+            res = {
+                name: "Pressed button information",
+                buttonId: code,
+                buttonName: text,
+            };
+        }
+        else if (service_id === 6) {
+            res = {
+                name: "Opening/closing",
+                openingStatus: (n & 0b0000100000000000) ? true : false,
+                openingCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 7) {
+            res = {
+                name: "Human detection",
+                humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
+                humanDetectionCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 8) {
+            res = {
+                name: "Vibration",
+                moveResponse: (n & 0b0000100000000000) ? true : false,
+                moveCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 9) {
+            let illuminance = n;
+            if (n >> 11) {
+                illuminance = ((n - 2047) * 50) + 2000;
+            }
+            res = {
+                name: "Illuminance (lx)",
+                illuminance,
+            };
+        }
+        else if (service_id === 15) {
+            res = {
+                name: "Vendor",
+                bin: ("000000000000" + n.toString(2)).slice(-12),
+            };
+        }
+        res.serviceId = service_id;
+        return res;
+    }
+    constructor() {
+    }
+}
+exports.default = LinkingAdvertising;
+
+//# sourceMappingURL=advertising.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/device.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - device.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-03
+* ---------------------------------------------------------------- */
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
+const service_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service.js"));
+class LinkingDevice {
+    constructor(peripheral) {
+        this.PRIMARY_SERVICE_UUID = "b3b3690150d34044808d50835b13a6cd";
+        this.WRITE_CHARACTERRISTIC_UUID = "b3b3910150d34044808d50835b13a6cd";
+        this.INDICATE_CHARACTERRISTIC_UUID = "b3b3910250d34044808d50835b13a6cd";
+        this.info = {};
+        this.connected = false;
+        this.onconnect = null;
+        this.onconnectprogress = null;
+        this.ondisconnect = null;
+        this.onnotify = null;
+        this.services = {
+            deviceName: null,
+            led: null,
+            vibration: null,
+            button: null,
+            gyroscope: null,
+            accelerometer: null,
+            orientation: null,
+            battery: null,
+            temperature: null,
+            humidity: null,
+            pressure: null,
+            openclose: null,
+            human: null,
+            move: null,
+            illuminance: null,
+        };
+        this._service = null;
+        this._div_packet_queue = [];
+        this._LinkingService = new service_1.default();
+        this._onresponse = null;
+        this._write_response_timeout = 30000; // msec
+        this._generic_access_service = {
+            SERVICE_UUID: "1800",
+            service: null,
+            device_name: {
+                CHARACTERRISTIC_UUID: "2a00",
+                char: null,
+            },
+        };
+        this.advertisement = advertising_1.default.parse(peripheral);
+        this._peripheral = peripheral;
+    }
+    connect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.connected === true) {
+                throw new Error("The device has been already connected.");
+            }
+            let onprogress = this.onconnectprogress;
+            if (!this._isFunction(this.onconnectprogress)) {
+                onprogress = () => { };
+            }
+            const peripheral = this._peripheral;
+            onprogress({ step: 1, desc: "CONNECTING" });
+            try {
+                peripheral.ondisconnect = () => __awaiter(this, void 0, void 0, function* () {
+                    yield this._clean();
+                    if (this._isFunction(this.ondisconnect)) {
+                        this.ondisconnect({ wasClean: false });
+                    }
+                });
+                yield peripheral.connectWait();
+                onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
+                onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
+                yield this._getServicesAndChars();
+                onprogress({ step: 4, desc: "SUBSCRIBING" });
+                yield this._subscribeForIndicate();
+                onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
+                let res;
+                res = yield this.write("GET_DEVICE_INFORMATION");
+                this.info.id = "";
+                if ("deviceId" in res.data) {
+                    this.info.id = res.data.deviceId;
+                }
+                this.info.uid = "";
+                if ("deviceUid" in res.data) {
+                    this.info.uid = res.data.deviceUid;
+                }
+                this.info.services = {};
+                if ("serviceList" in res.data) {
+                    res.data.serviceList.forEach((o) => {
+                        this.info.services[o.name] = o.id;
+                    });
+                }
+                this.info.capabilities = {};
+                if ("deviceCapability" in res.data) {
+                    res.data.deviceCapability.forEach((o) => {
+                        this.info.capabilities[o.name] = o.id;
+                    });
+                }
+                this.info.exsensors = {};
+                if ("exSensorType" in res.data) {
+                    res.data.exSensorType.forEach((o) => {
+                        this.info.exsensors[o.name] = o.id;
+                    });
+                }
+                onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
+                res = yield this._writeConfirmNotifyCategory();
+                this.info.notifyCategories = {};
+                if (res) {
+                    if ("notifyCategory" in res.data) {
+                        res.data.notifyCategory.forEach((o) => {
+                            this.info.notifyCategories[o.name] = o.id;
+                        });
+                    }
+                }
+                onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
+                res = yield this._writeGetSettingInformation();
+                this.info.settings = {};
+                if (res) {
+                    if ("settingInformationData" in res.data) {
+                        res.data.settingInformationData.forEach((o) => {
+                            this.info.settings[o.name] = o;
+                        });
+                    }
+                }
+                onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
+                res = yield this._writeGetSettingName("LEDColorName");
+                if (res) {
+                    this.info.settings.LED.colors = res.data.settingNameData;
+                }
+                onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("LEDPatternName");
+                if (res) {
+                    this.info.settings.LED.patterns = res.data.settingNameData;
+                }
+                onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("VibrationPatternName");
+                if (res) {
+                    this.info.settings.Vibration.patterns = res.data.settingNameData;
+                }
+                onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("BeepPatternName");
+                if (res) {
+                    this.info.settings.Beep.patterns = res.data.settingNameData;
+                }
+                this._LinkingService.setDeviceInfo(this.info);
+                this._initServices();
+                this.connected = true;
+                if (this._isFunction(this.onconnect)) {
+                    this.onconnect();
+                }
+                onprogress({ step: 12, desc: "COMPLETED" });
+            }
+            catch (e) {
+                onprogress({ step: 0, desc: "FAILED" });
+                throw e;
+            }
+        });
+    }
+    _wait(msec) {
+        const promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, msec);
+        });
+        return promise;
+    }
+    _writeConfirmNotifyCategory() {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceNotification" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            this.write("CONFIRM_NOTIFY_CATEGORY").then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _writeGetSettingInformation() {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            this.write("GET_SETTING_INFORMATION").then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _writeGetSettingName(name) {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            const s = this.info.settings;
+            if (name === "LEDColorName") {
+                if (!(("LED" in s) && s.LED.colorMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "LEDPatternName") {
+                if (!(("LED" in s) && s.LED.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "VibrationPatternName") {
+                if (!(("Vibration" in s) && s.Vibration.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "BeepPatternName") {
+                if (!(("Beep" in s) && s.Beep.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            this.write("GET_SETTING_NAME", { SettingNameType: name }).then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _isFunction(o) {
+        return (o && typeof (o) === "function") ? true : false;
+    }
+    _getServicesAndChars() {
+        const peripheral = this._peripheral;
+        const service = peripheral.getService(this.PRIMARY_SERVICE_UUID);
+        if (!service) {
+            throw new Error("No service was found");
+        }
+        const write_char = service.getCharacteristic(this.WRITE_CHARACTERRISTIC_UUID);
+        const indicate_char = service.getCharacteristic(this.INDICATE_CHARACTERRISTIC_UUID);
+        if (!(write_char && indicate_char)) {
+            throw new Error("No characteristic was found");
+        }
+        this.char_write = write_char;
+        this.char_indicate = indicate_char;
+        this._service = service;
+        const ga_service = peripheral.getService(this._generic_access_service.SERVICE_UUID);
+        if (ga_service) {
+            const ga_char = ga_service.getCharacteristic(this._generic_access_service.device_name.CHARACTERRISTIC_UUID);
+            if (ga_service && ga_char) {
+                this._generic_access_service.service = ga_service;
+                this._generic_access_service.device_name.char = ga_char;
+            }
+        }
+    }
+    _subscribeForIndicate() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.char_indicate.registerNotifyWait((data) => {
+                this._receivedPacket(Buffer.from(data));
+            });
+        });
+    }
+    _receivedPacket(buf) {
+        const new_buf = Buffer.alloc(buf.length - 1);
+        buf.copy(new_buf, 0, 1, buf.length);
+        this._div_packet_queue.push(new_buf);
+        if (this._isExecutedPacket(buf)) {
+            const header_byte = Buffer.from([buf.readUInt8(0)]);
+            this._div_packet_queue.unshift(header_byte);
+            const total_buf = Buffer.concat(this._div_packet_queue);
+            this._receivedIndicate(total_buf);
+            this._div_packet_queue = [];
+        }
+    }
+    _isExecutedPacket(buf) {
+        const ph = buf.readUInt8(0);
+        return (ph & 0x00000001) ? true : false;
+    }
+    _receivedIndicate(buf) {
+        const parsed = this._LinkingService.parseResponse(buf);
+        if (!parsed) {
+            return;
+        }
+        if (parsed.messageName.match(/_RESP$/)) {
+            if (this._onresponse) {
+                this._onresponse(parsed);
+            }
+        }
+        else {
+            // All notifications
+            if (this._isFunction(this.onnotify)) {
+                this.onnotify(parsed);
+            }
+            // Button
+            if (parsed.serviceId === 2) { // PeripheralDeviceOperation Service
+                if (parsed.messageId === 0) { // NOTIFY_PD_OPERATION
+                    // let f = this.services['button']['onnotify'];
+                    let f = null;
+                    if (this.services.button) {
+                        if (this._isFunction(this.services.button.onnotify)) {
+                            f = this.services.button.onnotify;
+                        }
+                    }
+                    if (f) {
+                        let button = null;
+                        parsed.parameters.forEach((p) => {
+                            if (p.parameterId === 2) { // ButtonId
+                                button = {
+                                    buttonId: p.buttonId,
+                                    buttonName: p.buttonName,
+                                };
+                            }
+                        });
+                        f(button);
+                    }
+                }
+                // Sensors
+            }
+            else if (parsed.serviceId === 3) { // PeripheralDeviceSensorInformation Service
+                if (parsed.messageId === 4) { // NOTIFY_PD_SENSOR_INFO
+                    let sensor_type = -1;
+                    let res = {};
+                    parsed.parameters.forEach((p) => {
+                        const pid = p.parameterId;
+                        if (pid === 2) { // SensorType
+                            sensor_type = p.sensorTypeCode;
+                        }
+                        else {
+                            if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
+                                if (pid === 4) { // X_value
+                                    res.x = p.xValue;
+                                }
+                                else if (pid === 5) { // Y_value
+                                    res.y = p.yValue;
+                                }
+                                else if (pid === 6) { // Z_value
+                                    res.z = p.zValue;
+                                }
+                            }
+                            else if (sensor_type === 3) { // Battery
+                                res = {
+                                    charge: p.charge,
+                                    level: p.level,
+                                };
+                            }
+                            else if (sensor_type === 4) { // Temperature
+                                res.temperature = p.temperature;
+                            }
+                            else if (sensor_type === 5) { // Humidity
+                                res.humidity = p.humidity;
+                            }
+                            else if (sensor_type === 6) { // Aire pressure
+                                res.pressure = p.pressure;
+                            }
+                            else if (sensor_type === 7) { // Opening and closing
+                                res.openclose = p.openclose;
+                            }
+                            else if (sensor_type === 8) { // Human detection
+                                res.human = p.human;
+                            }
+                            else if (sensor_type === 9) { // Move
+                                res.move = p.move;
+                            }
+                            else if (sensor_type === 0x0a) { // Illuminance
+                                res.illuminance = p.illuminance;
+                            }
+                        }
+                    });
+                    let f = null;
+                    if (sensor_type === 0) {
+                        if (this.services.gyroscope) {
+                            f = this.services.gyroscope.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 1) {
+                        if (this.services.accelerometer) {
+                            f = this.services.accelerometer.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 2) {
+                        if (this.services.orientation) {
+                            f = this.services.orientation.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 3) {
+                        if (this.services.battery) {
+                            f = this.services.battery.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 4) {
+                        if (this.services.temperature) {
+                            f = this.services.temperature.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 5) {
+                        if (this.services.humidity) {
+                            f = this.services.humidity.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 6) {
+                        if (this.services.pressure) {
+                            f = this.services.pressure.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 7) {
+                        if (this.services.openclose) {
+                            f = this.services.openclose.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 8) {
+                        if (this.services.human) {
+                            f = this.services.human.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 9) {
+                        if (this.services.move) {
+                            f = this.services.move.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 0x0a) {
+                        if (this.services.illuminance) {
+                            f = this.services.illuminance.onnotify;
+                        }
+                    }
+                    if (this._isFunction(f)) {
+                        f(res);
+                    }
+                }
+            }
+        }
+    }
+    disconnect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.connected === false) {
+                yield this._clean();
+                return;
+            }
+            yield this._peripheral.disconnectWait();
+            if (this._isFunction(this.ondisconnect)) {
+                this.ondisconnect({ wasClean: true });
+            }
+        });
+    }
+    _clean() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const p = this._peripheral;
+            if (!p) {
+                return;
+            }
+            if (this.char_indicate) {
+                yield this.char_indicate.unregisterNotifyWait();
+            }
+            // p.removeAllListeners();
+            this.connected = false;
+            this._service = null;
+            this.char_write = null;
+            this.char_indicate = null;
+            this._div_packet_queue = [];
+            this._onresponse = null;
+        });
+    }
+    write(message_name, params) {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            const buf = this._LinkingService.createRequest(message_name, params);
+            if (!buf) {
+                reject(new Error("The specified parameters are invalid."));
+            }
+            const timer = setTimeout(() => {
+                this._onresponse = null;
+                reject(new Error("Timeout"));
+            }, this._write_response_timeout);
+            this._onresponse = (res) => {
+                if (res.messageName === message_name + "_RESP") {
+                    this._onresponse = null;
+                    clearTimeout(timer);
+                    const data = this._margeResponsePrameters(res);
+                    if (data) {
+                        res.data = data;
+                        resolve(res);
+                    }
+                    else {
+                        reject(new Error("Unknown response"));
+                    }
+                }
+            };
+            try {
+                yield this.char_write.writeWait(buf, true);
+            }
+            catch (e) {
+                reject(e);
+            }
+        }));
+    }
+    _margeResponsePrameters(res) {
+        if (!res) {
+            return null;
+        }
+        const parameters = res.parameters;
+        if (parameters && Array.isArray(parameters) && parameters.length > 0) {
+            const data = {};
+            parameters.forEach((p) => {
+                for (const k in p) {
+                    if (!k.match(/^(name|parameterId)$/)) {
+                        data[k] = p[k];
+                    }
+                }
+            });
+            return data;
+        }
+        else {
+            return null;
+        }
+    }
+    _initServices() {
+        const device_name = this._peripheral.localName;
+        // Device Name
+        if (this._generic_access_service.device_name.char) {
+            this.services.deviceName = {
+                get: this._deviceNameGet.bind(this),
+                set: this._deviceNameSet.bind(this),
+            };
+        }
+        // Button
+        if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
+            this.services.button = {
+                onnotify: null,
+            };
+        }
+        // LED
+        if ("LED" in this.info.settings) {
+            const o = this.info.settings.LED;
+            if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
+                const colors = {};
+                for (let i = 0; i < o.colors.length; i++) {
+                    colors[o.colors[i]] = i + 1;
+                }
+                const patterns = {};
+                for (let i = 0; i < o.patterns.length; i++) {
+                    patterns[o.patterns[i]] = i + 1;
+                }
+                this.services.led = {
+                    colors,
+                    patterns,
+                    turnOn: this._ledTurnOn.bind(this),
+                    turnOff: this._ledTurnOff.bind(this),
+                };
+            }
+        }
+        // Vibration
+        if ("Vibration" in this.info.settings) {
+            const o = this.info.settings.Vibration;
+            if (o.patterns && o.patterns.length > 0) {
+                const patterns = {};
+                for (let i = 0; i < o.patterns.length; i++) {
+                    patterns[o.patterns[i]] = i + 1;
+                }
+                this.services.vibration = {
+                    patterns,
+                    turnOn: this._vibrationTurnOn.bind(this),
+                    turnOff: this._vibrationTurnOff.bind(this),
+                };
+            }
+        }
+        // Gyroscope
+        if ("Gyroscope" in this.info.capabilities) {
+            this.services.gyroscope = this._createSensorServiceObject(0x00);
+        }
+        // Accelerometer
+        if ("Accelerometer" in this.info.capabilities) {
+            this.services.accelerometer = this._createSensorServiceObject(0x01);
+        }
+        // Orientation
+        if ("Orientation" in this.info.capabilities) {
+            this.services.orientation = this._createSensorServiceObject(0x02);
+        }
+        // Battery
+        if ("Battery" in this.info.capabilities) {
+            this.services.battery = this._createSensorServiceObject(0x03);
+        }
+        // Temperature
+        if ("Temperature" in this.info.capabilities) {
+            this.services.temperature = this._createSensorServiceObject(0x04);
+        }
+        // Humidity
+        if ("Humidity" in this.info.capabilities) {
+            this.services.humidity = this._createSensorServiceObject(0x05);
+        }
+        // Atmospheric pressure
+        if ("Atmospheric pressure" in this.info.capabilities) {
+            this.services.pressure = this._createSensorServiceObject(0x06);
+        }
+        // Opening and closing
+        if ("Opening and closing" in this.info.exsensors) {
+            this.services.openclose = this._createSensorServiceObject(0x07);
+        }
+        // Human detection
+        if ("Human detection" in this.info.exsensors) {
+            this.services.human = this._createSensorServiceObject(0x08);
+        }
+        // Move
+        if ("Move" in this.info.exsensors) {
+            this.services.move = this._createSensorServiceObject(0x09);
+        }
+        // Illuminance
+        if ("Illuminance" in this.info.exsensors) {
+            this.services.illuminance = this._createSensorServiceObject(0x0a);
+        }
+    }
+    _deviceNameGet() {
+        const promise = new Promise((resolve, reject) => {
+            const char = this._generic_access_service.device_name.char;
+            char.read((error, data) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve({
+                        deviceName: data.toString("utf8"),
+                    });
+                }
+            });
+        });
+        return promise;
+    }
+    _deviceNameSet(name) {
+        const promise = new Promise((resolve, reject) => {
+            if (!name) {
+                reject(new Error("Device name is required."));
+                return;
+            }
+            else if (typeof (name) !== "string") {
+                reject(new Error("Device name must be a string."));
+                return;
+            }
+            else if (name.length > 32) {
+                reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
+                return;
+            }
+            const buf = Buffer.from(name, "utf8");
+            const char = this._generic_access_service.device_name.char;
+            char.write(buf, false, (error) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve();
+                }
+            });
+        });
+        return promise;
+    }
+    _ledTurnOn(color, pattern, duration) {
+        let color_number = 1;
+        if (color) {
+            const colors = this.services.led.colors;
+            if (typeof (color) === "number") {
+                for (const name in colors) {
+                    if (colors[name] === color) {
+                        color_number = color;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (color) === "string") {
+                if (color in colors) {
+                    color_number = colors[color];
+                }
+            }
+        }
+        let pattern_number = 2;
+        if (pattern) {
+            const patterns = this.services.led.patterns;
+            if (typeof (pattern) === "number") {
+                for (const name in patterns) {
+                    if (patterns[name] === pattern) {
+                        pattern_number = pattern;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (pattern) === "string") {
+                if (pattern in patterns) {
+                    pattern_number = patterns[pattern];
+                }
+            }
+        }
+        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+            duration = 5;
+        }
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "START_DEMONSTRATION",
+                },
+                SettingInformationData: [
+                    {
+                        settingName: "LED",
+                        colorNumber: color_number,
+                        patternNumber: pattern_number,
+                        duration,
+                    },
+                ],
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _ledTurnOff() {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "STOP_DEMONSTRATION",
+                },
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _vibrationTurnOn(pattern, duration) {
+        let pattern_number = 2;
+        if (pattern) {
+            const patterns = this.services.vibration.patterns;
+            if (typeof (pattern) === "number") {
+                for (const name in patterns) {
+                    if (patterns[name] === pattern) {
+                        pattern_number = pattern;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (pattern) === "string") {
+                if (pattern in patterns) {
+                    pattern_number = patterns[pattern];
+                }
+            }
+        }
+        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+            duration = 5;
+        }
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "START_DEMONSTRATION",
+                },
+                SettingInformationData: [
+                    {
+                        settingName: "Vibration",
+                        patternNumber: pattern_number,
+                        duration,
+                    },
+                ],
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _vibrationTurnOff() {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "STOP_DEMONSTRATION",
+                },
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _createSensorServiceObject(sensor_type) {
+        return {
+            onnotify: null,
+            start: () => {
+                return this._setNotifySensorInfo(sensor_type, 1);
+            },
+            stop: () => {
+                return this._setNotifySensorInfo(sensor_type, 0);
+            },
+            get: () => {
+                return this._getSensorInfo(sensor_type);
+            },
+        };
+    }
+    _setNotifySensorInfo(sensor_type, status) {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SET_NOTIFY_SENSOR_INFO", {
+                SensorType: sensor_type,
+                Status: status,
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _getSensorInfo(sensor_type) {
+        const promise = new Promise((resolve, reject) => {
+            this.write("GET_SENSOR_INFO", {
+                SensorType: sensor_type,
+            }).then((res) => {
+                if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
+                    const d = res.data;
+                    const data = {
+                        x: d.xValue,
+                        y: d.yValue,
+                        z: d.zValue,
+                    };
+                    resolve(data);
+                }
+                else {
+                    resolve(res.data);
+                }
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+}
+exports.default = LinkingDevice;
+
+//# sourceMappingURL=device.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/ieee754.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - ieee754.js
+*
+* Copyright (c) 2017, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2017-04-13
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingIEEE754 {
+    static read(n, slen, elen, flen) {
+        const sgn = slen ? ((n >>> 11) & 0b1) : 0; // sign
+        const max = Math.pow(2, elen) - 1; // maximum of exponent
+        const exp = (n >>> flen) & max; // exponent
+        let fra = 0; // fraction
+        for (let i = 0; i < flen; i++) {
+            if ((n >>> (flen - i - 1)) & 0b1) {
+                fra += Math.pow(2, -(i + 1));
+            }
+        }
+        if (exp === 0 && fra === 0) {
+            return 0;
+        }
+        else if (exp === 0 && fra !== 0) {
+            const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
+            const v = Math.pow(-1, sgn) * fra * Math.pow(2, (1 - m));
+            return v;
+        }
+        else if (exp >= 1 && exp <= max - 1) {
+            const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
+            const v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, (exp - m));
+            return v;
+        }
+        else if (exp === max && fra === 0) {
+            return Infinity;
+        }
+        else {
+            return NaN;
+        }
+    }
+    constructor() {
+    }
+}
+exports.default = LinkingIEEE754;
+
+//# sourceMappingURL=ieee754.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-notification.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-notification.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* ------------------------------------------------------------------
+* Constructor: LinkingServiceNotification()
+* ---------------------------------------------------------------- */
+class LinkingServiceNotification {
+    constructor() {
+        this.SERVICE_ID = 0x01;
+        this.SERVICE_NAME = "PeripheralDeviceNotification";
+        this.MESSAGE_NAME_MAP = {
+            "00": "CONFIRM_NOTIFY_CATEGORY",
+            "01": "CONFIRM_NOTIFY_CATEGORY_RESP",
+            "02": "NOTIFY_INFORMATION",
+            "03": "GET_PD_NOTIFY_DETAIL_DATA",
+            "04": "GET_PD_NOTIFY_DETAIL_DATA_RESP",
+            "05": "NOTIFY_PD_GENERAL_INFORMATION",
+            "06": "START_PD_APPLICATION",
+            "07": "START_PD_APPLICATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            CONFIRM_NOTIFY_CATEGORY: 0x00,
+            NOTIFY_INFORMATION: 0x02,
+            GET_PD_NOTIFY_DETAIL_DATA_RESP: 0x04,
+            START_PD_APPLICATION_RESP: 0x07,
+        };
+        this._NOTIFY_CATEGORY_NAME_ID_MAP = {
+            NotNotify: 0,
+            All: 1,
+            PhoneIncomingCall: 2,
+            PhoneInCall: 3,
+            PhoneIdle: 4,
+            Mail: 5,
+            Schedule: 6,
+            General: 7,
+            Etc: 8,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        let notify_cateogry_id = 0;
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                const p = this._parseParameter(pid, pvalue_buf);
+                parameters.push(this._parseParameter(pid, pvalue_buf, notify_cateogry_id));
+                if (pid === 0x04 && ("id" in p)) {
+                    notify_cateogry_id = p.id;
+                }
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf, notify_cateogory_id) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseGetStatus(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseNotifyCategory(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseNotifyCategoryID(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseGetParameterID(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseGetParameterLength(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseParameterIdList(buf, notify_cateogory_id);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseUniqueId(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseNotifyId(buf);
+        }
+        else if (pid === 0x0A) {
+            parsed = this._parseNotificationOperation(buf);
+        }
+        else if (pid === 0x0B) {
+            parsed = this._parseTittle(buf);
+        }
+        else if (pid === 0x0C) {
+            parsed = this._parseText(buf);
+        }
+        else if (pid === 0x0D) {
+            parsed = this._parseAppName(buf);
+        }
+        else if (pid === 0x0E) {
+            parsed = this._parseAppNameLocal(buf);
+        }
+        else if (pid === 0x0F) {
+            parsed = this._parseNotifyApp(buf);
+        }
+        else if (pid === 0x10) {
+            parsed = this._parseRumblingSetting(buf);
+        }
+        else if (pid === 0x11) {
+            parsed = this._parseVibrationPattern(buf);
+        }
+        else if (pid === 0x12) {
+            parsed = this._parseLedPattern(buf);
+        }
+        else if (pid === 0x13) {
+            parsed = this._parseSender(buf);
+        }
+        else if (pid === 0x14) {
+            parsed = this._parseSenderAddress(buf);
+        }
+        else if (pid === 0x15) {
+            parsed = this._parseReceiveDate(buf);
+        }
+        else if (pid === 0x16) {
+            parsed = this._parseStartDate(buf);
+        }
+        else if (pid === 0x17) {
+            parsed = this._parseEndDate(buf);
+        }
+        else if (pid === 0x18) {
+            parsed = this._parseArea(buf);
+        }
+        else if (pid === 0x19) {
+            parsed = this._parsePerson(buf);
+        }
+        else if (pid === 0x1A) {
+            parsed = this._parseMimeTypeForImage(buf);
+        }
+        else if (pid === 0x1B) {
+            parsed = this._parseMimeTypeForMedia(buf);
+        }
+        else if (pid === 0x1C) {
+            parsed = this._parseImage(buf);
+        }
+        else if (pid >= 0x1D && pid <= 0x26) {
+            parsed = this._parseContents(buf, pid);
+        }
+        else if (pid === 0x27) {
+            parsed = this._parseMedia(buf);
+        }
+        else if (pid === 0x28) {
+            parsed = this._parsePackage(buf);
+        }
+        else if (pid === 0x29) {
+            parsed = this._parseClass(buf);
+        }
+        else if (pid === 0x2A) {
+            parsed = this._parseSharingInformation(buf);
+        }
+        else if (pid === 0x2B) {
+            parsed = this._parseBeepPattern(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseGetStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "OK, request processed ,but some parameter not";
+        }
+        else if (code === 0x02) {
+            text = "Cancel";
+        }
+        else if (code === 0x03) {
+            text = "Error, failed";
+        }
+        else if (code === 0x04) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x05) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x06) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "GetStatus",
+            statusCode: code,
+            statusText: text,
+        };
+    }
+    _parseNotifyCategory(buf) {
+        const list = [];
+        const v1 = buf.readUInt8(0);
+        if (v1 & 0b00000001) {
+            list.push({
+                id: 0,
+                name: "NotNotify",
+            });
+        }
+        if (v1 & 0b00000010) {
+            list.push({
+                id: 1,
+                name: "All",
+            });
+        }
+        if (v1 & 0b00000100) {
+            list.push({
+                id: 2,
+                name: "PhoneIncomingCall",
+            });
+        }
+        if (v1 & 0b00001000) {
+            list.push({
+                id: 3,
+                name: "PhoneInCall",
+            });
+        }
+        if (v1 & 0b00010000) {
+            list.push({
+                id: 4,
+                name: "PhoneIdle",
+            });
+        }
+        if (v1 & 0b00100000) {
+            list.push({
+                id: 5,
+                name: "Mail",
+            });
+        }
+        if (v1 & 0b01000000) {
+            list.push({
+                id: 6,
+                name: "Schedule",
+            });
+        }
+        if (v1 & 0b10000000) {
+            list.push({
+                id: 7,
+                name: "General",
+            });
+        }
+        const v2 = buf.readUInt8(1);
+        if (v2 & 0b00000001) {
+            list.push({
+                id: 8,
+                name: "Etc",
+            });
+        }
+        return {
+            name: "NotifyCategory",
+            notifyCategory: list,
+        };
+    }
+    _parseNotifyCategoryID(buf) {
+        let res = null;
+        const v1 = buf.readUInt8(0);
+        const v2 = buf.readUInt8(1);
+        if (v1 & 0b00000001) {
+            res = { id: 0, text: "NotNotify" };
+        }
+        else if (v1 & 0b00000010) {
+            res = { id: 1, text: "All" };
+        }
+        else if (v1 & 0b00000100) {
+            res = { id: 2, text: "PhoneIncomingCall" };
+        }
+        else if (v1 & 0b00001000) {
+            res = { id: 3, text: "PhoneInCall" };
+        }
+        else if (v1 & 0b00010000) {
+            res = { id: 4, text: "PhoneIdle" };
+        }
+        else if (v1 & 0b00100000) {
+            res = { id: 5, text: "Mail" };
+        }
+        else if (v1 & 0b01000000) {
+            res = { id: 6, text: "Schedule" };
+        }
+        else if (v1 & 0b10000000) {
+            res = { id: 7, text: "General" };
+        }
+        else if (v2 & 0b00000001) {
+            res = { id: 8, text: "Etc" };
+        }
+        return {
+            name: "NotifyCategoryID",
+            notifyCategoryId: res.id,
+            NotifyCategoryText: res.text,
+        };
+    }
+    _parseGetParameterID(buf) {
+        return {
+            name: "GetParameterID",
+            getParameterId: buf.readUInt8(0),
+        };
+    }
+    _parseGetParameterLength(buf) {
+        return {
+            name: "GetParameterLength",
+            getParameterLength: buf.readUInt32LE(0),
+        };
+    }
+    _parseParameterIdList(buf, notify_cateogry_id) {
+        const v = buf.readUInt16LE(0);
+        const list = [];
+        if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) { // PhoneIncomingCall/PhoneInCall/PhoneIdle
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 5) { // Mail
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x13, name: "Sender" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x14, name: "SenderAddress" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x15, name: "ReceiveDate" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 6) { // Schedule
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x16, name: "StartDate" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x17, name: "EndDate" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x18, name: "Area" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x19, name: "Person" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x1D, name: "Contents1" });
+            }
+            if (v & 0b0000010000000000) {
+                list.push({ id: 0x1E, name: "Contents2" });
+            }
+            if (v & 0b0000100000000000) {
+                list.push({ id: 0x1F, name: "Contents3" });
+            }
+            if (v & 0b0001000000000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0010000000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 7) { // General
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 8) { // Etc
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x1D, name: "Contents1" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x1E, name: "Contents2" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x1F, name: "Contents3" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x20, name: "Contents4" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x21, name: "Contents5" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x22, name: "Contents6" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x23, name: "Contents7" });
+            }
+            if (v & 0b0000010000000000) {
+                list.push({ id: 0x1B, name: "MimeTypeForMedia" });
+            }
+            if (v & 0b0000100000000000) {
+                list.push({ id: 0x27, name: "Media" });
+            }
+            if (v & 0b0001000000000000) {
+                list.push({ id: 0x1A, name: "MimeTypeForImage" });
+            }
+            if (v & 0b0010000000000000) {
+                list.push({ id: 0x1C, name: "Image" });
+            }
+            if (v & 0b0100000000000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b1000000000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        return {
+            name: "ParameterIdList",
+            parameterIdList: list,
+        };
+    }
+    _parseUniqueId(buf) {
+        return {
+            name: "UniqueId",
+            uniqueId: buf.readUInt16LE(0),
+        };
+    }
+    _parseNotifyId(buf) {
+        return {
+            name: "NotifyId",
+            notifyId: buf.readUInt16LE(0),
+        };
+    }
+    _parseNotificationOperation(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "AlreadyRead";
+        }
+        else if (code === 0x01) {
+            text = "Delete";
+        }
+        return {
+            name: "NotificationOperation",
+            notificationOperationCode: code,
+            notificationOperationText: text,
+        };
+    }
+    _parseTittle(buf) {
+        return {
+            name: "Tittle",
+            title: buf.toString("UTF-8"),
+        };
+    }
+    _parseText(buf) {
+        return {
+            name: "Text",
+            text: buf.toString("UTF-8"),
+        };
+    }
+    _parseAppName(buf) {
+        return {
+            name: "AppName",
+            appName: buf.toString("UTF-8"),
+        };
+    }
+    _parseAppNameLocal(buf) {
+        return {
+            name: "AppNameLocal",
+            appNameLocal: buf.toString("UTF-8"),
+        };
+    }
+    _parseNotifyApp(buf) {
+        return {
+            name: "NotifyApp",
+            notifyApp: buf.toString("UTF-8"),
+        };
+    }
+    _parseRumblingSetting(buf) {
+        const list = [];
+        const v = buf.readUInt8(0);
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "LED" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Vibration" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Beep" });
+        }
+        return {
+            name: "RumblingSetting",
+            rumblingSetting: list,
+        };
+    }
+    _parseVibrationPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "VibrationPattern",
+            vibrationPattern: list,
+        };
+    }
+    _parseLedPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "LedPattern",
+            LedPattern: list,
+        };
+    }
+    _parseSender(buf) {
+        return {
+            name: "Sender",
+            sender: buf.toString("UTF-8"),
+        };
+    }
+    _parseSenderAddress(buf) {
+        return {
+            name: "SenderAddress",
+            senderAddress: buf.toString("UTF-8"),
+        };
+    }
+    _parseReceiveDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "ReceiveDate",
+            receiveDate: dt,
+        };
+    }
+    _parseStartDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "StartDate",
+            startDate: dt,
+        };
+    }
+    _parseEndDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "EndDate",
+            endDate: dt,
+        };
+    }
+    _parseArea(buf) {
+        return {
+            name: "Area",
+            area: buf.toString("UTF-8"),
+        };
+    }
+    _parsePerson(buf) {
+        const buf_list = [];
+        let offset = 0;
+        let start = 0;
+        while (true) {
+            if (buf.readUInt8(offset) === 0x00) {
+                if (start !== offset) {
+                    buf_list.push(buf.slice(start, offset));
+                    start = offset;
+                }
+            }
+            offset++;
+            if (offset >= buf.length) {
+                if (start !== offset) {
+                    buf_list.push(buf.slice(start, offset));
+                }
+                break;
+            }
+        }
+        const list = [];
+        buf_list.forEach((b) => {
+            list.push(b.toString("UTF-8"));
+        });
+        return {
+            name: "Person",
+            person: list,
+        };
+    }
+    _parseMimeTypeForImage(buf) {
+        return {
+            name: "MimeTypeForImage",
+            mimeTypeForImage: buf.toString("UTF-8"),
+        };
+    }
+    _parseMimeTypeForMedia(buf) {
+        return {
+            name: "MimeTypeForMedia",
+            mimeTypeForMedia: buf.toString("UTF-8"),
+        };
+    }
+    _parseImage(buf) {
+        return {
+            name: "Image",
+            image: buf,
+        };
+    }
+    _parseContents(buf, pid) {
+        return {
+            name: "Contents" + pid,
+            contents: buf.toString("UTF-8"),
+        };
+    }
+    _parseMedia(buf) {
+        return {
+            name: "Media",
+            media: buf,
+        };
+    }
+    _parsePackage(buf) {
+        return {
+            name: "Package",
+            package: buf.toString("UTF-8"),
+        };
+    }
+    _parseClass(buf) {
+        return {
+            name: "Class",
+            class: buf.toString("UTF-8"),
+        };
+    }
+    _parseSharingInformation(buf) {
+        return {
+            name: "SharingInformation",
+            sharingInformation: buf.toString("UTF-8"),
+        };
+    }
+    _parseBeepPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "BeepPattern",
+            beepPattern: list,
+        };
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "CONFIRM_NOTIFY_CATEGORY") {
+            return this._createPayloadConfirmNotifyCategory(params);
+        }
+        else if (message_name === "NOTIFY_INFORMATION") {
+            return this._createPayloadNotifyInformation(params);
+        }
+        else if (message_name === "GET_PD_NOTIFY_DETAIL_DATA_RESP") {
+            return this._createPayloadGetPdNotifyDetailDataResp(params);
+        }
+        else if (message_name === "START_PD_APPLICATION_RESP") {
+            return this._createPayloadStartPdApplicationResp(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadConfirmNotifyCategory(params) {
+        const pnum_buf = Buffer.alloc(1);
+        pnum_buf.writeUInt8(0);
+        return pnum_buf;
+    }
+    _createPayloadNotifyInformation(params) {
+        /*
+            NotifyCategory   M 2 0x03
+            UniqueId         M 2 0x08
+            ParameterIdList  M 2 0x07
+            RumblingSetting  O 1 0x10
+            VibrationPattern O   0x11
+            LedPattern       O   0x12
+            BeepPattern      O   0x2B
+            */
+        /*
+            let pnum = 0;
+            let notify_category = null;
+            let notify_category_name = '';
+            if('NotifyCategory' in params) {
+                notify_category =  params['NotifyCategory'];
+                if(typeof(notify_category) === 'number') {
+                    if(notify_category >= 0 && notify_category <= 0xFF && notify_category % 1 === 0) {
+                        let hit = false;
+                        for(let name in this._NOTIFY_CATEGORY_NAME_ID_MAP) {
+                            if(this._NOTIFY_CATEGORY_NAME_ID_MAP[name] === notify_category) {
+                                hit = true;
+                                notify_category_name = name;
+                                break;
+                            }
+                        }
+                        if(hit === true) {
+                            pnum ++;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
+                } else if(typeof(notify_category) === 'string') {
+                    if(notify_category in this._NOTIFY_CATEGORY_NAME_ID_MAP) {
+                        notify_category = this._NOTIFY_CATEGORY_NAME_ID_MAP[notify_category];
+                        notify_category_name = notify_category;
+                        pnum ++;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+            let uid = null;
+            if(('UniqueId' in params) && typeof(params['UniqueId']) === 'number' && params['UniqueId'] >= 0 && params['UniqueId'] <= 0xFFFF && params['UniqueId'] % 1 === 0) {
+                uid = params['UniqueId'];
+                pnum ++;
+            } else {
+                return null;
+            }
+            // buffer list
+            let buf_list = [];
+            // Number of parameters
+            let pnum_buf = Buffer.from([pnum]);
+            buf_list.push(pnum_buf);
+            // NotifyCategory
+            if(notify_category !== null) {
+                let n = 1 << notify_category;
+                let val_buf = Buffer.alloc(2);
+                val_buf.writeUInt16LE(n);
+                buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+            }
+            // UniqueId
+            if(uid !== null) {
+                let val_buf = Buffer.alloc(2);
+                val_buf.writeUInt16LE(uid);
+                buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+            }
+            // Create a packet
+            return Buffer.concat(buf_list);
+            */
+        return null;
+    }
+    _createPayloadGetPdNotifyDetailDataResp(params) {
+        let pnum = 0;
+        let rcode = null;
+        if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+            rcode = params.ResultCode;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let uid = null;
+        if (("UniqueId" in params) && typeof (params.UniqueId) === "number" && params.UniqueId >= 0 && params.UniqueId <= 0xFF && params.UniqueId % 1 === 0) {
+            uid = params.UniqueId;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // ResultCode
+        if (rcode !== null) {
+            const val_buf = Buffer.alloc(1);
+            val_buf.writeUInt8(rcode);
+            buf_list.push(this._createPropertyBlockBuffer(0x00, val_buf));
+        }
+        // UniqueId
+        if (uid !== null) {
+            const val_buf = Buffer.alloc(2);
+            val_buf.writeUInt16LE(uid);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadStartPdApplicationResp(params) {
+        let pnum = 0;
+        let rcode;
+        if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+            rcode = params.ResultCode;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // ResultCode
+        if (rcode !== null) {
+            const val_buf = Buffer.alloc(1);
+            val_buf.writeUInt8(rcode);
+            buf_list.push(this._createPropertyBlockBuffer(0x00, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceNotification;
+
+//# sourceMappingURL=service-notification.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-operation.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-operation.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceOperation {
+    constructor() {
+        this.SERVICE_ID = 0x02;
+        this.SERVICE_NAME = "PeripheralDeviceOperation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "NOTIFY_PD_OPERATION",
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseButtonId(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseButtonId(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "Power";
+        }
+        else if (code === 0x01) {
+            text = "Return";
+        }
+        else if (code === 0x02) {
+            text = "SingleClick";
+        }
+        else if (code === 0x03) {
+            text = "Home";
+        }
+        else if (code === 0x04) {
+            text = "DoubleClick";
+        }
+        else if (code === 0x05) {
+            text = "VolumeUp";
+        }
+        else if (code === 0x06) {
+            text = "VolumeDown";
+        }
+        else if (code === 0x07) {
+            text = "LongPress";
+        }
+        else if (code === 0x08) {
+            text = "Pause";
+        }
+        else if (code === 0x09) {
+            text = "LongPressRelease";
+        }
+        else if (code === 0x0A) {
+            text = "FastForward";
+        }
+        else if (code === 0x0B) {
+            text = "ReWind";
+        }
+        else if (code === 0x0C) {
+            text = "Shutter";
+        }
+        else if (code === 0x0D) {
+            text = "Up";
+        }
+        else if (code === 0x0E) {
+            text = "Down";
+        }
+        else if (code === 0x0F) {
+            text = "Left";
+        }
+        else if (code === 0x10) {
+            text = "Right";
+        }
+        else if (code === 0x11) {
+            text = "Enter";
+        }
+        else if (code === 0x12) {
+            text = "Menu";
+        }
+        else if (code === 0x13) {
+            text = "Play";
+        }
+        else if (code === 0x14) {
+            text = "Stop";
+        }
+        return {
+            name: "ButtonId",
+            buttonId: code,
+            buttonName: text,
+        };
+    }
+}
+exports.default = LinkingServiceOperation;
+
+//# sourceMappingURL=service-operation.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-property.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-property.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceProperty {
+    constructor() {
+        this.SERVICE_ID = 0x00;
+        this.SERVICE_NAME = "PeripheralDevicePropertyInformation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_DEVICE_INFORMATION",
+            "01": "GET_DEVICE_INFORMATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_DEVICE_INFORMATION: 0x00,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseServiceList(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseDeviceId(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseDeviceUid(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseDeviceCapability(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseOriginalInformation(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseExSensorType(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseServiceList(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "PeripheralDevicePropertyInformation" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "PeripheralDeviceNotification" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "PeripheralDeviceOperation" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "PeripheralDeviceSensorInformation" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "PeripheralDeviceSettingOperation" });
+        }
+        return {
+            name: "ServiceList",
+            serviceList: list,
+        };
+    }
+    _parseDeviceId(buf) {
+        return {
+            name: "DeviceId",
+            deviceId: buf.toString("hex"),
+        };
+    }
+    _parseDeviceUid(buf) {
+        return {
+            name: "DeviceUid",
+            deviceUid: buf.toString("hex"),
+        };
+    }
+    _parseDeviceCapability(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Gyroscope" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Accelerometer" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "Orientation" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "Battery" });
+        }
+        if (v & 0b00100000) {
+            list.push({ id: 5, name: "Temperature" });
+        }
+        if (v & 0b01000000) {
+            list.push({ id: 6, name: "Humidity" });
+        }
+        if (v & 0b10000000) {
+            list.push({ id: 7, name: "Atmospheric pressure" });
+        }
+        return {
+            name: "DeviceCapability",
+            deviceCapability: list,
+        };
+    }
+    _parseOriginalInformation(buf) {
+        const type = buf.readUInt8(0);
+        let type_name = "";
+        if (type === 0x00) {
+            type_name = "AppName";
+        }
+        else if (type === 0x01) {
+            type_name = "AppNameLocal";
+        }
+        else if (type === 0x02) {
+            type_name = "AppDLURL1";
+        }
+        else if (type === 0x03) {
+            type_name = "AppDLURL2";
+        }
+        else if (type === 0x04) {
+            type_name = "AppDLURL3";
+        }
+        else if (type === 0x05) {
+            type_name = "AppExecInfo1";
+        }
+        else if (type === 0x06) {
+            type_name = "AppExecInfo2";
+        }
+        else if (type === 0x07) {
+            type_name = "AppExecInfo3";
+        }
+        else if (type === 0x08) {
+            type_name = "AppPackage";
+        }
+        return {
+            name: "OriginalInformation",
+            originalInformationCode: type,
+            originalInformationName: type_name,
+            originalInformationText: buf.slice(1).toString("UTF-8"),
+        };
+    }
+    _parseExSensorType(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "Version" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Version" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Flag" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "Button" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "Opening and closing" });
+        }
+        if (v & 0b00100000) {
+            list.push({ id: 5, name: "Human detection" });
+        }
+        if (v & 0b01000000) {
+            list.push({ id: 6, name: "Move" });
+        }
+        if (v & 0b10000000) {
+            list.push({ id: 7, name: "Illuminance" });
+        }
+        return {
+            name: "ExSensorType",
+            exSensorType: list,
+        };
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "GET_DEVICE_INFORMATION") {
+            return this._createPayloadGetDeviceInformation(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPayloadGetDeviceInformation(params) {
+        const pnum_buf = Buffer.alloc(1);
+        pnum_buf.writeUInt8(0);
+        return pnum_buf;
+    }
+}
+exports.default = LinkingServiceProperty;
+
+//# sourceMappingURL=service-property.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-sensor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-sensor.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/ieee754.js"));
+class LinkingServiceSensor {
+    constructor() {
+        this.SERVICE_ID = 0x03;
+        this.SERVICE_NAME = "PeripheralDeviceSensorInformation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_SENSOR_INFO",
+            "01": "GET_SENSOR_INFO_RESP",
+            "02": "SET_NOTIFY_SENSOR_INFO",
+            "03": "SET_NOTIFY_SENSOR_INFO_RESP",
+            "04": "NOTIFY_PD_SENSOR_INFO",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_SENSOR_INFO: 0x00,
+            SET_NOTIFY_SENSOR_INFO: 0x02,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        let sensor_type = 0;
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                const p = this._parseParameter(pid, pvalue_buf, sensor_type);
+                if (pid === 0x02 && ("sensorTypeCode" in p)) {
+                    sensor_type = p.sensorTypeCode;
+                }
+                parameters.push(p);
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf, sensor_type) {
+        let parsed = {};
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseSensorType(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseStatus(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseX_value(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseY_value(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseZ_value(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseX_threshold(buf);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseY_threshold(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseZ_threshold(buf);
+        }
+        else if (pid === 0x0A) {
+            parsed = this._parseOriginalData(buf, sensor_type);
+        }
+        parsed.parameterId = pid;
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseSensorType(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "Gyroscope";
+        }
+        else if (code === 0x01) {
+            text = "Accelerometer";
+        }
+        else if (code === 0x02) {
+            text = "Orientation";
+        }
+        else if (code === 0x03) {
+            text = "Battery";
+        }
+        else if (code === 0x04) {
+            text = "Temperature";
+        }
+        else if (code === 0x05) {
+            text = "Humidity";
+        }
+        else if (code === 0x06) {
+            text = "Atmospheric pressure";
+        }
+        else if (code === 0x07) {
+            text = "Opening and closing";
+        }
+        else if (code === 0x08) {
+            text = "Human detection";
+        }
+        else if (code === 0x09) {
+            text = "Move";
+        }
+        else if (code === 0x0a) {
+            text = "Illuminance";
+        }
+        return {
+            name: "SensorType",
+            sensorTypeCode: code,
+            sensorTypeText: text,
+        };
+    }
+    _parseStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OFF";
+        }
+        else if (code === 0x01) {
+            text = "ON";
+        }
+        return {
+            name: "Status",
+            statusCode: code,
+            statusText: text,
+        };
+    }
+    _parseX_value(buf) {
+        return {
+            name: "X_value",
+            xValue: buf.readFloatLE(0),
+        };
+    }
+    _parseY_value(buf) {
+        return {
+            name: "Y_value",
+            yValue: buf.readFloatLE(0),
+        };
+    }
+    _parseZ_value(buf) {
+        return {
+            name: "Z_value",
+            zValue: buf.readFloatLE(0),
+        };
+    }
+    _parseX_threshold(buf) {
+        return {
+            name: "X_threshold",
+            xThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseY_threshold(buf) {
+        return {
+            name: "Y_threshold",
+            yThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseZ_threshold(buf) {
+        return {
+            name: "Z_threshold",
+            zThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseOriginalData(buf, sensor_type) {
+        const n = buf.readUInt16LE(0) & 0b0000111111111111;
+        if (sensor_type === 0x03) { // Battery
+            return {
+                chargeRequired: (n & 0b0000100000000000) ? true : false,
+                chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (sensor_type === 0x04) { // Temperature
+            return {
+                temperature: ieee754_1.default.read(n, 1, 4, 7),
+            };
+        }
+        else if (sensor_type === 0x05) { // Humidity
+            const v = ieee754_1.default.read(n, 0, 4, 8);
+            return {
+                humidity: v,
+            };
+        }
+        else if (sensor_type === 0x06) { // Atmospheric pressure
+            return {
+                pressure: buf.readFloatLE(0),
+            };
+        }
+        else if (sensor_type === 0x07) { // Opening and closing
+            return {
+                openingStatus: (n & 0b0000100000000000) ? true : false,
+                openingCount: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (sensor_type === 0x08) { // Human detection
+            return {
+                humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
+                humanDetectionCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (sensor_type === 0x09) { // Move (Vibration Sensor)
+            return {
+                moveResponse: (n & 0b0000100000000000) ? true : false,
+                moveCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (sensor_type === 0x0a) { // Illuminance
+            return {
+                illuminance: buf.readFloatLE(0),
+            };
+        }
+        else {
+            return {};
+        }
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "GET_SENSOR_INFO") {
+            return this._createPayloadGetSensorInfo(params);
+        }
+        else if (message_name === "SET_NOTIFY_SENSOR_INFO") {
+            return this._createPayloadSetNotifySensorInfo(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetSensorInfo(params) {
+        let pnum = 0;
+        let sensor_type = null;
+        if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+            sensor_type = params.SensorType;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SensorType
+        if (sensor_type !== null) {
+            const val_buf = Buffer.from([sensor_type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadSetNotifySensorInfo(params) {
+        let pnum = 0;
+        let sensor_type = null;
+        if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+            sensor_type = params.SensorType;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let status = null;
+        if (("Status" in params)) {
+            status = params.Status ? 1 : 0;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let x = null;
+        let y = null;
+        let z = null;
+        if (sensor_type <= 0x02) {
+            if ("X_threshold" in params) {
+                if (typeof (params.X_threshold) === "number") {
+                    x = params.X_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+            if ("Y_threshold" in params) {
+                if (typeof (params.Y_threshold) === "number") {
+                    y = params.Y_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+            if ("Z_threshold" in params) {
+                if (typeof (params.Z_threshold) === "number") {
+                    z = params.Z_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        let odata = null;
+        if ("OriginalData" in params) {
+            if (params.OriginalData && (params.OriginalData instanceof Buffer)) {
+                odata = params.OriginalData;
+                pnum++;
+            }
+            else {
+                return null;
+            }
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SensorType
+        if (sensor_type !== null) {
+            const val_buf = Buffer.from([sensor_type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Status
+        if (status !== null) {
+            const val_buf = Buffer.from([status]);
+            buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+        }
+        // X_threshold
+        if (x !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(x, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x07, val_buf));
+        }
+        // Y_threshold
+        if (y !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(y, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Z_threshold
+        if (z !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(z, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x09, val_buf));
+        }
+        // OriginalData
+        if (odata !== null) {
+            const val_buf = odata;
+            buf_list.push(this._createPropertyBlockBuffer(0x0A, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceSensor;
+
+//# sourceMappingURL=service-sensor.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-setting.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-setting.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceSetting {
+    constructor() {
+        this.SERVICE_ID = 0x04;
+        this.SERVICE_NAME = "PeripheralDeviceSettingOperation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_APP_VERSION",
+            "01": "GET_APP_VERSION_RESP",
+            "02": "CONFIRM_INSTALL_APP",
+            "03": "CONFIRM_INSTALL_APP_RESP",
+            "04": "GET_SETTING_INFORMATION",
+            "05": "GET_SETTING_INFORMATION_RESP",
+            "06": "GET_SETTING_NAME",
+            "07": "GET_SETTING_NAME_RESP",
+            "08": "SELECT_SETTING_INFORMATION",
+            "09": "SELECT_SETTING_INFORMATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_APP_VERSION: 0x00,
+            CONFIRM_INSTALL_APP: 0x02,
+            GET_SETTING_INFORMATION: 0x04,
+            GET_SETTING_NAME: 0x06,
+            SELECT_SETTING_INFORMATION: 0x08,
+        };
+        this._SETTING_NAME_TYPE_MAP = {
+            LEDColorName: 0x00,
+            LEDPatternName: 0x01,
+            VibrationPatternName: 0x02,
+            BeepPatternName: 0x03,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseSettingNameType(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseAppName(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseFileVer(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseFileSize(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseInstallConfirmStatus(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseSettingInformationRequest(buf);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseSettingInformationData(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseSettingNameData(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseSettingNameType(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "LEDColorName";
+        }
+        else if (code === 0x01) {
+            text = "LEDPatternName";
+        }
+        else if (code === 0x02) {
+            text = "VibrationPatternName";
+        }
+        else if (code === 0x03) {
+            text = "BeepPatternName";
+        }
+        return {
+            name: "SettingNameType",
+            settingNameTypeCode: code,
+            settingNameTypeText: text,
+        };
+    }
+    _parseAppName(buf) {
+        return {
+            name: "AppName",
+            appName: buf.toString("UTF-8"),
+        };
+    }
+    _parseFileVer(buf) {
+        const list = [];
+        for (let i = 0; i < buf.length; i++) {
+            list.push(buf.readUInt8(i));
+        }
+        return {
+            name: "FileVer",
+            fileVer: list.join("."),
+        };
+    }
+    _parseFileSize(buf) {
+        return {
+            name: "FileSize",
+            fileSize: buf.readUInt32LE(0),
+        };
+    }
+    _parseInstallConfirmStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, Device has been ready for install";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        else if (code === 0x06) {
+            text = "Error, Device has no space to install";
+        }
+        else if (code === 0x07) {
+            text = "Error, Requested file was already installed";
+        }
+        else if (code === 0x08) {
+            text = "Error, Newest file was already installed";
+        }
+        return {
+            name: "InstallConfirmStatus",
+            installConfirmStatusCode: code,
+            installConfirmStatusText: text,
+        };
+    }
+    _parseSettingInformationRequest(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "SETTING";
+        }
+        else if (code === 0x01) {
+            text = "START_DEMONSTRATION";
+        }
+        else if (code === 0x02) {
+            text = "STOP_DEMONSTRATION";
+        }
+        let offset = 1;
+        const settings = [];
+        while (true) {
+            const setting_code = buf.readUInt8(offset);
+            if (setting_code === 0x00) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "LED",
+                    colorMax: buf.readUInt8(offset + 1),
+                    colorNumber: buf.readUInt8(offset + 2),
+                    patternMax: buf.readUInt8(offset + 3),
+                    patternNumber: buf.readUInt8(offset + 4),
+                    duration: buf.readUInt8(offset + 5),
+                });
+                offset += 5;
+            }
+            else if (setting_code === 0x01) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "Vibration",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 3;
+            }
+            else if (setting_code === 0x02) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "Beep",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 3;
+            }
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingInformationRequest",
+            settingInformationRequestCode: code,
+            settingInformationRequestName: text,
+            settingInformationRequestData: settings,
+        };
+    }
+    _parseSettingInformationData(buf) {
+        let offset = 0;
+        const settings = [];
+        while (true) {
+            const setting_code = buf.readUInt8(offset);
+            if (setting_code === 0x00) {
+                settings.push({
+                    id: setting_code,
+                    name: "LED",
+                    colorMax: buf.readUInt8(offset + 1),
+                    colorNumber: buf.readUInt8(offset + 2),
+                    patternMax: buf.readUInt8(offset + 3),
+                    patternNumber: buf.readUInt8(offset + 4),
+                    duration: buf.readUInt8(offset + 5),
+                });
+                offset += 6;
+            }
+            else if (setting_code === 0x01) {
+                settings.push({
+                    id: setting_code,
+                    name: "Vibration",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 4;
+            }
+            else if (setting_code === 0x02) {
+                settings.push({
+                    id: setting_code,
+                    name: "Beep",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 4;
+            }
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingInformationData",
+            settingInformationData: settings,
+        };
+    }
+    _parseSettingNameData(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            const name = buf.slice(offset, offset + len - 1).toString("utf-8");
+            offset += len;
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingNameData",
+            settingNameData: list,
+        };
+    }
+    /* ------------------------------------------------------------------
+      * Method: createRequest(message_name, params)
+      * ---------------------------------------------------------------- */
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (!params || typeof (params) !== "object") {
+            params = {};
+        }
+        if (message_name === "GET_APP_VERSION") {
+            return this._createPayloadGetAppVersion(params);
+        }
+        else if (message_name === "CONFIRM_INSTALL_APP") {
+            return this._createPayloadConfirmInstallApp(params);
+        }
+        else if (message_name === "GET_SETTING_INFORMATION") {
+            return this._createPayloadGetSettingInformation(params);
+        }
+        else if (message_name === "GET_SETTING_NAME") {
+            return this._createPayloadGetSettingName(params);
+        }
+        else if (message_name === "SELECT_SETTING_INFORMATION") {
+            return this._createPayloadSelectSettingInformation(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetAppVersion(params) {
+        let pnum = 0;
+        let app_name = null;
+        if (("AppName" in params) && typeof (params.AppName) === "string") {
+            app_name = params.AppName;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // AppName
+        if (app_name !== null) {
+            const val_buf = Buffer.from(app_name);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadConfirmInstallApp(params) {
+        let pnum = 0;
+        let app_name = null;
+        if (("AppName" in params) && typeof (params.AppName) === "string") {
+            app_name = params.AppName;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let file_ver = null;
+        if (("FileVer" in params) && typeof (params.FileVer) === "string") {
+            file_ver = params.FileVer;
+            pnum++;
+        }
+        let file_size = null;
+        if (("FileSize" in params) && typeof (params.FileSize) === "number" && file_size % 1 === 0) {
+            file_size = params.FileSize;
+            pnum++;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // AppName
+        if (app_name !== null) {
+            const val_buf = Buffer.from(app_name);
+            buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+        }
+        // FileVer
+        if (file_ver !== null) {
+            const val_buf = Buffer.from(file_ver);
+            buf_list.push(this._createPropertyBlockBuffer(0x04, val_buf));
+        }
+        // FileSize
+        if (file_size !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeUInt32LE(file_size);
+            buf_list.push(this._createPropertyBlockBuffer(0x05, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetSettingInformation(params) {
+        const pnum_buf = Buffer.from([0]);
+        return pnum_buf;
+    }
+    _createPayloadGetSettingName(params) {
+        let pnum = 0;
+        let type = null;
+        if ("SettingNameType" in params) {
+            type = params.SettingNameType;
+            if (typeof (type) === "number") {
+                let setting_name = "";
+                for (const name in this._SETTING_NAME_TYPE_MAP) {
+                    if (this._SETTING_NAME_TYPE_MAP[name] === type) {
+                        setting_name = name;
+                        break;
+                    }
+                }
+                if (!setting_name) {
+                    return null;
+                }
+            }
+            else if (typeof (type) === "string") {
+                if (type in this._SETTING_NAME_TYPE_MAP) {
+                    type = this._SETTING_NAME_TYPE_MAP[type];
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        else {
+            return null;
+        }
+        pnum++;
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SettingNameType
+        if (type !== null) {
+            const val_buf = Buffer.from([type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadSelectSettingInformation(params) {
+        let pnum = 0;
+        let code = null;
+        if (("SettingInformationRequest" in params) && typeof (params.SettingInformationRequest) === "object") {
+            const req = params.SettingInformationRequest;
+            if (("requestCode" in req) && typeof (req.requestCode) === "number" && req.requestCode >= 0 && req.requestCode <= 0x02 && req.requestCode % 1 === 0) {
+                code = req.requestCode;
+            }
+            else if (("requestName" in req) && typeof (req.requestName) === "string") {
+                const name = req.requestName;
+                if (name === "SETTING") {
+                    code = 0x00;
+                }
+                else if (name === "START_DEMONSTRATION") {
+                    code = 0x01;
+                }
+                else if (name === "STOP_DEMONSTRATION") {
+                    code = 0x02;
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
+        pnum++;
+        let settings = null;
+        if ("SettingInformationData" in params) {
+            if (Array.isArray(params.SettingInformationData)) {
+                settings = [];
+                for (let i = 0; i < params.SettingInformationData.length; i++) {
+                    const s = params.SettingInformationData[i];
+                    let scode = null;
+                    let sname = "";
+                    if (("settingCode" in s) && typeof (s.settingCode) === "number" && s.settingCode >= 0x00 && s.settingCode <= 0x02 && s.settingCode % 1 === 0) {
+                        scode = s.settingCode;
+                        if (scode === 0x00) {
+                            sname = "LED";
+                        }
+                        else if (scode === 0x01) {
+                            sname = "Vibration";
+                        }
+                        else if (scode === 0x02) {
+                            sname = "Beep";
+                        }
+                    }
+                    else if (("settingName" in s) && typeof (s.settingName) === "string") {
+                        sname = s.settingName;
+                        if (sname === "LED") {
+                            scode = 0x00;
+                        }
+                        else if (sname === "Vibration") {
+                            scode = 0x01;
+                        }
+                        else if (sname === "Beep") {
+                            scode = 0x02;
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    if (!(sname in this._device.settings)) {
+                        return null;
+                    }
+                    let cn = null;
+                    let cm = null;
+                    if (scode === 0x00) { // LED
+                        if ("colorNumber" in s) {
+                            if (typeof (s.colorNumber) === "number" && s.colorNumber >= 0 && s.colorNumber <= this._device.settings.LED.colorMax && s.colorNumber % 1 === 0) {
+                                cn = s.colorNumber;
+                            }
+                            else {
+                                return null;
+                            }
+                        }
+                        else {
+                            cn = this._device.settings.LED.colorNumber;
+                        }
+                        cm = this._device.settings.LED.colorMax;
+                    }
+                    let pn = null;
+                    if ("patternNumber" in s) {
+                        if (typeof (s.patternNumber) === "number" && s.patternNumber >= 0 && s.patternNumber <= this._device.settings[sname].patternMax && s.patternNumber % 1 === 0) {
+                            pn = s.patternNumber;
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        pn = this._device.settings[sname].patternNumber;
+                    }
+                    const pm = this._device.settings[sname].patternMax;
+                    let dur = null;
+                    if ("duration" in s) {
+                        if (typeof (s.duration) === "number" && s.duration >= 0 && s.duration <= 0xFF && s.duration % 1 === 0) {
+                            dur = s.duration;
+                            if (dur <= 0x05) {
+                                dur = 0x05;
+                            }
+                            else if (dur <= 0x0A) {
+                                dur = 0x0A;
+                            }
+                            else if (dur <= 0x1E) {
+                                dur = 0x1E;
+                            }
+                            else if (dur <= 0x3C) {
+                                dur = 0x3C;
+                            }
+                            else if (dur <= 0xB4) {
+                                dur = 0xB4;
+                            }
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        dur = this._device.settings[sname].duration;
+                    }
+                    settings.push({
+                        settingCode: scode,
+                        colorNumber: cn,
+                        colorMax: cm,
+                        patternNumber: pn,
+                        patternMax: pm,
+                        duration: dur,
+                    });
+                }
+            }
+            else {
+                return null;
+            }
+            if (settings.length === 0) {
+                settings = null;
+            }
+            else {
+                pnum++;
+            }
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SettingInformationRequest
+        if (code !== null) {
+            const val_buf = Buffer.from([code]);
+            buf_list.push(this._createPropertyBlockBuffer(0x07, val_buf));
+        }
+        // SettingInformationData
+        if (settings !== null) {
+            const val_buf_list = [];
+            settings.forEach((s) => {
+                val_buf_list.push(Buffer.from([s.settingCode]));
+                if (s.colorNumber !== null) {
+                    val_buf_list.push(Buffer.from([s.colorMax, s.colorNumber]));
+                }
+                val_buf_list.push(Buffer.from([s.patternMax, s.patternNumber]));
+                val_buf_list.push(Buffer.from([s.duration]));
+            });
+            const val_buf = Buffer.concat(val_buf_list);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceSetting;
+
+//# sourceMappingURL=service-setting.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - service.js
+*
+* Copyright (c) 2017, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2017-04-15
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const service_notification_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-notification.js"));
+const service_operation_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-operation.js"));
+const service_property_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-property.js"));
+const service_sensor_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-sensor.js"));
+const service_setting_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-setting.js"));
+class LinkingService {
+    constructor() {
+        this._services = {
+            "00": new service_property_js_1.default(),
+            "01": new service_notification_1.default(),
+            "02": new service_operation_js_1.default(),
+            "03": new service_sensor_js_1.default(),
+            "04": new service_setting_js_1.default(),
+        };
+        this._write_message_name_map = {
+            // PeripheralDevicePropertyInformation Service
+            GET_DEVICE_INFORMATION: "00",
+            // PeripheralDeviceNotification Service
+            CONFIRM_NOTIFY_CATEGORY: "01",
+            NOTIFY_INFORMATION: "01",
+            // PeripheralDeviceSensorInformation Service
+            GET_SENSOR_INFO: "03",
+            SET_NOTIFY_SENSOR_INFO: "03",
+            // PeripheralDeviceSettingOperation Service
+            GET_APP_VERSION: "04",
+            CONFIRM_INSTALL_APP: "04",
+            GET_SETTING_INFORMATION: "04",
+            GET_SETTING_NAME: "04",
+            SELECT_SETTING_INFORMATION: "04",
+        };
+        this._device_info = null;
+    }
+    setDeviceInfo(device_info) {
+        for (const code in this._services) {
+            this._services[code].setDeviceInfo(device_info);
+        }
+        this._device_info = device_info;
+    }
+    parseResponse(buf) {
+        const service_id_hex = buf.slice(1, 2).toString("hex");
+        const service = this._services[service_id_hex];
+        if (!service) {
+            return null;
+        }
+        const service_id = buf.readUInt8(1);
+        const msg_id = buf.readUInt16LE(2);
+        // let msg_id = buf.readUInt8(2);
+        const msg_id_hex = buf.slice(2, 3).toString("hex");
+        const pnum = buf.readUInt8(4);
+        const payload_buf = buf.slice(5, buf.length);
+        const parameters = service.parsePayload(pnum, payload_buf);
+        const parsed = {
+            buffer: buf,
+            serviceId: service_id,
+            serviceName: service.SERVICE_NAME,
+            messageId: msg_id,
+            messageName: service.MESSAGE_NAME_MAP[msg_id_hex],
+            parameters,
+        };
+        return parsed;
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._write_message_name_map)) {
+            return null;
+        }
+        const sid = this._write_message_name_map[message_name];
+        const service = this._services[sid];
+        const buf = service.createRequest(message_name, params);
+        return buf;
+    }
+    isSupportedWriteMessageName(message_name) {
+        if (!message_name) {
+            return false;
+        }
+        let sid = this._write_message_name_map[message_name];
+        if (!sid) {
+            return false;
+        }
+        sid = parseInt(sid, 10);
+        const services = (this._device_info && this._device_info.services) ? this._device_info.services : null;
+        if (!services) {
+            return false;
+        }
+        let res = false;
+        for (const k in services) {
+            if (services[k] === sid) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+}
+exports.default = LinkingService;
+
+//# sourceMappingURL=service.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Camera/ArduCAMMini/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.ArduCAMMini
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20001,6 +28201,10 @@ exports.default = ArduCAMMini;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.JpegSerialCam
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20245,6 +28449,10 @@ exports.default = JpegSerialCam;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.PT550
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20295,6 +28503,10 @@ exports.default = PT550;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.S11059
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20361,6 +28573,10 @@ exports.default = S11059;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.7SegmentLED
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLED {
     constructor() {
@@ -20507,6 +28723,10 @@ exports.default = _7SegmentLED;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.7SegmentLEDArray
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLEDArray {
     constructor() {
@@ -20570,6 +28790,10 @@ exports.default = _7SegmentLEDArray;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.7SegmentLED_MAX7219
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLED_MAX7219 {
     constructor() {
@@ -20692,11 +28916,126 @@ exports.default = _7SegmentLED_MAX7219;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Display/MatrixLED_HT16K33/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MatrixLED_HT16K33 {
+    constructor() {
+        this.width = 0;
+        this.height = 0;
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
+        this.requiredKeys = [];
+        this.command = {};
+        this.command.blink = 0x80;
+        this.command.brightness = 0xE0;
+        this.blink_mode = {};
+        this.blink_mode.display_on = 0x01;
+        this.blink_mode.blink_off = 0x00;
+        this.blink_mode.blink_2hz = 0x01;
+        this.blink_mode.blink_1hz = 0x02;
+        this.blink_mode.blink_halfhz = 0x03;
+        this.vram = [];
+    }
+    static info() {
+        return {
+            name: "MatrixLED_HT16K33",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.address = this.params.address || 0x70;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.params.clock = this.params.clock || 400 * 1000;
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(1000);
+    }
+    init(width) {
+        console.log(width);
+        this.width = width;
+        this.height = 8; // IC static setting
+        this.prepareVram(width, this.height);
+        this.i2c.write(this.address, [0x21]);
+        this.blinkRate(this.blink_mode.blink_off);
+        this.brightness(15);
+        this.obniz.wait(10);
+    }
+    blinkRate(val) {
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 3) {
+            val = 3;
+        }
+        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
+    }
+    brightness(val) {
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 15) {
+            val = 15;
+        }
+        this.i2c.write(this.address, [this.command.brightness | val]);
+    }
+    clear() {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0x00;
+        }
+        this.writeVram();
+    }
+    draw(ctx) {
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                const pos = i * this.height * 4 + j * 4;
+                const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
+                this.vram[i] = this.vram[i] << 1;
+                if (brightness > 0x7f) {
+                    this.vram[i] |= 0x1;
+                }
+            }
+            this.vram[i] = this.vram[i] << 16 - this.width;
+        }
+        this.writeVram();
+    }
+    prepareVram(width, height) {
+        this.vram = [];
+        for (let i = 0; i < height; i++) {
+            this.vram.push(0);
+        }
+    }
+    writeVram() {
+        const data = [0x00];
+        for (let i = 0; i < 8; i++) {
+            data.push((this.vram[i] >> 8) & 0xFF);
+            data.push(this.vram[i] & 0xFF);
+        }
+        this.i2c.write(this.address, data);
+    }
+}
+exports.default = MatrixLED_HT16K33;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Display/MatrixLED_MAX7219/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MatrixLED_MAX7219
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class MatrixLED_MAX7219 {
     constructor() {
@@ -20827,6 +29166,10 @@ exports.default = MatrixLED_MAX7219;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.ST7735S
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -23042,6 +31385,10 @@ const font = [
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.SainSmartTFT18LCD
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -25239,6 +33586,10 @@ const font = [
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.SharpMemoryTFT
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class SharpMemoryTFT {
     constructor() {
@@ -25549,6 +33900,10 @@ exports.default = SharpMemoryTFT;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.GP2Y0A21YK0F
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -25640,6 +33995,10 @@ exports.default = GP2Y0A21YK0F;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.HC-SR04
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -25745,6 +34104,10 @@ exports.default = HCSR04;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.GYSFDMAXB
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class GYSFDMAXB {
     constructor() {
@@ -26105,6 +34468,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ135
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ135 extends MQGas_1.default {
     static info() {
@@ -26132,6 +34499,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ2
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ2 extends MQGas_1.default {
     static info() {
@@ -26159,6 +34530,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ3
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ3 extends MQGas_1.default {
     static info() {
@@ -26186,6 +34561,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ4
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ4 extends MQGas_1.default {
     static info() {
@@ -26213,6 +34592,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ5
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ5 extends MQGas_1.default {
     static info() {
@@ -26240,6 +34623,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ6
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ6 extends MQGas_1.default {
     static info() {
@@ -26267,6 +34654,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ7
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ7 extends MQGas_1.default {
     static info() {
@@ -26294,6 +34685,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ8
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ8 extends MQGas_1.default {
     static info() {
@@ -26321,6 +34716,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ9
+ */
 const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
 class MQ9 extends MQGas_1.default {
     static info() {
@@ -26344,6 +34743,10 @@ exports.default = MQ9;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MQGas
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class MQGasSensor {
     constructor() {
@@ -26412,6 +34815,10 @@ exports.default = MQGasSensor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_3AxisAccelerometer
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -26576,6 +34983,10 @@ exports.default = Grove_3AxisAccelerometer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Button
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -26647,6 +35058,10 @@ exports.default = Grove_Button;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Buzzer
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Buzzer {
     constructor() {
@@ -26693,6 +35108,10 @@ exports.default = Grove_Buzzer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_EarHeartRate
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EarHeartRate {
     constructor() {
@@ -26757,6 +35176,10 @@ exports.default = Grove_EarHeartRate;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_GPS
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_GPS {
     constructor() {
@@ -26815,7 +35238,11 @@ class Grove_GPS {
             if (pos >= 0) {
                 results = this.uart.received.slice(0, pos - 1);
                 this.uart.received.splice(0, pos + 1);
-                return this.uart.tryConvertString(results);
+                let str = this.uart.tryConvertString(results);
+                if (str === null) {
+                    str = "";
+                }
+                return str;
             }
         }
         return "";
@@ -27087,6 +35514,10 @@ exports.default = Grove_GPS;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_MP3
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27200,6 +35631,10 @@ exports.default = Grove_MP3;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.ENC03R_Module
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27268,6 +35703,10 @@ exports.default = ENC03R_Module;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.IRModule
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class IRModule {
     constructor() {
@@ -27337,6 +35776,10 @@ exports.default = IRModule;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.IRSensor
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class IRSensor {
     constructor() {
@@ -27412,6 +35855,10 @@ exports.default = IRSensor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.InfraredLED
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class InfraredLED {
     constructor() {
@@ -27460,6 +35907,10 @@ exports.default = InfraredLED;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.YG1006
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27504,111 +35955,350 @@ exports.default = YG1006;
 
 /***/ }),
 
-/***/ "./dist/src/parts/KeyeStudio/MatrixLED_HT16K33/index.js":
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Button
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class MatrixLED_HT16K33 {
+class Keyestudio_Button {
     constructor() {
-        this.width = 0;
-        this.height = 0;
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
-        this.requiredKeys = [];
-        this.command = {};
-        this.command.blink = 0x80;
-        this.command.brightness = 0xE0;
-        this.blink_mode = {};
-        this.blink_mode.display_on = 0x01;
-        this.blink_mode.blink_off = 0x00;
-        this.blink_mode.blink_2hz = 0x01;
-        this.blink_mode.blink_1hz = 0x02;
-        this.blink_mode.blink_halfhz = 0x03;
-        this.vram = [];
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
     }
     static info() {
         return {
-            name: "MatrixLED_HT16K33",
+            name: "Keyestudio_Button",
+        };
+    }
+    wired(obniz) {
+        this.io_signal = obniz.getIO(this.params.signal);
+        if (obniz.isValidIO(this.params.vcc)) {
+            this.io_vcc = obniz.getIO(this.params.vcc);
+            this.io_vcc.output(true);
+        }
+        if (obniz.isValidIO(this.params.gnd)) {
+            this.io_supply = obniz.getIO(this.params.gnd);
+            this.io_supply.output(false);
+        }
+        this.io_signal.pull("5v");
+        this.io_signal.input((value) => {
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io_signal.inputWait();
+        });
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => {
+                    };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Keyestudio_Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Buzzer
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Buzzer {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Buzzer",
         };
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.address = this.params.address || 0x70;
-        this.params.pull = "5v";
-        this.params.mode = "master";
-        this.params.clock = this.params.clock || 400 * 1000;
-        this.i2c = obniz.getI2CWithConfig(this.params);
-        this.obniz.wait(1000);
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.pwm = obniz.getFreePwm();
+        this.pwm.start({ io: this.params.signal });
     }
-    init(width) {
-        console.log(width);
-        this.width = width;
-        this.height = 8; // IC static setting
-        this.prepareVram(width, this.height);
-        this.i2c.write(this.address, [0x21]);
-        this.blinkRate(this.blink_mode.blink_off);
-        this.brightness(15);
-        this.obniz.wait(10);
-    }
-    blinkRate(val) {
-        if (val < 0) {
-            val = 0;
+    play(freq) {
+        if (typeof freq !== "number") {
+            throw new Error("freq must be a number");
         }
-        if (val > 3) {
-            val = 3;
+        freq = Math.floor(freq);
+        if (freq > 0) {
+            this.pwm.freq(freq);
+            this.pwm.pulse((1 / freq / 2) * 1000);
         }
-        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
-    }
-    brightness(val) {
-        if (val < 0) {
-            val = 0;
-        }
-        if (val > 15) {
-            val = 15;
-        }
-        this.i2c.write(this.address, [this.command.brightness | val]);
-    }
-    clear() {
-        for (let i = 0; i < this.height; i++) {
-            this.vram[i] = 0x00;
-        }
-        this.writeVram();
-    }
-    draw(ctx) {
-        const imageData = ctx.getImageData(0, 0, this.width, this.height);
-        const data = imageData.data;
-        for (let i = 0; i < this.height; i++) {
-            this.vram[i] = 0;
-            for (let j = 0; j < this.width; j++) {
-                const pos = i * this.height * 4 + j * 4;
-                const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
-                this.vram[i] = this.vram[i] << 1;
-                if (brightness > 0x7f) {
-                    this.vram[i] |= 0x1;
-                }
-            }
-            this.vram[i] = this.vram[i] << 16 - this.width;
-        }
-        this.writeVram();
-    }
-    prepareVram(width, height) {
-        this.vram = [];
-        for (let i = 0; i < height; i++) {
-            this.vram.push(0);
+        else {
+            this.pwm.pulse(0);
         }
     }
-    writeVram() {
-        const data = [0x00];
-        for (let i = 0; i < 8; i++) {
-            data.push((this.vram[i] >> 8) & 0xFF);
-            data.push(this.vram[i] & 0xFF);
-        }
-        this.i2c.write(this.address, data);
+    stop() {
+        this.play(0);
     }
 }
-exports.default = MatrixLED_HT16K33;
+exports.default = Keyestudio_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_MoistureSensor
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_MoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "signal", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_MoistureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    getHumidityWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ad.getWait();
+        });
+    }
+}
+exports.default = Keyestudio_MoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_PIR
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_PIR {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_PIR",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_signal = obniz.getIO(this.params.signal);
+        this.io_signal.pull("0v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.input((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+}
+exports.default = Keyestudio_PIR;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TemperatureSensor {
+    constructor() {
+        this.temp = 0;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TemperatureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((voltage) => {
+            this.temp = this.calc(voltage);
+            this.onchange(this.temp);
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const voltage = yield this.ad.getWait();
+            this.temp = this.calc(voltage);
+            return this.temp;
+        });
+    }
+    onchange(temp) {
+    }
+    calc(voltage) {
+        return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
+    }
+}
+exports.default = Keyestudio_TemperatureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_TrafficLight
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TrafficLight {
+    constructor() {
+        this.keys = ["gnd", "green", "yellow", "red"];
+        this.requiredKeys = ["green", "yellow", "red"];
+        this.state = "red";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TrafficLight",
+        };
+    }
+    wired(obniz) {
+        function getIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return io;
+                }
+            }
+            return obniz.getIO(io);
+        }
+        this.obniz = obniz;
+        obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.green = obniz.wired("LED", { anode: this.params.green });
+        this.yellow = obniz.wired("LED", { anode: this.params.yellow });
+        this.red = obniz.wired("LED", { anode: this.params.red });
+    }
+    single(led) {
+        this.green.off();
+        this.yellow.off();
+        this.red.off();
+        this.state = led;
+        switch (led) {
+            case "green":
+                this.green.on();
+                break;
+            case "yellow":
+                this.yellow.on();
+                break;
+            case "red":
+            default:
+                this.red.on();
+                this.state = "red";
+                break;
+        }
+    }
+    next() {
+        switch (this.state) {
+            case "green":
+                this.single("yellow");
+                break;
+            case "yellow":
+                this.single("red");
+                break;
+            case "red":
+            default:
+                this.single("green");
+                break;
+        }
+    }
+}
+exports.default = Keyestudio_TrafficLight;
 
 //# sourceMappingURL=index.js.map
 
@@ -27620,6 +36310,10 @@ exports.default = MatrixLED_HT16K33;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.FullColorLED
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class FullColorLED {
     constructor() {
@@ -27745,6 +36439,10 @@ exports.default = FullColorLED;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.LED
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class LED {
     constructor() {
@@ -27853,6 +36551,10 @@ exports.default = LED;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.WS2811
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class WS2811 {
     constructor() {
@@ -27976,6 +36678,10 @@ exports.default = WS2811;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.WS2812
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class WS2812 {
     constructor() {
@@ -28097,6 +36803,10 @@ exports.default = WS2812;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.WS2812B
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class WS2812B {
     constructor() {
@@ -28218,6 +36928,10 @@ exports.default = WS2812B;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.SNx4HC595
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class SNx4HC595_IO {
     constructor(chip, id) {
@@ -28229,7 +36943,7 @@ class SNx4HC595_IO {
         this.chip.output(this.id, value);
     }
 }
-// tslint:disable-next-line:max-classes-per-file
+// tslint:disable:max-classes-per-file
 class SNx4HC595 {
     constructor() {
         /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
@@ -28352,6 +37066,10 @@ exports.default = SNx4HC595;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.CT10
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28424,6 +37142,10 @@ exports.default = CT10;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.HMC5883L
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28491,6 +37213,10 @@ exports.default = HMC5883L;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.24LC256
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28547,6 +37273,10 @@ exports.default = _24LC256;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.AK8963
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28622,6 +37352,10 @@ exports.default = AK8963;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Button
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28700,6 +37434,10 @@ exports.default = Button;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.FlickHat
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29067,6 +37805,10 @@ exports.default = FlickHat;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.HC-SR505
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29115,6 +37857,10 @@ exports.default = HCSR505;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.IPM-165
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29163,6 +37909,10 @@ exports.default = IPM_165;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.JoyStick
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29245,6 +37995,10 @@ exports.default = JoyStick;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.KXR94-2050
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29351,6 +38105,10 @@ exports.default = KXR94_2050;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.KXSC7-2050
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29418,6 +38176,10 @@ exports.default = KXSC7_2050;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MPU6050
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29541,6 +38303,10 @@ exports.default = MPU6050;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MPU6886
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29724,6 +38490,10 @@ exports.default = MPU6886;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MPU9250
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29808,6 +38578,10 @@ exports.default = MPU9250;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.PaPIRsVZ
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class PaPIRsVZ {
     constructor() {
@@ -29843,6 +38617,10 @@ exports.default = PaPIRsVZ;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Potentiometer
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Potentiometer {
     constructor() {
@@ -29882,6 +38660,10 @@ exports.default = Potentiometer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.SH200Q
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -30064,6 +38846,10 @@ exports.default = SH200Q;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.DCMotor
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class DCMotor {
     constructor() {
@@ -30154,6 +38940,10 @@ exports.default = DCMotor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.PCA9685
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class PCA9685_PWM {
     constructor(chip, id) {
@@ -30172,7 +38962,7 @@ class PCA9685_PWM {
         this.chip.duty(this.id, value);
     }
 }
-// tslint:disable-next-line:max-classes-per-file
+// tslint:disable:max-classes-per-file
 class PCA9685 {
     constructor() {
         this.pwms = [];
@@ -30352,6 +39142,10 @@ exports.default = PCA9685;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.ServoMotor
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class ServoMotor {
     constructor() {
@@ -30416,6 +39210,10 @@ exports.default = ServoMotor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Solenoid
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Solenoid {
     constructor() {
@@ -30471,6 +39269,10 @@ exports.default = Solenoid;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.StepperMotor
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -30685,6 +39487,10 @@ exports.default = StepperMotor;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.AXP192
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -30828,6 +39634,10 @@ const LDO3_EN_MASK = 0xf7;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.DPS310
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31293,7 +40103,10 @@ exports.default = DPS310;
 
 "use strict";
 
-// Todo: add weight and calc pressure(kg)
+/**
+ * @packageDocumentation
+ * @module Parts.FSR40X
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31350,6 +40163,10 @@ exports.default = FSR40X;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.SEN0114
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31399,6 +40216,10 @@ exports.default = SEN0114;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Speaker
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Speaker {
     constructor(obniz) {
@@ -31658,6 +40479,10 @@ exports.default = MCP9701;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.S8100B
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31685,6 +40510,10 @@ exports.default = S8100B;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.S8120C
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31712,6 +40541,10 @@ exports.default = S8120C;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.ADT7410
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31774,6 +40607,10 @@ exports.default = ADT7410;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.AM2320
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31846,6 +40683,10 @@ exports.default = AM2320;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.AMG8833
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31968,6 +40809,10 @@ exports.default = AMG8833;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.BME280
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32242,6 +41087,10 @@ exports.default = BME280;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.D6T44L
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32319,6 +41168,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.DHT12
+ */
 const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
 class DHT12 extends i2cParts_1.default {
     static info() {
@@ -32374,6 +41227,10 @@ exports.default = DHT12;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.S5851A
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32488,6 +41345,10 @@ exports.default = S5851A;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.SHT31
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32568,6 +41429,11 @@ class SHT31 {
             return (yield this.getAllWait()).temperature;
         });
     }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getHumidWait();
+        });
+    }
     getHumidWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getAllWait()).humidity;
@@ -32596,6 +41462,10 @@ exports.default = SHT31;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.ADT7310
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32652,9 +41522,9 @@ exports.default = ADT7310;
 
 "use strict";
 
-/* ver 1.0
- * 2019/10/14
- * Created by Zjalic
+/**
+ * @packageDocumentation
+ * @module Parts.MFRC522
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -32666,7 +41536,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/*jshint esversion: 8 */
 const OK = true;
 const ERROR = false;
 class MFRC522 {
@@ -33233,6 +42102,10 @@ exports.default = MFRC522;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.RN42
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class RN42 {
     constructor() {
@@ -33440,6 +42313,10 @@ exports.default = RN42;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.XBee
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -33603,6 +42480,10 @@ exports.default = XBee;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {

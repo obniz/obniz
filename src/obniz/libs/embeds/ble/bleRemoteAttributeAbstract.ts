@@ -1,6 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleAttributeAbstract from "./bleAttributeAbstract";
 
-class BleRemoteAttributeAbstract extends BleAttributeAbstract {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
+export default class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   public isRemote: any;
   public discoverdOnRemote: any;
   public childrenName: any;
@@ -73,5 +82,3 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     }
   }
 }
-
-export default BleRemoteAttributeAbstract;

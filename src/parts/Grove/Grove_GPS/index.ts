@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_GPS
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
@@ -19,7 +24,9 @@ export interface Grove_GPSEditedData {
   GPRMC: any;
   GPVTG: any;
   GPZDA: any;
+
   [key: string]: any;
+
   timestamp: Date;
 }
 
@@ -107,7 +114,11 @@ export default class Grove_GPS implements ObnizPartsInterface {
       if (pos >= 0) {
         results = this.uart.received.slice(0, pos - 1);
         this.uart.received.splice(0, pos + 1);
-        return this.uart.tryConvertString(results);
+        let str = this.uart.tryConvertString(results);
+        if (str === null) {
+          str = "";
+        }
+        return str;
       }
     }
     return "";

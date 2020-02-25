@@ -1,8 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module Parts.HMC5883L
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface HMC5883LOptions {
+export interface  HMC5883LOptions {
   gnd?: number;
   sda?: number;
   scl?: number;

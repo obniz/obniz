@@ -1,20 +1,29 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 const events: any = require("events");
 
 import crypto from "./crypto";
 import Mgmt from "./mgmt";
 
-const SMP_CID: any = 0x0006;
+namespace SMP {
+  export const CID: any = 0x0006;
 
-const SMP_PAIRING_REQUEST: any = 0x01;
-const SMP_PAIRING_RESPONSE: any = 0x02;
-const SMP_PAIRING_CONFIRM: any = 0x03;
-const SMP_PAIRING_RANDOM: any = 0x04;
-const SMP_PAIRING_FAILED: any = 0x05;
-const SMP_ENCRYPT_INFO: any = 0x06;
-const SMP_MASTER_IDENT: any = 0x07;
+  export const PAIRING_REQUEST: any = 0x01;
+  export const PAIRING_RESPONSE: any = 0x02;
+  export const PAIRING_CONFIRM: any = 0x03;
+  export const PAIRING_RANDOM: any = 0x04;
+  export const PAIRING_FAILED: any = 0x05;
+  export const ENCRYPT_INFO: any = 0x06;
+  export const MASTER_IDENT: any = 0x07;
 
-const SMP_UNSPECIFIED: any = 0x08;
-
+  export const UNSPECIFIED: any = 0x08;
+}
+/**
+ * @ignore
+ */
 export default class Smp extends events.EventEmitter {
   public _aclStream: any;
   public _mgmt: any;
@@ -78,19 +87,19 @@ export default class Smp extends events.EventEmitter {
   }
 
   public onAclStreamData(cid: any, data: any) {
-    if (cid !== SMP_CID) {
+    if (cid !== SMP.CID) {
       return;
     }
 
     const code: any = data.readUInt8(0);
 
-    if (SMP_PAIRING_REQUEST === code) {
+    if (SMP.PAIRING_REQUEST === code) {
       this.handlePairingRequest(data);
-    } else if (SMP_PAIRING_CONFIRM === code) {
+    } else if (SMP.PAIRING_CONFIRM === code) {
       this.handlePairingConfirm(data);
-    } else if (SMP_PAIRING_RANDOM === code) {
+    } else if (SMP.PAIRING_RANDOM === code) {
       this.handlePairingRandom(data);
-    } else if (SMP_PAIRING_FAILED === code) {
+    } else if (SMP.PAIRING_FAILED === code) {
       this.handlePairingFailed(data);
     }
   }
@@ -98,11 +107,11 @@ export default class Smp extends events.EventEmitter {
   public onAclStreamEncryptChange(encrypted: any) {
     if (encrypted) {
       if (this._stk && this._diversifier && this._random) {
-        this.write(Buffer.concat([Buffer.from([SMP_ENCRYPT_INFO]), this._stk]));
+        this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
 
         this.write(
           Buffer.concat([
-            Buffer.from([SMP_MASTER_IDENT]),
+            Buffer.from([SMP.MASTER_IDENT]),
             this._diversifier,
             this._random,
           ]),
@@ -112,7 +121,7 @@ export default class Smp extends events.EventEmitter {
   }
 
   public onAclStreamLtkNegReply() {
-    this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_UNSPECIFIED]));
+    this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.UNSPECIFIED]));
 
     this.emit("fail");
   }
@@ -133,7 +142,7 @@ export default class Smp extends events.EventEmitter {
   public handlePairingRequest(data: any) {
     this._preq = data;
     this._pres = Buffer.from([
-      SMP_PAIRING_RESPONSE,
+      SMP.PAIRING_RESPONSE,
       0x03, // IO capability: NoInputNoOutput
       0x00, // OOB data: Authentication data not present
       0x01, // Authentication requirement: Bonding - No MITM
@@ -153,7 +162,7 @@ export default class Smp extends events.EventEmitter {
 
     this.write(
       Buffer.concat([
-        Buffer.from([SMP_PAIRING_CONFIRM]),
+        Buffer.from([SMP.PAIRING_CONFIRM]),
         crypto.c1(
           this._tk,
           this._r,
@@ -172,7 +181,7 @@ export default class Smp extends events.EventEmitter {
     const r: any = data.slice(1);
 
     const pcnf: any = Buffer.concat([
-      Buffer.from([SMP_PAIRING_CONFIRM]),
+      Buffer.from([SMP.PAIRING_CONFIRM]),
       crypto.c1(
         this._tk,
         r,
@@ -200,9 +209,9 @@ export default class Smp extends events.EventEmitter {
         this._stk,
       );
 
-      this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
+      this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
     } else {
-      this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_PAIRING_CONFIRM]));
+      this.write(Buffer.from([SMP.PAIRING_FAILED, SMP.PAIRING_CONFIRM]));
 
       this.emit("fail");
     }
@@ -213,6 +222,6 @@ export default class Smp extends events.EventEmitter {
   }
 
   public write(data: any) {
-    this._aclStream.write(SMP_CID, data);
+    this._aclStream.write(SMP.CID, data);
   }
 }

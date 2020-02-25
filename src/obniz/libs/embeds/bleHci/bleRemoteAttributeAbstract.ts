@@ -1,13 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleAttributeAbstract from "./bleAttributeAbstract";
 
-class BleRemoteAttributeAbstract extends BleAttributeAbstract {
-  public isRemote: any;
-  public discoverdOnRemote: any;
-  public childrenName: any;
-  public emitter: any;
-  public children: any;
-  public getChild: any;
-  public addChild: any;
+/**
+ * @category Use as Central
+ */
+export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
 
   constructor(params: any) {
     super(params);
@@ -16,6 +16,9 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     this.discoverdOnRemote = false;
   }
 
+  /**
+   * @ignore
+   */
   get wsChildUuidName() {
     const childrenName: any = this.childrenName;
     if (!childrenName) {
@@ -25,13 +28,19 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     return childName + "_uuid";
   }
 
+  /**
+   * @ignore
+   */
   public discoverChildren() {
   }
 
-  public discoverChildrenWait() {
+  /**
+   * @ignore
+   */
+  public discoverChildrenWait(): Promise<ChildrenClass[]> {
     return new Promise((resolve: any) => {
       this.emitter.once("discoverfinished", () => {
-        const children: any = this.children.filter((elm: any) => {
+        const children = this.children.filter((elm: any) => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
@@ -41,14 +50,24 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   }
 
   /**
-   * CALLBACKS
+   * @ignore
+   * @param child
    */
   public ondiscover(child: any) {
   }
 
+  /**
+   * @ignore
+   * @param children
+   */
   public ondiscoverfinished(children: any) {
   }
 
+  /**
+   * @ignore
+   * @param notifyName
+   * @param params
+   */
   public notifyFromServer(notifyName: any, params: any) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
@@ -73,5 +92,3 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     }
   }
 }
-
-export default BleRemoteAttributeAbstract;

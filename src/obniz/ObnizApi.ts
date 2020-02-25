@@ -1,14 +1,29 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
 import fetch from "node-fetch";
 
 // @ts-ignore
-import packageJson from "../../package"; // pakcage.js will be created from package.json on build.
+import packageJson from "../../package";
+import {ObnizOptions} from "./ObnizOptions"; // pakcage.js will be created from package.json on build.
 
-class ObnizApi {
-  public id: any;
+export default class ObnizApi {
+
+  /**
+   * obniz.js major version string
+   */
+  get apiVersion(): string {
+    const versionString: any = packageJson.version;
+    return versionString.split(".").shift();
+  }
+
   public options: any;
   public urlBase: any;
+  private id: string;
 
-  constructor(obnizId: any, options: any) {
+  constructor(obnizId: string, options?: ObnizOptions) {
     this.id = obnizId;
     options = options || {};
     this.options = {
@@ -18,13 +33,24 @@ class ObnizApi {
     this.urlBase = this.options.obniz_server + "/obniz/" + this.id;
   }
 
-  get apiVersion() {
-
-    const versionString: any = packageJson.version;
-    return versionString.split(".").shift();
+  /**
+   * Get device is online or offline
+   * @param callback with result
+   */
+  public getState(callback: (val: { state: "online" | "offline" }) => void) {
+    return this.post("/state", null, callback);
   }
 
-  public post(path: any, params: any, callback: any) {
+  /**
+   * post data via obniz REST api
+   * @param json
+   * @param callback
+   */
+  public postJson(json: any, callback: (result: any) => void) {
+    return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
+  }
+
+  protected post(path: any, params: any, callback: any) {
     const url: any = this.urlBase + path;
 
     // let query = [];
@@ -48,26 +74,16 @@ class ObnizApi {
     }
 
     return fetch(url, fetchParams)
-      .then ((res: any) => {
+      .then((res: any) => {
         return res.json();
       })
       .then((json: any) => {
         if (typeof callback === "function") {
           callback(json);
         }
-        return new Promise((resolve: any ) => {
+        return new Promise((resolve: any) => {
           resolve(json);
         });
       });
   }
-
-  public getState(callback: any) {
-    return this.post("/state", null, callback);
-  }
-
-  public postJson(json: any, callback: any) {
-    return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
-  }
 }
-
-export default ObnizApi;

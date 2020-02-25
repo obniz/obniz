@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import semver = require("semver");
 import ObnizUtil from "../utils/util";
 import WSCommand from "./WSCommand";

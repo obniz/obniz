@@ -1,6 +1,6 @@
 module.exports = {
   "name": "obniz",
-  "version": "3.3.0-beta.1",
+  "version": "3.3.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -24,14 +24,15 @@ module.exports = {
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
-    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build && npm run doc",
+    "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
     "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
-    "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -103,6 +104,8 @@ module.exports = {
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
     "typescript": "^3.7.5",
+    "typedoc": "^0.16.9",
+    "typedoc-plugin-external-module-name": "^3.0.0",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
@@ -126,6 +129,7 @@ module.exports = {
     "semver": "^5.7.0",
     "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
+    "typedoc-plugin-internal-external": "^2.1.1",
     "ws": "^6.1.4"
   },
   "bugs": {
