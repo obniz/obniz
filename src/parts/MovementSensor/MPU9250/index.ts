@@ -72,6 +72,25 @@ export default class MPU9250 extends MPU6500 {
     return this.ak8963.getRange();
   }
 
+  public async getMagneticWait(): Promise<Xyz> {
+    return await this.getCompassWait();
+  }
+  public async getMagneticAdcWait(): Promise<Xyz> {
+    return await this.getCompassAdcWait();
+  }
+  public async getMagneticArrayWait(): Promise<number[]> {
+    return await this.getCompassArrayWait();
+  }
+  public async getMagneticAdcArrayWait(): Promise<number[]> {
+    return await this.getCompassAdcArrayWait();
+  }
+  public getMagneticUnit() {
+    return this.getCompassUnit();
+  }
+  public getMagneticRange() {
+    return this.getCompassRange();
+  }
+
   private async _getAK8963Wait() {
     const ST1 = await this.readWait(0x02, 1); // confirm magnet value readable
     if (ST1[0] & 0x01) {

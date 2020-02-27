@@ -29931,6 +29931,32 @@ class MPU9250 extends MPU6500_1.default {
     getCompassRange() {
         return this.ak8963.getRange();
     }
+    getMagneticWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getCompassWait();
+        });
+    }
+    getMagneticAdcWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getCompassAdcWait();
+        });
+    }
+    getMagneticArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getCompassArrayWait();
+        });
+    }
+    getMagneticAdcArrayWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getCompassAdcArrayWait();
+        });
+    }
+    getMagneticUnit() {
+        return this.getCompassUnit();
+    }
+    getMagneticRange() {
+        return this.getCompassRange();
+    }
     _getAK8963Wait() {
         return __awaiter(this, void 0, void 0, function* () {
             const ST1 = yield this.readWait(0x02, 1); // confirm magnet value readable
