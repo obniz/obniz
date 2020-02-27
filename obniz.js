@@ -2500,6 +2500,7 @@ class ObnizConnection {
             return;
         }
         if (this.socket && this.socket.readyState === 1) {
+            this.print_debug("send via Global");
             this.socket.send(data);
             if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
                 this.warning("over " + this.socket.bufferedAmount + " bytes queued");
@@ -10391,12 +10392,15 @@ class Gap extends events_1.default.EventEmitter {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         this._hci.setScanEnabled(false, true);
+        console.log("scan enable false");
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
+            console.log("setScanParameters");
             this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
+                console.log("setScanParameters finished");
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-                }, 10);
+                }, 1000);
             });
         });
     }
@@ -11757,7 +11761,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('hci');
-const debug = () => {
+const debug = (...params) => {
+    console.log(...params);
 };
 const events = __webpack_require__("./node_modules/events/events.js");
 var COMMANDS;
@@ -15054,6 +15059,9 @@ class HW {
         else if (hw === "esp32p") {
             return __webpack_require__("./dist/src/obniz/libs/hw/esp32p.json");
         }
+        else if (hw === "m5stickc") {
+            return __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.json");
+        }
         else if (hw === "encored") {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored.json");
         }
@@ -15064,6 +15072,13 @@ exports.default = HW;
 
 //# sourceMappingURL=index.js.map
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/hw/m5stickc.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
