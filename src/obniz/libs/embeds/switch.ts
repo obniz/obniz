@@ -40,7 +40,7 @@ export default class ObnizSwitch {
   private observers!: ObnizSwitchCallback[];
   private onChangeForStateWait!: ObnizSwitchCallback | (() => void);
 
-  constructor(Obniz: any) {
+  constructor(Obniz: any, info: any) {
     this.Obniz = Obniz;
     this._reset();
   }

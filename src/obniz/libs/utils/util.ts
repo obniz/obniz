@@ -68,10 +68,27 @@ class ObnizUtil {
     return [...buf];
   }
 
-  private obniz: any;
-  private width: any;
-  private height: any;
-  private createCanvas: any;
+  /**
+   * @ignore
+   * @param data
+   * @param schema
+   */
+  public static hexToBinary(data: string, reverse: boolean = false): number[] {
+    const array: number[] = [];
+    const hex: string = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+    for (let i = 0; i < hex.length / 2; i++) {
+      array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
+    }
+    if (reverse) {
+      array.reverse();
+    }
+    return array;
+  }
+
+  public obniz: any;
+  public width: any;
+  public height: any;
+  public createCanvas: any;
 
   constructor(obniz: any) {
     this.obniz = obniz;

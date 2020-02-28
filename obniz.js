@@ -262,6 +262,7 @@ var map = {
 	"./request/ble/central/scan_start.yml": "./dist/src/json_schema/request/ble/central/scan_start.yml",
 	"./request/ble/central/scan_stop.yml": "./dist/src/json_schema/request/ble/central/scan_stop.yml",
 	"./request/ble/central/service_get.yml": "./dist/src/json_schema/request/ble/central/service_get.yml",
+	"./request/ble/hci/advertisement_filter.yml": "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml",
 	"./request/ble/hci/index.yml": "./dist/src/json_schema/request/ble/hci/index.yml",
 	"./request/ble/hci/write.yml": "./dist/src/json_schema/request/ble/hci/write.yml",
 	"./request/ble/index.yml": "./dist/src/json_schema/request/ble/index.yml",
@@ -436,7 +437,7 @@ webpackContext.id = "./dist/src/json_schema sync recursive \\.yml$";
 /***/ "./dist/src/json_schema/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageDataArray":{"id":"imageDataArray","type":"array","minItems":0,"items":{"type":"integer","minimum":0}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
 
 /***/ }),
 
@@ -559,10 +560,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/advertisement_filter","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["advertisement_filter"],"properties":{"advertisement_filter":{"type":"array","items":{"type":"object","required":["range"],"properties":{"range":{"type":"object","required":["index","length"],"properties":{"index":{"type":"integer","minimum":0,"maximum":255},"length":{"type":"integer","minimum":0,"maximum":255}}},"value":{"$ref":"/dataArray"}}}}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/ble/hci/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"},{"$ref":"/request/ble/hci/advertisement_filter"}]}
 
 /***/ }),
 
@@ -730,7 +738,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/display/raw.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageData128x64"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageDataArray"},"color_depth":{"type":"integer","enum":[1,4,16],"default":1}}}
 
 /***/ }),
 
@@ -1895,7 +1903,7 @@ class ObnizComponents extends ObnizParts_1.default {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
-                    this[key] = new Class(this);
+                    this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                 }
             }
@@ -5559,6 +5567,12 @@ class BleScan {
     } // dummy
     onfind(params) {
     } // dummy
+    setAdvertisementFilter() {
+        throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
+    }
+    setScanMode(mode) {
+        throw new Error("setScanMode is not support obnizOS < 3.2.0");
+    }
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onfind": {
@@ -8829,7 +8843,7 @@ class BleRemotePeripheral {
         if (!data) {
             return;
         }
-        const uuidLength = bit / 4;
+        const uuidLength = bit / 8;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
             results.push(ble_1.default._dataArray2uuidHex(one, true));
@@ -9091,6 +9105,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @category Use as Central
@@ -9134,30 +9150,28 @@ class BleScan {
      * @param target
      * @param settings
      */
-    start(target, settings) {
+    start(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
-        if (!settings) {
-            settings = {};
-        }
-        const timeout = settings.duration || 30;
+        const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
+        settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
-        target = target || {};
         this.scanTarget = target;
-        if (this.scanTarget &&
-            this.scanTarget.uuids &&
-            Array.isArray(this.scanTarget.uuids)) {
+        if (this.scanTarget.uuids) {
             this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
         }
         this.scanedPeripherals = [];
-        this.obnizBle.centralBindings.startScanning(null, false);
+        this._setTargetFilterOnDevice();
+        this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
-        this._timeoutTimer = setTimeout(() => {
-            this._timeoutTimer = undefined;
-            this.end();
-        }, timeout * 1000);
+        if (timeout !== null) {
+            this._timeoutTimer = setTimeout(() => {
+                this._timeoutTimer = undefined;
+                this.end();
+            }, timeout * 1000);
+        }
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -9279,29 +9293,192 @@ class BleScan {
             }
         }
     }
-    isTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.localName &&
-            peripheral.localName !== this.scanTarget.localName) {
-            return false;
+    /**
+     * Clear advertisement filter.
+     */
+    clearAdvertisementFilter() {
+        this.obnizBle.Obniz.send({
+            ble: {
+                hci: {
+                    advertisement_filter: [],
+                },
+            },
+        });
+    }
+    _setAdvertisementFilter(filterVals) {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
         }
-        if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
-                return bleHelper_1.default.uuidFilter(e);
+        // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
+        // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
+        const filters = [];
+        filterVals.forEach((filterVal) => {
+            if (filterVal.localNamePrefix) {
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: [0x08, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                });
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: [0x09, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                });
+            }
+            if (filterVal.deviceAddress) {
+                filters.push({
+                    range: {
+                        index: 2,
+                        length: 6,
+                    },
+                    value: util_1.default.hexToBinary(filterVal.deviceAddress, true),
+                });
+            }
+            if (filterVal.uuid) {
+                const binary = util_1.default.hexToBinary(filterVal.uuid, true);
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: binary,
+                });
+            }
+            if (filterVal.binary) {
+                filters.push({
+                    range: {
+                        index: 0,
+                        length: 255,
+                    },
+                    value: filterVal.binary,
+                });
+            }
+        });
+        this.obnizBle.Obniz.send({
+            ble: {
+                hci: {
+                    advertisement_filter: filters,
+                },
+            },
+        });
+    }
+    _arrayWrapper(val) {
+        if (Array.isArray(val)) {
+            return val;
+        }
+        else {
+            return [val];
+        }
+    }
+    _setTargetFilterOnDevice() {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
+        const adFilters = [];
+        if (this.scanTarget.uuids) {
+            this.scanTarget.uuids.map((elm) => {
+                adFilters.push({ uuid: bleHelper_1.default.uuidFilter(elm) });
             });
-            for (const uuid of this.scanTarget.uuids) {
-                if (!uuids.includes(uuid)) {
-                    return false;
-                }
+        }
+        if (this.scanTarget.localName) {
+            this._arrayWrapper(this.scanTarget.localName).forEach((name) => {
+                adFilters.push({ localNamePrefix: name });
+            });
+        }
+        if (this.scanTarget.deviceAddress) {
+            this._arrayWrapper(this.scanTarget.deviceAddress).forEach((address) => {
+                adFilters.push({ deviceAddress: address });
+            });
+        }
+        if (this.scanTarget.localNamePrefix) {
+            this._arrayWrapper(this.scanTarget.localNamePrefix).forEach((name) => {
+                adFilters.push({ localNamePrefix: name });
+            });
+        }
+        if (this.scanTarget.binary) {
+            if (Array.isArray(this.scanTarget.binary[0])) {
+                this.scanTarget.binary.forEach((e) => {
+                    adFilters.push({ binary: e });
+                });
+            }
+            else {
+                adFilters.push({ binary: this.scanTarget.binary });
             }
         }
-        return true;
+        this._setAdvertisementFilter(adFilters);
+    }
+    isTarget(peripheral) {
+        if (Object.keys(this.scanTarget).length === 0
+            || this.isLocalNamePrefixTarget(peripheral)
+            || this.isLocalNameTarget(peripheral)
+            || this.isUuidTarget(peripheral)
+            || this.isDeviceAddressTarget(peripheral)
+            || this.isBinaryTarget(peripheral)) {
+            return true;
+        }
+        return false;
     }
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
             this._timeoutTimer = undefined;
         }
+    }
+    isLocalNameTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.localName) {
+            for (const name of this._arrayWrapper(this.scanTarget.localName)) {
+                if (name === peripheral.localName) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isLocalNamePrefixTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.localNamePrefix) {
+            for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
+                if (peripheral.localName && peripheral.localName.startsWith(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isBinaryTarget(peripheral) {
+        if (this.scanTarget &&
+            this.scanTarget.binary) {
+            return true; // cannot detect on obnizjs
+        }
+        return false;
+    }
+    isUuidTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.uuids) {
+            const uuids = peripheral.advertisementServiceUuids().map((e) => {
+                return bleHelper_1.default.uuidFilter(e);
+            });
+            for (const uuid of this.scanTarget.uuids) {
+                if (uuids.includes(uuid)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isDeviceAddressTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.deviceAddress) {
+            if (this.scanTarget.deviceAddress === peripheral.address) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 exports.default = BleScan;
@@ -9676,9 +9853,9 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
     }
-    startScanning(serviceUuids, allowDuplicates) {
+    startScanning(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = serviceUuids || [];
-        this._gap.startScanning(allowDuplicates);
+        this._gap.startScanning(allowDuplicates, activeScan);
     }
     stopScanning() {
         this._gap.stopScanning();
@@ -10170,7 +10347,7 @@ exports.default = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10207,7 +10384,7 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
         this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
-    startScanning(allowDuplicates) {
+    startScanning(allowDuplicates, activeScan) {
         this._scanState = "starting";
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
@@ -10216,7 +10393,7 @@ class Gap extends events_1.default.EventEmitter {
         // p106 - p107
         this._hci.setScanEnabled(false, true);
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
-            this._hci.setScanParameters();
+            this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
@@ -10451,13 +10628,7 @@ class Gap extends events_1.default.EventEmitter {
             count: discoveryCount,
             hasScanResponse,
         };
-        // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-        if (type === 0x04 ||
-            !connectable ||
-            (discoveryCount > 1 && !hasScanResponse) ||
-            process.env.NOBLE_REPORT_ALL_HCI_EVENTS) {
-            this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
-        }
+        this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     startAdvertising(name, serviceUuids) {
         debug("startAdvertising: name = " +
@@ -10608,7 +10779,7 @@ exports.default = Gap;
 
 //# sourceMappingURL=gap.js.map
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js"), __webpack_require__("./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -11777,7 +11948,7 @@ class Hci extends events.EventEmitter {
         debug("write LE host supported - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
-    setScanParameters() {
+    setScanParameters(isActiveScan) {
         const cmd = Buffer.alloc(11);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -11785,7 +11956,7 @@ class Hci extends events.EventEmitter {
         // length
         cmd.writeUInt8(0x07, 3);
         // data
-        cmd.writeUInt8(0x01, 4); // type: 0 -> passive, 1 -> active
+        cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 4); // type: 0 -> passive, 1 -> active
         cmd.writeUInt16LE(0x0010, 5); // internal, ms * 1.6
         cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
         cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
@@ -12218,7 +12389,7 @@ class Hci extends events.EventEmitter {
             }
             else if (this._state !== "poweredOn") {
                 this.setScanEnabled(false, true);
-                this.setScanParameters();
+                this.setScanParameters(false);
             }
             this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
         }
@@ -14110,12 +14281,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @category Embeds
  */
 class Display {
-    constructor(obniz) {
+    constructor(obniz, info) {
         this.autoFlush = true;
         this.fontSize = 16;
+        this._pos = { x: 0, y: 0 };
+        this._colorDepthCapabilities = [1];
+        this._colorDepth = 1;
+        this._color = "#000";
+        this._paper_white = true;
+        this._raw_alternate = false;
         this.Obniz = obniz;
-        this.width = 128;
-        this.height = 64;
+        this.width = info.width;
+        this.height = info.height;
+        this._colorDepthCapabilities = info.color_depth;
+        this._paper_white = info.paper_white;
+        this._raw_alternate = info.raw_alternate;
         this._canvas = undefined;
         this._reset();
     }
@@ -14155,6 +14335,35 @@ class Display {
         ctx.font = "" + +" " + size + "px " + font;
     }
     /**
+     * Setting color for fill/stroke style for further rendering.
+     *
+     * ```javascript
+     * obniz.display.color('#FF0000');
+     * obniz.display.rect(0, 0, 10, 10, false)
+     * obniz.display.color('blue');
+     * obniz.display.rect(0, 10, 10, 10, false)
+     * ```
+     *
+     * @param depth css acceptable color definition
+     */
+    setColor(color) {
+        this._color = color;
+        const ctx = this._ctx();
+        ctx.fillStyle = this._color;
+        ctx.strokeStyle = this._color;
+    }
+    /**
+     * Getting color for fill/stroke style for further rendering.
+     *
+     * ```javascript
+     * const current = obniz.display.getColor();
+     * ```
+     *
+     */
+    getColor() {
+        return this._color;
+    }
+    /**
      * Clear the display.
      * ```javascript
      * // Javascript Example
@@ -14166,10 +14375,10 @@ class Display {
         this._pos.x = 0;
         this._pos.y = 0;
         if (ctx) {
-            ctx.fillStyle = "#000";
+            const currentFillStyle = ctx.fillStyle;
+            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
             ctx.fillRect(0, 0, this.width, this.height);
-            ctx.fillStyle = "#FFF";
-            ctx.strokeStyle = "#FFF";
+            ctx.fillStyle = currentFillStyle;
             this.draw(ctx);
         }
         else {
@@ -14373,23 +14582,59 @@ class Display {
      * Draw BMP image
      *
      * ```javascript
-     * obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
+     * obniz.display.raw([255, 255,,,,,])
      * ```
      *
-     * @param data data array. 1 bit represents 1 dot. 1=white, 0=black.
-     * 1 byte is part of one line.
+     * You should care about colorDepth before sending raw datas.
+     *
+     * @param data data array.
      * The order is as below.
      * {1byte} {2byte} {3byte}...{16byte}
      * {17byte} {18byte} {19byte}...
      * .....
-     * .....................{1024byte}
+     * .....................
      */
     raw(data) {
         const obj = {};
         obj.display = {
             raw: data,
         };
+        if (this._colorDepth > 1) {
+            obj.display.color_depth = this._colorDepth;
+        }
         this.Obniz.send(obj);
+    }
+    /**
+     * Setting color depth for all communication for the display
+     * higher number will get more beautiful colors and lowest number 1 is just monochrome.
+     * But 16 bit color mode is 16 times data bytes needed for same size rendering.
+     *
+     * ```javascript
+     * obniz.display.colorDepth(4); // => 4bit color mode.
+     * ```
+     *
+     * @param depth monochrome display always 1. For color display 1(monochrome) and 4 and 16 can be selected.
+     * default value is highest color depth for your display.
+     * If you call just
+     */
+    setColorDepth(depth) {
+        const found = this._colorDepthCapabilities.find((element) => element === depth);
+        if (found) {
+            this._colorDepth = depth;
+        }
+        else {
+            throw new Error(`This device can't accept depth ${depth}. availables are ${JSON.stringify(this._colorDepthCapabilities)}`);
+        }
+    }
+    /**
+     * Getting color depth for all communication for the display
+     *
+     * ```javascript
+     * const current = obniz.display.getColorDepth(); // => return current depth. 1 or higher
+     * ```
+     */
+    getColorDepth() {
+        return this._colorDepth;
     }
     /**
      * @ignore
@@ -14482,7 +14727,7 @@ class Display {
     }
     /**
      * You can specify to transfer the displayed data or not.
-     * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+     * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
      *
      * Use false to stop updating display and true to restart updating.
      *
@@ -14516,9 +14761,25 @@ class Display {
             throw new Error("obniz.js cant create canvas element to body");
         }
     }
+    _reset_canvas() {
+        // reset canvas
+        if (this._canvas) {
+            const ctx = this._canvas.getContext("2d");
+            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.fillStyle = this._color;
+            ctx.strokeStyle = this._color;
+            ctx.font = `${this.fontSize}px Arial`;
+        }
+    }
     _reset() {
-        this._pos = { x: 0, y: 0 };
         this.autoFlush = true;
+        // reset to default
+        this._pos = { x: 0, y: 0 };
+        this._color = this._paper_white ? "#000" : "#FFF";
+        this.fontSize = this.height > 200 ? 32 : 16;
+        this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+        this._reset_canvas();
     }
     _preparedCanvas() {
         if (this._canvas) {
@@ -14537,27 +14798,25 @@ class Display {
         else {
             const identifier = "obnizcanvas-" + this.Obniz.id;
             let canvas = document.getElementById(identifier);
-            if (!canvas) {
+            if (canvas) {
+                this._canvas = canvas;
+            }
+            else {
                 canvas = document.createElement("canvas");
                 canvas.setAttribute("id", identifier);
                 canvas.style.visibility = "hidden";
                 canvas.width = this.width;
                 canvas.height = this.height;
-                canvas.style["-webkit-font-smoothing"] = "none";
+                if (this._colorDepthCapabilities.length === 1) {
+                    // for monochro display
+                    canvas.style["-webkit-font-smoothing"] = "none";
+                }
                 const body = document.getElementsByTagName("body")[0];
                 body.appendChild(canvas);
+                this._canvas = canvas;
+                this._reset_canvas();
             }
-            this._canvas = canvas;
         }
-        const ctx = this._canvas.getContext("2d");
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, this.width, this.height);
-        ctx.fillStyle = "#FFF";
-        ctx.strokeStyle = "#FFF";
-        this._pos.x = 0;
-        this._pos.y = 0;
-        this.fontSize = 16;
-        ctx.font = `${this.fontSize}px Arial`;
         return this._canvas;
     }
     _ctx() {
@@ -14567,24 +14826,74 @@ class Display {
         }
     }
     _draw(ctx) {
-        const stride = this.width / 8;
-        const vram = new Array(stride * 64);
+        const raw = new Array(this.width * this.height * this._colorDepth / 8);
         const imageData = ctx.getImageData(0, 0, this.width, this.height);
         const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-            const index = Math.floor(i / 4);
-            const line = Math.floor(index / this.width);
-            const col = Math.floor((index - line * this.width) / 8);
-            const bits = Math.floor(index - line * this.width) % 8;
-            if (bits === 0) {
-                vram[line * stride + col] = 0x00;
-            }
-            if (brightness > 0x7f) {
-                vram[line * stride + col] |= 0x80 >> bits;
+        if (this._colorDepth === 16) {
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
+                raw[pixel_index * 2] = (hexColor >> 8) & 0xFF;
+                raw[pixel_index * 2 + 1] = hexColor & 0xFF;
             }
         }
-        this.raw(vram);
+        else if (this._colorDepth === 4) {
+            const stride = this.width / 2;
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+                const line = Math.floor(pixel_index / this.width);
+                const col = Math.floor((pixel_index - line * this.width) / 2);
+                const bits = Math.floor(pixel_index - line * this.width) % 2;
+                let pixel = 0b0000;
+                if (red > 0x7F) {
+                    pixel |= 0b1000;
+                }
+                if (green > 0x7F) {
+                    pixel |= 0b0100;
+                }
+                if (blue > 0x7F) {
+                    pixel |= 0b0010;
+                }
+                if (brightness > 0x7F) {
+                    pixel |= 0b0001;
+                }
+                if (bits === 0) {
+                    raw[line * stride + col] = pixel << 4;
+                }
+                if (brightness > 0x7f) {
+                    raw[line * stride + col] |= pixel;
+                }
+            }
+        }
+        else {
+            const stride = this.width / 8;
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+                const row = Math.floor(pixel_index / this.width);
+                const col = Math.floor((pixel_index - row * this.width) / 8);
+                const bits = Math.floor(pixel_index - row * this.width) % 8;
+                if (bits === 0) {
+                    raw[row * stride + col] = 0x00;
+                }
+                if (brightness > 0x7f) {
+                    raw[row * stride + col] |= 0x80 >> bits;
+                }
+            }
+        }
+        if (this._raw_alternate) {
+            for (let i = 0; i < raw.length; i++) {
+                raw[i] = (~raw[i]) & 0xFF;
+            }
+        }
+        this.raw(raw);
     }
 }
 exports.default = Display;
@@ -14609,7 +14918,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @category Embeds
  */
 class ObnizSwitch {
-    constructor(Obniz) {
+    constructor(Obniz, info) {
         this.Obniz = Obniz;
         this._reset();
     }
@@ -14704,21 +15013,21 @@ exports.default = ObnizSwitch;
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -14762,14 +15071,14 @@ exports.default = HW;
 /***/ "./dist/src/obniz/libs/hw/obnizb1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -18538,6 +18847,22 @@ class ObnizUtil {
         return [...buf];
     }
     /**
+     * @ignore
+     * @param data
+     * @param schema
+     */
+    static hexToBinary(data, reverse = false) {
+        const array = [];
+        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+        for (let i = 0; i < hex.length / 2; i++) {
+            array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
+        }
+        if (reverse) {
+            array.reverse();
+        }
+        return array;
+    }
+    /**
      * This creates a Canvas context.
      * It will add a canvas dom to body(in html).
      *
@@ -20301,14 +20626,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 class WSCommandBleHci {
     constructor(delegate) {
-        this._delegate = delegate;
         this._CommandHCIInit = 41;
         this._CommandHCIDeinit = 42;
         this._CommandHCISend = 43;
         this._CommandHCIRecv = 44;
+        this._CommandHCIAdvertisementFilter = 45;
+        this._delegate = delegate;
     }
     schemaData() {
-        return [{ uri: "/request/ble/hci/write", onValid: this.send.bind(this) }];
+        return [
+            { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
+            { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
+        ];
     }
     notifyFunctionList() {
         const funcList = {};
@@ -20328,6 +20657,16 @@ class WSCommandBleHci {
         objToSend.ble = objToSend.ble || {};
         objToSend.ble.hci = objToSend.ble.hci || {};
         objToSend.ble.hci.read = { data: arr };
+    }
+    advertisementFilter(params) {
+        const sendData = [];
+        params.hci.advertisement_filter.forEach((e) => {
+            const one = [e.range.index, e.range.length, e.value.length, ...e.value];
+            sendData.push(...one);
+        });
+        const buf = new Uint8Array(sendData.length);
+        buf.set(sendData);
+        this._delegate.sendCommand(this._CommandHCIAdvertisementFilter, buf);
     }
 }
 exports.default = WSCommandBleHci;
@@ -20546,7 +20885,7 @@ const qr_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/qr
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandDisplay extends WSCommand_1.default {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 8;
         this._CommandClear = 0;
         this._CommandPrint = 1;
@@ -20554,6 +20893,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         this._CommandDrawCampusHorizonalBytes = 3;
         this._CommandDrawIOState = 4;
         this._CommandSetPinName = 5;
+        this._CommandDrawCampusRawColors = 6;
     }
     // Commands
     clear(params) {
@@ -20563,16 +20903,20 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.sendCommand(this._CommandPrint, buf);
     }
     printText(text) {
-        let result;
         const buf = Buffer.from(text, "utf8");
-        result = new Uint8Array(buf);
+        const result = new Uint8Array(buf);
         this.print(result);
     }
     text(params) {
         this.printText(params.text);
     }
     raw(params) {
-        this.drawHorizonally(new Uint8Array(params.raw));
+        if (typeof params.color_depth === "number" && params.color_depth > 1) {
+            this.drawRawColors(params.raw, params.color_depth);
+        }
+        else {
+            this.drawHorizonally(new Uint8Array(params.raw));
+        }
     }
     qr(params) {
         const text = params.qr.text;
@@ -20639,6 +20983,12 @@ class WSCommandDisplay extends WSCommand_1.default {
         combined.set(buf, 0);
         combined.set(stringarray, 1);
         this.sendCommand(this._CommandSetPinName, combined);
+    }
+    drawRawColors(raw, colorDepth) {
+        const buf = new Uint8Array(1 + raw.length);
+        buf[0] = colorDepth;
+        buf.set(raw, 1);
+        this.sendCommand(this._CommandDrawCampusRawColors, buf);
     }
     parseFromJson(json) {
         const module = json.display;
@@ -22352,6 +22702,16 @@ var map = {
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
+	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
+	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
+	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
+	"./Ble/linking/modules/ieee754.js": "./dist/src/parts/Ble/linking/modules/ieee754.js",
+	"./Ble/linking/modules/service-notification.js": "./dist/src/parts/Ble/linking/modules/service-notification.js",
+	"./Ble/linking/modules/service-operation.js": "./dist/src/parts/Ble/linking/modules/service-operation.js",
+	"./Ble/linking/modules/service-property.js": "./dist/src/parts/Ble/linking/modules/service-property.js",
+	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
+	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
+	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -22359,6 +22719,7 @@ var map = {
 	"./Display/7SegmentLED/index.js": "./dist/src/parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./dist/src/parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./dist/src/parts/Display/7SegmentLED_MAX7219/index.js",
+	"./Display/MatrixLED_HT16K33/index.js": "./dist/src/parts/Display/MatrixLED_HT16K33/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./dist/src/parts/Display/MatrixLED_MAX7219/index.js",
 	"./Display/ST7735S/index.js": "./dist/src/parts/Display/ST7735S/index.js",
 	"./Display/SainSmartTFT18LCD/index.js": "./dist/src/parts/Display/SainSmartTFT18LCD/index.js",
@@ -22387,6 +22748,12 @@ var map = {
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
 	"./Infrared/InfraredLED/index.js": "./dist/src/parts/Infrared/InfraredLED/index.js",
 	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
+	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
+	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
+	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
+	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
+	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
+	"./Keyestudio/Keyestudio_TrafficLight/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
@@ -22777,6 +23144,7 @@ class OMRON_2JCIE {
             const target = {
                 localName: "Env",
             };
+            yield this.obniz.ble.initWait();
             this.periperal = yield this.obniz.ble.scan.startOneWait(target);
             return this.periperal;
         });
@@ -22849,6 +23217,4116 @@ class OMRON_2JCIE {
 exports.default = OMRON_2JCIE;
 
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* ------------------------------------------------------------------
+ * node-linking - linking.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
+const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
+class Linking {
+    constructor(params) {
+        this.PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+        this.initialized = false;
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+        this.onadvertisement = null;
+        this.ondiscover = null;
+        // Private properties
+        this._discover_status = false;
+        this._discover_wait = 3000; // ms
+        this._discover_timer = null;
+        this._peripherals = {};
+    }
+    static info() {
+        return {
+            name: "Linking",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.obniz.ble.initWait();
+            this.initialized = true;
+        });
+    }
+    discover(p) {
+        this._checkInitialized();
+        let duration = 5000;
+        let name_filter = "";
+        let id_filter = "";
+        let quick = false;
+        if (p && typeof p === "object") {
+            if ("duration" in p && typeof p.duration === "number") {
+                duration = p.duration;
+                if (duration < 1000) {
+                    duration = 1000;
+                }
+            }
+            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+                name_filter = p.nameFilter;
+            }
+            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+                id_filter = p.idFilter;
+            }
+            if ("quick" in p && typeof (p.quick === "boolean")) {
+                quick = p.quick;
+            }
+        }
+        return new Promise((resolve, reject) => {
+            let timer = null;
+            const finishDiscovery = () => {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+                this.stopScan();
+                const device_list = [];
+                for (const addr in this._peripherals) {
+                    device_list.push(this._peripherals[addr]);
+                }
+                resolve(device_list);
+            };
+            this._peripherals = {};
+            this.obniz.ble.scan.onfind = (peripheral) => {
+                const dev = this._discoveredDevice(peripheral, name_filter, id_filter);
+                if (quick && dev) {
+                    finishDiscovery();
+                    return;
+                }
+            };
+            this._scanDevices();
+            this._discover_status = true;
+            timer = setTimeout(() => {
+                finishDiscovery();
+            }, duration);
+        });
+    }
+    _checkInitialized() {
+        if (this.initialized === false) {
+            throw new Error("The `init()` method has not been called yet.");
+            return;
+        }
+        if (this._discover_status === true) {
+            throw new Error("The `discover()` or the `startScan()` method is in progress.");
+            return;
+        }
+    }
+    _discoveredDevice(peripheral, name_filter, id_filter) {
+        if (!peripheral.localName) {
+            return null;
+        }
+        // if (!peripheral.id) {
+        //   return null;
+        // }
+        if (name_filter && peripheral.localName.indexOf(name_filter) !== 0) {
+            return null;
+        }
+        // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
+        //   return null;
+        // }
+        const addr = peripheral.address;
+        if (this._peripherals[addr]) {
+            return null;
+        }
+        const device = new device_1.default(peripheral);
+        if (this.ondiscover && typeof this.ondiscover === "function") {
+            this.ondiscover(device);
+        }
+        this._peripherals[addr] = device;
+        return device;
+    }
+    _scanDevices() {
+        this.obniz.ble.scan.onfinish = () => {
+            // console.log("scan timeout!")
+            this._discover_status = false;
+        };
+        // var target = {
+        //   uuids: this.PRIMARY_SERVICE_UUID_LIST
+        // };
+        this.obniz.ble.scan.start();
+        this._discover_status = true;
+    }
+    stopScan() {
+        if (this._discover_status === true) {
+            this._discover_status = false;
+            if (this._discover_timer !== null) {
+                clearTimeout(this._discover_timer);
+                this._discover_timer = null;
+            }
+            this.obniz.ble.scan.end();
+        }
+    }
+    startScan(p) {
+        this._checkInitialized();
+        let name_filter = "";
+        let id_filter = "";
+        if (p && typeof p === "object") {
+            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+                name_filter = p.nameFilter;
+            }
+            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+                id_filter = p.idFilter;
+            }
+        }
+        this.obniz.ble.scan.onfind = function (peripheral) {
+            if (!peripheral.localName) {
+                return;
+            }
+            if (name_filter && peripheral.localName.indexOf(name_filter) !== 0) {
+                return;
+            }
+            // TODO
+            // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
+            //   return;
+            // }
+            if (this.onadvertisement && typeof this.onadvertisement === "function") {
+                const parsed = advertising_1.default.parse(peripheral);
+                if (parsed) {
+                    this.onadvertisement(parsed);
+                }
+            }
+        };
+        this._scanDevices();
+    }
+}
+exports.default = Linking;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/advertising.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - advertising.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/ieee754.js"));
+class LinkingAdvertising {
+    static parse(peripheral) {
+        const ad = peripheral;
+        const manu = ad.manufacturerData;
+        if (!manu || manu.length < 8) {
+            return null;
+        }
+        // Company identifier
+        const company_id = manu.readUInt16LE(0);
+        let company_name = "Unknown";
+        if (company_id === 0x02E2) {
+            company_name = "NTT docomo";
+        }
+        // Version
+        const version = (manu.readUInt8(2) >>> 4);
+        // Vendor identifier
+        const vendor_id = ((manu.readUInt16BE(2) >>> 4) & 0b11111111);
+        // Individual number
+        const indi_num = ((manu.readUInt32BE(3) >>> 8) & (Math.pow(2, 20) - 1));
+        // Beacon Data
+        const beacon_data_list = [];
+        for (let offset = 6; offset < manu.length; offset += 2) {
+            const beacon_buf = manu.slice(offset, offset + 2);
+            // Beacon service data
+            if (beacon_buf.length === 2) {
+                const beacon_data = this._parseBeaconServiceData(beacon_buf);
+                beacon_data_list.push(beacon_data);
+            }
+        }
+        return {
+            id: peripheral.id,
+            uuid: peripheral.uuid,
+            address: peripheral.address,
+            localName: ad.localName,
+            serviceUuids: ad.serviceUuids,
+            txPowerLevel: 0,
+            rssi: peripheral.rssi,
+            distance: Math.pow(10, (ad.txPowerLevel - peripheral.rssi) / 20),
+            companyId: company_id,
+            companyName: company_name,
+            version,
+            vendorId: vendor_id,
+            individualNumber: indi_num,
+            beaconDataList: beacon_data_list,
+        };
+    }
+    static _parseBeaconServiceData(buf) {
+        const bufn = buf.readUInt16BE(0);
+        const service_id = (bufn >>> 12);
+        const n = bufn & 0b0000111111111111;
+        let res = {};
+        if (service_id === 0) {
+            res = {
+                name: "General",
+            };
+        }
+        else if (service_id === 1) {
+            res = {
+                name: "Temperature (°C)",
+                temperature: ieee754_1.default.read(n, 1, 4, 7),
+            };
+        }
+        else if (service_id === 2) {
+            res = {
+                name: "Humidity (%)",
+                humidity: ieee754_1.default.read(n, 0, 4, 8),
+            };
+        }
+        else if (service_id === 3) {
+            res = {
+                name: "Air pressure (hPa)",
+                pressure: ieee754_1.default.read(n, 0, 5, 7),
+            };
+        }
+        else if (service_id === 4) {
+            res = {
+                name: "Remaining battery power (Threshold value or less)",
+                chargeRequired: (n & 0b0000100000000000) ? true : false,
+                chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (service_id === 5) {
+            const code = n & 0b0000111111111111;
+            let text = "";
+            if (code === 0x00) {
+                text = "Power";
+            }
+            else if (code === 0x01) {
+                text = "Return";
+            }
+            else if (code === 0x02) {
+                text = "SingleClick";
+            }
+            else if (code === 0x03) {
+                text = "Home";
+            }
+            else if (code === 0x04) {
+                text = "DoubleClick";
+            }
+            else if (code === 0x05) {
+                text = "VolumeUp";
+            }
+            else if (code === 0x06) {
+                text = "VolumeDown";
+            }
+            else if (code === 0x07) {
+                text = "LongPress";
+            }
+            else if (code === 0x08) {
+                text = "Pause";
+            }
+            else if (code === 0x09) {
+                text = "LongPressRelease";
+            }
+            else if (code === 0x0A) {
+                text = "FastForward";
+            }
+            else if (code === 0x0B) {
+                text = "ReWind";
+            }
+            else if (code === 0x0C) {
+                text = "Shutter";
+            }
+            else if (code === 0x0D) {
+                text = "Up";
+            }
+            else if (code === 0x0E) {
+                text = "Down";
+            }
+            else if (code === 0x0F) {
+                text = "Left";
+            }
+            else if (code === 0x10) {
+                text = "Right";
+            }
+            else if (code === 0x11) {
+                text = "Enter";
+            }
+            else if (code === 0x12) {
+                text = "Menu";
+            }
+            else if (code === 0x13) {
+                text = "Play";
+            }
+            else if (code === 0x14) {
+                text = "Stop";
+            }
+            res = {
+                name: "Pressed button information",
+                buttonId: code,
+                buttonName: text,
+            };
+        }
+        else if (service_id === 6) {
+            res = {
+                name: "Opening/closing",
+                openingStatus: (n & 0b0000100000000000) ? true : false,
+                openingCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 7) {
+            res = {
+                name: "Human detection",
+                humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
+                humanDetectionCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 8) {
+            res = {
+                name: "Vibration",
+                moveResponse: (n & 0b0000100000000000) ? true : false,
+                moveCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 9) {
+            let illuminance = n;
+            if (n >> 11) {
+                illuminance = ((n - 2047) * 50) + 2000;
+            }
+            res = {
+                name: "Illuminance (lx)",
+                illuminance,
+            };
+        }
+        else if (service_id === 15) {
+            res = {
+                name: "Vendor",
+                bin: ("000000000000" + n.toString(2)).slice(-12),
+            };
+        }
+        res.serviceId = service_id;
+        return res;
+    }
+    constructor() {
+    }
+}
+exports.default = LinkingAdvertising;
+
+//# sourceMappingURL=advertising.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/device.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - device.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-03
+* ---------------------------------------------------------------- */
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
+const service_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service.js"));
+class LinkingDevice {
+    constructor(peripheral) {
+        this.PRIMARY_SERVICE_UUID = "b3b3690150d34044808d50835b13a6cd";
+        this.WRITE_CHARACTERRISTIC_UUID = "b3b3910150d34044808d50835b13a6cd";
+        this.INDICATE_CHARACTERRISTIC_UUID = "b3b3910250d34044808d50835b13a6cd";
+        this.info = {};
+        this.connected = false;
+        this.onconnect = null;
+        this.onconnectprogress = null;
+        this.ondisconnect = null;
+        this.onnotify = null;
+        this.services = {
+            deviceName: null,
+            led: null,
+            vibration: null,
+            button: null,
+            gyroscope: null,
+            accelerometer: null,
+            orientation: null,
+            battery: null,
+            temperature: null,
+            humidity: null,
+            pressure: null,
+            openclose: null,
+            human: null,
+            move: null,
+            illuminance: null,
+        };
+        this._service = null;
+        this._div_packet_queue = [];
+        this._LinkingService = new service_1.default();
+        this._onresponse = null;
+        this._write_response_timeout = 30000; // msec
+        this._generic_access_service = {
+            SERVICE_UUID: "1800",
+            service: null,
+            device_name: {
+                CHARACTERRISTIC_UUID: "2a00",
+                char: null,
+            },
+        };
+        this.advertisement = advertising_1.default.parse(peripheral);
+        this._peripheral = peripheral;
+    }
+    connect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.connected === true) {
+                throw new Error("The device has been already connected.");
+            }
+            let onprogress = this.onconnectprogress;
+            if (!this._isFunction(this.onconnectprogress)) {
+                onprogress = () => { };
+            }
+            const peripheral = this._peripheral;
+            onprogress({ step: 1, desc: "CONNECTING" });
+            try {
+                peripheral.ondisconnect = () => __awaiter(this, void 0, void 0, function* () {
+                    yield this._clean();
+                    if (this._isFunction(this.ondisconnect)) {
+                        this.ondisconnect({ wasClean: false });
+                    }
+                });
+                yield peripheral.connectWait();
+                onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
+                onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
+                yield this._getServicesAndChars();
+                onprogress({ step: 4, desc: "SUBSCRIBING" });
+                yield this._subscribeForIndicate();
+                onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
+                let res;
+                res = yield this.write("GET_DEVICE_INFORMATION");
+                this.info.id = "";
+                if ("deviceId" in res.data) {
+                    this.info.id = res.data.deviceId;
+                }
+                this.info.uid = "";
+                if ("deviceUid" in res.data) {
+                    this.info.uid = res.data.deviceUid;
+                }
+                this.info.services = {};
+                if ("serviceList" in res.data) {
+                    res.data.serviceList.forEach((o) => {
+                        this.info.services[o.name] = o.id;
+                    });
+                }
+                this.info.capabilities = {};
+                if ("deviceCapability" in res.data) {
+                    res.data.deviceCapability.forEach((o) => {
+                        this.info.capabilities[o.name] = o.id;
+                    });
+                }
+                this.info.exsensors = {};
+                if ("exSensorType" in res.data) {
+                    res.data.exSensorType.forEach((o) => {
+                        this.info.exsensors[o.name] = o.id;
+                    });
+                }
+                onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
+                res = yield this._writeConfirmNotifyCategory();
+                this.info.notifyCategories = {};
+                if (res) {
+                    if ("notifyCategory" in res.data) {
+                        res.data.notifyCategory.forEach((o) => {
+                            this.info.notifyCategories[o.name] = o.id;
+                        });
+                    }
+                }
+                onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
+                res = yield this._writeGetSettingInformation();
+                this.info.settings = {};
+                if (res) {
+                    if ("settingInformationData" in res.data) {
+                        res.data.settingInformationData.forEach((o) => {
+                            this.info.settings[o.name] = o;
+                        });
+                    }
+                }
+                onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
+                res = yield this._writeGetSettingName("LEDColorName");
+                if (res) {
+                    this.info.settings.LED.colors = res.data.settingNameData;
+                }
+                onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("LEDPatternName");
+                if (res) {
+                    this.info.settings.LED.patterns = res.data.settingNameData;
+                }
+                onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("VibrationPatternName");
+                if (res) {
+                    this.info.settings.Vibration.patterns = res.data.settingNameData;
+                }
+                onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("BeepPatternName");
+                if (res) {
+                    this.info.settings.Beep.patterns = res.data.settingNameData;
+                }
+                this._LinkingService.setDeviceInfo(this.info);
+                this._initServices();
+                this.connected = true;
+                if (this._isFunction(this.onconnect)) {
+                    this.onconnect();
+                }
+                onprogress({ step: 12, desc: "COMPLETED" });
+            }
+            catch (e) {
+                onprogress({ step: 0, desc: "FAILED" });
+                throw e;
+            }
+        });
+    }
+    _wait(msec) {
+        const promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, msec);
+        });
+        return promise;
+    }
+    _writeConfirmNotifyCategory() {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceNotification" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            this.write("CONFIRM_NOTIFY_CATEGORY").then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _writeGetSettingInformation() {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            this.write("GET_SETTING_INFORMATION").then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _writeGetSettingName(name) {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            const s = this.info.settings;
+            if (name === "LEDColorName") {
+                if (!(("LED" in s) && s.LED.colorMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "LEDPatternName") {
+                if (!(("LED" in s) && s.LED.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "VibrationPatternName") {
+                if (!(("Vibration" in s) && s.Vibration.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "BeepPatternName") {
+                if (!(("Beep" in s) && s.Beep.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            this.write("GET_SETTING_NAME", { SettingNameType: name }).then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _isFunction(o) {
+        return (o && typeof (o) === "function") ? true : false;
+    }
+    _getServicesAndChars() {
+        const peripheral = this._peripheral;
+        const service = peripheral.getService(this.PRIMARY_SERVICE_UUID);
+        if (!service) {
+            throw new Error("No service was found");
+        }
+        const write_char = service.getCharacteristic(this.WRITE_CHARACTERRISTIC_UUID);
+        const indicate_char = service.getCharacteristic(this.INDICATE_CHARACTERRISTIC_UUID);
+        if (!(write_char && indicate_char)) {
+            throw new Error("No characteristic was found");
+        }
+        this.char_write = write_char;
+        this.char_indicate = indicate_char;
+        this._service = service;
+        const ga_service = peripheral.getService(this._generic_access_service.SERVICE_UUID);
+        if (ga_service) {
+            const ga_char = ga_service.getCharacteristic(this._generic_access_service.device_name.CHARACTERRISTIC_UUID);
+            if (ga_service && ga_char) {
+                this._generic_access_service.service = ga_service;
+                this._generic_access_service.device_name.char = ga_char;
+            }
+        }
+    }
+    _subscribeForIndicate() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.char_indicate.registerNotifyWait((data) => {
+                this._receivedPacket(Buffer.from(data));
+            });
+        });
+    }
+    _receivedPacket(buf) {
+        const new_buf = Buffer.alloc(buf.length - 1);
+        buf.copy(new_buf, 0, 1, buf.length);
+        this._div_packet_queue.push(new_buf);
+        if (this._isExecutedPacket(buf)) {
+            const header_byte = Buffer.from([buf.readUInt8(0)]);
+            this._div_packet_queue.unshift(header_byte);
+            const total_buf = Buffer.concat(this._div_packet_queue);
+            this._receivedIndicate(total_buf);
+            this._div_packet_queue = [];
+        }
+    }
+    _isExecutedPacket(buf) {
+        const ph = buf.readUInt8(0);
+        return (ph & 0x00000001) ? true : false;
+    }
+    _receivedIndicate(buf) {
+        const parsed = this._LinkingService.parseResponse(buf);
+        if (!parsed) {
+            return;
+        }
+        if (parsed.messageName.match(/_RESP$/)) {
+            if (this._onresponse) {
+                this._onresponse(parsed);
+            }
+        }
+        else {
+            // All notifications
+            if (this._isFunction(this.onnotify)) {
+                this.onnotify(parsed);
+            }
+            // Button
+            if (parsed.serviceId === 2) { // PeripheralDeviceOperation Service
+                if (parsed.messageId === 0) { // NOTIFY_PD_OPERATION
+                    // let f = this.services['button']['onnotify'];
+                    let f = null;
+                    if (this.services.button) {
+                        if (this._isFunction(this.services.button.onnotify)) {
+                            f = this.services.button.onnotify;
+                        }
+                    }
+                    if (f) {
+                        let button = null;
+                        parsed.parameters.forEach((p) => {
+                            if (p.parameterId === 2) { // ButtonId
+                                button = {
+                                    buttonId: p.buttonId,
+                                    buttonName: p.buttonName,
+                                };
+                            }
+                        });
+                        f(button);
+                    }
+                }
+                // Sensors
+            }
+            else if (parsed.serviceId === 3) { // PeripheralDeviceSensorInformation Service
+                if (parsed.messageId === 4) { // NOTIFY_PD_SENSOR_INFO
+                    let sensor_type = -1;
+                    let res = {};
+                    parsed.parameters.forEach((p) => {
+                        const pid = p.parameterId;
+                        if (pid === 2) { // SensorType
+                            sensor_type = p.sensorTypeCode;
+                        }
+                        else {
+                            if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
+                                if (pid === 4) { // X_value
+                                    res.x = p.xValue;
+                                }
+                                else if (pid === 5) { // Y_value
+                                    res.y = p.yValue;
+                                }
+                                else if (pid === 6) { // Z_value
+                                    res.z = p.zValue;
+                                }
+                            }
+                            else if (sensor_type === 3) { // Battery
+                                res = {
+                                    charge: p.charge,
+                                    level: p.level,
+                                };
+                            }
+                            else if (sensor_type === 4) { // Temperature
+                                res.temperature = p.temperature;
+                            }
+                            else if (sensor_type === 5) { // Humidity
+                                res.humidity = p.humidity;
+                            }
+                            else if (sensor_type === 6) { // Aire pressure
+                                res.pressure = p.pressure;
+                            }
+                            else if (sensor_type === 7) { // Opening and closing
+                                res.openclose = p.openclose;
+                            }
+                            else if (sensor_type === 8) { // Human detection
+                                res.human = p.human;
+                            }
+                            else if (sensor_type === 9) { // Move
+                                res.move = p.move;
+                            }
+                            else if (sensor_type === 0x0a) { // Illuminance
+                                res.illuminance = p.illuminance;
+                            }
+                        }
+                    });
+                    let f = null;
+                    if (sensor_type === 0) {
+                        if (this.services.gyroscope) {
+                            f = this.services.gyroscope.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 1) {
+                        if (this.services.accelerometer) {
+                            f = this.services.accelerometer.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 2) {
+                        if (this.services.orientation) {
+                            f = this.services.orientation.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 3) {
+                        if (this.services.battery) {
+                            f = this.services.battery.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 4) {
+                        if (this.services.temperature) {
+                            f = this.services.temperature.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 5) {
+                        if (this.services.humidity) {
+                            f = this.services.humidity.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 6) {
+                        if (this.services.pressure) {
+                            f = this.services.pressure.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 7) {
+                        if (this.services.openclose) {
+                            f = this.services.openclose.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 8) {
+                        if (this.services.human) {
+                            f = this.services.human.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 9) {
+                        if (this.services.move) {
+                            f = this.services.move.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 0x0a) {
+                        if (this.services.illuminance) {
+                            f = this.services.illuminance.onnotify;
+                        }
+                    }
+                    if (this._isFunction(f)) {
+                        f(res);
+                    }
+                }
+            }
+        }
+    }
+    disconnect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.connected === false) {
+                yield this._clean();
+                return;
+            }
+            yield this._peripheral.disconnectWait();
+            if (this._isFunction(this.ondisconnect)) {
+                this.ondisconnect({ wasClean: true });
+            }
+        });
+    }
+    _clean() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const p = this._peripheral;
+            if (!p) {
+                return;
+            }
+            if (this.char_indicate) {
+                yield this.char_indicate.unregisterNotifyWait();
+            }
+            // p.removeAllListeners();
+            this.connected = false;
+            this._service = null;
+            this.char_write = null;
+            this.char_indicate = null;
+            this._div_packet_queue = [];
+            this._onresponse = null;
+        });
+    }
+    write(message_name, params) {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            const buf = this._LinkingService.createRequest(message_name, params);
+            if (!buf) {
+                reject(new Error("The specified parameters are invalid."));
+            }
+            const timer = setTimeout(() => {
+                this._onresponse = null;
+                reject(new Error("Timeout"));
+            }, this._write_response_timeout);
+            this._onresponse = (res) => {
+                if (res.messageName === message_name + "_RESP") {
+                    this._onresponse = null;
+                    clearTimeout(timer);
+                    const data = this._margeResponsePrameters(res);
+                    if (data) {
+                        res.data = data;
+                        resolve(res);
+                    }
+                    else {
+                        reject(new Error("Unknown response"));
+                    }
+                }
+            };
+            try {
+                yield this.char_write.writeWait(buf, true);
+            }
+            catch (e) {
+                reject(e);
+            }
+        }));
+    }
+    _margeResponsePrameters(res) {
+        if (!res) {
+            return null;
+        }
+        const parameters = res.parameters;
+        if (parameters && Array.isArray(parameters) && parameters.length > 0) {
+            const data = {};
+            parameters.forEach((p) => {
+                for (const k in p) {
+                    if (!k.match(/^(name|parameterId)$/)) {
+                        data[k] = p[k];
+                    }
+                }
+            });
+            return data;
+        }
+        else {
+            return null;
+        }
+    }
+    _initServices() {
+        const device_name = this._peripheral.localName;
+        // Device Name
+        if (this._generic_access_service.device_name.char) {
+            this.services.deviceName = {
+                get: this._deviceNameGet.bind(this),
+                set: this._deviceNameSet.bind(this),
+            };
+        }
+        // Button
+        if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
+            this.services.button = {
+                onnotify: null,
+            };
+        }
+        // LED
+        if ("LED" in this.info.settings) {
+            const o = this.info.settings.LED;
+            if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
+                const colors = {};
+                for (let i = 0; i < o.colors.length; i++) {
+                    colors[o.colors[i]] = i + 1;
+                }
+                const patterns = {};
+                for (let i = 0; i < o.patterns.length; i++) {
+                    patterns[o.patterns[i]] = i + 1;
+                }
+                this.services.led = {
+                    colors,
+                    patterns,
+                    turnOn: this._ledTurnOn.bind(this),
+                    turnOff: this._ledTurnOff.bind(this),
+                };
+            }
+        }
+        // Vibration
+        if ("Vibration" in this.info.settings) {
+            const o = this.info.settings.Vibration;
+            if (o.patterns && o.patterns.length > 0) {
+                const patterns = {};
+                for (let i = 0; i < o.patterns.length; i++) {
+                    patterns[o.patterns[i]] = i + 1;
+                }
+                this.services.vibration = {
+                    patterns,
+                    turnOn: this._vibrationTurnOn.bind(this),
+                    turnOff: this._vibrationTurnOff.bind(this),
+                };
+            }
+        }
+        // Gyroscope
+        if ("Gyroscope" in this.info.capabilities) {
+            this.services.gyroscope = this._createSensorServiceObject(0x00);
+        }
+        // Accelerometer
+        if ("Accelerometer" in this.info.capabilities) {
+            this.services.accelerometer = this._createSensorServiceObject(0x01);
+        }
+        // Orientation
+        if ("Orientation" in this.info.capabilities) {
+            this.services.orientation = this._createSensorServiceObject(0x02);
+        }
+        // Battery
+        if ("Battery" in this.info.capabilities) {
+            this.services.battery = this._createSensorServiceObject(0x03);
+        }
+        // Temperature
+        if ("Temperature" in this.info.capabilities) {
+            this.services.temperature = this._createSensorServiceObject(0x04);
+        }
+        // Humidity
+        if ("Humidity" in this.info.capabilities) {
+            this.services.humidity = this._createSensorServiceObject(0x05);
+        }
+        // Atmospheric pressure
+        if ("Atmospheric pressure" in this.info.capabilities) {
+            this.services.pressure = this._createSensorServiceObject(0x06);
+        }
+        // Opening and closing
+        if ("Opening and closing" in this.info.exsensors) {
+            this.services.openclose = this._createSensorServiceObject(0x07);
+        }
+        // Human detection
+        if ("Human detection" in this.info.exsensors) {
+            this.services.human = this._createSensorServiceObject(0x08);
+        }
+        // Move
+        if ("Move" in this.info.exsensors) {
+            this.services.move = this._createSensorServiceObject(0x09);
+        }
+        // Illuminance
+        if ("Illuminance" in this.info.exsensors) {
+            this.services.illuminance = this._createSensorServiceObject(0x0a);
+        }
+    }
+    _deviceNameGet() {
+        const promise = new Promise((resolve, reject) => {
+            const char = this._generic_access_service.device_name.char;
+            char.read((error, data) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve({
+                        deviceName: data.toString("utf8"),
+                    });
+                }
+            });
+        });
+        return promise;
+    }
+    _deviceNameSet(name) {
+        const promise = new Promise((resolve, reject) => {
+            if (!name) {
+                reject(new Error("Device name is required."));
+                return;
+            }
+            else if (typeof (name) !== "string") {
+                reject(new Error("Device name must be a string."));
+                return;
+            }
+            else if (name.length > 32) {
+                reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
+                return;
+            }
+            const buf = Buffer.from(name, "utf8");
+            const char = this._generic_access_service.device_name.char;
+            char.write(buf, false, (error) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve();
+                }
+            });
+        });
+        return promise;
+    }
+    _ledTurnOn(color, pattern, duration) {
+        let color_number = 1;
+        if (color) {
+            const colors = this.services.led.colors;
+            if (typeof (color) === "number") {
+                for (const name in colors) {
+                    if (colors[name] === color) {
+                        color_number = color;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (color) === "string") {
+                if (color in colors) {
+                    color_number = colors[color];
+                }
+            }
+        }
+        let pattern_number = 2;
+        if (pattern) {
+            const patterns = this.services.led.patterns;
+            if (typeof (pattern) === "number") {
+                for (const name in patterns) {
+                    if (patterns[name] === pattern) {
+                        pattern_number = pattern;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (pattern) === "string") {
+                if (pattern in patterns) {
+                    pattern_number = patterns[pattern];
+                }
+            }
+        }
+        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+            duration = 5;
+        }
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "START_DEMONSTRATION",
+                },
+                SettingInformationData: [
+                    {
+                        settingName: "LED",
+                        colorNumber: color_number,
+                        patternNumber: pattern_number,
+                        duration,
+                    },
+                ],
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _ledTurnOff() {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "STOP_DEMONSTRATION",
+                },
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _vibrationTurnOn(pattern, duration) {
+        let pattern_number = 2;
+        if (pattern) {
+            const patterns = this.services.vibration.patterns;
+            if (typeof (pattern) === "number") {
+                for (const name in patterns) {
+                    if (patterns[name] === pattern) {
+                        pattern_number = pattern;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (pattern) === "string") {
+                if (pattern in patterns) {
+                    pattern_number = patterns[pattern];
+                }
+            }
+        }
+        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+            duration = 5;
+        }
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "START_DEMONSTRATION",
+                },
+                SettingInformationData: [
+                    {
+                        settingName: "Vibration",
+                        patternNumber: pattern_number,
+                        duration,
+                    },
+                ],
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _vibrationTurnOff() {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "STOP_DEMONSTRATION",
+                },
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _createSensorServiceObject(sensor_type) {
+        return {
+            onnotify: null,
+            start: () => {
+                return this._setNotifySensorInfo(sensor_type, 1);
+            },
+            stop: () => {
+                return this._setNotifySensorInfo(sensor_type, 0);
+            },
+            get: () => {
+                return this._getSensorInfo(sensor_type);
+            },
+        };
+    }
+    _setNotifySensorInfo(sensor_type, status) {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SET_NOTIFY_SENSOR_INFO", {
+                SensorType: sensor_type,
+                Status: status,
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _getSensorInfo(sensor_type) {
+        const promise = new Promise((resolve, reject) => {
+            this.write("GET_SENSOR_INFO", {
+                SensorType: sensor_type,
+            }).then((res) => {
+                if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
+                    const d = res.data;
+                    const data = {
+                        x: d.xValue,
+                        y: d.yValue,
+                        z: d.zValue,
+                    };
+                    resolve(data);
+                }
+                else {
+                    resolve(res.data);
+                }
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+}
+exports.default = LinkingDevice;
+
+//# sourceMappingURL=device.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/ieee754.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - ieee754.js
+*
+* Copyright (c) 2017, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2017-04-13
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingIEEE754 {
+    static read(n, slen, elen, flen) {
+        const sgn = slen ? ((n >>> 11) & 0b1) : 0; // sign
+        const max = Math.pow(2, elen) - 1; // maximum of exponent
+        const exp = (n >>> flen) & max; // exponent
+        let fra = 0; // fraction
+        for (let i = 0; i < flen; i++) {
+            if ((n >>> (flen - i - 1)) & 0b1) {
+                fra += Math.pow(2, -(i + 1));
+            }
+        }
+        if (exp === 0 && fra === 0) {
+            return 0;
+        }
+        else if (exp === 0 && fra !== 0) {
+            const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
+            const v = Math.pow(-1, sgn) * fra * Math.pow(2, (1 - m));
+            return v;
+        }
+        else if (exp >= 1 && exp <= max - 1) {
+            const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
+            const v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, (exp - m));
+            return v;
+        }
+        else if (exp === max && fra === 0) {
+            return Infinity;
+        }
+        else {
+            return NaN;
+        }
+    }
+    constructor() {
+    }
+}
+exports.default = LinkingIEEE754;
+
+//# sourceMappingURL=ieee754.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-notification.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-notification.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* ------------------------------------------------------------------
+* Constructor: LinkingServiceNotification()
+* ---------------------------------------------------------------- */
+class LinkingServiceNotification {
+    constructor() {
+        this.SERVICE_ID = 0x01;
+        this.SERVICE_NAME = "PeripheralDeviceNotification";
+        this.MESSAGE_NAME_MAP = {
+            "00": "CONFIRM_NOTIFY_CATEGORY",
+            "01": "CONFIRM_NOTIFY_CATEGORY_RESP",
+            "02": "NOTIFY_INFORMATION",
+            "03": "GET_PD_NOTIFY_DETAIL_DATA",
+            "04": "GET_PD_NOTIFY_DETAIL_DATA_RESP",
+            "05": "NOTIFY_PD_GENERAL_INFORMATION",
+            "06": "START_PD_APPLICATION",
+            "07": "START_PD_APPLICATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            CONFIRM_NOTIFY_CATEGORY: 0x00,
+            NOTIFY_INFORMATION: 0x02,
+            GET_PD_NOTIFY_DETAIL_DATA_RESP: 0x04,
+            START_PD_APPLICATION_RESP: 0x07,
+        };
+        this._NOTIFY_CATEGORY_NAME_ID_MAP = {
+            NotNotify: 0,
+            All: 1,
+            PhoneIncomingCall: 2,
+            PhoneInCall: 3,
+            PhoneIdle: 4,
+            Mail: 5,
+            Schedule: 6,
+            General: 7,
+            Etc: 8,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        let notify_cateogry_id = 0;
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                const p = this._parseParameter(pid, pvalue_buf);
+                parameters.push(this._parseParameter(pid, pvalue_buf, notify_cateogry_id));
+                if (pid === 0x04 && ("id" in p)) {
+                    notify_cateogry_id = p.id;
+                }
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf, notify_cateogory_id) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseGetStatus(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseNotifyCategory(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseNotifyCategoryID(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseGetParameterID(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseGetParameterLength(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseParameterIdList(buf, notify_cateogory_id);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseUniqueId(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseNotifyId(buf);
+        }
+        else if (pid === 0x0A) {
+            parsed = this._parseNotificationOperation(buf);
+        }
+        else if (pid === 0x0B) {
+            parsed = this._parseTittle(buf);
+        }
+        else if (pid === 0x0C) {
+            parsed = this._parseText(buf);
+        }
+        else if (pid === 0x0D) {
+            parsed = this._parseAppName(buf);
+        }
+        else if (pid === 0x0E) {
+            parsed = this._parseAppNameLocal(buf);
+        }
+        else if (pid === 0x0F) {
+            parsed = this._parseNotifyApp(buf);
+        }
+        else if (pid === 0x10) {
+            parsed = this._parseRumblingSetting(buf);
+        }
+        else if (pid === 0x11) {
+            parsed = this._parseVibrationPattern(buf);
+        }
+        else if (pid === 0x12) {
+            parsed = this._parseLedPattern(buf);
+        }
+        else if (pid === 0x13) {
+            parsed = this._parseSender(buf);
+        }
+        else if (pid === 0x14) {
+            parsed = this._parseSenderAddress(buf);
+        }
+        else if (pid === 0x15) {
+            parsed = this._parseReceiveDate(buf);
+        }
+        else if (pid === 0x16) {
+            parsed = this._parseStartDate(buf);
+        }
+        else if (pid === 0x17) {
+            parsed = this._parseEndDate(buf);
+        }
+        else if (pid === 0x18) {
+            parsed = this._parseArea(buf);
+        }
+        else if (pid === 0x19) {
+            parsed = this._parsePerson(buf);
+        }
+        else if (pid === 0x1A) {
+            parsed = this._parseMimeTypeForImage(buf);
+        }
+        else if (pid === 0x1B) {
+            parsed = this._parseMimeTypeForMedia(buf);
+        }
+        else if (pid === 0x1C) {
+            parsed = this._parseImage(buf);
+        }
+        else if (pid >= 0x1D && pid <= 0x26) {
+            parsed = this._parseContents(buf, pid);
+        }
+        else if (pid === 0x27) {
+            parsed = this._parseMedia(buf);
+        }
+        else if (pid === 0x28) {
+            parsed = this._parsePackage(buf);
+        }
+        else if (pid === 0x29) {
+            parsed = this._parseClass(buf);
+        }
+        else if (pid === 0x2A) {
+            parsed = this._parseSharingInformation(buf);
+        }
+        else if (pid === 0x2B) {
+            parsed = this._parseBeepPattern(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseGetStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "OK, request processed ,but some parameter not";
+        }
+        else if (code === 0x02) {
+            text = "Cancel";
+        }
+        else if (code === 0x03) {
+            text = "Error, failed";
+        }
+        else if (code === 0x04) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x05) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x06) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "GetStatus",
+            statusCode: code,
+            statusText: text,
+        };
+    }
+    _parseNotifyCategory(buf) {
+        const list = [];
+        const v1 = buf.readUInt8(0);
+        if (v1 & 0b00000001) {
+            list.push({
+                id: 0,
+                name: "NotNotify",
+            });
+        }
+        if (v1 & 0b00000010) {
+            list.push({
+                id: 1,
+                name: "All",
+            });
+        }
+        if (v1 & 0b00000100) {
+            list.push({
+                id: 2,
+                name: "PhoneIncomingCall",
+            });
+        }
+        if (v1 & 0b00001000) {
+            list.push({
+                id: 3,
+                name: "PhoneInCall",
+            });
+        }
+        if (v1 & 0b00010000) {
+            list.push({
+                id: 4,
+                name: "PhoneIdle",
+            });
+        }
+        if (v1 & 0b00100000) {
+            list.push({
+                id: 5,
+                name: "Mail",
+            });
+        }
+        if (v1 & 0b01000000) {
+            list.push({
+                id: 6,
+                name: "Schedule",
+            });
+        }
+        if (v1 & 0b10000000) {
+            list.push({
+                id: 7,
+                name: "General",
+            });
+        }
+        const v2 = buf.readUInt8(1);
+        if (v2 & 0b00000001) {
+            list.push({
+                id: 8,
+                name: "Etc",
+            });
+        }
+        return {
+            name: "NotifyCategory",
+            notifyCategory: list,
+        };
+    }
+    _parseNotifyCategoryID(buf) {
+        let res = null;
+        const v1 = buf.readUInt8(0);
+        const v2 = buf.readUInt8(1);
+        if (v1 & 0b00000001) {
+            res = { id: 0, text: "NotNotify" };
+        }
+        else if (v1 & 0b00000010) {
+            res = { id: 1, text: "All" };
+        }
+        else if (v1 & 0b00000100) {
+            res = { id: 2, text: "PhoneIncomingCall" };
+        }
+        else if (v1 & 0b00001000) {
+            res = { id: 3, text: "PhoneInCall" };
+        }
+        else if (v1 & 0b00010000) {
+            res = { id: 4, text: "PhoneIdle" };
+        }
+        else if (v1 & 0b00100000) {
+            res = { id: 5, text: "Mail" };
+        }
+        else if (v1 & 0b01000000) {
+            res = { id: 6, text: "Schedule" };
+        }
+        else if (v1 & 0b10000000) {
+            res = { id: 7, text: "General" };
+        }
+        else if (v2 & 0b00000001) {
+            res = { id: 8, text: "Etc" };
+        }
+        return {
+            name: "NotifyCategoryID",
+            notifyCategoryId: res.id,
+            NotifyCategoryText: res.text,
+        };
+    }
+    _parseGetParameterID(buf) {
+        return {
+            name: "GetParameterID",
+            getParameterId: buf.readUInt8(0),
+        };
+    }
+    _parseGetParameterLength(buf) {
+        return {
+            name: "GetParameterLength",
+            getParameterLength: buf.readUInt32LE(0),
+        };
+    }
+    _parseParameterIdList(buf, notify_cateogry_id) {
+        const v = buf.readUInt16LE(0);
+        const list = [];
+        if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) { // PhoneIncomingCall/PhoneInCall/PhoneIdle
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 5) { // Mail
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x13, name: "Sender" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x14, name: "SenderAddress" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x15, name: "ReceiveDate" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 6) { // Schedule
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x16, name: "StartDate" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x17, name: "EndDate" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x18, name: "Area" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x19, name: "Person" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x1D, name: "Contents1" });
+            }
+            if (v & 0b0000010000000000) {
+                list.push({ id: 0x1E, name: "Contents2" });
+            }
+            if (v & 0b0000100000000000) {
+                list.push({ id: 0x1F, name: "Contents3" });
+            }
+            if (v & 0b0001000000000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0010000000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 7) { // General
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 8) { // Etc
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x1D, name: "Contents1" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x1E, name: "Contents2" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x1F, name: "Contents3" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x20, name: "Contents4" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x21, name: "Contents5" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x22, name: "Contents6" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x23, name: "Contents7" });
+            }
+            if (v & 0b0000010000000000) {
+                list.push({ id: 0x1B, name: "MimeTypeForMedia" });
+            }
+            if (v & 0b0000100000000000) {
+                list.push({ id: 0x27, name: "Media" });
+            }
+            if (v & 0b0001000000000000) {
+                list.push({ id: 0x1A, name: "MimeTypeForImage" });
+            }
+            if (v & 0b0010000000000000) {
+                list.push({ id: 0x1C, name: "Image" });
+            }
+            if (v & 0b0100000000000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b1000000000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        return {
+            name: "ParameterIdList",
+            parameterIdList: list,
+        };
+    }
+    _parseUniqueId(buf) {
+        return {
+            name: "UniqueId",
+            uniqueId: buf.readUInt16LE(0),
+        };
+    }
+    _parseNotifyId(buf) {
+        return {
+            name: "NotifyId",
+            notifyId: buf.readUInt16LE(0),
+        };
+    }
+    _parseNotificationOperation(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "AlreadyRead";
+        }
+        else if (code === 0x01) {
+            text = "Delete";
+        }
+        return {
+            name: "NotificationOperation",
+            notificationOperationCode: code,
+            notificationOperationText: text,
+        };
+    }
+    _parseTittle(buf) {
+        return {
+            name: "Tittle",
+            title: buf.toString("UTF-8"),
+        };
+    }
+    _parseText(buf) {
+        return {
+            name: "Text",
+            text: buf.toString("UTF-8"),
+        };
+    }
+    _parseAppName(buf) {
+        return {
+            name: "AppName",
+            appName: buf.toString("UTF-8"),
+        };
+    }
+    _parseAppNameLocal(buf) {
+        return {
+            name: "AppNameLocal",
+            appNameLocal: buf.toString("UTF-8"),
+        };
+    }
+    _parseNotifyApp(buf) {
+        return {
+            name: "NotifyApp",
+            notifyApp: buf.toString("UTF-8"),
+        };
+    }
+    _parseRumblingSetting(buf) {
+        const list = [];
+        const v = buf.readUInt8(0);
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "LED" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Vibration" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Beep" });
+        }
+        return {
+            name: "RumblingSetting",
+            rumblingSetting: list,
+        };
+    }
+    _parseVibrationPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "VibrationPattern",
+            vibrationPattern: list,
+        };
+    }
+    _parseLedPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "LedPattern",
+            LedPattern: list,
+        };
+    }
+    _parseSender(buf) {
+        return {
+            name: "Sender",
+            sender: buf.toString("UTF-8"),
+        };
+    }
+    _parseSenderAddress(buf) {
+        return {
+            name: "SenderAddress",
+            senderAddress: buf.toString("UTF-8"),
+        };
+    }
+    _parseReceiveDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "ReceiveDate",
+            receiveDate: dt,
+        };
+    }
+    _parseStartDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "StartDate",
+            startDate: dt,
+        };
+    }
+    _parseEndDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "EndDate",
+            endDate: dt,
+        };
+    }
+    _parseArea(buf) {
+        return {
+            name: "Area",
+            area: buf.toString("UTF-8"),
+        };
+    }
+    _parsePerson(buf) {
+        const buf_list = [];
+        let offset = 0;
+        let start = 0;
+        while (true) {
+            if (buf.readUInt8(offset) === 0x00) {
+                if (start !== offset) {
+                    buf_list.push(buf.slice(start, offset));
+                    start = offset;
+                }
+            }
+            offset++;
+            if (offset >= buf.length) {
+                if (start !== offset) {
+                    buf_list.push(buf.slice(start, offset));
+                }
+                break;
+            }
+        }
+        const list = [];
+        buf_list.forEach((b) => {
+            list.push(b.toString("UTF-8"));
+        });
+        return {
+            name: "Person",
+            person: list,
+        };
+    }
+    _parseMimeTypeForImage(buf) {
+        return {
+            name: "MimeTypeForImage",
+            mimeTypeForImage: buf.toString("UTF-8"),
+        };
+    }
+    _parseMimeTypeForMedia(buf) {
+        return {
+            name: "MimeTypeForMedia",
+            mimeTypeForMedia: buf.toString("UTF-8"),
+        };
+    }
+    _parseImage(buf) {
+        return {
+            name: "Image",
+            image: buf,
+        };
+    }
+    _parseContents(buf, pid) {
+        return {
+            name: "Contents" + pid,
+            contents: buf.toString("UTF-8"),
+        };
+    }
+    _parseMedia(buf) {
+        return {
+            name: "Media",
+            media: buf,
+        };
+    }
+    _parsePackage(buf) {
+        return {
+            name: "Package",
+            package: buf.toString("UTF-8"),
+        };
+    }
+    _parseClass(buf) {
+        return {
+            name: "Class",
+            class: buf.toString("UTF-8"),
+        };
+    }
+    _parseSharingInformation(buf) {
+        return {
+            name: "SharingInformation",
+            sharingInformation: buf.toString("UTF-8"),
+        };
+    }
+    _parseBeepPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "BeepPattern",
+            beepPattern: list,
+        };
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "CONFIRM_NOTIFY_CATEGORY") {
+            return this._createPayloadConfirmNotifyCategory(params);
+        }
+        else if (message_name === "NOTIFY_INFORMATION") {
+            return this._createPayloadNotifyInformation(params);
+        }
+        else if (message_name === "GET_PD_NOTIFY_DETAIL_DATA_RESP") {
+            return this._createPayloadGetPdNotifyDetailDataResp(params);
+        }
+        else if (message_name === "START_PD_APPLICATION_RESP") {
+            return this._createPayloadStartPdApplicationResp(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadConfirmNotifyCategory(params) {
+        const pnum_buf = Buffer.alloc(1);
+        pnum_buf.writeUInt8(0);
+        return pnum_buf;
+    }
+    _createPayloadNotifyInformation(params) {
+        /*
+            NotifyCategory   M 2 0x03
+            UniqueId         M 2 0x08
+            ParameterIdList  M 2 0x07
+            RumblingSetting  O 1 0x10
+            VibrationPattern O   0x11
+            LedPattern       O   0x12
+            BeepPattern      O   0x2B
+            */
+        /*
+            let pnum = 0;
+            let notify_category = null;
+            let notify_category_name = '';
+            if('NotifyCategory' in params) {
+                notify_category =  params['NotifyCategory'];
+                if(typeof(notify_category) === 'number') {
+                    if(notify_category >= 0 && notify_category <= 0xFF && notify_category % 1 === 0) {
+                        let hit = false;
+                        for(let name in this._NOTIFY_CATEGORY_NAME_ID_MAP) {
+                            if(this._NOTIFY_CATEGORY_NAME_ID_MAP[name] === notify_category) {
+                                hit = true;
+                                notify_category_name = name;
+                                break;
+                            }
+                        }
+                        if(hit === true) {
+                            pnum ++;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
+                } else if(typeof(notify_category) === 'string') {
+                    if(notify_category in this._NOTIFY_CATEGORY_NAME_ID_MAP) {
+                        notify_category = this._NOTIFY_CATEGORY_NAME_ID_MAP[notify_category];
+                        notify_category_name = notify_category;
+                        pnum ++;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+            let uid = null;
+            if(('UniqueId' in params) && typeof(params['UniqueId']) === 'number' && params['UniqueId'] >= 0 && params['UniqueId'] <= 0xFFFF && params['UniqueId'] % 1 === 0) {
+                uid = params['UniqueId'];
+                pnum ++;
+            } else {
+                return null;
+            }
+            // buffer list
+            let buf_list = [];
+            // Number of parameters
+            let pnum_buf = Buffer.from([pnum]);
+            buf_list.push(pnum_buf);
+            // NotifyCategory
+            if(notify_category !== null) {
+                let n = 1 << notify_category;
+                let val_buf = Buffer.alloc(2);
+                val_buf.writeUInt16LE(n);
+                buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+            }
+            // UniqueId
+            if(uid !== null) {
+                let val_buf = Buffer.alloc(2);
+                val_buf.writeUInt16LE(uid);
+                buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+            }
+            // Create a packet
+            return Buffer.concat(buf_list);
+            */
+        return null;
+    }
+    _createPayloadGetPdNotifyDetailDataResp(params) {
+        let pnum = 0;
+        let rcode = null;
+        if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+            rcode = params.ResultCode;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let uid = null;
+        if (("UniqueId" in params) && typeof (params.UniqueId) === "number" && params.UniqueId >= 0 && params.UniqueId <= 0xFF && params.UniqueId % 1 === 0) {
+            uid = params.UniqueId;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // ResultCode
+        if (rcode !== null) {
+            const val_buf = Buffer.alloc(1);
+            val_buf.writeUInt8(rcode);
+            buf_list.push(this._createPropertyBlockBuffer(0x00, val_buf));
+        }
+        // UniqueId
+        if (uid !== null) {
+            const val_buf = Buffer.alloc(2);
+            val_buf.writeUInt16LE(uid);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadStartPdApplicationResp(params) {
+        let pnum = 0;
+        let rcode;
+        if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+            rcode = params.ResultCode;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // ResultCode
+        if (rcode !== null) {
+            const val_buf = Buffer.alloc(1);
+            val_buf.writeUInt8(rcode);
+            buf_list.push(this._createPropertyBlockBuffer(0x00, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceNotification;
+
+//# sourceMappingURL=service-notification.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-operation.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-operation.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceOperation {
+    constructor() {
+        this.SERVICE_ID = 0x02;
+        this.SERVICE_NAME = "PeripheralDeviceOperation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "NOTIFY_PD_OPERATION",
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseButtonId(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseButtonId(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "Power";
+        }
+        else if (code === 0x01) {
+            text = "Return";
+        }
+        else if (code === 0x02) {
+            text = "SingleClick";
+        }
+        else if (code === 0x03) {
+            text = "Home";
+        }
+        else if (code === 0x04) {
+            text = "DoubleClick";
+        }
+        else if (code === 0x05) {
+            text = "VolumeUp";
+        }
+        else if (code === 0x06) {
+            text = "VolumeDown";
+        }
+        else if (code === 0x07) {
+            text = "LongPress";
+        }
+        else if (code === 0x08) {
+            text = "Pause";
+        }
+        else if (code === 0x09) {
+            text = "LongPressRelease";
+        }
+        else if (code === 0x0A) {
+            text = "FastForward";
+        }
+        else if (code === 0x0B) {
+            text = "ReWind";
+        }
+        else if (code === 0x0C) {
+            text = "Shutter";
+        }
+        else if (code === 0x0D) {
+            text = "Up";
+        }
+        else if (code === 0x0E) {
+            text = "Down";
+        }
+        else if (code === 0x0F) {
+            text = "Left";
+        }
+        else if (code === 0x10) {
+            text = "Right";
+        }
+        else if (code === 0x11) {
+            text = "Enter";
+        }
+        else if (code === 0x12) {
+            text = "Menu";
+        }
+        else if (code === 0x13) {
+            text = "Play";
+        }
+        else if (code === 0x14) {
+            text = "Stop";
+        }
+        return {
+            name: "ButtonId",
+            buttonId: code,
+            buttonName: text,
+        };
+    }
+}
+exports.default = LinkingServiceOperation;
+
+//# sourceMappingURL=service-operation.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-property.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-property.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceProperty {
+    constructor() {
+        this.SERVICE_ID = 0x00;
+        this.SERVICE_NAME = "PeripheralDevicePropertyInformation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_DEVICE_INFORMATION",
+            "01": "GET_DEVICE_INFORMATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_DEVICE_INFORMATION: 0x00,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseServiceList(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseDeviceId(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseDeviceUid(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseDeviceCapability(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseOriginalInformation(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseExSensorType(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseServiceList(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "PeripheralDevicePropertyInformation" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "PeripheralDeviceNotification" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "PeripheralDeviceOperation" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "PeripheralDeviceSensorInformation" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "PeripheralDeviceSettingOperation" });
+        }
+        return {
+            name: "ServiceList",
+            serviceList: list,
+        };
+    }
+    _parseDeviceId(buf) {
+        return {
+            name: "DeviceId",
+            deviceId: buf.toString("hex"),
+        };
+    }
+    _parseDeviceUid(buf) {
+        return {
+            name: "DeviceUid",
+            deviceUid: buf.toString("hex"),
+        };
+    }
+    _parseDeviceCapability(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Gyroscope" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Accelerometer" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "Orientation" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "Battery" });
+        }
+        if (v & 0b00100000) {
+            list.push({ id: 5, name: "Temperature" });
+        }
+        if (v & 0b01000000) {
+            list.push({ id: 6, name: "Humidity" });
+        }
+        if (v & 0b10000000) {
+            list.push({ id: 7, name: "Atmospheric pressure" });
+        }
+        return {
+            name: "DeviceCapability",
+            deviceCapability: list,
+        };
+    }
+    _parseOriginalInformation(buf) {
+        const type = buf.readUInt8(0);
+        let type_name = "";
+        if (type === 0x00) {
+            type_name = "AppName";
+        }
+        else if (type === 0x01) {
+            type_name = "AppNameLocal";
+        }
+        else if (type === 0x02) {
+            type_name = "AppDLURL1";
+        }
+        else if (type === 0x03) {
+            type_name = "AppDLURL2";
+        }
+        else if (type === 0x04) {
+            type_name = "AppDLURL3";
+        }
+        else if (type === 0x05) {
+            type_name = "AppExecInfo1";
+        }
+        else if (type === 0x06) {
+            type_name = "AppExecInfo2";
+        }
+        else if (type === 0x07) {
+            type_name = "AppExecInfo3";
+        }
+        else if (type === 0x08) {
+            type_name = "AppPackage";
+        }
+        return {
+            name: "OriginalInformation",
+            originalInformationCode: type,
+            originalInformationName: type_name,
+            originalInformationText: buf.slice(1).toString("UTF-8"),
+        };
+    }
+    _parseExSensorType(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "Version" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Version" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Flag" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "Button" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "Opening and closing" });
+        }
+        if (v & 0b00100000) {
+            list.push({ id: 5, name: "Human detection" });
+        }
+        if (v & 0b01000000) {
+            list.push({ id: 6, name: "Move" });
+        }
+        if (v & 0b10000000) {
+            list.push({ id: 7, name: "Illuminance" });
+        }
+        return {
+            name: "ExSensorType",
+            exSensorType: list,
+        };
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "GET_DEVICE_INFORMATION") {
+            return this._createPayloadGetDeviceInformation(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPayloadGetDeviceInformation(params) {
+        const pnum_buf = Buffer.alloc(1);
+        pnum_buf.writeUInt8(0);
+        return pnum_buf;
+    }
+}
+exports.default = LinkingServiceProperty;
+
+//# sourceMappingURL=service-property.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-sensor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-sensor.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/ieee754.js"));
+class LinkingServiceSensor {
+    constructor() {
+        this.SERVICE_ID = 0x03;
+        this.SERVICE_NAME = "PeripheralDeviceSensorInformation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_SENSOR_INFO",
+            "01": "GET_SENSOR_INFO_RESP",
+            "02": "SET_NOTIFY_SENSOR_INFO",
+            "03": "SET_NOTIFY_SENSOR_INFO_RESP",
+            "04": "NOTIFY_PD_SENSOR_INFO",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_SENSOR_INFO: 0x00,
+            SET_NOTIFY_SENSOR_INFO: 0x02,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        let sensor_type = 0;
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                const p = this._parseParameter(pid, pvalue_buf, sensor_type);
+                if (pid === 0x02 && ("sensorTypeCode" in p)) {
+                    sensor_type = p.sensorTypeCode;
+                }
+                parameters.push(p);
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf, sensor_type) {
+        let parsed = {};
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseSensorType(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseStatus(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseX_value(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseY_value(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseZ_value(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseX_threshold(buf);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseY_threshold(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseZ_threshold(buf);
+        }
+        else if (pid === 0x0A) {
+            parsed = this._parseOriginalData(buf, sensor_type);
+        }
+        parsed.parameterId = pid;
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseSensorType(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "Gyroscope";
+        }
+        else if (code === 0x01) {
+            text = "Accelerometer";
+        }
+        else if (code === 0x02) {
+            text = "Orientation";
+        }
+        else if (code === 0x03) {
+            text = "Battery";
+        }
+        else if (code === 0x04) {
+            text = "Temperature";
+        }
+        else if (code === 0x05) {
+            text = "Humidity";
+        }
+        else if (code === 0x06) {
+            text = "Atmospheric pressure";
+        }
+        else if (code === 0x07) {
+            text = "Opening and closing";
+        }
+        else if (code === 0x08) {
+            text = "Human detection";
+        }
+        else if (code === 0x09) {
+            text = "Move";
+        }
+        else if (code === 0x0a) {
+            text = "Illuminance";
+        }
+        return {
+            name: "SensorType",
+            sensorTypeCode: code,
+            sensorTypeText: text,
+        };
+    }
+    _parseStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OFF";
+        }
+        else if (code === 0x01) {
+            text = "ON";
+        }
+        return {
+            name: "Status",
+            statusCode: code,
+            statusText: text,
+        };
+    }
+    _parseX_value(buf) {
+        return {
+            name: "X_value",
+            xValue: buf.readFloatLE(0),
+        };
+    }
+    _parseY_value(buf) {
+        return {
+            name: "Y_value",
+            yValue: buf.readFloatLE(0),
+        };
+    }
+    _parseZ_value(buf) {
+        return {
+            name: "Z_value",
+            zValue: buf.readFloatLE(0),
+        };
+    }
+    _parseX_threshold(buf) {
+        return {
+            name: "X_threshold",
+            xThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseY_threshold(buf) {
+        return {
+            name: "Y_threshold",
+            yThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseZ_threshold(buf) {
+        return {
+            name: "Z_threshold",
+            zThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseOriginalData(buf, sensor_type) {
+        const n = buf.readUInt16LE(0) & 0b0000111111111111;
+        if (sensor_type === 0x03) { // Battery
+            return {
+                chargeRequired: (n & 0b0000100000000000) ? true : false,
+                chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (sensor_type === 0x04) { // Temperature
+            return {
+                temperature: ieee754_1.default.read(n, 1, 4, 7),
+            };
+        }
+        else if (sensor_type === 0x05) { // Humidity
+            const v = ieee754_1.default.read(n, 0, 4, 8);
+            return {
+                humidity: v,
+            };
+        }
+        else if (sensor_type === 0x06) { // Atmospheric pressure
+            return {
+                pressure: buf.readFloatLE(0),
+            };
+        }
+        else if (sensor_type === 0x07) { // Opening and closing
+            return {
+                openingStatus: (n & 0b0000100000000000) ? true : false,
+                openingCount: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (sensor_type === 0x08) { // Human detection
+            return {
+                humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
+                humanDetectionCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (sensor_type === 0x09) { // Move (Vibration Sensor)
+            return {
+                moveResponse: (n & 0b0000100000000000) ? true : false,
+                moveCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (sensor_type === 0x0a) { // Illuminance
+            return {
+                illuminance: buf.readFloatLE(0),
+            };
+        }
+        else {
+            return {};
+        }
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "GET_SENSOR_INFO") {
+            return this._createPayloadGetSensorInfo(params);
+        }
+        else if (message_name === "SET_NOTIFY_SENSOR_INFO") {
+            return this._createPayloadSetNotifySensorInfo(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetSensorInfo(params) {
+        let pnum = 0;
+        let sensor_type = null;
+        if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+            sensor_type = params.SensorType;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SensorType
+        if (sensor_type !== null) {
+            const val_buf = Buffer.from([sensor_type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadSetNotifySensorInfo(params) {
+        let pnum = 0;
+        let sensor_type = null;
+        if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+            sensor_type = params.SensorType;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let status = null;
+        if (("Status" in params)) {
+            status = params.Status ? 1 : 0;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let x = null;
+        let y = null;
+        let z = null;
+        if (sensor_type <= 0x02) {
+            if ("X_threshold" in params) {
+                if (typeof (params.X_threshold) === "number") {
+                    x = params.X_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+            if ("Y_threshold" in params) {
+                if (typeof (params.Y_threshold) === "number") {
+                    y = params.Y_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+            if ("Z_threshold" in params) {
+                if (typeof (params.Z_threshold) === "number") {
+                    z = params.Z_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        let odata = null;
+        if ("OriginalData" in params) {
+            if (params.OriginalData && (params.OriginalData instanceof Buffer)) {
+                odata = params.OriginalData;
+                pnum++;
+            }
+            else {
+                return null;
+            }
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SensorType
+        if (sensor_type !== null) {
+            const val_buf = Buffer.from([sensor_type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Status
+        if (status !== null) {
+            const val_buf = Buffer.from([status]);
+            buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+        }
+        // X_threshold
+        if (x !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(x, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x07, val_buf));
+        }
+        // Y_threshold
+        if (y !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(y, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Z_threshold
+        if (z !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(z, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x09, val_buf));
+        }
+        // OriginalData
+        if (odata !== null) {
+            const val_buf = odata;
+            buf_list.push(this._createPropertyBlockBuffer(0x0A, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceSensor;
+
+//# sourceMappingURL=service-sensor.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-setting.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-setting.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceSetting {
+    constructor() {
+        this.SERVICE_ID = 0x04;
+        this.SERVICE_NAME = "PeripheralDeviceSettingOperation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_APP_VERSION",
+            "01": "GET_APP_VERSION_RESP",
+            "02": "CONFIRM_INSTALL_APP",
+            "03": "CONFIRM_INSTALL_APP_RESP",
+            "04": "GET_SETTING_INFORMATION",
+            "05": "GET_SETTING_INFORMATION_RESP",
+            "06": "GET_SETTING_NAME",
+            "07": "GET_SETTING_NAME_RESP",
+            "08": "SELECT_SETTING_INFORMATION",
+            "09": "SELECT_SETTING_INFORMATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_APP_VERSION: 0x00,
+            CONFIRM_INSTALL_APP: 0x02,
+            GET_SETTING_INFORMATION: 0x04,
+            GET_SETTING_NAME: 0x06,
+            SELECT_SETTING_INFORMATION: 0x08,
+        };
+        this._SETTING_NAME_TYPE_MAP = {
+            LEDColorName: 0x00,
+            LEDPatternName: 0x01,
+            VibrationPatternName: 0x02,
+            BeepPatternName: 0x03,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseSettingNameType(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseAppName(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseFileVer(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseFileSize(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseInstallConfirmStatus(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseSettingInformationRequest(buf);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseSettingInformationData(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseSettingNameData(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseSettingNameType(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "LEDColorName";
+        }
+        else if (code === 0x01) {
+            text = "LEDPatternName";
+        }
+        else if (code === 0x02) {
+            text = "VibrationPatternName";
+        }
+        else if (code === 0x03) {
+            text = "BeepPatternName";
+        }
+        return {
+            name: "SettingNameType",
+            settingNameTypeCode: code,
+            settingNameTypeText: text,
+        };
+    }
+    _parseAppName(buf) {
+        return {
+            name: "AppName",
+            appName: buf.toString("UTF-8"),
+        };
+    }
+    _parseFileVer(buf) {
+        const list = [];
+        for (let i = 0; i < buf.length; i++) {
+            list.push(buf.readUInt8(i));
+        }
+        return {
+            name: "FileVer",
+            fileVer: list.join("."),
+        };
+    }
+    _parseFileSize(buf) {
+        return {
+            name: "FileSize",
+            fileSize: buf.readUInt32LE(0),
+        };
+    }
+    _parseInstallConfirmStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, Device has been ready for install";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        else if (code === 0x06) {
+            text = "Error, Device has no space to install";
+        }
+        else if (code === 0x07) {
+            text = "Error, Requested file was already installed";
+        }
+        else if (code === 0x08) {
+            text = "Error, Newest file was already installed";
+        }
+        return {
+            name: "InstallConfirmStatus",
+            installConfirmStatusCode: code,
+            installConfirmStatusText: text,
+        };
+    }
+    _parseSettingInformationRequest(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "SETTING";
+        }
+        else if (code === 0x01) {
+            text = "START_DEMONSTRATION";
+        }
+        else if (code === 0x02) {
+            text = "STOP_DEMONSTRATION";
+        }
+        let offset = 1;
+        const settings = [];
+        while (true) {
+            const setting_code = buf.readUInt8(offset);
+            if (setting_code === 0x00) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "LED",
+                    colorMax: buf.readUInt8(offset + 1),
+                    colorNumber: buf.readUInt8(offset + 2),
+                    patternMax: buf.readUInt8(offset + 3),
+                    patternNumber: buf.readUInt8(offset + 4),
+                    duration: buf.readUInt8(offset + 5),
+                });
+                offset += 5;
+            }
+            else if (setting_code === 0x01) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "Vibration",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 3;
+            }
+            else if (setting_code === 0x02) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "Beep",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 3;
+            }
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingInformationRequest",
+            settingInformationRequestCode: code,
+            settingInformationRequestName: text,
+            settingInformationRequestData: settings,
+        };
+    }
+    _parseSettingInformationData(buf) {
+        let offset = 0;
+        const settings = [];
+        while (true) {
+            const setting_code = buf.readUInt8(offset);
+            if (setting_code === 0x00) {
+                settings.push({
+                    id: setting_code,
+                    name: "LED",
+                    colorMax: buf.readUInt8(offset + 1),
+                    colorNumber: buf.readUInt8(offset + 2),
+                    patternMax: buf.readUInt8(offset + 3),
+                    patternNumber: buf.readUInt8(offset + 4),
+                    duration: buf.readUInt8(offset + 5),
+                });
+                offset += 6;
+            }
+            else if (setting_code === 0x01) {
+                settings.push({
+                    id: setting_code,
+                    name: "Vibration",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 4;
+            }
+            else if (setting_code === 0x02) {
+                settings.push({
+                    id: setting_code,
+                    name: "Beep",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 4;
+            }
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingInformationData",
+            settingInformationData: settings,
+        };
+    }
+    _parseSettingNameData(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            const name = buf.slice(offset, offset + len - 1).toString("utf-8");
+            offset += len;
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingNameData",
+            settingNameData: list,
+        };
+    }
+    /* ------------------------------------------------------------------
+      * Method: createRequest(message_name, params)
+      * ---------------------------------------------------------------- */
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (!params || typeof (params) !== "object") {
+            params = {};
+        }
+        if (message_name === "GET_APP_VERSION") {
+            return this._createPayloadGetAppVersion(params);
+        }
+        else if (message_name === "CONFIRM_INSTALL_APP") {
+            return this._createPayloadConfirmInstallApp(params);
+        }
+        else if (message_name === "GET_SETTING_INFORMATION") {
+            return this._createPayloadGetSettingInformation(params);
+        }
+        else if (message_name === "GET_SETTING_NAME") {
+            return this._createPayloadGetSettingName(params);
+        }
+        else if (message_name === "SELECT_SETTING_INFORMATION") {
+            return this._createPayloadSelectSettingInformation(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetAppVersion(params) {
+        let pnum = 0;
+        let app_name = null;
+        if (("AppName" in params) && typeof (params.AppName) === "string") {
+            app_name = params.AppName;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // AppName
+        if (app_name !== null) {
+            const val_buf = Buffer.from(app_name);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadConfirmInstallApp(params) {
+        let pnum = 0;
+        let app_name = null;
+        if (("AppName" in params) && typeof (params.AppName) === "string") {
+            app_name = params.AppName;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let file_ver = null;
+        if (("FileVer" in params) && typeof (params.FileVer) === "string") {
+            file_ver = params.FileVer;
+            pnum++;
+        }
+        let file_size = null;
+        if (("FileSize" in params) && typeof (params.FileSize) === "number" && file_size % 1 === 0) {
+            file_size = params.FileSize;
+            pnum++;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // AppName
+        if (app_name !== null) {
+            const val_buf = Buffer.from(app_name);
+            buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+        }
+        // FileVer
+        if (file_ver !== null) {
+            const val_buf = Buffer.from(file_ver);
+            buf_list.push(this._createPropertyBlockBuffer(0x04, val_buf));
+        }
+        // FileSize
+        if (file_size !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeUInt32LE(file_size);
+            buf_list.push(this._createPropertyBlockBuffer(0x05, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetSettingInformation(params) {
+        const pnum_buf = Buffer.from([0]);
+        return pnum_buf;
+    }
+    _createPayloadGetSettingName(params) {
+        let pnum = 0;
+        let type = null;
+        if ("SettingNameType" in params) {
+            type = params.SettingNameType;
+            if (typeof (type) === "number") {
+                let setting_name = "";
+                for (const name in this._SETTING_NAME_TYPE_MAP) {
+                    if (this._SETTING_NAME_TYPE_MAP[name] === type) {
+                        setting_name = name;
+                        break;
+                    }
+                }
+                if (!setting_name) {
+                    return null;
+                }
+            }
+            else if (typeof (type) === "string") {
+                if (type in this._SETTING_NAME_TYPE_MAP) {
+                    type = this._SETTING_NAME_TYPE_MAP[type];
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        else {
+            return null;
+        }
+        pnum++;
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SettingNameType
+        if (type !== null) {
+            const val_buf = Buffer.from([type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadSelectSettingInformation(params) {
+        let pnum = 0;
+        let code = null;
+        if (("SettingInformationRequest" in params) && typeof (params.SettingInformationRequest) === "object") {
+            const req = params.SettingInformationRequest;
+            if (("requestCode" in req) && typeof (req.requestCode) === "number" && req.requestCode >= 0 && req.requestCode <= 0x02 && req.requestCode % 1 === 0) {
+                code = req.requestCode;
+            }
+            else if (("requestName" in req) && typeof (req.requestName) === "string") {
+                const name = req.requestName;
+                if (name === "SETTING") {
+                    code = 0x00;
+                }
+                else if (name === "START_DEMONSTRATION") {
+                    code = 0x01;
+                }
+                else if (name === "STOP_DEMONSTRATION") {
+                    code = 0x02;
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
+        pnum++;
+        let settings = null;
+        if ("SettingInformationData" in params) {
+            if (Array.isArray(params.SettingInformationData)) {
+                settings = [];
+                for (let i = 0; i < params.SettingInformationData.length; i++) {
+                    const s = params.SettingInformationData[i];
+                    let scode = null;
+                    let sname = "";
+                    if (("settingCode" in s) && typeof (s.settingCode) === "number" && s.settingCode >= 0x00 && s.settingCode <= 0x02 && s.settingCode % 1 === 0) {
+                        scode = s.settingCode;
+                        if (scode === 0x00) {
+                            sname = "LED";
+                        }
+                        else if (scode === 0x01) {
+                            sname = "Vibration";
+                        }
+                        else if (scode === 0x02) {
+                            sname = "Beep";
+                        }
+                    }
+                    else if (("settingName" in s) && typeof (s.settingName) === "string") {
+                        sname = s.settingName;
+                        if (sname === "LED") {
+                            scode = 0x00;
+                        }
+                        else if (sname === "Vibration") {
+                            scode = 0x01;
+                        }
+                        else if (sname === "Beep") {
+                            scode = 0x02;
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    if (!(sname in this._device.settings)) {
+                        return null;
+                    }
+                    let cn = null;
+                    let cm = null;
+                    if (scode === 0x00) { // LED
+                        if ("colorNumber" in s) {
+                            if (typeof (s.colorNumber) === "number" && s.colorNumber >= 0 && s.colorNumber <= this._device.settings.LED.colorMax && s.colorNumber % 1 === 0) {
+                                cn = s.colorNumber;
+                            }
+                            else {
+                                return null;
+                            }
+                        }
+                        else {
+                            cn = this._device.settings.LED.colorNumber;
+                        }
+                        cm = this._device.settings.LED.colorMax;
+                    }
+                    let pn = null;
+                    if ("patternNumber" in s) {
+                        if (typeof (s.patternNumber) === "number" && s.patternNumber >= 0 && s.patternNumber <= this._device.settings[sname].patternMax && s.patternNumber % 1 === 0) {
+                            pn = s.patternNumber;
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        pn = this._device.settings[sname].patternNumber;
+                    }
+                    const pm = this._device.settings[sname].patternMax;
+                    let dur = null;
+                    if ("duration" in s) {
+                        if (typeof (s.duration) === "number" && s.duration >= 0 && s.duration <= 0xFF && s.duration % 1 === 0) {
+                            dur = s.duration;
+                            if (dur <= 0x05) {
+                                dur = 0x05;
+                            }
+                            else if (dur <= 0x0A) {
+                                dur = 0x0A;
+                            }
+                            else if (dur <= 0x1E) {
+                                dur = 0x1E;
+                            }
+                            else if (dur <= 0x3C) {
+                                dur = 0x3C;
+                            }
+                            else if (dur <= 0xB4) {
+                                dur = 0xB4;
+                            }
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        dur = this._device.settings[sname].duration;
+                    }
+                    settings.push({
+                        settingCode: scode,
+                        colorNumber: cn,
+                        colorMax: cm,
+                        patternNumber: pn,
+                        patternMax: pm,
+                        duration: dur,
+                    });
+                }
+            }
+            else {
+                return null;
+            }
+            if (settings.length === 0) {
+                settings = null;
+            }
+            else {
+                pnum++;
+            }
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SettingInformationRequest
+        if (code !== null) {
+            const val_buf = Buffer.from([code]);
+            buf_list.push(this._createPropertyBlockBuffer(0x07, val_buf));
+        }
+        // SettingInformationData
+        if (settings !== null) {
+            const val_buf_list = [];
+            settings.forEach((s) => {
+                val_buf_list.push(Buffer.from([s.settingCode]));
+                if (s.colorNumber !== null) {
+                    val_buf_list.push(Buffer.from([s.colorMax, s.colorNumber]));
+                }
+                val_buf_list.push(Buffer.from([s.patternMax, s.patternNumber]));
+                val_buf_list.push(Buffer.from([s.duration]));
+            });
+            const val_buf = Buffer.concat(val_buf_list);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceSetting;
+
+//# sourceMappingURL=service-setting.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - service.js
+*
+* Copyright (c) 2017, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2017-04-15
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const service_notification_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-notification.js"));
+const service_operation_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-operation.js"));
+const service_property_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-property.js"));
+const service_sensor_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-sensor.js"));
+const service_setting_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-setting.js"));
+class LinkingService {
+    constructor() {
+        this._services = {
+            "00": new service_property_js_1.default(),
+            "01": new service_notification_1.default(),
+            "02": new service_operation_js_1.default(),
+            "03": new service_sensor_js_1.default(),
+            "04": new service_setting_js_1.default(),
+        };
+        this._write_message_name_map = {
+            // PeripheralDevicePropertyInformation Service
+            GET_DEVICE_INFORMATION: "00",
+            // PeripheralDeviceNotification Service
+            CONFIRM_NOTIFY_CATEGORY: "01",
+            NOTIFY_INFORMATION: "01",
+            // PeripheralDeviceSensorInformation Service
+            GET_SENSOR_INFO: "03",
+            SET_NOTIFY_SENSOR_INFO: "03",
+            // PeripheralDeviceSettingOperation Service
+            GET_APP_VERSION: "04",
+            CONFIRM_INSTALL_APP: "04",
+            GET_SETTING_INFORMATION: "04",
+            GET_SETTING_NAME: "04",
+            SELECT_SETTING_INFORMATION: "04",
+        };
+        this._device_info = null;
+    }
+    setDeviceInfo(device_info) {
+        for (const code in this._services) {
+            this._services[code].setDeviceInfo(device_info);
+        }
+        this._device_info = device_info;
+    }
+    parseResponse(buf) {
+        const service_id_hex = buf.slice(1, 2).toString("hex");
+        const service = this._services[service_id_hex];
+        if (!service) {
+            return null;
+        }
+        const service_id = buf.readUInt8(1);
+        const msg_id = buf.readUInt16LE(2);
+        // let msg_id = buf.readUInt8(2);
+        const msg_id_hex = buf.slice(2, 3).toString("hex");
+        const pnum = buf.readUInt8(4);
+        const payload_buf = buf.slice(5, buf.length);
+        const parameters = service.parsePayload(pnum, payload_buf);
+        const parsed = {
+            buffer: buf,
+            serviceId: service_id,
+            serviceName: service.SERVICE_NAME,
+            messageId: msg_id,
+            messageName: service.MESSAGE_NAME_MAP[msg_id_hex],
+            parameters,
+        };
+        return parsed;
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._write_message_name_map)) {
+            return null;
+        }
+        const sid = this._write_message_name_map[message_name];
+        const service = this._services[sid];
+        const buf = service.createRequest(message_name, params);
+        return buf;
+    }
+    isSupportedWriteMessageName(message_name) {
+        if (!message_name) {
+            return false;
+        }
+        let sid = this._write_message_name_map[message_name];
+        if (!sid) {
+            return false;
+        }
+        sid = parseInt(sid, 10);
+        const services = (this._device_info && this._device_info.services) ? this._device_info.services : null;
+        if (!services) {
+            return false;
+        }
+        let res = false;
+        for (const k in services) {
+            if (services[k] === sid) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+}
+exports.default = LinkingService;
+
+//# sourceMappingURL=service.js.map
 
 
 /***/ }),
@@ -24434,6 +28912,117 @@ class _7SegmentLED_MAX7219 {
     }
 }
 exports.default = _7SegmentLED_MAX7219;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/MatrixLED_HT16K33/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MatrixLED_HT16K33 {
+    constructor() {
+        this.width = 0;
+        this.height = 0;
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
+        this.requiredKeys = [];
+        this.command = {};
+        this.command.blink = 0x80;
+        this.command.brightness = 0xE0;
+        this.blink_mode = {};
+        this.blink_mode.display_on = 0x01;
+        this.blink_mode.blink_off = 0x00;
+        this.blink_mode.blink_2hz = 0x01;
+        this.blink_mode.blink_1hz = 0x02;
+        this.blink_mode.blink_halfhz = 0x03;
+        this.vram = [];
+    }
+    static info() {
+        return {
+            name: "MatrixLED_HT16K33",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.address = this.params.address || 0x70;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.params.clock = this.params.clock || 400 * 1000;
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(1000);
+    }
+    init(width) {
+        console.log(width);
+        this.width = width;
+        this.height = 8; // IC static setting
+        this.prepareVram(width, this.height);
+        this.i2c.write(this.address, [0x21]);
+        this.blinkRate(this.blink_mode.blink_off);
+        this.brightness(15);
+        this.obniz.wait(10);
+    }
+    blinkRate(val) {
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 3) {
+            val = 3;
+        }
+        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
+    }
+    brightness(val) {
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 15) {
+            val = 15;
+        }
+        this.i2c.write(this.address, [this.command.brightness | val]);
+    }
+    clear() {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0x00;
+        }
+        this.writeVram();
+    }
+    draw(ctx) {
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                const pos = i * this.height * 4 + j * 4;
+                const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
+                this.vram[i] = this.vram[i] << 1;
+                if (brightness > 0x7f) {
+                    this.vram[i] |= 0x1;
+                }
+            }
+            this.vram[i] = this.vram[i] << 16 - this.width;
+        }
+        this.writeVram();
+    }
+    prepareVram(width, height) {
+        this.vram = [];
+        for (let i = 0; i < height; i++) {
+            this.vram.push(0);
+        }
+    }
+    writeVram() {
+        const data = [0x00];
+        for (let i = 0; i < 8; i++) {
+            data.push((this.vram[i] >> 8) & 0xFF);
+            data.push(this.vram[i] & 0xFF);
+        }
+        this.i2c.write(this.address, data);
+    }
+}
+exports.default = MatrixLED_HT16K33;
 
 //# sourceMappingURL=index.js.map
 
@@ -31368,6 +35957,356 @@ exports.default = YG1006;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Button
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Button {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Button",
+        };
+    }
+    wired(obniz) {
+        this.io_signal = obniz.getIO(this.params.signal);
+        if (obniz.isValidIO(this.params.vcc)) {
+            this.io_vcc = obniz.getIO(this.params.vcc);
+            this.io_vcc.output(true);
+        }
+        if (obniz.isValidIO(this.params.gnd)) {
+            this.io_supply = obniz.getIO(this.params.gnd);
+            this.io_supply.output(false);
+        }
+        this.io_signal.pull("5v");
+        this.io_signal.input((value) => {
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io_signal.inputWait();
+        });
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => {
+                    };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Keyestudio_Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Buzzer
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Buzzer {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Buzzer",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.pwm = obniz.getFreePwm();
+        this.pwm.start({ io: this.params.signal });
+    }
+    play(freq) {
+        if (typeof freq !== "number") {
+            throw new Error("freq must be a number");
+        }
+        freq = Math.floor(freq);
+        if (freq > 0) {
+            this.pwm.freq(freq);
+            this.pwm.pulse((1 / freq / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Keyestudio_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_MoistureSensor
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_MoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "signal", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_MoistureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    getHumidityWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ad.getWait();
+        });
+    }
+}
+exports.default = Keyestudio_MoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_PIR
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_PIR {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_PIR",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_signal = obniz.getIO(this.params.signal);
+        this.io_signal.pull("0v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.input((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+}
+exports.default = Keyestudio_PIR;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TemperatureSensor {
+    constructor() {
+        this.temp = 0;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TemperatureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((voltage) => {
+            this.temp = this.calc(voltage);
+            this.onchange(this.temp);
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const voltage = yield this.ad.getWait();
+            this.temp = this.calc(voltage);
+            return this.temp;
+        });
+    }
+    onchange(temp) {
+    }
+    calc(voltage) {
+        return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
+    }
+}
+exports.default = Keyestudio_TemperatureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_TrafficLight
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TrafficLight {
+    constructor() {
+        this.keys = ["gnd", "green", "yellow", "red"];
+        this.requiredKeys = ["green", "yellow", "red"];
+        this.state = "red";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TrafficLight",
+        };
+    }
+    wired(obniz) {
+        function getIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return io;
+                }
+            }
+            return obniz.getIO(io);
+        }
+        this.obniz = obniz;
+        obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.green = obniz.wired("LED", { anode: this.params.green });
+        this.yellow = obniz.wired("LED", { anode: this.params.yellow });
+        this.red = obniz.wired("LED", { anode: this.params.red });
+    }
+    single(led) {
+        this.green.off();
+        this.yellow.off();
+        this.red.off();
+        this.state = led;
+        switch (led) {
+            case "green":
+                this.green.on();
+                break;
+            case "yellow":
+                this.yellow.on();
+                break;
+            case "red":
+            default:
+                this.red.on();
+                this.state = "red";
+                break;
+        }
+    }
+    next() {
+        switch (this.state) {
+            case "green":
+                this.single("yellow");
+                break;
+            case "yellow":
+                this.single("red");
+                break;
+            case "red":
+            default:
+                this.single("green");
+                break;
+        }
+    }
+}
+exports.default = Keyestudio_TrafficLight;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Light/FullColorLED/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -36490,6 +41429,11 @@ class SHT31 {
     getTempWait() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.getAllWait()).temperature;
+        });
+    }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getHumidWait();
         });
     }
     getHumidWait() {
