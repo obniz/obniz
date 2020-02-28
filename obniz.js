@@ -14869,7 +14869,7 @@ class Display {
                 if (bits === 0) {
                     raw[line * stride + col] = pixel << 4;
                 }
-                if (brightness > 0x7f) {
+                else {
                     raw[line * stride + col] |= pixel;
                 }
             }
@@ -14887,7 +14887,7 @@ class Display {
                 if (bits === 0) {
                     raw[row * stride + col] = 0x00;
                 }
-                else {
+                if (brightness > 0x7F) {
                     raw[row * stride + col] |= 0x80 >> bits;
                 }
             }
