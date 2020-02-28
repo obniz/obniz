@@ -15,15 +15,13 @@ Specify ```module_version:1``` when using ArduCAM-Mini-2MP-Plus.
 Instantiate camera object regarding ios.
 
 We recommend to supply power to an arducam from other power resource.
-You should pay attention over current detection when using an obniz Board as poewr supply.
 Supply methods are
-
 
 - use other power resource
 - use J1 on an obniz Board.
-- supply vcc more than two obniz Board io
 
-This document use io5 and io11 to supply a vcc.
+Also, if you use obniz Board 1Y, you can supply power from the power pin as shown below.  
+In this case, supply vcc / gnd from the + and - of the power pins.
 
 ![](wire.jpg)
 
@@ -64,7 +62,6 @@ Just specify connected io to configure.
 <script>
 var obniz = new Obniz("OBNIZ_ID_HERE");
 obniz.onconnect = async function () {
-  obniz.io11.output(true);
   var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
   await cam.startupWait();
   const data = await cam.takeWait('1024x768');
