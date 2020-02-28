@@ -14887,7 +14887,7 @@ class Display {
                 if (bits === 0) {
                     raw[row * stride + col] = 0x00;
                 }
-                if (brightness > 0x7f) {
+                else {
                     raw[row * stride + col] |= 0x80 >> bits;
                 }
             }
