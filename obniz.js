@@ -793,7 +793,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"}}}}
 
 /***/ }),
 
@@ -1423,7 +1423,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
 
 /***/ }),
 
@@ -2500,7 +2500,6 @@ class ObnizConnection {
             return;
         }
         if (this.socket && this.socket.readyState === 1) {
-            this.print_debug("send via Global");
             this.socket.send(data);
             if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
                 this.warning("over " + this.socket.bufferedAmount + " bytes queued");
@@ -2620,6 +2619,237 @@ class ObnizConnection {
 exports.default = ObnizConnection;
 
 //# sourceMappingURL=ObnizConnection.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/ObnizDevice.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
+class ObnizDevice extends ObnizUIs_1.default {
+    /**
+     * We will now instantiate obniz.
+     *
+     * obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
+     *
+     * ```javascript
+     * new Obniz('1234-5678') // OK
+     * new Obniz('12345678') // OK
+     * new Obniz(12345678) // Can't accept
+     * ```
+     *
+     * If you connect to obniz which has an access token, provide an option like this
+     *
+     * ```javascript
+     * new Obniz('1234-5678', {access_token: 'your token here'})
+     * ```
+     *
+     * If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
+     * In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
+     * It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
+     *
+     * ![](media://obniz_prompt.png)
+     *
+     * When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
+     *
+     * When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
+     * But when cloud connection gets closed, the local connect also gets closed.
+     *
+     * ![](media://local_connect.png)
+     *
+     * The timing onconnect() gets called depends on the availability of local connect.
+     * obniz.js will wait a little to establish connection via local connect as much as possible.
+     * See the flow below.
+     *
+     * ![](media://onconnect_flow.png)
+     *
+     * The second parameter when instantiating obniz Board is an option.
+     *
+     * @param id
+     * @param options
+     */
+    constructor(id, options) {
+        super(id, options);
+        this.util = new util_1.default(this);
+    }
+    /**
+     * Repeat will call the callback function periodically while it is connected to obniz Board.
+     * It will stop calling once it is disconnected from obniz Board.
+     *
+     * ```javascript
+     * // Javascript Example
+     *  obniz.ad0.start();
+     *  obniz.repeat(function(){
+     *    if (obniz.ad0.value > 2.5) {
+     *      obniz.io0.output(true);
+     *    } else {
+     *      obniz.io0.output(false);
+     *    }
+     *  }, 100)
+     * ```
+     *
+     * @param callback
+     * @param interval  default 100. It mean 100ms interval loop.
+     */
+    repeat(callback, interval) {
+        if (this.looper) {
+            this.looper = callback;
+            this.repeatInterval = interval || this.repeatInterval || 100;
+            return;
+        }
+        this.looper = callback;
+        this.repeatInterval = interval || 100;
+        if (this.onConnectCalled) {
+            this.loop();
+        }
+    }
+    /**
+     * @ignore
+     * @param msg
+     */
+    warning(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                console.log(msg.message);
+                return;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+            }
+            console.log(`Warning: ${msg}`);
+        }
+    }
+    /**
+     * @ignore
+     * @param msg
+     */
+    error(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                msg = msg.message;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+                console.error(new Error(msg));
+            }
+            else {
+                throw new Error(msg);
+            }
+        }
+    }
+    /**
+     * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
+     *
+     * ```javascript
+     * // Example
+     * obniz.onconnect = function(){
+     *  var button = obniz.wired("Button",  {signal:0, gnd:1});
+     *
+     *  button.onchange = function(){
+     *    var targets = [
+     *      "1234-1231",
+     *      "1234-1232",
+     *      "1234-1233",
+     *      "1234-1234",
+     *      "1234-1235",
+     *      "1234-1236",
+     *      "1234-1237",
+     *      "1234-1238",
+     *      "1234-1239",
+     *      "1234-1230"];
+     *
+     *    obniz.message(targets, "pressed");
+     *   };
+     * }
+     * ```
+     *
+     * @param target destination obniz id
+     * @param message message data
+     */
+    message(target, message) {
+        let targets = [];
+        if (typeof target === "string") {
+            targets.push(target);
+        }
+        else {
+            targets = target;
+        }
+        this.send({
+            message: {
+                to: targets,
+                data: message,
+            },
+        });
+    }
+    loop() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof this.looper === "function" && this.onConnectCalled) {
+                const prom = this.looper();
+                if (prom instanceof Promise) {
+                    yield prom;
+                }
+                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+            }
+        });
+    }
+    _callOnConnect() {
+        super._callOnConnect();
+        this.loop();
+    }
+    notifyToModule(obj) {
+        super.notifyToModule(obj);
+        // notify messaging
+        if (typeof obj.message === "object" && this.onmessage) {
+            this.onmessage(obj.message.data, obj.message.from);
+        }
+        // debug
+        if (typeof obj.debug === "object") {
+            if (obj.debug.warning) {
+                const msg = "Warning: " + obj.debug.warning.message;
+                this.warning({ alert: "warning", message: msg });
+            }
+            if (obj.debug.error) {
+                const msg = "Error: " + obj.debug.error.message;
+                this.error({ alert: "error", message: msg });
+            }
+            if (this.ondebug) {
+                this.ondebug(obj.debug);
+            }
+        }
+    }
+}
+exports.default = ObnizDevice;
+
+//# sourceMappingURL=ObnizDevice.js.map
 
 
 /***/ }),
@@ -3237,21 +3467,11 @@ function _ReadCookie(name) {
  * @packageDocumentation
  * @module ObnizCore
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
-const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
-const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
+const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
+const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
  *
@@ -3275,52 +3495,7 @@ const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUI
  * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
  *
  */
-class Obniz extends ObnizUIs_1.default {
-    /**
-     * We will now instantiate obniz.
-     *
-     * obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
-     *
-     * ```javascript
-     * new Obniz('1234-5678') // OK
-     * new Obniz('12345678') // OK
-     * new Obniz(12345678) // Can't accept
-     * ```
-     *
-     * If you connect to obniz which has an access token, provide an option like this
-     *
-     * ```javascript
-     * new Obniz('1234-5678', {access_token: 'your token here'})
-     * ```
-     *
-     * If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
-     * In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
-     * It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
-     *
-     * ![](media://obniz_prompt.png)
-     *
-     * When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
-     *
-     * When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
-     * But when cloud connection gets closed, the local connect also gets closed.
-     *
-     * ![](media://local_connect.png)
-     *
-     * The timing onconnect() gets called depends on the availability of local connect.
-     * obniz.js will wait a little to establish connection via local connect as much as possible.
-     * See the flow below.
-     *
-     * ![](media://onconnect_flow.png)
-     *
-     * The second parameter when instantiating obniz Board is an option.
-     *
-     * @param id
-     * @param options
-     */
-    constructor(id, options) {
-        super(id, options);
-        this.util = new util_1.default(this);
-    }
+class Obniz extends ObnizDevice_1.default {
     /**
      * obniz REST api class
      * @returns {ObnizApi}
@@ -3328,160 +3503,11 @@ class Obniz extends ObnizUIs_1.default {
     static get api() {
         return ObnizApi_1.default;
     }
-    /**
-     * Repeat will call the callback function periodically while it is connected to obniz Board.
-     * It will stop calling once it is disconnected from obniz Board.
-     *
-     * ```javascript
-     * // Javascript Example
-     *  obniz.ad0.start();
-     *  obniz.repeat(function(){
-     *    if (obniz.ad0.value > 2.5) {
-     *      obniz.io0.output(true);
-     *    } else {
-     *      obniz.io0.output(false);
-     *    }
-     *  }, 100)
-     * ```
-     *
-     * @param callback
-     * @param interval  default 100. It mean 100ms interval loop.
-     */
-    repeat(callback, interval) {
-        if (this.looper) {
-            this.looper = callback;
-            this.repeatInterval = interval || this.repeatInterval || 100;
-            return;
-        }
-        this.looper = callback;
-        this.repeatInterval = interval || 100;
-        if (this.onConnectCalled) {
-            this.loop();
-        }
-    }
-    /**
-     * @ignore
-     * @param msg
-     */
-    warning(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                console.log(msg.message);
-                return;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-            }
-            console.log(`Warning: ${msg}`);
-        }
-    }
-    /**
-     * @ignore
-     * @param msg
-     */
-    error(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                msg = msg.message;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-                console.error(new Error(msg));
-            }
-            else {
-                throw new Error(msg);
-            }
-        }
-    }
-    /**
-     * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
-     *
-     * ```javascript
-     * // Example
-     * obniz.onconnect = function(){
-     *  var button = obniz.wired("Button",  {signal:0, gnd:1});
-     *
-     *  button.onchange = function(){
-     *    var targets = [
-     *      "1234-1231",
-     *      "1234-1232",
-     *      "1234-1233",
-     *      "1234-1234",
-     *      "1234-1235",
-     *      "1234-1236",
-     *      "1234-1237",
-     *      "1234-1238",
-     *      "1234-1239",
-     *      "1234-1230"];
-     *
-     *    obniz.message(targets, "pressed");
-     *   };
-     * }
-     * ```
-     *
-     * @param target destination obniz id
-     * @param message message data
-     */
-    message(target, message) {
-        let targets = [];
-        if (typeof target === "string") {
-            targets.push(target);
-        }
-        else {
-            targets = target;
-        }
-        this.send({
-            message: {
-                to: targets,
-                data: message,
-            },
-        });
-    }
-    loop() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof this.looper === "function" && this.onConnectCalled) {
-                const prom = this.looper();
-                if (prom instanceof Promise) {
-                    yield prom;
-                }
-                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-            }
-        });
-    }
-    _callOnConnect() {
-        super._callOnConnect();
-        this.loop();
-    }
-    notifyToModule(obj) {
-        super.notifyToModule(obj);
-        // notify messaging
-        if (typeof obj.message === "object" && this.onmessage) {
-            this.onmessage(obj.message.data, obj.message.from);
-        }
-        // debug
-        if (typeof obj.debug === "object") {
-            if (obj.debug.warning) {
-                const msg = "Warning: " + obj.debug.warning.message;
-                this.warning({ alert: "warning", message: msg });
-            }
-            if (obj.debug.error) {
-                const msg = "Error: " + obj.debug.error.message;
-                this.error({ alert: "error", message: msg });
-            }
-            if (this.ondebug) {
-                this.ondebug(obj.debug);
-            }
-        }
-    }
 }
+/**
+ * M5StickC device
+ */
+Obniz.M5StickC = m5stickc_1.M5StickC;
 /*===================*/
 /* Utils */
 /*===================*/
@@ -3512,6 +3538,7 @@ catch (e) {
  * @ignore
  */
 const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
+const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
 if (requireContext.setBaseDir) {
     requireContext.setBaseDir(__dirname);
@@ -15075,10 +15102,123 @@ exports.default = HW;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/m5stickc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Hardware
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
+class M5StickC extends ObnizDevice_1.default {
+    constructor(id, options) {
+        super(id, options);
+    }
+    gyroWait() {
+        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        if (!(supportedIMUNameArr.includes(this.imu.constructor.name))) {
+            throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
+        }
+        return this.imu.getGyroWait();
+    }
+    accelerationWait() {
+        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        if (!(supportedIMUNameArr.includes(this.imu.constructor.name))) {
+            throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
+        }
+        return this.imu.getAccelWait();
+    }
+    setupIMUWait(imuName = "MPU6886") {
+        const i2c = this._m5i2c;
+        const onerror = i2c.onerror;
+        this.imu = this.wired(imuName, { i2c });
+        // @ts-ignore
+        this.imu._reset = () => {
+        };
+        const p1 = this.imu.whoamiWait();
+        const p2 = new Promise((resolve, reject) => {
+            i2c.onerror = reject;
+        });
+        return Promise.race([p1, p2]).then((val) => __awaiter(this, void 0, void 0, function* () {
+            // restore
+            i2c.onerror = onerror;
+            if (!val) {
+                throw new Error(`Cannot find IMU (${imuName}) on this M5StickC`);
+            }
+            switch (imuName) {
+                case "SH200Q":
+                    yield this.imu.initWait();
+                    break;
+                case "MPU6886":
+                    this.imu.init();
+                    break;
+                default:
+                    break;
+            }
+            return this.imu;
+        }));
+    }
+    _prepareComponents() {
+        // @ts-ignore
+        super._prepareComponents();
+        this.ir = this.wired("InfraredLED", { anode: 9 });
+        this.led = this.wired("LED", { cathode: 10 });
+        this.buttonA = this.wired("Button", { signal: 37 });
+        this.buttonB = this.wired("Button", { signal: 39 });
+        const i2cParams = { sda: 21, scl: 22, clock: 100000, pull: "3v", mode: "master" };
+        this._m5i2c = this.i2c1;
+        this._m5i2c.start(i2cParams);
+        this.axp = this.wired("AXP192", { i2c: this._m5i2c });
+        this.led.off();
+        this._addToAllComponentKeys();
+    }
+    _addToAllComponentKeys() {
+        const keys = [
+            "buttonA",
+            "buttonB",
+            "ir",
+            "led",
+            "axp",
+            "imu",
+        ];
+        for (const key of keys) {
+            this._allComponentKeys.push(key);
+            // @ts-ignore
+            if (this[key] && !this[key]._reset) {
+                // @ts-ignore
+                this[key]._reset = () => {
+                    return;
+                };
+            }
+        }
+    }
+}
+exports.M5StickC = M5StickC;
+
+//# sourceMappingURL=m5stickc.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/m5stickc.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -21134,7 +21274,7 @@ class WSCommandI2C extends WSCommand_1.default {
     }
     parseFromJson(json) {
         // 0
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 2; i++) {
             const module = json["i2c" + i];
             if (module === undefined) {
                 continue;
