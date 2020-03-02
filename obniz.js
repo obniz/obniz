@@ -15608,7 +15608,7 @@ class PeripheralGrove {
     getUart(baud, drive = "5v") {
         this.useWithType("uart", drive);
         this._current.uart = this.Obniz.getFreeUart();
-        this._current.uart.start({ rx: 1, tx: 2, baud });
+        this._current.uart.start({ rx: this._params.pin1, tx: this._params.pin2, baud, drive });
         return this._current.uart;
     }
     /**
@@ -31224,8 +31224,8 @@ class Grove_GPS {
     constructor() {
         this._latitude = 0;
         this._longitude = 0;
-        this.keys = ["tx", "rx", "vcc", "gnd"];
-        this.requiredKeys = ["tx", "rx"];
+        this.keys = ["tx", "rx", "vcc", "gnd", "grove"];
+        this.requiredKeys = [];
         this.ioKeys = this.keys;
         this.displayName = "gps";
         this.displayIoNames = { tx: "tx", rx: "rx" };
@@ -31244,13 +31244,18 @@ class Grove_GPS {
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.uart = obniz.getFreeUart();
-        this.uart.start({
-            tx: this.params.tx,
-            rx: this.params.rx,
-            baud: 9600,
-        });
+        if (this.params.grove) {
+            this.uart = this.params.grove.getUart(9600, "5v");
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.uart = obniz.getFreeUart();
+            this.uart.start({
+                tx: this.params.tx,
+                rx: this.params.rx,
+                baud: 9600,
+            });
+        }
         this.editedData = {};
         this.editedData.enable = false;
         this.editedData.GPGSV = new Array(4);

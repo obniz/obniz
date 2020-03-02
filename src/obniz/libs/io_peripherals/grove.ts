@@ -67,7 +67,7 @@ export default class PeripheralGrove {
   public getUart(baud: number, drive: DriveType = "5v"): PeripheralUART {
     this.useWithType("uart", drive);
     this._current.uart = this.Obniz.getFreeUart();
-    this._current.uart.start({rx: 1, tx: 2, baud});
+    this._current.uart.start({rx: this._params.pin1, tx: this._params.pin2, baud, drive});
     return this._current.uart;
 
   }
