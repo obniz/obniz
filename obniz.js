@@ -1727,6 +1727,7 @@ const measure_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/mea
 const tcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/protocol/tcp.js"));
 const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
 const hw_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/hw/index.js"));
+const grove_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js"));
 class ObnizComponents extends ObnizParts_1.default {
     constructor(id, options) {
         super(id, options);
@@ -1852,6 +1853,7 @@ class ObnizComponents extends ObnizParts_1.default {
             throw new Error(`unkown hw ${this.hw}`);
         }
         const hw_peripherals = hwDefinition.peripherals;
+        this._hw_peripherals = hw_peripherals;
         const hw_embeds = hwDefinition.embeds;
         const hw_protocol = hwDefinition.protocol;
         const shared_map = {
@@ -1866,6 +1868,7 @@ class ObnizComponents extends ObnizParts_1.default {
             spi: spi_1.default,
             i2c: i2c_1.default,
             pwm: pwm_1.default,
+            grove: grove_1.default,
         };
         let ble = ble_1.ObnizHciBLE.default;
         // < 3.0.0-beta
@@ -1892,7 +1895,7 @@ class ObnizComponents extends ObnizParts_1.default {
                     const Class = peripheral_map[key];
                     for (const unitId in units) {
                         const unitIdNumber = parseInt(unitId);
-                        this[key + unitIdNumber] = new Class(this, unitIdNumber);
+                        this[key + unitIdNumber] = new Class(this, unitIdNumber, units[unitId]);
                         this._allComponentKeys.push(key + unitIdNumber);
                     }
                 }
@@ -2915,6 +2918,13 @@ class ObnizParts extends ObnizConnection_1.default {
      */
     isValidIO(io) {
         return typeof io === "number" && this["io" + io] !== null;
+    }
+    /**
+     * Check the param is valid ad pin no.
+     * @param io
+     */
+    isValidAD(ad) {
+        return typeof ad === "number" && this["ad" + ad] !== null;
     }
     /**
      * Setup Parts of parts library
@@ -15218,7 +15228,7 @@ exports.M5StickC = M5StickC;
 /***/ "./dist/src/obniz/libs/hw/m5stickc.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -15545,6 +15555,113 @@ class Directive {
 exports.default = Directive;
 
 //# sourceMappingURL=directive.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/io_peripherals/grove.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Peripherals
+ */
+class PeripheralGrove {
+    constructor(obniz, no, params) {
+        this.used = false;
+        this._current = {};
+        this.Obniz = obniz;
+        this.no = no;
+        this._params = params;
+        this._reset();
+    }
+    getDigital(drive = "5v") {
+        this.useWithType("digital", drive);
+        const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
+        const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        return { primary, secondary };
+    }
+    getAnalog(drive = "5v") {
+        this.useWithType("analog", drive);
+        const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
+        const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
+        return { primary, secondary };
+    }
+    getI2c(frequency, drive = "5v") {
+        this.useWithType("i2c", drive);
+        if (!this._current.i2c) {
+            this._current.i2c = this.Obniz.getI2CWithConfig({
+                mode: "master",
+                sda: this._params.pin2,
+                scl: this._params.pin1,
+                clock: frequency,
+            });
+        }
+        return this._current.i2c;
+    }
+    getUart(baud, drive = "5v") {
+        this.useWithType("uart", drive);
+        this._current.uart = this.Obniz.getFreeUart();
+        this._current.uart.start({ rx: 1, tx: 2, baud });
+        return this._current.uart;
+    }
+    /**
+     * @ignore
+     */
+    _reset() {
+    }
+    end() {
+        this.used = false;
+        if (this._current.uart) {
+            this._current.uart.end();
+        }
+        if (this._current.i2c) {
+            this._current.i2c.end();
+        }
+        if (this._current.type === "analog") {
+            if (this.Obniz.isValidAD(this._params.pin1)) {
+                this.Obniz.getAD(this._params.pin1).end();
+            }
+            if (this.Obniz.isValidAD(this._params.pin2)) {
+                this.Obniz.getAD(this._params.pin2).end();
+            }
+        }
+        this._current = {};
+    }
+    /**
+     * @ignore
+     * @param obj
+     */
+    notified(obj) {
+        // nothing
+    }
+    useWithType(type, drive) {
+        if (this.used) {
+            if (this._current.type !== "i2c" || this._current.drive !== drive) {
+                throw new Error("Grove pins are already used.");
+            }
+        }
+        this.used = true;
+        this._current.type = type;
+        this._current.drive = drive;
+        this.Obniz.setVccGnd(this._params.vcc, this._params.gnd, drive);
+        if (this.Obniz.isValidIO(this._params.pin1)) {
+            this.Obniz.getIO(this._params.pin1).drive(drive);
+        }
+        if (this.Obniz.isValidIO(this._params.pin2)) {
+            this.Obniz.getIO(this._params.pin2).drive(drive);
+        }
+    }
+}
+exports.default = PeripheralGrove;
+
+//# sourceMappingURL=grove.js.map
 
 
 /***/ }),
@@ -30751,8 +30868,8 @@ class Grove_3AxisAccelerometer {
         this.displayName = "3axis";
         this.displayIoNames = { sda: "sda", scl: "scl" };
         this.address = 0x53;
-        this.keys = ["gnd", "vcc", "sda", "scl"];
-        this.requiredKeys = ["sda", "scl"];
+        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.requiredKeys = [];
         this.ioKeys = this.keys;
         this.regAdrs = {};
         this.regAdrs.POWER_CTL = 0x2d;
@@ -30793,12 +30910,17 @@ class Grove_3AxisAccelerometer {
     wired(obniz) {
         return __awaiter(this, void 0, void 0, function* () {
             this.obniz = obniz;
-            this.vcc = this.params.vcc;
-            this.gnd = this.params.gnd;
-            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-            this.params.clock = 400000;
-            this.params.mode = "master";
-            this.i2c = obniz.getI2CWithConfig(this.params);
+            if (this.params.grove) {
+                this.i2c = this.params.grove.getI2c(400000, "5v");
+            }
+            else {
+                this.vcc = this.params.vcc;
+                this.gnd = this.params.gnd;
+                this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+                this.params.clock = 400000;
+                this.params.mode = "master";
+                this.i2c = obniz.getI2CWithConfig(this.params);
+            }
             this.obniz.wait(100);
             // power on
             this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
@@ -30815,7 +30937,7 @@ class Grove_3AxisAccelerometer {
             yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
             yield this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
             yield this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
-            yield this.etRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
             this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
             this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
             this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
@@ -30918,9 +31040,10 @@ class Grove_Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.onChangeForStateWait = (pressed) => { };
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.onChangeForStateWait = (pressed) => {
+        };
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -30928,14 +31051,13 @@ class Grove_Button {
         };
     }
     wired(obniz) {
-        this.io_signal = obniz.getIO(this.params.signal);
-        if (obniz.isValidIO(this.params.vcc)) {
-            this.io_vcc = obniz.getIO(this.params.vcc);
-            this.io_vcc.output(true);
+        if (this.params.grove) {
+            const groveIOs = this.params.grove.getDigital("5v");
+            this.io_signal = groveIOs.primary;
         }
-        if (obniz.isValidIO(this.params.gnd)) {
-            this.io_supply = obniz.getIO(this.params.gnd);
-            this.io_supply.output(false);
+        else {
+            this.io_signal = obniz.getIO(this.params.signal);
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
         }
         this.io_signal.pull("5v");
         this.io_signal.input((value) => {

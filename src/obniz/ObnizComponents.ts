@@ -24,6 +24,7 @@ import TCP from "./libs/protocol/tcp";
 import ObnizParts from "./ObnizParts";
 
 import HW from "./libs/hw";
+import PeripheralGrove from "./libs/io_peripherals/grove";
 import {ObnizOptions} from "./ObnizOptions";
 
 export default class ObnizComponents extends ObnizParts {
@@ -239,6 +240,7 @@ export default class ObnizComponents extends ObnizParts {
 
   protected pongObservers: any;
   protected _allComponentKeys: any;
+  protected _hw_peripherals: any;
 
   constructor(id: string, options?: ObnizOptions) {
     super(id, options);
@@ -259,7 +261,7 @@ export default class ObnizComponents extends ObnizParts {
    * @param gnd
    * @param drive
    */
-  public setVccGnd(vcc: number | null, gnd: number | null, drive: DriveType) {
+  public setVccGnd(vcc: number | null | undefined, gnd: number | null | undefined, drive: DriveType) {
     if (this.isValidIO(vcc)) {
       if (drive) {
         this.getIO(vcc!).drive(drive);
@@ -322,7 +324,7 @@ export default class ObnizComponents extends ObnizParts {
     if (config.i2c) {
       return config.i2c;
     }
-    const i2c: any = this.getFreeI2C();
+    const i2c: PeripheralI2C = this.getFreeI2C();
     i2c.start(config);
     return i2c;
   }
@@ -380,6 +382,7 @@ export default class ObnizComponents extends ObnizParts {
     }
 
     const hw_peripherals: any = hwDefinition.peripherals;
+    this._hw_peripherals = hw_peripherals;
     const hw_embeds: any = hwDefinition.embeds;
     const hw_protocol: any = hwDefinition.protocol;
 
@@ -396,6 +399,7 @@ export default class ObnizComponents extends ObnizParts {
       spi: PeripheralSPI,
       i2c: PeripheralI2C,
       pwm: PeripheralPWM,
+      grove: PeripheralGrove,
     };
 
     let ble: any = ObnizHciBLE.default;
@@ -428,7 +432,7 @@ export default class ObnizComponents extends ObnizParts {
           const Class: any = peripheral_map[key];
           for (const unitId in units) {
             const unitIdNumber = parseInt(unitId);
-            (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber);
+            (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber, units[unitId]);
             this._allComponentKeys.push(key + unitIdNumber);
           }
         }
