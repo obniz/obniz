@@ -11799,7 +11799,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('hci');
 const debug = (...params) => {
-    console.log(...params);
+    // console.log(...params);
 };
 const events = __webpack_require__("./node_modules/events/events.js");
 var COMMANDS;
