@@ -9194,7 +9194,7 @@ class BleScan {
         settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
         this.scanTarget = target;
-        if (this.scanTarget.uuids) {
+        if (this.scanTarget && this.scanTarget.uuids) {
             this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
@@ -10431,10 +10431,8 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.setScanEnabled(false, true);
         console.log("scan enable false");
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
-            console.log("setScanParameters");
             this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
-                console.log("setScanParameters finished");
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
                 }, 1000);
