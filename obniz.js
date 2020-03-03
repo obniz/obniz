@@ -22749,6 +22749,7 @@ var map = {
 	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
 	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
 	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
+	"./Keyestudio/Keyestudio_HT16K33/index.js": "./dist/src/parts/Keyestudio/Keyestudio_HT16K33/index.js",
 	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
 	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
 	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
@@ -28956,7 +28957,6 @@ class MatrixLED_HT16K33 {
         this.obniz.wait(1000);
     }
     init(width) {
-        console.log(width);
         this.width = width;
         this.height = 8; // IC static setting
         this.prepareVram(width, this.height);
@@ -28997,28 +28997,32 @@ class MatrixLED_HT16K33 {
             for (let j = 0; j < this.width; j++) {
                 const pos = i * this.height * 4 + j * 4;
                 const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
-                this.vram[i] = this.vram[i] << 1;
                 if (brightness > 0x7f) {
-                    this.vram[i] |= 0x1;
+                    this.vram[i] |= 0x1 << j;
                 }
             }
-            this.vram[i] = this.vram[i] << 16 - this.width;
         }
         this.writeVram();
+    }
+    dots(data) {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = data[i];
+        }
+        this.writeVram();
+    }
+    writeVram() {
+        const data = [0x00];
+        for (let i = 0; i < this.height; i++) {
+            data.push(this.vram[i] & 0xFF);
+            data.push((this.vram[i] >> 8) & 0xFF);
+        }
+        this.i2c.write(this.address, data);
     }
     prepareVram(width, height) {
         this.vram = [];
         for (let i = 0; i < height; i++) {
             this.vram.push(0);
         }
-    }
-    writeVram() {
-        const data = [0x00];
-        for (let i = 0; i < 8; i++) {
-            data.push((this.vram[i] >> 8) & 0xFF);
-            data.push(this.vram[i] & 0xFF);
-        }
-        this.i2c.write(this.address, data);
     }
 }
 exports.default = MatrixLED_HT16K33;
@@ -36075,6 +36079,64 @@ class Keyestudio_Buzzer {
     }
 }
 exports.default = Keyestudio_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_HT16K33/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const MatrixLED_HT16K33_1 = __importDefault(__webpack_require__("./dist/src/parts/Display/MatrixLED_HT16K33/index.js"));
+class Keyestudio_HT16K33 extends MatrixLED_HT16K33_1.default {
+    constructor() {
+        super(...arguments);
+        this.bitArray = [7, 0, 1, 2, 3, 4, 5, 6];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_HT16K33",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        super.init(8);
+    }
+    draw(ctx) {
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                const pos = i * this.height * 4 + j * 4;
+                const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
+                if (brightness > 0x7f) {
+                    this.vram[i] |= 0x1 << this.bitArray[j];
+                }
+            }
+        }
+        super.writeVram();
+    }
+    dots(data) {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                if (data[i] & (1 << j)) {
+                    this.vram[i] |= 0x1 << this.bitArray[j];
+                }
+            }
+        }
+        super.writeVram();
+    }
+}
+exports.default = Keyestudio_HT16K33;
 
 //# sourceMappingURL=index.js.map
 
