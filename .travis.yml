@@ -19,9 +19,9 @@ install:
   - git fetch --tags
   - npm run build
 
-#cache:
-#  directories:
-#  - node_modules
+cache:
+  directories:
+  - node_modules
 
 notifications:
   slack:
