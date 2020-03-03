@@ -67,8 +67,8 @@ export default class Grove_GPS implements ObnizPartsInterface {
   private _longitude: number = 0;
 
   constructor() {
-    this.keys = ["tx", "rx", "vcc", "gnd"];
-    this.requiredKeys = ["tx", "rx"];
+    this.keys = ["tx", "rx", "vcc", "gnd", "grove"];
+    this.requiredKeys = [];
 
     this.ioKeys = this.keys;
     this.displayName = "gps";
@@ -78,14 +78,17 @@ export default class Grove_GPS implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    this.uart = obniz.getFreeUart();
-    this.uart.start({
-      tx: this.params.tx,
-      rx: this.params.rx,
-      baud: 9600,
-    });
-
+    if (this.params.grove) {
+      this.uart = this.params.grove.getUart(9600, "5v");
+    } else {
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.uart = obniz.getFreeUart();
+      this.uart.start({
+        tx: this.params.tx,
+        rx: this.params.rx,
+        baud: 9600,
+      });
+    }
     this.editedData = {};
     this.editedData.enable = false;
     this.editedData.GPGSV = new Array(4);

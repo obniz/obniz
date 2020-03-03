@@ -28,7 +28,7 @@ export default class Display {
   private fontSize: number = 16;
   private Obniz: Obniz;
   private _canvas?: HTMLCanvasElement;
-  private _pos = { x: 0, y: 0 };
+  private _pos = {x: 0, y: 0};
   private _colorDepthCapabilities: [number] = [1];
   private _colorDepth: number = 1;
   private _color = "#000";
@@ -632,8 +632,7 @@ export default class Display {
 
         if (bits === 0) {
           raw[line * stride + col] = pixel << 4;
-        }
-        if (brightness > 0x7f) {
+        } else {
           raw[line * stride + col] |= pixel;
         }
       }
@@ -652,7 +651,8 @@ export default class Display {
         if (bits === 0) {
           raw[row * stride + col] = 0x00;
         }
-        if (brightness > 0x7f) {
+
+        if (brightness > 0x7F) {
           raw[row * stride + col] |= 0x80 >> bits;
         }
       }

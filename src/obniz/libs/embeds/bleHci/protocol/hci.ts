@@ -4,7 +4,8 @@
  */
 
 // let debug = require('debug')('hci');
-const debug: any = () => {
+const debug: any = (...params: any[]) => {
+  console.log(...params);
 };
 
 import events = require("events");
@@ -147,7 +148,7 @@ class Hci extends events.EventEmitter {
     // this.readLeHostSupported();
     // this.readBdAddr();
 
-    return new Promise ((resolve: any ) => {
+    return new Promise((resolve: any) => {
       this.once("stateChange", () => {
         // console.log('te');
         resolve();

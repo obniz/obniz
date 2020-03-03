@@ -65,6 +65,14 @@ export default class ObnizParts extends ObnizConnection {
   }
 
   /**
+   * Check the param is valid ad pin no.
+   * @param io
+   */
+  public isValidAD(ad: any): boolean {
+    return typeof ad === "number" && (this as any)["ad" + ad] !== null;
+  }
+
+  /**
    * Setup Parts of parts library
    *
    * @param partsname
