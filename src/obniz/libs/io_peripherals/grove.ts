@@ -17,7 +17,7 @@ export interface PeripheralGroveParams {
   gnd?: number;
 }
 
-export type PeripheralGroveType = "digital" | "analog" | "i2c" | "uart";
+export type PeripheralGroveType = "digital" | "analog" | "analog-digital" | "i2c" | "uart";
 
 /**
  * @category Peripherals
@@ -48,7 +48,13 @@ export default class PeripheralGrove {
     const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
     const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
     return {primary, secondary};
+  }
 
+  public getAnalogDigital(drive: DriveType = "5v"): { analog?: PeripheralAD, digital?: PeripheralIO } {
+    this.useWithType("analog-digital", drive);
+    const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
+    const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+    return {analog, digital};
   }
 
   public getI2c(frequency: number, drive: DriveType = "5v"): PeripheralI2C {
@@ -94,6 +100,13 @@ export default class PeripheralGrove {
       if (this.Obniz.isValidAD(this._params.pin2)) {
         this.Obniz.getAD(this._params.pin2).end();
       }
+    } else if (this._current.type === "analog-digital") {
+      if (this.Obniz.isValidAD(this._params.pin1)) {
+        this.Obniz.getAD(this._params.pin1).end();
+      }
+      // if (this.Obniz.isValidIO(this._params.pin2)) {
+      //   this.Obniz.getIO(this._params.pin2).end();
+      // }
     }
     this._current = {};
 
