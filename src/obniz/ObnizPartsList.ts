@@ -108,6 +108,7 @@ import Grove_EARTH, {Grove_EARTHOptions} from "../parts/Grove/Grove_EARTH";
 import Grove_GPS, {Grove_GPSOptions} from "../parts/Grove/Grove_GPS";
 import Grove_JoyStick, {Grove_JoyStickOptions} from "../parts/Grove/Grove_JoyStick";
 import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
+
 // Keyestudio
 import Keyestudio_Button, {Keyestudio_ButtonOptions} from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, {Keyestudio_BuzzerOptions} from "../parts/Keyestudio/Keyestudio_Buzzer";
@@ -115,6 +116,7 @@ import Keyestudio_MoistureSensor, {Keyestudio_MoistureSensorOptions} from "../pa
 import Keyestudio_PIR, {Keyestudio_PIROptions} from "../parts/Keyestudio/Keyestudio_PIR";
 import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
 import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/Keyestudio/Keyestudio_TrafficLight";
+import StickC_JoyStick, {StickC_JoyStickOptions} from "../parts/StickCHat/StickC_JoyStick";
 
 export interface WiredNameMap {
   // Light
@@ -231,6 +233,8 @@ export interface WiredNameMap {
   "Grove_JoyStick": Grove_JoyStick;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  // StickCHat
+  "StickC_JoyStick": StickC_JoyStick;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -369,6 +373,8 @@ export interface WiredNameOptionsMap {
   "Grove_EARTH": Grove_EARTHOptions;
   "Grove_JoyStick": Grove_JoyStickOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  // StickCHat
+  "StickC_JoyStick": StickC_JoyStickOptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;

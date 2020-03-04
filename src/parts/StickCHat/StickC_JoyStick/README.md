@@ -17,9 +17,9 @@ gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
 scl | `number(obniz Board io)` | no |  &nbsp; | scl of I2C
 sda | `number(obniz Board io)` | no | &nbsp;  | sda of I2C
 i2c | `object` | no | &nbsp;  | obniz i2c object
-grove | `object` | no | &nbsp;  | grove interface object if a device has
 
 ```javascript
+// JavaScript Examples
 var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
 obniz.onconnect = async function() {
   var joystick = obniz.wired("Grove_JoyStick", { grove: obniz.grove0 });

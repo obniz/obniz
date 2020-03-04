@@ -678,6 +678,16 @@
     },
     {
       "name": "Keyestudio",
+      "image_url": "https://obniz.io/sdk/parts/StickC_JoyStick/index.jpg",
+      "parts": [
+        {
+          "name": "StickC_JoyStick",
+          "store": {}
+        }
+      ]
+    },
+    {
+      "name": "Keyestudio",
       "image_url": "https://obniz.io/sdk/parts/Keyestudio_Button/index.jpg",
       "parts": [
         {

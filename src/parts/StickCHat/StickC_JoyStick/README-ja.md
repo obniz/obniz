@@ -15,16 +15,15 @@ gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 
 scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
 sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
 i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
-grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
 
 ```javascript
 var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
 obniz.onconnect = async function() {
-  var joystick = obniz.wired("Grove_JoyStick", { grove: obniz.grove0 });
+  var joystick = obniz.wired("StickC_JoyStick", {scl:26, sda:0});
   while(true) {
     var x = await joystick.getXWait()
     var y = await joystick.getYWait()
-    console.log(`${x}-${y}`);
+    console.log(`${x}x${y}`);
     await obniz.wait(1);
   }
 }
@@ -36,7 +35,7 @@ obniz.onconnect = async function() {
 
 ```javascript
 // JavaScript Examples
-var joystick = obniz.wired("Grove_JoyStick", { grove: obniz.grove0 });
+var joystick = obniz.wired("StickC_JoyStick", {scl:26, sda:0});
 var isPressed = await joystick.isPressedWait();
 if (isPressed) {
     console.log("Pressed!");
@@ -49,11 +48,11 @@ if (isPressed) {
 
 X、Yそれぞれの傾きを一度だけ取得します。
 
-値は0~255の範囲となります。個体差などによりジョイスティックをすべて倒しても0や255まで届かないことがあります。
+値は中央で0となり、-127~127の範囲となります。個体差などによりジョイスティックをすべて倒しても最大値まで届かないことがあります。
 
 ```javascript
 // JavaScript Examples
-var joystick = obniz.wired("Grove_JoyStick", { grove: obniz.grove0 });
+var joystick = obniz.wired("StickC_JoyStick", {scl:26, sda:0});
 while(true) {
   var x = await joystick.getXWait()
   var y = await joystick.getYWait()
