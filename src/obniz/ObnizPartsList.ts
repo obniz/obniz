@@ -116,6 +116,7 @@ import Keyestudio_MoistureSensor, {Keyestudio_MoistureSensorOptions} from "../pa
 import Keyestudio_PIR, {Keyestudio_PIROptions} from "../parts/Keyestudio/Keyestudio_PIR";
 import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
 import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/Keyestudio/Keyestudio_TrafficLight";
+import StickC_ADC, {StickC_ADCOptions} from "../parts/StickCHat/StickC_ADC";
 import StickC_JoyStick, {StickC_JoyStickOptions} from "../parts/StickCHat/StickC_JoyStick";
 
 export interface WiredNameMap {
@@ -235,6 +236,7 @@ export interface WiredNameMap {
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
   // StickCHat
   "StickC_JoyStick": StickC_JoyStick;
+  "StickC_ADC": StickC_ADC;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -375,6 +377,7 @@ export interface WiredNameOptionsMap {
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
   // StickCHat
   "StickC_JoyStick": StickC_JoyStickOptions;
+  "StickC_ADC": StickC_ADCOptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;

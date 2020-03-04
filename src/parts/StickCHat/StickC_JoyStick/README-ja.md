@@ -1,6 +1,6 @@
-# Grove_JoyStick
+# StickC_JoyStick
 
-X軸Y軸とプッシュスイッチをもつGrove対応のジョイスティックです。I2C通信を利用します。
+X軸Y軸とプッシュスイッチをもつジョイスティックです。I2C通信を利用します。
 
 ![](./image.jpg)
 
