@@ -116,10 +116,10 @@ module.exports = {
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
-    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build && npm run doc",
+    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
     "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "version": "npm run build && git add obniz.js && git add obniz.min.js",
+    "version": "npm run build && npm run doc && git add docs && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
@@ -218,7 +218,6 @@ module.exports = {
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
-    "npm": "^6.14.1",
     "semver": "^5.7.0",
     "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
@@ -9195,7 +9194,7 @@ class BleScan {
         settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
         this.scanTarget = target;
-        if (this.scanTarget.uuids) {
+        if (this.scanTarget && this.scanTarget.uuids) {
             this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
@@ -10432,10 +10431,8 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.setScanEnabled(false, true);
         console.log("scan enable false");
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
-            console.log("setScanParameters");
             this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
-                console.log("setScanParameters finished");
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
                 }, 1000);
@@ -11800,7 +11797,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('hci');
 const debug = (...params) => {
-    console.log(...params);
+    // console.log(...params);
 };
 const events = __webpack_require__("./node_modules/events/events.js");
 var COMMANDS;

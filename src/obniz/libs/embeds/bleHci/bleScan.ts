@@ -177,7 +177,7 @@ export default class BleScan {
     this.scanSettings = settings;
 
     this.scanTarget = target;
-    if (this.scanTarget.uuids) {
+    if (this.scanTarget && this.scanTarget.uuids) {
       this.scanTarget.uuids = this.scanTarget.uuids.map((elm: UUID) => {
         return BleHelper.uuidFilter(elm);
       });

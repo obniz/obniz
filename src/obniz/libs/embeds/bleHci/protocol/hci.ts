@@ -5,7 +5,7 @@
 
 // let debug = require('debug')('hci');
 const debug: any = (...params: any[]) => {
-  console.log(...params);
+  // console.log(...params);
 };
 
 import events = require("events");
