@@ -104,6 +104,7 @@ import Grove_3AxisAccelerometer, {Grove_3AxisAccelerometerOptions} from "../part
 import Grove_Button, {Grove_ButtonOptions} from "../parts/Grove/Grove_Button";
 import Grove_Buzzer, {Grove_BuzzerOptions} from "../parts/Grove/Grove_Buzzer";
 import Grove_EarHeartRate, {Grove_EarHeartRateOptions} from "../parts/Grove/Grove_EarHeartRate";
+import Grove_EARTH, {Grove_EARTHOptions} from "../parts/Grove/Grove_EARTH";
 import Grove_GPS, {Grove_GPSOptions} from "../parts/Grove/Grove_GPS";
 import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
 // Keyestudio
@@ -225,6 +226,7 @@ export interface WiredNameMap {
   "Grove_Buzzer": Grove_Buzzer;
   "Grove_EarHeartRate": Grove_EarHeartRate;
   "Grove_MP3": Grove_MP3;
+  "Grove_EARTH": Grove_EARTH;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
   // Keyestudio
@@ -362,6 +364,7 @@ export interface WiredNameOptionsMap {
   "Grove_EarHeartRate": Grove_EarHeartRateOptions;
   "Grove_MP3": Grove_MP3Options;
   "Grove_GPS": Grove_GPSOptions;
+  "Grove_EARTH": Grove_EARTHOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;

@@ -123,8 +123,7 @@
         },
         {
           "name": "MatrixLED_HT16K33",
-          "store": {
-          }
+          "store": {}
         },
         {
           "name": "SharpMemoryTFT",
@@ -646,6 +645,10 @@
             "switchscience": "https://www.switch-science.com/catalog/1179/",
             "seedstudio": "https://www.seeedstudio.com/Grove-GPS-p-959.html"
           }
+        },
+        {
+          "name": "Grove_EARTH",
+          "store": {}
         },
         {
           "name": "Grove_3AxisAccelerometer",

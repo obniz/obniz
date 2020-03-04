@@ -3480,7 +3480,7 @@ function _ReadCookie(name) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.json");
+const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
 const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
@@ -3547,7 +3547,7 @@ catch (e) {
 /**
  * @ignore
  */
-const requireContext = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './libs/webpackReplace/require-context'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
 const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
 if (requireContext.setBaseDir) {
@@ -15110,6 +15110,119 @@ exports.default = HW;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/m5stickc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Hardware
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
+class M5StickC extends ObnizDevice_1.default {
+    constructor(id, options) {
+        super(id, options);
+    }
+    gyroWait() {
+        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        if (!(supportedIMUNameArr.includes(this.imu.constructor.name))) {
+            throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
+        }
+        return this.imu.getGyroWait();
+    }
+    accelerationWait() {
+        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        if (!(supportedIMUNameArr.includes(this.imu.constructor.name))) {
+            throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
+        }
+        return this.imu.getAccelWait();
+    }
+    setupIMUWait(imuName = "MPU6886") {
+        const i2c = this._m5i2c;
+        const onerror = i2c.onerror;
+        this.imu = this.wired(imuName, { i2c });
+        // @ts-ignore
+        this.imu._reset = () => {
+        };
+        const p1 = this.imu.whoamiWait();
+        const p2 = new Promise((resolve, reject) => {
+            i2c.onerror = reject;
+        });
+        return Promise.race([p1, p2]).then((val) => __awaiter(this, void 0, void 0, function* () {
+            // restore
+            i2c.onerror = onerror;
+            if (!val) {
+                throw new Error(`Cannot find IMU (${imuName}) on this M5StickC`);
+            }
+            switch (imuName) {
+                case "SH200Q":
+                    yield this.imu.initWait();
+                    break;
+                case "MPU6886":
+                    this.imu.init();
+                    break;
+                default:
+                    break;
+            }
+            return this.imu;
+        }));
+    }
+    _prepareComponents() {
+        // @ts-ignore
+        super._prepareComponents();
+        this.ir = this.wired("InfraredLED", { anode: 9 });
+        this.led = this.wired("LED", { cathode: 10 });
+        this.buttonA = this.wired("Button", { signal: 37 });
+        this.buttonB = this.wired("Button", { signal: 39 });
+        const i2cParams = { sda: 21, scl: 22, clock: 100000, pull: "3v", mode: "master" };
+        this._m5i2c = this.i2c1;
+        this._m5i2c.start(i2cParams);
+        this.axp = this.wired("AXP192", { i2c: this._m5i2c });
+        this.led.off();
+        this._addToAllComponentKeys();
+    }
+    _addToAllComponentKeys() {
+        const keys = [
+            "buttonA",
+            "buttonB",
+            "ir",
+            "led",
+            "axp",
+            "imu",
+        ];
+        for (const key of keys) {
+            this._allComponentKeys.push(key);
+            // @ts-ignore
+            if (this[key] && !this[key]._reset) {
+                // @ts-ignore
+                this[key]._reset = () => {
+                    return;
+                };
+            }
+        }
+    }
+}
+exports.M5StickC = M5StickC;
+
+//# sourceMappingURL=m5stickc.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/m5stickc.json":
 /***/ (function(module) {
 
@@ -19095,6 +19208,23 @@ exports.default = canvas;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/webpackReplace/require-context-browser.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+exports.default = {};
+
+//# sourceMappingURL=require-context-browser.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/webpackReplace/ws.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22514,7 +22644,7 @@ tv4.defineKeyword("uniqueKeys", (data, value, schema) => {
     return null;
 });
 const wsSchema = [];
-const require_context_1 = __importDefault(__webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../webpackReplace/require-context'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())));
+const require_context_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js"));
 // @ts-ignore
 __webpack_require__("./dist/src/obniz/libs/wscommand sync recursive").context = require_context_1.default;
 // @ts-ignore
@@ -22848,17 +22978,19933 @@ exports.default = JsonBinaryConverter;
 /***/ }),
 
 /***/ "./dist/src/parts sync recursive \\.js$":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
+var map = {
+	"./ADConverter/hx711/index.js": "./dist/src/parts/ADConverter/hx711/index.js",
+	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
+	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
+	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
+	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
+	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
+	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
+	"./Ble/linking/modules/ieee754.js": "./dist/src/parts/Ble/linking/modules/ieee754.js",
+	"./Ble/linking/modules/service-notification.js": "./dist/src/parts/Ble/linking/modules/service-notification.js",
+	"./Ble/linking/modules/service-operation.js": "./dist/src/parts/Ble/linking/modules/service-operation.js",
+	"./Ble/linking/modules/service-property.js": "./dist/src/parts/Ble/linking/modules/service-property.js",
+	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
+	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
+	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
+	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
+	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
+	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
+	"./ColorSensor/S11059/index.js": "./dist/src/parts/ColorSensor/S11059/index.js",
+	"./Display/7SegmentLED/index.js": "./dist/src/parts/Display/7SegmentLED/index.js",
+	"./Display/7SegmentLEDArray/index.js": "./dist/src/parts/Display/7SegmentLEDArray/index.js",
+	"./Display/7SegmentLED_MAX7219/index.js": "./dist/src/parts/Display/7SegmentLED_MAX7219/index.js",
+	"./Display/MatrixLED_HT16K33/index.js": "./dist/src/parts/Display/MatrixLED_HT16K33/index.js",
+	"./Display/MatrixLED_MAX7219/index.js": "./dist/src/parts/Display/MatrixLED_MAX7219/index.js",
+	"./Display/ST7735S/index.js": "./dist/src/parts/Display/ST7735S/index.js",
+	"./Display/SainSmartTFT18LCD/index.js": "./dist/src/parts/Display/SainSmartTFT18LCD/index.js",
+	"./Display/SharpMemoryTFT/index.js": "./dist/src/parts/Display/SharpMemoryTFT/index.js",
+	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./dist/src/parts/DistanceSensor/GP2Y0A21YK0F/index.js",
+	"./DistanceSensor/HC-SR04/index.js": "./dist/src/parts/DistanceSensor/HC-SR04/index.js",
+	"./GPS/GYSFDMAXB/index.js": "./dist/src/parts/GPS/GYSFDMAXB/index.js",
+	"./GasSensor/MQ135/index.js": "./dist/src/parts/GasSensor/MQ135/index.js",
+	"./GasSensor/MQ2/index.js": "./dist/src/parts/GasSensor/MQ2/index.js",
+	"./GasSensor/MQ3/index.js": "./dist/src/parts/GasSensor/MQ3/index.js",
+	"./GasSensor/MQ4/index.js": "./dist/src/parts/GasSensor/MQ4/index.js",
+	"./GasSensor/MQ5/index.js": "./dist/src/parts/GasSensor/MQ5/index.js",
+	"./GasSensor/MQ6/index.js": "./dist/src/parts/GasSensor/MQ6/index.js",
+	"./GasSensor/MQ7/index.js": "./dist/src/parts/GasSensor/MQ7/index.js",
+	"./GasSensor/MQ8/index.js": "./dist/src/parts/GasSensor/MQ8/index.js",
+	"./GasSensor/MQ9/index.js": "./dist/src/parts/GasSensor/MQ9/index.js",
+	"./GasSensor/MQGas/index.js": "./dist/src/parts/GasSensor/MQGas/index.js",
+	"./Grove/Grove_3AxisAccelerometer/index.js": "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js",
+	"./Grove/Grove_Button/index.js": "./dist/src/parts/Grove/Grove_Button/index.js",
+	"./Grove/Grove_Buzzer/index.js": "./dist/src/parts/Grove/Grove_Buzzer/index.js",
+	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
+	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
+	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
+	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
+	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
+	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
+	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
+	"./Infrared/InfraredLED/index.js": "./dist/src/parts/Infrared/InfraredLED/index.js",
+	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
+	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
+	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
+	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
+	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
+	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
+	"./Keyestudio/Keyestudio_TrafficLight/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js",
+	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
+	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
+	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
+	"./Light/WS2812/index.js": "./dist/src/parts/Light/WS2812/index.js",
+	"./Light/WS2812B/index.js": "./dist/src/parts/Light/WS2812B/index.js",
+	"./Logic/SNx4HC595/index.js": "./dist/src/parts/Logic/SNx4HC595/index.js",
+	"./Magnet/CT10/index.js": "./dist/src/parts/Magnet/CT10/index.js",
+	"./Magnet/HMC5883L/index.js": "./dist/src/parts/Magnet/HMC5883L/index.js",
+	"./Memory/24LC256/index.js": "./dist/src/parts/Memory/24LC256/index.js",
+	"./MovementSensor/AK8963/index.js": "./dist/src/parts/MovementSensor/AK8963/index.js",
+	"./MovementSensor/Button/index.js": "./dist/src/parts/MovementSensor/Button/index.js",
+	"./MovementSensor/FlickHat/index.js": "./dist/src/parts/MovementSensor/FlickHat/index.js",
+	"./MovementSensor/HC-SR505/index.js": "./dist/src/parts/MovementSensor/HC-SR505/index.js",
+	"./MovementSensor/IPM-165/index.js": "./dist/src/parts/MovementSensor/IPM-165/index.js",
+	"./MovementSensor/JoyStick/index.js": "./dist/src/parts/MovementSensor/JoyStick/index.js",
+	"./MovementSensor/KXR94-2050/index.js": "./dist/src/parts/MovementSensor/KXR94-2050/index.js",
+	"./MovementSensor/KXSC7-2050/index.js": "./dist/src/parts/MovementSensor/KXSC7-2050/index.js",
+	"./MovementSensor/MPU6050/index.js": "./dist/src/parts/MovementSensor/MPU6050/index.js",
+	"./MovementSensor/MPU6886/index.js": "./dist/src/parts/MovementSensor/MPU6886/index.js",
+	"./MovementSensor/MPU9250/index.js": "./dist/src/parts/MovementSensor/MPU9250/index.js",
+	"./MovementSensor/PaPIRsVZ/index.js": "./dist/src/parts/MovementSensor/PaPIRsVZ/index.js",
+	"./MovementSensor/Potentiometer/index.js": "./dist/src/parts/MovementSensor/Potentiometer/index.js",
+	"./MovementSensor/SH200Q/index.js": "./dist/src/parts/MovementSensor/SH200Q/index.js",
+	"./Moving/DCMotor/index.js": "./dist/src/parts/Moving/DCMotor/index.js",
+	"./Moving/PCA9685/index.js": "./dist/src/parts/Moving/PCA9685/index.js",
+	"./Moving/ServoMotor/index.js": "./dist/src/parts/Moving/ServoMotor/index.js",
+	"./Moving/Solenoid/index.js": "./dist/src/parts/Moving/Solenoid/index.js",
+	"./Moving/StepperMotor/index.js": "./dist/src/parts/Moving/StepperMotor/index.js",
+	"./Power/AXP192/index.js": "./dist/src/parts/Power/AXP192/index.js",
+	"./PressureSensor/DPS310/index.js": "./dist/src/parts/PressureSensor/DPS310/index.js",
+	"./PressureSensor/FSR-40X/index.js": "./dist/src/parts/PressureSensor/FSR-40X/index.js",
+	"./SoilSensor/SEN0114/index.js": "./dist/src/parts/SoilSensor/SEN0114/index.js",
+	"./Sound/Speaker/index.js": "./dist/src/parts/Sound/Speaker/index.js",
+	"./TemperatureSensor/analog/AnalogTemperatureSensor.js": "./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js",
+	"./TemperatureSensor/analog/LM35DZ/index.js": "./dist/src/parts/TemperatureSensor/analog/LM35DZ/index.js",
+	"./TemperatureSensor/analog/LM60/index.js": "./dist/src/parts/TemperatureSensor/analog/LM60/index.js",
+	"./TemperatureSensor/analog/LM61/index.js": "./dist/src/parts/TemperatureSensor/analog/LM61/index.js",
+	"./TemperatureSensor/analog/LMT87/index.js": "./dist/src/parts/TemperatureSensor/analog/LMT87/index.js",
+	"./TemperatureSensor/analog/MCP9700/index.js": "./dist/src/parts/TemperatureSensor/analog/MCP9700/index.js",
+	"./TemperatureSensor/analog/MCP9701/index.js": "./dist/src/parts/TemperatureSensor/analog/MCP9701/index.js",
+	"./TemperatureSensor/analog/S8100B/index.js": "./dist/src/parts/TemperatureSensor/analog/S8100B/index.js",
+	"./TemperatureSensor/analog/S8120C/index.js": "./dist/src/parts/TemperatureSensor/analog/S8120C/index.js",
+	"./TemperatureSensor/i2c/ADT7410/index.js": "./dist/src/parts/TemperatureSensor/i2c/ADT7410/index.js",
+	"./TemperatureSensor/i2c/AM2320/index.js": "./dist/src/parts/TemperatureSensor/i2c/AM2320/index.js",
+	"./TemperatureSensor/i2c/AMG8833/index.js": "./dist/src/parts/TemperatureSensor/i2c/AMG8833/index.js",
+	"./TemperatureSensor/i2c/BME280/index.js": "./dist/src/parts/TemperatureSensor/i2c/BME280/index.js",
+	"./TemperatureSensor/i2c/D6T44L/index.js": "./dist/src/parts/TemperatureSensor/i2c/D6T44L/index.js",
+	"./TemperatureSensor/i2c/DHT12/index.js": "./dist/src/parts/TemperatureSensor/i2c/DHT12/index.js",
+	"./TemperatureSensor/i2c/S-5851A/index.js": "./dist/src/parts/TemperatureSensor/i2c/S-5851A/index.js",
+	"./TemperatureSensor/i2c/SHT31/index.js": "./dist/src/parts/TemperatureSensor/i2c/SHT31/index.js",
+	"./TemperatureSensor/spi/ADT7310/index.js": "./dist/src/parts/TemperatureSensor/spi/ADT7310/index.js",
+	"./Wireless/MFRC522/index.js": "./dist/src/parts/Wireless/MFRC522/index.js",
+	"./Wireless/RN42/index.js": "./dist/src/parts/Wireless/RN42/index.js",
+	"./Wireless/XBee/index.js": "./dist/src/parts/Wireless/XBee/index.js",
+	"./i2cParts.js": "./dist/src/parts/i2cParts.js"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
 }
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = "./dist/src/parts sync recursive \\.js$";
+function webpackContextResolve(req) {
+	if(!__webpack_require__.o(map, req)) {
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return map[req];
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./dist/src/parts sync recursive \\.js$";
+
+/***/ }),
+
+/***/ "./dist/src/parts/ADConverter/hx711/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.hx711
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Hx711 {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sck", "dout"];
+        this.requiredKeys = ["sck", "dout"];
+        this._offset = 0;
+        this._scale = 1;
+    }
+    static info() {
+        return {
+            name: "hx711",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.spi = obniz.getFreeSpi();
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        const ioKeys = ["clk", "dout"];
+        for (const key of ioKeys) {
+            if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
+                throw new Error("spi start param '" + key + "' are to be valid io no");
+            }
+        }
+        this.sck = obniz.getIO(this.params.sck);
+        this.dout = obniz.getIO(this.params.dout);
+        this.sck.output(true);
+        obniz.wait(500);
+    }
+    readWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.sck.output(false);
+            while (true) {
+                const val = yield this.dout.inputWait();
+                if (val === false) {
+                    break;
+                }
+            }
+            this.spi.start({
+                mode: "master",
+                mosi: this.params.sck,
+                miso: this.params.dout,
+                frequency: 500 * 1000,
+            });
+            const ret_double = yield this.spi.writeWait([
+                0xaa,
+                0xaa,
+                0xaa,
+                0xaa,
+                0xaa,
+                0xaa,
+                0x80,
+            ]);
+            this.spi.end(true);
+            this.sck.output(false);
+            const ret = [
+                this.doubleBit2singleBit(ret_double[0], ret_double[1]),
+                this.doubleBit2singleBit(ret_double[2], ret_double[3]),
+                this.doubleBit2singleBit(ret_double[4], ret_double[5]),
+            ];
+            const flag = (ret[0] & 0x80) === 0 ? 1 : -1;
+            return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
+        });
+    }
+    doubleBit2singleBit(a, b) {
+        return ((this.bit(a, 7) << 7) |
+            (this.bit(a, 5) << 6) |
+            (this.bit(a, 3) << 5) |
+            (this.bit(a, 1) << 4) |
+            (this.bit(b, 7) << 3) |
+            (this.bit(b, 5) << 2) |
+            (this.bit(b, 3) << 1) |
+            (this.bit(b, 1) << 0));
+    }
+    bit(a, n) {
+        return a & (1 << n) ? 1 : 0;
+    }
+    readAverageWait(times) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const results = [];
+            for (let i = 0; i < times; i++) {
+                results.push(yield this.readWait());
+            }
+            return (results.reduce((prev, current, i) => {
+                return prev + current;
+            }, 0) / results.length);
+        });
+    }
+    powerDown() {
+        this.sck.output(true);
+    }
+    powerUp() {
+        this.sck.output(false);
+    }
+    zeroAdjustWait(times) {
+        return __awaiter(this, void 0, void 0, function* () {
+            times = parseInt(times) || 1;
+            this._offset = yield this.readAverageWait(times);
+        });
+    }
+    getValueWait(times) {
+        return __awaiter(this, void 0, void 0, function* () {
+            times = parseInt(times) || 1;
+            const val = yield this.readAverageWait(times);
+            return (val - this._offset) / this._scale;
+        });
+    }
+    setOffset(offset) {
+        if (typeof offset !== "number") {
+            throw new Error("offset variable is Number");
+        }
+        this._offset = offset;
+    }
+    setScale(scale) {
+        if (typeof scale !== "number") {
+            throw new Error("scale variable is Number");
+        }
+        this._scale = scale;
+    }
+}
+exports.default = Hx711;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Accessory/USB/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class USB {
+    constructor() {
+        this.keys = ["vcc", "gnd"];
+        this.requiredKeys = ["vcc", "gnd"];
+        this.displayIoNames = {
+            vcc: "vcc",
+            gnd: "gnd",
+        };
+    }
+    static info() {
+        return {
+            name: "USB",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_vdd = obniz.getIO(this.params.vcc);
+        this.io_gnd = obniz.getIO(this.params.gnd);
+        this.io_gnd.output(false);
+    }
+    on() {
+        this.io_vdd.output(true);
+    }
+    off() {
+        this.io_vdd.output(false);
+    }
+}
+exports.default = USB;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Puls08M5stickcS
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Puls08M5stickcS {
+    constructor() {
+        this.keys = ["vcc", "gnd", "tx", "rx"];
+        this.requiredKeys = ["tx", "rx"];
+        this.delimiter = 0x0a;
+    }
+    static info() {
+        return {
+            name: "Puls08M5stickcS",
+        };
+    }
+    onbpmupdate(bpm) {
+        return;
+    }
+    onrawupdate(values) {
+        return;
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.uart = obniz.getFreeUart();
+        this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 19200 });
+        this.receivingData = [];
+        this.init();
+        this.uart.onreceive = (data, text) => {
+            const dataToCallback = [];
+            data.forEach((e) => {
+                if (e !== this.delimiter) {
+                    this.receivingData.push(e);
+                    return;
+                }
+                else {
+                    const row = this.receivingData;
+                    if (row[0] === "#".charCodeAt(0)) {
+                        row[0] = " ".charCodeAt(0);
+                        const str = this.decode(row);
+                        const val = parseInt(str);
+                        const bpm = val > 0 ? 60000 / val : null;
+                        this.onbpmupdate(bpm);
+                    }
+                    else {
+                        const str = this.decode(row);
+                        const val = parseInt(str);
+                        dataToCallback.push(val);
+                    }
+                    this.receivingData = [];
+                }
+            });
+            if (dataToCallback.length > 0) {
+                this.onrawupdate(dataToCallback);
+            }
+        };
+    }
+    decode(data) {
+        return Buffer.from(data).toString("utf8");
+        // if (typeof TextDecoder !== 'undefined') {
+        //   let enc = new TextDecoder('utf-8');
+        //   let arr = new Uint8Array(data);
+        //   return enc.decode(arr);
+        // } else if (typeof Buffer !== 'undefined') {
+        // return Buffer.from(data).toString('utf8');
+        // }
+        // throw new Error('cannot decode');
+    }
+    init() {
+        this.uart.send("@OF30");
+        this.uart.send(0x0a);
+        this.uart.send("@RG2");
+        this.uart.send(0x0a);
+    }
+}
+exports.default = Puls08M5stickcS;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/2jcie/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.OMRON_2JCIE
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class OMRON_2JCIE {
+    constructor() {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+    }
+    static info() {
+        return {
+            name: "2JCIE",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+    findWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const target = {
+                localName: "Env",
+            };
+            yield this.obniz.ble.initWait();
+            this.periperal = yield this.obniz.ble.scan.startOneWait(target);
+            return this.periperal;
+        });
+    }
+    omron_uuid(uuid) {
+        return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
+    }
+    connectWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.periperal) {
+                yield this.findWait();
+            }
+            if (!this.periperal) {
+                throw new Error("2JCIE not found");
+            }
+            if (!this.periperal.connected) {
+                yield this.periperal.connectWait();
+            }
+        });
+    }
+    disconnectWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.periperal && this.periperal.connected) {
+                this.periperal.disconnectWait();
+            }
+        });
+    }
+    signedNumberFromBinary(data) {
+        // little adian
+        let val = data[data.length - 1] & 0x7f;
+        for (let i = data.length - 2; i >= 0; i--) {
+            val = val * 256 + data[i];
+        }
+        if ((data[data.length - 1] & 0x80) !== 0) {
+            val = val - Math.pow(2, data.length * 8 - 1);
+        }
+        return val;
+    }
+    unsignedNumberFromBinary(data) {
+        // little adian
+        let val = data[data.length - 1];
+        for (let i = data.length - 2; i >= 0; i--) {
+            val = val * 256 + data[i];
+        }
+        return val;
+    }
+    getLatestData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.connectWait();
+            const c = this.periperal
+                .getService(this.omron_uuid("3000"))
+                .getCharacteristic(this.omron_uuid("3001"));
+            const data = yield c.readWait();
+            const json = {
+                row_number: data[0],
+                temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+                relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+                light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
+                uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
+                barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
+                soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+                discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
+                heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
+                battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+            };
+            return json;
+        });
+    }
+}
+exports.default = OMRON_2JCIE;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* ------------------------------------------------------------------
+ * node-linking - linking.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
+const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
+class Linking {
+    constructor(params) {
+        this.PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+        this.initialized = false;
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+        this.onadvertisement = null;
+        this.ondiscover = null;
+        // Private properties
+        this._discover_status = false;
+        this._discover_wait = 3000; // ms
+        this._discover_timer = null;
+        this._peripherals = {};
+    }
+    static info() {
+        return {
+            name: "Linking",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.obniz.ble.initWait();
+            this.initialized = true;
+        });
+    }
+    discover(p) {
+        this._checkInitialized();
+        let duration = 5000;
+        let name_filter = "";
+        let id_filter = "";
+        let quick = false;
+        if (p && typeof p === "object") {
+            if ("duration" in p && typeof p.duration === "number") {
+                duration = p.duration;
+                if (duration < 1000) {
+                    duration = 1000;
+                }
+            }
+            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+                name_filter = p.nameFilter;
+            }
+            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+                id_filter = p.idFilter;
+            }
+            if ("quick" in p && typeof (p.quick === "boolean")) {
+                quick = p.quick;
+            }
+        }
+        return new Promise((resolve, reject) => {
+            let timer = null;
+            const finishDiscovery = () => {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+                this.stopScan();
+                const device_list = [];
+                for (const addr in this._peripherals) {
+                    device_list.push(this._peripherals[addr]);
+                }
+                resolve(device_list);
+            };
+            this._peripherals = {};
+            this.obniz.ble.scan.onfind = (peripheral) => {
+                const dev = this._discoveredDevice(peripheral, name_filter, id_filter);
+                if (quick && dev) {
+                    finishDiscovery();
+                    return;
+                }
+            };
+            this._scanDevices();
+            this._discover_status = true;
+            timer = setTimeout(() => {
+                finishDiscovery();
+            }, duration);
+        });
+    }
+    _checkInitialized() {
+        if (this.initialized === false) {
+            throw new Error("The `init()` method has not been called yet.");
+            return;
+        }
+        if (this._discover_status === true) {
+            throw new Error("The `discover()` or the `startScan()` method is in progress.");
+            return;
+        }
+    }
+    _discoveredDevice(peripheral, name_filter, id_filter) {
+        if (!peripheral.localName) {
+            return null;
+        }
+        // if (!peripheral.id) {
+        //   return null;
+        // }
+        if (name_filter && peripheral.localName.indexOf(name_filter) !== 0) {
+            return null;
+        }
+        // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
+        //   return null;
+        // }
+        const addr = peripheral.address;
+        if (this._peripherals[addr]) {
+            return null;
+        }
+        const device = new device_1.default(peripheral);
+        if (this.ondiscover && typeof this.ondiscover === "function") {
+            this.ondiscover(device);
+        }
+        this._peripherals[addr] = device;
+        return device;
+    }
+    _scanDevices() {
+        this.obniz.ble.scan.onfinish = () => {
+            // console.log("scan timeout!")
+            this._discover_status = false;
+        };
+        // var target = {
+        //   uuids: this.PRIMARY_SERVICE_UUID_LIST
+        // };
+        this.obniz.ble.scan.start();
+        this._discover_status = true;
+    }
+    stopScan() {
+        if (this._discover_status === true) {
+            this._discover_status = false;
+            if (this._discover_timer !== null) {
+                clearTimeout(this._discover_timer);
+                this._discover_timer = null;
+            }
+            this.obniz.ble.scan.end();
+        }
+    }
+    startScan(p) {
+        this._checkInitialized();
+        let name_filter = "";
+        let id_filter = "";
+        if (p && typeof p === "object") {
+            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+                name_filter = p.nameFilter;
+            }
+            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+                id_filter = p.idFilter;
+            }
+        }
+        this.obniz.ble.scan.onfind = function (peripheral) {
+            if (!peripheral.localName) {
+                return;
+            }
+            if (name_filter && peripheral.localName.indexOf(name_filter) !== 0) {
+                return;
+            }
+            // TODO
+            // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
+            //   return;
+            // }
+            if (this.onadvertisement && typeof this.onadvertisement === "function") {
+                const parsed = advertising_1.default.parse(peripheral);
+                if (parsed) {
+                    this.onadvertisement(parsed);
+                }
+            }
+        };
+        this._scanDevices();
+    }
+}
+exports.default = Linking;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/advertising.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - advertising.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/ieee754.js"));
+class LinkingAdvertising {
+    static parse(peripheral) {
+        const ad = peripheral;
+        const manu = ad.manufacturerData;
+        if (!manu || manu.length < 8) {
+            return null;
+        }
+        // Company identifier
+        const company_id = manu.readUInt16LE(0);
+        let company_name = "Unknown";
+        if (company_id === 0x02E2) {
+            company_name = "NTT docomo";
+        }
+        // Version
+        const version = (manu.readUInt8(2) >>> 4);
+        // Vendor identifier
+        const vendor_id = ((manu.readUInt16BE(2) >>> 4) & 0b11111111);
+        // Individual number
+        const indi_num = ((manu.readUInt32BE(3) >>> 8) & (Math.pow(2, 20) - 1));
+        // Beacon Data
+        const beacon_data_list = [];
+        for (let offset = 6; offset < manu.length; offset += 2) {
+            const beacon_buf = manu.slice(offset, offset + 2);
+            // Beacon service data
+            if (beacon_buf.length === 2) {
+                const beacon_data = this._parseBeaconServiceData(beacon_buf);
+                beacon_data_list.push(beacon_data);
+            }
+        }
+        return {
+            id: peripheral.id,
+            uuid: peripheral.uuid,
+            address: peripheral.address,
+            localName: ad.localName,
+            serviceUuids: ad.serviceUuids,
+            txPowerLevel: 0,
+            rssi: peripheral.rssi,
+            distance: Math.pow(10, (ad.txPowerLevel - peripheral.rssi) / 20),
+            companyId: company_id,
+            companyName: company_name,
+            version,
+            vendorId: vendor_id,
+            individualNumber: indi_num,
+            beaconDataList: beacon_data_list,
+        };
+    }
+    static _parseBeaconServiceData(buf) {
+        const bufn = buf.readUInt16BE(0);
+        const service_id = (bufn >>> 12);
+        const n = bufn & 0b0000111111111111;
+        let res = {};
+        if (service_id === 0) {
+            res = {
+                name: "General",
+            };
+        }
+        else if (service_id === 1) {
+            res = {
+                name: "Temperature (°C)",
+                temperature: ieee754_1.default.read(n, 1, 4, 7),
+            };
+        }
+        else if (service_id === 2) {
+            res = {
+                name: "Humidity (%)",
+                humidity: ieee754_1.default.read(n, 0, 4, 8),
+            };
+        }
+        else if (service_id === 3) {
+            res = {
+                name: "Air pressure (hPa)",
+                pressure: ieee754_1.default.read(n, 0, 5, 7),
+            };
+        }
+        else if (service_id === 4) {
+            res = {
+                name: "Remaining battery power (Threshold value or less)",
+                chargeRequired: (n & 0b0000100000000000) ? true : false,
+                chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (service_id === 5) {
+            const code = n & 0b0000111111111111;
+            let text = "";
+            if (code === 0x00) {
+                text = "Power";
+            }
+            else if (code === 0x01) {
+                text = "Return";
+            }
+            else if (code === 0x02) {
+                text = "SingleClick";
+            }
+            else if (code === 0x03) {
+                text = "Home";
+            }
+            else if (code === 0x04) {
+                text = "DoubleClick";
+            }
+            else if (code === 0x05) {
+                text = "VolumeUp";
+            }
+            else if (code === 0x06) {
+                text = "VolumeDown";
+            }
+            else if (code === 0x07) {
+                text = "LongPress";
+            }
+            else if (code === 0x08) {
+                text = "Pause";
+            }
+            else if (code === 0x09) {
+                text = "LongPressRelease";
+            }
+            else if (code === 0x0A) {
+                text = "FastForward";
+            }
+            else if (code === 0x0B) {
+                text = "ReWind";
+            }
+            else if (code === 0x0C) {
+                text = "Shutter";
+            }
+            else if (code === 0x0D) {
+                text = "Up";
+            }
+            else if (code === 0x0E) {
+                text = "Down";
+            }
+            else if (code === 0x0F) {
+                text = "Left";
+            }
+            else if (code === 0x10) {
+                text = "Right";
+            }
+            else if (code === 0x11) {
+                text = "Enter";
+            }
+            else if (code === 0x12) {
+                text = "Menu";
+            }
+            else if (code === 0x13) {
+                text = "Play";
+            }
+            else if (code === 0x14) {
+                text = "Stop";
+            }
+            res = {
+                name: "Pressed button information",
+                buttonId: code,
+                buttonName: text,
+            };
+        }
+        else if (service_id === 6) {
+            res = {
+                name: "Opening/closing",
+                openingStatus: (n & 0b0000100000000000) ? true : false,
+                openingCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 7) {
+            res = {
+                name: "Human detection",
+                humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
+                humanDetectionCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 8) {
+            res = {
+                name: "Vibration",
+                moveResponse: (n & 0b0000100000000000) ? true : false,
+                moveCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (service_id === 9) {
+            let illuminance = n;
+            if (n >> 11) {
+                illuminance = ((n - 2047) * 50) + 2000;
+            }
+            res = {
+                name: "Illuminance (lx)",
+                illuminance,
+            };
+        }
+        else if (service_id === 15) {
+            res = {
+                name: "Vendor",
+                bin: ("000000000000" + n.toString(2)).slice(-12),
+            };
+        }
+        res.serviceId = service_id;
+        return res;
+    }
+    constructor() {
+    }
+}
+exports.default = LinkingAdvertising;
+
+//# sourceMappingURL=advertising.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/device.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - device.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-03
+* ---------------------------------------------------------------- */
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
+const service_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service.js"));
+class LinkingDevice {
+    constructor(peripheral) {
+        this.PRIMARY_SERVICE_UUID = "b3b3690150d34044808d50835b13a6cd";
+        this.WRITE_CHARACTERRISTIC_UUID = "b3b3910150d34044808d50835b13a6cd";
+        this.INDICATE_CHARACTERRISTIC_UUID = "b3b3910250d34044808d50835b13a6cd";
+        this.info = {};
+        this.connected = false;
+        this.onconnect = null;
+        this.onconnectprogress = null;
+        this.ondisconnect = null;
+        this.onnotify = null;
+        this.services = {
+            deviceName: null,
+            led: null,
+            vibration: null,
+            button: null,
+            gyroscope: null,
+            accelerometer: null,
+            orientation: null,
+            battery: null,
+            temperature: null,
+            humidity: null,
+            pressure: null,
+            openclose: null,
+            human: null,
+            move: null,
+            illuminance: null,
+        };
+        this._service = null;
+        this._div_packet_queue = [];
+        this._LinkingService = new service_1.default();
+        this._onresponse = null;
+        this._write_response_timeout = 30000; // msec
+        this._generic_access_service = {
+            SERVICE_UUID: "1800",
+            service: null,
+            device_name: {
+                CHARACTERRISTIC_UUID: "2a00",
+                char: null,
+            },
+        };
+        this.advertisement = advertising_1.default.parse(peripheral);
+        this._peripheral = peripheral;
+    }
+    connect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.connected === true) {
+                throw new Error("The device has been already connected.");
+            }
+            let onprogress = this.onconnectprogress;
+            if (!this._isFunction(this.onconnectprogress)) {
+                onprogress = () => { };
+            }
+            const peripheral = this._peripheral;
+            onprogress({ step: 1, desc: "CONNECTING" });
+            try {
+                peripheral.ondisconnect = () => __awaiter(this, void 0, void 0, function* () {
+                    yield this._clean();
+                    if (this._isFunction(this.ondisconnect)) {
+                        this.ondisconnect({ wasClean: false });
+                    }
+                });
+                yield peripheral.connectWait();
+                onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
+                onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
+                yield this._getServicesAndChars();
+                onprogress({ step: 4, desc: "SUBSCRIBING" });
+                yield this._subscribeForIndicate();
+                onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
+                let res;
+                res = yield this.write("GET_DEVICE_INFORMATION");
+                this.info.id = "";
+                if ("deviceId" in res.data) {
+                    this.info.id = res.data.deviceId;
+                }
+                this.info.uid = "";
+                if ("deviceUid" in res.data) {
+                    this.info.uid = res.data.deviceUid;
+                }
+                this.info.services = {};
+                if ("serviceList" in res.data) {
+                    res.data.serviceList.forEach((o) => {
+                        this.info.services[o.name] = o.id;
+                    });
+                }
+                this.info.capabilities = {};
+                if ("deviceCapability" in res.data) {
+                    res.data.deviceCapability.forEach((o) => {
+                        this.info.capabilities[o.name] = o.id;
+                    });
+                }
+                this.info.exsensors = {};
+                if ("exSensorType" in res.data) {
+                    res.data.exSensorType.forEach((o) => {
+                        this.info.exsensors[o.name] = o.id;
+                    });
+                }
+                onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
+                res = yield this._writeConfirmNotifyCategory();
+                this.info.notifyCategories = {};
+                if (res) {
+                    if ("notifyCategory" in res.data) {
+                        res.data.notifyCategory.forEach((o) => {
+                            this.info.notifyCategories[o.name] = o.id;
+                        });
+                    }
+                }
+                onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
+                res = yield this._writeGetSettingInformation();
+                this.info.settings = {};
+                if (res) {
+                    if ("settingInformationData" in res.data) {
+                        res.data.settingInformationData.forEach((o) => {
+                            this.info.settings[o.name] = o;
+                        });
+                    }
+                }
+                onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
+                res = yield this._writeGetSettingName("LEDColorName");
+                if (res) {
+                    this.info.settings.LED.colors = res.data.settingNameData;
+                }
+                onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("LEDPatternName");
+                if (res) {
+                    this.info.settings.LED.patterns = res.data.settingNameData;
+                }
+                onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("VibrationPatternName");
+                if (res) {
+                    this.info.settings.Vibration.patterns = res.data.settingNameData;
+                }
+                onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
+                res = yield this._writeGetSettingName("BeepPatternName");
+                if (res) {
+                    this.info.settings.Beep.patterns = res.data.settingNameData;
+                }
+                this._LinkingService.setDeviceInfo(this.info);
+                this._initServices();
+                this.connected = true;
+                if (this._isFunction(this.onconnect)) {
+                    this.onconnect();
+                }
+                onprogress({ step: 12, desc: "COMPLETED" });
+            }
+            catch (e) {
+                onprogress({ step: 0, desc: "FAILED" });
+                throw e;
+            }
+        });
+    }
+    _wait(msec) {
+        const promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, msec);
+        });
+        return promise;
+    }
+    _writeConfirmNotifyCategory() {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceNotification" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            this.write("CONFIRM_NOTIFY_CATEGORY").then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _writeGetSettingInformation() {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            this.write("GET_SETTING_INFORMATION").then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _writeGetSettingName(name) {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            const s = this.info.settings;
+            if (name === "LEDColorName") {
+                if (!(("LED" in s) && s.LED.colorMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "LEDPatternName") {
+                if (!(("LED" in s) && s.LED.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "VibrationPatternName") {
+                if (!(("Vibration" in s) && s.Vibration.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "BeepPatternName") {
+                if (!(("Beep" in s) && s.Beep.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            this.write("GET_SETTING_NAME", { SettingNameType: name }).then((res) => {
+                resolve(res);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _isFunction(o) {
+        return (o && typeof (o) === "function") ? true : false;
+    }
+    _getServicesAndChars() {
+        const peripheral = this._peripheral;
+        const service = peripheral.getService(this.PRIMARY_SERVICE_UUID);
+        if (!service) {
+            throw new Error("No service was found");
+        }
+        const write_char = service.getCharacteristic(this.WRITE_CHARACTERRISTIC_UUID);
+        const indicate_char = service.getCharacteristic(this.INDICATE_CHARACTERRISTIC_UUID);
+        if (!(write_char && indicate_char)) {
+            throw new Error("No characteristic was found");
+        }
+        this.char_write = write_char;
+        this.char_indicate = indicate_char;
+        this._service = service;
+        const ga_service = peripheral.getService(this._generic_access_service.SERVICE_UUID);
+        if (ga_service) {
+            const ga_char = ga_service.getCharacteristic(this._generic_access_service.device_name.CHARACTERRISTIC_UUID);
+            if (ga_service && ga_char) {
+                this._generic_access_service.service = ga_service;
+                this._generic_access_service.device_name.char = ga_char;
+            }
+        }
+    }
+    _subscribeForIndicate() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.char_indicate.registerNotifyWait((data) => {
+                this._receivedPacket(Buffer.from(data));
+            });
+        });
+    }
+    _receivedPacket(buf) {
+        const new_buf = Buffer.alloc(buf.length - 1);
+        buf.copy(new_buf, 0, 1, buf.length);
+        this._div_packet_queue.push(new_buf);
+        if (this._isExecutedPacket(buf)) {
+            const header_byte = Buffer.from([buf.readUInt8(0)]);
+            this._div_packet_queue.unshift(header_byte);
+            const total_buf = Buffer.concat(this._div_packet_queue);
+            this._receivedIndicate(total_buf);
+            this._div_packet_queue = [];
+        }
+    }
+    _isExecutedPacket(buf) {
+        const ph = buf.readUInt8(0);
+        return (ph & 0x00000001) ? true : false;
+    }
+    _receivedIndicate(buf) {
+        const parsed = this._LinkingService.parseResponse(buf);
+        if (!parsed) {
+            return;
+        }
+        if (parsed.messageName.match(/_RESP$/)) {
+            if (this._onresponse) {
+                this._onresponse(parsed);
+            }
+        }
+        else {
+            // All notifications
+            if (this._isFunction(this.onnotify)) {
+                this.onnotify(parsed);
+            }
+            // Button
+            if (parsed.serviceId === 2) { // PeripheralDeviceOperation Service
+                if (parsed.messageId === 0) { // NOTIFY_PD_OPERATION
+                    // let f = this.services['button']['onnotify'];
+                    let f = null;
+                    if (this.services.button) {
+                        if (this._isFunction(this.services.button.onnotify)) {
+                            f = this.services.button.onnotify;
+                        }
+                    }
+                    if (f) {
+                        let button = null;
+                        parsed.parameters.forEach((p) => {
+                            if (p.parameterId === 2) { // ButtonId
+                                button = {
+                                    buttonId: p.buttonId,
+                                    buttonName: p.buttonName,
+                                };
+                            }
+                        });
+                        f(button);
+                    }
+                }
+                // Sensors
+            }
+            else if (parsed.serviceId === 3) { // PeripheralDeviceSensorInformation Service
+                if (parsed.messageId === 4) { // NOTIFY_PD_SENSOR_INFO
+                    let sensor_type = -1;
+                    let res = {};
+                    parsed.parameters.forEach((p) => {
+                        const pid = p.parameterId;
+                        if (pid === 2) { // SensorType
+                            sensor_type = p.sensorTypeCode;
+                        }
+                        else {
+                            if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
+                                if (pid === 4) { // X_value
+                                    res.x = p.xValue;
+                                }
+                                else if (pid === 5) { // Y_value
+                                    res.y = p.yValue;
+                                }
+                                else if (pid === 6) { // Z_value
+                                    res.z = p.zValue;
+                                }
+                            }
+                            else if (sensor_type === 3) { // Battery
+                                res = {
+                                    charge: p.charge,
+                                    level: p.level,
+                                };
+                            }
+                            else if (sensor_type === 4) { // Temperature
+                                res.temperature = p.temperature;
+                            }
+                            else if (sensor_type === 5) { // Humidity
+                                res.humidity = p.humidity;
+                            }
+                            else if (sensor_type === 6) { // Aire pressure
+                                res.pressure = p.pressure;
+                            }
+                            else if (sensor_type === 7) { // Opening and closing
+                                res.openclose = p.openclose;
+                            }
+                            else if (sensor_type === 8) { // Human detection
+                                res.human = p.human;
+                            }
+                            else if (sensor_type === 9) { // Move
+                                res.move = p.move;
+                            }
+                            else if (sensor_type === 0x0a) { // Illuminance
+                                res.illuminance = p.illuminance;
+                            }
+                        }
+                    });
+                    let f = null;
+                    if (sensor_type === 0) {
+                        if (this.services.gyroscope) {
+                            f = this.services.gyroscope.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 1) {
+                        if (this.services.accelerometer) {
+                            f = this.services.accelerometer.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 2) {
+                        if (this.services.orientation) {
+                            f = this.services.orientation.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 3) {
+                        if (this.services.battery) {
+                            f = this.services.battery.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 4) {
+                        if (this.services.temperature) {
+                            f = this.services.temperature.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 5) {
+                        if (this.services.humidity) {
+                            f = this.services.humidity.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 6) {
+                        if (this.services.pressure) {
+                            f = this.services.pressure.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 7) {
+                        if (this.services.openclose) {
+                            f = this.services.openclose.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 8) {
+                        if (this.services.human) {
+                            f = this.services.human.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 9) {
+                        if (this.services.move) {
+                            f = this.services.move.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 0x0a) {
+                        if (this.services.illuminance) {
+                            f = this.services.illuminance.onnotify;
+                        }
+                    }
+                    if (this._isFunction(f)) {
+                        f(res);
+                    }
+                }
+            }
+        }
+    }
+    disconnect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.connected === false) {
+                yield this._clean();
+                return;
+            }
+            yield this._peripheral.disconnectWait();
+            if (this._isFunction(this.ondisconnect)) {
+                this.ondisconnect({ wasClean: true });
+            }
+        });
+    }
+    _clean() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const p = this._peripheral;
+            if (!p) {
+                return;
+            }
+            if (this.char_indicate) {
+                yield this.char_indicate.unregisterNotifyWait();
+            }
+            // p.removeAllListeners();
+            this.connected = false;
+            this._service = null;
+            this.char_write = null;
+            this.char_indicate = null;
+            this._div_packet_queue = [];
+            this._onresponse = null;
+        });
+    }
+    write(message_name, params) {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            const buf = this._LinkingService.createRequest(message_name, params);
+            if (!buf) {
+                reject(new Error("The specified parameters are invalid."));
+            }
+            const timer = setTimeout(() => {
+                this._onresponse = null;
+                reject(new Error("Timeout"));
+            }, this._write_response_timeout);
+            this._onresponse = (res) => {
+                if (res.messageName === message_name + "_RESP") {
+                    this._onresponse = null;
+                    clearTimeout(timer);
+                    const data = this._margeResponsePrameters(res);
+                    if (data) {
+                        res.data = data;
+                        resolve(res);
+                    }
+                    else {
+                        reject(new Error("Unknown response"));
+                    }
+                }
+            };
+            try {
+                yield this.char_write.writeWait(buf, true);
+            }
+            catch (e) {
+                reject(e);
+            }
+        }));
+    }
+    _margeResponsePrameters(res) {
+        if (!res) {
+            return null;
+        }
+        const parameters = res.parameters;
+        if (parameters && Array.isArray(parameters) && parameters.length > 0) {
+            const data = {};
+            parameters.forEach((p) => {
+                for (const k in p) {
+                    if (!k.match(/^(name|parameterId)$/)) {
+                        data[k] = p[k];
+                    }
+                }
+            });
+            return data;
+        }
+        else {
+            return null;
+        }
+    }
+    _initServices() {
+        const device_name = this._peripheral.localName;
+        // Device Name
+        if (this._generic_access_service.device_name.char) {
+            this.services.deviceName = {
+                get: this._deviceNameGet.bind(this),
+                set: this._deviceNameSet.bind(this),
+            };
+        }
+        // Button
+        if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
+            this.services.button = {
+                onnotify: null,
+            };
+        }
+        // LED
+        if ("LED" in this.info.settings) {
+            const o = this.info.settings.LED;
+            if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
+                const colors = {};
+                for (let i = 0; i < o.colors.length; i++) {
+                    colors[o.colors[i]] = i + 1;
+                }
+                const patterns = {};
+                for (let i = 0; i < o.patterns.length; i++) {
+                    patterns[o.patterns[i]] = i + 1;
+                }
+                this.services.led = {
+                    colors,
+                    patterns,
+                    turnOn: this._ledTurnOn.bind(this),
+                    turnOff: this._ledTurnOff.bind(this),
+                };
+            }
+        }
+        // Vibration
+        if ("Vibration" in this.info.settings) {
+            const o = this.info.settings.Vibration;
+            if (o.patterns && o.patterns.length > 0) {
+                const patterns = {};
+                for (let i = 0; i < o.patterns.length; i++) {
+                    patterns[o.patterns[i]] = i + 1;
+                }
+                this.services.vibration = {
+                    patterns,
+                    turnOn: this._vibrationTurnOn.bind(this),
+                    turnOff: this._vibrationTurnOff.bind(this),
+                };
+            }
+        }
+        // Gyroscope
+        if ("Gyroscope" in this.info.capabilities) {
+            this.services.gyroscope = this._createSensorServiceObject(0x00);
+        }
+        // Accelerometer
+        if ("Accelerometer" in this.info.capabilities) {
+            this.services.accelerometer = this._createSensorServiceObject(0x01);
+        }
+        // Orientation
+        if ("Orientation" in this.info.capabilities) {
+            this.services.orientation = this._createSensorServiceObject(0x02);
+        }
+        // Battery
+        if ("Battery" in this.info.capabilities) {
+            this.services.battery = this._createSensorServiceObject(0x03);
+        }
+        // Temperature
+        if ("Temperature" in this.info.capabilities) {
+            this.services.temperature = this._createSensorServiceObject(0x04);
+        }
+        // Humidity
+        if ("Humidity" in this.info.capabilities) {
+            this.services.humidity = this._createSensorServiceObject(0x05);
+        }
+        // Atmospheric pressure
+        if ("Atmospheric pressure" in this.info.capabilities) {
+            this.services.pressure = this._createSensorServiceObject(0x06);
+        }
+        // Opening and closing
+        if ("Opening and closing" in this.info.exsensors) {
+            this.services.openclose = this._createSensorServiceObject(0x07);
+        }
+        // Human detection
+        if ("Human detection" in this.info.exsensors) {
+            this.services.human = this._createSensorServiceObject(0x08);
+        }
+        // Move
+        if ("Move" in this.info.exsensors) {
+            this.services.move = this._createSensorServiceObject(0x09);
+        }
+        // Illuminance
+        if ("Illuminance" in this.info.exsensors) {
+            this.services.illuminance = this._createSensorServiceObject(0x0a);
+        }
+    }
+    _deviceNameGet() {
+        const promise = new Promise((resolve, reject) => {
+            const char = this._generic_access_service.device_name.char;
+            char.read((error, data) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve({
+                        deviceName: data.toString("utf8"),
+                    });
+                }
+            });
+        });
+        return promise;
+    }
+    _deviceNameSet(name) {
+        const promise = new Promise((resolve, reject) => {
+            if (!name) {
+                reject(new Error("Device name is required."));
+                return;
+            }
+            else if (typeof (name) !== "string") {
+                reject(new Error("Device name must be a string."));
+                return;
+            }
+            else if (name.length > 32) {
+                reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
+                return;
+            }
+            const buf = Buffer.from(name, "utf8");
+            const char = this._generic_access_service.device_name.char;
+            char.write(buf, false, (error) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve();
+                }
+            });
+        });
+        return promise;
+    }
+    _ledTurnOn(color, pattern, duration) {
+        let color_number = 1;
+        if (color) {
+            const colors = this.services.led.colors;
+            if (typeof (color) === "number") {
+                for (const name in colors) {
+                    if (colors[name] === color) {
+                        color_number = color;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (color) === "string") {
+                if (color in colors) {
+                    color_number = colors[color];
+                }
+            }
+        }
+        let pattern_number = 2;
+        if (pattern) {
+            const patterns = this.services.led.patterns;
+            if (typeof (pattern) === "number") {
+                for (const name in patterns) {
+                    if (patterns[name] === pattern) {
+                        pattern_number = pattern;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (pattern) === "string") {
+                if (pattern in patterns) {
+                    pattern_number = patterns[pattern];
+                }
+            }
+        }
+        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+            duration = 5;
+        }
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "START_DEMONSTRATION",
+                },
+                SettingInformationData: [
+                    {
+                        settingName: "LED",
+                        colorNumber: color_number,
+                        patternNumber: pattern_number,
+                        duration,
+                    },
+                ],
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _ledTurnOff() {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "STOP_DEMONSTRATION",
+                },
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _vibrationTurnOn(pattern, duration) {
+        let pattern_number = 2;
+        if (pattern) {
+            const patterns = this.services.vibration.patterns;
+            if (typeof (pattern) === "number") {
+                for (const name in patterns) {
+                    if (patterns[name] === pattern) {
+                        pattern_number = pattern;
+                        break;
+                    }
+                }
+            }
+            else if (typeof (pattern) === "string") {
+                if (pattern in patterns) {
+                    pattern_number = patterns[pattern];
+                }
+            }
+        }
+        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+            duration = 5;
+        }
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "START_DEMONSTRATION",
+                },
+                SettingInformationData: [
+                    {
+                        settingName: "Vibration",
+                        patternNumber: pattern_number,
+                        duration,
+                    },
+                ],
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _vibrationTurnOff() {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "STOP_DEMONSTRATION",
+                },
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _createSensorServiceObject(sensor_type) {
+        return {
+            onnotify: null,
+            start: () => {
+                return this._setNotifySensorInfo(sensor_type, 1);
+            },
+            stop: () => {
+                return this._setNotifySensorInfo(sensor_type, 0);
+            },
+            get: () => {
+                return this._getSensorInfo(sensor_type);
+            },
+        };
+    }
+    _setNotifySensorInfo(sensor_type, status) {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SET_NOTIFY_SENSOR_INFO", {
+                SensorType: sensor_type,
+                Status: status,
+            }).then((res) => {
+                resolve(res.data);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _getSensorInfo(sensor_type) {
+        const promise = new Promise((resolve, reject) => {
+            this.write("GET_SENSOR_INFO", {
+                SensorType: sensor_type,
+            }).then((res) => {
+                if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
+                    const d = res.data;
+                    const data = {
+                        x: d.xValue,
+                        y: d.yValue,
+                        z: d.zValue,
+                    };
+                    resolve(data);
+                }
+                else {
+                    resolve(res.data);
+                }
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+}
+exports.default = LinkingDevice;
+
+//# sourceMappingURL=device.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/ieee754.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - ieee754.js
+*
+* Copyright (c) 2017, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2017-04-13
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingIEEE754 {
+    static read(n, slen, elen, flen) {
+        const sgn = slen ? ((n >>> 11) & 0b1) : 0; // sign
+        const max = Math.pow(2, elen) - 1; // maximum of exponent
+        const exp = (n >>> flen) & max; // exponent
+        let fra = 0; // fraction
+        for (let i = 0; i < flen; i++) {
+            if ((n >>> (flen - i - 1)) & 0b1) {
+                fra += Math.pow(2, -(i + 1));
+            }
+        }
+        if (exp === 0 && fra === 0) {
+            return 0;
+        }
+        else if (exp === 0 && fra !== 0) {
+            const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
+            const v = Math.pow(-1, sgn) * fra * Math.pow(2, (1 - m));
+            return v;
+        }
+        else if (exp >= 1 && exp <= max - 1) {
+            const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
+            const v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, (exp - m));
+            return v;
+        }
+        else if (exp === max && fra === 0) {
+            return Infinity;
+        }
+        else {
+            return NaN;
+        }
+    }
+    constructor() {
+    }
+}
+exports.default = LinkingIEEE754;
+
+//# sourceMappingURL=ieee754.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-notification.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-notification.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* ------------------------------------------------------------------
+* Constructor: LinkingServiceNotification()
+* ---------------------------------------------------------------- */
+class LinkingServiceNotification {
+    constructor() {
+        this.SERVICE_ID = 0x01;
+        this.SERVICE_NAME = "PeripheralDeviceNotification";
+        this.MESSAGE_NAME_MAP = {
+            "00": "CONFIRM_NOTIFY_CATEGORY",
+            "01": "CONFIRM_NOTIFY_CATEGORY_RESP",
+            "02": "NOTIFY_INFORMATION",
+            "03": "GET_PD_NOTIFY_DETAIL_DATA",
+            "04": "GET_PD_NOTIFY_DETAIL_DATA_RESP",
+            "05": "NOTIFY_PD_GENERAL_INFORMATION",
+            "06": "START_PD_APPLICATION",
+            "07": "START_PD_APPLICATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            CONFIRM_NOTIFY_CATEGORY: 0x00,
+            NOTIFY_INFORMATION: 0x02,
+            GET_PD_NOTIFY_DETAIL_DATA_RESP: 0x04,
+            START_PD_APPLICATION_RESP: 0x07,
+        };
+        this._NOTIFY_CATEGORY_NAME_ID_MAP = {
+            NotNotify: 0,
+            All: 1,
+            PhoneIncomingCall: 2,
+            PhoneInCall: 3,
+            PhoneIdle: 4,
+            Mail: 5,
+            Schedule: 6,
+            General: 7,
+            Etc: 8,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        let notify_cateogry_id = 0;
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                const p = this._parseParameter(pid, pvalue_buf);
+                parameters.push(this._parseParameter(pid, pvalue_buf, notify_cateogry_id));
+                if (pid === 0x04 && ("id" in p)) {
+                    notify_cateogry_id = p.id;
+                }
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf, notify_cateogory_id) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseGetStatus(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseNotifyCategory(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseNotifyCategoryID(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseGetParameterID(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseGetParameterLength(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseParameterIdList(buf, notify_cateogory_id);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseUniqueId(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseNotifyId(buf);
+        }
+        else if (pid === 0x0A) {
+            parsed = this._parseNotificationOperation(buf);
+        }
+        else if (pid === 0x0B) {
+            parsed = this._parseTittle(buf);
+        }
+        else if (pid === 0x0C) {
+            parsed = this._parseText(buf);
+        }
+        else if (pid === 0x0D) {
+            parsed = this._parseAppName(buf);
+        }
+        else if (pid === 0x0E) {
+            parsed = this._parseAppNameLocal(buf);
+        }
+        else if (pid === 0x0F) {
+            parsed = this._parseNotifyApp(buf);
+        }
+        else if (pid === 0x10) {
+            parsed = this._parseRumblingSetting(buf);
+        }
+        else if (pid === 0x11) {
+            parsed = this._parseVibrationPattern(buf);
+        }
+        else if (pid === 0x12) {
+            parsed = this._parseLedPattern(buf);
+        }
+        else if (pid === 0x13) {
+            parsed = this._parseSender(buf);
+        }
+        else if (pid === 0x14) {
+            parsed = this._parseSenderAddress(buf);
+        }
+        else if (pid === 0x15) {
+            parsed = this._parseReceiveDate(buf);
+        }
+        else if (pid === 0x16) {
+            parsed = this._parseStartDate(buf);
+        }
+        else if (pid === 0x17) {
+            parsed = this._parseEndDate(buf);
+        }
+        else if (pid === 0x18) {
+            parsed = this._parseArea(buf);
+        }
+        else if (pid === 0x19) {
+            parsed = this._parsePerson(buf);
+        }
+        else if (pid === 0x1A) {
+            parsed = this._parseMimeTypeForImage(buf);
+        }
+        else if (pid === 0x1B) {
+            parsed = this._parseMimeTypeForMedia(buf);
+        }
+        else if (pid === 0x1C) {
+            parsed = this._parseImage(buf);
+        }
+        else if (pid >= 0x1D && pid <= 0x26) {
+            parsed = this._parseContents(buf, pid);
+        }
+        else if (pid === 0x27) {
+            parsed = this._parseMedia(buf);
+        }
+        else if (pid === 0x28) {
+            parsed = this._parsePackage(buf);
+        }
+        else if (pid === 0x29) {
+            parsed = this._parseClass(buf);
+        }
+        else if (pid === 0x2A) {
+            parsed = this._parseSharingInformation(buf);
+        }
+        else if (pid === 0x2B) {
+            parsed = this._parseBeepPattern(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseGetStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "OK, request processed ,but some parameter not";
+        }
+        else if (code === 0x02) {
+            text = "Cancel";
+        }
+        else if (code === 0x03) {
+            text = "Error, failed";
+        }
+        else if (code === 0x04) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x05) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x06) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "GetStatus",
+            statusCode: code,
+            statusText: text,
+        };
+    }
+    _parseNotifyCategory(buf) {
+        const list = [];
+        const v1 = buf.readUInt8(0);
+        if (v1 & 0b00000001) {
+            list.push({
+                id: 0,
+                name: "NotNotify",
+            });
+        }
+        if (v1 & 0b00000010) {
+            list.push({
+                id: 1,
+                name: "All",
+            });
+        }
+        if (v1 & 0b00000100) {
+            list.push({
+                id: 2,
+                name: "PhoneIncomingCall",
+            });
+        }
+        if (v1 & 0b00001000) {
+            list.push({
+                id: 3,
+                name: "PhoneInCall",
+            });
+        }
+        if (v1 & 0b00010000) {
+            list.push({
+                id: 4,
+                name: "PhoneIdle",
+            });
+        }
+        if (v1 & 0b00100000) {
+            list.push({
+                id: 5,
+                name: "Mail",
+            });
+        }
+        if (v1 & 0b01000000) {
+            list.push({
+                id: 6,
+                name: "Schedule",
+            });
+        }
+        if (v1 & 0b10000000) {
+            list.push({
+                id: 7,
+                name: "General",
+            });
+        }
+        const v2 = buf.readUInt8(1);
+        if (v2 & 0b00000001) {
+            list.push({
+                id: 8,
+                name: "Etc",
+            });
+        }
+        return {
+            name: "NotifyCategory",
+            notifyCategory: list,
+        };
+    }
+    _parseNotifyCategoryID(buf) {
+        let res = null;
+        const v1 = buf.readUInt8(0);
+        const v2 = buf.readUInt8(1);
+        if (v1 & 0b00000001) {
+            res = { id: 0, text: "NotNotify" };
+        }
+        else if (v1 & 0b00000010) {
+            res = { id: 1, text: "All" };
+        }
+        else if (v1 & 0b00000100) {
+            res = { id: 2, text: "PhoneIncomingCall" };
+        }
+        else if (v1 & 0b00001000) {
+            res = { id: 3, text: "PhoneInCall" };
+        }
+        else if (v1 & 0b00010000) {
+            res = { id: 4, text: "PhoneIdle" };
+        }
+        else if (v1 & 0b00100000) {
+            res = { id: 5, text: "Mail" };
+        }
+        else if (v1 & 0b01000000) {
+            res = { id: 6, text: "Schedule" };
+        }
+        else if (v1 & 0b10000000) {
+            res = { id: 7, text: "General" };
+        }
+        else if (v2 & 0b00000001) {
+            res = { id: 8, text: "Etc" };
+        }
+        return {
+            name: "NotifyCategoryID",
+            notifyCategoryId: res.id,
+            NotifyCategoryText: res.text,
+        };
+    }
+    _parseGetParameterID(buf) {
+        return {
+            name: "GetParameterID",
+            getParameterId: buf.readUInt8(0),
+        };
+    }
+    _parseGetParameterLength(buf) {
+        return {
+            name: "GetParameterLength",
+            getParameterLength: buf.readUInt32LE(0),
+        };
+    }
+    _parseParameterIdList(buf, notify_cateogry_id) {
+        const v = buf.readUInt16LE(0);
+        const list = [];
+        if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) { // PhoneIncomingCall/PhoneInCall/PhoneIdle
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 5) { // Mail
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x13, name: "Sender" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x14, name: "SenderAddress" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x15, name: "ReceiveDate" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 6) { // Schedule
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x16, name: "StartDate" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x17, name: "EndDate" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x18, name: "Area" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x19, name: "Person" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x1D, name: "Contents1" });
+            }
+            if (v & 0b0000010000000000) {
+                list.push({ id: 0x1E, name: "Contents2" });
+            }
+            if (v & 0b0000100000000000) {
+                list.push({ id: 0x1F, name: "Contents3" });
+            }
+            if (v & 0b0001000000000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0010000000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 7) { // General
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0B, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x0C, name: "Text" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 8) { // Etc
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0D, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0E, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x1D, name: "Contents1" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x1E, name: "Contents2" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x1F, name: "Contents3" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x20, name: "Contents4" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x21, name: "Contents5" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x22, name: "Contents6" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x23, name: "Contents7" });
+            }
+            if (v & 0b0000010000000000) {
+                list.push({ id: 0x1B, name: "MimeTypeForMedia" });
+            }
+            if (v & 0b0000100000000000) {
+                list.push({ id: 0x27, name: "Media" });
+            }
+            if (v & 0b0001000000000000) {
+                list.push({ id: 0x1A, name: "MimeTypeForImage" });
+            }
+            if (v & 0b0010000000000000) {
+                list.push({ id: 0x1C, name: "Image" });
+            }
+            if (v & 0b0100000000000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b1000000000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        return {
+            name: "ParameterIdList",
+            parameterIdList: list,
+        };
+    }
+    _parseUniqueId(buf) {
+        return {
+            name: "UniqueId",
+            uniqueId: buf.readUInt16LE(0),
+        };
+    }
+    _parseNotifyId(buf) {
+        return {
+            name: "NotifyId",
+            notifyId: buf.readUInt16LE(0),
+        };
+    }
+    _parseNotificationOperation(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "AlreadyRead";
+        }
+        else if (code === 0x01) {
+            text = "Delete";
+        }
+        return {
+            name: "NotificationOperation",
+            notificationOperationCode: code,
+            notificationOperationText: text,
+        };
+    }
+    _parseTittle(buf) {
+        return {
+            name: "Tittle",
+            title: buf.toString("UTF-8"),
+        };
+    }
+    _parseText(buf) {
+        return {
+            name: "Text",
+            text: buf.toString("UTF-8"),
+        };
+    }
+    _parseAppName(buf) {
+        return {
+            name: "AppName",
+            appName: buf.toString("UTF-8"),
+        };
+    }
+    _parseAppNameLocal(buf) {
+        return {
+            name: "AppNameLocal",
+            appNameLocal: buf.toString("UTF-8"),
+        };
+    }
+    _parseNotifyApp(buf) {
+        return {
+            name: "NotifyApp",
+            notifyApp: buf.toString("UTF-8"),
+        };
+    }
+    _parseRumblingSetting(buf) {
+        const list = [];
+        const v = buf.readUInt8(0);
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "LED" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Vibration" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Beep" });
+        }
+        return {
+            name: "RumblingSetting",
+            rumblingSetting: list,
+        };
+    }
+    _parseVibrationPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "VibrationPattern",
+            vibrationPattern: list,
+        };
+    }
+    _parseLedPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "LedPattern",
+            LedPattern: list,
+        };
+    }
+    _parseSender(buf) {
+        return {
+            name: "Sender",
+            sender: buf.toString("UTF-8"),
+        };
+    }
+    _parseSenderAddress(buf) {
+        return {
+            name: "SenderAddress",
+            senderAddress: buf.toString("UTF-8"),
+        };
+    }
+    _parseReceiveDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "ReceiveDate",
+            receiveDate: dt,
+        };
+    }
+    _parseStartDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "StartDate",
+            startDate: dt,
+        };
+    }
+    _parseEndDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "EndDate",
+            endDate: dt,
+        };
+    }
+    _parseArea(buf) {
+        return {
+            name: "Area",
+            area: buf.toString("UTF-8"),
+        };
+    }
+    _parsePerson(buf) {
+        const buf_list = [];
+        let offset = 0;
+        let start = 0;
+        while (true) {
+            if (buf.readUInt8(offset) === 0x00) {
+                if (start !== offset) {
+                    buf_list.push(buf.slice(start, offset));
+                    start = offset;
+                }
+            }
+            offset++;
+            if (offset >= buf.length) {
+                if (start !== offset) {
+                    buf_list.push(buf.slice(start, offset));
+                }
+                break;
+            }
+        }
+        const list = [];
+        buf_list.forEach((b) => {
+            list.push(b.toString("UTF-8"));
+        });
+        return {
+            name: "Person",
+            person: list,
+        };
+    }
+    _parseMimeTypeForImage(buf) {
+        return {
+            name: "MimeTypeForImage",
+            mimeTypeForImage: buf.toString("UTF-8"),
+        };
+    }
+    _parseMimeTypeForMedia(buf) {
+        return {
+            name: "MimeTypeForMedia",
+            mimeTypeForMedia: buf.toString("UTF-8"),
+        };
+    }
+    _parseImage(buf) {
+        return {
+            name: "Image",
+            image: buf,
+        };
+    }
+    _parseContents(buf, pid) {
+        return {
+            name: "Contents" + pid,
+            contents: buf.toString("UTF-8"),
+        };
+    }
+    _parseMedia(buf) {
+        return {
+            name: "Media",
+            media: buf,
+        };
+    }
+    _parsePackage(buf) {
+        return {
+            name: "Package",
+            package: buf.toString("UTF-8"),
+        };
+    }
+    _parseClass(buf) {
+        return {
+            name: "Class",
+            class: buf.toString("UTF-8"),
+        };
+    }
+    _parseSharingInformation(buf) {
+        return {
+            name: "SharingInformation",
+            sharingInformation: buf.toString("UTF-8"),
+        };
+    }
+    _parseBeepPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "BeepPattern",
+            beepPattern: list,
+        };
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "CONFIRM_NOTIFY_CATEGORY") {
+            return this._createPayloadConfirmNotifyCategory(params);
+        }
+        else if (message_name === "NOTIFY_INFORMATION") {
+            return this._createPayloadNotifyInformation(params);
+        }
+        else if (message_name === "GET_PD_NOTIFY_DETAIL_DATA_RESP") {
+            return this._createPayloadGetPdNotifyDetailDataResp(params);
+        }
+        else if (message_name === "START_PD_APPLICATION_RESP") {
+            return this._createPayloadStartPdApplicationResp(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadConfirmNotifyCategory(params) {
+        const pnum_buf = Buffer.alloc(1);
+        pnum_buf.writeUInt8(0);
+        return pnum_buf;
+    }
+    _createPayloadNotifyInformation(params) {
+        /*
+            NotifyCategory   M 2 0x03
+            UniqueId         M 2 0x08
+            ParameterIdList  M 2 0x07
+            RumblingSetting  O 1 0x10
+            VibrationPattern O   0x11
+            LedPattern       O   0x12
+            BeepPattern      O   0x2B
+            */
+        /*
+            let pnum = 0;
+            let notify_category = null;
+            let notify_category_name = '';
+            if('NotifyCategory' in params) {
+                notify_category =  params['NotifyCategory'];
+                if(typeof(notify_category) === 'number') {
+                    if(notify_category >= 0 && notify_category <= 0xFF && notify_category % 1 === 0) {
+                        let hit = false;
+                        for(let name in this._NOTIFY_CATEGORY_NAME_ID_MAP) {
+                            if(this._NOTIFY_CATEGORY_NAME_ID_MAP[name] === notify_category) {
+                                hit = true;
+                                notify_category_name = name;
+                                break;
+                            }
+                        }
+                        if(hit === true) {
+                            pnum ++;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
+                } else if(typeof(notify_category) === 'string') {
+                    if(notify_category in this._NOTIFY_CATEGORY_NAME_ID_MAP) {
+                        notify_category = this._NOTIFY_CATEGORY_NAME_ID_MAP[notify_category];
+                        notify_category_name = notify_category;
+                        pnum ++;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+            let uid = null;
+            if(('UniqueId' in params) && typeof(params['UniqueId']) === 'number' && params['UniqueId'] >= 0 && params['UniqueId'] <= 0xFFFF && params['UniqueId'] % 1 === 0) {
+                uid = params['UniqueId'];
+                pnum ++;
+            } else {
+                return null;
+            }
+            // buffer list
+            let buf_list = [];
+            // Number of parameters
+            let pnum_buf = Buffer.from([pnum]);
+            buf_list.push(pnum_buf);
+            // NotifyCategory
+            if(notify_category !== null) {
+                let n = 1 << notify_category;
+                let val_buf = Buffer.alloc(2);
+                val_buf.writeUInt16LE(n);
+                buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+            }
+            // UniqueId
+            if(uid !== null) {
+                let val_buf = Buffer.alloc(2);
+                val_buf.writeUInt16LE(uid);
+                buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+            }
+            // Create a packet
+            return Buffer.concat(buf_list);
+            */
+        return null;
+    }
+    _createPayloadGetPdNotifyDetailDataResp(params) {
+        let pnum = 0;
+        let rcode = null;
+        if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+            rcode = params.ResultCode;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let uid = null;
+        if (("UniqueId" in params) && typeof (params.UniqueId) === "number" && params.UniqueId >= 0 && params.UniqueId <= 0xFF && params.UniqueId % 1 === 0) {
+            uid = params.UniqueId;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // ResultCode
+        if (rcode !== null) {
+            const val_buf = Buffer.alloc(1);
+            val_buf.writeUInt8(rcode);
+            buf_list.push(this._createPropertyBlockBuffer(0x00, val_buf));
+        }
+        // UniqueId
+        if (uid !== null) {
+            const val_buf = Buffer.alloc(2);
+            val_buf.writeUInt16LE(uid);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadStartPdApplicationResp(params) {
+        let pnum = 0;
+        let rcode;
+        if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+            rcode = params.ResultCode;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // ResultCode
+        if (rcode !== null) {
+            const val_buf = Buffer.alloc(1);
+            val_buf.writeUInt8(rcode);
+            buf_list.push(this._createPropertyBlockBuffer(0x00, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceNotification;
+
+//# sourceMappingURL=service-notification.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-operation.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-operation.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceOperation {
+    constructor() {
+        this.SERVICE_ID = 0x02;
+        this.SERVICE_NAME = "PeripheralDeviceOperation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "NOTIFY_PD_OPERATION",
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseButtonId(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseButtonId(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "Power";
+        }
+        else if (code === 0x01) {
+            text = "Return";
+        }
+        else if (code === 0x02) {
+            text = "SingleClick";
+        }
+        else if (code === 0x03) {
+            text = "Home";
+        }
+        else if (code === 0x04) {
+            text = "DoubleClick";
+        }
+        else if (code === 0x05) {
+            text = "VolumeUp";
+        }
+        else if (code === 0x06) {
+            text = "VolumeDown";
+        }
+        else if (code === 0x07) {
+            text = "LongPress";
+        }
+        else if (code === 0x08) {
+            text = "Pause";
+        }
+        else if (code === 0x09) {
+            text = "LongPressRelease";
+        }
+        else if (code === 0x0A) {
+            text = "FastForward";
+        }
+        else if (code === 0x0B) {
+            text = "ReWind";
+        }
+        else if (code === 0x0C) {
+            text = "Shutter";
+        }
+        else if (code === 0x0D) {
+            text = "Up";
+        }
+        else if (code === 0x0E) {
+            text = "Down";
+        }
+        else if (code === 0x0F) {
+            text = "Left";
+        }
+        else if (code === 0x10) {
+            text = "Right";
+        }
+        else if (code === 0x11) {
+            text = "Enter";
+        }
+        else if (code === 0x12) {
+            text = "Menu";
+        }
+        else if (code === 0x13) {
+            text = "Play";
+        }
+        else if (code === 0x14) {
+            text = "Stop";
+        }
+        return {
+            name: "ButtonId",
+            buttonId: code,
+            buttonName: text,
+        };
+    }
+}
+exports.default = LinkingServiceOperation;
+
+//# sourceMappingURL=service-operation.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-property.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-property.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceProperty {
+    constructor() {
+        this.SERVICE_ID = 0x00;
+        this.SERVICE_NAME = "PeripheralDevicePropertyInformation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_DEVICE_INFORMATION",
+            "01": "GET_DEVICE_INFORMATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_DEVICE_INFORMATION: 0x00,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseServiceList(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseDeviceId(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseDeviceUid(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseDeviceCapability(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseOriginalInformation(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseExSensorType(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseServiceList(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "PeripheralDevicePropertyInformation" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "PeripheralDeviceNotification" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "PeripheralDeviceOperation" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "PeripheralDeviceSensorInformation" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "PeripheralDeviceSettingOperation" });
+        }
+        return {
+            name: "ServiceList",
+            serviceList: list,
+        };
+    }
+    _parseDeviceId(buf) {
+        return {
+            name: "DeviceId",
+            deviceId: buf.toString("hex"),
+        };
+    }
+    _parseDeviceUid(buf) {
+        return {
+            name: "DeviceUid",
+            deviceUid: buf.toString("hex"),
+        };
+    }
+    _parseDeviceCapability(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Gyroscope" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Accelerometer" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "Orientation" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "Battery" });
+        }
+        if (v & 0b00100000) {
+            list.push({ id: 5, name: "Temperature" });
+        }
+        if (v & 0b01000000) {
+            list.push({ id: 6, name: "Humidity" });
+        }
+        if (v & 0b10000000) {
+            list.push({ id: 7, name: "Atmospheric pressure" });
+        }
+        return {
+            name: "DeviceCapability",
+            deviceCapability: list,
+        };
+    }
+    _parseOriginalInformation(buf) {
+        const type = buf.readUInt8(0);
+        let type_name = "";
+        if (type === 0x00) {
+            type_name = "AppName";
+        }
+        else if (type === 0x01) {
+            type_name = "AppNameLocal";
+        }
+        else if (type === 0x02) {
+            type_name = "AppDLURL1";
+        }
+        else if (type === 0x03) {
+            type_name = "AppDLURL2";
+        }
+        else if (type === 0x04) {
+            type_name = "AppDLURL3";
+        }
+        else if (type === 0x05) {
+            type_name = "AppExecInfo1";
+        }
+        else if (type === 0x06) {
+            type_name = "AppExecInfo2";
+        }
+        else if (type === 0x07) {
+            type_name = "AppExecInfo3";
+        }
+        else if (type === 0x08) {
+            type_name = "AppPackage";
+        }
+        return {
+            name: "OriginalInformation",
+            originalInformationCode: type,
+            originalInformationName: type_name,
+            originalInformationText: buf.slice(1).toString("UTF-8"),
+        };
+    }
+    _parseExSensorType(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "Version" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Version" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Flag" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "Button" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "Opening and closing" });
+        }
+        if (v & 0b00100000) {
+            list.push({ id: 5, name: "Human detection" });
+        }
+        if (v & 0b01000000) {
+            list.push({ id: 6, name: "Move" });
+        }
+        if (v & 0b10000000) {
+            list.push({ id: 7, name: "Illuminance" });
+        }
+        return {
+            name: "ExSensorType",
+            exSensorType: list,
+        };
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "GET_DEVICE_INFORMATION") {
+            return this._createPayloadGetDeviceInformation(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPayloadGetDeviceInformation(params) {
+        const pnum_buf = Buffer.alloc(1);
+        pnum_buf.writeUInt8(0);
+        return pnum_buf;
+    }
+}
+exports.default = LinkingServiceProperty;
+
+//# sourceMappingURL=service-property.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-sensor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-sensor.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-11-02
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/ieee754.js"));
+class LinkingServiceSensor {
+    constructor() {
+        this.SERVICE_ID = 0x03;
+        this.SERVICE_NAME = "PeripheralDeviceSensorInformation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_SENSOR_INFO",
+            "01": "GET_SENSOR_INFO_RESP",
+            "02": "SET_NOTIFY_SENSOR_INFO",
+            "03": "SET_NOTIFY_SENSOR_INFO_RESP",
+            "04": "NOTIFY_PD_SENSOR_INFO",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_SENSOR_INFO: 0x00,
+            SET_NOTIFY_SENSOR_INFO: 0x02,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        let sensor_type = 0;
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                const p = this._parseParameter(pid, pvalue_buf, sensor_type);
+                if (pid === 0x02 && ("sensorTypeCode" in p)) {
+                    sensor_type = p.sensorTypeCode;
+                }
+                parameters.push(p);
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf, sensor_type) {
+        let parsed = {};
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseSensorType(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseStatus(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseX_value(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseY_value(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseZ_value(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseX_threshold(buf);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseY_threshold(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseZ_threshold(buf);
+        }
+        else if (pid === 0x0A) {
+            parsed = this._parseOriginalData(buf, sensor_type);
+        }
+        parsed.parameterId = pid;
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseSensorType(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "Gyroscope";
+        }
+        else if (code === 0x01) {
+            text = "Accelerometer";
+        }
+        else if (code === 0x02) {
+            text = "Orientation";
+        }
+        else if (code === 0x03) {
+            text = "Battery";
+        }
+        else if (code === 0x04) {
+            text = "Temperature";
+        }
+        else if (code === 0x05) {
+            text = "Humidity";
+        }
+        else if (code === 0x06) {
+            text = "Atmospheric pressure";
+        }
+        else if (code === 0x07) {
+            text = "Opening and closing";
+        }
+        else if (code === 0x08) {
+            text = "Human detection";
+        }
+        else if (code === 0x09) {
+            text = "Move";
+        }
+        else if (code === 0x0a) {
+            text = "Illuminance";
+        }
+        return {
+            name: "SensorType",
+            sensorTypeCode: code,
+            sensorTypeText: text,
+        };
+    }
+    _parseStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OFF";
+        }
+        else if (code === 0x01) {
+            text = "ON";
+        }
+        return {
+            name: "Status",
+            statusCode: code,
+            statusText: text,
+        };
+    }
+    _parseX_value(buf) {
+        return {
+            name: "X_value",
+            xValue: buf.readFloatLE(0),
+        };
+    }
+    _parseY_value(buf) {
+        return {
+            name: "Y_value",
+            yValue: buf.readFloatLE(0),
+        };
+    }
+    _parseZ_value(buf) {
+        return {
+            name: "Z_value",
+            zValue: buf.readFloatLE(0),
+        };
+    }
+    _parseX_threshold(buf) {
+        return {
+            name: "X_threshold",
+            xThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseY_threshold(buf) {
+        return {
+            name: "Y_threshold",
+            yThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseZ_threshold(buf) {
+        return {
+            name: "Z_threshold",
+            zThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseOriginalData(buf, sensor_type) {
+        const n = buf.readUInt16LE(0) & 0b0000111111111111;
+        if (sensor_type === 0x03) { // Battery
+            return {
+                chargeRequired: (n & 0b0000100000000000) ? true : false,
+                chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (sensor_type === 0x04) { // Temperature
+            return {
+                temperature: ieee754_1.default.read(n, 1, 4, 7),
+            };
+        }
+        else if (sensor_type === 0x05) { // Humidity
+            const v = ieee754_1.default.read(n, 0, 4, 8);
+            return {
+                humidity: v,
+            };
+        }
+        else if (sensor_type === 0x06) { // Atmospheric pressure
+            return {
+                pressure: buf.readFloatLE(0),
+            };
+        }
+        else if (sensor_type === 0x07) { // Opening and closing
+            return {
+                openingStatus: (n & 0b0000100000000000) ? true : false,
+                openingCount: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (sensor_type === 0x08) { // Human detection
+            return {
+                humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
+                humanDetectionCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (sensor_type === 0x09) { // Move (Vibration Sensor)
+            return {
+                moveResponse: (n & 0b0000100000000000) ? true : false,
+                moveCount: (n & 0b0000011111111111),
+            };
+        }
+        else if (sensor_type === 0x0a) { // Illuminance
+            return {
+                illuminance: buf.readFloatLE(0),
+            };
+        }
+        else {
+            return {};
+        }
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "GET_SENSOR_INFO") {
+            return this._createPayloadGetSensorInfo(params);
+        }
+        else if (message_name === "SET_NOTIFY_SENSOR_INFO") {
+            return this._createPayloadSetNotifySensorInfo(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetSensorInfo(params) {
+        let pnum = 0;
+        let sensor_type = null;
+        if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+            sensor_type = params.SensorType;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SensorType
+        if (sensor_type !== null) {
+            const val_buf = Buffer.from([sensor_type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadSetNotifySensorInfo(params) {
+        let pnum = 0;
+        let sensor_type = null;
+        if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+            sensor_type = params.SensorType;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let status = null;
+        if (("Status" in params)) {
+            status = params.Status ? 1 : 0;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let x = null;
+        let y = null;
+        let z = null;
+        if (sensor_type <= 0x02) {
+            if ("X_threshold" in params) {
+                if (typeof (params.X_threshold) === "number") {
+                    x = params.X_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+            if ("Y_threshold" in params) {
+                if (typeof (params.Y_threshold) === "number") {
+                    y = params.Y_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+            if ("Z_threshold" in params) {
+                if (typeof (params.Z_threshold) === "number") {
+                    z = params.Z_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        let odata = null;
+        if ("OriginalData" in params) {
+            if (params.OriginalData && (params.OriginalData instanceof Buffer)) {
+                odata = params.OriginalData;
+                pnum++;
+            }
+            else {
+                return null;
+            }
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SensorType
+        if (sensor_type !== null) {
+            const val_buf = Buffer.from([sensor_type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Status
+        if (status !== null) {
+            const val_buf = Buffer.from([status]);
+            buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+        }
+        // X_threshold
+        if (x !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(x, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x07, val_buf));
+        }
+        // Y_threshold
+        if (y !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(y, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Z_threshold
+        if (z !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(z, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x09, val_buf));
+        }
+        // OriginalData
+        if (odata !== null) {
+            const val_buf = odata;
+            buf_list.push(this._createPropertyBlockBuffer(0x0A, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceSensor;
+
+//# sourceMappingURL=service-sensor.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-setting.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+* node-linking - service-setting.js
+*
+* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2019-10-24
+* ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceSetting {
+    constructor() {
+        this.SERVICE_ID = 0x04;
+        this.SERVICE_NAME = "PeripheralDeviceSettingOperation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_APP_VERSION",
+            "01": "GET_APP_VERSION_RESP",
+            "02": "CONFIRM_INSTALL_APP",
+            "03": "CONFIRM_INSTALL_APP_RESP",
+            "04": "GET_SETTING_INFORMATION",
+            "05": "GET_SETTING_INFORMATION_RESP",
+            "06": "GET_SETTING_NAME",
+            "07": "GET_SETTING_NAME_RESP",
+            "08": "SELECT_SETTING_INFORMATION",
+            "09": "SELECT_SETTING_INFORMATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_APP_VERSION: 0x00,
+            CONFIRM_INSTALL_APP: 0x02,
+            GET_SETTING_INFORMATION: 0x04,
+            GET_SETTING_NAME: 0x06,
+            SELECT_SETTING_INFORMATION: 0x08,
+        };
+        this._SETTING_NAME_TYPE_MAP = {
+            LEDColorName: 0x00,
+            LEDPatternName: 0x01,
+            VibrationPatternName: 0x02,
+            BeepPatternName: 0x03,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseSettingNameType(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseAppName(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseFileVer(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseFileSize(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseInstallConfirmStatus(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseSettingInformationRequest(buf);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseSettingInformationData(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseSettingNameData(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseSettingNameType(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "LEDColorName";
+        }
+        else if (code === 0x01) {
+            text = "LEDPatternName";
+        }
+        else if (code === 0x02) {
+            text = "VibrationPatternName";
+        }
+        else if (code === 0x03) {
+            text = "BeepPatternName";
+        }
+        return {
+            name: "SettingNameType",
+            settingNameTypeCode: code,
+            settingNameTypeText: text,
+        };
+    }
+    _parseAppName(buf) {
+        return {
+            name: "AppName",
+            appName: buf.toString("UTF-8"),
+        };
+    }
+    _parseFileVer(buf) {
+        const list = [];
+        for (let i = 0; i < buf.length; i++) {
+            list.push(buf.readUInt8(i));
+        }
+        return {
+            name: "FileVer",
+            fileVer: list.join("."),
+        };
+    }
+    _parseFileSize(buf) {
+        return {
+            name: "FileSize",
+            fileSize: buf.readUInt32LE(0),
+        };
+    }
+    _parseInstallConfirmStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, Device has been ready for install";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        else if (code === 0x06) {
+            text = "Error, Device has no space to install";
+        }
+        else if (code === 0x07) {
+            text = "Error, Requested file was already installed";
+        }
+        else if (code === 0x08) {
+            text = "Error, Newest file was already installed";
+        }
+        return {
+            name: "InstallConfirmStatus",
+            installConfirmStatusCode: code,
+            installConfirmStatusText: text,
+        };
+    }
+    _parseSettingInformationRequest(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "SETTING";
+        }
+        else if (code === 0x01) {
+            text = "START_DEMONSTRATION";
+        }
+        else if (code === 0x02) {
+            text = "STOP_DEMONSTRATION";
+        }
+        let offset = 1;
+        const settings = [];
+        while (true) {
+            const setting_code = buf.readUInt8(offset);
+            if (setting_code === 0x00) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "LED",
+                    colorMax: buf.readUInt8(offset + 1),
+                    colorNumber: buf.readUInt8(offset + 2),
+                    patternMax: buf.readUInt8(offset + 3),
+                    patternNumber: buf.readUInt8(offset + 4),
+                    duration: buf.readUInt8(offset + 5),
+                });
+                offset += 5;
+            }
+            else if (setting_code === 0x01) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "Vibration",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 3;
+            }
+            else if (setting_code === 0x02) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "Beep",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 3;
+            }
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingInformationRequest",
+            settingInformationRequestCode: code,
+            settingInformationRequestName: text,
+            settingInformationRequestData: settings,
+        };
+    }
+    _parseSettingInformationData(buf) {
+        let offset = 0;
+        const settings = [];
+        while (true) {
+            const setting_code = buf.readUInt8(offset);
+            if (setting_code === 0x00) {
+                settings.push({
+                    id: setting_code,
+                    name: "LED",
+                    colorMax: buf.readUInt8(offset + 1),
+                    colorNumber: buf.readUInt8(offset + 2),
+                    patternMax: buf.readUInt8(offset + 3),
+                    patternNumber: buf.readUInt8(offset + 4),
+                    duration: buf.readUInt8(offset + 5),
+                });
+                offset += 6;
+            }
+            else if (setting_code === 0x01) {
+                settings.push({
+                    id: setting_code,
+                    name: "Vibration",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 4;
+            }
+            else if (setting_code === 0x02) {
+                settings.push({
+                    id: setting_code,
+                    name: "Beep",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 4;
+            }
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingInformationData",
+            settingInformationData: settings,
+        };
+    }
+    _parseSettingNameData(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            const name = buf.slice(offset, offset + len - 1).toString("utf-8");
+            offset += len;
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingNameData",
+            settingNameData: list,
+        };
+    }
+    /* ------------------------------------------------------------------
+      * Method: createRequest(message_name, params)
+      * ---------------------------------------------------------------- */
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (!params || typeof (params) !== "object") {
+            params = {};
+        }
+        if (message_name === "GET_APP_VERSION") {
+            return this._createPayloadGetAppVersion(params);
+        }
+        else if (message_name === "CONFIRM_INSTALL_APP") {
+            return this._createPayloadConfirmInstallApp(params);
+        }
+        else if (message_name === "GET_SETTING_INFORMATION") {
+            return this._createPayloadGetSettingInformation(params);
+        }
+        else if (message_name === "GET_SETTING_NAME") {
+            return this._createPayloadGetSettingName(params);
+        }
+        else if (message_name === "SELECT_SETTING_INFORMATION") {
+            return this._createPayloadSelectSettingInformation(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetAppVersion(params) {
+        let pnum = 0;
+        let app_name = null;
+        if (("AppName" in params) && typeof (params.AppName) === "string") {
+            app_name = params.AppName;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // AppName
+        if (app_name !== null) {
+            const val_buf = Buffer.from(app_name);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadConfirmInstallApp(params) {
+        let pnum = 0;
+        let app_name = null;
+        if (("AppName" in params) && typeof (params.AppName) === "string") {
+            app_name = params.AppName;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let file_ver = null;
+        if (("FileVer" in params) && typeof (params.FileVer) === "string") {
+            file_ver = params.FileVer;
+            pnum++;
+        }
+        let file_size = null;
+        if (("FileSize" in params) && typeof (params.FileSize) === "number" && file_size % 1 === 0) {
+            file_size = params.FileSize;
+            pnum++;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // AppName
+        if (app_name !== null) {
+            const val_buf = Buffer.from(app_name);
+            buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+        }
+        // FileVer
+        if (file_ver !== null) {
+            const val_buf = Buffer.from(file_ver);
+            buf_list.push(this._createPropertyBlockBuffer(0x04, val_buf));
+        }
+        // FileSize
+        if (file_size !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeUInt32LE(file_size);
+            buf_list.push(this._createPropertyBlockBuffer(0x05, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetSettingInformation(params) {
+        const pnum_buf = Buffer.from([0]);
+        return pnum_buf;
+    }
+    _createPayloadGetSettingName(params) {
+        let pnum = 0;
+        let type = null;
+        if ("SettingNameType" in params) {
+            type = params.SettingNameType;
+            if (typeof (type) === "number") {
+                let setting_name = "";
+                for (const name in this._SETTING_NAME_TYPE_MAP) {
+                    if (this._SETTING_NAME_TYPE_MAP[name] === type) {
+                        setting_name = name;
+                        break;
+                    }
+                }
+                if (!setting_name) {
+                    return null;
+                }
+            }
+            else if (typeof (type) === "string") {
+                if (type in this._SETTING_NAME_TYPE_MAP) {
+                    type = this._SETTING_NAME_TYPE_MAP[type];
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        else {
+            return null;
+        }
+        pnum++;
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SettingNameType
+        if (type !== null) {
+            const val_buf = Buffer.from([type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadSelectSettingInformation(params) {
+        let pnum = 0;
+        let code = null;
+        if (("SettingInformationRequest" in params) && typeof (params.SettingInformationRequest) === "object") {
+            const req = params.SettingInformationRequest;
+            if (("requestCode" in req) && typeof (req.requestCode) === "number" && req.requestCode >= 0 && req.requestCode <= 0x02 && req.requestCode % 1 === 0) {
+                code = req.requestCode;
+            }
+            else if (("requestName" in req) && typeof (req.requestName) === "string") {
+                const name = req.requestName;
+                if (name === "SETTING") {
+                    code = 0x00;
+                }
+                else if (name === "START_DEMONSTRATION") {
+                    code = 0x01;
+                }
+                else if (name === "STOP_DEMONSTRATION") {
+                    code = 0x02;
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
+        pnum++;
+        let settings = null;
+        if ("SettingInformationData" in params) {
+            if (Array.isArray(params.SettingInformationData)) {
+                settings = [];
+                for (let i = 0; i < params.SettingInformationData.length; i++) {
+                    const s = params.SettingInformationData[i];
+                    let scode = null;
+                    let sname = "";
+                    if (("settingCode" in s) && typeof (s.settingCode) === "number" && s.settingCode >= 0x00 && s.settingCode <= 0x02 && s.settingCode % 1 === 0) {
+                        scode = s.settingCode;
+                        if (scode === 0x00) {
+                            sname = "LED";
+                        }
+                        else if (scode === 0x01) {
+                            sname = "Vibration";
+                        }
+                        else if (scode === 0x02) {
+                            sname = "Beep";
+                        }
+                    }
+                    else if (("settingName" in s) && typeof (s.settingName) === "string") {
+                        sname = s.settingName;
+                        if (sname === "LED") {
+                            scode = 0x00;
+                        }
+                        else if (sname === "Vibration") {
+                            scode = 0x01;
+                        }
+                        else if (sname === "Beep") {
+                            scode = 0x02;
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    if (!(sname in this._device.settings)) {
+                        return null;
+                    }
+                    let cn = null;
+                    let cm = null;
+                    if (scode === 0x00) { // LED
+                        if ("colorNumber" in s) {
+                            if (typeof (s.colorNumber) === "number" && s.colorNumber >= 0 && s.colorNumber <= this._device.settings.LED.colorMax && s.colorNumber % 1 === 0) {
+                                cn = s.colorNumber;
+                            }
+                            else {
+                                return null;
+                            }
+                        }
+                        else {
+                            cn = this._device.settings.LED.colorNumber;
+                        }
+                        cm = this._device.settings.LED.colorMax;
+                    }
+                    let pn = null;
+                    if ("patternNumber" in s) {
+                        if (typeof (s.patternNumber) === "number" && s.patternNumber >= 0 && s.patternNumber <= this._device.settings[sname].patternMax && s.patternNumber % 1 === 0) {
+                            pn = s.patternNumber;
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        pn = this._device.settings[sname].patternNumber;
+                    }
+                    const pm = this._device.settings[sname].patternMax;
+                    let dur = null;
+                    if ("duration" in s) {
+                        if (typeof (s.duration) === "number" && s.duration >= 0 && s.duration <= 0xFF && s.duration % 1 === 0) {
+                            dur = s.duration;
+                            if (dur <= 0x05) {
+                                dur = 0x05;
+                            }
+                            else if (dur <= 0x0A) {
+                                dur = 0x0A;
+                            }
+                            else if (dur <= 0x1E) {
+                                dur = 0x1E;
+                            }
+                            else if (dur <= 0x3C) {
+                                dur = 0x3C;
+                            }
+                            else if (dur <= 0xB4) {
+                                dur = 0xB4;
+                            }
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        dur = this._device.settings[sname].duration;
+                    }
+                    settings.push({
+                        settingCode: scode,
+                        colorNumber: cn,
+                        colorMax: cm,
+                        patternNumber: pn,
+                        patternMax: pm,
+                        duration: dur,
+                    });
+                }
+            }
+            else {
+                return null;
+            }
+            if (settings.length === 0) {
+                settings = null;
+            }
+            else {
+                pnum++;
+            }
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SettingInformationRequest
+        if (code !== null) {
+            const val_buf = Buffer.from([code]);
+            buf_list.push(this._createPropertyBlockBuffer(0x07, val_buf));
+        }
+        // SettingInformationData
+        if (settings !== null) {
+            const val_buf_list = [];
+            settings.forEach((s) => {
+                val_buf_list.push(Buffer.from([s.settingCode]));
+                if (s.colorNumber !== null) {
+                    val_buf_list.push(Buffer.from([s.colorMax, s.colorNumber]));
+                }
+                val_buf_list.push(Buffer.from([s.patternMax, s.patternNumber]));
+                val_buf_list.push(Buffer.from([s.duration]));
+            });
+            const val_buf = Buffer.concat(val_buf_list);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceSetting;
+
+//# sourceMappingURL=service-setting.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+* node-linking - service.js
+*
+* Copyright (c) 2017, Futomi Hatano, All rights reserved.
+* Released under the MIT license
+* Date: 2017-04-15
+* ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const service_notification_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-notification.js"));
+const service_operation_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-operation.js"));
+const service_property_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-property.js"));
+const service_sensor_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-sensor.js"));
+const service_setting_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-setting.js"));
+class LinkingService {
+    constructor() {
+        this._services = {
+            "00": new service_property_js_1.default(),
+            "01": new service_notification_1.default(),
+            "02": new service_operation_js_1.default(),
+            "03": new service_sensor_js_1.default(),
+            "04": new service_setting_js_1.default(),
+        };
+        this._write_message_name_map = {
+            // PeripheralDevicePropertyInformation Service
+            GET_DEVICE_INFORMATION: "00",
+            // PeripheralDeviceNotification Service
+            CONFIRM_NOTIFY_CATEGORY: "01",
+            NOTIFY_INFORMATION: "01",
+            // PeripheralDeviceSensorInformation Service
+            GET_SENSOR_INFO: "03",
+            SET_NOTIFY_SENSOR_INFO: "03",
+            // PeripheralDeviceSettingOperation Service
+            GET_APP_VERSION: "04",
+            CONFIRM_INSTALL_APP: "04",
+            GET_SETTING_INFORMATION: "04",
+            GET_SETTING_NAME: "04",
+            SELECT_SETTING_INFORMATION: "04",
+        };
+        this._device_info = null;
+    }
+    setDeviceInfo(device_info) {
+        for (const code in this._services) {
+            this._services[code].setDeviceInfo(device_info);
+        }
+        this._device_info = device_info;
+    }
+    parseResponse(buf) {
+        const service_id_hex = buf.slice(1, 2).toString("hex");
+        const service = this._services[service_id_hex];
+        if (!service) {
+            return null;
+        }
+        const service_id = buf.readUInt8(1);
+        const msg_id = buf.readUInt16LE(2);
+        // let msg_id = buf.readUInt8(2);
+        const msg_id_hex = buf.slice(2, 3).toString("hex");
+        const pnum = buf.readUInt8(4);
+        const payload_buf = buf.slice(5, buf.length);
+        const parameters = service.parsePayload(pnum, payload_buf);
+        const parsed = {
+            buffer: buf,
+            serviceId: service_id,
+            serviceName: service.SERVICE_NAME,
+            messageId: msg_id,
+            messageName: service.MESSAGE_NAME_MAP[msg_id_hex],
+            parameters,
+        };
+        return parsed;
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._write_message_name_map)) {
+            return null;
+        }
+        const sid = this._write_message_name_map[message_name];
+        const service = this._services[sid];
+        const buf = service.createRequest(message_name, params);
+        return buf;
+    }
+    isSupportedWriteMessageName(message_name) {
+        if (!message_name) {
+            return false;
+        }
+        let sid = this._write_message_name_map[message_name];
+        if (!sid) {
+            return false;
+        }
+        sid = parseInt(sid, 10);
+        const services = (this._device_info && this._device_info.services) ? this._device_info.services : null;
+        if (!services) {
+            return false;
+        }
+        let res = false;
+        for (const k in services) {
+            if (services[k] === sid) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+}
+exports.default = LinkingService;
+
+//# sourceMappingURL=service.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Camera/ArduCAMMini/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.ArduCAMMini
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class ArduCAMMini {
+    constructor() {
+        this.keys = [
+            "cs",
+            "mosi",
+            "miso",
+            "sclk",
+            "gnd",
+            "vcc",
+            "sda",
+            "scl",
+            "spi",
+            "i2c",
+            "spi_frequency",
+            "spi_drive",
+            "module_version",
+        ];
+        this.requiredKeys = ["cs"];
+        this.ioKeys = this.keys;
+        this.displayName = "Cam";
+        this.regs = {
+            ARDUCHIP_TEST1: 0x00,
+            ARDUCHIP_MODE: 0x02,
+            ARDUCHIP_FIFO: 0x04,
+            BURST_FIFO_READ: 0x3c,
+            ARDUCHIP_TRIG: 0x41,
+            FIFO_SIZE1: 0x42,
+            FIFO_SIZE2: 0x43,
+            FIFO_SIZE3: 0x44,
+        };
+        this.configs = {
+            OV2640_JPEG_INIT: [
+                [0xff, 0x00],
+                [0x2c, 0xff],
+                [0x2e, 0xdf],
+                [0xff, 0x01],
+                [0x3c, 0x32],
+                [0x11, 0x04],
+                [0x09, 0x02],
+                [0x04, 0x28],
+                [0x13, 0xe5],
+                [0x14, 0x48],
+                [0x2c, 0x0c],
+                [0x33, 0x78],
+                [0x3a, 0x33],
+                [0x3b, 0xfb],
+                [0x3e, 0x00],
+                [0x43, 0x11],
+                [0x16, 0x10],
+                [0x39, 0x92],
+                [0x35, 0xda],
+                [0x22, 0x1a],
+                [0x37, 0xc3],
+                [0x23, 0x00],
+                [0x34, 0xc0],
+                [0x36, 0x1a],
+                [0x06, 0x88],
+                [0x07, 0xc0],
+                [0x0d, 0x87],
+                [0x0e, 0x41],
+                [0x4c, 0x00],
+                [0x48, 0x00],
+                [0x5b, 0x00],
+                [0x42, 0x03],
+                [0x4a, 0x81],
+                [0x21, 0x99],
+                [0x24, 0x40],
+                [0x25, 0x38],
+                [0x26, 0x82],
+                [0x5c, 0x00],
+                [0x63, 0x00],
+                [0x61, 0x70],
+                [0x62, 0x80],
+                [0x7c, 0x05],
+                [0x20, 0x80],
+                [0x28, 0x30],
+                [0x6c, 0x00],
+                [0x6d, 0x80],
+                [0x6e, 0x00],
+                [0x70, 0x02],
+                [0x71, 0x94],
+                [0x73, 0xc1],
+                [0x12, 0x40],
+                [0x17, 0x11],
+                [0x18, 0x43],
+                [0x19, 0x00],
+                [0x1a, 0x4b],
+                [0x32, 0x09],
+                [0x37, 0xc0],
+                [0x4f, 0x60],
+                [0x50, 0xa8],
+                [0x6d, 0x00],
+                [0x3d, 0x38],
+                [0x46, 0x3f],
+                [0x4f, 0x60],
+                [0x0c, 0x3c],
+                [0xff, 0x00],
+                [0xe5, 0x7f],
+                [0xf9, 0xc0],
+                [0x41, 0x24],
+                [0xe0, 0x14],
+                [0x76, 0xff],
+                [0x33, 0xa0],
+                [0x42, 0x20],
+                [0x43, 0x18],
+                [0x4c, 0x00],
+                [0x87, 0xd5],
+                [0x88, 0x3f],
+                [0xd7, 0x03],
+                [0xd9, 0x10],
+                [0xd3, 0x82],
+                [0xc8, 0x08],
+                [0xc9, 0x80],
+                [0x7c, 0x00],
+                [0x7d, 0x00],
+                [0x7c, 0x03],
+                [0x7d, 0x48],
+                [0x7d, 0x48],
+                [0x7c, 0x08],
+                [0x7d, 0x20],
+                [0x7d, 0x10],
+                [0x7d, 0x0e],
+                [0x90, 0x00],
+                [0x91, 0x0e],
+                [0x91, 0x1a],
+                [0x91, 0x31],
+                [0x91, 0x5a],
+                [0x91, 0x69],
+                [0x91, 0x75],
+                [0x91, 0x7e],
+                [0x91, 0x88],
+                [0x91, 0x8f],
+                [0x91, 0x96],
+                [0x91, 0xa3],
+                [0x91, 0xaf],
+                [0x91, 0xc4],
+                [0x91, 0xd7],
+                [0x91, 0xe8],
+                [0x91, 0x20],
+                [0x92, 0x00],
+                [0x93, 0x06],
+                [0x93, 0xe3],
+                [0x93, 0x05],
+                [0x93, 0x05],
+                [0x93, 0x00],
+                [0x93, 0x04],
+                [0x93, 0x00],
+                [0x93, 0x00],
+                [0x93, 0x00],
+                [0x93, 0x00],
+                [0x93, 0x00],
+                [0x93, 0x00],
+                [0x93, 0x00],
+                [0x96, 0x00],
+                [0x97, 0x08],
+                [0x97, 0x19],
+                [0x97, 0x02],
+                [0x97, 0x0c],
+                [0x97, 0x24],
+                [0x97, 0x30],
+                [0x97, 0x28],
+                [0x97, 0x26],
+                [0x97, 0x02],
+                [0x97, 0x98],
+                [0x97, 0x80],
+                [0x97, 0x00],
+                [0x97, 0x00],
+                [0xc3, 0xed],
+                [0xa4, 0x00],
+                [0xa8, 0x00],
+                [0xc5, 0x11],
+                [0xc6, 0x51],
+                [0xbf, 0x80],
+                [0xc7, 0x10],
+                [0xb6, 0x66],
+                [0xb8, 0xa5],
+                [0xb7, 0x64],
+                [0xb9, 0x7c],
+                [0xb3, 0xaf],
+                [0xb4, 0x97],
+                [0xb5, 0xff],
+                [0xb0, 0xc5],
+                [0xb1, 0x94],
+                [0xb2, 0x0f],
+                [0xc4, 0x5c],
+                [0xc0, 0x64],
+                [0xc1, 0x4b],
+                [0x8c, 0x00],
+                [0x86, 0x3d],
+                [0x50, 0x00],
+                [0x51, 0xc8],
+                [0x52, 0x96],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x00],
+                [0x5a, 0xc8],
+                [0x5b, 0x96],
+                [0x5c, 0x00],
+                [0xd3, 0x00],
+                [0xc3, 0xed],
+                [0x7f, 0x00],
+                [0xda, 0x00],
+                [0xe5, 0x1f],
+                [0xe1, 0x67],
+                [0xe0, 0x00],
+                [0xdd, 0x7f],
+                [0x05, 0x00],
+                //
+                [0x12, 0x40],
+                [0xd3, 0x04],
+                [0xc0, 0x16],
+                [0xc1, 0x12],
+                [0x8c, 0x00],
+                [0x86, 0x3d],
+                [0x50, 0x00],
+                [0x51, 0x2c],
+                [0x52, 0x24],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x00],
+                [0x5a, 0x2c],
+                [0x5b, 0x24],
+                [0x5c, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_YUV422: [
+                [0xff, 0x00],
+                [0x05, 0x00],
+                [0xda, 0x10],
+                [0xd7, 0x03],
+                [0xdf, 0x00],
+                [0x33, 0x80],
+                [0x3c, 0x40],
+                [0xe1, 0x77],
+                [0x00, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_JPEG: [
+                [0xe0, 0x14],
+                [0xe1, 0x77],
+                [0xe5, 0x1f],
+                [0xd7, 0x03],
+                [0xda, 0x10],
+                [0xe0, 0x00],
+                [0xff, 0x01],
+                [0x04, 0x08],
+                [0xff, 0xff],
+            ],
+            OV2640_160x120_JPEG: [
+                [0xff, 0x01],
+                [0x12, 0x40],
+                [0x17, 0x11],
+                [0x18, 0x43],
+                [0x19, 0x00],
+                [0x1a, 0x4b],
+                [0x32, 0x09],
+                [0x4f, 0xca],
+                [0x50, 0xa8],
+                [0x5a, 0x23],
+                [0x6d, 0x00],
+                [0x39, 0x12],
+                [0x35, 0xda],
+                [0x22, 0x1a],
+                [0x37, 0xc3],
+                [0x23, 0x00],
+                [0x34, 0xc0],
+                [0x36, 0x1a],
+                [0x06, 0x88],
+                [0x07, 0xc0],
+                [0x0d, 0x87],
+                [0x0e, 0x41],
+                [0x4c, 0x00],
+                [0xff, 0x00],
+                [0xe0, 0x04],
+                [0xc0, 0x64],
+                [0xc1, 0x4b],
+                [0x86, 0x35],
+                [0x50, 0x92],
+                [0x51, 0xc8],
+                [0x52, 0x96],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x00],
+                [0x57, 0x00],
+                [0x5a, 0x28],
+                [0x5b, 0x1e],
+                [0x5c, 0x00],
+                [0xe0, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_176x144_JPEG: [
+                [0xff, 0x01],
+                [0x12, 0x40],
+                [0x17, 0x11],
+                [0x18, 0x43],
+                [0x19, 0x00],
+                [0x1a, 0x4b],
+                [0x32, 0x09],
+                [0x4f, 0xca],
+                [0x50, 0xa8],
+                [0x5a, 0x23],
+                [0x6d, 0x00],
+                [0x39, 0x12],
+                [0x35, 0xda],
+                [0x22, 0x1a],
+                [0x37, 0xc3],
+                [0x23, 0x00],
+                [0x34, 0xc0],
+                [0x36, 0x1a],
+                [0x06, 0x88],
+                [0x07, 0xc0],
+                [0x0d, 0x87],
+                [0x0e, 0x41],
+                [0x4c, 0x00],
+                [0xff, 0x00],
+                [0xe0, 0x04],
+                [0xc0, 0x64],
+                [0xc1, 0x4b],
+                [0x86, 0x35],
+                [0x50, 0x92],
+                [0x51, 0xc8],
+                [0x52, 0x96],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x00],
+                [0x57, 0x00],
+                [0x5a, 0x2c],
+                [0x5b, 0x24],
+                [0x5c, 0x00],
+                [0xe0, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_320x240_JPEG: [
+                [0xff, 0x01],
+                [0x12, 0x40],
+                [0x17, 0x11],
+                [0x18, 0x43],
+                [0x19, 0x00],
+                [0x1a, 0x4b],
+                [0x32, 0x09],
+                [0x4f, 0xca],
+                [0x50, 0xa8],
+                [0x5a, 0x23],
+                [0x6d, 0x00],
+                [0x39, 0x12],
+                [0x35, 0xda],
+                [0x22, 0x1a],
+                [0x37, 0xc3],
+                [0x23, 0x00],
+                [0x34, 0xc0],
+                [0x36, 0x1a],
+                [0x06, 0x88],
+                [0x07, 0xc0],
+                [0x0d, 0x87],
+                [0x0e, 0x41],
+                [0x4c, 0x00],
+                [0xff, 0x00],
+                [0xe0, 0x04],
+                [0xc0, 0x64],
+                [0xc1, 0x4b],
+                [0x86, 0x35],
+                [0x50, 0x89],
+                [0x51, 0xc8],
+                [0x52, 0x96],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x00],
+                [0x57, 0x00],
+                [0x5a, 0x50],
+                [0x5b, 0x3c],
+                [0x5c, 0x00],
+                [0xe0, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_352x288_JPEG: [
+                [0xff, 0x01],
+                [0x12, 0x40],
+                [0x17, 0x11],
+                [0x18, 0x43],
+                [0x19, 0x00],
+                [0x1a, 0x4b],
+                [0x32, 0x09],
+                [0x4f, 0xca],
+                [0x50, 0xa8],
+                [0x5a, 0x23],
+                [0x6d, 0x00],
+                [0x39, 0x12],
+                [0x35, 0xda],
+                [0x22, 0x1a],
+                [0x37, 0xc3],
+                [0x23, 0x00],
+                [0x34, 0xc0],
+                [0x36, 0x1a],
+                [0x06, 0x88],
+                [0x07, 0xc0],
+                [0x0d, 0x87],
+                [0x0e, 0x41],
+                [0x4c, 0x00],
+                [0xff, 0x00],
+                [0xe0, 0x04],
+                [0xc0, 0x64],
+                [0xc1, 0x4b],
+                [0x86, 0x35],
+                [0x50, 0x89],
+                [0x51, 0xc8],
+                [0x52, 0x96],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x00],
+                [0x57, 0x00],
+                [0x5a, 0x58],
+                [0x5b, 0x48],
+                [0x5c, 0x00],
+                [0xe0, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_640x480_JPEG: [
+                [0xff, 0x01],
+                [0x11, 0x01],
+                [0x12, 0x00],
+                [0x17, 0x11],
+                [0x18, 0x75],
+                [0x32, 0x36],
+                [0x19, 0x01],
+                [0x1a, 0x97],
+                [0x03, 0x0f],
+                [0x37, 0x40],
+                [0x4f, 0xbb],
+                [0x50, 0x9c],
+                [0x5a, 0x57],
+                [0x6d, 0x80],
+                [0x3d, 0x34],
+                [0x39, 0x02],
+                [0x35, 0x88],
+                [0x22, 0x0a],
+                [0x37, 0x40],
+                [0x34, 0xa0],
+                [0x06, 0x02],
+                [0x0d, 0xb7],
+                [0x0e, 0x01],
+                [0xff, 0x00],
+                [0xe0, 0x04],
+                [0xc0, 0xc8],
+                [0xc1, 0x96],
+                [0x86, 0x3d],
+                [0x50, 0x89],
+                [0x51, 0x90],
+                [0x52, 0x2c],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x88],
+                [0x57, 0x00],
+                [0x5a, 0xa0],
+                [0x5b, 0x78],
+                [0x5c, 0x00],
+                [0xd3, 0x04],
+                [0xe0, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_800x600_JPEG: [
+                [0xff, 0x01],
+                [0x11, 0x01],
+                [0x12, 0x00],
+                [0x17, 0x11],
+                [0x18, 0x75],
+                [0x32, 0x36],
+                [0x19, 0x01],
+                [0x1a, 0x97],
+                [0x03, 0x0f],
+                [0x37, 0x40],
+                [0x4f, 0xbb],
+                [0x50, 0x9c],
+                [0x5a, 0x57],
+                [0x6d, 0x80],
+                [0x3d, 0x34],
+                [0x39, 0x02],
+                [0x35, 0x88],
+                [0x22, 0x0a],
+                [0x37, 0x40],
+                [0x34, 0xa0],
+                [0x06, 0x02],
+                [0x0d, 0xb7],
+                [0x0e, 0x01],
+                [0xff, 0x00],
+                [0xe0, 0x04],
+                [0xc0, 0xc8],
+                [0xc1, 0x96],
+                [0x86, 0x35],
+                [0x50, 0x89],
+                [0x51, 0x90],
+                [0x52, 0x2c],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x88],
+                [0x57, 0x00],
+                [0x5a, 0xc8],
+                [0x5b, 0x96],
+                [0x5c, 0x00],
+                [0xd3, 0x02],
+                [0xe0, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_1024x768_JPEG: [
+                [0xff, 0x01],
+                [0x11, 0x01],
+                [0x12, 0x00],
+                [0x17, 0x11],
+                [0x18, 0x75],
+                [0x32, 0x36],
+                [0x19, 0x01],
+                [0x1a, 0x97],
+                [0x03, 0x0f],
+                [0x37, 0x40],
+                [0x4f, 0xbb],
+                [0x50, 0x9c],
+                [0x5a, 0x57],
+                [0x6d, 0x80],
+                [0x3d, 0x34],
+                [0x39, 0x02],
+                [0x35, 0x88],
+                [0x22, 0x0a],
+                [0x37, 0x40],
+                [0x34, 0xa0],
+                [0x06, 0x02],
+                [0x0d, 0xb7],
+                [0x0e, 0x01],
+                [0xff, 0x00],
+                [0xc0, 0xc8],
+                [0xc1, 0x96],
+                [0x8c, 0x00],
+                [0x86, 0x3d],
+                [0x50, 0x00],
+                [0x51, 0x90],
+                [0x52, 0x2c],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x88],
+                [0x5a, 0x00],
+                [0x5b, 0xc0],
+                [0x5c, 0x01],
+                [0xd3, 0x02],
+                [0xff, 0xff],
+            ],
+            OV2640_1280x960_JPEG: [
+                [0xff, 0x01],
+                [0x11, 0x01],
+                [0x12, 0x00],
+                [0x17, 0x11],
+                [0x18, 0x75],
+                [0x32, 0x36],
+                [0x19, 0x01],
+                [0x1a, 0x97],
+                [0x03, 0x0f],
+                [0x37, 0x40],
+                [0x4f, 0xbb],
+                [0x50, 0x9c],
+                [0x5a, 0x57],
+                [0x6d, 0x80],
+                [0x3d, 0x34],
+                [0x39, 0x02],
+                [0x35, 0x88],
+                [0x22, 0x0a],
+                [0x37, 0x40],
+                [0x34, 0xa0],
+                [0x06, 0x02],
+                [0x0d, 0xb7],
+                [0x0e, 0x01],
+                [0xff, 0x00],
+                [0xe0, 0x04],
+                [0xc0, 0xc8],
+                [0xc1, 0x96],
+                [0x86, 0x3d],
+                [0x50, 0x00],
+                [0x51, 0x90],
+                [0x52, 0x2c],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x88],
+                [0x57, 0x00],
+                [0x5a, 0x40],
+                [0x5b, 0xf0],
+                [0x5c, 0x01],
+                [0xd3, 0x02],
+                [0xe0, 0x00],
+                [0xff, 0xff],
+            ],
+            OV2640_1600x1200_JPEG: [
+                [0xff, 0x01],
+                [0x11, 0x01],
+                [0x12, 0x00],
+                [0x17, 0x11],
+                [0x18, 0x75],
+                [0x32, 0x36],
+                [0x19, 0x01],
+                [0x1a, 0x97],
+                [0x03, 0x0f],
+                [0x37, 0x40],
+                [0x4f, 0xbb],
+                [0x50, 0x9c],
+                [0x5a, 0x57],
+                [0x6d, 0x80],
+                [0x3d, 0x34],
+                [0x39, 0x02],
+                [0x35, 0x88],
+                [0x22, 0x0a],
+                [0x37, 0x40],
+                [0x34, 0xa0],
+                [0x06, 0x02],
+                [0x0d, 0xb7],
+                [0x0e, 0x01],
+                [0xff, 0x00],
+                [0xe0, 0x04],
+                [0xc0, 0xc8],
+                [0xc1, 0x96],
+                [0x86, 0x3d],
+                [0x50, 0x00],
+                [0x51, 0x90],
+                [0x52, 0x2c],
+                [0x53, 0x00],
+                [0x54, 0x00],
+                [0x55, 0x88],
+                [0x57, 0x00],
+                [0x5a, 0x90],
+                [0x5b, 0x2c],
+                [0x5c, 0x05],
+                [0xd3, 0x02],
+                [0xe0, 0x00],
+                [0xff, 0xff],
+            ],
+        };
+    }
+    static info() {
+        return {
+            name: "ArduCAMMini",
+        };
+    }
+    wired(obniz) {
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_cs = obniz.getIO(this.params.cs);
+        this.io_cs.output(true);
+        obniz.wait(100);
+        this.sensor_addr = 0x30; // i2c
+        this.params.module_version = this.params.module_version || 0;
+        this.params.mode = this.params.mode || "master";
+        this.params.drive = this.params.spi_drive || "3v";
+        this.params.frequency = this.params.spi_frequency || 4 * 1000 * 1000;
+        this.params.clk = this.params.sclk;
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+        this.params.sda = this.params.sda;
+        this.params.scl = this.params.scl;
+        this.params.clock = this.params.clock || 100 * 1000;
+        this.params.mode = "master";
+        this.params.pull = "5v";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+    }
+    spi_write(addr, byteData) {
+        const data = [];
+        data.push(addr);
+        data.push(byteData);
+        this.io_cs.output(false);
+        this.spi.write(data);
+        this.io_cs.output(true);
+    }
+    spi_readWait(addr) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = [];
+            data.push(addr);
+            data.push(0x00);
+            this.io_cs.output(false);
+            const recv = yield this.spi.writeWait(data);
+            this.io_cs.output(true);
+            return recv[1];
+        });
+    }
+    i2c_byte_write(addr, byteData) {
+        this.i2c.write(this.sensor_addr, [addr, byteData]);
+    }
+    i2c_regs_write(regs) {
+        for (let i = 0; i < regs.length; i++) {
+            this.i2c.write(this.sensor_addr, regs[i]);
+        }
+    }
+    spi_write_reg(addr, byteData) {
+        this.spi_write(addr | 0x80, byteData);
+    }
+    spi_read_regWait(addr) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.spi_readWait(addr & 0x7f);
+        });
+    }
+    spi_pingpongWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const testVal = 0x55;
+            this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
+            const val = yield this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
+            if (val !== testVal) {
+                throw new Error("spi bus fail");
+            }
+        });
+    }
+    setMode(mode) {
+        const modes = {
+            MCU2LCD: 0x00,
+            CAM2LCD: 0x01,
+            LCD2MCU: 0x02,
+        };
+        if (typeof modes[mode] !== "number") {
+            throw new Error("unknown mode. options are " + modes);
+        }
+        this.spi_write_reg(this.regs.ARDUCHIP_MODE, modes[mode]);
+    }
+    getChipIdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.sensor_addr, [0x0a]);
+            const val0 = yield this.i2c.readWait(this.sensor_addr, 1);
+            this.i2c.write(this.sensor_addr, [0x0b]);
+            const val1 = yield this.i2c.readWait(this.sensor_addr, 1);
+            return (val0[0] << 8) + val1[0];
+        });
+    }
+    init() {
+        this.i2c_byte_write(0xff, 0x01);
+        this.i2c_byte_write(0x12, 0x80);
+        this.obniz.wait(100);
+        this.i2c_regs_write(this.configs.OV2640_JPEG_INIT);
+        this.i2c_regs_write(this.configs.OV2640_YUV422);
+        this.i2c_regs_write(this.configs.OV2640_JPEG);
+        this.i2c_byte_write(0xff, 0x01);
+        this.i2c_byte_write(0x15, 0x00);
+        this.setSize("320x240");
+    }
+    startupWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.spi_pingpongWait();
+            this.setMode("MCU2LCD");
+            const chipid = yield this.getChipIdWait();
+            if (chipid !== 0x2642 && chipid !== 0x2641) {
+                throw new Error("unknown chip " + chipid);
+            }
+            this.init();
+        });
+    }
+    takeWait(size) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof size === "string" && this._size !== size) {
+                this.setSize(size);
+                this.obniz.wait(1000);
+            }
+            this.flushFIFO();
+            this.flushFIFO();
+            this.startCapture();
+            while (true) {
+                if (yield this.isCaptureDoneWait()) {
+                    break;
+                }
+            }
+            return yield this.readFIFOWait();
+        });
+    }
+    setSize(string) {
+        if (this._size === string) {
+            return;
+        }
+        const map = {
+            "160x120": this.configs.OV2640_160x120_JPEG,
+            "176x144": this.configs.OV2640_176x144_JPEG,
+            "320x240": this.configs.OV2640_320x240_JPEG,
+            "352x288": this.configs.OV2640_352x288_JPEG,
+            "640x480": this.configs.OV2640_640x480_JPEG,
+            "800x600": this.configs.OV2640_800x600_JPEG,
+            "1024x768": this.configs.OV2640_1024x768_JPEG,
+            "1280x960": this.configs.OV2640_1280x960_JPEG,
+            "1600x1200": this.configs.OV2640_1600x1200_JPEG,
+        };
+        if (map[string]) {
+            this._size = string;
+            this.i2c_regs_write(map[string]);
+        }
+        else {
+            throw new Error("unsupported size options are " + Object.keys(map));
+        }
+    }
+    updateFIFO(data) {
+        //  FIFO_CLEAR_MASK    		0x01
+        //  FIFO_START_MASK    		0x02
+        //  FIFO_RDPTR_RST_MASK     0x10
+        //  FIFO_WRPTR_RST_MASK     0x20
+        this.spi_write_reg(this.regs.ARDUCHIP_FIFO, data);
+    }
+    flushFIFO() {
+        this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x01);
+    }
+    readFIFOLengthWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const len1 = yield this.spi_read_regWait(this.regs.FIFO_SIZE1);
+            const len2 = yield this.spi_read_regWait(this.regs.FIFO_SIZE2);
+            const len3 = (yield this.spi_read_regWait(this.regs.FIFO_SIZE3)) & 0x07;
+            return ((len3 << 16) | (len2 << 8) | len1) & 0x07ffff;
+        });
+    }
+    startCapture() {
+        this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x02);
+    }
+    isCaptureDoneWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const CAP_DONE_MASK = 0x08;
+            const val = yield this.spi_read_regWait(this.regs.ARDUCHIP_TRIG);
+            return val & CAP_DONE_MASK ? true : false;
+        });
+    }
+    readFIFOWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // get length of image data
+            const length = yield this.readFIFOLengthWait();
+            // start bust
+            this.io_cs.output(false);
+            this.spi.write([this.regs.BURST_FIFO_READ]);
+            if (this.params.module_version === 0) {
+                this.spi.write([0xff]); // dummy read
+            }
+            const buf = [];
+            while (buf.length < length) {
+                let mustRead = length - buf.length;
+                if (mustRead > 1024) {
+                    mustRead = 1024;
+                }
+                const arr = new Array(mustRead);
+                arr.fill(0);
+                const sliced = yield this.spi.writeWait(arr);
+                buf.push(...sliced);
+            }
+            // end burst
+            this.io_cs.output(true);
+            return buf;
+        });
+    }
+    arrayToBase64(array) {
+        return Buffer.from(array).toString("base64");
+    }
+}
+exports.default = ArduCAMMini;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Camera/JpegSerialCam/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.JpegSerialCam
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class JpegSerialCam {
+    constructor() {
+        this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
+        this.requiredKeys = ["cam_tx", "cam_rx"];
+        this.ioKeys = this.keys;
+        this.displayName = "Jcam";
+        this.displayIoNames = { cam_tx: "camTx", cam_rx: "camRx" };
+    }
+    static info() {
+        return {
+            name: "JpegSerialCam",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.my_tx = this.params.cam_rx;
+        this.my_rx = this.params.cam_tx;
+        this.obniz.getIO(this.my_tx).drive("3v");
+        this.uart = this.obniz.getFreeUart();
+    }
+    _drainUntil(uart, search, recv) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!recv) {
+                recv = [];
+            }
+            while (true) {
+                const readed = uart.readBytes();
+                recv = recv.concat(readed);
+                const tail = this._seekTail(search, recv);
+                if (tail >= 0) {
+                    recv.splice(0, tail);
+                    return recv;
+                }
+                yield this.obniz.wait(10);
+            }
+        });
+    }
+    _seekTail(search, src) {
+        let f = 0;
+        for (let i = 0; i < src.length; i++) {
+            if (src[i] === search[f]) {
+                f++;
+                if (f === search.length) {
+                    return i + 1;
+                }
+            }
+            else {
+                f = 0;
+            }
+        }
+        return -1;
+    }
+    arrayToBase64(array) {
+        return Buffer.from(array).toString("base64");
+    }
+    startWait(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!obj) {
+                obj = {};
+            }
+            this.uart.start({
+                tx: this.my_tx,
+                rx: this.my_rx,
+                baud: obj.baud || 38400,
+            });
+            this.obniz.display.setPinName(this.my_tx, "JpegSerialCam", "camRx");
+            this.obniz.display.setPinName(this.my_rx, "JpegSerialCam", "camTx");
+            yield this.obniz.wait(2500);
+        });
+    }
+    resetwait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.uart.send([0x56, 0x00, 0x26, 0x00]);
+            yield this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
+            yield this.obniz.wait(2500);
+        });
+    }
+    setSizeWait(resolution) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let val;
+            if (resolution === "640x480") {
+                val = 0x00;
+            }
+            else if (resolution === "320x240") {
+                val = 0x11;
+            }
+            else if (resolution === "160x120") {
+                val = 0x22;
+            }
+            else {
+                throw new Error("unsupported size");
+            }
+            this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
+            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+            yield this.resetwait();
+        });
+    }
+    setCompressibilityWait(compress) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const val = Math.floor((compress / 100) * 0xff);
+            this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+            yield this.resetwait();
+        });
+    }
+    setBaudWait(baud) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let val;
+            switch (baud) {
+                case 9600:
+                    val = [0xae, 0xc8];
+                    break;
+                case 19200:
+                    val = [0x56, 0xe4];
+                    break;
+                case 38400:
+                    val = [0x2a, 0xf2];
+                    break;
+                case 57600:
+                    val = [0x1c, 0x4c];
+                    break;
+                case 115200:
+                    val = [0x0d, 0xa6];
+                    break;
+                default:
+                    throw new Error("invalid baud rate");
+            }
+            this.uart.send([
+                0x56,
+                0x00,
+                0x31,
+                0x06,
+                0x04,
+                0x02,
+                0x00,
+                0x08,
+                val[0],
+                val[1],
+            ]);
+            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+            // await this.obniz.wait(1000);
+            yield this.startWait({
+                baud,
+            });
+        });
+    }
+    takeWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const uart = this.uart;
+            // console.log("stop a photo")
+            uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
+            yield this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+            // console.log("take a photo")
+            uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
+            yield this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+            // console.log("read length")
+            uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
+            let recv = yield this._drainUntil(uart, [
+                0x76,
+                0x00,
+                0x34,
+                0x00,
+                0x04,
+                0x00,
+                0x00,
+            ]); // ack
+            let XX;
+            let YY;
+            while (true) {
+                const readed = uart.readBytes();
+                // console.log(recv);
+                recv = recv.concat(readed);
+                if (recv.length >= 2) {
+                    XX = recv[0];
+                    YY = recv[1];
+                    break;
+                }
+                yield this.obniz.wait(1000);
+            }
+            const databytes = XX * 256 + YY;
+            // console.log("image: " + databytes + " Bytes");
+            // const high = (databytes >> 8) & 0xff;
+            // const low = databytes & 0xff;
+            // console.log("start reading image")
+            uart.send([
+                0x56,
+                0x00,
+                0x32,
+                0x0c,
+                0x00,
+                0x0a,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                XX,
+                YY,
+                0x00,
+                0xff,
+            ]);
+            recv = yield this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+            // console.log("reading...");
+            while (true) {
+                const readed = uart.readBytes();
+                recv = recv.concat(readed);
+                // console.log(readed.length);
+                if (recv.length >= databytes) {
+                    break;
+                }
+                yield this.obniz.wait(10);
+            }
+            // console.log("done");
+            recv = recv.splice(0, databytes); // remove tail
+            recv = recv.concat([0xff, 0xd9]);
+            return recv;
+        });
+    }
+}
+exports.default = JpegSerialCam;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/ColorSensor/PT550/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.PT550
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class PT550 {
+    constructor() {
+        this.keys = ["signal", "vcc", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "PT550",
+        };
+    }
+    onchange(value) {
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.signal = this.obniz.getAD(this.params.signal);
+        this.signal.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.signal.getWait();
+        });
+    }
+}
+exports.default = PT550;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/ColorSensor/S11059/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.S11059
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class S11059 {
+    constructor() {
+        this.keys = ["vcc", "sda", "scl", "i2c", "gnd"];
+        this.requiredKeys = [];
+        this.address = 0x2a;
+        this.regAdrs = {
+            ctrl: 0x00,
+            manualTiming: 0x01,
+            sensorRed: 0x03,
+        };
+    }
+    static info() {
+        return {
+            name: "S11059",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.obniz.wait(100);
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(100);
+    }
+    init(gain, intergerTime) {
+        this.i2c.write(this.address, [this.regAdrs.ctrl, 0x80]); // Reset
+        const val = (gain << 3) | intergerTime;
+        this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
+    }
+    getVal() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [this.regAdrs.sensorRed]);
+            const ret = yield this.i2c.readWait(this.address, 8);
+            const level = [0, 0, 0, 0];
+            level[0] = (ret[0] << 8) | ret[1];
+            level[1] = (ret[2] << 8) | ret[3];
+            level[2] = (ret[4] << 8) | ret[5];
+            level[3] = (ret[6] << 8) | ret[7];
+            return level;
+        });
+    }
+}
+exports.default = S11059;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/7SegmentLED/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.7SegmentLED
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class _7SegmentLED {
+    constructor() {
+        this.keys = [
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "dp",
+            "common",
+            "commonType",
+        ];
+        this.requiredKeys = ["a", "b", "c", "d", "e", "f", "g"];
+        this.digits = [
+            0x3f,
+            0x06,
+            0x5b,
+            0x4f,
+            0x66,
+            0x6d,
+            0x7d,
+            0x07,
+            0x7f,
+            0x6f,
+            0x6f,
+        ];
+        this.displayIoNames = {
+            a: "a",
+            b: "b",
+            c: "c",
+            d: "d",
+            e: "e",
+            f: "f",
+            g: "g",
+            dp: "dp",
+            common: "com",
+        };
+        this.ios = [];
+        this.isCathodeCommon = false;
+    }
+    static info() {
+        return {
+            name: "7SegmentLED",
+        };
+    }
+    wired(obniz) {
+        function getIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return io;
+                }
+            }
+            return obniz.getIO(io);
+        }
+        function isValidIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return true;
+                }
+            }
+            return obniz.isValidIO(io);
+        }
+        this.obniz = obniz;
+        this.ios = [];
+        this.ios.push(getIO(this.params.a));
+        this.ios.push(getIO(this.params.b));
+        this.ios.push(getIO(this.params.c));
+        this.ios.push(getIO(this.params.d));
+        this.ios.push(getIO(this.params.e));
+        this.ios.push(getIO(this.params.f));
+        this.ios.push(getIO(this.params.g));
+        this.isCathodeCommon = this.params.commonType === "anode" ? false : true;
+        for (let i = 0; i < this.ios.length; i++) {
+            this.ios[i].output(this.isCathodeCommon ? false : true);
+        }
+        if (isValidIO(this.params.dp)) {
+            const dp = getIO(this.params.dp);
+            dp.output(false);
+            this.dp = dp;
+        }
+        if (isValidIO(this.params.common)) {
+            this.common = getIO(this.params.common);
+            this.on();
+        }
+    }
+    print(data) {
+        if (typeof data === "number") {
+            data = Math.floor(data);
+            data = data % 10;
+            for (let i = 0; i < 7; i++) {
+                if (this.ios[i]) {
+                    let val = this.digits[data] & (1 << i) ? true : false;
+                    if (!this.isCathodeCommon) {
+                        val = !val;
+                    }
+                    this.ios[i].output(val);
+                }
+            }
+            this.on();
+        }
+    }
+    printRaw(data) {
+        if (typeof data === "number") {
+            for (let i = 0; i < 7; i++) {
+                if (this.ios[i]) {
+                    let val = data & (1 << i) ? true : false;
+                    if (!this.isCathodeCommon) {
+                        val = !val;
+                    }
+                    this.ios[i].output(val);
+                }
+            }
+            this.on();
+        }
+    }
+    dpState(show) {
+        if (this.dp) {
+            this.dp.output(this.isCathodeCommon ? show : !show);
+        }
+    }
+    on() {
+        if (this.common) {
+            this.common.output(this.isCathodeCommon ? false : true);
+        }
+    }
+    off() {
+        if (this.common) {
+            this.common.output(this.isCathodeCommon ? true : false);
+        }
+    }
+}
+exports.default = _7SegmentLED;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/7SegmentLEDArray/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.7SegmentLEDArray
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class _7SegmentLEDArray {
+    constructor() {
+        this.identifier = "" + new Date().getTime();
+        this.keys = ["segments"];
+        this.requiredKeys = this.keys;
+    }
+    static info() {
+        return {
+            name: "7SegmentLEDArray",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.segments = this.params.segments;
+    }
+    print(data) {
+        if (typeof data === "number") {
+            data = Math.floor(data);
+            const print = (index) => {
+                let val = data;
+                for (let i = 0; i < this.segments.length; i++) {
+                    if (index === i) {
+                        this.segments[i].print(val % 10);
+                    }
+                    else {
+                        this.segments[i].off();
+                    }
+                    val = val / 10;
+                }
+            };
+            const animations = [];
+            for (let i = 0; i < this.segments.length; i++) {
+                animations.push({
+                    duration: 3,
+                    state: print,
+                });
+            }
+            this.obniz.io.animation(this.identifier, "loop", animations);
+        }
+    }
+    on() {
+        this.obniz.io.animation(this.identifier, "resume");
+    }
+    off() {
+        this.obniz.io.animation(this.identifier, "pause");
+        for (let i = 0; i < this.segments.length; i++) {
+            this.segments[i].off();
+        }
+    }
+}
+exports.default = _7SegmentLEDArray;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/7SegmentLED_MAX7219/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.7SegmentLED_MAX7219
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class _7SegmentLED_MAX7219 {
+    constructor() {
+        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
+        this.requiredKeys = ["din", "cs", "clk"];
+    }
+    static info() {
+        return {
+            name: "7SegmentLED_MAX7219",
+        };
+    }
+    wired(obniz) {
+        this.cs = obniz.getIO(this.params.cs);
+        // logich high must 3.5v <=
+        if (obniz.isValidIO(this.params.vcc)) {
+            obniz.getIO(this.params.vcc).output(true);
+        }
+        if (obniz.isValidIO(this.params.gnd)) {
+            obniz.getIO(this.params.gnd).output(false);
+        }
+        // max 10Mhz but motor driver can't
+        this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
+        this.params.mode = "master";
+        this.params.mosi = this.params.din;
+        this.params.drive = "3v";
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+        // reset a onece
+        this.cs.output(true);
+        this.cs.output(false);
+        this.cs.output(true);
+    }
+    init(numberOfDisplays, digits) {
+        this.numOfDisp = numberOfDisplays;
+        this.digits = digits;
+        this.writeAllDisp([0x09, 0xff]); // Code B decode for digits 7-0
+        this.writeAllDisp([0x0a, 0x05]); // brightness 11/32 0 to f
+        this.writeAllDisp([0x0b, digits - 1]);
+        this.writeAllDisp([0x0c, 0x01]); // Shutdown to normal operation
+        this.writeAllDisp([0x0f, 0x00]);
+        this.obniz.wait(10);
+    }
+    clear(disp) {
+        for (let i = 0; i < this.digits; i++) {
+            this.writeOneDisp(disp, [i + 1, 0x0f]);
+        }
+    }
+    clearAll() {
+        for (let i = 0; i < this.numOfDisp; i++) {
+            for (let j = 0; j < this.digits; j++) {
+                this.writeAllDisp([j + 1, 0x0f]);
+            }
+        }
+    }
+    test() {
+        this.writeAllDisp([0x0f, 0x00]); // test command
+    }
+    brightness(display, value) {
+        this.writeOneDisp(display, [0x0a, value]); // 0 to 15;
+    }
+    brightnessAll(value) {
+        this.writeAllDisp([0x0a, value]); // 0 to 15;
+    }
+    writeAllDisp(data) {
+        for (let i = 0; i < this.numOfDisp; i++) {
+            this.writeOneDisp(i, data);
+        }
+    }
+    writeOneDisp(disp, data) {
+        this.cs.output(false);
+        for (let i = 0; i < disp; i++) {
+            this.spi.write([0x00, 0x00]);
+        }
+        this.spi.write(data);
+        for (let i = 0; i < this.numOfDisp - (disp + 1); i++) {
+            this.spi.write([0x00, 0x00]);
+        }
+        this.cs.output(true);
+    }
+    setNumber(display, digit, number, dp) {
+        if (digit >= 0 && digit <= this.digits - 1) {
+            this.writeOneDisp(display, [digit + 1, this.encodeBCD(number, dp)]);
+        }
+    }
+    encodeBCD(decimal, dp) {
+        const dpreg = (dp === true) ? 0x80 : 0x00;
+        if (decimal >= 0 && decimal <= 9) {
+            return decimal | dpreg;
+        }
+        else if (decimal === "-" || decimal === 10) {
+            return 0x0a | dpreg;
+        }
+        else if (decimal === "e" || decimal === 11) {
+            return 0x0b | dpreg;
+        }
+        else if (decimal === "h" || decimal === 12) {
+            return 0x0c | dpreg;
+        }
+        else if (decimal === "l" || decimal === 13) {
+            return 0x0d | dpreg;
+        }
+        else if (decimal === "p" || decimal === 14) {
+            return 0x0e | dpreg;
+        }
+        else if (decimal === "on") {
+            // light all segments
+            return 0x88;
+        }
+        else if (decimal === "off") {
+            return 0x0f | dpreg;
+        }
+        else {
+            return 0x0f | dpreg;
+        }
+    }
+}
+exports.default = _7SegmentLED_MAX7219;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/MatrixLED_HT16K33/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MatrixLED_HT16K33 {
+    constructor() {
+        this.width = 0;
+        this.height = 0;
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
+        this.requiredKeys = [];
+        this.command = {};
+        this.command.blink = 0x80;
+        this.command.brightness = 0xE0;
+        this.blink_mode = {};
+        this.blink_mode.display_on = 0x01;
+        this.blink_mode.blink_off = 0x00;
+        this.blink_mode.blink_2hz = 0x01;
+        this.blink_mode.blink_1hz = 0x02;
+        this.blink_mode.blink_halfhz = 0x03;
+        this.vram = [];
+    }
+    static info() {
+        return {
+            name: "MatrixLED_HT16K33",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.address = this.params.address || 0x70;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.params.clock = this.params.clock || 400 * 1000;
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(1000);
+    }
+    init(width) {
+        console.log(width);
+        this.width = width;
+        this.height = 8; // IC static setting
+        this.prepareVram(width, this.height);
+        this.i2c.write(this.address, [0x21]);
+        this.blinkRate(this.blink_mode.blink_off);
+        this.brightness(15);
+        this.obniz.wait(10);
+    }
+    blinkRate(val) {
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 3) {
+            val = 3;
+        }
+        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
+    }
+    brightness(val) {
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 15) {
+            val = 15;
+        }
+        this.i2c.write(this.address, [this.command.brightness | val]);
+    }
+    clear() {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0x00;
+        }
+        this.writeVram();
+    }
+    draw(ctx) {
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                const pos = i * this.height * 4 + j * 4;
+                const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
+                this.vram[i] = this.vram[i] << 1;
+                if (brightness > 0x7f) {
+                    this.vram[i] |= 0x1;
+                }
+            }
+            this.vram[i] = this.vram[i] << 16 - this.width;
+        }
+        this.writeVram();
+    }
+    prepareVram(width, height) {
+        this.vram = [];
+        for (let i = 0; i < height; i++) {
+            this.vram.push(0);
+        }
+    }
+    writeVram() {
+        const data = [0x00];
+        for (let i = 0; i < 8; i++) {
+            data.push((this.vram[i] >> 8) & 0xFF);
+            data.push(this.vram[i] & 0xFF);
+        }
+        this.i2c.write(this.address, data);
+    }
+}
+exports.default = MatrixLED_HT16K33;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/MatrixLED_MAX7219/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MatrixLED_MAX7219
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class MatrixLED_MAX7219 {
+    constructor() {
+        this.width = 0;
+        this.height = 0;
+        this.vram = [[]];
+        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
+        this.requiredKeys = ["din", "cs", "clk"];
+    }
+    static info() {
+        return {
+            name: "MatrixLED_MAX7219",
+        };
+    }
+    wired(obniz) {
+        this.cs = obniz.getIO(this.params.cs);
+        // logich high must 3.5v <=
+        if (obniz.isValidIO(this.params.vcc)) {
+            obniz.getIO(this.params.vcc).output(true);
+        }
+        if (obniz.isValidIO(this.params.gnd)) {
+            obniz.getIO(this.params.gnd).output(false);
+        }
+        // max 10Mhz but motor driver can't
+        this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
+        this.params.mode = "master";
+        this.params.mosi = this.params.din;
+        this.params.drive = "3v";
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+        // reset a onece
+        this.cs.output(true);
+        this.cs.output(false);
+        this.cs.output(true);
+    }
+    init(width, height) {
+        this.width = width;
+        this.height = height;
+        this.preparevram(width, height);
+        this.initModule();
+    }
+    initModule() {
+        this.write([0x09, 0x00]); // Code B decode for digits 3-0 No decode for digits 7-4
+        this.write([0x0a, 0x05]); // brightness 9/32 0 to f
+        this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
+        this.write([0x0c, 0x01]); // Shutdown to normal operation
+        this.write([0x0f, 0x00]);
+        this.passingCommands();
+        this.obniz.wait(10);
+    }
+    test() {
+        this.write([0x0f, 0x00]); // test command
+        this.passingCommands();
+    }
+    passingCommands() {
+        for (let i = 8; i < this.width; i += 8) {
+            // this needed for number of unit
+            this.write([0x00, 0x00]);
+        }
+    }
+    brightness(val) {
+        this.write([0x0a, val]); // 0 to 15;
+        this.passingCommands();
+    }
+    preparevram(width, height) {
+        this.vram = [];
+        for (let i = 0; i < height; i++) {
+            const dots = new Array(width / 8);
+            for (let ii = 0; ii < dots.length; ii++) {
+                dots[ii] = 0x00;
+            }
+            this.vram.push(dots);
+        }
+    }
+    write(data) {
+        this.cs.output(false);
+        this.spi.write(data);
+        this.cs.output(true);
+    }
+    writeVram() {
+        for (let line_num = 0; line_num < this.height; line_num++) {
+            const addr = line_num + 1;
+            const line = this.vram[line_num];
+            const data = [];
+            for (let col = 0; col < line.length; col++) {
+                data.push(addr);
+                data.push(line[col]);
+            }
+            this.write(data);
+        }
+    }
+    clear() {
+        for (let line_num = 0; line_num < this.height; line_num++) {
+            const line = this.vram[line_num];
+            for (let col = 0; col < line.length; col++) {
+                this.vram[line_num][col] = 0x00;
+            }
+            this.writeVram();
+        }
+    }
+    draw(ctx) {
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+            const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+            const index = Math.floor(i / 4);
+            const line = Math.floor(index / this.width);
+            const col = Math.floor((index - line * this.width) / 8);
+            const bits = Math.floor(index - line * this.width) % 8;
+            if (bits === 0) {
+                this.vram[line][col] = 0x00;
+            }
+            if (brightness > 0x7f) {
+                this.vram[line][col] |= 0x80 >> bits;
+            }
+        }
+        this.writeVram();
+    }
+}
+exports.default = MatrixLED_MAX7219;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/ST7735S/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.ST7735S
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class ST7735S {
+    constructor() {
+        this.debugprint = false;
+        this.width = 0;
+        this.height = 0;
+        this.x_offset = 0;
+        this.y_offset = 0;
+        this.writeBuffer = [];
+        this.keys = ["sclk", "mosi", "cs", "res", "dc"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "ST7735S",
+        };
+    }
+    wired(obniz) {
+        this.debugprint = false;
+        this.obniz = obniz;
+        this.io_dc = obniz.getIO(this.params.dc);
+        this.io_res = obniz.getIO(this.params.res);
+        this.io_cs = obniz.getIO(this.params.cs);
+        this.params.frequency = 16 * 1000 * 1000; // 16MHz
+        this.params.mode = "master";
+        this.params.clk = this.params.sclk;
+        this.params.mosi = this.params.mosi;
+        this.params.drive = "3v";
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+        this.io_dc.output(true);
+        this.io_cs.output(false);
+        this.width = ST7735S_TFTWIDTH;
+        this.height = ST7735S_TFTHEIGHT;
+        this.rotation = 0;
+        this.x_offset = 26;
+        this.y_offset = 2;
+        this.writeBuffer = []; // 1024bytes bufferring
+        this._setPresetColor();
+        this.init();
+    }
+    print_debug(v) {
+        if (this.debugprint) {
+            console.log("SainSmartTFT18LCD: " + Array.prototype.slice.call(arguments).join(""));
+        }
+    }
+    _deadSleep(waitMsec) {
+        const startMsec = new Date();
+        while (new Date() - startMsec < waitMsec) {
+        }
+    }
+    _reset() {
+        this.io_res.output(false);
+        this._deadSleep(10);
+        this.io_res.output(true);
+        this._deadSleep(10);
+    }
+    writeCommand(cmd) {
+        this.io_dc.output(false);
+        this.io_cs.output(false);
+        this.spi.write([cmd]);
+        this.io_cs.output(true);
+    }
+    writeData(data) {
+        this.io_dc.output(true);
+        this.io_cs.output(false);
+        this.spi.write(data);
+        this.io_cs.output(true);
+    }
+    write(cmd, data) {
+        if (data.length === 0) {
+            return;
+        }
+        this.writeCommand(cmd);
+        this.writeData(data);
+    }
+    asyncwait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.spi.writeWait([0x00]);
+        });
+    }
+    _writeFlush() {
+        while (this.writeBuffer.length > 0) {
+            if (this.writeBuffer.length > 1024) {
+                const data = this.writeBuffer.slice(0, 1024);
+                this.writeData(data);
+                this.writeBuffer.splice(0, 1024);
+            }
+            else {
+                if (this.writeBuffer.length > 0) {
+                    this.writeData(this.writeBuffer);
+                }
+                this.writeBuffer = [];
+            }
+        }
+    }
+    _writeBuffer(data) {
+        if (data && data.length > 0) {
+            this.writeBuffer = this.writeBuffer.concat(data);
+        }
+        else {
+            this._writeFlush();
+        }
+    }
+    color16(r, g, b) {
+        //  1st byte  (r & 0xF8 | g >> 5)
+        //  2nd byte  (g & 0xFC << 3 | b >> 3)
+        return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | (b >> 3);
+    }
+    complementaryColor16(color) {
+        const r = (color & 0xf800) >> 8;
+        const g = (color & 0x7e0) >> 3;
+        const b = (color & 0x1f) << 3;
+        const x = Math.max(r, g, b) + Math.min(r, g, b);
+        return this.color16(x - r, x - g, x - b);
+    }
+    reverseColor16(color) {
+        const r = (color & 0xf800) >> 8;
+        const g = (color & 0x7e0) >> 3;
+        const b = (color & 0x1f) << 3;
+        const x = 0xff;
+        return this.color16(x - r, x - g, x - b);
+    }
+    _initG() {
+        // initialize display
+        this.writeCommand(ST7735_SWRESET);
+        this.obniz.wait(150);
+        this.writeCommand(ST7735_SLPOUT); // Sleep out & booster on
+        this.obniz.wait(500);
+        this.write(ST7735_FRMCTR1, [0x01, 0x2c, 0x2d]);
+        this.write(ST7735_FRMCTR2, [0x01, 0x2c, 0x2d]);
+        this.write(ST7735_FRMCTR3, [0x01, 0x2c, 0x2d, 0x01, 0x2c, 0x2d]);
+        this.write(ST7735_INVCTR, [0x07]);
+        this.write(ST7735_PWCTR1, [0xa2, 0x02, 0x84]);
+        this.write(ST7735_PWCTR2, [0xc5]);
+        this.write(ST7735_PWCTR3, [0x0a, 0x00]);
+        this.write(ST7735_PWCTR4, [0x8a, 0x2a]);
+        this.write(ST7735_PWCTR5, [0x8a, 0xee]);
+        this.write(ST7735_VMCTR1, [0x0e]);
+        this.writeCommand(ST7735_INVOFF);
+        this.write(ST7735_MADCTL, [0xc8]);
+        this.write(ST7735_COLMOD, [0x05]);
+        this.write(ST7735_CASET, [0x00, 0x00, 0x00, 0x7f]);
+        this.write(ST7735_RASET, [0x00, 0x00, 0x00, 0x9f]);
+        this.writeCommand(ST7735_INVON);
+        this.write(ST7735_GMCTRP1, [
+            0x02,
+            0x1c,
+            0x07,
+            0x12,
+            0x37,
+            0x32,
+            0x29,
+            0x2d,
+            0x29,
+            0x25,
+            0x2b,
+            0x39,
+            0x00,
+            0x01,
+            0x03,
+            0x10,
+        ]);
+        this.write(ST7735_GMCTRN1, [
+            0x03,
+            0x1d,
+            0x07,
+            0x06,
+            0x2e,
+            0x2c,
+            0x29,
+            0x2d,
+            0x2e,
+            0x2e,
+            0x37,
+            0x3f,
+            0x00,
+            0x00,
+            0x02,
+            0x10,
+        ]);
+    }
+    init() {
+        this._reset();
+        this._initG();
+        this.setDisplayOn();
+        this.setRotation(0);
+    }
+    setDisplayOn() {
+        this.writeCommand(ST7735_DISPON);
+    }
+    setDisplayOff() {
+        this.writeCommand(ST7735_DISPOFF);
+    }
+    setDisplay(on) {
+        if (on === true) {
+            this.setDisplayOn();
+        }
+        else {
+            this.setDisplayOff();
+        }
+    }
+    setInversionOn() {
+        this.writeCommand(ST7735_INVON);
+    }
+    setInversionOff() {
+        this.writeCommand(ST7735_INVOFF);
+    }
+    setInversion(inversion) {
+        if (inversion === true) {
+            this.setInversionOn();
+        }
+        else {
+            this.setInversionOff();
+        }
+    }
+    setRotation(m) {
+        const MADCTL_MY = 0x80;
+        const MADCTL_MX = 0x40;
+        const MADCTL_MV = 0x20;
+        // const MADCTL_ML = 0x10;
+        const MADCTL_RGB = 0x00; // always RGB, never BGR
+        // const MADCTL_MH = 0x04;
+        let data = [];
+        this.rotation = m % 4; // can't be higher than 3
+        switch (this.rotation) {
+            case 0:
+                data = [MADCTL_MX | MADCTL_MY | MADCTL_RGB];
+                this.width = ST7735S_TFTWIDTH;
+                this.height = ST7735S_TFTHEIGHT;
+                break;
+            case 1:
+                data = [MADCTL_MY | MADCTL_MV | MADCTL_RGB];
+                this.width = ST7735S_TFTHEIGHT;
+                this.height = ST7735S_TFTWIDTH;
+                break;
+            case 2:
+                data = [MADCTL_RGB];
+                this.width = ST7735S_TFTWIDTH;
+                this.height = ST7735S_TFTHEIGHT;
+                break;
+            case 3:
+                data = [MADCTL_MX | MADCTL_MV | MADCTL_RGB];
+                this.width = ST7735S_TFTHEIGHT;
+                this.height = ST7735S_TFTWIDTH;
+                break;
+        }
+        this.write(ST7735_MADCTL, data);
+        this.setAddrWindow(0, 0, this.width - 1, this.height - 1);
+    }
+    setAddrWindow(x0, y0, x1, y1) {
+        this.print_debug(`setAddrWindow: (x0: ${x0}, y0: ${y0}) - (x1: ${x1}, y1: ${y1})`);
+        if (x0 < 0) {
+            x0 = 0;
+        }
+        if (y0 < 0) {
+            y0 = 0;
+        }
+        if (x1 < 0) {
+            x1 = 0;
+        }
+        if (y1 < 0) {
+            y1 = 0;
+        }
+        if (this.rotation === 0 || this.rotation === 2) {
+            x0 = x0 + this.x_offset;
+            x1 = x1 + this.x_offset;
+            y0 = y0 + this.y_offset;
+            y1 = y1 + this.y_offset;
+        }
+        else {
+            x0 = x0 + this.y_offset;
+            x1 = x1 + this.y_offset;
+            y0 = y0 + this.x_offset;
+            y1 = y1 + this.x_offset;
+        }
+        // column addr set
+        this.write(ST7735_CASET, [0x00, x0, 0x00, x1]); // XSTART-XEND
+        // row addr set
+        this.write(ST7735_RASET, [0x00, y0, 0x00, y1]); // YSTART-YEND
+        // write to RAM
+        this.writeCommand(ST7735_RAMWR);
+        this.writeBuffer = [];
+    }
+    // __swap(a, b) { let t = a; a = b; b = t; }
+    fillScreen(color) {
+        this.fillRect(0, 0, this.width, this.height, color);
+    }
+    fillRect(x, y, width, height, color) {
+        if (x >= this.width || y >= this.height) {
+            return;
+        }
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
+        }
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
+        }
+        const pixels = this._color2pixels(width, height, color);
+        this.rawBound16(x, y, width, height, pixels, true);
+    }
+    drawRect(x, y, width, height, color) {
+        this.drawHLine(x, y, width, color);
+        this.drawHLine(x, y + height - 1, width, color);
+        this.drawVLine(x, y, height, color);
+        this.drawVLine(x + width - 1, y, height, color);
+    }
+    drawCircle(center_x, center_y, radius, color) {
+        let f = 1 - radius;
+        let ddF_x = 1;
+        let ddF_y = -2 * radius;
+        let x = 0;
+        let y = radius;
+        this.drawPixel(center_x, center_y + radius, color);
+        this.drawPixel(center_x, center_y - radius, color);
+        this.drawPixel(center_x + radius, center_y, color);
+        this.drawPixel(center_x - radius, center_y, color);
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            this.drawPixel(center_x + x, center_y + y, color);
+            this.drawPixel(center_x - x, center_y + y, color);
+            this.drawPixel(center_x + x, center_y - y, color);
+            this.drawPixel(center_x - x, center_y - y, color);
+            this.drawPixel(center_x + y, center_y + x, color);
+            this.drawPixel(center_x - y, center_y + x, color);
+            this.drawPixel(center_x + y, center_y - x, color);
+            this.drawPixel(center_x - y, center_y - x, color);
+        }
+    }
+    fillCircle(center_x, center_y, radius, color) {
+        this.drawVLine(center_x, center_y - radius, 2 * radius + 1, color);
+        this._fillCircleHelper(center_x, center_y, radius, 3, 0, color);
+    }
+    _fillCircleHelper(x0, y0, r, cornername, delta, color) {
+        let f = 1 - r;
+        let ddF_x = 1;
+        let ddF_y = -2 * r;
+        let x = 0;
+        let y = r;
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            if (cornername & 0x1) {
+                this.drawVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
+                this.drawVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
+            }
+            if (cornername & 0x2) {
+                this.drawVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
+                this.drawVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
+            }
+        }
+    }
+    drawRoundRect(x, y, width, height, round, color) {
+        this.drawHLine(x + round, y, width - 2 * round, color); // Top
+        this.drawHLine(x + round, y + height - 1, width - 2 * round, color); // Bottom
+        this.drawVLine(x, y + round, height - 2 * round, color); // Left
+        this.drawVLine(x + width - 1, y + round, height - 2 * round, color); // Right
+        this._drawCircleHelper(x + round, y + round, round, 1, color);
+        this._drawCircleHelper(x + width - round - 1, y + round, round, 2, color);
+        this._drawCircleHelper(x + width - round - 1, y + height - round - 1, round, 4, color);
+        this._drawCircleHelper(x + round, y + height - round - 1, round, 8, color);
+    }
+    fillRoundRect(x, y, width, height, round, color) {
+        this.fillRect(x + round, y, width - 2 * round, height, color);
+        this._fillCircleHelper(x + width - round - 1, y + round, round, 1, height - 2 * round - 1, color);
+        this._fillCircleHelper(x + round, y + round, round, 2, height - 2 * round - 1, color);
+    }
+    drawTriangle(x0, y0, x1, y1, x2, y2, color) {
+        this.drawLine(x0, y0, x1, y1, color);
+        this.drawLine(x1, y1, x2, y2, color);
+        this.drawLine(x2, y2, x0, y0, color);
+    }
+    fillTriangle(x0, y0, x1, y1, x2, y2, color) {
+        let a;
+        let b;
+        let y;
+        let last;
+        // Sort coordinates by Y order (y2 >= y1 >= y0)
+        if (y0 > y1) {
+            y1 = [y0, (y0 = y1)][0]; // this._swap(y0, y1);
+            x1 = [x0, (x0 = x1)][0]; // this._swap(x0, x1);
+        }
+        if (y1 > y2) {
+            y2 = [y1, (y1 = y2)][0]; // this._swap(y2, y1);
+            x2 = [x1, (x1 = x2)][0]; // this._swap(x2, x1);
+        }
+        if (y0 > y1) {
+            y1 = [y0, (y0 = y1)][0]; // this._swap(y0, y1);
+            x1 = [x0, (x0 = x1)][0]; // this._swap(x0, x1);
+        }
+        if (y0 === y2) {
+            // Handle awkward all-on-same-line case as its own thing
+            a = b = x0;
+            if (x1 < a) {
+                a = x1;
+            }
+            else if (x1 > b) {
+                b = x1;
+            }
+            if (x2 < a) {
+                a = x2;
+            }
+            else if (x2 > b) {
+                b = x2;
+            }
+            this.drawHLine(a, y0, b - a + 1, color);
+            return;
+        }
+        const dx01 = x1 - x0;
+        const dy01 = y1 - y0;
+        const dx02 = x2 - x0;
+        const dy02 = y2 - y0;
+        const dx12 = x2 - x1;
+        const dy12 = y2 - y1;
+        let sa = 0;
+        let sb = 0;
+        if (y1 === y2) {
+            last = y1;
+        }
+        else {
+            last = y1 - 1;
+        } // skip it
+        for (y = y0; y <= last; y++) {
+            a = x0 + Math.floor(sa / dy01);
+            b = x0 + Math.floor(sb / dy02);
+            sa += dx01;
+            sb += dx02;
+            if (a > b) {
+                b = [a, (a = b)][0];
+            } // this._swap(a,b);
+            this.drawHLine(a, y, b - a + 1, color);
+        }
+        sa = dx12 * (y - y1);
+        sb = dx02 * (y - y0);
+        for (; y <= y2; y++) {
+            a = x1 + Math.floor(sa / dy12);
+            b = x0 + Math.floor(sb / dy02);
+            sa += dx12;
+            sb += dx02;
+            if (a > b) {
+                b = [a, (a = b)][0];
+            } // this._swap(a,b);
+            this.drawHLine(a, y, b - a + 1, color);
+        }
+    }
+    drawVLine(x, y, height, color) {
+        if (height < 0) {
+            height = -height;
+            y = y - height;
+        }
+        if (x >= this.width || y >= this.height) {
+            return;
+        }
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
+        }
+        const pixels = this._color2pixels(1, height, color);
+        this.rawBound16(x, y, 1, height, pixels, false);
+    }
+    drawHLine(x, y, width, color) {
+        if (width < 0) {
+            width = -width;
+            x = x - width;
+        }
+        if (x >= this.width || y >= this.height) {
+            return;
+        }
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
+        }
+        const pixels = this._color2pixels(width, 1, color);
+        this.rawBound16(x, y, width, 1, pixels, false);
+    }
+    drawLine(x0, y0, x1, y1, color) {
+        if (x0 === x1) {
+            this.drawVLine(x0, y0, y1 - y0, color);
+            return;
+        }
+        if (y0 === y1) {
+            this.drawHLine(x0, y0, x1 - x0, color);
+            return;
+        }
+        const step = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+        if (step) {
+            y0 = [x0, (x0 = y0)][0]; // this._swap(x0, y0);
+            y1 = [x1, (x1 = y1)][0]; // this._swap(x1, y1);
+        }
+        if (x0 > x1) {
+            x1 = [x0, (x0 = x1)][0]; // this._swap(x0, x1);
+            y1 = [y0, (y0 = y1)][0]; // this._swap(y0, y1);
+        }
+        const dx = x1 - x0;
+        const dy = Math.abs(y1 - y0);
+        let err = dx / 2;
+        const ystep = y0 < y1 ? 1 : -1;
+        for (; x0 <= x1; x0++) {
+            if (step) {
+                this.drawPixel(y0, x0, color);
+            }
+            else {
+                this.drawPixel(x0, y0, color);
+            }
+            err -= dy;
+            if (err < 0) {
+                y0 += ystep;
+                err += dx;
+            }
+        }
+    }
+    drawPixel(x, y, color) {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+            return;
+        }
+        this.rawBound16(x, y, 1, 1, [color], false);
+    }
+    drawChar(x, y, char, color, backgroundColor, size) {
+        //  bg = bg || color;
+        size = size || 1;
+        if (x >= this.width || // Clip right
+            y >= this.height || // Clip bottom
+            x + 6 * size - 1 < 0 || // Clip left
+            y + 8 * size - 1 < 0) {
+            // Clip top
+            return;
+        }
+        if (color !== backgroundColor) {
+            this.drawChar2(x, y, char, color, backgroundColor, size);
+            return;
+        }
+        const c = char.charCodeAt(0);
+        for (let i = 0; i < 6; i++) {
+            let line = i === 5 ? 0 : font[c * 5 + i];
+            for (let j = 0; j < 8; j++) {
+                if (line & 0x1) {
+                    if (size === 1) {
+                        // default size
+                        this.drawPixel(x + i, y + j, color);
+                    }
+                    else {
+                        // big size
+                        this.fillRect(x + i * size, y + j * size, size, size, color);
+                    }
+                }
+                else if (backgroundColor !== color) {
+                    if (size === 1) {
+                        // default size
+                        this.drawPixel(x + i, y + j, backgroundColor);
+                    }
+                    else {
+                        // big size
+                        this.fillRect(x + i * size, y + j * size, size, size, backgroundColor);
+                    }
+                }
+                line >>= 1;
+            }
+        }
+    }
+    drawChar2(x, y, ch, color, bg, size) {
+        //  bg = bg || color;
+        size = size || 1;
+        if (x >= this.width || // Clip right
+            y >= this.height || // Clip bottom
+            x + 6 * size - 1 < 0 || // Clip left
+            y + 8 * size - 1 < 0 // Clip top
+        ) {
+            return;
+        }
+        const pixels = new Array(6 * 8 * size * size);
+        const c = ch.charCodeAt(0);
+        for (let i = 0; i < 6; i++) {
+            let line = i === 5 ? 0 : font[c * 5 + i];
+            for (let j = 0; j < 8; j++) {
+                const cl = line & 0x1 ? color : bg;
+                for (let w = 0; w < size; w++) {
+                    for (let h = 0; h < size; h++) {
+                        pixels[i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))] = cl;
+                    }
+                }
+                line >>= 1;
+            }
+        }
+        this.rawBound16(x, y, 6 * size, 8 * size, pixels);
+    }
+    rawBound16(x, y, width, height, pixels, flush) {
+        const rgb = [];
+        pixels.forEach((v) => {
+            const v2 = ((v & 0xf800) >> 11) | (v & 0x7e0) | ((v & 0x1f) << 11);
+            rgb.push((v2 & 0xff00) >> 8);
+            rgb.push(v2 & 0xff);
+        });
+        this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+        if (flush) {
+            this._writeBuffer(rgb);
+            this._writeBuffer(); // for flush
+        }
+        else {
+            this.writeData(rgb);
+        }
+    }
+    drawString(x, y, string, color, backgroundColor, size, wrap) {
+        //  bg = bg || color;
+        size = size || 1;
+        //  wrap = wrap || true;
+        for (let n = 0; n < string.length; n++) {
+            const c = string.charAt(n);
+            if (c === "\n") {
+                y += size * 8;
+                x = 0;
+            }
+            else if (c === "\r") {
+                // skip em
+            }
+            else {
+                this.drawChar(x, y, c, color, backgroundColor, size);
+                x += size * 6;
+                if (wrap && x > this.width - size * 6) {
+                    y += size * 8;
+                    x = 0;
+                }
+            }
+        }
+        return [x, y];
+    }
+    drawContextBound(context, x0, y0, width, height, x1, y1, gray) {
+        x0 = x0 || 0;
+        y0 = y0 || 0;
+        width = width || context.canvas.clientWidth;
+        height = height || context.canvas.clientHeight;
+        x1 = x1 || 0;
+        y1 = y1 || 0;
+        gray = gray || false;
+        this.write(ST7735_COLMOD, [ST7735_18bit]); // 18bit/pixel
+        const imageData = context.getImageData(x0, y0, width, height).data;
+        const rgb = [];
+        for (let n = 0; n < imageData.length; n += 4) {
+            const r = imageData[n + 0];
+            const g = imageData[n + 1];
+            const b = imageData[n + 2];
+            if (!gray) {
+                rgb.push(b);
+                rgb.push(g);
+                rgb.push(r);
+            }
+            else {
+                const gs = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+                rgb.push(gs);
+                rgb.push(gs);
+                rgb.push(gs);
+            }
+        }
+        this.write(ST7735_COLMOD, [ST7735_18bit]); // 18bit/pixel
+        this.setAddrWindow(x1, y1, x1 + width - 1, y1 + height - 1);
+        this._writeBuffer(rgb);
+        this._writeBuffer(); // for flush
+        this.write(ST7735_COLMOD, [ST7735_16bit]); // 16bit/pixel
+    }
+    drawContext(context, gray) {
+        gray = gray || false;
+        this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray);
+    }
+    draw(context, gray) {
+        this.drawContext(context, gray);
+    }
+    rawBound(x, y, width, height, pixels) {
+        const rgb = [];
+        pixels.forEach((v) => {
+            rgb.push(v & 0xff);
+            rgb.push((v & 0xff00) >> 8);
+            rgb.push((v & 0xff0000) >> 16);
+        });
+        this.write(ST7735_COLMOD, [ST7735_18bit]); // 18bit/pixel
+        this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+        this._writeBuffer(rgb);
+        this._writeBuffer(); // for flush
+        this.write(ST7735_COLMOD, [ST7735_16bit]); // 16bit/pixel
+    }
+    raw(pixels) {
+        this.rawBound16(0, 0, this.width, this.height, pixels, true);
+    }
+    _setPresetColor() {
+        this.color = {
+            AliceBlue: 0xf7df,
+            AntiqueWhite: 0xff5a,
+            Aqua: 0x07ff,
+            Aquamarine: 0x7ffa,
+            Azure: 0xf7ff,
+            Beige: 0xf7bb,
+            Bisque: 0xff38,
+            Black: 0x0000,
+            BlanchedAlmond: 0xff59,
+            Blue: 0x001f,
+            BlueViolet: 0x895c,
+            Brown: 0xa145,
+            BurlyWood: 0xddd0,
+            CadetBlue: 0x5cf4,
+            Chartreuse: 0x7fe0,
+            Chocolate: 0xd343,
+            Coral: 0xfbea,
+            CornflowerBlue: 0x64bd,
+            Cornsilk: 0xffdb,
+            Crimson: 0xd8a7,
+            Cyan: 0x07ff,
+            DarkBlue: 0x0011,
+            DarkCyan: 0x0451,
+            DarkGoldenRod: 0xbc21,
+            DarkGray: 0xad55,
+            DarkGreen: 0x0320,
+            DarkKhaki: 0xbdad,
+            DarkMagenta: 0x8811,
+            DarkOliveGreen: 0x5345,
+            DarkOrange: 0xfc60,
+            DarkOrchid: 0x9999,
+            DarkRed: 0x8800,
+            DarkSalmon: 0xecaf,
+            DarkSeaGreen: 0x8df1,
+            DarkSlateBlue: 0x49f1,
+            DarkSlateGray: 0x2a69,
+            DarkTurquoise: 0x067a,
+            DarkViolet: 0x901a,
+            DeepPink: 0xf8b2,
+            DeepSkyBlue: 0x05ff,
+            DimGray: 0x6b4d,
+            DodgerBlue: 0x1c9f,
+            FireBrick: 0xb104,
+            FloralWhite: 0xffde,
+            ForestGreen: 0x2444,
+            Fuchsia: 0xf81f,
+            Gainsboro: 0xdefb,
+            GhostWhite: 0xffdf,
+            Gold: 0xfea0,
+            GoldenRod: 0xdd24,
+            Gray: 0x8410,
+            Green: 0x0400,
+            GreenYellow: 0xafe5,
+            HoneyDew: 0xf7fe,
+            HotPink: 0xfb56,
+            IndianRed: 0xcaeb,
+            Indigo: 0x4810,
+            Ivory: 0xfffe,
+            Khaki: 0xf731,
+            Lavender: 0xe73f,
+            LavenderBlush: 0xff9e,
+            LawnGreen: 0x7fe0,
+            LemonChiffon: 0xffd9,
+            LightBlue: 0xaedc,
+            LightCoral: 0xf410,
+            LightCyan: 0xe7ff,
+            LightGoldenRodYellow: 0xffda,
+            LightGray: 0xd69a,
+            LightGreen: 0x9772,
+            LightPink: 0xfdb8,
+            LightSalmon: 0xfd0f,
+            LightSeaGreen: 0x2595,
+            LightSkyBlue: 0x867f,
+            LightSlateGray: 0x7453,
+            LightSteelBlue: 0xb63b,
+            LightYellow: 0xfffc,
+            Lime: 0x07e0,
+            LimeGreen: 0x3666,
+            Linen: 0xff9c,
+            Magenta: 0xf81f,
+            Maroon: 0x8000,
+            MediumAquaMarine: 0x6675,
+            MediumBlue: 0x0019,
+            MediumOrchid: 0xbaba,
+            MediumPurple: 0x939b,
+            MediumSeaGreen: 0x3d8e,
+            MediumSlateBlue: 0x7b5d,
+            MediumSpringGreen: 0x07d3,
+            MediumTurquoise: 0x4e99,
+            MediumVioletRed: 0xc0b0,
+            MidnightBlue: 0x18ce,
+            MintCream: 0xf7ff,
+            MistyRose: 0xff3c,
+            Moccasin: 0xff36,
+            NavajoWhite: 0xfef5,
+            Navy: 0x0010,
+            OldLace: 0xffbc,
+            Olive: 0x8400,
+            OliveDrab: 0x6c64,
+            Orange: 0xfd20,
+            OrangeRed: 0xfa20,
+            Orchid: 0xdb9a,
+            PaleGoldenRod: 0xef55,
+            PaleGreen: 0x9fd3,
+            PaleTurquoise: 0xaf7d,
+            PaleVioletRed: 0xdb92,
+            PapayaWhip: 0xff7a,
+            PeachPuff: 0xfed7,
+            Peru: 0xcc27,
+            Pink: 0xfe19,
+            Plum: 0xdd1b,
+            PowderBlue: 0xb71c,
+            Purple: 0x8010,
+            RebeccaPurple: 0x6193,
+            Red: 0xf800,
+            RosyBrown: 0xbc71,
+            RoyalBlue: 0x435c,
+            SaddleBrown: 0x8a22,
+            Salmon: 0xfc0e,
+            SandyBrown: 0xf52c,
+            SeaGreen: 0x2c4a,
+            SeaShell: 0xffbd,
+            Sienna: 0xa285,
+            Silver: 0xc618,
+            SkyBlue: 0x867d,
+            SlateBlue: 0x6ad9,
+            SlateGray: 0x7412,
+            Snow: 0xffdf,
+            SpringGreen: 0x07ef,
+            SteelBlue: 0x4416,
+            Tan: 0xd5b1,
+            Teal: 0x0410,
+            Thistle: 0xddfb,
+            Tomato: 0xfb08,
+            Turquoise: 0x471a,
+            Violet: 0xec1d,
+            Wheat: 0xf6f6,
+            White: 0xffff,
+            WhiteSmoke: 0xf7be,
+            Yellow: 0xffe0,
+            YellowGreen: 0x9e66,
+        };
+    }
+    _color2pixels(w, h, color) {
+        return Array.from(new Array(Math.abs(w * h))).map((v, i) => color);
+    }
+    _drawCircleHelper(x0, y0, r, cornername, color) {
+        let f = 1 - r;
+        let ddF_x = 1;
+        let ddF_y = -2 * r;
+        let x = 0;
+        let y = r;
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            if (cornername & 0x4) {
+                this.drawPixel(x0 + x, y0 + y, color);
+                this.drawPixel(x0 + y, y0 + x, color);
+            }
+            if (cornername & 0x2) {
+                this.drawPixel(x0 + x, y0 - y, color);
+                this.drawPixel(x0 + y, y0 - x, color);
+            }
+            if (cornername & 0x8) {
+                this.drawPixel(x0 - y, y0 + x, color);
+                this.drawPixel(x0 - x, y0 + y, color);
+            }
+            if (cornername & 0x1) {
+                this.drawPixel(x0 - y, y0 - x, color);
+                this.drawPixel(x0 - x, y0 - y, color);
+            }
+        }
+    }
+}
+exports.default = ST7735S;
+// ----------------------------------------------------------
+const ST7735S_TFTWIDTH = 80;
+const ST7735S_TFTHEIGHT = 160;
+// const ST7735_NOP = 0x00;
+const ST7735_SWRESET = 0x01;
+// const ST7735_RDDID = 0x04;
+// const ST7735_RDDST = 0x09;
+// const ST7735_RDDPM = 0x0a;
+// const ST7735_SLPIN = 0x10;
+const ST7735_SLPOUT = 0x11;
+// const ST7735_PTLON = 0x12;
+// const ST7735_NORON = 0x13;
+const ST7735_INVOFF = 0x20;
+const ST7735_INVON = 0x21;
+const ST7735_DISPOFF = 0x28;
+const ST7735_DISPON = 0x29;
+const ST7735_CASET = 0x2a;
+const ST7735_RASET = 0x2b;
+const ST7735_RAMWR = 0x2c;
+// const ST7735_RAMRD = 0x2e;
+const ST7735_MADCTL = 0x36;
+// const ST7735_PTLAR = 0x30;
+const ST7735_COLMOD = 0x3a;
+const ST7735_FRMCTR1 = 0xb1;
+const ST7735_FRMCTR2 = 0xb2;
+const ST7735_FRMCTR3 = 0xb3;
+const ST7735_INVCTR = 0xb4;
+// const ST7735_DISSET5 = 0xb6;
+const ST7735_PWCTR1 = 0xc0;
+const ST7735_PWCTR2 = 0xc1;
+const ST7735_PWCTR3 = 0xc2;
+const ST7735_PWCTR4 = 0xc3;
+const ST7735_PWCTR5 = 0xc4;
+const ST7735_VMCTR1 = 0xc5;
+// const ST7735_RDID1 = 0xda;
+// const ST7735_RDID2 = 0xdb;
+// const ST7735_RDID3 = 0xdc;
+// const ST7735_RDID4 = 0xdd;
+// const ST7735_PWCTR6 = 0xfc;
+const ST7735_GMCTRP1 = 0xe0;
+const ST7735_GMCTRN1 = 0xe1;
+const ST7735_18bit = 0x06; // 18bit/pixel
+const ST7735_16bit = 0x05; // 16bit/pixel
+// standard ascii 5x7 font
+const font = [
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x3e,
+    0x5b,
+    0x4f,
+    0x5b,
+    0x3e,
+    0x3e,
+    0x6b,
+    0x4f,
+    0x6b,
+    0x3e,
+    0x1c,
+    0x3e,
+    0x7c,
+    0x3e,
+    0x1c,
+    0x18,
+    0x3c,
+    0x7e,
+    0x3c,
+    0x18,
+    0x1c,
+    0x57,
+    0x7d,
+    0x57,
+    0x1c,
+    0x1c,
+    0x5e,
+    0x7f,
+    0x5e,
+    0x1c,
+    0x00,
+    0x18,
+    0x3c,
+    0x18,
+    0x00,
+    0xff,
+    0xe7,
+    0xc3,
+    0xe7,
+    0xff,
+    0x00,
+    0x18,
+    0x24,
+    0x18,
+    0x00,
+    0xff,
+    0xe7,
+    0xdb,
+    0xe7,
+    0xff,
+    0x30,
+    0x48,
+    0x3a,
+    0x06,
+    0x0e,
+    0x26,
+    0x29,
+    0x79,
+    0x29,
+    0x26,
+    0x40,
+    0x7f,
+    0x05,
+    0x05,
+    0x07,
+    0x40,
+    0x7f,
+    0x05,
+    0x25,
+    0x3f,
+    0x5a,
+    0x3c,
+    0xe7,
+    0x3c,
+    0x5a,
+    0x7f,
+    0x3e,
+    0x1c,
+    0x1c,
+    0x08,
+    0x08,
+    0x1c,
+    0x1c,
+    0x3e,
+    0x7f,
+    0x14,
+    0x22,
+    0x7f,
+    0x22,
+    0x14,
+    0x5f,
+    0x5f,
+    0x00,
+    0x5f,
+    0x5f,
+    0x06,
+    0x09,
+    0x7f,
+    0x01,
+    0x7f,
+    0x00,
+    0x66,
+    0x89,
+    0x95,
+    0x6a,
+    0x60,
+    0x60,
+    0x60,
+    0x60,
+    0x60,
+    0x94,
+    0xa2,
+    0xff,
+    0xa2,
+    0x94,
+    0x08,
+    0x04,
+    0x7e,
+    0x04,
+    0x08,
+    0x10,
+    0x20,
+    0x7e,
+    0x20,
+    0x10,
+    0x08,
+    0x08,
+    0x2a,
+    0x1c,
+    0x08,
+    0x08,
+    0x1c,
+    0x2a,
+    0x08,
+    0x08,
+    0x1e,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x0c,
+    0x1e,
+    0x0c,
+    0x1e,
+    0x0c,
+    0x30,
+    0x38,
+    0x3e,
+    0x38,
+    0x30,
+    0x06,
+    0x0e,
+    0x3e,
+    0x0e,
+    0x06,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x5f,
+    0x00,
+    0x00,
+    0x00,
+    0x07,
+    0x00,
+    0x07,
+    0x00,
+    0x14,
+    0x7f,
+    0x14,
+    0x7f,
+    0x14,
+    0x24,
+    0x2a,
+    0x7f,
+    0x2a,
+    0x12,
+    0x23,
+    0x13,
+    0x08,
+    0x64,
+    0x62,
+    0x36,
+    0x49,
+    0x56,
+    0x20,
+    0x50,
+    0x00,
+    0x08,
+    0x07,
+    0x03,
+    0x00,
+    0x00,
+    0x1c,
+    0x22,
+    0x41,
+    0x00,
+    0x00,
+    0x41,
+    0x22,
+    0x1c,
+    0x00,
+    0x2a,
+    0x1c,
+    0x7f,
+    0x1c,
+    0x2a,
+    0x08,
+    0x08,
+    0x3e,
+    0x08,
+    0x08,
+    0x00,
+    0x80,
+    0x70,
+    0x30,
+    0x00,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x00,
+    0x00,
+    0x60,
+    0x60,
+    0x00,
+    0x20,
+    0x10,
+    0x08,
+    0x04,
+    0x02,
+    0x3e,
+    0x51,
+    0x49,
+    0x45,
+    0x3e,
+    0x00,
+    0x42,
+    0x7f,
+    0x40,
+    0x00,
+    0x72,
+    0x49,
+    0x49,
+    0x49,
+    0x46,
+    0x21,
+    0x41,
+    0x49,
+    0x4d,
+    0x33,
+    0x18,
+    0x14,
+    0x12,
+    0x7f,
+    0x10,
+    0x27,
+    0x45,
+    0x45,
+    0x45,
+    0x39,
+    0x3c,
+    0x4a,
+    0x49,
+    0x49,
+    0x31,
+    0x41,
+    0x21,
+    0x11,
+    0x09,
+    0x07,
+    0x36,
+    0x49,
+    0x49,
+    0x49,
+    0x36,
+    0x46,
+    0x49,
+    0x49,
+    0x29,
+    0x1e,
+    0x00,
+    0x00,
+    0x14,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x34,
+    0x00,
+    0x00,
+    0x00,
+    0x08,
+    0x14,
+    0x22,
+    0x41,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x00,
+    0x41,
+    0x22,
+    0x14,
+    0x08,
+    0x02,
+    0x01,
+    0x59,
+    0x09,
+    0x06,
+    0x3e,
+    0x41,
+    0x5d,
+    0x59,
+    0x4e,
+    0x7c,
+    0x12,
+    0x11,
+    0x12,
+    0x7c,
+    0x7f,
+    0x49,
+    0x49,
+    0x49,
+    0x36,
+    0x3e,
+    0x41,
+    0x41,
+    0x41,
+    0x22,
+    0x7f,
+    0x41,
+    0x41,
+    0x41,
+    0x3e,
+    0x7f,
+    0x49,
+    0x49,
+    0x49,
+    0x41,
+    0x7f,
+    0x09,
+    0x09,
+    0x09,
+    0x01,
+    0x3e,
+    0x41,
+    0x41,
+    0x51,
+    0x73,
+    0x7f,
+    0x08,
+    0x08,
+    0x08,
+    0x7f,
+    0x00,
+    0x41,
+    0x7f,
+    0x41,
+    0x00,
+    0x20,
+    0x40,
+    0x41,
+    0x3f,
+    0x01,
+    0x7f,
+    0x08,
+    0x14,
+    0x22,
+    0x41,
+    0x7f,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x7f,
+    0x02,
+    0x1c,
+    0x02,
+    0x7f,
+    0x7f,
+    0x04,
+    0x08,
+    0x10,
+    0x7f,
+    0x3e,
+    0x41,
+    0x41,
+    0x41,
+    0x3e,
+    0x7f,
+    0x09,
+    0x09,
+    0x09,
+    0x06,
+    0x3e,
+    0x41,
+    0x51,
+    0x21,
+    0x5e,
+    0x7f,
+    0x09,
+    0x19,
+    0x29,
+    0x46,
+    0x26,
+    0x49,
+    0x49,
+    0x49,
+    0x32,
+    0x03,
+    0x01,
+    0x7f,
+    0x01,
+    0x03,
+    0x3f,
+    0x40,
+    0x40,
+    0x40,
+    0x3f,
+    0x1f,
+    0x20,
+    0x40,
+    0x20,
+    0x1f,
+    0x3f,
+    0x40,
+    0x38,
+    0x40,
+    0x3f,
+    0x63,
+    0x14,
+    0x08,
+    0x14,
+    0x63,
+    0x03,
+    0x04,
+    0x78,
+    0x04,
+    0x03,
+    0x61,
+    0x59,
+    0x49,
+    0x4d,
+    0x43,
+    0x00,
+    0x7f,
+    0x41,
+    0x41,
+    0x41,
+    0x02,
+    0x04,
+    0x08,
+    0x10,
+    0x20,
+    0x00,
+    0x41,
+    0x41,
+    0x41,
+    0x7f,
+    0x04,
+    0x02,
+    0x01,
+    0x02,
+    0x04,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x00,
+    0x03,
+    0x07,
+    0x08,
+    0x00,
+    0x20,
+    0x54,
+    0x54,
+    0x78,
+    0x40,
+    0x7f,
+    0x28,
+    0x44,
+    0x44,
+    0x38,
+    0x38,
+    0x44,
+    0x44,
+    0x44,
+    0x28,
+    0x38,
+    0x44,
+    0x44,
+    0x28,
+    0x7f,
+    0x38,
+    0x54,
+    0x54,
+    0x54,
+    0x18,
+    0x00,
+    0x08,
+    0x7e,
+    0x09,
+    0x02,
+    0x18,
+    0xa4,
+    0xa4,
+    0x9c,
+    0x78,
+    0x7f,
+    0x08,
+    0x04,
+    0x04,
+    0x78,
+    0x00,
+    0x44,
+    0x7d,
+    0x40,
+    0x00,
+    0x20,
+    0x40,
+    0x40,
+    0x3d,
+    0x00,
+    0x7f,
+    0x10,
+    0x28,
+    0x44,
+    0x00,
+    0x00,
+    0x41,
+    0x7f,
+    0x40,
+    0x00,
+    0x7c,
+    0x04,
+    0x78,
+    0x04,
+    0x78,
+    0x7c,
+    0x08,
+    0x04,
+    0x04,
+    0x78,
+    0x38,
+    0x44,
+    0x44,
+    0x44,
+    0x38,
+    0xfc,
+    0x18,
+    0x24,
+    0x24,
+    0x18,
+    0x18,
+    0x24,
+    0x24,
+    0x18,
+    0xfc,
+    0x7c,
+    0x08,
+    0x04,
+    0x04,
+    0x08,
+    0x48,
+    0x54,
+    0x54,
+    0x54,
+    0x24,
+    0x04,
+    0x04,
+    0x3f,
+    0x44,
+    0x24,
+    0x3c,
+    0x40,
+    0x40,
+    0x20,
+    0x7c,
+    0x1c,
+    0x20,
+    0x40,
+    0x20,
+    0x1c,
+    0x3c,
+    0x40,
+    0x30,
+    0x40,
+    0x3c,
+    0x44,
+    0x28,
+    0x10,
+    0x28,
+    0x44,
+    0x4c,
+    0x90,
+    0x90,
+    0x90,
+    0x7c,
+    0x44,
+    0x64,
+    0x54,
+    0x4c,
+    0x44,
+    0x00,
+    0x08,
+    0x36,
+    0x41,
+    0x00,
+    0x00,
+    0x00,
+    0x77,
+    0x00,
+    0x00,
+    0x00,
+    0x41,
+    0x36,
+    0x08,
+    0x00,
+    0x02,
+    0x01,
+    0x02,
+    0x04,
+    0x02,
+    0x3c,
+    0x26,
+    0x23,
+    0x26,
+    0x3c,
+    0x1e,
+    0xa1,
+    0xa1,
+    0x61,
+    0x12,
+    0x3a,
+    0x40,
+    0x40,
+    0x20,
+    0x7a,
+    0x38,
+    0x54,
+    0x54,
+    0x55,
+    0x59,
+    0x21,
+    0x55,
+    0x55,
+    0x79,
+    0x41,
+    0x21,
+    0x54,
+    0x54,
+    0x78,
+    0x41,
+    0x21,
+    0x55,
+    0x54,
+    0x78,
+    0x40,
+    0x20,
+    0x54,
+    0x55,
+    0x79,
+    0x40,
+    0x0c,
+    0x1e,
+    0x52,
+    0x72,
+    0x12,
+    0x39,
+    0x55,
+    0x55,
+    0x55,
+    0x59,
+    0x39,
+    0x54,
+    0x54,
+    0x54,
+    0x59,
+    0x39,
+    0x55,
+    0x54,
+    0x54,
+    0x58,
+    0x00,
+    0x00,
+    0x45,
+    0x7c,
+    0x41,
+    0x00,
+    0x02,
+    0x45,
+    0x7d,
+    0x42,
+    0x00,
+    0x01,
+    0x45,
+    0x7c,
+    0x40,
+    0xf0,
+    0x29,
+    0x24,
+    0x29,
+    0xf0,
+    0xf0,
+    0x28,
+    0x25,
+    0x28,
+    0xf0,
+    0x7c,
+    0x54,
+    0x55,
+    0x45,
+    0x00,
+    0x20,
+    0x54,
+    0x54,
+    0x7c,
+    0x54,
+    0x7c,
+    0x0a,
+    0x09,
+    0x7f,
+    0x49,
+    0x32,
+    0x49,
+    0x49,
+    0x49,
+    0x32,
+    0x32,
+    0x48,
+    0x48,
+    0x48,
+    0x32,
+    0x32,
+    0x4a,
+    0x48,
+    0x48,
+    0x30,
+    0x3a,
+    0x41,
+    0x41,
+    0x21,
+    0x7a,
+    0x3a,
+    0x42,
+    0x40,
+    0x20,
+    0x78,
+    0x00,
+    0x9d,
+    0xa0,
+    0xa0,
+    0x7d,
+    0x39,
+    0x44,
+    0x44,
+    0x44,
+    0x39,
+    0x3d,
+    0x40,
+    0x40,
+    0x40,
+    0x3d,
+    0x3c,
+    0x24,
+    0xff,
+    0x24,
+    0x24,
+    0x48,
+    0x7e,
+    0x49,
+    0x43,
+    0x66,
+    0x2b,
+    0x2f,
+    0xfc,
+    0x2f,
+    0x2b,
+    0xff,
+    0x09,
+    0x29,
+    0xf6,
+    0x20,
+    0xc0,
+    0x88,
+    0x7e,
+    0x09,
+    0x03,
+    0x20,
+    0x54,
+    0x54,
+    0x79,
+    0x41,
+    0x00,
+    0x00,
+    0x44,
+    0x7d,
+    0x41,
+    0x30,
+    0x48,
+    0x48,
+    0x4a,
+    0x32,
+    0x38,
+    0x40,
+    0x40,
+    0x22,
+    0x7a,
+    0x00,
+    0x7a,
+    0x0a,
+    0x0a,
+    0x72,
+    0x7d,
+    0x0d,
+    0x19,
+    0x31,
+    0x7d,
+    0x26,
+    0x29,
+    0x29,
+    0x2f,
+    0x28,
+    0x26,
+    0x29,
+    0x29,
+    0x29,
+    0x26,
+    0x30,
+    0x48,
+    0x4d,
+    0x40,
+    0x20,
+    0x38,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x38,
+    0x2f,
+    0x10,
+    0xc8,
+    0xac,
+    0xba,
+    0x2f,
+    0x10,
+    0x28,
+    0x34,
+    0xfa,
+    0x00,
+    0x00,
+    0x7b,
+    0x00,
+    0x00,
+    0x08,
+    0x14,
+    0x2a,
+    0x14,
+    0x22,
+    0x22,
+    0x14,
+    0x2a,
+    0x14,
+    0x08,
+    0xaa,
+    0x00,
+    0x55,
+    0x00,
+    0xaa,
+    0xaa,
+    0x55,
+    0xaa,
+    0x55,
+    0xaa,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0x00,
+    0x10,
+    0x10,
+    0x10,
+    0xff,
+    0x00,
+    0x14,
+    0x14,
+    0x14,
+    0xff,
+    0x00,
+    0x10,
+    0x10,
+    0xff,
+    0x00,
+    0xff,
+    0x10,
+    0x10,
+    0xf0,
+    0x10,
+    0xf0,
+    0x14,
+    0x14,
+    0x14,
+    0xfc,
+    0x00,
+    0x14,
+    0x14,
+    0xf7,
+    0x00,
+    0xff,
+    0x00,
+    0x00,
+    0xff,
+    0x00,
+    0xff,
+    0x14,
+    0x14,
+    0xf4,
+    0x04,
+    0xfc,
+    0x14,
+    0x14,
+    0x17,
+    0x10,
+    0x1f,
+    0x10,
+    0x10,
+    0x1f,
+    0x10,
+    0x1f,
+    0x14,
+    0x14,
+    0x14,
+    0x1f,
+    0x00,
+    0x10,
+    0x10,
+    0x10,
+    0xf0,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x1f,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x1f,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0xf0,
+    0x10,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0xff,
+    0x10,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0x14,
+    0x00,
+    0x00,
+    0xff,
+    0x00,
+    0xff,
+    0x00,
+    0x00,
+    0x1f,
+    0x10,
+    0x17,
+    0x00,
+    0x00,
+    0xfc,
+    0x04,
+    0xf4,
+    0x14,
+    0x14,
+    0x17,
+    0x10,
+    0x17,
+    0x14,
+    0x14,
+    0xf4,
+    0x04,
+    0xf4,
+    0x00,
+    0x00,
+    0xff,
+    0x00,
+    0xf7,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0xf7,
+    0x00,
+    0xf7,
+    0x14,
+    0x14,
+    0x14,
+    0x17,
+    0x14,
+    0x10,
+    0x10,
+    0x1f,
+    0x10,
+    0x1f,
+    0x14,
+    0x14,
+    0x14,
+    0xf4,
+    0x14,
+    0x10,
+    0x10,
+    0xf0,
+    0x10,
+    0xf0,
+    0x00,
+    0x00,
+    0x1f,
+    0x10,
+    0x1f,
+    0x00,
+    0x00,
+    0x00,
+    0x1f,
+    0x14,
+    0x00,
+    0x00,
+    0x00,
+    0xfc,
+    0x14,
+    0x00,
+    0x00,
+    0xf0,
+    0x10,
+    0xf0,
+    0x10,
+    0x10,
+    0xff,
+    0x10,
+    0xff,
+    0x14,
+    0x14,
+    0x14,
+    0xff,
+    0x14,
+    0x10,
+    0x10,
+    0x10,
+    0x1f,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xf0,
+    0x10,
+    0xff,
+    0xff,
+    0xff,
+    0xff,
+    0xff,
+    0xf0,
+    0xf0,
+    0xf0,
+    0xf0,
+    0xf0,
+    0xff,
+    0xff,
+    0xff,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0xff,
+    0x0f,
+    0x0f,
+    0x0f,
+    0x0f,
+    0x0f,
+    0x38,
+    0x44,
+    0x44,
+    0x38,
+    0x44,
+    0x7c,
+    0x2a,
+    0x2a,
+    0x3e,
+    0x14,
+    0x7e,
+    0x02,
+    0x02,
+    0x06,
+    0x06,
+    0x02,
+    0x7e,
+    0x02,
+    0x7e,
+    0x02,
+    0x63,
+    0x55,
+    0x49,
+    0x41,
+    0x63,
+    0x38,
+    0x44,
+    0x44,
+    0x3c,
+    0x04,
+    0x40,
+    0x7e,
+    0x20,
+    0x1e,
+    0x20,
+    0x06,
+    0x02,
+    0x7e,
+    0x02,
+    0x02,
+    0x99,
+    0xa5,
+    0xe7,
+    0xa5,
+    0x99,
+    0x1c,
+    0x2a,
+    0x49,
+    0x2a,
+    0x1c,
+    0x4c,
+    0x72,
+    0x01,
+    0x72,
+    0x4c,
+    0x30,
+    0x4a,
+    0x4d,
+    0x4d,
+    0x30,
+    0x30,
+    0x48,
+    0x78,
+    0x48,
+    0x30,
+    0xbc,
+    0x62,
+    0x5a,
+    0x46,
+    0x3d,
+    0x3e,
+    0x49,
+    0x49,
+    0x49,
+    0x00,
+    0x7e,
+    0x01,
+    0x01,
+    0x01,
+    0x7e,
+    0x2a,
+    0x2a,
+    0x2a,
+    0x2a,
+    0x2a,
+    0x44,
+    0x44,
+    0x5f,
+    0x44,
+    0x44,
+    0x40,
+    0x51,
+    0x4a,
+    0x44,
+    0x40,
+    0x40,
+    0x44,
+    0x4a,
+    0x51,
+    0x40,
+    0x00,
+    0x00,
+    0xff,
+    0x01,
+    0x03,
+    0xe0,
+    0x80,
+    0xff,
+    0x00,
+    0x00,
+    0x08,
+    0x08,
+    0x6b,
+    0x6b,
+    0x08,
+    0x36,
+    0x12,
+    0x36,
+    0x24,
+    0x36,
+    0x06,
+    0x0f,
+    0x09,
+    0x0f,
+    0x06,
+    0x00,
+    0x00,
+    0x18,
+    0x18,
+    0x00,
+    0x00,
+    0x00,
+    0x10,
+    0x10,
+    0x00,
+    0x30,
+    0x40,
+    0xff,
+    0x01,
+    0x01,
+    0x00,
+    0x1f,
+    0x01,
+    0x01,
+    0x1e,
+    0x00,
+    0x19,
+    0x1d,
+    0x17,
+    0x12,
+    0x00,
+    0x3c,
+    0x3c,
+    0x3c,
+    0x3c,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/SainSmartTFT18LCD/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SainSmartTFT18LCD
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class SainSmartTFT18LCD {
+    constructor() {
+        this.debugprint = false;
+        this.width = 0;
+        this.height = 0;
+        this.writeBuffer = [];
+        this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];
+        this.requiredKeys = ["scl", "sda", "dc", "res", "cs"];
+        this.displayIoNames = {
+            vcc: "vcc",
+            gnd: "gnd",
+            scl: "scl",
+            sda: "sda",
+            dc: "dc",
+            res: "res",
+            cs: "cs",
+        };
+    }
+    static info() {
+        return {
+            name: "SainSmartTFT18LCD",
+        };
+    }
+    wired(obniz) {
+        this.debugprint = false;
+        this.obniz = obniz;
+        this.io_dc = obniz.getIO(this.params.dc);
+        this.io_res = obniz.getIO(this.params.res);
+        this.io_cs = obniz.getIO(this.params.cs);
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.frequency = 16 * 1000 * 1000; // 16MHz
+        this.params.mode = "master";
+        this.params.clk = this.params.scl;
+        this.params.mosi = this.params.sda;
+        this.params.drive = "3v";
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+        this.io_dc.output(true);
+        this.io_cs.output(false);
+        this.width = ST7735_TFTWIDTH;
+        this.height = ST7735_TFTHEIGHT;
+        this.writeBuffer = []; // 1024bytes bufferring
+        this._setPresetColor();
+        this.init();
+    }
+    print_debug(v) {
+        if (this.debugprint) {
+            console.log("SainSmartTFT18LCD: " + Array.prototype.slice.call(arguments).join(""));
+        }
+    }
+    _deadSleep(waitMsec) {
+        const startMsec = new Date();
+        while (new Date() - startMsec < waitMsec) {
+        }
+    }
+    _reset() {
+        this.io_res.output(false);
+        this._deadSleep(10);
+        this.io_res.output(true);
+        this._deadSleep(10);
+    }
+    writeCommand(cmd) {
+        this.io_dc.output(false);
+        this.io_cs.output(false);
+        this.spi.write([cmd]);
+        this.io_cs.output(true);
+    }
+    writeData(data) {
+        this.io_dc.output(true);
+        this.io_cs.output(false);
+        this.spi.write(data);
+        this.io_cs.output(true);
+    }
+    write(cmd, data) {
+        if (data.length === 0) {
+            return;
+        }
+        this.writeCommand(cmd);
+        this.writeData(data);
+    }
+    asyncwait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.spi.writeWait([0x00]);
+        });
+    }
+    _writeFlush() {
+        while (this.writeBuffer.length > 0) {
+            if (this.writeBuffer.length > 1024) {
+                const data = this.writeBuffer.slice(0, 1024);
+                this.writeData(data);
+                this.writeBuffer.splice(0, 1024);
+            }
+            else {
+                if (this.writeBuffer.length > 0) {
+                    this.writeData(this.writeBuffer);
+                }
+                this.writeBuffer = [];
+            }
+        }
+    }
+    _writeBuffer(data) {
+        if (data && data.length > 0) {
+            this.writeBuffer = this.writeBuffer.concat(data);
+        }
+        else {
+            this._writeFlush();
+        }
+    }
+    color16(r, g, b) {
+        //  1st byte  (r & 0xF8 | g >> 5)
+        //  2nd byte  (g & 0xFC << 3 | b >> 3)
+        return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | (b >> 3);
+    }
+    _initG() {
+        // initialize for Green Tab
+        this.writeCommand(ST7735_SLPOUT); // Sleep out & booster on
+        this.obniz.wait(120);
+        this.write(ST7735_FRMCTR1, [0x01, 0x2c, 0x2d]);
+        this.write(ST7735_FRMCTR2, [0x01, 0x2c, 0x2d]);
+        this.write(ST7735_FRMCTR3, [0x01, 0x2c, 0x2d, 0x01, 0x2c, 0x2d]);
+        this.write(ST7735_INVCTR, [0x07]);
+        this.write(ST7735_PWCTR1, [0xa2, 0x02, 0x84]);
+        this.write(ST7735_PWCTR2, [0xc5]);
+        this.write(ST7735_PWCTR3, [0x0a, 0x00]);
+        this.write(ST7735_PWCTR4, [0x8a, 0x2a]);
+        this.write(ST7735_PWCTR5, [0x8a, 0xee]);
+        this.write(ST7735_VMCTR1, [0x0e]);
+        this.write(ST7735_GMCTRP1, [
+            0x02,
+            0x1c,
+            0x07,
+            0x12,
+            0x37,
+            0x32,
+            0x29,
+            0x2d,
+            0x29,
+            0x25,
+            0x2b,
+            0x39,
+            0x00,
+            0x01,
+            0x03,
+            0x10,
+        ]);
+        this.write(ST7735_GMCTRN1, [
+            0x03,
+            0x1d,
+            0x07,
+            0x06,
+            0x2e,
+            0x2c,
+            0x29,
+            0x2d,
+            0x2e,
+            0x2e,
+            0x37,
+            0x3f,
+            0x00,
+            0x00,
+            0x02,
+            0x10,
+        ]);
+        this.write(ST7735_COLMOD, [ST7735_16bit]); // color format: 16bit/pixel
+    }
+    init() {
+        this._reset();
+        this._initG();
+        this.setDisplayOn();
+        this.setRotation(0);
+    }
+    setDisplayOn() {
+        this.writeCommand(ST7735_DISPON);
+    }
+    setDisplayOff() {
+        this.writeCommand(ST7735_DISPOFF);
+    }
+    setDisplay(on) {
+        if (on === true) {
+            this.setDisplayOn();
+        }
+        else {
+            this.setDisplayOff();
+        }
+    }
+    setInversionOn() {
+        this.writeCommand(ST7735_INVON);
+    }
+    setInversionOff() {
+        this.writeCommand(ST7735_INVOFF);
+    }
+    setInversion(inversion) {
+        if (inversion === true) {
+            this.setInversionOn();
+        }
+        else {
+            this.setInversionOff();
+        }
+    }
+    setRotation(m) {
+        const MADCTL_MY = 0x80;
+        const MADCTL_MX = 0x40;
+        const MADCTL_MV = 0x20;
+        // const MADCTL_ML = 0x10;
+        const MADCTL_RGB = 0x00; // always RGB, never BGR
+        // const MADCTL_MH = 0x04;
+        let data;
+        const rotation = m % 4; // can't be higher than 3
+        switch (rotation) {
+            case 0:
+                data = [MADCTL_MX | MADCTL_MY | MADCTL_RGB];
+                this.width = ST7735_TFTWIDTH;
+                this.height = ST7735_TFTHEIGHT;
+                break;
+            case 1:
+                data = [MADCTL_MY | MADCTL_MV | MADCTL_RGB];
+                this.width = ST7735_TFTHEIGHT;
+                this.height = ST7735_TFTWIDTH;
+                break;
+            case 2:
+                data = [MADCTL_RGB];
+                this.width = ST7735_TFTWIDTH;
+                this.height = ST7735_TFTHEIGHT;
+                break;
+            case 3:
+                data = [MADCTL_MX | MADCTL_MV | MADCTL_RGB];
+                this.width = ST7735_TFTHEIGHT;
+                this.height = ST7735_TFTWIDTH;
+                break;
+        }
+        this.write(ST7735_MADCTL, data);
+        this.setAddrWindow(0, 0, this.width - 1, this.height - 1);
+    }
+    setAddrWindow(x0, y0, x1, y1) {
+        this.print_debug(`setAddrWindow: (x0: ${x0}, y0: ${y0}) - (x1: ${x1}, y1: ${y1})`);
+        if (x0 < 0) {
+            x0 = 0;
+        }
+        if (y0 < 0) {
+            y0 = 0;
+        }
+        if (x1 < 0) {
+            x1 = 0;
+        }
+        if (y1 < 0) {
+            y1 = 0;
+        }
+        // column addr set
+        this.write(ST7735_CASET, [0x00, x0, 0x00, x1]); // XSTART-XEND
+        // row addr set
+        this.write(ST7735_RASET, [0x00, y0, 0x00, y1]); // YSTART-YEND
+        // write to RAM
+        this.writeCommand(ST7735_RAMWR);
+        this.writeBuffer = [];
+    }
+    // __swap(a, b) { let t = a; a = b; b = t; }
+    fillScreen(color) {
+        this.fillRect(0, 0, this.width, this.height, color);
+    }
+    fillRect(x, y, width, height, color) {
+        if (x >= this.width || y >= this.height) {
+            return;
+        }
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
+        }
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
+        }
+        this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+        const hi = color >> 8;
+        const lo = color & 0xff;
+        const data = [];
+        for (y = height; y > 0; y--) {
+            for (x = width; x > 0; x--) {
+                data.push(hi);
+                data.push(lo);
+            }
+        }
+        this._writeBuffer(data);
+        this._writeBuffer(); // for flush
+    }
+    drawRect(x, y, width, height, color) {
+        this.drawHLine(x, y, width, color);
+        this.drawHLine(x, y + height - 1, width, color);
+        this.drawVLine(x, y, height, color);
+        this.drawVLine(x + width - 1, y, height, color);
+    }
+    drawCircle(center_x, center_y, radius, color) {
+        let f = 1 - radius;
+        let ddF_x = 1;
+        let ddF_y = -2 * radius;
+        let x = 0;
+        let y = radius;
+        this.drawPixel(center_x, center_y + radius, color);
+        this.drawPixel(center_x, center_y - radius, color);
+        this.drawPixel(center_x + radius, center_y, color);
+        this.drawPixel(center_x - radius, center_y, color);
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            this.drawPixel(center_x + x, center_y + y, color);
+            this.drawPixel(center_x - x, center_y + y, color);
+            this.drawPixel(center_x + x, center_y - y, color);
+            this.drawPixel(center_x - x, center_y - y, color);
+            this.drawPixel(center_x + y, center_y + x, color);
+            this.drawPixel(center_x - y, center_y + x, color);
+            this.drawPixel(center_x + y, center_y - x, color);
+            this.drawPixel(center_x - y, center_y - x, color);
+        }
+    }
+    fillCircle(center_x, center_y, radius, color) {
+        this.drawVLine(center_x, center_y - radius, 2 * radius + 1, color);
+        this._fillCircleHelper(center_x, center_y, radius, 3, 0, color);
+    }
+    drawRoundRect(x, y, width, height, round, color) {
+        this.drawHLine(x + round, y, width - 2 * round, color); // Top
+        this.drawHLine(x + round, y + height - 1, width - 2 * round, color); // Bottom
+        this.drawVLine(x, y + round, height - 2 * round, color); // Left
+        this.drawVLine(x + width - 1, y + round, height - 2 * round, color); // Right
+        this._drawCircleHelper(x + round, y + round, round, 1, color);
+        this._drawCircleHelper(x + width - round - 1, y + round, round, 2, color);
+        this._drawCircleHelper(x + width - round - 1, y + height - round - 1, round, 4, color);
+        this._drawCircleHelper(x + round, y + height - round - 1, round, 8, color);
+    }
+    fillRoundRect(x, y, width, height, round, color) {
+        this.fillRect(x + round, y, width - 2 * round, height, color);
+        this._fillCircleHelper(x + width - round - 1, y + round, round, 1, height - 2 * round - 1, color);
+        this._fillCircleHelper(x + round, y + round, round, 2, height - 2 * round - 1, color);
+    }
+    drawTriangle(x0, y0, x1, y1, x2, y2, color) {
+        this.drawLine(x0, y0, x1, y1, color);
+        this.drawLine(x1, y1, x2, y2, color);
+        this.drawLine(x2, y2, x0, y0, color);
+    }
+    fillTriangle(x0, y0, x1, y1, x2, y2, color) {
+        let a = 0;
+        let b = 0;
+        let y = 0;
+        let last = 0;
+        // Sort coordinates by Y order (y2 >= y1 >= y0)
+        if (y0 > y1) {
+            y1 = [y0, (y0 = y1)][0]; // this._swap(y0, y1);
+            x1 = [x0, (x0 = x1)][0]; // this._swap(x0, x1);
+        }
+        if (y1 > y2) {
+            y2 = [y1, (y1 = y2)][0]; // this._swap(y2, y1);
+            x2 = [x1, (x1 = x2)][0]; // this._swap(x2, x1);
+        }
+        if (y0 > y1) {
+            y1 = [y0, (y0 = y1)][0]; // this._swap(y0, y1);
+            x1 = [x0, (x0 = x1)][0]; // this._swap(x0, x1);
+        }
+        if (y0 === y2) {
+            // Handle awkward all-on-same-line case as its own thing
+            a = b = x0;
+            if (x1 < a) {
+                a = x1;
+            }
+            else if (x1 > b) {
+                b = x1;
+            }
+            if (x2 < a) {
+                a = x2;
+            }
+            else if (x2 > b) {
+                b = x2;
+            }
+            this.drawHLine(a, y0, b - a + 1, color);
+            return;
+        }
+        const dx01 = x1 - x0;
+        const dy01 = y1 - y0;
+        const dx02 = x2 - x0;
+        const dy02 = y2 - y0;
+        const dx12 = x2 - x1;
+        const dy12 = y2 - y1;
+        let sa = 0;
+        let sb = 0;
+        if (y1 === y2) {
+            last = y1;
+        }
+        else {
+            last = y1 - 1;
+        } // skip it
+        for (y = y0; y <= last; y++) {
+            a = x0 + Math.floor(sa / dy01);
+            b = x0 + Math.floor(sb / dy02);
+            sa += dx01;
+            sb += dx02;
+            if (a > b) {
+                b = [a, (a = b)][0];
+            } // this._swap(a,b);
+            this.drawHLine(a, y, b - a + 1, color);
+        }
+        sa = dx12 * (y - y1);
+        sb = dx02 * (y - y0);
+        for (; y <= y2; y++) {
+            a = x1 + Math.floor(sa / dy12);
+            b = x0 + Math.floor(sb / dy02);
+            sa += dx12;
+            sb += dx02;
+            if (a > b) {
+                b = [a, (a = b)][0];
+            } // this._swap(a,b);
+            this.drawHLine(a, y, b - a + 1, color);
+        }
+    }
+    drawVLine(x, y, height, color) {
+        if (x >= this.width || y >= this.height) {
+            return;
+        }
+        if (y + height - 1 >= this.height) {
+            height = this.height - y;
+        }
+        this.setAddrWindow(x, y, x, y + height - 1);
+        const hi = color >> 8;
+        const lo = color & 0xff;
+        const data = [];
+        while (height--) {
+            data.push(hi);
+            data.push(lo);
+        }
+        this.writeData(data);
+    }
+    drawHLine(x, y, width, color) {
+        if (x >= this.width || y >= this.height) {
+            return;
+        }
+        if (x + width - 1 >= this.width) {
+            width = this.width - x;
+        }
+        this.setAddrWindow(x, y, x + width - 1, y);
+        const hi = color >> 8;
+        const lo = color & 0xff;
+        const data = [];
+        while (width--) {
+            data.push(hi);
+            data.push(lo);
+        }
+        this.writeData(data);
+    }
+    drawLine(x0, y0, x1, y1, color) {
+        const step = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+        if (step) {
+            y0 = [x0, (x0 = y0)][0]; // this._swap(x0, y0);
+            y1 = [x1, (x1 = y1)][0]; // this._swap(x1, y1);
+        }
+        if (x0 > x1) {
+            x1 = [x0, (x0 = x1)][0]; // this._swap(x0, x1);
+            y1 = [y0, (y0 = y1)][0]; // this._swap(y0, y1);
+        }
+        const dx = x1 - x0;
+        const dy = Math.abs(y1 - y0);
+        let err = dx / 2;
+        const ystep = y0 < y1 ? 1 : -1;
+        for (; x0 <= x1; x0++) {
+            if (step) {
+                this.drawPixel(y0, x0, color);
+            }
+            else {
+                this.drawPixel(x0, y0, color);
+            }
+            err -= dy;
+            if (err < 0) {
+                y0 += ystep;
+                err += dx;
+            }
+        }
+    }
+    drawPixel(x, y, color) {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+            return;
+        }
+        this.setAddrWindow(x, y, x + 1, y + 1);
+        this.writeData([color >> 8, color & 0xff]);
+    }
+    drawChar(x, y, char, color, backgroundColor, size) {
+        //  bg = bg || color;
+        size = size || 1;
+        if (x >= this.width || // Clip right
+            y >= this.height || // Clip bottom
+            x + 6 * size - 1 < 0 || // Clip left
+            y + 8 * size - 1 < 0) {
+            // Clip top
+            return;
+        }
+        if (color !== backgroundColor) {
+            this.drawChar2(x, y, char, color, backgroundColor, size);
+            return;
+        }
+        const c = char.charCodeAt(0);
+        for (let i = 0; i < 6; i++) {
+            let line = i === 5 ? 0 : font[c * 5 + i];
+            for (let j = 0; j < 8; j++) {
+                if (line & 0x1) {
+                    if (size === 1) {
+                        // default size
+                        this.drawPixel(x + i, y + j, color);
+                    }
+                    else {
+                        // big size
+                        this.fillRect(x + i * size, y + j * size, size, size, color);
+                    }
+                }
+                else if (backgroundColor !== color) {
+                    if (size === 1) {
+                        // default size
+                        this.drawPixel(x + i, y + j, backgroundColor);
+                    }
+                    else {
+                        // big size
+                        this.fillRect(x + i * size, y + j * size, size, size, backgroundColor);
+                    }
+                }
+                line >>= 1;
+            }
+        }
+    }
+    drawString(x, y, string, color, backgroundColor, size, wrap) {
+        //  bg = bg || color;
+        size = size || 1;
+        //  wrap = wrap || true;
+        for (let n = 0; n < string.length; n++) {
+            const c = string.charAt(n);
+            if (c === "\n") {
+                y += size * 8;
+                x = 0;
+            }
+            else if (c === "\r") {
+                // skip em
+            }
+            else {
+                this.drawChar(x, y, c, color, backgroundColor, size);
+                x += size * 6;
+                if (wrap && x > this.width - size * 6) {
+                    y += size * 8;
+                    x = 0;
+                }
+            }
+        }
+        return [x, y];
+    }
+    drawContextBound(context, x0, y0, width, height, x1, y1, gray) {
+        x0 = x0 || 0;
+        y0 = y0 || 0;
+        width = width || context.canvas.clientWidth;
+        height = height || context.canvas.clientHeight;
+        x1 = x1 || 0;
+        y1 = y1 || 0;
+        gray = gray || false;
+        this.write(ST7735_COLMOD, [ST7735_18bit]); // 18bit/pixel
+        const imageData = context.getImageData(x0, y0, width, height).data;
+        const rgb = [];
+        for (let n = 0; n < imageData.length; n += 4) {
+            const r = imageData[n + 0];
+            const g = imageData[n + 1];
+            const b = imageData[n + 2];
+            if (!gray) {
+                rgb.push(r);
+                rgb.push(g);
+                rgb.push(b);
+            }
+            else {
+                const gs = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+                rgb.push(gs);
+                rgb.push(gs);
+                rgb.push(gs);
+            }
+        }
+        this.write(ST7735_COLMOD, [ST7735_18bit]); // 18bit/pixel
+        this.setAddrWindow(x1, y1, x1 + width - 1, y1 + height - 1);
+        this._writeBuffer(rgb);
+        this._writeBuffer(); // for flush
+        this.write(ST7735_COLMOD, [ST7735_16bit]); // 16bit/pixel
+    }
+    drawContext(context, gray) {
+        gray = gray || false;
+        this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray);
+    }
+    rawBound(x, y, width, height, pixels) {
+        const rgb = [];
+        pixels.forEach((v) => {
+            rgb.push((v & 0xff0000) >> 16);
+            rgb.push((v & 0xff00) >> 8);
+            rgb.push(v & 0xff);
+        });
+        this.write(ST7735_COLMOD, [ST7735_18bit]); // 18bit/pixel
+        this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+        this._writeBuffer(rgb);
+        this._writeBuffer(); // for flush
+        this.write(ST7735_COLMOD, [ST7735_16bit]); // 16bit/pixel
+    }
+    raw(pixels) {
+        this.rawBound(0, 0, this.width, this.height, pixels);
+    }
+    _setPresetColor() {
+        this.color = {
+            AliceBlue: 0xf7df,
+            AntiqueWhite: 0xff5a,
+            Aqua: 0x07ff,
+            Aquamarine: 0x7ffa,
+            Azure: 0xf7ff,
+            Beige: 0xf7bb,
+            Bisque: 0xff38,
+            Black: 0x0000,
+            BlanchedAlmond: 0xff59,
+            Blue: 0x001f,
+            BlueViolet: 0x895c,
+            Brown: 0xa145,
+            BurlyWood: 0xddd0,
+            CadetBlue: 0x5cf4,
+            Chartreuse: 0x7fe0,
+            Chocolate: 0xd343,
+            Coral: 0xfbea,
+            CornflowerBlue: 0x64bd,
+            Cornsilk: 0xffdb,
+            Crimson: 0xd8a7,
+            Cyan: 0x07ff,
+            DarkBlue: 0x0011,
+            DarkCyan: 0x0451,
+            DarkGoldenRod: 0xbc21,
+            DarkGray: 0xad55,
+            DarkGreen: 0x0320,
+            DarkKhaki: 0xbdad,
+            DarkMagenta: 0x8811,
+            DarkOliveGreen: 0x5345,
+            DarkOrange: 0xfc60,
+            DarkOrchid: 0x9999,
+            DarkRed: 0x8800,
+            DarkSalmon: 0xecaf,
+            DarkSeaGreen: 0x8df1,
+            DarkSlateBlue: 0x49f1,
+            DarkSlateGray: 0x2a69,
+            DarkTurquoise: 0x067a,
+            DarkViolet: 0x901a,
+            DeepPink: 0xf8b2,
+            DeepSkyBlue: 0x05ff,
+            DimGray: 0x6b4d,
+            DodgerBlue: 0x1c9f,
+            FireBrick: 0xb104,
+            FloralWhite: 0xffde,
+            ForestGreen: 0x2444,
+            Fuchsia: 0xf81f,
+            Gainsboro: 0xdefb,
+            GhostWhite: 0xffdf,
+            Gold: 0xfea0,
+            GoldenRod: 0xdd24,
+            Gray: 0x8410,
+            Green: 0x0400,
+            GreenYellow: 0xafe5,
+            HoneyDew: 0xf7fe,
+            HotPink: 0xfb56,
+            IndianRed: 0xcaeb,
+            Indigo: 0x4810,
+            Ivory: 0xfffe,
+            Khaki: 0xf731,
+            Lavender: 0xe73f,
+            LavenderBlush: 0xff9e,
+            LawnGreen: 0x7fe0,
+            LemonChiffon: 0xffd9,
+            LightBlue: 0xaedc,
+            LightCoral: 0xf410,
+            LightCyan: 0xe7ff,
+            LightGoldenRodYellow: 0xffda,
+            LightGray: 0xd69a,
+            LightGreen: 0x9772,
+            LightPink: 0xfdb8,
+            LightSalmon: 0xfd0f,
+            LightSeaGreen: 0x2595,
+            LightSkyBlue: 0x867f,
+            LightSlateGray: 0x7453,
+            LightSteelBlue: 0xb63b,
+            LightYellow: 0xfffc,
+            Lime: 0x07e0,
+            LimeGreen: 0x3666,
+            Linen: 0xff9c,
+            Magenta: 0xf81f,
+            Maroon: 0x8000,
+            MediumAquaMarine: 0x6675,
+            MediumBlue: 0x0019,
+            MediumOrchid: 0xbaba,
+            MediumPurple: 0x939b,
+            MediumSeaGreen: 0x3d8e,
+            MediumSlateBlue: 0x7b5d,
+            MediumSpringGreen: 0x07d3,
+            MediumTurquoise: 0x4e99,
+            MediumVioletRed: 0xc0b0,
+            MidnightBlue: 0x18ce,
+            MintCream: 0xf7ff,
+            MistyRose: 0xff3c,
+            Moccasin: 0xff36,
+            NavajoWhite: 0xfef5,
+            Navy: 0x0010,
+            OldLace: 0xffbc,
+            Olive: 0x8400,
+            OliveDrab: 0x6c64,
+            Orange: 0xfd20,
+            OrangeRed: 0xfa20,
+            Orchid: 0xdb9a,
+            PaleGoldenRod: 0xef55,
+            PaleGreen: 0x9fd3,
+            PaleTurquoise: 0xaf7d,
+            PaleVioletRed: 0xdb92,
+            PapayaWhip: 0xff7a,
+            PeachPuff: 0xfed7,
+            Peru: 0xcc27,
+            Pink: 0xfe19,
+            Plum: 0xdd1b,
+            PowderBlue: 0xb71c,
+            Purple: 0x8010,
+            RebeccaPurple: 0x6193,
+            Red: 0xf800,
+            RosyBrown: 0xbc71,
+            RoyalBlue: 0x435c,
+            SaddleBrown: 0x8a22,
+            Salmon: 0xfc0e,
+            SandyBrown: 0xf52c,
+            SeaGreen: 0x2c4a,
+            SeaShell: 0xffbd,
+            Sienna: 0xa285,
+            Silver: 0xc618,
+            SkyBlue: 0x867d,
+            SlateBlue: 0x6ad9,
+            SlateGray: 0x7412,
+            Snow: 0xffdf,
+            SpringGreen: 0x07ef,
+            SteelBlue: 0x4416,
+            Tan: 0xd5b1,
+            Teal: 0x0410,
+            Thistle: 0xddfb,
+            Tomato: 0xfb08,
+            Turquoise: 0x471a,
+            Violet: 0xec1d,
+            Wheat: 0xf6f6,
+            White: 0xffff,
+            WhiteSmoke: 0xf7be,
+            Yellow: 0xffe0,
+            YellowGreen: 0x9e66,
+        };
+    }
+    _drawCircleHelper(x0, y0, r, cornername, color) {
+        let f = 1 - r;
+        let ddF_x = 1;
+        let ddF_y = -2 * r;
+        let x = 0;
+        let y = r;
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            if (cornername & 0x4) {
+                this.drawPixel(x0 + x, y0 + y, color);
+                this.drawPixel(x0 + y, y0 + x, color);
+            }
+            if (cornername & 0x2) {
+                this.drawPixel(x0 + x, y0 - y, color);
+                this.drawPixel(x0 + y, y0 - x, color);
+            }
+            if (cornername & 0x8) {
+                this.drawPixel(x0 - y, y0 + x, color);
+                this.drawPixel(x0 - x, y0 + y, color);
+            }
+            if (cornername & 0x1) {
+                this.drawPixel(x0 - y, y0 - x, color);
+                this.drawPixel(x0 - x, y0 - y, color);
+            }
+        }
+    }
+    _fillCircleHelper(x0, y0, r, cornername, delta, color) {
+        let f = 1 - r;
+        let ddF_x = 1;
+        let ddF_y = -2 * r;
+        let x = 0;
+        let y = r;
+        while (x < y) {
+            if (f >= 0) {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+            if (cornername & 0x1) {
+                this.drawVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
+                this.drawVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
+            }
+            if (cornername & 0x2) {
+                this.drawVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
+                this.drawVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
+            }
+        }
+    }
+    drawChar2(x, y, ch, color, bg, size) {
+        //  bg = bg || color;
+        size = size || 1;
+        if (x >= this.width || // Clip right
+            y >= this.height || // Clip bottom
+            x + 6 * size - 1 < 0 || // Clip left
+            y + 8 * size - 1 < 0 // Clip top
+        ) {
+            return;
+        }
+        const pixels = new Array(6 * 8 * size * size);
+        const c = ch.charCodeAt(0);
+        for (let i = 0; i < 6; i++) {
+            let line = i === 5 ? 0 : font[c * 5 + i];
+            for (let j = 0; j < 8; j++) {
+                const cl = line & 0x1 ? color : bg;
+                for (let w = 0; w < size; w++) {
+                    for (let h = 0; h < size; h++) {
+                        pixels[i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))] = cl;
+                    }
+                }
+                line >>= 1;
+            }
+        }
+        this.rawBound16(x, y, 6 * size, 8 * size, pixels);
+    }
+    rawBound16(x, y, width, height, pixels) {
+        const rgb = [];
+        pixels.forEach((v) => {
+            rgb.push((v & 0xff00) >> 8);
+            rgb.push(v & 0xff);
+        });
+        this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+        this._writeBuffer(rgb);
+        this._writeBuffer(); // for flush
+    }
+}
+exports.default = SainSmartTFT18LCD;
+// ----------------------------------------------------------
+// commands
+// const INITR_GREENTAB = 0x0;
+// const INITR_REDTAB = 0x1;
+// const INITR_BLACKTAB = 0x2;
+const ST7735_TFTWIDTH = 128;
+const ST7735_TFTHEIGHT = 160;
+// const ST7735_NOP = 0x00;
+// const ST7735_SWRESET = 0x01;
+// const ST7735_RDDID = 0x04;
+// const ST7735_RDDST = 0x09;
+// const ST7735_RDDPM = 0x0a;
+// const ST7735_SLPIN = 0x10;
+const ST7735_SLPOUT = 0x11;
+// const ST7735_PTLON = 0x12;
+// const ST7735_NORON = 0x13;
+const ST7735_INVOFF = 0x20;
+const ST7735_INVON = 0x21;
+const ST7735_DISPOFF = 0x28;
+const ST7735_DISPON = 0x29;
+const ST7735_CASET = 0x2a;
+const ST7735_RASET = 0x2b;
+const ST7735_RAMWR = 0x2c;
+// const ST7735_RAMRD = 0x2e;
+// const ST7735_PTLAR = 0x30;
+const ST7735_COLMOD = 0x3a;
+const ST7735_MADCTL = 0x36;
+const ST7735_FRMCTR1 = 0xb1;
+const ST7735_FRMCTR2 = 0xb2;
+const ST7735_FRMCTR3 = 0xb3;
+const ST7735_INVCTR = 0xb4;
+// const ST7735_DISSET5 = 0xb6;
+const ST7735_PWCTR1 = 0xc0;
+const ST7735_PWCTR2 = 0xc1;
+const ST7735_PWCTR3 = 0xc2;
+const ST7735_PWCTR4 = 0xc3;
+const ST7735_PWCTR5 = 0xc4;
+const ST7735_VMCTR1 = 0xc5;
+// const ST7735_RDID1 = 0xda;
+// const ST7735_RDID2 = 0xdb;
+// const ST7735_RDID3 = 0xdc;
+// const ST7735_RDID4 = 0xdd;
+// const ST7735_PWCTR6 = 0xfc;
+const ST7735_GMCTRP1 = 0xe0;
+const ST7735_GMCTRN1 = 0xe1;
+// Color definitions
+// const ST7735_BLACK = 0x0000;
+// const ST7735_BLUE = 0x001f;
+// const ST7735_RED = 0xf800;
+// const ST7735_GREEN = 0x07e0;
+// const ST7735_CYAN = 0x07ff;
+// const ST7735_MAGENTA = 0xf81f;
+// const ST7735_YELLOW = 0xffe0;
+// const ST7735_WHITE = 0xffff;
+const ST7735_18bit = 0x06; // 18bit/pixel
+const ST7735_16bit = 0x05; // 16bit/pixel
+// standard ascii 5x7 font
+const font = [
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x3e,
+    0x5b,
+    0x4f,
+    0x5b,
+    0x3e,
+    0x3e,
+    0x6b,
+    0x4f,
+    0x6b,
+    0x3e,
+    0x1c,
+    0x3e,
+    0x7c,
+    0x3e,
+    0x1c,
+    0x18,
+    0x3c,
+    0x7e,
+    0x3c,
+    0x18,
+    0x1c,
+    0x57,
+    0x7d,
+    0x57,
+    0x1c,
+    0x1c,
+    0x5e,
+    0x7f,
+    0x5e,
+    0x1c,
+    0x00,
+    0x18,
+    0x3c,
+    0x18,
+    0x00,
+    0xff,
+    0xe7,
+    0xc3,
+    0xe7,
+    0xff,
+    0x00,
+    0x18,
+    0x24,
+    0x18,
+    0x00,
+    0xff,
+    0xe7,
+    0xdb,
+    0xe7,
+    0xff,
+    0x30,
+    0x48,
+    0x3a,
+    0x06,
+    0x0e,
+    0x26,
+    0x29,
+    0x79,
+    0x29,
+    0x26,
+    0x40,
+    0x7f,
+    0x05,
+    0x05,
+    0x07,
+    0x40,
+    0x7f,
+    0x05,
+    0x25,
+    0x3f,
+    0x5a,
+    0x3c,
+    0xe7,
+    0x3c,
+    0x5a,
+    0x7f,
+    0x3e,
+    0x1c,
+    0x1c,
+    0x08,
+    0x08,
+    0x1c,
+    0x1c,
+    0x3e,
+    0x7f,
+    0x14,
+    0x22,
+    0x7f,
+    0x22,
+    0x14,
+    0x5f,
+    0x5f,
+    0x00,
+    0x5f,
+    0x5f,
+    0x06,
+    0x09,
+    0x7f,
+    0x01,
+    0x7f,
+    0x00,
+    0x66,
+    0x89,
+    0x95,
+    0x6a,
+    0x60,
+    0x60,
+    0x60,
+    0x60,
+    0x60,
+    0x94,
+    0xa2,
+    0xff,
+    0xa2,
+    0x94,
+    0x08,
+    0x04,
+    0x7e,
+    0x04,
+    0x08,
+    0x10,
+    0x20,
+    0x7e,
+    0x20,
+    0x10,
+    0x08,
+    0x08,
+    0x2a,
+    0x1c,
+    0x08,
+    0x08,
+    0x1c,
+    0x2a,
+    0x08,
+    0x08,
+    0x1e,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x0c,
+    0x1e,
+    0x0c,
+    0x1e,
+    0x0c,
+    0x30,
+    0x38,
+    0x3e,
+    0x38,
+    0x30,
+    0x06,
+    0x0e,
+    0x3e,
+    0x0e,
+    0x06,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x5f,
+    0x00,
+    0x00,
+    0x00,
+    0x07,
+    0x00,
+    0x07,
+    0x00,
+    0x14,
+    0x7f,
+    0x14,
+    0x7f,
+    0x14,
+    0x24,
+    0x2a,
+    0x7f,
+    0x2a,
+    0x12,
+    0x23,
+    0x13,
+    0x08,
+    0x64,
+    0x62,
+    0x36,
+    0x49,
+    0x56,
+    0x20,
+    0x50,
+    0x00,
+    0x08,
+    0x07,
+    0x03,
+    0x00,
+    0x00,
+    0x1c,
+    0x22,
+    0x41,
+    0x00,
+    0x00,
+    0x41,
+    0x22,
+    0x1c,
+    0x00,
+    0x2a,
+    0x1c,
+    0x7f,
+    0x1c,
+    0x2a,
+    0x08,
+    0x08,
+    0x3e,
+    0x08,
+    0x08,
+    0x00,
+    0x80,
+    0x70,
+    0x30,
+    0x00,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x00,
+    0x00,
+    0x60,
+    0x60,
+    0x00,
+    0x20,
+    0x10,
+    0x08,
+    0x04,
+    0x02,
+    0x3e,
+    0x51,
+    0x49,
+    0x45,
+    0x3e,
+    0x00,
+    0x42,
+    0x7f,
+    0x40,
+    0x00,
+    0x72,
+    0x49,
+    0x49,
+    0x49,
+    0x46,
+    0x21,
+    0x41,
+    0x49,
+    0x4d,
+    0x33,
+    0x18,
+    0x14,
+    0x12,
+    0x7f,
+    0x10,
+    0x27,
+    0x45,
+    0x45,
+    0x45,
+    0x39,
+    0x3c,
+    0x4a,
+    0x49,
+    0x49,
+    0x31,
+    0x41,
+    0x21,
+    0x11,
+    0x09,
+    0x07,
+    0x36,
+    0x49,
+    0x49,
+    0x49,
+    0x36,
+    0x46,
+    0x49,
+    0x49,
+    0x29,
+    0x1e,
+    0x00,
+    0x00,
+    0x14,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x34,
+    0x00,
+    0x00,
+    0x00,
+    0x08,
+    0x14,
+    0x22,
+    0x41,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x00,
+    0x41,
+    0x22,
+    0x14,
+    0x08,
+    0x02,
+    0x01,
+    0x59,
+    0x09,
+    0x06,
+    0x3e,
+    0x41,
+    0x5d,
+    0x59,
+    0x4e,
+    0x7c,
+    0x12,
+    0x11,
+    0x12,
+    0x7c,
+    0x7f,
+    0x49,
+    0x49,
+    0x49,
+    0x36,
+    0x3e,
+    0x41,
+    0x41,
+    0x41,
+    0x22,
+    0x7f,
+    0x41,
+    0x41,
+    0x41,
+    0x3e,
+    0x7f,
+    0x49,
+    0x49,
+    0x49,
+    0x41,
+    0x7f,
+    0x09,
+    0x09,
+    0x09,
+    0x01,
+    0x3e,
+    0x41,
+    0x41,
+    0x51,
+    0x73,
+    0x7f,
+    0x08,
+    0x08,
+    0x08,
+    0x7f,
+    0x00,
+    0x41,
+    0x7f,
+    0x41,
+    0x00,
+    0x20,
+    0x40,
+    0x41,
+    0x3f,
+    0x01,
+    0x7f,
+    0x08,
+    0x14,
+    0x22,
+    0x41,
+    0x7f,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x7f,
+    0x02,
+    0x1c,
+    0x02,
+    0x7f,
+    0x7f,
+    0x04,
+    0x08,
+    0x10,
+    0x7f,
+    0x3e,
+    0x41,
+    0x41,
+    0x41,
+    0x3e,
+    0x7f,
+    0x09,
+    0x09,
+    0x09,
+    0x06,
+    0x3e,
+    0x41,
+    0x51,
+    0x21,
+    0x5e,
+    0x7f,
+    0x09,
+    0x19,
+    0x29,
+    0x46,
+    0x26,
+    0x49,
+    0x49,
+    0x49,
+    0x32,
+    0x03,
+    0x01,
+    0x7f,
+    0x01,
+    0x03,
+    0x3f,
+    0x40,
+    0x40,
+    0x40,
+    0x3f,
+    0x1f,
+    0x20,
+    0x40,
+    0x20,
+    0x1f,
+    0x3f,
+    0x40,
+    0x38,
+    0x40,
+    0x3f,
+    0x63,
+    0x14,
+    0x08,
+    0x14,
+    0x63,
+    0x03,
+    0x04,
+    0x78,
+    0x04,
+    0x03,
+    0x61,
+    0x59,
+    0x49,
+    0x4d,
+    0x43,
+    0x00,
+    0x7f,
+    0x41,
+    0x41,
+    0x41,
+    0x02,
+    0x04,
+    0x08,
+    0x10,
+    0x20,
+    0x00,
+    0x41,
+    0x41,
+    0x41,
+    0x7f,
+    0x04,
+    0x02,
+    0x01,
+    0x02,
+    0x04,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x00,
+    0x03,
+    0x07,
+    0x08,
+    0x00,
+    0x20,
+    0x54,
+    0x54,
+    0x78,
+    0x40,
+    0x7f,
+    0x28,
+    0x44,
+    0x44,
+    0x38,
+    0x38,
+    0x44,
+    0x44,
+    0x44,
+    0x28,
+    0x38,
+    0x44,
+    0x44,
+    0x28,
+    0x7f,
+    0x38,
+    0x54,
+    0x54,
+    0x54,
+    0x18,
+    0x00,
+    0x08,
+    0x7e,
+    0x09,
+    0x02,
+    0x18,
+    0xa4,
+    0xa4,
+    0x9c,
+    0x78,
+    0x7f,
+    0x08,
+    0x04,
+    0x04,
+    0x78,
+    0x00,
+    0x44,
+    0x7d,
+    0x40,
+    0x00,
+    0x20,
+    0x40,
+    0x40,
+    0x3d,
+    0x00,
+    0x7f,
+    0x10,
+    0x28,
+    0x44,
+    0x00,
+    0x00,
+    0x41,
+    0x7f,
+    0x40,
+    0x00,
+    0x7c,
+    0x04,
+    0x78,
+    0x04,
+    0x78,
+    0x7c,
+    0x08,
+    0x04,
+    0x04,
+    0x78,
+    0x38,
+    0x44,
+    0x44,
+    0x44,
+    0x38,
+    0xfc,
+    0x18,
+    0x24,
+    0x24,
+    0x18,
+    0x18,
+    0x24,
+    0x24,
+    0x18,
+    0xfc,
+    0x7c,
+    0x08,
+    0x04,
+    0x04,
+    0x08,
+    0x48,
+    0x54,
+    0x54,
+    0x54,
+    0x24,
+    0x04,
+    0x04,
+    0x3f,
+    0x44,
+    0x24,
+    0x3c,
+    0x40,
+    0x40,
+    0x20,
+    0x7c,
+    0x1c,
+    0x20,
+    0x40,
+    0x20,
+    0x1c,
+    0x3c,
+    0x40,
+    0x30,
+    0x40,
+    0x3c,
+    0x44,
+    0x28,
+    0x10,
+    0x28,
+    0x44,
+    0x4c,
+    0x90,
+    0x90,
+    0x90,
+    0x7c,
+    0x44,
+    0x64,
+    0x54,
+    0x4c,
+    0x44,
+    0x00,
+    0x08,
+    0x36,
+    0x41,
+    0x00,
+    0x00,
+    0x00,
+    0x77,
+    0x00,
+    0x00,
+    0x00,
+    0x41,
+    0x36,
+    0x08,
+    0x00,
+    0x02,
+    0x01,
+    0x02,
+    0x04,
+    0x02,
+    0x3c,
+    0x26,
+    0x23,
+    0x26,
+    0x3c,
+    0x1e,
+    0xa1,
+    0xa1,
+    0x61,
+    0x12,
+    0x3a,
+    0x40,
+    0x40,
+    0x20,
+    0x7a,
+    0x38,
+    0x54,
+    0x54,
+    0x55,
+    0x59,
+    0x21,
+    0x55,
+    0x55,
+    0x79,
+    0x41,
+    0x21,
+    0x54,
+    0x54,
+    0x78,
+    0x41,
+    0x21,
+    0x55,
+    0x54,
+    0x78,
+    0x40,
+    0x20,
+    0x54,
+    0x55,
+    0x79,
+    0x40,
+    0x0c,
+    0x1e,
+    0x52,
+    0x72,
+    0x12,
+    0x39,
+    0x55,
+    0x55,
+    0x55,
+    0x59,
+    0x39,
+    0x54,
+    0x54,
+    0x54,
+    0x59,
+    0x39,
+    0x55,
+    0x54,
+    0x54,
+    0x58,
+    0x00,
+    0x00,
+    0x45,
+    0x7c,
+    0x41,
+    0x00,
+    0x02,
+    0x45,
+    0x7d,
+    0x42,
+    0x00,
+    0x01,
+    0x45,
+    0x7c,
+    0x40,
+    0xf0,
+    0x29,
+    0x24,
+    0x29,
+    0xf0,
+    0xf0,
+    0x28,
+    0x25,
+    0x28,
+    0xf0,
+    0x7c,
+    0x54,
+    0x55,
+    0x45,
+    0x00,
+    0x20,
+    0x54,
+    0x54,
+    0x7c,
+    0x54,
+    0x7c,
+    0x0a,
+    0x09,
+    0x7f,
+    0x49,
+    0x32,
+    0x49,
+    0x49,
+    0x49,
+    0x32,
+    0x32,
+    0x48,
+    0x48,
+    0x48,
+    0x32,
+    0x32,
+    0x4a,
+    0x48,
+    0x48,
+    0x30,
+    0x3a,
+    0x41,
+    0x41,
+    0x21,
+    0x7a,
+    0x3a,
+    0x42,
+    0x40,
+    0x20,
+    0x78,
+    0x00,
+    0x9d,
+    0xa0,
+    0xa0,
+    0x7d,
+    0x39,
+    0x44,
+    0x44,
+    0x44,
+    0x39,
+    0x3d,
+    0x40,
+    0x40,
+    0x40,
+    0x3d,
+    0x3c,
+    0x24,
+    0xff,
+    0x24,
+    0x24,
+    0x48,
+    0x7e,
+    0x49,
+    0x43,
+    0x66,
+    0x2b,
+    0x2f,
+    0xfc,
+    0x2f,
+    0x2b,
+    0xff,
+    0x09,
+    0x29,
+    0xf6,
+    0x20,
+    0xc0,
+    0x88,
+    0x7e,
+    0x09,
+    0x03,
+    0x20,
+    0x54,
+    0x54,
+    0x79,
+    0x41,
+    0x00,
+    0x00,
+    0x44,
+    0x7d,
+    0x41,
+    0x30,
+    0x48,
+    0x48,
+    0x4a,
+    0x32,
+    0x38,
+    0x40,
+    0x40,
+    0x22,
+    0x7a,
+    0x00,
+    0x7a,
+    0x0a,
+    0x0a,
+    0x72,
+    0x7d,
+    0x0d,
+    0x19,
+    0x31,
+    0x7d,
+    0x26,
+    0x29,
+    0x29,
+    0x2f,
+    0x28,
+    0x26,
+    0x29,
+    0x29,
+    0x29,
+    0x26,
+    0x30,
+    0x48,
+    0x4d,
+    0x40,
+    0x20,
+    0x38,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x08,
+    0x38,
+    0x2f,
+    0x10,
+    0xc8,
+    0xac,
+    0xba,
+    0x2f,
+    0x10,
+    0x28,
+    0x34,
+    0xfa,
+    0x00,
+    0x00,
+    0x7b,
+    0x00,
+    0x00,
+    0x08,
+    0x14,
+    0x2a,
+    0x14,
+    0x22,
+    0x22,
+    0x14,
+    0x2a,
+    0x14,
+    0x08,
+    0xaa,
+    0x00,
+    0x55,
+    0x00,
+    0xaa,
+    0xaa,
+    0x55,
+    0xaa,
+    0x55,
+    0xaa,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0x00,
+    0x10,
+    0x10,
+    0x10,
+    0xff,
+    0x00,
+    0x14,
+    0x14,
+    0x14,
+    0xff,
+    0x00,
+    0x10,
+    0x10,
+    0xff,
+    0x00,
+    0xff,
+    0x10,
+    0x10,
+    0xf0,
+    0x10,
+    0xf0,
+    0x14,
+    0x14,
+    0x14,
+    0xfc,
+    0x00,
+    0x14,
+    0x14,
+    0xf7,
+    0x00,
+    0xff,
+    0x00,
+    0x00,
+    0xff,
+    0x00,
+    0xff,
+    0x14,
+    0x14,
+    0xf4,
+    0x04,
+    0xfc,
+    0x14,
+    0x14,
+    0x17,
+    0x10,
+    0x1f,
+    0x10,
+    0x10,
+    0x1f,
+    0x10,
+    0x1f,
+    0x14,
+    0x14,
+    0x14,
+    0x1f,
+    0x00,
+    0x10,
+    0x10,
+    0x10,
+    0xf0,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x1f,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x1f,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0xf0,
+    0x10,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0xff,
+    0x10,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0x14,
+    0x00,
+    0x00,
+    0xff,
+    0x00,
+    0xff,
+    0x00,
+    0x00,
+    0x1f,
+    0x10,
+    0x17,
+    0x00,
+    0x00,
+    0xfc,
+    0x04,
+    0xf4,
+    0x14,
+    0x14,
+    0x17,
+    0x10,
+    0x17,
+    0x14,
+    0x14,
+    0xf4,
+    0x04,
+    0xf4,
+    0x00,
+    0x00,
+    0xff,
+    0x00,
+    0xf7,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0x14,
+    0xf7,
+    0x00,
+    0xf7,
+    0x14,
+    0x14,
+    0x14,
+    0x17,
+    0x14,
+    0x10,
+    0x10,
+    0x1f,
+    0x10,
+    0x1f,
+    0x14,
+    0x14,
+    0x14,
+    0xf4,
+    0x14,
+    0x10,
+    0x10,
+    0xf0,
+    0x10,
+    0xf0,
+    0x00,
+    0x00,
+    0x1f,
+    0x10,
+    0x1f,
+    0x00,
+    0x00,
+    0x00,
+    0x1f,
+    0x14,
+    0x00,
+    0x00,
+    0x00,
+    0xfc,
+    0x14,
+    0x00,
+    0x00,
+    0xf0,
+    0x10,
+    0xf0,
+    0x10,
+    0x10,
+    0xff,
+    0x10,
+    0xff,
+    0x14,
+    0x14,
+    0x14,
+    0xff,
+    0x14,
+    0x10,
+    0x10,
+    0x10,
+    0x1f,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xf0,
+    0x10,
+    0xff,
+    0xff,
+    0xff,
+    0xff,
+    0xff,
+    0xf0,
+    0xf0,
+    0xf0,
+    0xf0,
+    0xf0,
+    0xff,
+    0xff,
+    0xff,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0xff,
+    0x0f,
+    0x0f,
+    0x0f,
+    0x0f,
+    0x0f,
+    0x38,
+    0x44,
+    0x44,
+    0x38,
+    0x44,
+    0x7c,
+    0x2a,
+    0x2a,
+    0x3e,
+    0x14,
+    0x7e,
+    0x02,
+    0x02,
+    0x06,
+    0x06,
+    0x02,
+    0x7e,
+    0x02,
+    0x7e,
+    0x02,
+    0x63,
+    0x55,
+    0x49,
+    0x41,
+    0x63,
+    0x38,
+    0x44,
+    0x44,
+    0x3c,
+    0x04,
+    0x40,
+    0x7e,
+    0x20,
+    0x1e,
+    0x20,
+    0x06,
+    0x02,
+    0x7e,
+    0x02,
+    0x02,
+    0x99,
+    0xa5,
+    0xe7,
+    0xa5,
+    0x99,
+    0x1c,
+    0x2a,
+    0x49,
+    0x2a,
+    0x1c,
+    0x4c,
+    0x72,
+    0x01,
+    0x72,
+    0x4c,
+    0x30,
+    0x4a,
+    0x4d,
+    0x4d,
+    0x30,
+    0x30,
+    0x48,
+    0x78,
+    0x48,
+    0x30,
+    0xbc,
+    0x62,
+    0x5a,
+    0x46,
+    0x3d,
+    0x3e,
+    0x49,
+    0x49,
+    0x49,
+    0x00,
+    0x7e,
+    0x01,
+    0x01,
+    0x01,
+    0x7e,
+    0x2a,
+    0x2a,
+    0x2a,
+    0x2a,
+    0x2a,
+    0x44,
+    0x44,
+    0x5f,
+    0x44,
+    0x44,
+    0x40,
+    0x51,
+    0x4a,
+    0x44,
+    0x40,
+    0x40,
+    0x44,
+    0x4a,
+    0x51,
+    0x40,
+    0x00,
+    0x00,
+    0xff,
+    0x01,
+    0x03,
+    0xe0,
+    0x80,
+    0xff,
+    0x00,
+    0x00,
+    0x08,
+    0x08,
+    0x6b,
+    0x6b,
+    0x08,
+    0x36,
+    0x12,
+    0x36,
+    0x24,
+    0x36,
+    0x06,
+    0x0f,
+    0x09,
+    0x0f,
+    0x06,
+    0x00,
+    0x00,
+    0x18,
+    0x18,
+    0x00,
+    0x00,
+    0x00,
+    0x10,
+    0x10,
+    0x00,
+    0x30,
+    0x40,
+    0xff,
+    0x01,
+    0x01,
+    0x00,
+    0x1f,
+    0x01,
+    0x01,
+    0x1e,
+    0x00,
+    0x19,
+    0x1d,
+    0x17,
+    0x12,
+    0x00,
+    0x3c,
+    0x3c,
+    0x3c,
+    0x3c,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/SharpMemoryTFT/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SharpMemoryTFT
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class SharpMemoryTFT {
+    constructor() {
+        this.commands = {
+            write: 0x80,
+            clear: 0x20,
+            vcom: 0x40,
+        };
+        this.width = 0;
+        this.height = 0;
+        this._pos = { x: 0, y: 0 };
+        this.autoFlush = false;
+        this.fontSize = 0;
+        this.keys = [
+            "vcc",
+            "gnd",
+            "vcc_a",
+            "gnd_a",
+            "sclk",
+            "mosi",
+            "cs",
+            "disp",
+            "extcomin",
+            "extmode",
+            "width",
+            "height",
+        ];
+        this.requiredKeys = ["sclk", "mosi", "cs", "width", "height"];
+        this._canvas = null;
+        this._reset();
+    }
+    static info() {
+        return {
+            name: "SharpMemoryTFT",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_cs = obniz.getIO(this.params.cs);
+        if (this.params.disp && this.params.extcomin && this.params.extmode) {
+            this.io_disp = obniz.getIO(this.params.disp);
+            this.io_extcomin = obniz.getIO(this.params.extcomin);
+            this.io_extmode = obniz.getIO(this.params.extmode);
+            this.io_disp.output(true);
+            this.io_extcomin.output(false);
+            this.io_extmode.output(false);
+        }
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        obniz.setVccGnd(this.params.vcc_a, this.params.gnd_a, "5v");
+        this.params.mode = "master";
+        this.params.frequency = 1000 * 1000;
+        this.params.clk = this.params.sclk;
+        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+        this.width = this.params.width;
+        this.height = this.params.height;
+        this.obniz.wait(100);
+    }
+    _reverseBits(data) {
+        let revData = 0;
+        for (let i = 0; i < 8; i++) {
+            revData += data & 0x01;
+            data >>= 1;
+            if (i < 7) {
+                revData <<= 1;
+            }
+        }
+        return revData;
+    }
+    sendLSB(data) {
+        this.spi.write([this._reverseBits(data)]);
+    }
+    sendClear() {
+        this.io_cs.output(true);
+        this.spi.write([this.commands.clear | 0x00, 0x00]);
+        this.io_cs.output(false);
+    }
+    raw(rawData) {
+        let oldline;
+        let currentline;
+        const totalbytes = (this.width * this.height) / 8;
+        let array = new Array(1024);
+        let index = 0;
+        array[index++] = this.commands.write | this.commands.vcom;
+        oldline = currentline = 1;
+        array[index++] = this._reverseBits(currentline);
+        this.io_cs.output(true);
+        for (let i = 0; i < totalbytes; i++) {
+            array[index++] = rawData[i]; // lsb
+            currentline = Math.floor((i + 1) / (this.width / 8) + 1);
+            if (currentline !== oldline) {
+                array[index++] = 0x00;
+                if (currentline <= this.height) {
+                    array[index++] = this._reverseBits(currentline);
+                }
+                oldline = currentline;
+            }
+            if (index >= 1021) {
+                // regarding SPI max.
+                this.spi.write(array.slice(0, index));
+                array = new Array(1024);
+                index = 0;
+            }
+        }
+        if (index > 0) {
+            this.spi.write(array.slice(0, index));
+        }
+        this.spi.write([0x00]);
+        this.io_cs.output(false);
+    }
+    // copy from display.js
+    _reset() {
+        this._pos = { x: 0, y: 0 };
+        this.autoFlush = true;
+    }
+    warnCanvasAvailability() {
+        if (this.obniz.isNode) {
+            throw new Error("MemoryDisplay require node-canvas to draw rich contents. see more detail on docs");
+        }
+        else {
+            throw new Error("MemoryDisplay cant create canvas element to body");
+        }
+    }
+    _preparedCanvas() {
+        if (this._canvas) {
+            return this._canvas;
+        }
+        if (this.obniz.isNode) {
+            try {
+                const { createCanvas } = __webpack_require__("./dist/src/obniz/libs/webpackReplace/canvas.js");
+                this._canvas = createCanvas(this.width, this.height);
+            }
+            catch (e) {
+                // this.warnCanvasAvailability();
+                return null;
+            }
+        }
+        else {
+            const identifier = "MemoryDispCanvas-" + this.obniz.id;
+            let canvas = document.getElementById(identifier);
+            if (!canvas) {
+                canvas = document.createElement("canvas");
+                canvas.setAttribute("id", identifier);
+                canvas.style.visibility = "hidden";
+                canvas.width = this.width;
+                canvas.height = this.height;
+                canvas.style["-webkit-font-smoothing"] = "none";
+                const body = document.getElementsByTagName("body")[0];
+                body.appendChild(canvas);
+            }
+            this._canvas = canvas;
+        }
+        const ctx = this._canvas.getContext("2d");
+        ctx.fillStyle = "#FFF";
+        ctx.fillRect(0, 0, this.width, this.height);
+        ctx.fillStyle = "#000";
+        ctx.strokeStyle = "#000";
+        this._pos.x = 0;
+        this._pos.y = 0;
+        this.fontSize = 16;
+        ctx.font = `${this.fontSize}px Arial`;
+        return this._canvas;
+    }
+    _ctx() {
+        const canvas = this._preparedCanvas();
+        return canvas.getContext("2d");
+    }
+    font(font, size) {
+        const ctx = this._ctx();
+        if (typeof size !== "number") {
+            size = 16;
+        }
+        if (typeof font !== "string") {
+            font = "Arial";
+        }
+        this.fontSize = size;
+        ctx.font = "" + size + "px " + font;
+    }
+    clear() {
+        const ctx = this._ctx();
+        this._pos.x = 0;
+        this._pos.y = 0;
+        if (ctx) {
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.fillStyle = "#000";
+            ctx.strokeStyle = "#000";
+            this.draw(ctx);
+        }
+        else {
+            this.sendClear();
+        }
+    }
+    pos(x, y) {
+        this._ctx(); // crete first
+        if (typeof x === "number") {
+            this._pos.x = x;
+        }
+        if (typeof y === "number") {
+            this._pos.y = y;
+        }
+        return this._pos;
+    }
+    print(text) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
+            this.draw(ctx);
+            this._pos.y += this.fontSize;
+        }
+        else {
+            /*
+            let obj = {};
+            obj['display'] = {
+              text: '' + text,
+            };
+            this.obniz.send(obj);
+            */
+        }
+    }
+    line(x_0, y_0, x_1, y_1) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(x_0, y_0);
+            ctx.lineTo(x_1, y_1);
+            ctx.stroke();
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    rect(x, y, width, height, mustFill) {
+        const ctx = this._ctx();
+        if (ctx) {
+            if (mustFill) {
+                ctx.fillRect(x, y, width, height);
+            }
+            else {
+                ctx.strokeRect(x, y, width, height);
+            }
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    circle(x, y, r, mustFill) {
+        const ctx = this._ctx();
+        if (ctx) {
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            if (mustFill) {
+                ctx.fill();
+            }
+            else {
+                ctx.stroke();
+            }
+            this.draw(ctx);
+        }
+        else {
+            this.warnCanvasAvailability();
+        }
+    }
+    draw(ctx) {
+        if (this.autoFlush) {
+            this._draw(ctx);
+        }
+    }
+    drawing(autoFlush) {
+        this.autoFlush = autoFlush === true;
+        const ctx = this._ctx();
+        if (ctx) {
+            this.draw(ctx);
+        }
+    }
+    _draw(ctx) {
+        const stride = this.width / 8;
+        const vram = new Array(stride * 64);
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+            const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+            const index = Math.floor(i / 4);
+            const line = Math.floor(index / this.width);
+            const col = Math.floor((index - line * this.width) / 8);
+            const bits = Math.floor(index - line * this.width) % 8;
+            if (bits === 0) {
+                vram[line * stride + col] = 0x00;
+            }
+            if (brightness > 0x73) {
+                vram[line * stride + col] |= 0x80 >> bits;
+            }
+        }
+        this.raw(vram);
+    }
+}
+exports.default = SharpMemoryTFT;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/DistanceSensor/GP2Y0A21YK0F/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.GP2Y0A21YK0F
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class GP2Y0A21YK0F {
+    constructor() {
+        this.displayIoNames = {
+            vcc: "vcc",
+            gnd: "gnd",
+            signal: "signal",
+        };
+        this._unit = "mm";
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "GP2Y0A21YK0F",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        const io_signal = obniz.getIO(this.params.signal);
+        io_signal.end();
+        this.ad_signal = obniz.getAD(this.params.signal);
+    }
+    start(callback) {
+        this.ad_signal.start((val) => {
+            const distance = this._volt2distance(val);
+            if (typeof callback === "function") {
+                callback(distance);
+            }
+        });
+    }
+    _volt2distance(val) {
+        if (val <= 0) {
+            val = 0.001;
+        }
+        let distance = 19988.34 * Math.pow((val / 5.0) * 1024, -1.25214) * 10;
+        if (this._unit === "mm") {
+            distance = Math.floor(distance * 10) / 10;
+        }
+        else {
+            distance *= 0.0393701;
+            distance = Math.floor(distance * 1000) / 1000;
+        }
+        return distance;
+    }
+    getWait() {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const val = yield this.ad_signal.getWait();
+                const distance = this._volt2distance(val);
+                resolve(distance);
+            }
+            catch (e) {
+                reject(e);
+            }
+        }));
+    }
+    unit(unit) {
+        if (unit === "mm") {
+            this._unit = "mm";
+        }
+        else if (unit === "inch") {
+            this._unit = "inch";
+        }
+        else {
+            throw new Error("unknown unit " + unit);
+        }
+    }
+}
+exports.default = GP2Y0A21YK0F;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/DistanceSensor/HC-SR04/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.HC-SR04
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class HCSR04 {
+    constructor() {
+        this._unit = "mm";
+        this.reset_alltime = false;
+        this.temp = 15;
+        this.keys = ["vcc", "trigger", "echo", "gnd"];
+        this.requiredKeys = ["vcc", "trigger", "echo"];
+    }
+    static info() {
+        return {
+            name: "HC-SR04",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.vccIO = obniz.getIO(this.params.vcc);
+        if (obniz.isValidIO(this.params.trigger) === false) {
+            throw new Error(`trigger ${this.params.trigger} is invalid io`);
+        }
+        if (obniz.isValidIO(this.params.echo) === false) {
+            throw new Error(`echo ${this.params.echo} is invalid io`);
+        }
+        this.trigger = this.params.trigger;
+        this.echo = this.params.echo;
+        this.vccIO.drive("5v");
+        this.vccIO.output(true);
+        this.obniz.wait(100);
+    }
+    measure(callback) {
+        this.obniz.measure.echo({
+            io_pulse: this.trigger,
+            io_echo: this.echo,
+            pulse: "positive",
+            pulse_width: 0.011,
+            measure_edges: 3,
+            timeout: (10 / 340) * 1000,
+            callback: (edges) => __awaiter(this, void 0, void 0, function* () {
+                if (this.reset_alltime) {
+                    this.vccIO.output(false);
+                    this.obniz.wait(100);
+                    this.vccIO.output(true);
+                    this.obniz.wait(100);
+                }
+                let distance;
+                for (let i = 0; i < edges.length - 1; i++) {
+                    // HCSR04's output of io_echo is initially high when trigger is finshed
+                    if (edges[i].edge === true) {
+                        const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
+                        distance =
+                            (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
+                        if (this._unit === "inch") {
+                            distance = distance * 0.0393701;
+                        }
+                    }
+                }
+                if (typeof callback === "function") {
+                    callback(distance);
+                }
+            }),
+        });
+    }
+    measureWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve) => {
+                this.measure((distance) => {
+                    resolve(distance);
+                });
+            });
+        });
+    }
+    unit(unit) {
+        if (unit === "mm") {
+            this._unit = "mm";
+        }
+        else if (unit === "inch") {
+            this._unit = "inch";
+        }
+        else {
+            throw new Error("HCSR04: unknown unit " + unit);
+        }
+    }
+}
+exports.default = HCSR04;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GPS/GYSFDMAXB/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.GYSFDMAXB
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class GYSFDMAXB {
+    constructor() {
+        this.displayName = "gps";
+        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
+        this.on1pps = null;
+        this.last1pps = 0;
+        this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
+        this.requiredKeys = ["txd", "rxd"];
+        this.ioKeys = this.keys;
+    }
+    // -------------------
+    get latitude() {
+        return this.nmea2dd(this._latitude);
+    }
+    get longitude() {
+        return this.nmea2dd(this._longitude);
+    }
+    static info() {
+        return {
+            name: "GYSFDMAXB",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.tx = this.params.txd;
+        this.rx = this.params.rxd;
+        this.vcc = this.params.vcc;
+        this.gnd = this.params.gnd;
+        this.Opps = this.params.Opps;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.uart = obniz.getFreeUart();
+        this.uart.start({
+            tx: this.params.txd,
+            rx: this.params.rxd,
+            baud: 9600,
+            drive: "3v",
+        });
+        this.editedData = {};
+        this.editedData.enable = false;
+        this.editedData.GPGSV = new Array(4);
+        this.on1pps = null;
+        this.last1pps = 0;
+        this.gpsInfo = {};
+        this.gpsInfo._sentenceType = {
+            GPGGA: 0x0001,
+            GPGSA: 0x0002,
+            GPGSV: 0x0004,
+            GPRMC: 0x0008,
+            GPVTG: 0x0010,
+            GPZDA: 0x0020,
+        };
+        this.gpsInfo.status = "V";
+        this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained
+        this.gpsInfo.satelliteInfo = {
+            satellites: [],
+            inView: 0,
+        };
+    }
+    start1pps(callback) {
+        this.on1pps = callback;
+        if (callback) {
+            this.last1pps = 2;
+            this.obniz.getAD(this.Opps).start((voltage) => {
+                const vol = Math.round(voltage);
+                if (vol !== this.last1pps) {
+                    this.last1pps = vol;
+                    if (vol === 0 && this.on1pps) {
+                        this.on1pps();
+                    }
+                }
+            });
+        }
+        else {
+            this.obniz.getAD(this.Opps).end();
+        }
+    }
+    readSentence() {
+        let results = [];
+        if (this.uart.isDataExists()) {
+            const pos = this.uart.received.indexOf(0x0a);
+            if (pos >= 0) {
+                results = this.uart.received.slice(0, pos - 1);
+                this.uart.received.splice(0, pos + 1);
+                return this.uart.tryConvertString(results);
+            }
+        }
+        return "";
+    }
+    getEditedData() {
+        let n;
+        let utc;
+        let format;
+        let sentence = this.readSentence();
+        this.editedData.enable = false;
+        this.editedData.GPGSV = new Array(4);
+        while (sentence.length > 0) {
+            const part = sentence.split(",");
+            if (sentence.slice(-4, -3) !== ",") {
+                const st = part[part.length - 1].slice(0, -3);
+                part.push(part[part.length - 1].slice(-3));
+                part[part.length - 2] = st;
+            }
+            this.editedData.sentence = part.join(",");
+            switch (part[0]) {
+                case "$GPGGA":
+                    this.editedData.GPGGA = part;
+                    break;
+                case "$GPGLL":
+                    this.editedData.GPGLL = part;
+                    break;
+                case "$GPGSA":
+                    this.editedData.GPGSA = part;
+                    break;
+                case "$GPGSV":
+                    n = Number(part[2]);
+                    if (n > this.editedData.GPGSV.length) {
+                        while (n > this.editedData.GPGSV.length) {
+                            this.editedData.GPGSV.push([]);
+                        }
+                    }
+                    this.editedData.GPGSV[n - 1] = part;
+                    break;
+                case "$GPRMC":
+                    this.editedData.GPRMC = part;
+                    break;
+                case "$GPVTG":
+                    this.editedData.GPVTG = part;
+                    break;
+                case "$GPZDA":
+                    this.editedData.GPZDA = part;
+                    utc =
+                        part[4] +
+                            "/" +
+                            part[3] +
+                            "/" +
+                            part[2] +
+                            " " +
+                            part[1].substring(0, 2) +
+                            ":" +
+                            part[1].substring(2, 4) +
+                            ":" +
+                            part[1].substring(4, 6) +
+                            " +00:00";
+                    this.editedData.timestamp = new Date(utc);
+                    break;
+                default:
+                    format = part[0].substr(1);
+                    this.editedData[format] = part;
+            }
+            this.editedData.enable = true;
+            sentence = this.readSentence();
+        }
+        return this.editedData;
+    }
+    getGpsInfo(editedData) {
+        const NMEA_SATINSENTENCE = 4;
+        const NMEA_MAXSAT = 12;
+        editedData = editedData || this.getEditedData();
+        this.gpsInfo.status = "V";
+        if (editedData.enable) {
+            if (editedData.GPGGA) {
+                const gga = editedData.GPGGA;
+                this.gpsInfo.gpsQuality = parseFloat(gga[6]); // Fix Quality: 0 = Invalid, 1 = GPS fix, 2 = DGPS fix
+                this.gpsInfo.hdop = parseFloat(gga[8]); // Horizontal Dilution of Precision (HDOP)
+                this.gpsInfo.altitude = parseFloat(gga[9]); // Antenna Altitude meters above mean sea level
+                const latitude = this.nmea2dd(parseFloat(gga[2]));
+                this.gpsInfo.latitude = gga[3] === "N" ? latitude : -latitude;
+                const longitude = this.nmea2dd(parseFloat(gga[4]));
+                this.gpsInfo.longitude = gga[5] === "E" ? longitude : -longitude;
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
+            }
+            if (editedData.GPGSV) {
+                for (let n = 0; n < editedData.GPGSV.length; n++) {
+                    if (editedData.GPGSV[n]) {
+                        const gsv = editedData.GPGSV[n].map((v) => parseFloat(v));
+                        const pack_count = gsv[1];
+                        const pack_index = gsv[2];
+                        const sat_count = gsv[3];
+                        if (pack_index > pack_count) {
+                            continue;
+                        }
+                        this.gpsInfo.satelliteInfo.inView = sat_count;
+                        let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
+                        nsat =
+                            nsat + NMEA_SATINSENTENCE > sat_count
+                                ? sat_count - nsat
+                                : NMEA_SATINSENTENCE;
+                        for (let isat = 0; isat < nsat; ++isat) {
+                            const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
+                            if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
+                                this.gpsInfo.satelliteInfo.satellites.push({});
+                            }
+                            const isatn = isat * NMEA_SATINSENTENCE;
+                            this.gpsInfo.satelliteInfo.satellites[isi] = {
+                                id: gsv[isatn + 4],
+                                elevation: gsv[isatn + 5],
+                                azimuth: gsv[isatn + 6],
+                                snr: gsv[isatn + 7],
+                                inUse: false,
+                            };
+                        }
+                        this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSV);
+                    }
+                }
+            }
+            if (editedData.GPGSA) {
+                const gsa = editedData.GPGSA;
+                let nuse = 0;
+                this.gpsInfo.fixMode = parseFloat(gsa[2]); // Fix Mode: 1=Fix not available, 2=2D, 3=3D
+                this.gpsInfo.pdop = parseFloat(gsa[15]); // PDOP: Position Dilution of Precision
+                this.gpsInfo.hdop = parseFloat(gsa[16]); // HDOP: Horizontal Dilution of Precision
+                this.gpsInfo.vdop = parseFloat(gsa[17]); // VDOP: Vertical Dilution of Position
+                for (let i = 0; i < NMEA_MAXSAT; ++i) {
+                    for (let j = 0; j < this.gpsInfo.satelliteInfo.inView; ++j) {
+                        if (this.gpsInfo.satelliteInfo.satellites[j] &&
+                            gsa[i + 3] === this.gpsInfo.satelliteInfo.satellites[j].id) {
+                            this.gpsInfo.satelliteInfo.satellites[j].inUse = true;
+                            nuse++;
+                        }
+                    }
+                }
+                this.gpsInfo.satelliteInfo.inUse = nuse;
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSA);
+            }
+            if (editedData.GPRMC) {
+                const rmc = editedData.GPRMC;
+                this.gpsInfo.status = rmc[2]; // Status Active or Void
+                const latitude = this.nmea2dd(parseFloat(rmc[3]));
+                this.gpsInfo.latitude = rmc[4] === "N" ? latitude : -latitude;
+                const longitude = this.nmea2dd(parseFloat(rmc[5]));
+                this.gpsInfo.longitude = rmc[6] === "E" ? longitude : -longitude;
+                const NMEA_TUD_KNOTS = 1.852; // 1knot=1.852km/h
+                this.gpsInfo.speed = parseFloat(rmc[7]) * NMEA_TUD_KNOTS; // unit: km/h
+                this.gpsInfo.direction = rmc[8];
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPRMC);
+            }
+            if (editedData.GPVTG) {
+                const vtg = editedData.GPVTG;
+                this.gpsInfo.direction = parseFloat(vtg[1]);
+                this.gpsInfo.declination = parseFloat(vtg[3]);
+                this.gpsInfo.speed = parseFloat(vtg[7]);
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPVTG);
+            }
+            if (editedData.GPZDA) {
+                this.gpsInfo.utc = editedData.timestamp;
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPZDA);
+            }
+        }
+        return this.gpsInfo;
+    }
+    _mneaTo(format, value) {
+        let result = this.nmea2dd(value);
+        if (typeof format === "string") {
+            switch (format.toUpperCase()) {
+                case "DMS":
+                    result = this.nmea2dms(value);
+                    break;
+                case "DM":
+                    result = this.nmea2dm(value);
+                    break;
+                case "S":
+                    result = this.nmea2s(value);
+                    break;
+                default:
+            }
+        }
+        return result;
+    }
+    latitudeTo(format) {
+        return this._mneaTo(format, this._latitude);
+    }
+    longitudeTo(format) {
+        return this._mneaTo(format, this._longitude);
+    }
+    status2string(status) {
+        status = status || this.status;
+        if (status === "A") {
+            return "Active";
+        }
+        if (status === "V") {
+            return "Void";
+        }
+        return status;
+    }
+    fixMode2string(fixMode) {
+        fixMode = fixMode || this.fixMode;
+        if (fixMode === 1) {
+            return "Fix not available";
+        }
+        if (fixMode === 2) {
+            return "2D";
+        }
+        if (fixMode === 3) {
+            return "3D";
+        }
+        return fixMode;
+    }
+    gpsQuality2string(gpsQuality) {
+        gpsQuality = gpsQuality || this.gpsQuality;
+        if (gpsQuality === 0) {
+            return "Invalid";
+        }
+        if (gpsQuality === 1) {
+            return "GPS fix";
+        }
+        if (gpsQuality === 2) {
+            return "DGPS fix";
+        }
+        return gpsQuality;
+    }
+    // --- latitude/longitude MNEA format change to each unit
+    nmea2dms(val) {
+        // NMEA format to DMS format string (999° 99'99.9")
+        val = parseFloat(val);
+        const d = Math.floor(val / 100);
+        const m = Math.floor((val / 100.0 - d) * 100.0);
+        const s = ((val / 100.0 - d) * 100.0 - m) * 60;
+        return d + "°" + m + "'" + s.toFixed(1) + '"';
+    }
+    nmea2dm(val) {
+        // NMEA format to DM format string (999° 99.9999')
+        val = parseFloat(val);
+        const d = Math.floor(val / 100.0);
+        const m = (val / 100.0 - d) * 100.0;
+        return d + "°" + m.toFixed(4) + "'";
+    }
+    nmea2dd(val) {
+        // NMEA format to DD format decimal (999.999999)
+        val = parseFloat(val);
+        const d = Math.floor(val / 100.0);
+        const m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
+        const s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
+        return parseFloat((d + m + s).toFixed(6));
+    }
+    nmea2s(val) {
+        // NMEA format to S format decimal (99999.9999)
+        val = parseFloat(val);
+        const d = Math.floor(val / 100.0);
+        const m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
+        const s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
+        return (d + m + s) / (1.0 / 60.0 / 60.0);
+    }
+}
+exports.default = GYSFDMAXB;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ135/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ135
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ135 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ135",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ135;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ2
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ2 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ2",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ2;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ3/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ3
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ3 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ3",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ3;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ4/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ4
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ4 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ4",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ4;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ5/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ5
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ5 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ5",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ5;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ6/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ6
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ6 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ6",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ6;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ7/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ7
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ7 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ7",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ7;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ8/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ8
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ8 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ8",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ8;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQ9/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.MQ9
+ */
+const MQGas_1 = __importDefault(__webpack_require__("./dist/src/parts/GasSensor/MQGas/index.js"));
+class MQ9 extends MQGas_1.default {
+    static info() {
+        return {
+            name: "MQ9",
+        };
+    }
+    constructor() {
+        super();
+    }
+}
+exports.default = MQ9;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GasSensor/MQGas/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MQGas
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class MQGasSensor {
+    constructor() {
+        this.keys = ["gnd", "vcc", "do", "ao"];
+        this.requiredKeys = [];
+        // this.RL = 2 * 1000;
+        // this.RO = 20 * 1000;
+    }
+    static info() {
+        return {
+            name: "MQGas",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.vcc = this.params.vcc;
+        this.gnd = this.params.gnd;
+        if (this.obniz.isValidIO(this.params.ao)) {
+            this.ad = obniz.getAD(this.params.ao);
+            this.ad.start((voltage) => {
+                // this.level = this.calc(voltage);
+                if (typeof this.onchangeanalog === "function") {
+                    this.onchangeanalog(voltage);
+                }
+                if (typeof this.voltageLimit === "number" &&
+                    this.voltageLimit <= voltage &&
+                    typeof this.onexceedvoltage === "function") {
+                    this.onexceedvoltage(voltage);
+                }
+            });
+        }
+        if (this.obniz.isValidIO(this.params.do)) {
+            this.do = obniz.getIO(this.params.do);
+            this.do.input((value) => {
+                if (typeof this.onchangedigital === "function") {
+                    this.onchangedigital(value);
+                }
+            });
+        }
+    }
+    startHeating() {
+        this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
+    }
+    heatWait(seconds) {
+        this.startHeating();
+        if (typeof seconds === "number" && seconds > 0) {
+            seconds *= 1000;
+        }
+        else {
+            seconds = 2 * 60 * 1000;
+        }
+        return new Promise((resolve) => {
+            setTimeout(resolve, seconds);
+        });
+    }
+}
+exports.default = MQGasSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_3AxisAccelerometer
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_3AxisAccelerometer {
+    constructor() {
+        this.displayName = "3axis";
+        this.displayIoNames = { sda: "sda", scl: "scl" };
+        this.address = 0x53;
+        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.requiredKeys = [];
+        this.ioKeys = this.keys;
+        this.regAdrs = {};
+        this.regAdrs.POWER_CTL = 0x2d;
+        this.regAdrs.THRESH_ACT = 0x24;
+        this.regAdrs.THRESH_INACT = 0x25;
+        this.regAdrs.TIME_INACT = 0x26;
+        this.regAdrs.ACT_INACT_CTL = 0x27;
+        this.regAdrs.TAP_AXES = 0x2a;
+        this.regAdrs.THRESH_TAP = 0x1d;
+        this.regAdrs.DUR = 0x21;
+        this.regAdrs.LATENT = 0x22;
+        this.regAdrs.WINDOW = 0x23;
+        this.regAdrs.THRESH_FF = 0x28;
+        this.regAdrs.TIME_FF = 0x29;
+        this.regAdrs.INT_MAP = 0x2f;
+        this.regAdrs.INT_ENABLE = 0x2e;
+        this.regAdrs.DATAX0 = 0x32;
+        this.regAdrs.INT_DATA_READY_BIT = 0x07;
+        this.regAdrs.INT_SINGLE_TAP_BIT = 0x06;
+        this.regAdrs.INT_DOUBLE_TAP_BIT = 0x05;
+        this.regAdrs.INT_ACTIVITY_BIT = 0x04;
+        this.regAdrs.INT_INACTIVITY_BIT = 0x03;
+        this.regAdrs.INT_FREE_FALL_BIT = 0x02;
+        this.regAdrs.INT_WATERMARK_BIT = 0x01;
+        this.regAdrs.INT_OVERRUNY_BIT = 0x00;
+        this.constVal = {};
+        this.constVal.gainX = 0.0037639;
+        this.constVal.gainY = 0.00376009;
+        this.constVal.gainZ = 0.00349265;
+        this.constVal.INT1_PIN = 0x00;
+        this.constVal.INT2_PIN = 0x01;
+    }
+    static info() {
+        return {
+            name: "Grove_3AxisAccelerometer",
+        };
+    }
+    wired(obniz) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.obniz = obniz;
+            if (this.params.grove) {
+                this.i2c = this.params.grove.getI2c(400000, "5v");
+            }
+            else {
+                this.vcc = this.params.vcc;
+                this.gnd = this.params.gnd;
+                this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+                this.params.clock = 400000;
+                this.params.mode = "master";
+                this.i2c = obniz.getI2CWithConfig(this.params);
+            }
+            this.obniz.wait(100);
+            // power on
+            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
+            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
+            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 8]);
+            this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
+            this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
+            this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
+            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
+            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
+            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
+            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
+            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
+            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
+            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
+            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
+            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+            this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
+            this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
+            this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
+            this.i2c.write(this.address, [this.regAdrs.WINDOW, 200]); // setDoubleTapWindow
+            this.i2c.write(this.address, [this.regAdrs.THRESH_FF, 7]); // setFreeFallThreshold
+            this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
+            // setInterruptMapping
+            yield this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
+            yield this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
+            yield this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
+            yield this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
+            yield this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
+            // setInterrupt
+            yield this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
+            yield this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
+            yield this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
+            yield this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
+            yield this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
+        });
+    }
+    setRegisterBit(regAddr, bitPos, state) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [regAddr]);
+            let b = yield this.i2c.readWait(this.address, 1);
+            if (state) {
+                b = b | (1 << bitPos); // forces nth bit of b to be 1.  all other bits left alone.
+            }
+            else {
+                b = b & ~(1 << bitPos); // forces nth bit of b to be 0.  all other bits left alone.
+            }
+            this.i2c.write(this.address, [b]);
+        });
+    }
+    setInterruptMapping(interruptBit, interruptPin) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
+        });
+    }
+    setInterrupt(interruptBit, state) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
+        });
+    }
+    signHandling(val) {
+        const sign = val >> 15;
+        if (sign) {
+            val = -(0xffff - val);
+        }
+        return val;
+    }
+    getRawVal() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [this.regAdrs.DATAX0]);
+            const buff = yield this.i2c.readWait(this.address, 6);
+            const rawVal = [0, 0, 0];
+            rawVal[0] = this.signHandling((buff[1] << 8) | buff[0]);
+            rawVal[1] = this.signHandling((buff[3] << 8) | buff[2]);
+            rawVal[2] = this.signHandling((buff[5] << 8) | buff[4]);
+            return rawVal;
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const accelVal = [0, 0, 0];
+            const raw = yield this.getRawVal();
+            accelVal[0] = raw[0] * this.constVal.gainX;
+            accelVal[1] = raw[1] * this.constVal.gainY;
+            accelVal[2] = raw[2] * this.constVal.gainZ;
+            return accelVal;
+        });
+    }
+}
+exports.default = Grove_3AxisAccelerometer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_Button/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Button
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_Button {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => {
+        };
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_Button",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveIOs = this.params.grove.getDigital("5v");
+            this.io_signal = groveIOs.primary;
+        }
+        else {
+            this.io_signal = obniz.getIO(this.params.signal);
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        }
+        this.io_signal.pull("5v");
+        this.io_signal.input((value) => {
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io_signal.inputWait();
+        });
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => {
+                    };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Grove_Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Buzzer
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_Buzzer {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Grove_Buzzer",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.pwm = obniz.getFreePwm();
+        this.pwm.start({ io: this.params.signal });
+    }
+    play(freq) {
+        if (typeof freq !== "number") {
+            throw new Error("freq must be a number");
+        }
+        freq = Math.floor(freq);
+        if (freq > 0) {
+            this.pwm.freq(freq);
+            this.pwm.pulse((1 / freq / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Grove_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_EARTH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_EARTH {
+    constructor() {
+        this.keys = ["vcc", "aout", "dout", "gnd", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_EARTH",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            const groveIOs = this.params.grove.getAnalogDigital();
+            this.ad = groveIOs.analog;
+            this.io = groveIOs.digital;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.aout);
+            this.io = obniz.getIO(this.params.dout);
+        }
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    getHumidityWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ad.getWait();
+        });
+    }
+    getDigitalHumidityWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io.inputWait();
+        });
+    }
+}
+exports.default = Grove_EARTH;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_EarHeartRate/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_EarHeartRate
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_EarHeartRate {
+    constructor() {
+        this.displayIoNames = {
+            vcc: "vcc",
+            gnd: "gnd",
+            signal: "signal",
+        };
+        this.interval = 5;
+        this.duration = 2.5 * 1000;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["vcc", "gnd"];
+    }
+    static info() {
+        return {
+            name: "Grove_EarHeartRate",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    }
+    start(callback) {
+        this.obniz.logicAnalyzer.start({
+            io: this.params.signal,
+            interval: this.interval,
+            duration: this.duration,
+        });
+        this.obniz.logicAnalyzer.onmeasured = (array) => {
+            const edges = [];
+            for (let i = 0; i < array.length - 1; i++) {
+                if (array[i] === 0 && array[i + 1] === 1) {
+                    edges.push(i);
+                }
+            }
+            if (edges.length >= 2) {
+                let between = 0;
+                let pulseMin = 0;
+                between = ((edges[1] - edges[0]) * this.interval) / 1000.0;
+                pulseMin = 60 / between;
+                callback(pulseMin);
+            }
+        };
+    }
+    getWait() {
+        return new Promise((resolve) => {
+            this.start((rate) => {
+                resolve(rate);
+            });
+        });
+    }
+}
+exports.default = Grove_EarHeartRate;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_GPS/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_GPS
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_GPS {
+    constructor() {
+        this._latitude = 0;
+        this._longitude = 0;
+        this.keys = ["tx", "rx", "vcc", "gnd", "grove"];
+        this.requiredKeys = [];
+        this.ioKeys = this.keys;
+        this.displayName = "gps";
+        this.displayIoNames = { tx: "tx", rx: "rx" };
+    }
+    // -------------------
+    get latitude() {
+        return this.nmea2dd(this._latitude);
+    }
+    get longitude() {
+        return this.nmea2dd(this._longitude);
+    }
+    static info() {
+        return {
+            name: "Grove_GPS",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            this.uart = this.params.grove.getUart(9600, "5v");
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.uart = obniz.getFreeUart();
+            this.uart.start({
+                tx: this.params.tx,
+                rx: this.params.rx,
+                baud: 9600,
+            });
+        }
+        this.editedData = {};
+        this.editedData.enable = false;
+        this.editedData.GPGSV = new Array(4);
+        this.gpsInfo = {};
+        this.gpsInfo._sentenceType = {
+            GPGGA: 0x0001,
+            GPGSA: 0x0002,
+            GPGSV: 0x0004,
+            GPRMC: 0x0008,
+            GPVTG: 0x0010,
+            GPZDA: 0x0020,
+        };
+        this.gpsInfo.status = "V";
+        this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained
+        this.gpsInfo.satelliteInfo = {
+            satellites: [],
+            inView: 0,
+        };
+    }
+    readSentence() {
+        let results = [];
+        if (this.uart.isDataExists()) {
+            const pos = this.uart.received.indexOf(0x0a);
+            if (pos >= 0) {
+                results = this.uart.received.slice(0, pos - 1);
+                this.uart.received.splice(0, pos + 1);
+                let str = this.uart.tryConvertString(results);
+                if (str === null) {
+                    str = "";
+                }
+                return str;
+            }
+        }
+        return "";
+    }
+    getEditedData() {
+        let n;
+        let utc;
+        let format;
+        let sentence = this.readSentence();
+        this.editedData.enable = false;
+        this.editedData.GPGSV = new Array(4);
+        while (sentence.length > 0) {
+            const part = sentence.split(",");
+            if (sentence.slice(-4, -3) !== ",") {
+                const st = part[part.length - 1].slice(0, -3);
+                part.push(part[part.length - 1].slice(-3));
+                part[part.length - 2] = st;
+            }
+            this.editedData.sentence = part.join(",");
+            switch (part[0]) {
+                case "$GPGGA":
+                    this.editedData.GPGGA = part;
+                    break;
+                case "$GPGLL":
+                    this.editedData.GPGLL = part;
+                    break;
+                case "$GPGSA":
+                    this.editedData.GPGSA = part;
+                    break;
+                case "$GPGSV":
+                    n = Number(part[2]);
+                    if (n > this.editedData.GPGSV.length) {
+                        while (n > this.editedData.GPGSV.length) {
+                            this.editedData.GPGSV.push([]);
+                        }
+                    }
+                    this.editedData.GPGSV[n - 1] = part;
+                    break;
+                case "$GPRMC":
+                    this.editedData.GPRMC = part;
+                    break;
+                case "$GPVTG":
+                    this.editedData.GPVTG = part;
+                    break;
+                case "$GPZDA":
+                    this.editedData.GPZDA = part;
+                    utc =
+                        part[4] +
+                            "/" +
+                            part[3] +
+                            "/" +
+                            part[2] +
+                            " " +
+                            part[1].substring(0, 2) +
+                            ":" +
+                            part[1].substring(2, 4) +
+                            ":" +
+                            part[1].substring(4, 6) +
+                            " +00:00";
+                    this.editedData.timestamp = new Date(utc);
+                    break;
+                default:
+                    format = part[0].substr(1);
+                    this.editedData[format] = part;
+            }
+            this.editedData.enable = true;
+            sentence = this.readSentence();
+        }
+        return this.editedData;
+    }
+    getGpsInfo(editedData) {
+        const NMEA_SATINSENTENCE = 4;
+        const NMEA_MAXSAT = 12;
+        editedData = editedData || this.getEditedData();
+        this.gpsInfo.status = "V";
+        if (editedData.enable) {
+            if (editedData.GPGGA) {
+                const gga = editedData.GPGGA;
+                this.gpsInfo.gpsQuality = parseFloat(gga[6]); // Fix Quality: 0 = Invalid, 1 = GPS fix, 2 = DGPS fix
+                this.gpsInfo.hdop = parseFloat(gga[8]); // Horizontal Dilution of Precision (HDOP)
+                this.gpsInfo.altitude = parseFloat(gga[9]); // Antenna Altitude meters above mean sea level
+                const latitude = this.nmea2dd(parseFloat(gga[2]));
+                this.gpsInfo.latitude = gga[3] === "N" ? latitude : -latitude;
+                const longitude = this.nmea2dd(parseFloat(gga[4]));
+                this.gpsInfo.longitude = gga[5] === "E" ? longitude : -longitude;
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
+            }
+            if (editedData.GPGSV) {
+                for (let n = 0; n < editedData.GPGSV.length; n++) {
+                    if (editedData.GPGSV[n]) {
+                        const gsv = editedData.GPGSV[n].map((v) => parseFloat(v));
+                        const pack_count = gsv[1];
+                        const pack_index = gsv[2];
+                        const sat_count = gsv[3];
+                        if (pack_index > pack_count) {
+                            continue;
+                        }
+                        this.gpsInfo.satelliteInfo.inView = sat_count;
+                        let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
+                        nsat =
+                            nsat + NMEA_SATINSENTENCE > sat_count
+                                ? sat_count - nsat
+                                : NMEA_SATINSENTENCE;
+                        for (let isat = 0; isat < nsat; ++isat) {
+                            const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
+                            if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
+                                this.gpsInfo.satelliteInfo.satellites.push({});
+                            }
+                            const isatn = isat * NMEA_SATINSENTENCE;
+                            this.gpsInfo.satelliteInfo.satellites[isi] = {
+                                id: gsv[isatn + 4],
+                                elevation: gsv[isatn + 5],
+                                azimuth: gsv[isatn + 6],
+                                snr: gsv[isatn + 7],
+                                inUse: false,
+                            };
+                        }
+                        this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSV);
+                    }
+                }
+            }
+            if (editedData.GPGSA) {
+                const gsa = editedData.GPGSA;
+                let nuse = 0;
+                this.gpsInfo.fixMode = parseFloat(gsa[2]); // Fix Mode: 1=Fix not available, 2=2D, 3=3D
+                this.gpsInfo.pdop = parseFloat(gsa[15]); // PDOP: Position Dilution of Precision
+                this.gpsInfo.hdop = parseFloat(gsa[16]); // HDOP: Horizontal Dilution of Precision
+                this.gpsInfo.vdop = parseFloat(gsa[17]); // VDOP: Vertical Dilution of Position
+                for (let i = 0; i < NMEA_MAXSAT; ++i) {
+                    for (let j = 0; j < this.gpsInfo.satelliteInfo.inView; ++j) {
+                        if (this.gpsInfo.satelliteInfo.satellites[j] &&
+                            gsa[i + 3] === this.gpsInfo.satelliteInfo.satellites[j].id) {
+                            this.gpsInfo.satelliteInfo.satellites[j].inUse = true;
+                            nuse++;
+                        }
+                    }
+                }
+                this.gpsInfo.satelliteInfo.inUse = nuse;
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSA);
+            }
+            if (editedData.GPRMC) {
+                const rmc = editedData.GPRMC;
+                this.gpsInfo.status = rmc[2]; // Status Active or Void
+                const latitude = this.nmea2dd(parseFloat(rmc[3]));
+                this.gpsInfo.latitude = rmc[4] === "N" ? latitude : -latitude;
+                const longitude = this.nmea2dd(parseFloat(rmc[5]));
+                this.gpsInfo.longitude = rmc[6] === "E" ? longitude : -longitude;
+                const NMEA_TUD_KNOTS = 1.852; // 1knot=1.852km/h
+                this.gpsInfo.speed = parseFloat(rmc[7]) * NMEA_TUD_KNOTS; // unit: km/h
+                this.gpsInfo.direction = rmc[8];
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPRMC);
+            }
+            if (editedData.GPVTG) {
+                const vtg = editedData.GPVTG;
+                this.gpsInfo.direction = parseFloat(vtg[1]);
+                this.gpsInfo.declination = parseFloat(vtg[3]);
+                this.gpsInfo.speed = parseFloat(vtg[7]);
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPVTG);
+            }
+            if (editedData.GPZDA) {
+                this.gpsInfo.utc = editedData.timestamp;
+                this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPZDA);
+            }
+        }
+        return this.gpsInfo;
+    }
+    _mneaTo(format, value) {
+        let result = this.nmea2dd(value);
+        if (typeof format === "string") {
+            switch (format.toUpperCase()) {
+                case "DMS":
+                    result = this.nmea2dms(value);
+                    break;
+                case "DM":
+                    result = this.nmea2dm(value);
+                    break;
+                case "S":
+                    result = this.nmea2s(value);
+                    break;
+                default:
+            }
+        }
+        return result;
+    }
+    latitudeTo(format) {
+        return this._mneaTo(format, this._latitude);
+    }
+    longitudeTo(format) {
+        return this._mneaTo(format, this._longitude);
+    }
+    status2string(status) {
+        status = status || this.status;
+        if (status === "A") {
+            return "Active";
+        }
+        if (status === "V") {
+            return "Void";
+        }
+        return status;
+    }
+    fixMode2string(fixMode) {
+        fixMode = fixMode || this.fixMode;
+        if (fixMode === 1) {
+            return "Fix not available";
+        }
+        if (fixMode === 2) {
+            return "2D";
+        }
+        if (fixMode === 3) {
+            return "3D";
+        }
+        return fixMode;
+    }
+    gpsQuality2string(gpsQuality) {
+        gpsQuality = gpsQuality || this.gpsQuality;
+        if (gpsQuality === 0) {
+            return "Invalid";
+        }
+        if (gpsQuality === 1) {
+            return "GPS fix";
+        }
+        if (gpsQuality === 2) {
+            return "DGPS fix";
+        }
+        return gpsQuality;
+    }
+    // --- latitude/longitude MNEA format change to each unit
+    nmea2dms(val) {
+        // NMEA format to DMS format string (999° 99'99.9")
+        val = parseFloat(val);
+        const d = Math.floor(val / 100);
+        const m = Math.floor((val / 100.0 - d) * 100.0);
+        const s = ((val / 100.0 - d) * 100.0 - m) * 60;
+        return d + "°" + m + "'" + s.toFixed(1) + '"';
+    }
+    nmea2dm(val) {
+        // NMEA format to DM format string (999° 99.9999')
+        val = parseFloat(val);
+        const d = Math.floor(val / 100.0);
+        const m = (val / 100.0 - d) * 100.0;
+        return d + "°" + m.toFixed(4) + "'";
+    }
+    nmea2dd(val) {
+        // NMEA format to DD format decimal (999.999999)
+        val = parseFloat(val);
+        const d = Math.floor(val / 100.0);
+        const m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
+        const s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
+        return parseFloat((d + m + s).toFixed(6));
+    }
+    nmea2s(val) {
+        // NMEA format to S format decimal (99999.9999)
+        val = parseFloat(val);
+        const d = Math.floor(val / 100.0);
+        const m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
+        const s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
+        return (d + m + s) / (1.0 / 60.0 / 60.0);
+    }
+}
+exports.default = Grove_GPS;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_MP3/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_MP3
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_MP3 {
+    constructor() {
+        this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx"];
+        this.requiredKeys = ["mp3_rx", "mp3_tx"];
+        this.ioKeys = this.keys;
+        this.displayName = "MP3";
+        this.displayIoNames = { mp3_rx: "MP3Rx", mp3_tx: "MP3Tx" };
+    }
+    static info() {
+        return {
+            name: "Grove_MP3",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.my_tx = this.params.mp3_rx;
+        this.my_rx = this.params.mp3_tx;
+        this.uart = this.obniz.getFreeUart();
+    }
+    initWait(strage) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.uart.start({
+                tx: this.my_tx,
+                rx: this.my_rx,
+                baud: 9600,
+            });
+            yield this.obniz.wait(100);
+            this.uartSend(0x0c, 0);
+            yield this.obniz.wait(500);
+            this.uartSend(0x0b, 0);
+            yield this.obniz.wait(100);
+            if (strage) {
+                if (strage === "usb") {
+                    this.uartSend(0x09, 1);
+                }
+                else if (strage === "sd") {
+                    this.uartSend(0x09, 2);
+                }
+            }
+            else {
+                this.uartSend(0x09, 2);
+            }
+            yield this.obniz.wait(200);
+        });
+    }
+    setVolume(vol) {
+        if (vol >= 0 && vol <= 31) {
+            this.uartSend(0x06, vol);
+        }
+    }
+    volUp() {
+        this.uartSend(0x04, 0);
+    }
+    volDown() {
+        this.uartSend(0x05, 0);
+    }
+    play(track, folder) {
+        // if (!folder) folder = {};
+        if (folder) {
+            this.uart.send([0x7e, 0xff, 0x06, 0x0f, 0x00, folder, track, 0xef]);
+        }
+        else {
+            // Play 'MP3' folder
+            this.uartSend(0x12, track);
+        }
+    }
+    stop() {
+        this.uartSend(0x16, 0);
+    }
+    pause() {
+        this.uartSend(0x0e, 0);
+    }
+    resume() {
+        this.uartSend(0x0d, 0);
+    }
+    next() {
+        this.uartSend(0x01, 0);
+    }
+    prev() {
+        this.uartSend(0x02, 0);
+    }
+    uartSend(command, param) {
+        const paramM = param >> 8;
+        const paramL = param & 0xff;
+        this.uart.send([0x7e, 0xff, 0x06, command, 0x01, paramM, paramL, 0xef]);
+        const response = this.uart.readBytes();
+        return response;
+        // return response;
+    }
+}
+exports.default = Grove_MP3;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/GyroSensor/ENC03R_Module/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.ENC03R_Module
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class ENC03R_Module {
+    constructor() {
+        this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
+        this.sens1 = 0;
+        this.sens2 = 0;
+        this.keys = ["vcc", "out1", "out2", "gnd"];
+        this.requiredKeys = ["out1", "out2"];
+    }
+    static info() {
+        return {
+            name: "ENC03R_Module",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad0 = obniz.getAD(this.params.out1);
+        this.ad1 = obniz.getAD(this.params.out2);
+        this.ad0.start((value) => {
+            this.sens1 = (value - 1.45) / this.Sens; // [Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+            if (this.onchange1) {
+                this.onchange1(this.sens1);
+            }
+        });
+        this.ad1.start((value) => {
+            this.sens2 = (value - 1.35) / this.Sens; // [Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+            if (this.onchange2) {
+                this.onchange2(this.sens2);
+            }
+        });
+    }
+    get1Wait() {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            const value = yield this.ad0.getWait();
+            this.sens1 = (value - 1.45) / this.Sens;
+            resolve(this.sens1);
+        }));
+    }
+    get2Wait() {
+        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            const value = yield this.ad1.getWait();
+            this.sens2 = (value - 1.35) / this.Sens;
+            resolve(this.sens2);
+        }));
+    }
+}
+exports.default = ENC03R_Module;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Infrared/IRModule/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.IRModule
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IRModule {
+    constructor() {
+        this.keys = ["recv", "vcc", "send", "gnd"];
+        this.requiredKeys = ["recv", "send"];
+    }
+    static info() {
+        return {
+            name: "IRModule",
+        };
+    }
+    get dataSymbolLength() {
+        return this.sensor.dataSymbolLength;
+    }
+    set dataSymbolLength(x) {
+        this.sensor.dataSymbolLength = x;
+        this.led.dataSymbolLength = x;
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        if (!obniz.isValidIO(this.params.recv)) {
+            throw new Error("recv is not valid io");
+        }
+        if (!obniz.isValidIO(this.params.send)) {
+            throw new Error("send is not valid io");
+        }
+        this.sensor = obniz.wired("IRSensor", {
+            output: this.params.recv,
+        });
+        this.setGetterSetter("sensor", "duration");
+        this.setGetterSetter("sensor", "dataInverted");
+        this.setGetterSetter("sensor", "cutTail");
+        this.setGetterSetter("sensor", "output_pullup");
+        this.setGetterSetter("sensor", "ondetect");
+        this.led = obniz.wired("InfraredLED", {
+            anode: this.params.send,
+        });
+    }
+    // link
+    send(arr) {
+        this.led.send(arr);
+    }
+    start(callback) {
+        this.sensor.start(callback);
+    }
+    setGetterSetter(partsName, varName) {
+        Object.defineProperty(this, varName, {
+            get() {
+                return this[partsName][varName];
+            },
+            set(x) {
+                this[partsName][varName] = x;
+            },
+        });
+    }
+}
+exports.default = IRModule;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Infrared/IRSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.IRSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IRSensor {
+    constructor() {
+        this.dataSymbolLength = 0.07;
+        this.duration = 500; // 500msec;
+        this.dataInverted = true;
+        this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
+        this.cutTail = false;
+        this.output_pullup = true;
+        this.ondetect = null;
+        this.keys = ["output", "vcc", "gnd"];
+        this.requiredKeys = ["output"];
+    }
+    static info() {
+        return {
+            name: "IRSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        if (!obniz.isValidIO(this.params.output)) {
+            throw new Error("output is not valid io");
+        }
+    }
+    start(callback) {
+        if (callback) {
+            this.ondetect = callback;
+        }
+        if (this.output_pullup) {
+            this.obniz.getIO(this.params.output).pull("5v");
+        }
+        this.obniz.logicAnalyzer.start({
+            io: this.params.output,
+            interval: this.dataSymbolLength,
+            duration: this.duration,
+            triggerValue: this.dataInverted ? false : true,
+            triggerValueSamples: this.triggerSampleCount,
+        });
+        this.obniz.logicAnalyzer.onmeasured = (levels) => {
+            if (typeof this.ondetect === "function") {
+                if (this.dataInverted) {
+                    const arr = new Uint8Array(levels);
+                    for (let i = 0; i < arr.length; i++) {
+                        arr[i] = arr[i] ? 0 : 1;
+                    }
+                    levels = Array.from(arr);
+                }
+                if (this.cutTail) {
+                    for (let i = levels.length - 1; i > 1; i--) {
+                        if (levels[i] === 0 && levels[i - 1] === 0) {
+                            levels.splice(i, 1);
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+                this.ondetect(levels);
+            }
+        };
+    }
+}
+exports.default = IRSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Infrared/InfraredLED/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.InfraredLED
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class InfraredLED {
+    constructor() {
+        this.dataSymbolLength = 0.07;
+        this.keys = ["anode", "cathode"];
+        this.requiredKeys = ["anode"];
+    }
+    static info() {
+        return {
+            name: "InfraredLED",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (!this.obniz.isValidIO(this.params.anode)) {
+            throw new Error("anode is not valid io");
+        }
+        if (this.params.cathode) {
+            if (!this.obniz.isValidIO(this.params.cathode)) {
+                throw new Error("cathode is not valid io");
+            }
+            this.io_cathode = obniz.getIO(this.params.cathode);
+            this.io_cathode.output(false);
+        }
+        this.pwm = this.obniz.getFreePwm();
+        this.pwm.start({ io: this.params.anode });
+        this.pwm.freq(38000);
+        this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
+    }
+    send(data) {
+        if (data && data.length > 0 && data[data.length - 1] === 1) {
+            data.push(0);
+        }
+        this.pwm.modulate("am", this.dataSymbolLength, data);
+    }
+}
+exports.default = InfraredLED;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Infrared/YG1006/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.YG1006
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class YG1006 {
+    constructor() {
+        this.onchange = null;
+        this.keys = ["signal", "vcc", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "YG1006",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.signal = this.obniz.getAD(this.params.signal);
+        this.signal.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.signal.getWait();
+        });
+    }
+}
+exports.default = YG1006;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Button
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Button {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Button",
+        };
+    }
+    wired(obniz) {
+        this.io_signal = obniz.getIO(this.params.signal);
+        if (obniz.isValidIO(this.params.vcc)) {
+            this.io_vcc = obniz.getIO(this.params.vcc);
+            this.io_vcc.output(true);
+        }
+        if (obniz.isValidIO(this.params.gnd)) {
+            this.io_supply = obniz.getIO(this.params.gnd);
+            this.io_supply.output(false);
+        }
+        this.io_signal.pull("5v");
+        this.io_signal.input((value) => {
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io_signal.inputWait();
+        });
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => {
+                    };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Keyestudio_Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Buzzer
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Buzzer {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Buzzer",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.pwm = obniz.getFreePwm();
+        this.pwm.start({ io: this.params.signal });
+    }
+    play(freq) {
+        if (typeof freq !== "number") {
+            throw new Error("freq must be a number");
+        }
+        freq = Math.floor(freq);
+        if (freq > 0) {
+            this.pwm.freq(freq);
+            this.pwm.pulse((1 / freq / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Keyestudio_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_MoistureSensor
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_MoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "signal", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_MoistureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    getHumidityWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ad.getWait();
+        });
+    }
+}
+exports.default = Keyestudio_MoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_PIR
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_PIR {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_PIR",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_signal = obniz.getIO(this.params.signal);
+        this.io_signal.pull("0v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.input((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+}
+exports.default = Keyestudio_PIR;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TemperatureSensor {
+    constructor() {
+        this.temp = 0;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TemperatureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((voltage) => {
+            this.temp = this.calc(voltage);
+            this.onchange(this.temp);
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const voltage = yield this.ad.getWait();
+            this.temp = this.calc(voltage);
+            return this.temp;
+        });
+    }
+    onchange(temp) {
+    }
+    calc(voltage) {
+        return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
+    }
+}
+exports.default = Keyestudio_TemperatureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_TrafficLight
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TrafficLight {
+    constructor() {
+        this.keys = ["gnd", "green", "yellow", "red"];
+        this.requiredKeys = ["green", "yellow", "red"];
+        this.state = "red";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TrafficLight",
+        };
+    }
+    wired(obniz) {
+        function getIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return io;
+                }
+            }
+            return obniz.getIO(io);
+        }
+        this.obniz = obniz;
+        obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.green = obniz.wired("LED", { anode: this.params.green });
+        this.yellow = obniz.wired("LED", { anode: this.params.yellow });
+        this.red = obniz.wired("LED", { anode: this.params.red });
+    }
+    single(led) {
+        this.green.off();
+        this.yellow.off();
+        this.red.off();
+        this.state = led;
+        switch (led) {
+            case "green":
+                this.green.on();
+                break;
+            case "yellow":
+                this.yellow.on();
+                break;
+            case "red":
+            default:
+                this.red.on();
+                this.state = "red";
+                break;
+        }
+    }
+    next() {
+        switch (this.state) {
+            case "green":
+                this.single("yellow");
+                break;
+            case "yellow":
+                this.single("red");
+                break;
+            case "red":
+            default:
+                this.single("green");
+                break;
+        }
+    }
+}
+exports.default = Keyestudio_TrafficLight;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Light/FullColorLED/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.FullColorLED
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class FullColorLED {
+    constructor() {
+        this.COMMON_TYPE_ANODE = 1;
+        this.COMMON_TYPE_CATHODE = 0;
+        this.anode_keys = ["anode", "anode_common", "anodeCommon", "vcc"];
+        this.cathode_keys = ["cathode", "cathode_common", "cathodeCommon", "gnd"];
+        this.animationName = "FullColorLED-" + Math.round(Math.random() * 1000);
+        this.keys = ["r", "g", "b", "common", "commonType"];
+        this.requiredKeys = ["r", "g", "b", "common", "commonType"];
+    }
+    static info() {
+        return {
+            name: "FullColorLED",
+        };
+    }
+    wired(obniz) {
+        const r = this.params.r;
+        const g = this.params.g;
+        const b = this.params.b;
+        const common = this.params.common;
+        const commontype = this.params.commonType;
+        this.obniz = obniz;
+        if (this.anode_keys.includes(commontype)) {
+            this.commontype = this.COMMON_TYPE_ANODE;
+        }
+        else if (this.cathode_keys.includes(commontype)) {
+            this.commontype = this.COMMON_TYPE_CATHODE;
+        }
+        else {
+            this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
+        }
+        this.common = this.obniz.getIO(common);
+        this.common.output(this.commontype);
+        this.obniz.getIO(r).output(this.commontype);
+        this.obniz.getIO(g).output(this.commontype);
+        this.obniz.getIO(b).output(this.commontype);
+        this.pwmR = this.obniz.getFreePwm();
+        this.pwmR.start({ io: r });
+        this.pwmR.freq(1000);
+        this.pwmG = this.obniz.getFreePwm();
+        this.pwmG.start({ io: g });
+        this.pwmG.freq(1000);
+        this.pwmB = this.obniz.getFreePwm();
+        this.pwmB.start({ io: b });
+        this.pwmB.freq(1000);
+        this.rgb(0, 0, 0);
+    }
+    rgb(red, green, blue) {
+        red = Math.min(Math.max(parseInt(red), 0), 255);
+        green = Math.min(Math.max(parseInt(green), 0), 255);
+        blue = Math.min(Math.max(parseInt(blue), 0), 255);
+        if (this.commontype === this.COMMON_TYPE_ANODE) {
+            red = 255 - red;
+            green = 255 - green;
+            blue = 255 - blue;
+        }
+        this.pwmR.duty((red / 255) * 100);
+        this.pwmG.duty((green / 255) * 100);
+        this.pwmB.duty((blue / 255) * 100);
+    }
+    hsv(hue, saturation, value) {
+        const C = value * saturation;
+        const Hp = hue / 60;
+        const X = C * (1 - Math.abs((Hp % 2) - 1));
+        let R = 0;
+        let G = 0;
+        let B = 0;
+        if (0 <= Hp && Hp < 1) {
+            [R, G, B] = [C, X, 0];
+        }
+        if (1 <= Hp && Hp < 2) {
+            [R, G, B] = [X, C, 0];
+        }
+        if (2 <= Hp && Hp < 3) {
+            [R, G, B] = [0, C, X];
+        }
+        if (3 <= Hp && Hp < 4) {
+            [R, G, B] = [0, X, C];
+        }
+        if (4 <= Hp && Hp < 5) {
+            [R, G, B] = [X, 0, C];
+        }
+        if (5 <= Hp && Hp < 6) {
+            [R, G, B] = [C, 0, X];
+        }
+        const m = value - C;
+        [R, G, B] = [R + m, G + m, B + m];
+        R = Math.floor(R * 255);
+        G = Math.floor(G * 255);
+        B = Math.floor(B * 255);
+        this.rgb(R, G, B);
+    }
+    gradation(cycletime_ms) {
+        const frames = [];
+        const max = 36 / 2;
+        const duration = Math.round(cycletime_ms / max);
+        for (let i = 0; i < max; i++) {
+            const oneFrame = {
+                duration,
+                state: (index) => {
+                    // index = 0
+                    this.hsv(index * 10 * 2, 1, 1);
+                },
+            };
+            frames.push(oneFrame);
+        }
+        this.obniz.io.animation(this.animationName, "loop", frames);
+    }
+    stopgradation() {
+        this.obniz.io.animation(this.animationName, "pause");
+    }
+}
+exports.default = FullColorLED;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Light/LED/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.LED
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class LED {
+    constructor() {
+        this.keys = ["anode", "cathode"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "LED",
+        };
+    }
+    wired(obniz) {
+        function getIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return io;
+                }
+            }
+            return obniz.getIO(io);
+        }
+        this.obniz = obniz;
+        if (this.obniz.isValidIO(this.params.anode)) {
+            this.io_anode = getIO(this.params.anode);
+        }
+        if (this.obniz.isValidIO(this.params.cathode)) {
+            this.io_cathode = getIO(this.params.cathode);
+        }
+        this.animationName = "Led-" + this.params.anode;
+        this.off();
+    }
+    on() {
+        this.endBlink();
+        this._on();
+    }
+    off() {
+        this.endBlink();
+        this._off();
+    }
+    output(value) {
+        if (value) {
+            this.on();
+        }
+        else {
+            this.off();
+        }
+    }
+    endBlink() {
+        this.obniz.io.animation(this.animationName, "pause");
+    }
+    blink(interval) {
+        if (!interval) {
+            interval = 100;
+        }
+        const frames = [
+            {
+                duration: interval,
+                state: (index) => {
+                    // index = 0
+                    this._on(); // on
+                },
+            },
+            {
+                duration: interval,
+                state: (index) => {
+                    // index = 0
+                    this._off();
+                },
+            },
+        ];
+        this.obniz.io.animation(this.animationName, "loop", frames);
+    }
+    _on() {
+        if (this.io_anode && this.io_cathode) {
+            this.io_anode.output(true);
+            this.io_cathode.output(false);
+        }
+        else if (this.io_anode) {
+            this.io_anode.output(true);
+        }
+        else if (this.io_cathode) {
+            this.io_cathode.output(false);
+        }
+    }
+    _off() {
+        if (this.io_anode && this.io_cathode) {
+            this.io_anode.output(false);
+            this.io_cathode.output(false);
+        }
+        else if (this.io_anode) {
+            this.io_anode.output(false);
+        }
+        else if (this.io_cathode) {
+            this.io_cathode.output(true);
+        }
+    }
+}
+exports.default = LED;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Light/WS2811/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.WS2811
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class WS2811 {
+    constructor() {
+        this.keys = ["din", "vcc", "gnd"];
+        this.requiredKeys = ["din"];
+    }
+    static info() {
+        return {
+            name: "WS2811",
+        };
+    }
+    static _generateFromByte(val) {
+        // T0H 0.5us+-0.15us
+        // T1H 1.2us+-0.15us
+        // T0L 2.0us+-0.15us
+        // T1L 1.3us+-0.15us
+        val = parseInt(val);
+        const zero = 0x8;
+        const one = 0xe;
+        const ret = [];
+        for (let i = 0; i < 8; i += 2) {
+            let byte = 0;
+            if (val & (0x80 >> i)) {
+                byte = one << 4;
+            }
+            else {
+                byte = zero << 4;
+            }
+            if (val & (0x80 >> (i + 1))) {
+                byte |= one;
+            }
+            else {
+                byte |= zero;
+            }
+            ret.push(byte);
+        }
+        return ret;
+    }
+    static _generateColor(r, g, b) {
+        let array = WS2811._generateFromByte(r);
+        array = array.concat(WS2811._generateFromByte(g));
+        array = array.concat(WS2811._generateFromByte(b));
+        return array;
+    }
+    static _generateHsvColor(h, s, v) {
+        const C = v * s;
+        const Hp = h / 60;
+        const X = C * (1 - Math.abs((Hp % 2) - 1));
+        let R;
+        let G;
+        let B;
+        if (0 <= Hp && Hp < 1) {
+            [R, G, B] = [C, X, 0];
+        }
+        if (1 <= Hp && Hp < 2) {
+            [R, G, B] = [X, C, 0];
+        }
+        if (2 <= Hp && Hp < 3) {
+            [R, G, B] = [0, C, X];
+        }
+        if (3 <= Hp && Hp < 4) {
+            [R, G, B] = [0, X, C];
+        }
+        if (4 <= Hp && Hp < 5) {
+            [R, G, B] = [X, 0, C];
+        }
+        if (5 <= Hp && Hp < 6) {
+            [R, G, B] = [C, 0, X];
+        }
+        const m = v - C;
+        [R, G, B] = [R + m, G + m, B + m];
+        R = Math.floor(R * 255);
+        G = Math.floor(G * 255);
+        B = Math.floor(B * 255);
+        let array = WS2811._generateFromByte(R);
+        array = array.concat(WS2811._generateFromByte(G));
+        array = array.concat(WS2811._generateFromByte(B));
+        return array;
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.mode = "master";
+        this.params.frequency = 2 * 1000 * 1000;
+        this.params.mosi = this.params.din;
+        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+    }
+    rgb(red, green, blue) {
+        this.spi.write(WS2811._generateColor(red, green, blue));
+    }
+    hsv(hue, saturation, value) {
+        this.spi.write(WS2811._generateHsvColor(hue, saturation, value));
+    }
+    rgbs(array) {
+        let bytes = [];
+        for (let i = 0; i < array.length; i++) {
+            const oneArray = array[i];
+            bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+        }
+        this.spi.write(bytes);
+    }
+    hsvs(array) {
+        let bytes = [];
+        for (let i = 0; i < array.length; i++) {
+            const oneArray = array[i];
+            bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+        }
+        this.spi.write(bytes);
+    }
+}
+exports.default = WS2811;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Light/WS2812/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.WS2812
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class WS2812 {
+    constructor() {
+        this.keys = ["din", "vcc", "gnd"];
+        this.requiredKeys = ["din"];
+    }
+    static info() {
+        return {
+            name: "WS2812",
+        };
+    }
+    static _generateFromByte(val) {
+        // T0H 0.35us+-0.15us
+        // T1H 0.7us+-0.15us
+        // T0L 0.8us+-0.15us
+        // T1L 0.6us+-0.15us
+        // 0.3-0.9 and 0.6-0.6 at 3.33Mhz
+        val = parseInt(val);
+        const zero = 0x8;
+        const one = 0xc;
+        const ret = [];
+        for (let i = 0; i < 8; i += 2) {
+            let byte = 0;
+            if (val & (0x80 >> i)) {
+                byte = one << 4;
+            }
+            else {
+                byte = zero << 4;
+            }
+            if (val & (0x80 >> (i + 1))) {
+                byte |= one;
+            }
+            else {
+                byte |= zero;
+            }
+            ret.push(byte);
+        }
+        return ret;
+    }
+    static _generateColor(r, g, b) {
+        let array = WS2812._generateFromByte(g);
+        array = array.concat(WS2812._generateFromByte(r));
+        array = array.concat(WS2812._generateFromByte(b));
+        return array;
+    }
+    static _generateHsvColor(h, s, v) {
+        const C = v * s;
+        const Hp = h / 60;
+        const X = C * (1 - Math.abs((Hp % 2) - 1));
+        let R;
+        let G;
+        let B;
+        if (0 <= Hp && Hp < 1) {
+            [R, G, B] = [C, X, 0];
+        }
+        if (1 <= Hp && Hp < 2) {
+            [R, G, B] = [X, C, 0];
+        }
+        if (2 <= Hp && Hp < 3) {
+            [R, G, B] = [0, C, X];
+        }
+        if (3 <= Hp && Hp < 4) {
+            [R, G, B] = [0, X, C];
+        }
+        if (4 <= Hp && Hp < 5) {
+            [R, G, B] = [X, 0, C];
+        }
+        if (5 <= Hp && Hp < 6) {
+            [R, G, B] = [C, 0, X];
+        }
+        const m = v - C;
+        [R, G, B] = [R + m, G + m, B + m];
+        R = Math.floor(R * 255);
+        G = Math.floor(G * 255);
+        B = Math.floor(B * 255);
+        return WS2812._generateColor(R, G, B);
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.mode = "master";
+        this.params.frequency = Math.floor(3.33 * 1000 * 1000);
+        this.params.mosi = this.params.din;
+        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+    }
+    rgb(red, green, blue) {
+        this.spi.write(WS2812._generateColor(red, green, blue));
+    }
+    hsv(hue, saturation, value) {
+        this.spi.write(WS2812._generateHsvColor(hue, saturation, value));
+    }
+    rgbs(array) {
+        let bytes = [];
+        for (let i = 0; i < array.length; i++) {
+            const oneArray = array[i];
+            bytes = bytes.concat(WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+        }
+        this.spi.write(bytes);
+    }
+    hsvs(array) {
+        let bytes = [];
+        for (let i = 0; i < array.length; i++) {
+            const oneArray = array[i];
+            bytes = bytes.concat(WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+        }
+        this.spi.write(bytes);
+    }
+}
+exports.default = WS2812;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Light/WS2812B/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.WS2812B
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class WS2812B {
+    constructor() {
+        this.keys = ["din", "vcc", "gnd"];
+        this.requiredKeys = ["din"];
+    }
+    static info() {
+        return {
+            name: "WS2812B",
+        };
+    }
+    static _generateFromByte(val) {
+        // T0H 0.35us+-0.15us
+        // T1H 0.9us+-0.15us
+        // T0L 0.9us+-0.15us
+        // T1L 0.35us+-0.15us
+        // 0.3-0.9 and 0.9-0.3 at 3.33Mhz
+        val = parseInt(val);
+        const zero = 0x8;
+        const one = 0xe;
+        const ret = [];
+        for (let i = 0; i < 8; i += 2) {
+            let byte = 0;
+            if (val & (0x80 >> i)) {
+                byte = one << 4;
+            }
+            else {
+                byte = zero << 4;
+            }
+            if (val & (0x80 >> (i + 1))) {
+                byte |= one;
+            }
+            else {
+                byte |= zero;
+            }
+            ret.push(byte);
+        }
+        return ret;
+    }
+    static _generateColor(r, g, b) {
+        let array = WS2812B._generateFromByte(g);
+        array = array.concat(WS2812B._generateFromByte(r));
+        array = array.concat(WS2812B._generateFromByte(b));
+        return array;
+    }
+    static _generateHsvColor(h, s, v) {
+        const C = v * s;
+        const Hp = h / 60;
+        const X = C * (1 - Math.abs((Hp % 2) - 1));
+        let R;
+        let G;
+        let B;
+        if (0 <= Hp && Hp < 1) {
+            [R, G, B] = [C, X, 0];
+        }
+        if (1 <= Hp && Hp < 2) {
+            [R, G, B] = [X, C, 0];
+        }
+        if (2 <= Hp && Hp < 3) {
+            [R, G, B] = [0, C, X];
+        }
+        if (3 <= Hp && Hp < 4) {
+            [R, G, B] = [0, X, C];
+        }
+        if (4 <= Hp && Hp < 5) {
+            [R, G, B] = [X, 0, C];
+        }
+        if (5 <= Hp && Hp < 6) {
+            [R, G, B] = [C, 0, X];
+        }
+        const m = v - C;
+        [R, G, B] = [R + m, G + m, B + m];
+        R = Math.floor(R * 255);
+        G = Math.floor(G * 255);
+        B = Math.floor(B * 255);
+        return WS2812B._generateColor(R, G, B);
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.mode = "master";
+        this.params.frequency = Math.floor(3.33 * 1000 * 1000);
+        this.params.mosi = this.params.din;
+        this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+    }
+    rgb(red, green, blue) {
+        this.spi.write(WS2812B._generateColor(red, green, blue));
+    }
+    hsv(hue, saturation, value) {
+        this.spi.write(WS2812B._generateHsvColor(hue, saturation, value));
+    }
+    rgbs(array) {
+        let bytes = [];
+        for (let i = 0; i < array.length; i++) {
+            const oneArray = array[i];
+            bytes = bytes.concat(WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+        }
+        this.spi.write(bytes);
+    }
+    hsvs(array) {
+        let bytes = [];
+        for (let i = 0; i < array.length; i++) {
+            const oneArray = array[i];
+            bytes = bytes.concat(WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+        }
+        this.spi.write(bytes);
+    }
+}
+exports.default = WS2812B;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Logic/SNx4HC595/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SNx4HC595
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class SNx4HC595_IO {
+    constructor(chip, id) {
+        this.chip = chip;
+        this.id = id;
+        this.value = 0;
+    }
+    output(value) {
+        this.chip.output(this.id, value);
+    }
+}
+// tslint:disable:max-classes-per-file
+class SNx4HC595 {
+    constructor() {
+        /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
+        this.keys = [
+            "gnd",
+            "vcc",
+            "ser",
+            "srclk",
+            "rclk",
+            "oe",
+            "srclr",
+            "io_num",
+            "enabled",
+        ];
+        this.requiredKeys = ["ser", "srclk", "rclk"];
+        this.autoFlash = true;
+    }
+    static info() {
+        return {
+            name: "SNx4HC595",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_ser = this.obniz.getIO(this.params.ser);
+        this.io_srclk = this.obniz.getIO(this.params.srclk);
+        this.io_rclk = this.obniz.getIO(this.params.rclk);
+        this.io_ser.output(false);
+        this.io_srclk.output(false);
+        this.io_rclk.output(false);
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        if (this.obniz.isValidIO(this.params.srclr)) {
+            this.io_srclr = this.obniz.getIO(this.params.srclr);
+            this.io_srclr.output(true);
+        }
+        if (this.obniz.isValidIO(this.params.oe)) {
+            this.io_oe = this.obniz.getIO(this.params.oe);
+            this.io_oe.output(true);
+        }
+        if (this.obniz.isValidIO(this.params.vcc) ||
+            this.obniz.isValidIO(this.params.gnd)) {
+            this.obniz.wait(100);
+        }
+        if (typeof this.params.io_num !== "number") {
+            this.params.io_num = 8;
+        }
+        this.ioNum(this.params.io_num);
+        if (typeof this.params.enabled !== "boolean") {
+            this.params.enabled = true;
+        }
+        if (this.io_oe && this.params.enabled) {
+            this.io_oe.output(false);
+        }
+    }
+    ioNum(num) {
+        if (typeof num === "number" && this._io_num !== num) {
+            this._io_num = num;
+            this.io = [];
+            for (let i = 0; i < num; i++) {
+                this.io.push(new SNx4HC595_IO(this, i));
+            }
+            this.flush();
+        }
+        else {
+            throw new Error("io num should be a number");
+        }
+    }
+    isValidIO(io) {
+        return typeof io === "number" && io >= 0 && io < this._io_num;
+    }
+    getIO(io) {
+        if (!this.isValidIO(io)) {
+            throw new Error("io " + io + " is not valid io");
+        }
+        return this.io[io];
+    }
+    output(id, value) {
+        value = value === true;
+        this.io[id].value = value;
+        if (this.autoFlash) {
+            this.flush();
+        }
+    }
+    onece(operation) {
+        if (typeof operation !== "function") {
+            throw new Error("please provide function");
+        }
+        const lastValue = this.autoFlash;
+        this.autoFlash = false;
+        operation();
+        this.flush();
+        this.autoFlash = lastValue;
+    }
+    setEnable(enable) {
+        if (!this.io_oe && enable === false) {
+            throw new Error('pin "oe" is not specified');
+        }
+        this.io_oe.output(!enable);
+    }
+    flush() {
+        /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
+        this.io_rclk.output(false);
+        for (let i = this.io.length - 1; i >= 0; i--) {
+            this.io_ser.output(this.io[i].value);
+            this.io_srclk.output(true);
+            this.io_srclk.output(false);
+        }
+        this.io_rclk.output(true);
+    }
+}
+exports.default = SNx4HC595;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Magnet/CT10/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.CT10
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class CT10 {
+    constructor() {
+        this.isNear = null;
+        this.onchange = null;
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+        this.onChangeForStateWait = () => {
+        };
+    }
+    static info() {
+        return {
+            name: "CT10",
+        };
+    }
+    wired(obniz) {
+        this.io_signal = obniz.getIO(this.params.signal);
+        if (obniz.isValidIO(this.params.vcc)) {
+            this.io_vcc = obniz.getIO(this.params.vcc);
+            this.io_vcc.output(true);
+        }
+        if (obniz.isValidIO(this.params.gnd)) {
+            this.io_supply = obniz.getIO(this.params.gnd);
+            this.io_supply.output(false);
+        }
+        this.io_signal.pull("0v");
+        this.io_signal.input((value) => {
+            this.isNear = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    isNearWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io_signal.inputWait();
+        });
+    }
+    stateWait(isNear) {
+        return new Promise((resolve) => {
+            this.onChangeForStateWait = (near) => {
+                if (isNear === near) {
+                    this.onChangeForStateWait = () => {
+                    };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = CT10;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Magnet/HMC5883L/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.HMC5883L
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class HMC5883L {
+    constructor() {
+        this.address = {
+            device: 0x1e,
+            reset: [0x02, 0x00],
+            xMSB: [0x03],
+        };
+        this.keys = ["gnd", "sda", "scl", "i2c"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "HMC5883L",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(null, this.params.gnd, "3v");
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(500);
+    }
+    init() {
+        this.i2c.write(this.address.device, this.address.reset);
+        this.obniz.wait(500);
+    }
+    get() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address.device, this.address.xMSB);
+            const readed = yield this.i2c.readWait(this.address.device, 2 * 3);
+            const obj = {};
+            const keys = ["x", "y", "z"];
+            for (let i = 0; i < 3; i++) {
+                let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
+                if (val & 0x8000) {
+                    val = val - 65536;
+                }
+                obj[keys[i]] = val;
+            }
+            return obj;
+        });
+    }
+}
+exports.default = HMC5883L;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Memory/24LC256/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.24LC256
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class _24LC256 {
+    constructor() {
+        this.requiredKeys = ["address"];
+        this.keys = ["sda", "scl", "clock", "pull", "i2c", "address"];
+    }
+    static info() {
+        return {
+            name: "24LC256",
+        };
+    }
+    wired(obniz) {
+        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.clock = this.params.clock || 400 * 1000; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+    }
+    // Module functions
+    set(address, data) {
+        const array = [];
+        array.push((address >> 8) & 0xff);
+        array.push(address & 0xff);
+        array.push.apply(array, data);
+        this.i2c.write(0x50, array);
+        this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+    }
+    getWait(address, length) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const array = [];
+            array.push((address >> 8) & 0xff);
+            array.push(address & 0xff);
+            this.i2c.write(0x50, array);
+            return yield this.i2c.readWait(0x50, length);
+        });
+    }
+}
+exports.default = _24LC256;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/AK8963/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.AK8963
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class AK8963 {
+    constructor() {
+        this._adc_cycle = 0;
+        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address", "adb_cycle"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "AK8963",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
+        this._address = this.params.address || 0x0c;
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.setConfig(this.params.adc_cycle || 8);
+    }
+    setConfig(ADC_cycle) {
+        switch (ADC_cycle) {
+            case 8:
+                this.i2c.write(this._address, [0x0a, 0x12]);
+                break;
+            case 100:
+                this.i2c.write(this._address, [0x0a, 0x16]);
+                break;
+            default:
+                throw new Error("ADC_cycle variable 8,100 setting");
+        }
+        this._adc_cycle = ADC_cycle;
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this._address, [0x03]); // request AK8963 data
+            const raw_data_AK8963 = yield this.i2c.readWait(this._address, 7); // read 7byte(read mag_data[6] to refresh)
+            return {
+                x: this.char2short(raw_data_AK8963[0], raw_data_AK8963[1]),
+                y: this.char2short(raw_data_AK8963[2], raw_data_AK8963[3]),
+                z: this.char2short(raw_data_AK8963[4], raw_data_AK8963[5]),
+            };
+        });
+    }
+    char2short(valueH, valueL) {
+        const buffer = new ArrayBuffer(2);
+        const dv = new DataView(buffer);
+        dv.setUint8(0, valueH);
+        dv.setUint8(1, valueL);
+        return dv.getInt16(0, false);
+    }
+}
+exports.default = AK8963;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/Button/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Button
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Button {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.keys = ["signal", "gnd", "pull"];
+        this.requiredKeys = ["signal"];
+        this.onChangeForStateWait = () => {
+        };
+    }
+    static info() {
+        return {
+            name: "Button",
+        };
+    }
+    wired(obniz) {
+        this.io_signal = obniz.getIO(this.params.signal);
+        if (obniz.isValidIO(this.params.gnd)) {
+            this.io_supply = obniz.getIO(this.params.gnd);
+            this.io_supply.output(false);
+        }
+        // start input
+        if (this.params.pull === "3v") {
+            this.io_signal.pull("3v");
+        }
+        else if (this.params.pull === "0v") {
+            this.io_signal.pull("0v");
+        }
+        else {
+            this.io_signal.pull("5v");
+        }
+        this.io_signal.input((value) => {
+            this.isPressed = value === false;
+            if (this.onchange) {
+                this.onchange(value === false);
+            }
+            this.onChangeForStateWait(value === false);
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.io_signal.inputWait();
+            return ret === false;
+        });
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => {
+                    };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/FlickHat/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.FlickHat
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class FlickHat {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "reset", "ts", "led1", "led2"];
+        this.requiredKeys = ["gnd", "sda", "scl", "reset", "ts"];
+        this.displayIoNames = {
+            // vcc: 'vcc', //5v
+            sda: "sda",
+            scl: "scl",
+            gnd: "gnd",
+            reset: "reset",
+            ts: "ts",
+        };
+    }
+    static info() {
+        return {
+            name: "FlickHat",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.address = 0x42;
+        if (this.obniz.isValidIO(this.params.vcc)) {
+            this.obniz.getIO(this.params.vcc).drive("5v");
+            this.obniz.getIO(this.params.vcc).output(true);
+        }
+        this.obniz.getIO(this.params.gnd).output(false);
+        this.io_reset = this.obniz.getIO(this.params.reset);
+        this.io_reset.drive("3v");
+        this.io_ts = this.obniz.getIO(this.params.ts);
+        this.io_ts.drive("open-drain");
+        this.io_ts.pull("3v");
+        this.params.mode = "master";
+        this.params.pull = "3v";
+        this.params.clock = 100 * 1000; // 100KHz
+        // PeripheralI2C
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+        if (this.obniz.isValidIO(this.params.led1)) {
+            this.led1 = this.obniz.wired("LED", { anode: this.params.led1 });
+        }
+        if (this.obniz.isValidIO(this.params.led2)) {
+            this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
+        }
+    }
+    start(callback) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.io_ts.pull("3v");
+            this.io_reset.output(false);
+            yield this.obniz.wait(50);
+            this.io_reset.output(true);
+            yield this.obniz.wait(50);
+            this.onfwinfo = callback;
+            this.fwInfo = {
+                fwValid: 0,
+                fwInfoReceived: false,
+            };
+            this.rotation = 0;
+            this.lastRotation = 0;
+            this.readSize = 132;
+            yield this.polling();
+            yield this.obniz.wait(200);
+            this.i2c.write(this.address, [
+                0x10,
+                0x00,
+                0x00,
+                0xa2,
+                0xa1,
+                0x00,
+                0x00,
+                0x00,
+                0x1f,
+                0x00,
+                0x00,
+                0x00,
+                0xff,
+                0xff,
+                0xff,
+                0xff,
+            ]);
+            yield this.obniz.wait(100);
+            this.i2c.write(this.address, [
+                0x10,
+                0x00,
+                0x00,
+                0xa2,
+                0x80,
+                0x00,
+                0x00,
+                0x00,
+                0x3f,
+                0x00,
+                0x00,
+                0x00,
+                0x3f,
+                0x00,
+                0x00,
+                0x00,
+            ]);
+        });
+    }
+    _dataArray2string(data) {
+        let result = "";
+        for (const n of data) {
+            result += String.fromCharCode(n);
+        }
+        return result;
+    }
+    polling(timeout) {
+        return __awaiter(this, void 0, void 0, function* () {
+            timeout = timeout || 3000; // default: 3s
+            // DataOutputConfigMask	2byte
+            // const maskDSPStatus = 1;
+            const maskGestureInfo = 1 << 1;
+            const maskTouchInfo = 1 << 2;
+            const maskAirWheelInfo = 1 << 3;
+            const maskXYZPosition = 1 << 4;
+            // SystemInfo	1byte
+            const sysPositionValid = 1;
+            const sysAirWheelValid = 1 << 1;
+            // const sysDSPRunning = 1 << 7;
+            const startTime = new Date();
+            let ts = true;
+            while (ts && new Date() - startTime < timeout) {
+                ts = yield this.io_ts.inputWait();
+            }
+            if (!ts) {
+                this.io_ts.pull("0v");
+                // await this.obniz.wait(1);
+                const data = yield this.i2c.readWait(this.address, this.readSize);
+                const size = data[0];
+                // let flag = data[1];
+                const seq = data[2];
+                const msgID = data[3];
+                if (size !== 0xff && size > 0) {
+                    if (this.debugprint || this.obniz.debugprint) {
+                        console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
+                    }
+                    let configmask;
+                    let sysinfo;
+                    let gesture;
+                    let touch;
+                    let airwheel;
+                    let statusInfo;
+                    let fwInfo;
+                    switch (msgID) {
+                        case 0x91: // sensor data output
+                            configmask = data[4] | (data[5] << 8); // little endian
+                            // let timestamp = data[6]; // 200hz, 8-bit counter, max ~1.25sec
+                            sysinfo = data[7];
+                            // let dspstatus = data.slice(8, 10);
+                            gesture = data.slice(10, 14);
+                            touch = data.slice(14, 18);
+                            airwheel = data.slice(18, 20);
+                            // let xyz = data.slice(20, 26);
+                            // let noisepow = data.slice(27, 30);
+                            if (gesture[0] === 255 &&
+                                gesture[1] === 255 &&
+                                gesture[2] === 255 &&
+                                gesture[3] === 255) {
+                                break;
+                            }
+                            if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
+                                const xyz = {
+                                    // little endian
+                                    x: (data[20] | (data[21] << 8)) / 65536,
+                                    y: (data[22] | (data[23] << 8)) / 65536,
+                                    z: (data[24] | (data[25] << 8)) / 65536,
+                                    seq,
+                                };
+                                this.xyz = xyz;
+                                if (typeof this.onxyz === "function") {
+                                    this.onxyz(xyz);
+                                }
+                            }
+                            if (configmask & maskGestureInfo && gesture[0] > 0) {
+                                this.lastGesture = gesture[0];
+                                const gestures = [
+                                    ["", "", ""],
+                                    ["garbage", "", ""],
+                                    ["flick", "west", "east"],
+                                    ["flick", "east", "west"],
+                                    ["flick", "south", "north"],
+                                    ["flick", "north", "south"],
+                                    ["circle", "clockwise", ""],
+                                    ["circle", "counter-clockwise", ""],
+                                    ["wave", "x", ""],
+                                    ["wave", "y", ""],
+                                    ["hold", "", ""],
+                                ];
+                                for (const index in gestures) {
+                                    if (index === gesture[0] &&
+                                        typeof this.ongestureall === "function") {
+                                        this.ongestureall({
+                                            action: gestures[index][0],
+                                            from: gestures[index][1],
+                                            to: gestures[index][2],
+                                            raw: gesture,
+                                            seq,
+                                        });
+                                    }
+                                    if (index === gesture[0] &&
+                                        gestures[index][0] === "flick" &&
+                                        typeof this.ongesture === "function") {
+                                        this.ongesture({
+                                            action: "gesture",
+                                            from: gestures[index][1],
+                                            to: gestures[index][2],
+                                            raw: gesture,
+                                            seq,
+                                        });
+                                    }
+                                }
+                            }
+                            if (configmask & maskTouchInfo &&
+                                !(touch[0] === 0 && touch[1] === 0) &&
+                                touch[3] === 0) {
+                                // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
+                                const touchAction = touch[0] | (touch[1] << 8); // little endian
+                                if (touchAction === 0xffff) {
+                                    break;
+                                }
+                                // let touchCount = touch[2] * 5; // touch counter value * 5[ms]
+                                const actions = [
+                                    ["touch", "south"],
+                                    ["touch", "west"],
+                                    ["touch", "north"],
+                                    ["touch", "east"],
+                                    ["touch", "center"],
+                                    ["tap", "south"],
+                                    ["tap", "west"],
+                                    ["tap", "north"],
+                                    ["tap", "east"],
+                                    ["tap", "center"],
+                                    ["doubletap", "south"],
+                                    ["doubletap", "west"],
+                                    ["doubletap", "north"],
+                                    ["doubletap", "east"],
+                                    ["doubletap", "center"],
+                                ];
+                                const touches = [];
+                                const taps = [];
+                                const doubletaps = [];
+                                this.lastTouch = touchAction;
+                                let comp = 1;
+                                for (const index in actions) {
+                                    const value = actions[index];
+                                    if (touchAction & comp) {
+                                        // console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
+                                        switch (value[0]) {
+                                            case "touch":
+                                                touches.push(value[1]);
+                                                break;
+                                            case "tap":
+                                                taps.push(value[1]);
+                                                break;
+                                            case "doubletap":
+                                                doubletaps.push(value[1]);
+                                                break;
+                                            default:
+                                        }
+                                    }
+                                    comp <<= 1;
+                                }
+                                if (touches.length > 0 && typeof this.ontouch === "function") {
+                                    this.ontouch({
+                                        action: "touch",
+                                        positions: touches,
+                                        raw: touch,
+                                        seq,
+                                    });
+                                }
+                                if (taps.length > 0 && typeof this.ontap === "function") {
+                                    this.ontap({
+                                        action: "tap",
+                                        positions: taps,
+                                        raw: touch,
+                                        seq,
+                                    });
+                                }
+                                if (doubletaps.length > 0 &&
+                                    typeof this.ondoubletap === "function") {
+                                    this.ondoubletap({
+                                        action: "doubletap",
+                                        positions: doubletaps,
+                                        raw: touch,
+                                        seq,
+                                    });
+                                }
+                            }
+                            if (configmask & maskAirWheelInfo && sysinfo & sysAirWheelValid) {
+                                const delta = (airwheel[0] - this.lastRotation) / 32.0;
+                                this.rotation += delta * 360.0;
+                                this.rotation %= 360;
+                                if (delta !== 0 && delta > -0.5 && delta < 0.5) {
+                                    if (typeof this.onairwheel === "function") {
+                                        this.onairwheel({
+                                            delta: delta * 360.0,
+                                            rotation: this.rotation,
+                                            raw: airwheel,
+                                            seq,
+                                        });
+                                    }
+                                }
+                                this.lastRotation = airwheel[0];
+                            }
+                            break;
+                        case 0x15: // system status
+                            statusInfo = {
+                                msgId: data[4],
+                                maxCmdSize: data[5],
+                                error: data[6] | (data[7] << 8),
+                            };
+                            this.statusInfo = statusInfo;
+                            if (this.debugprint || this.obniz.debugprint) {
+                                console.log(`flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`);
+                            }
+                            break;
+                        case 0x83: // farmware information
+                            fwInfo = {
+                                fwValid: data[4] === 0xaa,
+                                hwRev: [data[5], data[6]],
+                                paramStartAddr: data[7] * 128,
+                                libLoaderVer: [data[8], data[9]],
+                                libLoaderPlatform: data[10],
+                                fwStartAddr: data[11] * 128,
+                                fwVersion: this._dataArray2string(data.slice(12, 132)).split("\0")[0],
+                                fwInfoReceived: true,
+                            };
+                            this.fwInfo = fwInfo;
+                            if (typeof this.onfwinfo === "function") {
+                                this.onfwinfo(fwInfo);
+                            }
+                            this.readSize = 26;
+                            break;
+                        default:
+                            console.error(`unknown message: 0x${msgID.toString(16)}, data:${data
+                                .slice(0, size)
+                                .map((v) => "0x" + v.toString(16))}`);
+                    }
+                }
+                this.io_ts.pull("3v");
+                // await this.obniz.wait(1);
+            }
+        });
+    }
+}
+exports.default = FlickHat;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/HC-SR505/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.HC-SR505
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class HCSR505 {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "HC-SR505",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_signal = obniz.getIO(this.params.signal);
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.input((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.io_signal.inputWait();
+        });
+    }
+}
+exports.default = HCSR505;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/IPM-165/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.IPM-165
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class IPM_165 {
+    constructor() {
+        this.keys = ["signal", "vcc", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "IPM-165",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.signal = this.obniz.getAD(this.params.signal);
+        this.signal.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.signal.getWait();
+        });
+    }
+}
+exports.default = IPM_165;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/JoyStick/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.JoyStick
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class JoyStick {
+    constructor() {
+        this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
+        this.requiredKeys = ["sw", "y", "x"];
+        this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
+        this.pinname = { sw: "sw12" };
+        this.shortName = "joyS";
+    }
+    static info() {
+        return {
+            name: "JoyStick",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_sig_sw = obniz.getIO(this.params.sw);
+        this.ad_x = obniz.getAD(this.params.x);
+        this.ad_y = obniz.getAD(this.params.y);
+        this.io_sig_sw.pull("5v");
+        this.ad_x.start((value) => {
+            this.positionX = value / 5.0;
+            if (this.onchangex) {
+                this.onchangex(this.positionX * 2 - 1);
+            }
+        });
+        this.ad_y.start((value) => {
+            this.positionY = value / 5.0;
+            if (this.onchangey) {
+                this.onchangey(this.positionY * 2 - 1);
+            }
+        });
+        this.io_sig_sw.input((value) => {
+            this.isPressed = value === false;
+            if (this.onchangesw) {
+                this.onchangesw(value === false);
+            }
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.io_sig_sw.inputWait();
+            return ret === false;
+        });
+    }
+    getXWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const value = yield this.ad_x.getWait();
+            this.positionX = value / 5.0;
+            return this.positionX * 2 - 1;
+        });
+    }
+    getYWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const value = yield this.ad_y.getWait();
+            this.positionY = value / 5.0;
+            return this.positionY * 2 - 1;
+        });
+    }
+}
+exports.default = JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/KXR94-2050/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.KXR94-2050
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class KXR94_2050 {
+    constructor() {
+        this.keys = ["x", "y", "z", "vcc", "gnd", "enable", "self_test"];
+        this.requiredKeys = ["x", "y", "z"];
+    }
+    static info() {
+        return {
+            name: "KXR94-2050",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad_x = obniz.getAD(this.params.x);
+        this.ad_y = obniz.getAD(this.params.y);
+        this.ad_z = obniz.getAD(this.params.z);
+        if (obniz.isValidIO(this.params.enable)) {
+            obniz.getIO(this.params.enable).drive("5v");
+            obniz.getIO(this.params.enable).output(true);
+        }
+        if (obniz.isValidIO(this.params.self_test)) {
+            obniz.getIO(this.params.self_test).drive("5v");
+            obniz.getIO(this.params.self_test).output(false);
+        }
+        this.changeVccVoltage(5);
+        this.ad_x.start((value) => {
+            this._x_val = value;
+            if (this.onChangeX) {
+                this.onChangeX(this.voltage2gravity(value));
+            }
+            if (this.onChange) {
+                this.onChange(this._get());
+            }
+        });
+        this.ad_y.start((value) => {
+            this._y_val = value;
+            if (this.onChangeY) {
+                this.onChangeY(this.voltage2gravity(value));
+            }
+            if (this.onChange) {
+                this.onChange(this._get());
+            }
+        });
+        this.ad_z.start((value) => {
+            this._z_val = value;
+            if (this.onChangeZ) {
+                this.onChangeZ(this.voltage2gravity(value));
+            }
+            if (this.onChange) {
+                this.onChange(this._get());
+            }
+        });
+        if (this.obniz.isValidIO(this.params.vcc)) {
+            this.obniz.getAD(this.params.vcc).start((value) => {
+                this.changeVccVoltage(value);
+            });
+        }
+    }
+    changeVccVoltage(pwrVoltage) {
+        this.sensitivity = pwrVoltage / 5; // Set sensitivity (unit:V)
+        this.offsetVoltage = pwrVoltage / 2; // Set offset voltage (Output voltage at 0g, unit:V)
+    }
+    voltage2gravity(volt) {
+        return (volt - this.offsetVoltage) / this.sensitivity;
+    }
+    get() {
+        return this._get();
+    }
+    _get() {
+        return {
+            x: this.voltage2gravity(this._x_val),
+            y: this.voltage2gravity(this._y_val),
+            z: this.voltage2gravity(this._z_val),
+        };
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this._x_val = yield this.ad_x.getWait();
+            this._y_val = yield this.ad_y.getWait();
+            this._z_val = yield this.ad_z.getWait();
+            return this._get();
+        });
+    }
+}
+exports.default = KXR94_2050;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/KXSC7-2050/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.KXSC7-2050
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class KXSC7_2050 {
+    constructor() {
+        this.keys = ["x", "y", "z", "vcc", "gnd"];
+        this.requiredKeys = ["x", "y", "z"];
+    }
+    static info() {
+        return {
+            name: "KXSC7-2050",
+        };
+    }
+    wired(obniz) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.obniz = obniz;
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+            this.ad_x = obniz.getAD(this.params.x);
+            this.ad_y = obniz.getAD(this.params.y);
+            this.ad_z = obniz.getAD(this.params.z);
+            yield obniz.wait(500);
+            const ad = obniz.getAD(this.params.vcc);
+            const pwrVoltage = yield ad.getWait();
+            const horizontalZ = yield this.ad_z.getWait();
+            const sensitivity = pwrVoltage / 5; // Set sensitivity (unit:V)
+            const offsetVoltage = horizontalZ - sensitivity; // Set offset voltage (Output voltage at 0g, unit:V)
+            const self = this;
+            this.ad_x.start((value) => {
+                self.gravity = (value - offsetVoltage) / sensitivity;
+                if (self.onchangex) {
+                    self.onchangex(self.gravity);
+                }
+            });
+            this.ad_y.start((value) => {
+                self.gravity = (value - offsetVoltage) / sensitivity;
+                if (self.onchangey) {
+                    self.onchangey(self.gravity);
+                }
+            });
+            this.ad_z.start((value) => {
+                self.gravity = (value - offsetVoltage) / sensitivity;
+                if (self.onchangez) {
+                    self.onchangez(self.gravity);
+                }
+            });
+        });
+    }
+}
+exports.default = KXSC7_2050;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/MPU6050/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MPU6050
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class MPU6050 {
+    constructor() {
+        this._address = 0x68;
+        this.keys = [
+            "gnd",
+            "vcc",
+            "sda",
+            "scl",
+            "i2c",
+            "address",
+            "accelerometer_range",
+            "gyroscope_range",
+        ];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "MPU6050",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
+        if (typeof this.params.address === "number") {
+            this._address = this.params.address;
+        }
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.setConfig(this.params.accelerometer_range || 2, this.params.gyroscope_range || 250);
+    }
+    setConfig(accelerometer_range, gyroscope_range) {
+        // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
+        switch (accelerometer_range) {
+            case 2:
+                this.i2c.write(this._address, [0x1c, 0x00]);
+                break;
+            case 4:
+                this.i2c.write(this._address, [0x1c, 0x08]);
+                break;
+            case 8:
+                this.i2c.write(this._address, [0x1c, 0x10]);
+                break;
+            case 16:
+                this.i2c.write(this._address, [0x1c, 0x18]);
+                break;
+            default:
+                throw new Error("accel_range variable 2,4,8,16 setting");
+        }
+        // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
+        switch (gyroscope_range) {
+            case 250:
+                this.i2c.write(this._address, [0x1b, 0x00]);
+                break;
+            case 500:
+                this.i2c.write(this._address, [0x1b, 0x08]);
+                break;
+            case 1000:
+                this.i2c.write(this._address, [0x1b, 0x10]);
+                break;
+            case 2000:
+                this.i2c.write(this._address, [0x1b, 0x18]);
+                break;
+            default:
+                throw new Error("accel_range variable 250,500,1000,2000 setting");
+        }
+        this._accel_range = accelerometer_range;
+        this._gyro_range = gyroscope_range;
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this._address, [0x3b]); // request MPU6050 data
+            const raw_data_MPU6050 = yield this.i2c.readWait(this._address, 14); // read 14byte
+            const ac_scale = this._accel_range / 32768;
+            const gy_scale = this._gyro_range / 32768;
+            return {
+                accelerometer: {
+                    x: this.char2short(raw_data_MPU6050[0], raw_data_MPU6050[1]) * ac_scale,
+                    y: this.char2short(raw_data_MPU6050[2], raw_data_MPU6050[3]) * ac_scale,
+                    z: this.char2short(raw_data_MPU6050[4], raw_data_MPU6050[5]) * ac_scale,
+                },
+                temp: this.char2short(raw_data_MPU6050[6], raw_data_MPU6050[7]) / 333.87 + 21,
+                gyroscope: {
+                    x: this.char2short(raw_data_MPU6050[8], raw_data_MPU6050[9]) * gy_scale,
+                    y: this.char2short(raw_data_MPU6050[10], raw_data_MPU6050[11]) *
+                        gy_scale,
+                    z: this.char2short(raw_data_MPU6050[12], raw_data_MPU6050[13]) *
+                        gy_scale,
+                },
+            };
+        });
+    }
+    char2short(valueH, valueL) {
+        const buffer = new ArrayBuffer(2);
+        const dv = new DataView(buffer);
+        dv.setUint8(0, valueH);
+        dv.setUint8(1, valueL);
+        return dv.getInt16(0, false);
+    }
+}
+exports.default = MPU6050;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/MPU6886/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MPU6886
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class MPU6886 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.commands = {};
+        this.commands.whoami = 0x75;
+        this.commands.accelIntelCtrl = 0x69;
+        this.commands.smplrtDiv = 0x19;
+        this.commands.intPinCfg = 0x37;
+        this.commands.intEnable = 0x38;
+        this.commands.accelXoutH = 0x3b;
+        this.commands.accelXoutL = 0x3c;
+        this.commands.accelYoutH = 0x3d;
+        this.commands.accelYoutL = 0x3e;
+        this.commands.accelZoutH = 0x3f;
+        this.commands.accelZoutL = 0x40;
+        this.commands.tempOutH = 0x41;
+        this.commands.tempOutL = 0x42;
+        this.commands.gyroXoutH = 0x43;
+        this.commands.gyroXoutL = 0x44;
+        this.commands.gyroYoutH = 0x45;
+        this.commands.gyroYoutL = 0x46;
+        this.commands.gyroZoutH = 0x47;
+        this.commands.gyroZoutL = 0x48;
+        this.commands.userCtrl = 0x6a;
+        this.commands.pwrMgmt1 = 0x6b;
+        this.commands.pwrMgmt2 = 0x6c;
+        this.commands.config = 0x1a;
+        this.commands.gyroConfig = 0x1b;
+        this.commands.accelConfig = 0x1c;
+        this.commands.accelConfig2 = 0x1d;
+        this.commands.fifoEn = 0x23;
+    }
+    static info() {
+        return {
+            name: "MPU6886",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        this.init();
+    }
+    i2cInfo() {
+        return {
+            address: 0x68,
+            clock: 100000,
+            voltage: "3v",
+        };
+    }
+    whoamiWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.readWait(this.commands.whoami, 1);
+            return result[0];
+        });
+    }
+    init() {
+        this.write(this.commands.pwrMgmt1, 0x00);
+        this.obniz.wait(10);
+        this.write(this.commands.pwrMgmt1, 0x01 << 7);
+        this.obniz.wait(10);
+        this.write(this.commands.pwrMgmt1, 0x01 << 0);
+        this.obniz.wait(10);
+        this.setConfig(this.params.accelerometer_range || 2, this.params.gyroscope_range || 250);
+        this.obniz.wait(1);
+        this.write(this.commands.config, 0x01);
+        this.obniz.wait(1);
+        this.write(this.commands.smplrtDiv, 0x05);
+        this.obniz.wait(1);
+        this.write(this.commands.intEnable, 0x00);
+        this.obniz.wait(1);
+        this.write(this.commands.accelConfig2, 0x00);
+        this.obniz.wait(1);
+        this.write(this.commands.userCtrl, 0x00);
+        this.obniz.wait(1);
+        this.write(this.commands.fifoEn, 0x00);
+        this.obniz.wait(1);
+        this.write(this.commands.intPinCfg, 0x22);
+        this.obniz.wait(1);
+        this.write(this.commands.intEnable, 0x01);
+        this.obniz.wait(1);
+    }
+    setConfig(accelerometer_range, gyroscope_range) {
+        // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
+        switch (accelerometer_range) {
+            case 2:
+                this.write(this.commands.accelConfig, 0x00);
+                break;
+            case 4:
+                this.write(this.commands.accelConfig, 0x08);
+                break;
+            case 8:
+                this.write(this.commands.accelConfig, 0x10);
+                break;
+            case 16:
+                this.write(this.commands.accelConfig, 0x18);
+                break;
+            default:
+                throw new Error("accel_range variable 2,4,8,16 setting");
+        }
+        // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
+        switch (gyroscope_range) {
+            case 250:
+                this.write(this.commands.gyroConfig, 0x00);
+                break;
+            case 500:
+                this.write(this.commands.gyroConfig, 0x08);
+                break;
+            case 1000:
+                this.write(this.commands.gyroConfig, 0x10);
+                break;
+            case 2000:
+                this.write(this.commands.gyroConfig, 0x18);
+                break;
+            default:
+                throw new Error("accel_range variable 250,500,1000,2000 setting");
+        }
+        this._accel_range = accelerometer_range;
+        this._gyro_range = gyroscope_range;
+    }
+    getAllDataWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const raw_data = yield this.readWait(this.commands.accelXoutH, 14); // request all data
+            const ac_scale = this._accel_range / 32768;
+            const gy_scale = this._gyro_range / 32768;
+            const accelerometer = {
+                x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
+                y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
+                z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+            };
+            const temperature = this.char2short(raw_data[6], raw_data[7]) / 326.8 + 25.0;
+            const gyroscope = {
+                x: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
+                y: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+                z: this.char2short(raw_data[12], raw_data[13]) * gy_scale,
+            };
+            return {
+                accelerometer,
+                temperature,
+                gyroscope,
+            };
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllDataWait()).temperature;
+        });
+    }
+    getAccelWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllDataWait()).accelerometer;
+        });
+    }
+    getGyroWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllDataWait()).gyroscope;
+        });
+    }
+}
+exports.default = MPU6886;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/MPU9250/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MPU9250
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class MPU9250 {
+    constructor() {
+        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "MPU9250",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this._address = this.params.address || 0x68;
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.i2c.write(this._address, [0x6b, 0x00]); // activate MPU9250
+        this.i2c.write(this._address, [0x37, 0x02]); // activate AK8963 (bypass)
+        this.i2c.write(this._address, [0x1a, 0x06]); // activate LPF (search datasheet_p.13)
+        this.i2c.write(this._address, [0x1d, 0x02]); // accel LPF set.
+        this.mpu6050 = obniz.wired("MPU6050", { i2c: this.i2c });
+        this.ak8963 = obniz.wired("AK8963", { i2c: this.i2c });
+    }
+    setConfig(accel_range, gyro_range, ADC_cycle) {
+        this.mpu6050.setConfig(accel_range, gyro_range);
+        this.ak8963.setConfig(ADC_cycle);
+    }
+    _getAK8963Wait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.i2c.write(this._address, [0x02]); // request AK8983 data
+            const ST1 = yield this.i2c.readWait(this._address, 1); // confirm magnet value readable
+            if (ST1 & 0x01) {
+                return yield this.ak8963.getWait();
+            }
+            return {};
+        });
+    }
+    getAllWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.mpu6050.getWait();
+            data.compass = yield this.ak8963.getWait();
+            return data;
+        });
+    }
+    getCompassWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ak8963.getWait();
+        });
+    }
+    getAccelerometerWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.mpu6050.getWait()).accelerometer;
+        });
+    }
+    getGyroscopeWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.mpu6050.getWait()).gyroscope;
+        });
+    }
+}
+exports.default = MPU9250;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/PaPIRsVZ/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.PaPIRsVZ
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class PaPIRsVZ {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "PaPIRsVZ",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_signal = obniz.getIO(this.params.signal);
+        this.io_signal.pull("0v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.input((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+}
+exports.default = PaPIRsVZ;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/Potentiometer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Potentiometer
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Potentiometer {
+    constructor() {
+        this.vcc_voltage = 5.0;
+        this.position = 0;
+        this.keys = ["pin0", "pin1", "pin2"];
+        this.requiredKeys = ["pin0", "pin1", "pin2"];
+    }
+    static info() {
+        return {
+            name: "Potentiometer",
+        };
+    }
+    wired(obniz) {
+        this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+        this.ad = obniz.getAD(this.params.pin1);
+        obniz.getAD(this.params.pin0).start((value) => {
+            this.vcc_voltage = value;
+        });
+        this.ad.start((value) => {
+            this.position = value / this.vcc_voltage;
+            if (this.onchange) {
+                this.onchange(this.position);
+            }
+        });
+    }
+}
+exports.default = Potentiometer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/SH200Q/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SH200Q
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class SH200Q extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.commands = {};
+        this.commands.whoami = 0x30;
+        this.commands.accConfig = 0x0e;
+        this.commands.gyroConfig = 0x0f;
+        this.commands.gyroDlpf = 0x11;
+        this.commands.fifoConfig = 0x12;
+        this.commands.accRange = 0x16;
+        this.commands.gyroRange = 0x2b;
+        this.commands.outputAcc = 0x00;
+        this.commands.outputGyro = 0x06;
+        this.commands.outputTemp = 0x0c;
+        this.commands.regSet1 = 0xba;
+        this.commands.regSet2 = 0xca;
+        this.commands.adcReset = 0xc2;
+        this.commands.softReset = 0x7f;
+        this.commands.reset = 0x75;
+    }
+    static info() {
+        return {
+            name: "SH200Q",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+    }
+    i2cInfo() {
+        return {
+            address: 0x6c,
+            clock: 100000,
+            voltage: "3v",
+        };
+    }
+    whoamiWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.readWait(this.commands.whoami, 1);
+            return result[0];
+        });
+    }
+    initWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.resetAdcWait();
+            yield this.writeFlagWait(0xd8, 7);
+            yield this.obniz.wait(1);
+            yield this.clearFlagWait(0xd8, 7);
+            yield this.write(0x78, 0x61);
+            yield this.obniz.wait(1);
+            yield this.write(0x78, 0x00);
+            // set acc odr 256hz
+            yield this.write(this.commands.accConfig, 0x91);
+            // set gyro odr 500hz
+            yield this.write(this.commands.gyroConfig, 0x13);
+            // set gyro dlpf 50hz
+            yield this.write(this.commands.gyroDlpf, 0x03);
+            // set no buffer mode
+            yield this.write(this.commands.fifoConfig, 0x00);
+            this.setConfig(8, 2000);
+            yield this.write(this.commands.regSet1, 0xc0);
+            // ADC Reset
+            yield this.writeFlagWait(this.commands.regSet2, 4);
+            yield this.obniz.wait(1);
+            yield this.clearFlagWait(this.commands.regSet2, 4);
+            yield this.obniz.wait(10);
+        });
+    }
+    setConfig(accelerometer_range, gyroscope_range) {
+        // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
+        switch (accelerometer_range) {
+            case 4:
+                this.write(this.commands.accRange, 0x00);
+                break;
+            case 8:
+                this.write(this.commands.accRange, 0x01);
+                break;
+            case 16:
+                this.write(this.commands.accRange, 0x10);
+                break;
+            default:
+                throw new Error("accel_range variable 4,8,16 setting");
+        }
+        // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
+        switch (gyroscope_range) {
+            case 125:
+                this.write(this.commands.gyroRange, 0x04);
+                break;
+            case 250:
+                this.write(this.commands.gyroRange, 0x03);
+                break;
+            case 500:
+                this.write(this.commands.gyroRange, 0x02);
+                break;
+            case 1000:
+                this.write(this.commands.gyroRange, 0x01);
+                break;
+            case 2000:
+                this.write(this.commands.gyroRange, 0x00);
+                break;
+            default:
+                throw new Error("gyroscope_range variable 125,250,500,1000,2000 setting");
+        }
+        this._accel_range = accelerometer_range;
+        this._gyro_range = gyroscope_range;
+    }
+    resetAdcWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // set 0xC2 bit2 1-->0
+            const tempdata = yield this.readWait(this.commands.adcReset, 1);
+            tempdata[0] = tempdata[0] | 0x04; // tempdata[0] = 0x0E; //CC
+            this.write(this.commands.adcReset, tempdata);
+            yield this.obniz.wait(1);
+            tempdata[0] = tempdata[0] & 0xfb; // tempdata[0] = 0x0A; //C8
+            this.write(this.commands.adcReset, tempdata);
+        });
+    }
+    getAllDataWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const raw_data = yield this.readWait(this.commands.outputAcc, 14); // request all data
+            const ac_scale = this._accel_range / 32768;
+            const gy_scale = this._gyro_range / 32768;
+            const accelerometer = {
+                x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
+                y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
+                z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+            };
+            const gyroscope = {
+                x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
+                y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
+                z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+            };
+            const temperature = this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
+            return {
+                accelerometer,
+                temperature,
+                gyroscope,
+            };
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const raw_data = yield this.readWait(this.commands.outputTemp, 2); // request all data
+            return this.char2short(raw_data[1], raw_data[0]) / 333.87 + 21.0;
+        });
+    }
+    getAccelWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllDataWait()).accelerometer;
+        });
+    }
+    getGyroWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllDataWait()).gyroscope;
+        });
+    }
+}
+exports.default = SH200Q;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Moving/DCMotor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.DCMotor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class DCMotor {
+    constructor() {
+        this.keys = ["forward", "back"];
+        this.requiredKeys = ["forward", "back"];
+    }
+    static info() {
+        return {
+            name: "DCMotor",
+        };
+    }
+    wired(obniz) {
+        this.status = {
+            direction: null,
+            power: null,
+        };
+        this.pwm1_io_num = this.params.forward;
+        this.pwm2_io_num = this.params.back;
+        this.pwm1 = obniz.getFreePwm();
+        this.pwm1.start({ io: this.pwm1_io_num });
+        this.pwm1.freq(100000);
+        this.pwm2 = obniz.getFreePwm();
+        this.pwm2.start({ io: this.pwm2_io_num });
+        this.pwm2.freq(100000);
+        this.power(30);
+    }
+    // Module functions
+    forward() {
+        this.move(true);
+    }
+    reverse() {
+        this.move(false);
+    }
+    stop() {
+        if (this.status.direction === null) {
+            return;
+        }
+        this.status.direction = null;
+        this.pwm1.duty(0);
+        this.pwm2.duty(0);
+    }
+    move(forward) {
+        if (forward) {
+            if (this.status.direction === true) {
+                return;
+            }
+            this.status.direction = true;
+        }
+        else {
+            if (this.status.direction === false) {
+                return;
+            }
+            this.status.direction = false;
+        }
+        const power = this.power();
+        this.power(0);
+        this.power(power);
+    }
+    power(power) {
+        if (power === undefined) {
+            return this.status.power;
+        }
+        this.status.power = power;
+        if (this.status.direction === null) {
+            this.pwm1.duty(0);
+            this.pwm2.duty(0);
+            return;
+        }
+        if (this.status.direction) {
+            this.pwm1.duty(power);
+            this.pwm2.duty(0);
+        }
+        else {
+            this.pwm1.duty(0);
+            this.pwm2.duty(power);
+        }
+    }
+}
+exports.default = DCMotor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Moving/PCA9685/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.PCA9685
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class PCA9685_PWM {
+    constructor(chip, id) {
+        this.value = 0;
+        this.state = {};
+        this.chip = chip;
+        this.id = id;
+    }
+    freq(frequency) {
+        this.chip.freq(frequency);
+    }
+    pulse(value) {
+        this.chip.pulse(this.id, value);
+    }
+    duty(value) {
+        this.chip.duty(this.id, value);
+    }
+}
+// tslint:disable:max-classes-per-file
+class PCA9685 {
+    constructor() {
+        this.pwms = [];
+        this._freq = 0;
+        /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
+        this.keys = [
+            "gnd",
+            "vcc",
+            "scl",
+            "sda",
+            "oe",
+            "i2c",
+            "enabled",
+            "address",
+            "drive",
+        ];
+        this.requiredKeys = [];
+        this.address = 0x40;
+        this._commands = {
+            MODE1: 0x00,
+            MODE2: 0x01,
+            SUBADR1: 0x02,
+            SUBADR2: 0x03,
+            SUBADR3: 0x04,
+            PRESCALE: 0xfe,
+            LED0_ON_L: 0x06,
+            ALL_LED_ON_L: 0xfa,
+            bits: {
+                ALLCALL: 0x01,
+                SLEEP_ENABLE: 0x10,
+                AUTO_INCREMENT_ENABLED: 0x20,
+                RESTART: 0x80,
+                OUTDRV: 0x04,
+                INVRT: 0x10,
+            },
+        };
+        this._regs = new Array(1);
+        this.pwmNum = 16;
+        this.pwms = [];
+        this._preparePWM(this.pwmNum);
+    }
+    static info() {
+        return {
+            name: "PCA9685",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (obniz.isValidIO(this.params.oe)) {
+            this.io_oe = obniz.getIO(this.params.oe);
+        }
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        if (typeof this.params.address === "number") {
+            this.address = this.params.address;
+        }
+        this.params.clock = this.params.clock || 400 * 1000; // for i2c
+        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.pull = this.params.pull || "5v"; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        if (this.obniz.isValidIO(this.params.srclr)) {
+            this.io_srclr = this.obniz.getIO(this.params.srclr);
+            this.io_srclr.output(true);
+        }
+        if (typeof this.params.enabled !== "boolean") {
+            this.params.enabled = true;
+        }
+        if (this.io_oe && this.params.enabled) {
+            this.io_oe.output(false);
+        }
+        if (this.params.drive === "open-drain") {
+            this.i2c.write(this.address, [
+                this._commands.MODE2,
+                this._commands.bits.OUTDRV,
+            ]);
+        }
+        let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
+        mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
+        this.i2c.write(this.address, [this._commands.MODE1, mode1]);
+        this.i2c.write(this.address, [
+            this._commands.MODE1,
+            mode1 | this._commands.bits.RESTART,
+        ]);
+        this._regs[this._commands.MODE1] = mode1;
+        obniz.wait(10);
+    }
+    _preparePWM(num) {
+        for (let i = 0; i < num; i++) {
+            this.pwms.push(new PCA9685_PWM(this, i));
+        }
+    }
+    isValidPWM(id) {
+        return typeof id === "number" && id >= 0 && id < this.pwmNum;
+    }
+    getPWM(id) {
+        if (!this.isValidPWM(id)) {
+            throw new Error("pwm " + id + " is not valid pwm");
+        }
+        return this.pwms[id];
+    }
+    freq(frequency) {
+        if (typeof frequency !== "number") {
+            return;
+        }
+        if (frequency < 24 || 1526 < frequency) {
+            throw new Error("freq must be within 24-1526 hz");
+        }
+        if (this._freq === frequency) {
+            return;
+        }
+        let prescaleval = 25000000.0; // 25MHz
+        prescaleval /= 4096.0; // 12bit
+        prescaleval /= frequency * 0.9;
+        prescaleval -= 1.0;
+        const prescale = Math.floor(Math.floor(prescaleval + 0.5));
+        const mode1 = this._regs[this._commands.MODE1];
+        this.i2c.write(this.address, [
+            this._commands.MODE1,
+            (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE,
+        ]); // enter sleep
+        this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
+        this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
+        this.obniz.wait(5);
+        // save
+        this._freq = frequency;
+        for (let i = 0; i < this.pwms.length; i++) {
+            this.pwms[i].state.freq = this._freq;
+        }
+    }
+    pulse(index, pulse_width) {
+        if (typeof this._freq !== "number" || this._freq <= 0) {
+            throw new Error("please provide freq first.");
+        }
+        this.duty(index, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
+    }
+    duty(index, duty) {
+        duty *= 1.0;
+        if (typeof this._freq !== "number" || this._freq <= 0) {
+            throw new Error("please provide freq first.");
+        }
+        if (typeof duty !== "number") {
+            throw new Error("please provide duty in number");
+        }
+        if (duty < 0) {
+            duty = 0;
+        }
+        if (duty > 100) {
+            duty = 100;
+        }
+        this.getPWM(index).state.duty = duty;
+        this.writeSingleONOFF(index, 0, (duty / 100.0) * 4095);
+    }
+    writeSingleONOFF(index, on, off) {
+        this.i2c.write(this.address, [
+            this._commands.LED0_ON_L + 4 * index,
+            on & 0xff,
+            on >> 8,
+            off & 0xff,
+            off >> 8,
+        ]);
+    }
+    setEnable(enable) {
+        if (!this.io_oe && enable === false) {
+            throw new Error('pin "oe" is not specified');
+        }
+        this.io_oe.output(!enable);
+    }
+}
+exports.default = PCA9685;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Moving/ServoMotor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.ServoMotor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class ServoMotor {
+    constructor() {
+        this.range = {
+            min: 0.5,
+            max: 2.4,
+        };
+        this.keys = ["gnd", "vcc", "signal", "pwm"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "ServoMotor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        if (obniz.isValidIO(this.params.vcc)) {
+            this.io_vcc = obniz.getIO(this.params.vcc);
+        }
+        if (this.params.pwm) {
+            this.pwm = this.params.pwm;
+        }
+        else {
+            this.pwm = obniz.getFreePwm();
+            this.pwm_io_num = this.params.signal;
+            if (typeof this.pwm_io_num !== "number") {
+                throw new Error(`no io specified for pwm`);
+            }
+            this.pwm.start({ io: this.pwm_io_num });
+        }
+        this.pwm.freq(50);
+    }
+    // Module functions
+    angle(ratio) {
+        const max = this.range.max;
+        const min = this.range.min;
+        const val = ((max - min) * ratio) / 180.0 + min;
+        this.pwm.pulse(val);
+    }
+    on() {
+        if (this.io_vcc) {
+            this.io_vcc.output(true);
+        }
+    }
+    off() {
+        if (this.io_vcc) {
+            this.io_vcc.output(false);
+        }
+    }
+}
+exports.default = ServoMotor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Moving/Solenoid/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Solenoid
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Solenoid {
+    constructor() {
+        this.keys = ["gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Solenoid",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (obniz.isValidIO(this.params.gnd)) {
+            this.io_gnd = obniz.getIO(this.params.gnd);
+            this.io_gnd.output(false);
+        }
+        this.io_signal = obniz.getIO(this.params.signal);
+        this.io_signal.output(false);
+    }
+    on() {
+        this.io_signal.output(true);
+    }
+    off() {
+        this.io_signal.output(false);
+    }
+    click(time_msec) {
+        this.on();
+        if (typeof time_msec !== "number") {
+            time_msec = 100;
+        }
+        this.obniz.wait(time_msec);
+        this.off();
+    }
+    doubleClick(time_msec) {
+        if (typeof time_msec !== "number") {
+            time_msec = 100;
+        }
+        this.click(time_msec);
+        this.obniz.wait(time_msec);
+        this.click(time_msec);
+    }
+}
+exports.default = Solenoid;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Moving/StepperMotor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.StepperMotor
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class StepperMotor {
+    constructor() {
+        this.currentStep = 0;
+        this.frequency = 100;
+        this.rotationStepCount = 100;
+        this.milliMeterStepCount = 1;
+        this.ios = [];
+        this._stepInstructions = {
+            "1": [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
+            "2": [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
+            "1-2": [
+                [0, 1, 1, 1],
+                [0, 0, 1, 1],
+                [1, 0, 1, 1],
+                [1, 0, 0, 1],
+                [1, 1, 0, 1],
+                [1, 1, 0, 0],
+                [1, 1, 1, 0],
+                [0, 1, 1, 0],
+            ],
+        };
+        this._stepType = "2";
+        this.keys = ["a", "b", "aa", "bb", "common"];
+        this.requiredKeys = ["a", "b", "aa", "bb"];
+    }
+    static info() {
+        return {
+            name: "StepperMotor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (obniz.isValidIO(this.params.common)) {
+            this.common = obniz.getIO(this.params.common);
+            this.common.output(true);
+            this.type = "unipolar";
+        }
+        else {
+            this.type = "bipolar";
+        }
+        this.ios = [];
+        this.ios.push(obniz.getIO(this.params.a));
+        this.ios.push(obniz.getIO(this.params.b));
+        this.ios.push(obniz.getIO(this.params.aa));
+        this.ios.push(obniz.getIO(this.params.bb));
+    }
+    stepWait(step_count) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof step_count !== "number") {
+                throw new Error("must provide number");
+            }
+            step_count = Math.round(step_count);
+            if (step_count === 0) {
+                return;
+            }
+            const step_count_abs = Math.abs(step_count);
+            const instructions = this._getStepInstructions();
+            const instruction_length = instructions.length;
+            const array = [];
+            // set instructions
+            let currentPhase = this.currentStep % instruction_length;
+            if (currentPhase < 0) {
+                currentPhase = instruction_length - currentPhase * -1;
+            }
+            if (step_count > 0) {
+                for (let i = 0; i < instructions.length; i++) {
+                    if (++currentPhase >= instruction_length) {
+                        currentPhase = 0;
+                    }
+                    array.push(instructions[currentPhase]);
+                }
+            }
+            else {
+                for (let i = 0; i < instructions.length; i++) {
+                    if (--currentPhase < 0) {
+                        currentPhase = instruction_length - 1;
+                    }
+                    array.push(instructions[currentPhase]);
+                }
+            }
+            // prepare animation
+            let msec = 1000 / this.frequency;
+            msec = parseInt(msec);
+            if (msec < 1) {
+                msec = 1;
+            }
+            const state = (index) => {
+                const instruction = array[index];
+                for (let i = 0; i < this.ios.length; i++) {
+                    this.ios[i].output(instruction[i]);
+                }
+            };
+            const states = [];
+            for (let i = 0; i < instruction_length; i++) {
+                states.push({
+                    duration: msec,
+                    state,
+                });
+            }
+            // execute and wait
+            yield this.obniz.io.repeatWait(states, step_count_abs);
+            this.currentStep += step_count;
+        });
+    }
+    stepToWait(destination) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const mustmove = destination - this.currentStep;
+            yield this.stepWait(mustmove);
+        });
+    }
+    holdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const instructions = this._getStepInstructions();
+            const instruction_length = instructions.length;
+            // set instructions
+            let currentPhase = this.currentStep % instruction_length;
+            if (currentPhase < 0) {
+                currentPhase = instruction_length - currentPhase * -1;
+            }
+            for (let i = 0; i < this.ios.length; i++) {
+                this.ios[i].output(instructions[currentPhase][i] === 1);
+            }
+            yield this.obniz.pingWait();
+        });
+    }
+    freeWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (let i = 0; i < this.ios.length; i++) {
+                this.ios[i].output(true);
+            }
+            yield this.obniz.pingWait();
+        });
+    }
+    stepType(stepType) {
+        const newType = this._stepInstructions[stepType];
+        if (!newType) {
+            throw new Error("unknown step type " + stepType);
+        }
+        this._stepType = stepType;
+    }
+    speed(step_per_sec) {
+        this.frequency = step_per_sec;
+    }
+    currentRotation() {
+        // => degree
+        return (this.currentStep / this.rotationStepCount) * 360;
+    }
+    currentAngle() {
+        // => degree
+        let angle = (Math.floor(this.currentRotation() * 1000) % 360000) / 1000;
+        if (angle < 0) {
+            angle = 360 - angle;
+        }
+        return angle;
+    }
+    rotateWait(rotation) {
+        return __awaiter(this, void 0, void 0, function* () {
+            rotation /= 360;
+            const needed = rotation * this.rotationStepCount;
+            yield this.stepWait(needed);
+        });
+    }
+    rotateToWait(angle) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let needed = angle - this.currentAngle();
+            if (Math.abs(needed) > 180) {
+                needed = needed > 0 ? needed - 360 : 360 + needed;
+            }
+            needed = (needed / 360) * this.rotationStepCount;
+            yield this.stepWait(needed);
+        });
+    }
+    currentDistance() {
+        // => mm
+        return this.currentStep / this.milliMeterStepCount;
+    }
+    moveWait(distance) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const needed = distance * this.milliMeterStepCount;
+            yield this.stepWait(needed);
+        });
+    }
+    moveToWait(destination) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const needed = (destination - this.currentDistance()) * this.milliMeterStepCount;
+            yield this.stepWait(needed);
+        });
+    }
+    _getStepInstructions() {
+        return this._stepInstructions[this._stepType];
+    }
+}
+exports.default = StepperMotor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Power/AXP192/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.AXP192
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class AXP192 {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = ["sda", "scl", "i2c"];
+    }
+    static info() {
+        return {
+            name: "AXP192",
+        };
+    }
+    wired(obniz) {
+        this.params.mode = "master"; // for i2c
+        this.params.clock = 400 * 1000; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+    }
+    // Module functions
+    set(address, data) {
+        this.i2c.write(AXP192_ADDRESS, [address, data]);
+    }
+    getWait(address) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(AXP192_ADDRESS, [address]);
+            return yield this.i2c.readWait(AXP192_ADDRESS, 1);
+        });
+    }
+    setLDO2Voltage(voltage) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (voltage < 1.8) {
+                voltage = 1.8;
+            }
+            if (voltage > 3.3) {
+                voltage = 3.3;
+            }
+            let set = yield this.getWait(REG_VOLT_SET_LDO2_3);
+            let offset = (voltage - 1.8) * 10;
+            if (offset > 15) {
+                offset = 15;
+            }
+            set = (set & 0x0f) | (offset << 4);
+            console.log("set voltage to ", set);
+            this.set(REG_VOLT_SET_LDO2_3, set);
+        });
+    }
+    setLDO3Voltage(voltage) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (voltage < 1.8) {
+                voltage = 1.8;
+            }
+            if (voltage > 3.3) {
+                voltage = 3.3;
+            }
+            let set = yield this.getWait(REG_VOLT_SET_LDO2_3);
+            let offset = (voltage - 1.8) * 10;
+            if (offset > 15) {
+                offset = 15;
+            }
+            set = (set & 0xf0) | offset;
+            this.set(REG_VOLT_SET_LDO2_3, set);
+        });
+    }
+    set3VLDO2_3() {
+        this.set(REG_VOLT_SET_LDO2_3, 0xcc);
+    }
+    enableLDO2_3() {
+        this.set(REG_EN_DC1_LDO2_3, 0x4d);
+    }
+    toggleLDO2(val) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const bit = val ? 1 : 0;
+            let state = yield this.getWait(REG_EN_DC1_LDO2_3);
+            state = (state & LDO2_EN_MASK) | (bit << 2);
+            this.set(REG_EN_DC1_LDO2_3, state);
+        });
+    }
+    toggleLDO3(val) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const bit = val ? 1 : 0;
+            let state = yield this.getWait(REG_EN_DC1_LDO2_3);
+            state = (state & LDO3_EN_MASK) | (bit << 3);
+            this.set(REG_EN_DC1_LDO2_3, state);
+        });
+    }
+    initM5StickC() {
+        this.i2c.write(AXP192_ADDRESS, [REG_EN_EXT_DC2, 0xff]);
+        this.i2c.write(AXP192_ADDRESS, [REG_VOLT_SET_LDO2_3, 0xcc]);
+        this.i2c.write(AXP192_ADDRESS, [REG_ADC_EN1, 0xff]);
+        this.i2c.write(AXP192_ADDRESS, [REG_CHARGE_CTRL1, 0xc0]);
+        this.i2c.write(AXP192_ADDRESS, [REG_CCOUNTER, 0x80]);
+        this.i2c.write(AXP192_ADDRESS, [REG_EN_DC1_LDO2_3, 0x4d]);
+        this.i2c.write(AXP192_ADDRESS, [REG_PEK, 0x0c]);
+        this.i2c.write(AXP192_ADDRESS, [REG_GPIO0, 0x02]);
+        this.i2c.write(AXP192_ADDRESS, [REG_VBUS_IPSOUT, 0xe0]);
+        this.i2c.write(AXP192_ADDRESS, [REG_CHARGE_OVTEMP, 0xfc]);
+        this.i2c.write(AXP192_ADDRESS, [REG_BCKUP_BAT, 0xa2]);
+    }
+    getVbat() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
+            const vbat_lsb = yield this.i2c.readWait(AXP192_ADDRESS, 1);
+            this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
+            const vbat_msb = yield this.i2c.readWait(AXP192_ADDRESS, 1);
+            return (vbat_lsb << 4) + vbat_msb;
+        });
+    }
+}
+exports.default = AXP192;
+const AXP192_ADDRESS = 0x34;
+const REG_EN_EXT_DC2 = 0x10;
+const REG_EN_DC1_LDO2_3 = 0x12;
+const REG_VOLT_SET_LDO2_3 = 0x28;
+const REG_VBUS_IPSOUT = 0x30;
+const REG_CHARGE_CTRL1 = 0x33;
+const REG_BCKUP_BAT = 0x35;
+const REG_PEK = 0x36;
+const REG_CHARGE_OVTEMP = 0x39;
+const REG_VBAT_LSB = 0x78;
+const REG_VBAT_MSB = 0x79;
+const REG_ADC_EN1 = 0x82;
+const REG_GPIO0 = 0x90;
+const REG_CCOUNTER = 0xb8;
+const LDO2_EN_MASK = 0xfb;
+const LDO3_EN_MASK = 0xf7;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/PressureSensor/DPS310/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.DPS310
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class DPS310 {
+    constructor() {
+        this.configration = {
+            DPS310__STD_SLAVE_ADDRESS: 0x77,
+        };
+        this.DPS310__OSR_SE = 3;
+        this.DPS310__LSB = 0x01;
+        this.DPS310__PRS_STD_MR = 2;
+        this.DPS310__PRS_STD_OSR = 3;
+        this.DPS310__TEMP_STD_MR = 2;
+        this.DPS310__TEMP_STD_OSR = 3;
+        this.DPS310__SUCCEEDED = 0;
+        this.DPS310__FAIL_UNKNOWN = -1;
+        this.DPS310__FAIL_INIT_FAILED = -2;
+        this.DPS310__FAIL_TOOBUSY = -3;
+        this.DPS310__FAIL_UNFINISHED = -4;
+        this.prsMr = 0;
+        this.prsOsr = 0;
+        this.tempMr = 0;
+        this.tempOsr = 0;
+        this.m_lastTempScal = 0;
+        this.mode = {
+            IDLE: 0x00,
+            CMD_PRS: 0x01,
+            CMD_TEMP: 0x02,
+            INVAL_OP_CMD_BOTH: 0x03,
+            INVAL_OP_CONT_NONE: 0x04,
+            CONT_PRS: 0x05,
+            CONT_TMP: 0x06,
+            CONT_BOTH: 0x07,
+        };
+        this.bitFileds = {
+            DPS310__REG_INFO_PROD_ID: {
+                address: 0x0d,
+                mask: 0x0f,
+                shift: 0,
+            },
+            DPS310__REG_INFO_REV_ID: {
+                address: 0x0d,
+                mask: 0xf0,
+                shift: 4,
+            },
+            DPS310__REG_INFO_TEMP_SENSORREC: {
+                address: 0x28,
+                mask: 0x80,
+                shift: 7,
+            },
+            DPS310__REG_INFO_TEMP_SENSOR: {
+                address: 0x07,
+                mask: 0x80,
+                shift: 7,
+            },
+            DPS310__REG_INFO_OPMODE: {
+                address: 0x08,
+                mask: 0x07,
+                shift: 0,
+            },
+            DPS310__REG_INFO_FIFO_FL: {
+                address: 0x0c,
+                mask: 0x80,
+                shift: 7,
+            },
+            DPS310__REG_INFO_FIFO_EN: {
+                address: 0x09,
+                mask: 0x02,
+                shift: 1,
+            },
+            DPS310__REG_INFO_TEMP_MR: {
+                address: 0x07,
+                mask: 0x70,
+                shift: 4,
+            },
+            DPS310__REG_INFO_TEMP_OSR: {
+                address: 0x07,
+                mask: 0x07,
+                shift: 0,
+            },
+            DPS310__REG_INFO_PRS_MR: {
+                address: 0x06,
+                mask: 0x70,
+                shift: 4,
+            },
+            DPS310__REG_INFO_PRS_OSR: {
+                address: 0x06,
+                mask: 0x07,
+                shift: 0,
+            },
+            DPS310__REG_INFO_PRS_SE: {
+                address: 0x09,
+                mask: 0x04,
+                shift: 2,
+            },
+            DPS310__REG_INFO_PRS_RDY: {
+                address: 0x08,
+                mask: 0x10,
+                shift: 4,
+            },
+            DPS310__REG_INFO_TEMP_SE: {
+                address: 0x09,
+                mask: 0x08,
+                shift: 3,
+            },
+            DPS310__REG_INFO_TEMP_RDY: {
+                address: 0x08,
+                mask: 0x20,
+                shift: 5,
+            },
+        };
+        this.dataBlock = {
+            DPS310__REG_ADR_COEF: {
+                address: 0x10,
+                length: 18,
+            },
+            DPS310__REG_ADR_PRS: {
+                address: 0x00,
+                length: 3,
+            },
+            DPS310__REG_ADR_TEMP: {
+                address: 0x03,
+                length: 3,
+            },
+        };
+        this.scaling_facts = [
+            524288,
+            1572864,
+            3670016,
+            7864320,
+            253952,
+            516096,
+            1040384,
+            2088960,
+        ];
+        this.requiredKeys = ["sda", "scl"];
+        this.keys = ["gpio3", "vcc", "gnd", "scl", "sda"];
+        this.ioKeys = ["gpio3", "vcc", "gnd", "scl", "sda"];
+        this.coeffs = {};
+        this.opMode = this.mode.IDLE;
+    }
+    static info() {
+        return {
+            name: "DPS310",
+            datasheet: "",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.address = 0x77;
+        this.params.sda = this.params.sda;
+        this.params.scl = this.params.scl;
+        this.params.clock = this.params.clock || 100 * 1000;
+        this.params.mode = "master";
+        this.params.pull = "3v";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(10);
+    }
+    initWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const prodId = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PROD_ID);
+            if (prodId !== 0) {
+                throw new Error("invalid prodId");
+            }
+            yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
+            yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
+            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
+            yield this.readCoeffsWait();
+            yield this.standbyWait();
+            yield this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
+            yield this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
+            yield this.standbyWait();
+            yield this.measureTempOnceWait();
+            yield this.standbyWait();
+            yield this.correctTempWait();
+        });
+    }
+    measurePressureOnceWait(oversamplingRate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (oversamplingRate === undefined) {
+                oversamplingRate = this.prsOsr;
+            }
+            yield this.startMeasurePressureOnceWait(oversamplingRate);
+            yield this.obniz.wait(100);
+            const ret = yield this.getSingleResultWait();
+            return ret;
+        });
+    }
+    readByteWait(regAddress) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [regAddress]);
+            yield this.obniz.wait(1);
+            const results = yield this.i2c.readWait(this.address, 1);
+            return results[0];
+        });
+    }
+    readByteBitfieldWait(field) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const regAddress = field.address;
+            const mask = field.mask;
+            const shift = field.shift;
+            let ret = yield this.readByteWait(regAddress);
+            if (ret < 0) {
+                return ret;
+            }
+            if (mask !== undefined) {
+                ret = ret & mask;
+            }
+            if (shift !== undefined) {
+                ret = ret >> shift;
+            }
+            return ret;
+        });
+    }
+    readBlockWait(datablock) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const address = datablock.address;
+            const length = datablock.length;
+            yield this.obniz.wait(1);
+            this.i2c.write(this.address, [address]);
+            const results = yield this.i2c.readWait(this.address, length);
+            return results;
+        });
+    }
+    writeByteWait(regAddress, data, check) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [regAddress, data]);
+            if (check) {
+                if ((yield this.readByteWait(regAddress)) !== data) {
+                    throw new Error("DPS310 data write failed");
+                }
+            }
+        });
+    }
+    writeByteBitfield(field, data, check) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const old = yield this.readByteWait(field.address);
+            const sendData = (old & ~field.mask) | ((data << field.shift) & field.mask);
+            yield this.writeByteWait(field.address, sendData, check);
+        });
+    }
+    setOpModeDetailWait(background, temperature, pressure) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const opMode = ((background & this.DPS310__LSB) << 2) |
+                ((temperature & this.DPS310__LSB) << 1) |
+                (pressure & this.DPS310__LSB);
+            return yield this.setOpModeWait(opMode);
+        });
+    }
+    setOpModeWait(opMode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            opMode &=
+                this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
+                    this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
+            yield this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
+            this.opMode = opMode;
+        });
+    }
+    standbyWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.setOpModeWait(this.mode.IDLE);
+            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
+            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
+        });
+    }
+    configTempWait(tempMr, tempOsr) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
+            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
+            if (tempOsr > this.DPS310__OSR_SE) {
+                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
+            }
+            else {
+                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
+            }
+            this.tempMr = tempMr;
+            this.tempOsr = tempOsr;
+        });
+    }
+    configPressureWait(prsMr, prsOsr) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
+            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
+            if (prsOsr > this.DPS310__OSR_SE) {
+                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
+            }
+            else {
+                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
+            }
+            this.prsMr = prsMr;
+            this.prsOsr = prsOsr;
+        });
+    }
+    readCoeffsWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const buffer = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_COEF);
+            this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
+            if (this.coeffs.m_c0Half & (1 << 11)) {
+                this.coeffs.m_c0Half -= 1 << 12;
+            }
+            this.coeffs.m_c0Half = this.coeffs.m_c0Half / 2;
+            this.coeffs.m_c1 = ((buffer[1] & 0x0f) << 8) | buffer[2];
+            if (this.coeffs.m_c1 & (1 << 11)) {
+                this.coeffs.m_c1 -= 1 << 12;
+            }
+            this.coeffs.m_c00 =
+                (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+            if (this.coeffs.m_c00 & (1 << 19)) {
+                this.coeffs.m_c00 -= 1 << 20;
+            }
+            this.coeffs.m_c10 =
+                ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+            if (this.coeffs.m_c10 & (1 << 19)) {
+                this.coeffs.m_c10 -= 1 << 20;
+            }
+            this.coeffs.m_c01 = (buffer[8] << 8) | buffer[9];
+            if (this.coeffs.m_c01 & (1 << 15)) {
+                this.coeffs.m_c01 -= 1 << 16;
+            }
+            this.coeffs.m_c11 = (buffer[10] << 8) | buffer[11];
+            if (this.coeffs.m_c11 & (1 << 15)) {
+                this.coeffs.m_c11 -= 1 << 16;
+            }
+            this.coeffs.m_c20 = (buffer[12] << 8) | buffer[13];
+            if (this.coeffs.m_c20 & (1 << 15)) {
+                this.coeffs.m_c20 -= 1 << 16;
+            }
+            this.coeffs.m_c21 = (buffer[14] << 8) | buffer[15];
+            if (this.coeffs.m_c21 & (1 << 15)) {
+                this.coeffs.m_c21 -= 1 << 16;
+            }
+            this.coeffs.m_c30 = (buffer[16] << 8) | buffer[17];
+            if (this.coeffs.m_c30 & (1 << 15)) {
+                this.coeffs.m_c30 -= 1 << 16;
+            }
+        });
+    }
+    getSingleResultWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let rdy;
+            switch (this.opMode) {
+                case this.mode.CMD_TEMP:
+                    rdy = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_RDY);
+                    break;
+                case this.mode.CMD_PRS:
+                    rdy = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_RDY);
+                    break;
+                default:
+                    return this.DPS310__FAIL_TOOBUSY;
+            }
+            let oldMode;
+            switch (rdy) {
+                case this.DPS310__FAIL_UNKNOWN:
+                    throw new Error("DPS310__FAIL_UNKNOWN");
+                case 0:
+                    return this.obniz.wait(10).then(() => {
+                        return this.getSingleResultWait();
+                    });
+                case 1:
+                    oldMode = this.opMode;
+                    this.opMode = this.mode.IDLE;
+                    switch (oldMode) {
+                        case this.mode.CMD_TEMP:
+                            return yield this.getTempWait();
+                        case this.mode.CMD_PRS:
+                            return yield this.getPressureWait();
+                        default:
+                            throw new Error("DPS310__FAIL_UNKNOWN");
+                    }
+            }
+            throw new Error("DPS310__FAIL_UNKNOWN");
+        });
+    }
+    startMeasureTempOnceWait(oversamplingRate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.configTempWait(0, oversamplingRate);
+            yield this.setOpModeDetailWait(0, 1, 0);
+        });
+    }
+    startMeasurePressureOnceWait(oversamplingRate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.configPressureWait(0, oversamplingRate);
+            yield this.setOpModeDetailWait(0, 0, 1);
+        });
+    }
+    calcPressure(raw) {
+        let prs = raw;
+        prs /= this.scaling_facts[this.prsOsr];
+        prs =
+            this.coeffs.m_c00 +
+                prs *
+                    (this.coeffs.m_c10 +
+                        prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
+                this.m_lastTempScal *
+                    (this.coeffs.m_c01 +
+                        prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
+        return prs;
+    }
+    calcTemp(raw) {
+        let temp = raw;
+        temp /= this.scaling_facts[this.tempOsr];
+        this.m_lastTempScal = temp;
+        temp = this.coeffs.m_c0Half + this.coeffs.m_c1 * temp;
+        return temp;
+    }
+    correctTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.writeByteWait(0x0e, 0xe5);
+            this.writeByteWait(0x0f, 0x96);
+            this.writeByteWait(0x62, 0x02);
+            this.writeByteWait(0x0e, 0x00);
+            this.writeByteWait(0x0f, 0x00);
+            yield this.measureTempOnceWait();
+        });
+    }
+    measureTempOnceWait(oversamplingRate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (oversamplingRate === undefined) {
+                oversamplingRate = this.tempOsr;
+            }
+            yield this.startMeasureTempOnceWait(oversamplingRate);
+            yield this.obniz.wait(100);
+            return yield this.getSingleResultWait();
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_TEMP);
+            let temp = (data[0] << 16) | (data[1] << 8) | data[2];
+            if (temp & (1 << 23)) {
+                temp -= 1 << 24;
+            }
+            return this.calcTemp(temp);
+        });
+    }
+    getPressureWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_PRS);
+            let prs = (data[0] << 16) | (data[1] << 8) | data[2];
+            if (prs & (1 << 23)) {
+                prs -= 1 << 24;
+            }
+            return this.calcPressure(prs);
+        });
+    }
+}
+exports.default = DPS310;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/PressureSensor/FSR-40X/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.FSR40X
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class FSR40X {
+    constructor() {
+        this.pressure = 0;
+        this.keys = ["pin0", "pin1"];
+        this.requiredKeys = ["pin0", "pin1"];
+    }
+    static info() {
+        return {
+            name: "FSR40X",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_pwr = obniz.getIO(this.params.pin0);
+        this.ad = obniz.getAD(this.params.pin1);
+        this.io_pwr.drive("5v");
+        this.io_pwr.output(true);
+        this.ad.start((value) => {
+            const pressure = value * 100;
+            this.pressure = pressure;
+            if (this.onchange) {
+                this.onchange(this.pressure);
+            }
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const value = yield this.ad.getWait();
+            const pressure = value * 100;
+            this.pressure = pressure;
+            return this.pressure;
+        });
+    }
+}
+exports.default = FSR40X;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/SoilSensor/SEN0114/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SEN0114
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class SEN0114 {
+    constructor() {
+        this.keys = ["vcc", "output", "gnd"];
+        this.requiredKeys = ["output"];
+    }
+    static info() {
+        return {
+            name: "SEN0114",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad = obniz.getAD(this.params.output);
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    getHumidityWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ad.getWait();
+        });
+    }
+}
+exports.default = SEN0114;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Sound/Speaker/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Speaker
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Speaker {
+    constructor(obniz) {
+        this.keys = ["signal", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Speaker",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.pwm = obniz.getFreePwm();
+        this.pwm.start({ io: this.params.signal });
+    }
+    play(frequency) {
+        if (typeof frequency !== "number") {
+            throw new Error("freq must be a number");
+        }
+        frequency = Math.floor(frequency); // temporary
+        if (frequency > 0) {
+            this.pwm.freq(frequency);
+            this.pwm.pulse((1 / frequency / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Speaker;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class AnalogTemperatureSensor {
+    constructor() {
+        this.temp = 0;
+        this.keys = ["vcc", "gnd", "output"];
+        this.requiredKeys = ["output"];
+        this.drive = "5v";
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+        this.ad = obniz.getAD(this.params.output);
+        this.ad.start((voltage) => {
+            this.temp = this.calc(voltage);
+            this.onchange(this.temp);
+        });
+    }
+    getWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const voltage = yield this.ad.getWait();
+            this.temp = this.calc(voltage);
+            return this.temp;
+        });
+    }
+    onchange(temp) {
+    }
+    calc(voltage) {
+        return 0;
+    }
+}
+exports.default = AnalogTemperatureSensor;
+
+//# sourceMappingURL=AnalogTemperatureSensor.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/LM35DZ/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
+class LM35DZ extends AnalogTemperatureSensor_1.default {
+    static info() {
+        return {
+            name: "LM35DZ",
+        };
+    }
+    calc(voltage) {
+        return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
+    }
+}
+exports.default = LM35DZ;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/LM60/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
+class LM60 extends AnalogTemperatureSensor_1.default {
+    static info() {
+        return {
+            name: "LM60",
+        };
+    }
+    calc(voltage) {
+        return Math.round(((voltage - 0.424) / 0.00625) * 10) / 10; // Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    }
+}
+exports.default = LM60;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/LM61/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
+class LM61 extends AnalogTemperatureSensor_1.default {
+    static info() {
+        return {
+            name: "LM61",
+        };
+    }
+    calc(voltage) {
+        return Math.round((voltage - 0.6) / 0.01); // Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    }
+}
+exports.default = LM61;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/LMT87/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
+class LMT87 extends AnalogTemperatureSensor_1.default {
+    static info() {
+        return {
+            name: "LMT87",
+        };
+    }
+    calc(voltage) {
+        return (voltage * 1000 - 2365) / -13.6 + 20; // 20-50dc;
+    }
+}
+exports.default = LMT87;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/MCP9700/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
+class MCP9700 extends AnalogTemperatureSensor_1.default {
+    static info() {
+        return {
+            name: "MCP9700",
+        };
+    }
+    calc(voltage) {
+        return (voltage - 0.5) / 0.01; // Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+    }
+}
+exports.default = MCP9700;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/MCP9701/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
+class MCP9701 extends AnalogTemperatureSensor_1.default {
+    static info() {
+        return {
+            name: "MCP9701",
+        };
+    }
+    calc(voltage) {
+        return (voltage - 0.4) / 0.0195; // Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+    }
+}
+exports.default = MCP9701;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/S8100B/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.S8100B
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
+class S8100B extends AnalogTemperatureSensor_1.default {
+    static info() {
+        return {
+            name: "S8100B",
+        };
+    }
+    calc(voltage) {
+        return 30 + (1.508 - voltage) / -0.08; // Temp(Celsius) =
+    }
+}
+exports.default = S8100B;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/analog/S8120C/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.S8120C
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const AnalogTemperatureSensor_1 = __importDefault(__webpack_require__("./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js"));
+class S8120C extends AnalogTemperatureSensor_1.default {
+    static info() {
+        return {
+            name: "S8120C",
+        };
+    }
+    calc(voltage) {
+        return (voltage - 1.474) / -0.0082 + 30; // Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
+    }
+}
+exports.default = S8120C;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/ADT7410/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.ADT7410
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class ADT7410 {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
+        this.requiredKeys = ["addressMode"];
+    }
+    static info() {
+        return {
+            name: "ADT7410",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        if (this.params.addressMode === 8) {
+            this.address = 0x48;
+        }
+        else if (this.params.addressMode === 9) {
+            this.address = 0x49;
+        }
+        else {
+            throw new Error(`please specify address. 8 or 9`);
+        }
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.i2c.readWait(this.address, 2);
+            let tempBin = ret[0] << 8;
+            tempBin |= ret[1];
+            tempBin = tempBin >> 3;
+            if (tempBin & 0x1000) {
+                tempBin = tempBin - 8192;
+            }
+            return tempBin / 16;
+        });
+    }
+}
+exports.default = ADT7410;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/AM2320/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.AM2320
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class AM2320 {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "AM2320",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.address = 0x5c;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.params.clock = this.params.clock || 100 * 1000;
+        this.i2c = obniz.getI2CWithConfig(this.params);
+    }
+    getAllWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const i2cOnerror = this.i2c.onerror;
+            this.i2c.onerror = () => {
+            };
+            this.i2c.write(this.address, [0]); // wake
+            this.obniz.wait(2);
+            this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+            this.obniz.wait(2);
+            this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+            const ret = yield this.i2c.readWait(this.address, 6);
+            this.i2c.onerror = i2cOnerror;
+            if (ret[0] !== 3 || ret[1] !== 4) {
+                throw new Error(`Could not receive data correctly`);
+            }
+            const humidity = (ret[2] * 256 + ret[3]) / 10.0;
+            const temperature = (ret[4] * 256 + ret[5]) / 10.0;
+            return { temperature, humidity };
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).temperature;
+        });
+    }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).humidity;
+        });
+    }
+}
+exports.default = AM2320;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/AMG8833/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.AMG8833
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class AMG8833 {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = ["vcc", "gnd", "sda", "scl", "address"];
+        this.ioKeys = ["vcc", "gnd", "sda", "scl"];
+        this.commands = {};
+        this.commands.mode_normal = [0x00, 0x00];
+        this.commands.reset_flag = [0x01, 0x30];
+        this.commands.reset_initial = [0x01, 0x3f];
+        this.commands.frameRate_10fps = [0x02, 0x00];
+        this.commands.frameRate_1fps = [0x02, 0x01];
+        this.commands.int_disable = [0x03, 0x00];
+        this.commands.int_absVal = [0x03, 0x03];
+        this.commands.int_diff = [0x03, 0x01];
+        this.commands.stat = [0x04];
+        this.commands.statClr_ovs = [0x05, 0x04];
+        this.commands.statClr_int = [0x05, 0x02];
+        this.commands.average_disable = [0x07, 0x00];
+        this.commands.average_enable = [0x07, 0x10];
+    }
+    static info() {
+        return {
+            name: "AMG8833",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.address = 0x69;
+        if (this.params.address === 0x69) {
+            this.address = 0x69;
+        }
+        else if (this.params.addressmode === 0x68) {
+            this.address = 0x68;
+        }
+        else if (this.params.address !== undefined) {
+            throw new Error("address must be 0x68 or 0x69");
+        }
+        this.params.clock = this.params.clock || 400 * 1000; // for i2c
+        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.pull = this.params.pull || null; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(50);
+        this.i2c.write(this.address, this.commands.mode_normal);
+        this.i2c.write(this.address, this.commands.reset_flag);
+        this.i2c.write(this.address, this.commands.frameRate_10fps);
+        this.i2c.write(this.address, this.commands.int_disable);
+    }
+    getOnePixWait(pixel) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let pixelAddrL = 0x80;
+            let pixelAddrH = 0x81;
+            if (pixel >= 0 && pixel <= 63) {
+                pixelAddrL = 0x80 + pixel * 2;
+                pixelAddrH = 0x81 + pixel * 2;
+            }
+            else {
+                throw new Error("pixel number must be range of 0 to 63");
+            }
+            this.i2c.write(this.address, [pixelAddrL]);
+            const dataL = yield this.i2c.readWait(this.address, 1);
+            this.i2c.write(this.address, [pixelAddrH]);
+            const dataH = yield this.i2c.readWait(this.address, 1);
+            let temp12bit = (dataH << 8) | dataL;
+            if (dataH & 0x08) {
+                // negative temperature
+                temp12bit = temp12bit - 1;
+                temp12bit = 0xfff - temp12bit; // bit inverting
+                return temp12bit * -0.25;
+            }
+            else {
+                // positive temperature
+                return temp12bit * 0.25;
+            }
+        });
+    }
+    getAllPixWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const tempArray = new Array(64);
+            this.i2c.write(this.address, [0x80]);
+            const datas = yield this.i2c.readWait(this.address, 64 * 2);
+            for (let i = 0; i < 64; i++) {
+                let temp12bit = (datas[i * 2 + 1] << 8) | datas[i * 2];
+                let temp = 0;
+                if (datas[i * 2 + 1] & 0x08) {
+                    // negative temperature
+                    temp12bit = temp12bit - 1;
+                    temp12bit = 0xfff - temp12bit; // bit inverting
+                    temp = temp12bit * -0.25;
+                }
+                else {
+                    // positive temperature
+                    temp = temp12bit * 0.25;
+                }
+                tempArray[i] = temp;
+            }
+            return tempArray;
+        });
+    }
+}
+exports.default = AMG8833;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/BME280/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.BME280
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class BME280 {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = [
+            "vcore",
+            "vio",
+            "gnd",
+            "csb",
+            "sdi",
+            "sck",
+            "sdo",
+            "i2c",
+            "address",
+        ];
+        this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
+        this.configration = {
+            sampling: {
+                temp: 1,
+                hum: 1,
+                pres: 1,
+            },
+            interval: 5,
+            iir_strength: 0,
+            mode: 3,
+            Modes: {
+                sleep: 0,
+                forced: 1,
+                normal: 3,
+            },
+        };
+        this.commands = {};
+        this.commands.addresses = {
+            config: 0xf5,
+            ctrl_meas: 0xf4,
+            ctrl_hum: 0xf2,
+        };
+    }
+    static info() {
+        return {
+            name: "BME280",
+            datasheet: "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (obniz.isValidIO(this.params.csb)) {
+            // selecting I2C mode before powerup
+            this.io_csb = obniz.getIO(this.params.csb);
+            this.io_csb.drive("3v");
+            this.io_csb.output(true);
+        }
+        this.obniz.setVccGnd(this.params.vio, null, "3v");
+        this.obniz.setVccGnd(this.params.vcore, null, "3v");
+        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.wait(10);
+        this.address = 0x76;
+        if (this.params.address === 0x76) {
+            this.address = 0x76;
+        }
+        else if (this.params.address === 0x77) {
+            this.address = 0x77;
+        }
+        else if (this.params.address !== undefined) {
+            throw new Error("address must be 0x76 or 0x77");
+        }
+        if (obniz.isValidIO(this.params.sdo)) {
+            this.io_sdo = obniz.getIO(this.params.sdo);
+            this.io_sdo.drive("3v");
+            this.io_sdo.output(this.address === 0x76 ? false : true);
+        }
+        this.params.sda = this.params.sda || this.params.sdi;
+        this.params.scl = this.params.scl || this.params.sck;
+        this.params.clock = this.params.clock || 100 * 1000;
+        this.params.mode = "master";
+        this.params.pull = "3v";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(10);
+        this.config();
+        this.obniz.wait(10);
+    }
+    config() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.write([
+                this.commands.addresses.config,
+                (this.configration.interval << 5) |
+                    (this.configration.iir_strength << 2) |
+                    0,
+            ]);
+            this.write([
+                this.commands.addresses.ctrl_hum,
+                this.configration.sampling.hum,
+            ]);
+            this.write([
+                this.commands.addresses.ctrl_meas,
+                (this.configration.sampling.temp << 5) |
+                    (this.configration.sampling.pres << 2) |
+                    this.configration.mode,
+            ]);
+        });
+    }
+    setIIRStrength(strengh) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.configration.iir_strength = strengh;
+            this.config();
+        });
+    }
+    applyCalibration() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [0x88]);
+            const data = yield this.i2c.readWait(this.address, 24);
+            this.i2c.write(this.address, [0xa1]);
+            let data_next = yield this.i2c.readWait(this.address, 1);
+            data.push(...data_next);
+            this.i2c.write(this.address, [0xe1]);
+            data_next = yield this.i2c.readWait(this.address, 7);
+            data.push(...data_next);
+            this._calibrated = {
+                dig_T1: (data[1] << 8) | data[0],
+                dig_T2: this._readSigned16((data[3] << 8) | data[2]),
+                dig_T3: this._readSigned16((data[5] << 8) | data[4]),
+                dig_P1: (data[7] << 8) | data[6],
+                dig_P2: this._readSigned16((data[9] << 8) | data[8]),
+                dig_P3: this._readSigned16((data[11] << 8) | data[10]),
+                dig_P4: this._readSigned16((data[13] << 8) | data[12]),
+                dig_P5: this._readSigned16((data[15] << 8) | data[14]),
+                dig_P6: this._readSigned16((data[17] << 8) | data[16]),
+                dig_P7: this._readSigned16((data[19] << 8) | data[18]),
+                dig_P8: this._readSigned16((data[21] << 8) | data[20]),
+                dig_P9: this._readSigned16((data[23] << 8) | data[22]),
+                dig_H1: this._readSigned8(data[24]),
+                dig_H2: this._readSigned16((data[26] << 8) | data[25]),
+                dig_H3: this._readSigned8(data[27]),
+                dig_H4: this._readSigned16((data[28] << 4) | (0x0f & data[29])),
+                dig_H5: this._readSigned16((data[30] << 4) | ((data[29] >> 4) & 0x0f)),
+                dig_H6: this._readSigned8(data[31]),
+            };
+            this._t_fine = 0;
+        });
+    }
+    _readSigned16(value) {
+        if (value >= 0x8000) {
+            value = value - 0x10000;
+        }
+        return value;
+    }
+    _readSigned8(value) {
+        if (value >= 0x80) {
+            value = value - 0x100;
+        }
+        return value;
+    }
+    write(data) {
+        this.i2c.write(this.address, data);
+    }
+    getData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [0xf7]);
+            return yield this.i2c.readWait(this.address, 8);
+        });
+    }
+    getAllWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.getData();
+            const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
+            const temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
+            const hum_raw = (data[6] << 8) | data[7];
+            const temperature = this.calibration_T(temp_raw) / 100.0;
+            const pressure = this.calibration_P(press_raw) / 100.0;
+            const humidity = this.calibration_H(hum_raw);
+            return { temperature, humidity, pressure };
+        });
+    }
+    calibration_T(adc_T) {
+        let var1;
+        let var2;
+        let T;
+        var1 =
+            (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
+                this._calibrated.dig_T2) >>
+                11;
+        var2 =
+            (((((adc_T >> 4) - this._calibrated.dig_T1) *
+                ((adc_T >> 4) - this._calibrated.dig_T1)) >>
+                12) *
+                this._calibrated.dig_T3) >>
+                14;
+        this._t_fine = var1 + var2;
+        T = (this._t_fine * 5 + 128) >> 8;
+        return T;
+    }
+    calibration_P(adc_P) {
+        let pvar1 = this._t_fine / 2 - 64000;
+        let pvar2 = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
+        pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
+        pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
+        pvar1 =
+            ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 +
+                this._calibrated.dig_P2 * pvar1) /
+                524288;
+        pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
+        if (pvar1 !== 0) {
+            let p = 1048576 - adc_P;
+            p = ((p - pvar2 / 4096) * 6250) / pvar1;
+            pvar1 = (this._calibrated.dig_P9 * p * p) / 2147483648;
+            pvar2 = (p * this._calibrated.dig_P8) / 32768;
+            p = p + (pvar1 + pvar2 + this._calibrated.dig_P7) / 16;
+            return p;
+        }
+        return 0;
+    }
+    calibration_H(adc_H) {
+        let h = this._t_fine - 76800;
+        h =
+            (adc_H -
+                (this._calibrated.dig_H4 * 64 +
+                    (this._calibrated.dig_H5 / 16384) * h)) *
+                ((this._calibrated.dig_H2 / 65536) *
+                    (1 +
+                        (this._calibrated.dig_H6 / 67108864) *
+                            h *
+                            (1 + (this._calibrated.dig_H3 / 67108864) * h)));
+        h = h * (1 - (this._calibrated.dig_H1 * h) / 524288);
+        return h;
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).temperature;
+        });
+    }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).humidity;
+        });
+    }
+    getPressureWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).pressure;
+        });
+    }
+    getAltitudeWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pressure = yield this.getPressureWait();
+            return this.calcAltitude(pressure);
+        });
+    }
+    calcAltitude(pressure, seaPressure) {
+        if (typeof seaPressure !== "number") {
+            seaPressure = 1013.25;
+        }
+        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
+    }
+}
+exports.default = BME280;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/D6T44L/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.D6T44L
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class D6T44L {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = ["vcc", "gnd", "sda", "scl", "clock"];
+        this.address = 0x0a;
+        this.ioKeys = ["vcc", "gnd", "sda", "scl"];
+        this.commands = {};
+        this.commands.read_data = [0x4c];
+    }
+    static info() {
+        return {
+            name: "D6T44L",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.clock = this.params.clock || 100 * 1000; // for i2c
+        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.pull = this.params.pull || null; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(50);
+    }
+    getOnePixWait(pixcel) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.getAllPixWait();
+            return data[pixcel];
+        });
+    }
+    getAllPixWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [0x4c]);
+            // await obniz.wait(160);
+            const raw = yield this.i2c.readWait(this.address, 35);
+            const data = [];
+            for (let i = 0; i < 16; i++) {
+                data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
+            }
+            return data;
+        });
+    }
+}
+exports.default = D6T44L;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/DHT12/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.DHT12
+ */
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class DHT12 extends i2cParts_1.default {
+    static info() {
+        return {
+            name: "DHT12",
+        };
+    }
+    i2cInfo() {
+        return {
+            address: 0x5c,
+            clock: 100000,
+            voltage: "3v",
+        };
+    }
+    getAllDataWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.readWait(0x00, 5);
+            const humidity = data[0] + data[1] * 0.1;
+            let temperature = data[2] + (data[3] & 0x7f) * 0.1;
+            if (data[3] & 0x80) {
+                temperature *= -1;
+            }
+            const checksum = data[0] + data[1] + data[2] + data[3];
+            if (checksum !== data[4]) {
+                throw new Error(`checksum does not match`);
+            }
+            return {
+                humidity,
+                temperature,
+            };
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllDataWait()).temperature;
+        });
+    }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllDataWait()).humidity;
+        });
+    }
+}
+exports.default = DHT12;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/S-5851A/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.S5851A
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class S5851A {
+    constructor() {
+        this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
+        this.keys = ["sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
+    }
+    static info() {
+        return {
+            name: "S5851A",
+        };
+    }
+    wired(obniz) {
+        // params: pwr, gnd, sda, scl, adr0, adr1, adr_select
+        this.io_adr0 = obniz.getIO(this.params.adr0);
+        this.io_adr1 = obniz.getIO(this.params.adr1);
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        switch (this.params.adr_select) {
+            case 8:
+                this.io_adr0.output(false);
+                this.io_adr1.output(false);
+                this.address = 0x48;
+                break;
+            case 9:
+                this.io_adr0.pull(null);
+                this.io_adr1.output(false);
+                this.address = 0x49;
+                break;
+            case "A":
+                this.io_adr0.output(true);
+                this.io_adr1.output(false);
+                this.address = 0x4a;
+                break;
+            case "B":
+                this.io_adr0.output(false);
+                this.io_adr1.output(true);
+                this.address = 0x4b;
+                break;
+            case "C":
+                this.io_adr0.pull(null);
+                this.io_adr1.output(true);
+                this.address = 0x4c;
+                break;
+            case "D":
+                this.io_adr0.output(true);
+                this.io_adr1.output(true);
+                this.address = 0x4d;
+                break;
+            case "E":
+                this.io_adr0.output(false);
+                this.io_adr1.pull(null);
+                this.address = 0x4e;
+                break;
+            case "F":
+                this.io_adr0.output(true);
+                this.io_adr1.pull(null);
+                this.address = 0x4f;
+                break;
+            default:
+                this.io_adr0.output(false);
+                this.io_adr1.output(false);
+                this.address = 0x48;
+                break;
+        }
+        console.log("i2c address=" + this.address);
+        this.params.clock = this.params.clock || 400 * 1000; // for i2c
+        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.pull = this.params.pull || "5v"; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        // obniz.i2c0.write(address, [0x20, 0x24]);
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // console.log("gettempwait");
+            // obniz.i2c0.write(address, [0x20, 0x24]);
+            // obniz.i2c0.write(address, [0xE0, 0x00]);
+            const ret = yield this.i2c0.readWait(this.address, 2);
+            // console.log('ret:' + ret);
+            const tempBin = ret[0].toString(2) + ("00000000" + ret[1].toString(2)).slice(-8);
+            const temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
+            return temperature;
+        });
+    }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [0x20, 0x24]);
+            this.i2c.write(this.address, [0xe0, 0x00]);
+            const ret = yield this.i2c.readWait(this.address, 4);
+            const humdBin = ret[2].toString(2) + ("00000000" + ret[3].toString(2)).slice(-8);
+            const humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
+            return humidity;
+        });
+    }
+}
+exports.default = S5851A;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/SHT31/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SHT31
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class SHT31 {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = [
+            "vcc",
+            "sda",
+            "scl",
+            "gnd",
+            "adr",
+            "addressmode",
+            "i2c",
+            "pull",
+            "address",
+        ];
+        this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
+        this.commands = {};
+        this.commands.softReset = [0x30, 0xa2];
+        this.commands.highRepeatStreach = [0x2c, 0x06];
+        this.commands.middleRepeatStreach = [0x2c, 0x0d];
+        this.commands.lowRepeatStreach = [0x2c, 0x10];
+        this.commands.highRepeat = [0x24, 0x00];
+        this.commands.mediumRepeat = [0x24, 0x0b];
+        this.commands.lowRepeat = [0x24, 0x16];
+        this.waitTime = {};
+        this.waitTime.wakeup = 1;
+        this.waitTime.softReset = 1;
+        this.waitTime.lowRepeat = 4;
+        this.waitTime.mediumRepeat = 6;
+        this.waitTime.highRepeat = 15;
+        // not tested
+        this.commands.readStatus = [0xf3, 0x2d];
+    }
+    static info() {
+        return {
+            name: "SHT31",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.address = this.params.address || 0x44;
+        if (this.params.addressmode) {
+            this.io_adr = obniz.getIO(this.params.adr);
+            if (this.params.addressmode === 4) {
+                this.io_adr.output(false);
+                this.address = 0x44;
+            }
+            else if (this.params.addressmode === 5) {
+                this.io_adr.pull("5v");
+                this.address = 0x45;
+            }
+        }
+        this.params.clock = this.params.clock || 100 * 1000; // for i2c
+        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.pull = this.params.pull || "5v"; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.i2c.write(this.address, this.commands.softReset);
+    }
+    getData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, this.commands.highRepeat);
+            yield this.obniz.wait(this.waitTime.highRepeat);
+            return yield this.i2c.readWait(this.address, 6);
+        });
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).temperature;
+        });
+    }
+    getHumdWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getHumidWait();
+        });
+    }
+    getHumidWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.getAllWait()).humidity;
+        });
+    }
+    getAllWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.getData();
+            const tempBin = ret[0] * 256 + ret[1];
+            const temperature = -45 + 175 * (tempBin / (65536 - 1));
+            const humdBin = ret[3] * 256 + ret[4];
+            const humidity = 100 * (humdBin / (65536 - 1));
+            return { temperature, humidity };
+        });
+    }
+}
+exports.default = SHT31;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/spi/ADT7310/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.ADT7310
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class ADT7310 {
+    constructor() {
+        this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "ADT7310",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.mode = this.params.mode || "master";
+        this.params.frequency = this.params.frequency || 500000;
+        this.params.mosi = this.params.din;
+        this.params.miso = this.params.dout;
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+    }
+    getTempWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.spi.writeWait([0x54]); // send before each commands for stable
+            yield this.obniz.wait(200);
+            const ret = yield this.spi.writeWait([0x00, 0x00]);
+            let tempBin = ret[0] << 8;
+            tempBin |= ret[1];
+            tempBin = tempBin >> 3;
+            if (tempBin & 0x1000) {
+                tempBin = tempBin - 8192;
+            }
+            return tempBin / 16;
+        });
+    }
+}
+exports.default = ADT7310;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Wireless/MFRC522/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.MFRC522
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const OK = true;
+const ERROR = false;
+class MFRC522 {
+    constructor() {
+        // PCD commands. Described in chapter 10 of the datasheet.
+        // PCD(Proximity Coupling Device): NXP MFRC522 Contactless Reader IC.
+        this.PCD_Idle = 0x00; // no action, cancels current command execution.
+        this.PCD_Mem = 0x01; // stores 25 bytes into the internal buffer.
+        this.PCD_GenerateRandomID = 0x02; // generates a 10-byte random ID number.
+        this.PCD_CalcCRC = 0x03; // activates the CRC coprocessor or performs a self-test.
+        this.PCD_Transmit = 0x04; // transmits data from the FIFO buffer.
+        this.PCD_NoCmdChange = 0x07; // no command change, can be used to modify the CommandReg register bits without affecting the command, for example, the PowerDown bit.
+        this.PCD_Receive = 0x08; // activates the receiver circuits.
+        this.PCD_Transceive = 0x0c; // transmits data from FIFO buffer to antenna and automatically activates the receiver after transmission.
+        // this.PCD_Reserved0Dh = 0x0D;
+        this.PCD_MFAuthent = 0x0e; // performs the MIFARE standard authentication as a reader.
+        this.PCD_SoftReset = 0x0f; // resets the MFRC522.
+        // MFRC522 RxGain[2:0] masks, defines the receiver's signal voltage gain factor (on the PCD).
+        // Described in 9.3.3.6 / table 98 of the datasheet at http://www.nxp.com/documents/data_sheet/MFRC522.pdf
+        this.RxGain_18dB = 0x00 << 4; // 000b - 18 dB, minimum.
+        this.RxGain_23dB = 0x01 << 4; // 001b - 23 dB.
+        this.RxGain_18dB_2 = 0x02 << 4; // 010b - 18 dB, it seems 010b is a duplicate for 000b.
+        this.RxGain_23dB_2 = 0x03 << 4; // 011b - 23 dB, it seems 011b is a duplicate for 001b.
+        this.RxGain_33dB = 0x04 << 4; // 100b - 33 dB, average, and typical default.
+        this.RxGain_38dB = 0x05 << 4; // 101b - 38 dB.
+        this.RxGain_43dB = 0x06 << 4; // 110b - 43 dB.
+        this.RxGain_48dB = 0x07 << 4; // 111b - 48 dB, maximum.
+        this.RxGain_min = 0x00 << 4; // 000b - 18 dB, minimum, convenience for RxGain_18dB.
+        this.RxGain_avg = 0x04 << 4; // 100b - 33 dB, average, convenience for RxGain_33dB.
+        this.RxGain_max = 0x07 << 4; // 111b - 48 dB, maximum, convenience for RxGain_48dB.
+        // The PICC commands used by the PCD to manage communication with several PICCs (ISO 14443-3, Type A, section 6.4).
+        this.PICC_REQA = 0x26; // REQuest command, Type A. Invites PICCs in state IDLE to go to READY and prepare for anticollision or selection. 7 bit frame.
+        this.PICC_WUPA = 0x52; // Wake-UP command, Type A. Invites PICCs in state IDLE and HALT to go to READY(*) and prepare for anticollision or selection. 7 bit frame.
+        this.PICC_CT = 0x88; // Cascade Tag. Not really a command, but used during anti collision.
+        this.PICC_SEL_CL1 = 0x93; // Anti collision/Select, Cascade Level 1.
+        this.PICC_SEL_CL2 = 0x95; // Anti collision/Select, Cascade Level 2.
+        this.PICC_SEL_CL3 = 0x97; // Anti collision/Select, Cascade Level 3.
+        this.PICC_HLTA = 0x50; // HaLT command, Type A. Instructs an ACTIVE PICC to go to state HALT.
+        this.PICC_RATS = 0xe0; // Request command for Answer To Reset.
+        // The commands used for MIFARE Classic (from http://www.mouser.com/ds/2/302/MF1S503x-89574.pdf, Section 9)
+        // Use PCD_MFAuthent to authenticate access to a sector, then use these commands to read/write/modify the blocks on the sector.
+        // The read/write commands can also be used for MIFARE Ultralight.
+        this.PICC_AUTH_KEYA = 0x60; // Perform authentication with Key A.
+        this.PICC_AUTH_KEYB = 0x61; // Perform authentication with Key B.
+        this.PICC_READ = 0x30; // Reads one 16 byte block from the authenticated sector of the PICC. Also used for MIFARE Ultralight.
+        this.PICC_WRITE = 0xa0; // Writes one 16 byte block to the authenticated sector of the PICC. Called "COMPATIBILITY WRITE" for MIFARE Ultralight.
+        this.PICC_DECREMENT = 0xc0; // Decrements the contents of a block and stores the result in the internal data register.
+        this.PICC_INCREMENT = 0xc1; // Increments the contents of a block and stores the result in the internal data register.
+        this.PICC_RESTORE = 0xc2; // Reads the contents of a block into the internal data register.
+        this.PICC_TRANSFER = 0xb0; // Writes the contents of the internal data register to a block.
+        // The commands used for MIFARE Ultralight (from http://www.nxp.com/documents/data_sheet/MF0ICU1.pdf, Section 8.6)
+        // The PICC_CMD_MF_READ and PICC_CMD_MF_WRITE can also be used for MIFARE Ultralight.
+        this.PICC_UL_WRITE = 0xa2; // Writes one 4 byte page to the PICC.
+        this.PICC_SElECTTAG = 0x93;
+        // Page 0: Command and status
+        // this.Reserved00h = 0x00;
+        this.CommandReg = 0x01;
+        this.ComlEnReg = 0x02;
+        this.DivlEnReg = 0x03;
+        this.ComIrqReg = 0x04;
+        this.DivIrqReg = 0x05;
+        this.ErrorReg = 0x06;
+        this.Status1Reg = 0x07;
+        this.Status2Reg = 0x08;
+        this.FIFODataReg = 0x09;
+        this.FIFOLevelReg = 0x0a;
+        this.WaterLevelReg = 0x0b;
+        this.ControlReg = 0x0c;
+        this.BitFramingReg = 0x0d;
+        this.CollReg = 0x0e;
+        // this.Reserved0Fh = 0x0F;
+        // Page 1: Command
+        // this.Reserved10h = 0x10;
+        this.ModeReg = 0x11;
+        this.TxModeReg = 0x12;
+        this.RxModeReg = 0x13;
+        this.TxControlReg = 0x14;
+        this.TxASKReg = 0x15;
+        this.TxSelReg = 0x16;
+        this.RxSelReg = 0x17;
+        this.RxThresholdReg = 0x18;
+        this.DemodReg = 0x19;
+        this.Reserved1Ah = 0x1a;
+        this.Reserved1Bh = 0x1b;
+        this.MfTxReg = 0x1c;
+        this.MfRxReg = 0x1d;
+        this.Reserved1Eh = 0x1e;
+        this.SerialSpeedReg = 0x1f;
+        // Page 2: Configuration
+        // this.Reserved20h = 0x20;
+        this.CRCResultRegMSB = 0x21;
+        this.CRCResultRegLSB = 0x22;
+        // this.Reserved23h = 0x23;
+        this.ModWidthReg = 0x24;
+        // this.Reserved25h = 0x25;
+        this.RFCfgReg = 0x26;
+        this.GsNReg = 0x27;
+        this.CWGsPReg = 0x28;
+        this.ModGsPReg = 0x29;
+        this.TModeReg = 0x2a;
+        this.TPrescalerReg = 0x2b;
+        this.TReloadRegHi = 0x2c;
+        this.TReloadRegLo = 0x2d;
+        this.TCounterValRegHi = 0x2e;
+        this.TCounterValRegLo = 0x2f;
+        // Page 3: Test register
+        // this.Reserved30h = 0x30;
+        this.TestSel1Reg = 0x31;
+        this.TestSel2Reg = 0x32;
+        this.TestPinEnReg = 0x33;
+        this.TestPinValueReg = 0x34;
+        this.TestBusReg = 0x35;
+        this.AutoTestReg = 0x36;
+        this.VersionReg = 0x37;
+        this.AnalogTestReg = 0x38;
+        this.TestDAC1Reg = 0x39;
+        this.TestDAC2Reg = 0x3a;
+        this.TestADCReg = 0x3b;
+        // this.Reserved3Ch = 0x3C;
+        // this.Reserved3Dh = 0x3D;
+        // this.Reserved3Eh = 0x3E;
+        // this.Reserved3Fh = 0x3F;
+        // required pin of obniz
+        this.keys = [
+            "cs",
+            "clk",
+            "mosi",
+            "miso",
+            "rst",
+            "vcc",
+            "gnd",
+            "spi",
+            "spi_frequency",
+        ];
+        this.requiredKeys = ["cs", "mosi", "miso", "rst"];
+    }
+    static info() {
+        return {
+            name: "MFRC522",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        // IO pin settings
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.rst = obniz.getIO(this.params.rst);
+        // SPI settings
+        this.cs = obniz.getIO(this.params.cs);
+        this.cs.output(true);
+        this.params.mode = "master";
+        this.params.drive = "3v";
+        this.params.pull = "3v";
+        this.params.frequency = this.params.spi_frequency || 5 * 1000 * 1000;
+        this.spi = this.obniz.getSpiWithConfig(this.params);
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Initializes the MFRC522 chip
+            // Hardware and Software reset
+            this.rst.output(false);
+            yield this.obniz.wait(50); // 8.8.2 says the oscillator start-up time is the start up time of the crystal + 37,74us: 50ms.
+            this.rst.output(true);
+            this.writeRegister(this.CommandReg, this.PCD_SoftReset);
+            // Timer setup: When communicating with a PICC we need a timeout if something goes wrong.
+            // f_timer = 13.56 MHz / (2*TPreScaler+1) where TPreScaler = [TPrescaler_Hi:TPrescaler_Lo].
+            this.writeRegister(this.TModeReg, 0x80); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
+            this.writeRegister(this.TPrescalerReg, 0xa9); // TPreScaler = TModeReg[3..0]: TPrescalerReg, ie 0x0A9 = 169 => f_timer=40kHz, ie a timer period of 25us.
+            this.writeRegister(this.TReloadRegHi, 0x03);
+            this.writeRegister(this.TReloadRegLo, 0xe8); // Reload timer with 0x3E8 = 1000, ie. 25ms before timeout
+            this.writeRegister(this.TxASKReg, 0x40); // Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
+            this.writeRegister(this.ModeReg, 0x3d); // Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (6.2.4)
+            yield this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
+        });
+    }
+    writeRegister(addr, val) {
+        let data;
+        if (val instanceof Array) {
+            // If val is Array
+            data = [(addr << 1) & 0x7e].concat(val);
+        }
+        else {
+            data = [(addr << 1) & 0x7e, val];
+        }
+        this.cs.output(false);
+        this.spi.write(data);
+        this.cs.output(true);
+    }
+    readRegister(addr) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = [((addr << 1) & 0x7e) | 0x80, 0];
+            this.cs.output(false);
+            const response = yield this.spi.writeWait(data);
+            this.cs.output(true);
+            return response[1];
+        });
+    }
+    readRegister_nByte(addr, n) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const dataArray = [];
+            if (addr instanceof Array) {
+                // Multiple addresses(If addr is Array)
+                for (let i = 0; i < addr.length; i++) {
+                    dataArray.push(((addr[i] << 1) & 0x7e) | 0x80);
+                }
+            }
+            else {
+                // Single address & read n times
+                for (let i = 0; i < n; i++) {
+                    dataArray.push(((addr << 1) & 0x7e) | 0x80);
+                }
+            }
+            dataArray.push(0); // End reading
+            this.cs.output(false);
+            const values = yield this.spi.writeWait(dataArray);
+            this.cs.output(true);
+            values.shift();
+            return values;
+        });
+    }
+    setRegisterBitMask(reg, mask) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield this.readRegister(reg);
+            this.writeRegister(reg, response | mask);
+        });
+    }
+    clearRegisterBitMask(reg, mask) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield this.readRegister(reg);
+            this.writeRegister(reg, response & ~mask);
+        });
+    }
+    antennaOn() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Turns the antenna on by enabling pins TX1 and TX2
+            const response = yield this.readRegister(this.TxControlReg);
+            if ((response & 0x03) !== 0x03) {
+                // If TX1 and TX2 down
+                yield this.setRegisterBitMask(this.TxControlReg, response | 0x03);
+            }
+        });
+    }
+    antennaOff() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Turns the antenna off by disabling pins TX1 and TX2
+            yield this.clearRegisterBitMask(this.TxControlReg, 0x03);
+        });
+    }
+    // RC522 and ISO14443 card communication
+    toCard(command, bitsToSend) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let data = [];
+            let bitSize = 0;
+            let status = ERROR;
+            let irqEn = 0x00;
+            let waitIRq = 0x00;
+            if (command === this.PCD_MFAuthent) {
+                irqEn = 0x12;
+                waitIRq = 0x10;
+            }
+            if (command === this.PCD_Transceive) {
+                irqEn = 0x77;
+                waitIRq = 0x30;
+            }
+            this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
+            this.writeRegister(this.ComlEnReg, irqEn | 0x80); // Interrupt request is enabled
+            this.writeRegister(this.ComIrqReg, 0x7f); // Clear all seven interrupt request bits
+            this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
+            this.writeRegister(this.FIFODataReg, bitsToSend); // Write sendData to the FIFO
+            this.writeRegister(this.CommandReg, command); // Execute the command
+            if (command === this.PCD_Transceive) {
+                yield this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
+            }
+            let TryingTimes = 10;
+            let n = 0;
+            do {
+                // Wait for the received data complete
+                n = yield this.readRegister(this.ComIrqReg);
+                TryingTimes--;
+            } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
+            // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
+            const response = yield this.readRegister_nByte([
+                this.ErrorReg,
+                this.FIFOLevelReg,
+                this.ControlReg,
+            ]);
+            if (TryingTimes !== 0) {
+                if ((response[0] & 0x1b) === 0x00) {
+                    // BufferOvfl CollErr ParityErr ProtocolErr
+                    status = n & irqEn & 0x01 ? ERROR : OK;
+                    if (command === this.PCD_Transceive) {
+                        n = response[1]; // Number of bytes in the FIFO
+                        const lastBits = response[2] & 0x07; // RxLastBits[2:0] indicates the number of valid bits in the last received byte. If this value is 000b, the whole byte is valid.
+                        if (lastBits) {
+                            bitSize = (n - 1) * 8 + lastBits;
+                        }
+                        else {
+                            bitSize = n * 8;
+                        }
+                        if (n === 0) {
+                            n = 1;
+                        }
+                        if (n > 16) {
+                            n = 16;
+                        } // Restrict until 16bytes
+                        data = yield this.readRegister_nByte(this.FIFODataReg, n); // Get received data from FIFO buffer
+                    }
+                }
+                else {
+                    status = ERROR;
+                }
+            }
+            return { status, data, bitSize };
+        });
+    }
+    findCardWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
+            yield this.searchTagWait();
+            const uid = yield this.getUidWait();
+            const PICC_Type = yield this.identifyCardTypeWait(uid);
+            return { uid, PICC_Type };
+        });
+    }
+    searchTagWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.writeRegister(this.BitFramingReg, 0x07);
+            const tagType = [this.PICC_REQA];
+            const response = yield this.toCard(this.PCD_Transceive, tagType);
+            if (response.bitSize !== 0x10) {
+                throw new Error("card_search_ERROR");
+            }
+        });
+    }
+    getUidWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.writeRegister(this.BitFramingReg, 0x00);
+            let uid = [this.PICC_SEL_CL1, 0x20];
+            const response = yield this.toCard(this.PCD_Transceive, uid);
+            if (!response.status) {
+                throw new Error("uid_scan_ERROR");
+            }
+            const uidCheck = response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
+            if (uidCheck !== response.data[4]) {
+                throw new Error("uid_check_ERROR");
+            }
+            uid = response.data;
+            // (uid).pop();
+            return uid;
+        });
+    }
+    calculateCRCWait(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
+            this.writeRegister(this.DivIrqReg, 0x04); // Clear the CRCIRq interrupt request bit
+            this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
+            this.writeRegister(this.FIFODataReg, data); // Write data to the FIFO
+            this.writeRegister(this.CommandReg, this.PCD_CalcCRC); // Start the calculation
+            let i = 0xff;
+            let n;
+            // Wait for the CRC calculation to complete
+            do {
+                n = yield this.readRegister(this.DivIrqReg);
+                i--;
+            } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
+            // CRC calculation result
+            return yield this.readRegister_nByte([
+                this.CRCResultRegLSB,
+                this.CRCResultRegMSB,
+            ]);
+        });
+    }
+    identifySoftwareWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let version = yield this.readRegister(this.VersionReg);
+            switch (version) {
+                case 0x88:
+                    version = "(clone)";
+                    break;
+                case 0x90:
+                    version = "v0.0";
+                    break;
+                case 0x91:
+                    version = "v1.0";
+                    break;
+                case 0x92:
+                    version = "v2.0";
+                    break;
+                case 0x12:
+                    version = "counterfeit chip";
+                    break;
+                default:
+                    version = "(unknown)";
+            }
+            // When 0x00 or 0xFF is returned, communication probably failed
+            if (version === 0x00 || version === 0xff) {
+                throw new Error("software_version_ERROR");
+            }
+            return version;
+        });
+    }
+    identifyCardTypeWait(uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Identify type of the scanned card
+            let buffer = [this.PICC_SElECTTAG, 0x70].concat(uid);
+            buffer = buffer.concat(yield this.calculateCRCWait(buffer));
+            const response = yield this.toCard(this.PCD_Transceive, buffer);
+            let PICC_Type;
+            if (response.status && response.bitSize === 0x18) {
+                PICC_Type = response.data[0];
+            }
+            switch (PICC_Type) {
+                case 0x04:
+                    PICC_Type = "SAK indicates UID is not complete.";
+                    break; // UID not complete
+                case 0x09:
+                    PICC_Type = "MIFARE Mini, 320 bytes";
+                    break;
+                case 0x08:
+                    PICC_Type = "MIFARE 1KB";
+                    break;
+                case 0x18:
+                    PICC_Type = "MIFARE 4KB";
+                    break;
+                case 0x00:
+                    PICC_Type = "MIFARE Ultralight or Ultralight C";
+                    break;
+                case 0x11:
+                    PICC_Type = "MIFARE Plus";
+                    break;
+                case 0x01:
+                    PICC_Type = "MIFARE TNP3XXX";
+                    break;
+                case 0x20:
+                    PICC_Type = "PICC compliant with ISO/IEC 14443-4";
+                    break;
+                case 0x40:
+                    PICC_Type = "PICC compliant with ISO/IEC 18092 (NFC)";
+                    break;
+                default:
+                    throw new Error("PICC_type_ERROR");
+            }
+            return PICC_Type;
+        });
+    }
+    readSectorDataWait(Sector, uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.authenticateSectorWait(Sector, uid);
+            return yield this.getSectorDataWait(Sector);
+        });
+    }
+    readBlockDataWait(Block, uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.authenticateBlockWait(Block, uid);
+            return yield this.getBlockDataWait(Block);
+        });
+    }
+    authenticateSectorWait(Sector, uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            /* Password authentication mode (A or B)
+                 * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
+                 * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
+                 */
+            const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
+            // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+            const Block = Sector * 4;
+            let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
+            uid = uid.slice(0, 4); // Append the first 4 bit of the UID
+            buffer = buffer.concat(uid); // 12byte
+            // Start authentication itself
+            yield this.toCard(this.PCD_MFAuthent, buffer);
+            if (!((yield this.readRegister(this.Status2Reg)) & 0x08)) {
+                throw new Error("password_authentication_ERROR");
+            }
+        });
+    }
+    authenticateBlockWait(Block, uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            /* Password authentication mode (A or B)
+                 * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
+                 * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
+                 */
+            const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
+            // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+            let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
+            uid = uid.slice(0, 4); // Append the first 4 bit of the UID
+            buffer = buffer.concat(uid); // 12byte
+            // Start authentication itself
+            yield this.toCard(this.PCD_MFAuthent, buffer);
+            if (!((yield this.readRegister(this.Status2Reg)) & 0x08)) {
+                throw new Error("password_authentication_ERROR");
+            }
+        });
+    }
+    readAgainWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // If you finish reading and want to read again, this can use instead of init()
+            yield this.clearRegisterBitMask(this.Status2Reg, 0x08);
+        });
+    }
+    getSectorDataWait(address) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = [];
+            const blockData = [];
+            for (let i = 0; i < 4; i++) {
+                let request = [this.PICC_READ, address * 4 + i];
+                request = request.concat(yield this.calculateCRCWait(request));
+                response[i] = yield this.toCard(this.PCD_Transceive, request);
+                if (!response[i].status) {
+                    throw new Error("data_read_ERROR");
+                }
+                blockData[i] = response[i].data;
+            }
+            return blockData;
+        });
+    }
+    getBlockDataWait(address) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let request = [this.PICC_READ, address];
+            request = request.concat(yield this.calculateCRCWait(request));
+            const response = yield this.toCard(this.PCD_Transceive, request);
+            if (!response.status) {
+                throw new Error("data_read_ERROR");
+            }
+            return response.data;
+        });
+    }
+    appendCRCtoBufferAndSendToCardWait(buffer) {
+        return __awaiter(this, void 0, void 0, function* () {
+            buffer = buffer.concat(yield this.calculateCRCWait(buffer));
+            const response = yield this.toCard(this.PCD_Transceive, buffer);
+            if (!response.status ||
+                response.bitSize !== 4 ||
+                (response.data[0] & 0x0f) !== 0x0a) {
+                response.status = ERROR;
+            }
+            return response;
+        });
+    }
+    writeBlockDataWait(Block, sixteenBytes) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (Block === 0 || Block % 4 === 3) {
+                throw new Error("deny_Write");
+            }
+            const buffer = [this.PICC_WRITE, Block];
+            let response = yield this.appendCRCtoBufferAndSendToCardWait(buffer);
+            if (response.status) {
+                response = yield this.appendCRCtoBufferAndSendToCardWait(sixteenBytes);
+            }
+            else {
+                throw new Error("data_write_ERROR");
+            }
+        });
+    }
+}
+exports.default = MFRC522;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Wireless/RN42/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.RN42
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class RN42 {
+    constructor() {
+        this.keys = ["tx", "rx", "gnd"];
+        this.requiredKeys = ["tx", "rx"];
+    }
+    static info() {
+        return {
+            name: "RN42",
+        };
+    }
+    wired(obniz) {
+        if (obniz.isValidIO(this.params.gnd)) {
+            obniz.getIO(this.params.gnd).output(false);
+        }
+        this.uart = obniz.getFreeUart();
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: 115200,
+            drive: "3v",
+        });
+        this.uart.onreceive = (data, text) => {
+            // this is not perfect. separation is possible.
+            if (text.indexOf("CONNECT") >= 0) {
+                // console.log("connected");
+            }
+            else if (text.indexOf("DISCONNECT") >= 0) {
+                // console.log("disconnected");
+            }
+            if (typeof this.onreceive === "function") {
+                this.onreceive(data, text);
+            }
+        };
+    }
+    send(data) {
+        this.uart.send(data);
+    }
+    sendCommand(data) {
+        this.uart.send(data + "\n");
+        this.obniz.wait(100);
+    }
+    enterCommandMode() {
+        this.send("$$$");
+        this.obniz.wait(100);
+    }
+    config(json) {
+        this.enterCommandMode();
+        if (typeof json !== "object") {
+            // TODO: warning
+            return;
+        }
+        // remove noize data
+        this.sendCommand("");
+        if (json.master_slave) {
+            this.config_masterslave(json.master_slave);
+        }
+        if (json.auth) {
+            this.config_auth(json.auth);
+        }
+        if (json.hid_flag) {
+            this.config_HIDflag(json.hid_flag);
+        }
+        if (json.profile) {
+            this.config_profile(json.profile);
+        }
+        if (json.power) {
+            this.config_power(json.power);
+        }
+        if (json.display_name) {
+            this.config_displayName(json.display_name);
+        }
+        this.config_reboot();
+    }
+    config_reboot() {
+        this.sendCommand("R,1");
+    }
+    config_masterslave(mode) {
+        let val = -1;
+        if (typeof mode === "number") {
+            val = mode;
+        }
+        else if (typeof mode === "string") {
+            const modes = [
+                "slave",
+                "master",
+                "trigger",
+                "auto-connect-master",
+                "auto-connect-dtr",
+                "auto-connect-any",
+                "pairing",
+            ];
+            for (let i = 0; i < modes.length; i++) {
+                if (modes[i] === mode) {
+                    val = i;
+                    break;
+                }
+            }
+        }
+        if (val === -1) {
+            // TODO: warning
+            return;
+        }
+        this.sendCommand("SM," + val);
+    }
+    config_displayName(name) {
+        this.sendCommand("SN," + name);
+    }
+    // // SH,0200 HID Flag register. Descriptor=keyboard
+    config_HIDflag(flag) {
+        this.sendCommand("SH," + flag);
+    }
+    config_profile(mode) {
+        let val = -1;
+        if (typeof mode === "number") {
+            val = mode;
+        }
+        else if (typeof mode === "string") {
+            const modes = [
+                "SPP",
+                "DUN-DCE",
+                "DUN-DTE",
+                "MDM-SPP",
+                "SPP-DUN-DCE",
+                "APL",
+                "HID",
+            ];
+            for (let i = 0; i < modes.length; i++) {
+                if (modes[i] === mode) {
+                    val = i;
+                    break;
+                }
+            }
+        }
+        if (val === -1) {
+            // TODO: warning
+            return;
+        }
+        this.sendCommand("S~," + val);
+    }
+    config_revert_localecho() {
+        this.sendCommand("+");
+    }
+    config_auth(mode) {
+        let val = -1;
+        if (typeof mode === "number") {
+            val = mode;
+        }
+        else if (typeof mode === "string") {
+            const modes = ["open", "ssp-keyboard", "just-work", "pincode"];
+            for (let i = 0; i < modes.length; i++) {
+                if (modes[i] === mode) {
+                    val = i;
+                    break;
+                }
+            }
+        }
+        if (val === -1) {
+            // TODO: warning
+            return;
+        }
+        this.sendCommand("SA," + val);
+    }
+    config_power(dbm) {
+        let val = "0010";
+        if (16 > dbm && dbm >= 12) {
+            val = "000C";
+        }
+        else if (12 > dbm && dbm >= 8) {
+            val = "0008";
+        }
+        else if (8 > dbm && dbm >= 4) {
+            val = "0004";
+        }
+        else if (4 > dbm && dbm >= 0) {
+            val = "0000";
+        }
+        else if (0 > dbm && dbm >= -4) {
+            val = "FFFC";
+        }
+        else if (-4 > dbm && dbm >= -8) {
+            val = "FFF8";
+        }
+        else if (-8 > dbm) {
+            val = "FFF4";
+        }
+        this.sendCommand("SY," + val);
+    }
+    config_get_setting() {
+        this.sendCommand("D");
+    }
+    config_get_extendSetting() {
+        this.sendCommand("E");
+    }
+}
+exports.default = RN42;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Wireless/XBee/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.XBee
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class XBee {
+    constructor() {
+        this.displayIoNames = { tx: "<tx", rx: ">rx" };
+        this.keys = ["tx", "rx", "gnd"];
+        this.requiredKeys = ["tx", "rx"];
+    }
+    static info() {
+        return {
+            name: "XBee",
+        };
+    }
+    wired(obniz) {
+        this.uart = obniz.getFreeUart();
+        this.currentCommand = null;
+        this.commands = [];
+        this.isAtMode = false;
+        this.onFinishAtModeCallback = null;
+        if (typeof this.params.gnd === "number") {
+            obniz.getIO(this.params.gnd).output(false);
+        }
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: 9600,
+            drive: "3v",
+        });
+        this.uart.onreceive = (data, text) => {
+            if (this.isAtMode) {
+                this.onAtResultsRecieve(data, text);
+            }
+            else {
+                if (typeof this.onreceive === "function") {
+                    this.onreceive(data, text);
+                }
+            }
+        };
+    }
+    send(data) {
+        if (this.isAtMode === false) {
+            this.uart.send(data);
+        }
+        else {
+            this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
+        }
+    }
+    onAtResultsRecieve(data, text) {
+        if (!this.isAtMode) {
+            return;
+        }
+        const next = () => {
+            this.currentCommand = null;
+            this.sendCommand();
+        };
+        if (text === "OK\r") {
+            if (this.currentCommand === "ATCN") {
+                this.isAtMode = false;
+                this.currentCommand = null;
+                if (typeof this.onFinishAtModeCallback === "function") {
+                    this.onFinishAtModeCallback();
+                    this.onFinishAtModeCallback = null;
+                }
+                return;
+            }
+            next();
+        }
+        else if (text === "ERROR\r") {
+            this.obniz.error("XBee config error : " + this.currentCommand);
+        }
+        else {
+            // response of at command.
+            console.log("XBEE : no catch message", data);
+            next();
+        }
+    }
+    addCommand(command, value) {
+        const str = command + (value ? " " + value : "");
+        this.commands.push(str);
+        if (this.isAtMode === true && this.currentCommand === null) {
+            this.sendCommand();
+        }
+    }
+    sendCommand() {
+        if (this.isAtMode === true &&
+            this.currentCommand === null &&
+            this.commands.length > 0) {
+            this.currentCommand = "AT" + this.commands.shift();
+            this.uart.send(this.currentCommand + "\r");
+        }
+    }
+    enterAtMode() {
+        if (this.currentCommand !== null) {
+            return;
+        }
+        this.isAtMode = true;
+        this.obniz.wait(1000);
+        const command = "+++";
+        this.currentCommand = command;
+        this.uart.send(this.currentCommand);
+        this.obniz.wait(1000);
+    }
+    exitAtMode() {
+        this.addCommand("CN");
+    }
+    configWait(config) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.isAtMode) {
+                throw new Error("Xbee : duplicate config setting");
+            }
+            return new Promise((resolve, reject) => {
+                const standaloneKeys = {
+                    destination_address_high: "DH",
+                    destination_address_low: "DL",
+                    source_address: "MY",
+                };
+                const highLowKeys = ["destination_address"];
+                this.enterAtMode();
+                for (const key in config) {
+                    if (key.length === 2) {
+                        this.addCommand(key, config[key]);
+                    }
+                    else if (standaloneKeys[key]) {
+                        this.addCommand(standaloneKeys[key], config[key]);
+                    }
+                    else if (highLowKeys.includes(key)) {
+                        let high = config[key].slice(0, -8);
+                        if (!high) {
+                            high = "0";
+                        }
+                        const low = config[key].slice(-8);
+                        this.addCommand(standaloneKeys[key + "_high"], high);
+                        this.addCommand(standaloneKeys[key + "_low"], low);
+                    }
+                }
+                this.exitAtMode();
+                this.onFinishAtModeCallback = () => {
+                    resolve();
+                };
+            });
+        });
+    }
+}
+exports.default = XBee;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/i2cParts.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class I2cPartsAbstruct {
+    constructor() {
+        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "vcc"];
+        this.requiredKeys = [];
+        this.i2cinfo = this.i2cInfo();
+        this.address = this.i2cinfo.address;
+    }
+    i2cInfo() {
+        throw new Error("abstruct class");
+        // eslint-disable-next-line no-unreachable
+        return {
+            address: 0x00,
+            clock: 100000,
+            voltage: "3v",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.i2cinfo.voltage);
+        this.params.clock = this.i2cinfo.clock;
+        this.params.pull = this.i2cinfo.voltage;
+        this.params.mode = "master";
+        // @ts-ignore
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+    }
+    char2short(val1, val2) {
+        const buffer = new ArrayBuffer(2);
+        const dv = new DataView(buffer);
+        dv.setUint8(0, val1);
+        dv.setUint8(1, val2);
+        return dv.getInt16(0, false);
+    }
+    readWait(command, length) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(this.address, [command]);
+            return yield this.i2c.readWait(this.address, length);
+        });
+    }
+    // public async readUint16Wait(command: number, length: number): Promise<number[]> {
+    //   this.i2c.write(this.address, [command]);
+    //   return await this.i2c.readWait(this.address, length);
+    // }
+    write(command, buf) {
+        if (!Array.isArray(buf)) {
+            buf = [buf];
+        }
+        this.i2c.write(this.address, [command, ...buf]);
+    }
+}
+exports.default = I2cPartsAbstruct;
+
+//# sourceMappingURL=i2cParts.js.map
+
 
 /***/ }),
 
