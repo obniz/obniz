@@ -6,7 +6,7 @@ M5STACK用土壌湿度センサEARTHユニットです。土壌の湿度を取�
 アナログ・デジタルの出力を持っています。
 
 ## wired(obniz, { [aout, dout, vcc, gnd, grove] })
-obniz BoardにEARTHユニットをつなぎます。
+デバイスにEARTHユニットをつなぎます。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -14,7 +14,7 @@ vcc | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はvcc, 
 gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
 dout | `number(obniz Board io)` | no |  &nbsp; | デジタル出力です。
 aout | `number(obniz Board io)` | no | &nbsp;  | アナログ出力です。
-grove | `number(obniz Board io)` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
+grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
 
 白線、黄線、赤線、黒線がそれぞれaout、dout、vcc、gndに対応しています。
 

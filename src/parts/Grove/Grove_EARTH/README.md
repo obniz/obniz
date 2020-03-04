@@ -8,7 +8,7 @@ It has both analog and digital outputs.
 
 
 ## wired(obniz, { aout, dout, vcc, gnd })
-connect EARTH UNIT to the obniz Board.  
+connect EARTH UNIT to the obniz Device.  
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -16,7 +16,7 @@ vcc | `number(obniz Board io)` | no |  &nbsp; | power supply
 gnd | `number(obniz Board io)` | no |  &nbsp; | power supply
 dout | `number(obniz Board io)` | no |  &nbsp; | digital out
 aout | `number(obniz Board io)` | no | &nbsp;  | analog out
-grove | `number(obniz Board io)` | no | &nbsp;  | grove property when device has a grove interface
+grove | `object` | no | &nbsp;  | grove property when device has a grove interface
 
 ```javascript
 // JavaScript Example

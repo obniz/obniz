@@ -23026,6 +23026,7 @@ var map = {
 	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
+	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
@@ -35861,6 +35862,72 @@ class Grove_GPS {
     }
 }
 exports.default = Grove_GPS;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_JoyStick/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_JoyStick {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_JoyStick",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        const speed = 400000;
+        if (this.params.grove) {
+            this.i2c = this.params.grove.getI2c(speed, "5v");
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.wait(100); // wait for booting of MEGA328
+            this.params.mode = "master";
+            this.params.clock = speed;
+            this.params.pull = "5v";
+            this.i2c = this.obniz.getI2CWithConfig(this.params);
+        }
+    }
+    getXWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.i2c.readWait(0x52, 3);
+            return ret[0];
+        });
+    }
+    getYWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.i2c.readWait(0x52, 3);
+            return ret[1];
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.i2c.readWait(0x52, 3);
+            return Boolean(ret[2]);
+        });
+    }
+}
+exports.default = Grove_JoyStick;
 
 //# sourceMappingURL=index.js.map
 
