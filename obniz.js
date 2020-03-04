@@ -15193,27 +15193,6 @@ class M5StickC extends ObnizDevice_1.default {
         this._m5i2c.start(i2cParams);
         this.axp = this.wired("AXP192", { i2c: this._m5i2c });
         this.led.off();
-        this._addToAllComponentKeys();
-    }
-    _addToAllComponentKeys() {
-        const keys = [
-            "buttonA",
-            "buttonB",
-            "ir",
-            "led",
-            "axp",
-            "imu",
-        ];
-        for (const key of keys) {
-            this._allComponentKeys.push(key);
-            // @ts-ignore
-            if (this[key] && !this[key]._reset) {
-                // @ts-ignore
-                this[key]._reset = () => {
-                    return;
-                };
-            }
-        }
     }
 }
 exports.M5StickC = M5StickC;
@@ -23072,6 +23051,7 @@ var map = {
 	"./PressureSensor/FSR-40X/index.js": "./dist/src/parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./dist/src/parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./dist/src/parts/Sound/Speaker/index.js",
+	"./StickCHat/StickC_JoyStick/index.js": "./dist/src/parts/StickCHat/StickC_JoyStick/index.js",
 	"./TemperatureSensor/analog/AnalogTemperatureSensor.js": "./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js",
 	"./TemperatureSensor/analog/LM35DZ/index.js": "./dist/src/parts/TemperatureSensor/analog/LM35DZ/index.js",
 	"./TemperatureSensor/analog/LM60/index.js": "./dist/src/parts/TemperatureSensor/analog/LM60/index.js",
@@ -40680,6 +40660,83 @@ class Speaker {
     }
 }
 exports.default = Speaker;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/StickCHat/StickC_JoyStick/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class StickC_JoyStick {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "StickC_JoyStick",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.wait(100); // wait for booting of STM32F030F4
+        this.params.mode = "master";
+        this.params.clock = 100000;
+        this.params.pull = "5v";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+    }
+    getXWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.getXYWait();
+            let val = ret[0];
+            if (val > 0x7F) {
+                val = val - 0x100;
+            }
+            return val;
+        });
+    }
+    getYWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ret = yield this.getXYWait();
+            let val = ret[1];
+            if (val > 0x7F) {
+                val = val - 0x100;
+            }
+            return val;
+        });
+    }
+    isPressedWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(0x38, [0x02]);
+            const ret = yield this.i2c.readWait(0x38, 3);
+            return !Boolean(ret[2]);
+        });
+    }
+    getXYWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.i2c.write(0x38, [0x02]);
+            const ret = yield this.i2c.readWait(0x38, 3);
+            return ret;
+        });
+    }
+}
+exports.default = StickC_JoyStick;
 
 //# sourceMappingURL=index.js.map
 

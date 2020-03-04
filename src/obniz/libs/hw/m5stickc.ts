@@ -392,34 +392,5 @@ export class M5StickC extends ObnizDevice {
     this._m5i2c.start(i2cParams as any);
     this.axp = this.wired("AXP192", {i2c: this._m5i2c});
     this.led!.off();
-
-    this._addToAllComponentKeys();
-
-  }
-
-  private _addToAllComponentKeys() {
-    const keys = [
-      "buttonA",
-      "buttonB",
-      "ir",
-      "led",
-      "axp",
-      "imu",
-    ];
-
-    for (const key of keys) {
-      this._allComponentKeys.push(key);
-
-      // @ts-ignore
-      if (this[key] && !this[key]._reset) {
-
-        // @ts-ignore
-        this[key]._reset = () => {
-          return;
-        };
-      }
-
-    }
-
   }
 }
