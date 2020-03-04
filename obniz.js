@@ -262,7 +262,9 @@ var map = {
 	"./request/ble/central/scan_stop.yml": "./dist/src/json_schema/request/ble/central/scan_stop.yml",
 	"./request/ble/central/service_get.yml": "./dist/src/json_schema/request/ble/central/service_get.yml",
 	"./request/ble/hci/advertisement_filter.yml": "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml",
+	"./request/ble/hci/deinit.yml": "./dist/src/json_schema/request/ble/hci/deinit.yml",
 	"./request/ble/hci/index.yml": "./dist/src/json_schema/request/ble/hci/index.yml",
+	"./request/ble/hci/init.yml": "./dist/src/json_schema/request/ble/hci/init.yml",
 	"./request/ble/hci/write.yml": "./dist/src/json_schema/request/ble/hci/write.yml",
 	"./request/ble/index.yml": "./dist/src/json_schema/request/ble/index.yml",
 	"./request/ble/peripheral/advertisement_start.yml": "./dist/src/json_schema/request/ble/peripheral/advertisement_start.yml",
@@ -566,10 +568,24 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/ble/hci/deinit.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/deinit","type":"object","required":["hci"],"properties":{"hci":{"type":"null"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/ble/hci/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"},{"$ref":"/request/ble/hci/advertisement_filter"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/init"},{"$ref":"/request/ble/hci/deinit"},{"$ref":"/request/ble/hci/write"},{"$ref":"/request/ble/hci/advertisement_filter"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/ble/hci/init.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/init","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["initialize"],"properties":{"initialize":{"type":"boolean"}}}}}
 
 /***/ }),
 
@@ -5902,6 +5918,7 @@ const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/
 const bindings_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/bindings.js"));
 const hci_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const bindings_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
@@ -5981,6 +5998,12 @@ class ObnizBLE {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._initialized) {
                 this._initialized = true;
+                // force initialize on obnizOS < 3.2.0
+                if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
+                    this.hci.init();
+                    this.hci.end(); // disable once
+                    this.hci.init();
+                }
                 yield this.hciProtocol.initWait();
             }
         });
@@ -9754,6 +9777,32 @@ class ObnizBLEHci {
     constructor(Obniz) {
         this.Obniz = Obniz;
     }
+    /**
+     * Initialize BLE HCI module
+     */
+    init() {
+        this.Obniz.send({
+            ble: {
+                hci: {
+                    initialize: true,
+                },
+            },
+        });
+    }
+    /**
+     * Deinitalize BLE HCI module
+     */
+    end() {
+        this.Obniz.send({
+            ble: {
+                hci: null,
+            },
+        });
+    }
+    /**
+     * write HCI command to HCI module
+     * @param hciCommand
+     */
     write(hciCommand) {
         this.Obniz.send({
             ble: {
@@ -9763,11 +9812,19 @@ class ObnizBLEHci {
             },
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.read && obj.read.data) {
             this.onread(obj.read.data);
         }
     }
+    /**
+     * Callback on HCI command received.
+     * @param data
+     */
     onread(data) {
     }
 }
@@ -10398,7 +10455,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => { };
+const debug = () => {
+};
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 /**
@@ -10429,7 +10487,7 @@ class Gap extends events_1.default.EventEmitter {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         this._hci.setScanEnabled(false, true);
-        console.log("scan enable false");
+        // console.log("scan enable false");
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
             this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
@@ -12254,10 +12312,10 @@ class Hci extends events.EventEmitter {
         const data = Buffer.from(array);
         debug("onSocketData: " + data.toString("hex"));
         const eventType = data.readUInt8(0);
-        debug("\tevent type = " + eventType);
+        debug("\tevent type = 0x" + eventType.toString(16));
         if (COMMANDS.HCI_EVENT_PKT === eventType) {
             const subEventType = data.readUInt8(1);
-            debug("\tsub event type = " + subEventType);
+            debug("\tsub event type = 0x" + subEventType.toString(16));
             if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
                 const handle = data.readUInt16LE(4);
                 const reason = data.readUInt8(6);
@@ -12293,10 +12351,10 @@ class Hci extends events.EventEmitter {
                 const cmd = data.readUInt16LE(4);
                 const status = data.readUInt8(6);
                 const result = data.slice(7);
-                debug("\t\tncmd = " + ncmd);
-                debug("\t\tcmd = " + cmd);
-                debug("\t\tstatus = " + status);
-                debug("\t\tresult = " + result.toString("hex"));
+                debug("\t\tncmd = 0x" + ncmd.toString(16));
+                debug("\t\tcmd = 0x" + cmd.toString(16));
+                debug("\t\tstatus = 0x" + status.toString(16));
+                debug("\t\tresult = 0x" + result.toString("hex"));
                 this.processCmdCompleteEvent(cmd, status, result);
             }
             else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
@@ -20904,6 +20962,8 @@ class WSCommandBleHci {
     }
     schemaData() {
         return [
+            { uri: "/request/ble/hci/init", onValid: this.init.bind(this) },
+            { uri: "/request/ble/hci/deinit", onValid: this.deinit.bind(this) },
             { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
             { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
         ];
@@ -20912,6 +20972,14 @@ class WSCommandBleHci {
         const funcList = {};
         funcList[this._CommandHCIRecv] = this.recv.bind(this);
         return funcList;
+    }
+    init(params, module) {
+        const buf = new Uint8Array(0);
+        this._delegate.sendCommand(this._CommandHCIInit, buf);
+    }
+    deinit(params, module) {
+        const buf = new Uint8Array(0);
+        this._delegate.sendCommand(this._CommandHCIDeinit, buf);
     }
     send(params, module) {
         const buf = new Uint8Array(params.hci.write.length);
