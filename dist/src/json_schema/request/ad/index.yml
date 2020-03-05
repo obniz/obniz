@@ -1,0 +1,10 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ad"
+basePath: "ad0"
+description: "available ad0~ad11"
+
+"anyOf":
+  - {$ref: "/request/ad/get"}
+  - {$ref: "/request/ad/deinit"}

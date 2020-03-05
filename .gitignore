@@ -20,6 +20,5 @@ log
 /test/test*.ts
 dist/**/*.map
 dist/**/*.ts
-dist/**/*.yml
 .vscode
 

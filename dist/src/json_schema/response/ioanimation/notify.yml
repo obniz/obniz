@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ioAnimation/notify"
+
+type: object
+required: [animation]
+properties:
+  animation:
+    type: object
+    required: [name, status]
+    properties:
+      name:
+        type: string
+        description: "animation name which is finished"
+        example: "animation-1"
+        minLength: 1
+        maxLength: 254
+
+      status:
+        type: string
+        enum: [finish]
+        description: "status of an registrated animation"
+        example: "finish"
+

@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/hci"
+basePath: "ble"
+
+"anyOf":
+  - {$ref: "/request/ble/hci/init"}
+  - {$ref: "/request/ble/hci/deinit"}
+  - {$ref: "/request/ble/hci/write"}
+  - {$ref: "/request/ble/hci/advertisement_filter"}

@@ -1,0 +1,8 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/logicAnalyzer"
+basePath: "logic_analyzer"
+
+"anyOf":
+  - {$ref: "/response/logicAnalyzer/data"}
