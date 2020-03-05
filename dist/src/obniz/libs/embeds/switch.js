@@ -95,4 +95,5 @@ class ObnizSwitch {
     }
 }
 exports.default = ObnizSwitch;
+
 //# sourceMappingURL=switch.js.map

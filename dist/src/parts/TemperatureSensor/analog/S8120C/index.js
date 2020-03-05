@@ -19,4 +19,5 @@ class S8120C extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = S8120C;
+
 //# sourceMappingURL=index.js.map

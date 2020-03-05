@@ -86,4 +86,5 @@ class SHT31 {
     }
 }
 exports.default = SHT31;
+
 //# sourceMappingURL=index.js.map

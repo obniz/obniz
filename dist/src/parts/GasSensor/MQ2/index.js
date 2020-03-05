@@ -19,4 +19,5 @@ class MQ2 extends MQGas_1.default {
     }
 }
 exports.default = MQ2;
+
 //# sourceMappingURL=index.js.map

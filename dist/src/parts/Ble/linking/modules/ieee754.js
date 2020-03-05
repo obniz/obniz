@@ -42,4 +42,5 @@ class LinkingIEEE754 {
     }
 }
 exports.default = LinkingIEEE754;
+
 //# sourceMappingURL=ieee754.js.map

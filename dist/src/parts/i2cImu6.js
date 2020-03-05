@@ -157,4 +157,5 @@ I2cImu6Abstract.scales = {
         },
     },
 };
+
 //# sourceMappingURL=i2cImu6.js.map

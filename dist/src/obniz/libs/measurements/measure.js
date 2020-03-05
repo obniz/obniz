@@ -99,4 +99,5 @@ class ObnizMeasure {
     }
 }
 exports.default = ObnizMeasure;
+
 //# sourceMappingURL=measure.js.map
