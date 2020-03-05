@@ -275,5 +275,4 @@ class BleAttributeAbstract {
     }
 }
 exports.default = BleAttributeAbstract;
-
 //# sourceMappingURL=bleAttributeAbstract.js.map

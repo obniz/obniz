@@ -2196,5 +2196,4 @@ const font = [
     0x00,
     0x00,
 ];
-
 //# sourceMappingURL=index.js.map

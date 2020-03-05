@@ -180,5 +180,4 @@ class WSCommandDirective extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandDirective;
-
 //# sourceMappingURL=WSCommandDirective.js.map

@@ -31,5 +31,4 @@ class PT550 {
     }
 }
 exports.default = PT550;
-
 //# sourceMappingURL=index.js.map

@@ -212,5 +212,4 @@ class JpegSerialCam {
     }
 }
 exports.default = JpegSerialCam;
-
 //# sourceMappingURL=index.js.map

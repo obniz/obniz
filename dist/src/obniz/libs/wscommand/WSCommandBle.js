@@ -1231,5 +1231,4 @@ class WSCommandBle extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandBle;
-
 //# sourceMappingURL=WSCommandBle.js.map

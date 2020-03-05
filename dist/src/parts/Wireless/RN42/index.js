@@ -199,5 +199,4 @@ class RN42 {
     }
 }
 exports.default = RN42;
-
 //# sourceMappingURL=index.js.map

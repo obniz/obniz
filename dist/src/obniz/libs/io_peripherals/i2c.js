@@ -299,5 +299,4 @@ class PeripheralI2C {
     }
 }
 exports.default = PeripheralI2C;
-
 //# sourceMappingURL=i2c.js.map

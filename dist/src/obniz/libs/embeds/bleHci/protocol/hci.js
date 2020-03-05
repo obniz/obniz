@@ -797,5 +797,4 @@ class Hci extends events.EventEmitter {
 }
 Hci.STATUS_MAPPER = STATUS_MAPPER;
 exports.default = Hci;
-
 //# sourceMappingURL=hci.js.map

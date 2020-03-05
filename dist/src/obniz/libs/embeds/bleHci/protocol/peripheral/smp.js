@@ -141,5 +141,4 @@ class Smp extends events.EventEmitter {
     }
 }
 exports.default = Smp;
-
 //# sourceMappingURL=smp.js.map

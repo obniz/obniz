@@ -19,5 +19,4 @@ class MQ3 extends MQGas_1.default {
     }
 }
 exports.default = MQ3;
-
 //# sourceMappingURL=index.js.map

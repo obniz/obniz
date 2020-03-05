@@ -63,5 +63,4 @@ class VL53L0X {
     }
 }
 exports.default = VL53L0X;
-
 //# sourceMappingURL=index.js.map

@@ -16,6 +16,7 @@ const bleHelper_1 = __importDefault(require("./bleHelper"));
  */
 class BleScan {
     constructor(obnizBle) {
+        this._delayNotifyTimers = [];
         this.scanTarget = {};
         this.scanSettings = {};
         this.obnizBle = obnizBle;
@@ -66,6 +67,7 @@ class BleScan {
             });
         }
         this.scanedPeripherals = [];
+        this._clearDelayNotifyTimer();
         this._setTargetFilterOnDevice();
         this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
@@ -171,23 +173,28 @@ class BleScan {
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onfind": {
-                if (this.scanSettings.duplicate === false) {
-                    // duplicate filter
-                    if (this.scanedPeripherals.find((e) => e.address === params.address)) {
-                        break;
-                    }
+                const peripheral = params;
+                const alreadyGotCompleteAdverData = peripheral.adv_data && peripheral.adv_data.length > 0
+                    && peripheral.scan_resp && peripheral.scan_resp.length > 0;
+                const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
+                // wait for adv_data + scan resp
+                // 10 seconds timeout
+                if (alreadyGotCompleteAdverData || nonConnectable) {
+                    this._removeDelayNotifyTimer(peripheral.address);
+                    this._notifyOnFind(peripheral);
                 }
-                if (this.isTarget(params)) {
-                    this.scanedPeripherals.push(params);
-                    this.emitter.emit(notifyName, params);
-                    if (this.onfind) {
-                        this.onfind(params);
-                    }
+                else {
+                    const timer = setInterval(() => {
+                        this._notifyOnFind(peripheral);
+                    }, 10000);
+                    this._delayNotifyTimers.push({ timer, peripheral });
                 }
                 break;
             }
             case "onfinish": {
                 this.clearTimeoutTimer();
+                this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+                this._clearDelayNotifyTimer();
                 this.emitter.emit(notifyName, this.scanedPeripherals);
                 if (this.onfinish) {
                     this.onfinish(this.scanedPeripherals);
@@ -334,6 +341,21 @@ class BleScan {
             this._timeoutTimer = undefined;
         }
     }
+    _notifyOnFind(peripheral) {
+        if (this.scanSettings.duplicate === false) {
+            // duplicate filter
+            if (this.scanedPeripherals.find((e) => e.address === peripheral.address)) {
+                return;
+            }
+        }
+        if (this.isTarget(peripheral)) {
+            this.scanedPeripherals.push(peripheral);
+            this.emitter.emit("onfind", peripheral);
+            if (this.onfind) {
+                this.onfind(peripheral);
+            }
+        }
+    }
     isLocalNameTarget(peripheral) {
         if (this.scanTarget &&
             this.scanTarget.localName) {
@@ -384,7 +406,21 @@ class BleScan {
         }
         return false;
     }
+    _clearDelayNotifyTimer() {
+        this._delayNotifyTimers.forEach((e) => {
+            clearTimeout(e.timer);
+        });
+        this._delayNotifyTimers = [];
+    }
+    _removeDelayNotifyTimer(targetAddress) {
+        this._delayNotifyTimers = this._delayNotifyTimers.filter((e) => {
+            if (e.peripheral.address === targetAddress) {
+                clearTimeout(e.timer);
+                return false;
+            }
+            return true;
+        });
+    }
 }
 exports.default = BleScan;
-
 //# sourceMappingURL=bleScan.js.map

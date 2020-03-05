@@ -48,5 +48,4 @@ class StickC_JoyStick {
     }
 }
 exports.default = StickC_JoyStick;
-
 //# sourceMappingURL=index.js.map

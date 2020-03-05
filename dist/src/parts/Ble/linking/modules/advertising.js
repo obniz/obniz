@@ -208,5 +208,4 @@ class LinkingAdvertising {
     }
 }
 exports.default = LinkingAdvertising;
-
 //# sourceMappingURL=advertising.js.map

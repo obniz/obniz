@@ -190,5 +190,4 @@ class Directive {
     }
 }
 exports.default = Directive;
-
 //# sourceMappingURL=directive.js.map

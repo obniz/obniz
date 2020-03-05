@@ -331,5 +331,4 @@ class Grove_GPS {
     }
 }
 exports.default = Grove_GPS;
-
 //# sourceMappingURL=index.js.map

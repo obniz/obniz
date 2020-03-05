@@ -55,5 +55,4 @@ I2cCompassAbstract.unitScales = {
     kG: 0.001,
     uG: 1000 * 1000,
 };
-
 //# sourceMappingURL=i2cCompass.js.map

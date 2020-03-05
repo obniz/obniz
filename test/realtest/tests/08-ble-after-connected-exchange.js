@@ -269,12 +269,12 @@ describe('8-ble-exchange', function() {
 
   it('unknown service error', async () => {
     let service = this.peripheral.getService('FF00');
-    expect(service).to.be.undefined;
+    expect(service).to.be.null;
   });
 
   it('unknown char error', async () => {
     let char = this.peripheral.getService('FFF0').getCharacteristic('FF00');
-    expect(char).to.be.undefined;
+    expect(char).to.be.null;
   });
 
   it('unknown desc error', async () => {
@@ -282,7 +282,7 @@ describe('8-ble-exchange', function() {
       .getService('fff0')
       .getCharacteristic('fff1')
       .getDescriptor('2902');
-    expect(desc).to.be.undefined;
+    expect(desc).to.be.null;
   });
 
   it('close', async () => {

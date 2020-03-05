@@ -67,5 +67,4 @@ class IRSensor {
     }
 }
 exports.default = IRSensor;
-
 //# sourceMappingURL=index.js.map
