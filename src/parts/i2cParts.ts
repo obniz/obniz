@@ -4,9 +4,9 @@
  */
 
 import Obniz from "../obniz";
-import {PullType} from "../obniz/libs/io_peripherals/common";
+import { PullType } from "../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../obniz/ObnizPartsInterface";
 
 export interface  I2cPartsAbstructOptions {
   vcc?: number;
@@ -19,6 +19,14 @@ export interface  I2cPartsAbstructOptions {
 }
 
 export default class I2cPartsAbstruct implements ObnizPartsInterface {
+
+  public static charArrayToInt16(values: [number, number], endian = "b"): number {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
+    dv.setUint8(0, values[0]);
+    dv.setUint8(1, values[1]);
+    return dv.getInt16(0, endian !== "b");
+  }
   public keys: string[];
   public requiredKeys: string[];
   public i2cinfo: any;
@@ -71,15 +79,24 @@ export default class I2cPartsAbstruct implements ObnizPartsInterface {
     return await this.i2c.readWait(this.address, length);
   }
 
-  // public async readUint16Wait(command: number, length: number): Promise<number[]> {
-  //   this.i2c.write(this.address, [command]);
-  //   return await this.i2c.readWait(this.address, length);
-  // }
-
   public write(command: any, buf: any) {
     if (!Array.isArray(buf)) {
       buf = [buf];
     }
     this.i2c.write(this.address, [command, ...buf]);
+  }
+
+  protected async readInt16Wait(register: number, endian: string = "b"): Promise<number> {
+    const data = await this.readWait(register, 2) as [number, number];
+    return I2cPartsAbstruct.charArrayToInt16(data, endian);
+  }
+
+  protected async readThreeInt16Wait(register: number, endian: string = "b"): Promise<[number, number, number]> {
+    const data: number[] = await this.readWait(register, 6);
+    const results: [number, number, number] = [0, 0, 0];
+    results[0] = (I2cPartsAbstruct.charArrayToInt16(data.slice(0, 2) as [number, number], endian));
+    results[1] = (I2cPartsAbstruct.charArrayToInt16(data.slice(2, 4) as [number, number], endian));
+    results[2] = (I2cPartsAbstruct.charArrayToInt16(data.slice(4, 6) as [number, number], endian));
+    return results;
   }
 }
