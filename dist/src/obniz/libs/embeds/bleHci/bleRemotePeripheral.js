@@ -16,6 +16,10 @@ const bleRemoteService_1 = __importDefault(require("./bleRemoteService"));
  */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
+        /**
+         * @ignore
+         */
+        this._connectSetting = {};
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -39,7 +43,8 @@ class BleRemotePeripheral {
         this.emitter = new eventemitter3_1.default();
     }
     /**
-     * It contains all discovered services in a peripheral as an array. It is discovered when connection automatically.
+     * It contains all discovered services in a peripheral as an array.
+     * It is discovered when connection automatically.
      *
      * ```javascript
      * // Javascript Example
@@ -117,7 +122,9 @@ class BleRemotePeripheral {
      * obniz.ble.scan.start();
      * ```
      */
-    connect() {
+    connect(setting) {
+        this._connectSetting = setting || {};
+        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         this.obnizBle.scan.end();
         this.obnizBle.centralBindings.connect(this.address);
     }
@@ -151,7 +158,7 @@ class BleRemotePeripheral {
      * ```
      *
      */
-    connectWait() {
+    connectWait(setting) {
         return new Promise((resolve, reject) => {
             // if (this.connected) {
             //   resolve();
@@ -165,7 +172,7 @@ class BleRemotePeripheral {
                     reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
                 }
             });
-            this.connect();
+            this.connect(setting);
         });
     }
     /**
@@ -321,7 +328,27 @@ class BleRemotePeripheral {
         this.obnizBle.centralBindings.discoverServices(this.address);
     }
     /**
-     * @ignore
+     * Discover services.
+     *
+     * If connect setting param 'autoDiscovery' is true(default),
+     * services are automatically disvocer on connection established.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.discoverAllServicesWait(); //manually discover
+     *          let service = peripheral.getService("1800");
+     *      }
+     *      peripheral.connect({autoDiscovery:false});
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
      */
     discoverAllServicesWait() {
         return new Promise((resolve) => {
@@ -518,5 +545,4 @@ class BleRemotePeripheral {
     }
 }
 exports.default = BleRemotePeripheral;
-
 //# sourceMappingURL=bleRemotePeripheral.js.map

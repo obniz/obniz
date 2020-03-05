@@ -224,7 +224,7 @@ class ObnizBLE {
     }
     async onConnect(peripheralUuid, error) {
         const peripheral = this.findPeripheral(peripheralUuid);
-        if (!error) {
+        if (!error && peripheral._connectSetting.autoDiscovery) {
             await peripheral.discoverAllHandlesWait();
         }
         peripheral.notifyFromServer("statusupdate", {
