@@ -100,8 +100,7 @@ module.exports = {
     "dist",
     "!dist/**/*.map",
     "index.js",
-    "obniz.js",
-    "obniz.min.js"
+    "obniz.js"
   ],
   "engines": {
     "node": ">=8.17.0"
