@@ -50,10 +50,10 @@ class NobleBindings extends events.EventEmitter {
     this._gap = new Gap(this._hci);
   }
 
-  public startScanning(serviceUuids: any, allowDuplicates: any) {
+  public startScanning(serviceUuids: any, allowDuplicates: any, activeScan: boolean) {
     this._scanServiceUuids = serviceUuids || [];
 
-    this._gap.startScanning(allowDuplicates);
+    this._gap.startScanning(allowDuplicates, activeScan);
   }
 
   public stopScanning() {
@@ -337,7 +337,7 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public discoverServices(peripheralUuid: any, uuids: any) {
+  public discoverServices(peripheralUuid: any, uuids?: any) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -382,7 +382,7 @@ class NobleBindings extends events.EventEmitter {
     );
   }
 
-  public discoverCharacteristics(peripheralUuid: any, serviceUuid: any, characteristicUuids: any) {
+  public discoverCharacteristics(peripheralUuid: any, serviceUuid: any, characteristicUuids?: any) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 

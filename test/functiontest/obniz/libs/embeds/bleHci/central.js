@@ -18,6 +18,31 @@ describe('ble-hci-central', function() {
   it('init', async function() {
     this.obniz.ble.initWait();
 
+    expect(this.obniz).send([
+      {
+        ble: {
+          hci: {
+            initialize: true,
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).send([
+      {
+        ble: {
+          hci: null,
+        },
+      },
+    ]);
+    expect(this.obniz).send([
+      {
+        ble: {
+          hci: {
+            initialize: true,
+          },
+        },
+      },
+    ]);
     let commands = [
       [0x01, 0x03, 0x0c, 0x0], // reset
     ];
@@ -38,6 +63,33 @@ describe('ble-hci-central', function() {
   });
   it('init resp', async function() {
     this.obniz.ble.initWait();
+
+    expect(this.obniz).send([
+      {
+        ble: {
+          hci: {
+            initialize: true,
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).send([
+      {
+        ble: {
+          hci: null,
+        },
+      },
+    ]);
+    expect(this.obniz).send([
+      {
+        ble: {
+          hci: {
+            initialize: true,
+          },
+        },
+      },
+    ]);
+
     let commands = [
       [0x01, 0x03, 0x0c, 0x0], // reset
     ];

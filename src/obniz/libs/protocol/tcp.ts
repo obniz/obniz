@@ -103,7 +103,7 @@ export default class Tcp {
    * @param domain
    */
   public connectWait(port: number, domain: string): Promise<void> {
-    if (semver.lt(this.Obniz.firmware_ver, "2.1.0")) {
+    if (semver.lt(this.Obniz.firmware_ver!, "2.1.0")) {
       throw new Error(`Please update obniz firmware >= 2.1.0`);
     }
 

@@ -51,6 +51,7 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
       localName: "Env",
     };
 
+    await this.obniz.ble!.initWait();
     this.periperal = await this.obniz.ble!.scan.startOneWait(target);
 
     return this.periperal;

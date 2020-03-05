@@ -4,7 +4,8 @@
  */
 
 // let debug = require('debug')('hci');
-const debug: any = () => {
+const debug: any = (...params: any[]) => {
+  // console.log(...params);
 };
 
 import events = require("events");
@@ -147,7 +148,7 @@ class Hci extends events.EventEmitter {
     // this.readLeHostSupported();
     // this.readBdAddr();
 
-    return new Promise ((resolve: any ) => {
+    return new Promise((resolve: any) => {
       this.once("stateChange", () => {
         // console.log('te');
         resolve();
@@ -269,7 +270,7 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public setScanParameters() {
+  public setScanParameters(isActiveScan: boolean) {
     const cmd: any = Buffer.alloc(11);
 
     // header
@@ -280,7 +281,7 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt8(0x07, 3);
 
     // data
-    cmd.writeUInt8(0x01, 4); // type: 0 -> passive, 1 -> active
+    cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 4); // type: 0 -> passive, 1 -> active
     cmd.writeUInt16LE(0x0010, 5); // internal, ms * 1.6
     cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
     cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
@@ -628,12 +629,12 @@ class Hci extends events.EventEmitter {
 
     const eventType: any = data.readUInt8(0);
 
-    debug("\tevent type = " + eventType);
+    debug("\tevent type = 0x" + eventType.toString(16));
 
     if (COMMANDS.HCI_EVENT_PKT === eventType) {
       const subEventType: any = data.readUInt8(1);
 
-      debug("\tsub event type = " + subEventType);
+      debug("\tsub event type = 0x" + subEventType.toString(16));
 
       if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
         const handle: any = data.readUInt16LE(4);
@@ -673,10 +674,10 @@ class Hci extends events.EventEmitter {
         const status: any = data.readUInt8(6);
         const result: any = data.slice(7);
 
-        debug("\t\tncmd = " + ncmd);
-        debug("\t\tcmd = " + cmd);
-        debug("\t\tstatus = " + status);
-        debug("\t\tresult = " + result.toString("hex"));
+        debug("\t\tncmd = 0x" + ncmd.toString(16));
+        debug("\t\tcmd = 0x" + cmd.toString(16));
+        debug("\t\tstatus = 0x" + status.toString(16));
+        debug("\t\tresult = 0x" + result.toString("hex"));
 
         this.processCmdCompleteEvent(cmd, status, result);
       } else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
@@ -829,7 +830,7 @@ class Hci extends events.EventEmitter {
         this.emit("stateChange", "unsupported");
       } else if (this._state !== "poweredOn") {
         this.setScanEnabled(false, true);
-        this.setScanParameters();
+        this.setScanParameters(false);
       }
 
       this.emit(

@@ -12,6 +12,10 @@ import BleScan from "./bleScan";
 import BleSecurity from "./bleSecurity";
 import BleService from "./bleService";
 
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ */
 export default class ObnizBLE {
 
   public static _dataArray2uuidHex(data: any, reverse: any) {

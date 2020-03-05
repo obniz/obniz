@@ -202,7 +202,7 @@ export default class PeripheralSPI {
     if (!this.used) {
       throw new Error(`spi${this.id} is not started`);
     }
-    if (semver.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+    if (semver.lte(this.Obniz.firmware_ver!, "1.0.2") && data.length > 32) {
       throw new Error(
         `with your obniz ${
           this.Obniz.firmware_ver
@@ -239,7 +239,7 @@ export default class PeripheralSPI {
     if (!this.used) {
       throw new Error(`spi${this.id} is not started`);
     }
-    if (semver.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
+    if (semver.lte(this.Obniz.firmware_ver!, "1.0.2") && data.length > 32) {
       throw new Error(
         `with your obniz ${
           this.Obniz.firmware_ver

@@ -74,6 +74,23 @@
 		<div class="col-8 col-content">
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>LogicAnalyzer records samples read from io periodically.
+						This is useful for digital bus signal check.</p>
+					</div>
+					<p>Only one LogicAnalyzer can be used per obniz Board.</p>
+					<a href="#how-it-works" id="how-it-works" style="color: inherit; text-decoration: none;">
+						<h3>How it works</h3>
+					</a>
+					<p>LogicAnalyzer starts logging by a trigger.
+					The default trigger is &quot;value change&quot;.</p>
+					<p>When it occurs, data will be recorded for a desired duration.
+						After that is done, LogicAnalyzer starts monitoring changes in io (= continue working).
+					One sample becomes one 1/0.</p>
+					<p><img src="media://logiana_0.png" alt=""></p>
+					<p>Sampling interval and duration can be configured.
+						For example, if interval is 1 ms and duration is 800ms, you will get 800 arrays of data.
+					The data will be in multiples of 8.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -97,18 +114,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#measured" class="tsd-kind-icon">measured</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#obniz" class="tsd-kind-icon">obniz</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#onmeasured" class="tsd-kind-icon">onmeasured</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#params" class="tsd-kind-icon">params</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#_reset" class="tsd-kind-icon">_reset</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#end" class="tsd-kind-icon">end</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#notified" class="tsd-kind-icon">notified</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.logicanalyzer.html#start" class="tsd-kind-icon">start</a></li>
 							</ul>
 						</section>
@@ -127,7 +139,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L26">src/obniz/libs/measurements/logicanalyzer.ts:26</a></li>
+									<li>Defined in src/obniz/libs/measurements/logicanalyzer.ts:89</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -144,65 +156,31 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="measured" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> measured</h3>
-					<div class="tsd-signature tsd-kind-icon">measured<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L26">src/obniz/libs/measurements/logicanalyzer.ts:26</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="obniz" class="tsd-anchor"></a>
-					<h3>obniz</h3>
-					<div class="tsd-signature tsd-kind-icon">obniz<span class="tsd-signature-symbol">:</span> <a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L23">src/obniz/libs/measurements/logicanalyzer.ts:23</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onmeasured" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onmeasured</h3>
 					<div class="tsd-signature tsd-kind-icon">onmeasured<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>array<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L24">src/obniz/libs/measurements/logicanalyzer.ts:24</a></li>
+							<li>Defined in src/obniz/libs/measurements/logicanalyzer.ts:86</li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="params" class="tsd-anchor"></a>
-					<h3>params</h3>
-					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L25">src/obniz/libs/measurements/logicanalyzer.ts:25</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>This is a callback function that will be called when data arrives.</p>
+						</div>
+						<p>The received data is in 0/1 array.
+						And every data represents 0,1 of io in a particular instance.</p>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.logicAnalyzer.start({<span class="hljs-attr">io</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">interval</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">duration</span>:<span class="hljs-number">1000</span>});  <span class="hljs-comment">// start on io0. 1ms interval and 1sec long.</span>
+
+obniz.logicAnalyzer.onmeasured = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(array);
+}</code></pre>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_reset" class="tsd-anchor"></a>
-					<h3>_reset</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L33">src/obniz/libs/measurements/logicanalyzer.ts:33</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="end" class="tsd-anchor"></a>
 					<h3>end</h3>
@@ -213,32 +191,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L69">src/obniz/libs/measurements/logicanalyzer.ts:69</a></li>
+									<li>Defined in src/obniz/libs/measurements/logicanalyzer.ts:173</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="notified" class="tsd-anchor"></a>
-					<h3>notified</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">notified<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L76">src/obniz/libs/measurements/logicanalyzer.ts:76</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>obj: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This stops the logicAnalyzer.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.logicAnalyzer.start({<span class="hljs-attr">io</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">interval</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">duration</span>:<span class="hljs-number">1000</span>});  <span class="hljs-comment">// start on io0. 1ms interval and 1sec long.</span>
+obniz.logicAnalyzer.end();</code></pre>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -253,13 +216,35 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/obniz/obniz/blob/76c959e6/src/obniz/libs/measurements/logicanalyzer.ts#L37">src/obniz/libs/measurements/logicanalyzer.ts:37</a></li>
+									<li>Defined in src/obniz/libs/measurements/logicanalyzer.ts:132</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This starts the logic analyzer on a given io.</p>
+								</div>
+								<p>For example, if you want to collect the data after io0 changes every 2ms for 1sec long, set as below.</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.logicAnalyzer.start({<span class="hljs-attr">io</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">interval</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">duration</span>:<span class="hljs-number">1000</span>});  <span class="hljs-comment">// start on io0. 2ms interval and 1sec long.</span>
+obniz.logicAnalyzer.onmeasured = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(array);
+}</code></pre>
+								<p>The trigger is an optional configuration.</p>
+								<p>Without this, logicAnalyzer recognizes any io level change as trigger and start. Trigger specifies the start position.
+									Value means start value, true/false. Samples means how much that value consists.
+								So, with the below sample code, you will only receive data that start with &quot;0, 0, 0&quot;</p>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.logicAnalyzer.start({<span class="hljs-attr">io</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">interval</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">duration</span>:<span class="hljs-number">1000</span>, <span class="hljs-attr">triggerValue</span>:<span class="hljs-literal">false</span>, <span class="hljs-attr">triggerValueSamples</span>:<span class="hljs-number">3</span>});  <span class="hljs-comment">// start on io0. 2ms interval and 1sec long.</span>
+obniz.logicAnalyzer.onmeasured = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array</span>) </span>{
+  <span class="hljs-built_in">console</span>.log(array);
+}</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>params: <a href="../interfaces/obnizcore.components.logicanalyzeroptions.html" class="tsd-signature-type">LogicAnalyzerOptions</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/obnizcore.components.logicanalyzeroptionsext.html" class="tsd-signature-type">LogicAnalyzerOptionsExt</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -274,16 +259,65 @@
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_index_.html">&quot;parts/<wbr>Ble/linking/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_advertising_.html">&quot;parts/<wbr>Ble/linking/modules/advertising&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_device_.html">&quot;parts/<wbr>Ble/linking/modules/device&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_ieee754_.html">&quot;parts/<wbr>Ble/linking/modules/ieee754&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_.html">&quot;parts/<wbr>Ble/linking/modules/service&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_notification_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>notification&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_operation_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>operation&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_property_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>property&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_sensor_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>sensor&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_setting_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>setting&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_display_matrixled_ht16k33_index_.html">&quot;parts/<wbr>Display/<wbr>MatrixLED_<wbr>HT16<wbr>K33/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_keyestudio_keyestudio_ht16k33_index_.html">&quot;parts/<wbr>Keyestudio/<wbr>Keyestudio_<wbr>HT16<wbr>K33/index&quot;</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
+						<ul>
+							<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+								<a href="../modules/obnizcore.components.html">Components</a>
+								<ul>
+									<li class=" tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+										<a href="../modules/obnizcore.components.ble.html">Ble</a>
+									</li>
+								</ul>
+							</li>
+							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.hardware.html">Hardware</a>
+							</li>
+						</ul>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.html">Parts</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.directive.html" class="tsd-kind-icon">Directive</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.display.html" class="tsd-kind-icon">Display</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
@@ -293,25 +327,10 @@
 								<a href="obnizcore.components.logicanalyzer.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#measured" class="tsd-kind-icon">measured</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#obniz" class="tsd-kind-icon">obniz</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.logicanalyzer.html#onmeasured" class="tsd-kind-icon">onmeasured</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#params" class="tsd-kind-icon">params</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#_reset" class="tsd-kind-icon">_reset</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.logicanalyzer.html#end" class="tsd-kind-icon">end</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.logicanalyzer.html#notified" class="tsd-kind-icon">notified</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.logicanalyzer.html#start" class="tsd-kind-icon">start</a>
@@ -320,111 +339,6 @@
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.obnizmeasure.html" class="tsd-kind-icon">Obniz<wbr>Measure</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.obnizswitch.html" class="tsd-kind-icon">Obniz<wbr>Switch</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheralad.html" class="tsd-kind-icon">PeripheralAD</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripherali2c.html" class="tsd-kind-icon">Peripheral<wbr>I2C</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheralio.html" class="tsd-kind-icon">PeripheralIO</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheralpwm.html" class="tsd-kind-icon">PeripheralPWM</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheralspi.html" class="tsd-kind-icon">PeripheralSPI</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheraluart.html" class="tsd-kind-icon">PeripheralUART</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.tcp.html" class="tsd-kind-icon">Tcp</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.directiveanimationframe.html" class="tsd-kind-icon">Directive<wbr>Animation<wbr>Frame</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.logicanalyzeroptions.html" class="tsd-kind-icon">Logic<wbr>Analyzer<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.logicanalyzeroptionsext.html" class="tsd-kind-icon">Logic<wbr>Analyzer<wbr>Options<wbr>Ext</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.obnizmeasureoptions.html" class="tsd-kind-icon">Obniz<wbr>Measure<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.obnizmeasureresult.html" class="tsd-kind-icon">Obniz<wbr>Measure<wbr>Result</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.pwminterface.html" class="tsd-kind-icon">PWMInterface</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/obnizcore.components.peripherali2coptions.html" class="tsd-kind-icon">Peripheral<wbr>I2COptions</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/obnizcore.components.peripherali2cstate.html" class="tsd-kind-icon">Peripheral<wbr>I2CState</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/obnizcore.components.peripheralpwmoptions.html" class="tsd-kind-icon">PeripheralPWMOptions</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/obnizcore.components.peripheralspioptions.html" class="tsd-kind-icon">PeripheralSPIOptions</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.peripheraluartoptions.html" class="tsd-kind-icon">PeripheralUARTOptions</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#animationstatus" class="tsd-kind-icon">Animation<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#bittype" class="tsd-kind-icon">Bit<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#drivetype" class="tsd-kind-icon">Drive<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#flowcontroltype" class="tsd-kind-icon">Flow<wbr>Control<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#i2cmode" class="tsd-kind-icon">I2CMode</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#obnizmeasureresultarray" class="tsd-kind-icon">Obniz<wbr>Measure<wbr>Result<wbr>Array</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#obnizswitchcallback" class="tsd-kind-icon">Obniz<wbr>Switch<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#obnizswitchstate" class="tsd-kind-icon">Obniz<wbr>Switch<wbr>State</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#pwmmodulatetype" class="tsd-kind-icon">PWMModulate<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#paritytype" class="tsd-kind-icon">Parity<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#pulltype" class="tsd-kind-icon">Pull<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#stopbittype" class="tsd-kind-icon">Stop<wbr>Bit<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#tcpconnectioncallbackfunction" class="tsd-kind-icon">TCPConnection<wbr>Callback<wbr>Function</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#tcperrorcallbackfunction" class="tsd-kind-icon">TCPError<wbr>Callback<wbr>Function</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#tcpreceivecallbackfunction" class="tsd-kind-icon">TCPReceive<wbr>Callback<wbr>Function</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

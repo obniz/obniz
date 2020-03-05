@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module ObnizCore.Components.hw
+ * @module ObnizCore.Hardware
  */
 
 import Obniz from "../../index";
@@ -66,5 +66,9 @@ interface obnizBoard extends Obniz {
   ble: ObnizBLE | ObnizBLEHci;
 }
 
+/**
+ * @ignore
+ */
 type ObnizBoard = obnizBoard;
+
 export default ObnizBoard;
