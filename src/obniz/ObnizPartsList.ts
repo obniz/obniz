@@ -8,6 +8,7 @@ import HX711, {Hx711Options} from "../parts/ADConverter/hx711";
 // Camera
 import ArduCAMMini, {ArduCAMMiniOptions} from "../parts/Camera/ArduCAMMini";
 import JpegSerialCam, {JpegSerialCamOptions} from "../parts/Camera/JpegSerialCam";
+import MCP4725, {MCP4725Options} from "../parts/DAConverter/MCP4725";
 // Display
 import _7SegmentLED, {_7SegmentLEDOptions} from "../parts/Display/7SegmentLED";
 import _7SegmentLED_MAX7219, {_7SegmentLED_MAX7219Options} from "../parts/Display/7SegmentLED_MAX7219";
@@ -117,6 +118,7 @@ import Keyestudio_PIR, {Keyestudio_PIROptions} from "../parts/Keyestudio/Keyestu
 import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
 import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/Keyestudio/Keyestudio_TrafficLight";
 import StickC_ADC, {StickC_ADCOptions} from "../parts/StickCHat/StickC_ADC";
+import StickC_DAC, {StickC_DACOptions} from "../parts/StickCHat/StickC_DAC";
 import StickC_JoyStick, {StickC_JoyStickOptions} from "../parts/StickCHat/StickC_JoyStick";
 
 export interface WiredNameMap {
@@ -199,6 +201,8 @@ export interface WiredNameMap {
   "HMC5883L": HMC5883L;
   // ADConverter
   "hx711": HX711;
+  // DAConverter
+  "MCP4725": MCP4725;
   // SoilSensor
   "SEN0114": SEN0114;
   // Temperature Sensor
@@ -237,6 +241,7 @@ export interface WiredNameMap {
   // StickCHat
   "StickC_JoyStick": StickC_JoyStick;
   "StickC_ADC": StickC_ADC;
+  "StickC_DAC": StickC_DAC;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -342,6 +347,8 @@ export interface WiredNameOptionsMap {
   "HMC5883L": HMC5883LOptions;
   // ADConverter
   "hx711": Hx711Options;
+  // DAConverter
+  "MCP4725": MCP4725Options;
   // SoilSensor
   "SEN0114": SEN0114Options;
   // Temperature Sensor
@@ -378,6 +385,7 @@ export interface WiredNameOptionsMap {
   // StickCHat
   "StickC_JoyStick": StickC_JoyStickOptions;
   "StickC_ADC": StickC_ADCOptions;
+  "StickC_DAC": StickC_DACOptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;

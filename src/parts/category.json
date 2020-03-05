@@ -485,6 +485,17 @@
       ]
     },
     {
+      "name": "DAConverter",
+      "parts": [
+        {
+          "name": "MCP4725",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-08677/"
+          }
+        }
+      ]
+    },
+    {
       "name": "Soil Moisture Sensor",
       "image_url": "https://obniz.io/sdk/parts/SEN0114/wired.png",
       "parts": [
@@ -683,8 +694,13 @@
         {
           "name": "StickC_JoyStick",
           "store": {}
-        },{
+        },
+        {
           "name": "StickC_ADC",
+          "store": {}
+        },
+        {
+          "name": "StickC_DAC",
           "store": {}
         }
       ]
