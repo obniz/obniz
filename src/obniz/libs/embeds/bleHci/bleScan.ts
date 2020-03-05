@@ -19,7 +19,7 @@ export type BleBinary = number[];
 /**
  * All parameters are OR. If you set uuid and localName, obniz find uuid match but localName not match device.
  *
- * If obnizOS >= 3.2.0, filters are apply on obniz device. So it reduce traffic.
+ * If you set BleScanSetting.filterOnDevice 'true', filters are apply on obniz device. So it reduce traffic.
  */
 export interface BleScanTarget {
   uuids?: UUID[];
@@ -78,6 +78,17 @@ export interface BleScanSetting {
    *
    */
   activeScan?: boolean;
+
+  /**
+   * (obnizOS >= 3.2.0 only)
+   * filters are apply on obniz device
+   *
+   * True: filter on device and JavaScript.
+   * False : filter on JavaScript only.
+   *
+   * Default is false : filter on JavaScript only.
+   */
+  filterOnDevice?: boolean;
 }
 
 /**
@@ -127,6 +138,7 @@ export default class BleScan {
   protected emitter: EventEmitter;
   protected scanedPeripherals: BleRemotePeripheral[];
   private _timeoutTimer?: NodeJS.Timeout;
+  private _delayNotifyTimers: Array<{ peripheral: BleRemotePeripheral, timer: NodeJS.Timeout }> = [];
 
   constructor(obnizBle: ObnizBLE) {
     this.scanTarget = {};
@@ -173,6 +185,7 @@ export default class BleScan {
 
     const timeout: number | null = settings.duration === undefined ? 30 : settings.duration;
     settings.duplicate = !!settings.duplicate;
+    settings.filterOnDevice = !!settings.filterOnDevice;
     settings.activeScan = settings.activeScan !== false;
     this.scanSettings = settings;
 
@@ -183,9 +196,12 @@ export default class BleScan {
       });
     }
     this.scanedPeripherals = [];
-
-    this._setTargetFilterOnDevice();
-
+    this._clearDelayNotifyTimer();
+    if (settings.filterOnDevice) {
+      this._setTargetFilterOnDevice(this.scanTarget);
+    } else {
+      this._setTargetFilterOnDevice({}); // clear
+    }
     this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
 
     this.clearTimeoutTimer();
@@ -299,23 +315,32 @@ export default class BleScan {
   public notifyFromServer(notifyName: string, params: any) {
     switch (notifyName) {
       case "onfind": {
-        if (this.scanSettings.duplicate === false) {
-          // duplicate filter
-          if (this.scanedPeripherals.find((e: any) => e.address === params.address)) {
-            break;
-          }
+        const peripheral: BleRemotePeripheral = params;
+
+        const alreadyGotCompleteAdveData = peripheral.adv_data && peripheral.adv_data.length > 0
+          && peripheral.scan_resp && peripheral.scan_resp.length > 0;
+        const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
+        const maybeAdvOnly = this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address)
+          && (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
+
+        // wait for adv_data + scan resp
+        // 10 seconds timeout
+        if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
+          this._removeDelayNotifyTimer(peripheral.address);
+          this._notifyOnFind(peripheral);
+        } else {
+          const timer = setInterval(() => {
+            this._notifyOnFind(peripheral);
+          }, 10000);
+          this._delayNotifyTimers.push({timer, peripheral});
         }
-        if (this.isTarget(params)) {
-          this.scanedPeripherals.push(params);
-          this.emitter.emit(notifyName, params);
-          if (this.onfind) {
-            this.onfind(params);
-          }
-        }
+
         break;
       }
       case "onfinish": {
         this.clearTimeoutTimer();
+        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+        this._clearDelayNotifyTimer();
         this.emitter.emit(notifyName, this.scanedPeripherals);
         if (this.onfinish) {
           this.onfinish(this.scanedPeripherals);
@@ -420,7 +445,7 @@ export default class BleScan {
     }
   }
 
-  protected _setTargetFilterOnDevice() {
+  protected _setTargetFilterOnDevice(scanTarget: BleScanTarget) {
 
     // < 3.2.0
     if (semver.lt(this.obnizBle.Obniz.firmware_ver!, "3.2.0")) {
@@ -428,34 +453,34 @@ export default class BleScan {
     }
 
     const adFilters: BleScanAdvertisementFilterParam[] = [];
-    if (this.scanTarget.uuids) {
-      this.scanTarget.uuids.map((elm: UUID) => {
+    if (scanTarget.uuids) {
+      scanTarget.uuids.map((elm: UUID) => {
         adFilters.push({uuid: BleHelper.uuidFilter(elm)});
       });
     }
-    if (this.scanTarget.localName) {
-      this._arrayWrapper(this.scanTarget.localName).forEach((name) => {
+    if (scanTarget.localName) {
+      this._arrayWrapper(scanTarget.localName).forEach((name) => {
         adFilters.push({localNamePrefix: name});
       });
     }
-    if (this.scanTarget.deviceAddress) {
-      this._arrayWrapper(this.scanTarget.deviceAddress).forEach((address) => {
+    if (scanTarget.deviceAddress) {
+      this._arrayWrapper(scanTarget.deviceAddress).forEach((address) => {
         adFilters.push({deviceAddress: address});
       });
     }
 
-    if (this.scanTarget.localNamePrefix) {
-      this._arrayWrapper(this.scanTarget.localNamePrefix).forEach((name) => {
+    if (scanTarget.localNamePrefix) {
+      this._arrayWrapper(scanTarget.localNamePrefix).forEach((name) => {
         adFilters.push({localNamePrefix: name});
       });
     }
-    if (this.scanTarget.binary) {
-      if (Array.isArray(this.scanTarget.binary[0])) {
-        this.scanTarget.binary.forEach((e: any) => {
+    if (scanTarget.binary) {
+      if (Array.isArray(scanTarget.binary[0])) {
+        scanTarget.binary.forEach((e: any) => {
           adFilters.push({binary: e});
         });
       } else {
-        adFilters.push({binary: this.scanTarget.binary as number[]});
+        adFilters.push({binary: scanTarget.binary as number[]});
       }
     }
     this._setAdvertisementFilter(adFilters);
@@ -463,7 +488,7 @@ export default class BleScan {
 
   protected isTarget(peripheral: BleRemotePeripheral) {
 
-    if ( !this.scanTarget ||
+    if (!this.scanTarget ||
       Object.keys(this.scanTarget).length === 0
       || this.isLocalNamePrefixTarget(peripheral)
       || this.isLocalNameTarget(peripheral)
@@ -481,6 +506,22 @@ export default class BleScan {
     if (this._timeoutTimer) {
       clearTimeout(this._timeoutTimer);
       this._timeoutTimer = undefined;
+    }
+  }
+
+  private _notifyOnFind(peripheral: BleRemotePeripheral) {
+    if (this.scanSettings.duplicate === false) {
+      // duplicate filter
+      if (this.scanedPeripherals.find((e: any) => e.address === peripheral.address)) {
+        return;
+      }
+    }
+    if (this.isTarget(peripheral)) {
+      this.scanedPeripherals.push(peripheral);
+      this.emitter.emit("onfind", peripheral);
+      if (this.onfind) {
+        this.onfind(peripheral);
+      }
     }
   }
 
@@ -544,6 +585,24 @@ export default class BleScan {
       }
     }
     return false;
+  }
+
+  private _clearDelayNotifyTimer() {
+    this._delayNotifyTimers.forEach((e) => {
+      clearTimeout(e.timer);
+    });
+    this._delayNotifyTimers = [];
+  }
+
+  private _removeDelayNotifyTimer(targetAddress: BleDeviceAddress) {
+    this._delayNotifyTimers = this._delayNotifyTimers.filter((e) => {
+      if (e.peripheral.address === targetAddress) {
+        clearTimeout(e.timer);
+        return false;
+      }
+      return true;
+    });
+
   }
 
 }

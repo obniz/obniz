@@ -6,7 +6,9 @@
 import EventEmitter from "eventemitter3";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
+import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
 import BleRemoteService from "./bleRemoteService";
+import {BleBinary} from "./bleScan";
 import {BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID} from "./bleTypes";
 
 /**
@@ -34,12 +36,48 @@ export interface IBeacon {
 }
 
 /**
+ * connect setting
+ */
+export interface BleConnectSetting {
+  /**
+   * Auto discovery on connection established.
+   *
+   * true : auto discover services/characteristics/descriptors on connection established.
+   * false : don't discover automatically. Please manually.
+   *
+   * Default is true;
+   *
+   * If set false, you should manually discover services/characteristics/descriptors;
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.ble.initWait({});
+   * obniz.ble.scan.onfind = function(peripheral){
+   * if(peripheral.localName == "my peripheral"){
+   *      peripheral.onconnect = async function(){
+   *          console.log("success");
+   *          await peripheral.discoverAllServicesWait(); //manually discover
+   *          let service = peripheral.getService("1800");
+   *      }
+   *      peripheral.connect({autoDiscovery:false});
+   *     }
+   * }
+   * obniz.ble.scan.start();
+   * ```
+   *
+   */
+  autoDiscovery?: boolean;
+
+}
+
+/**
  * @category Use as Central
  */
 export default class BleRemotePeripheral {
 
   /**
-   * It contains all discovered services in a peripheral as an array. It is discovered when connection automatically.
+   * It contains all discovered services in a peripheral as an array.
+   * It is discovered when connection automatically.
    *
    * ```javascript
    * // Javascript Example
@@ -253,6 +291,11 @@ export default class BleRemotePeripheral {
    */
   public obnizBle: ObnizBLE;
 
+  /**
+   * @ignore
+   */
+  public _connectSetting: BleConnectSetting = {};
+
   protected keys: any;
   protected advertise_data_rows: any;
   protected _services: BleRemoteService[];
@@ -336,7 +379,9 @@ export default class BleRemotePeripheral {
    * obniz.ble.scan.start();
    * ```
    */
-  public connect() {
+  public connect(setting?: BleConnectSetting) {
+    this._connectSetting = setting || {};
+    this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
     this.obnizBle.scan.end();
     this.obnizBle.centralBindings.connect(this.address);
   }
@@ -371,7 +416,7 @@ export default class BleRemotePeripheral {
    * ```
    *
    */
-  public connectWait(): Promise<void> {
+  public connectWait(setting?: BleConnectSetting): Promise<void> {
     return new Promise((resolve: any, reject: any) => {
       // if (this.connected) {
       //   resolve();
@@ -390,7 +435,7 @@ export default class BleRemotePeripheral {
           );
         }
       });
-      this.connect();
+      this.connect(setting);
     });
   }
 
@@ -559,9 +604,29 @@ export default class BleRemotePeripheral {
   }
 
   /**
-   * @ignore
+   * Discover services.
+   *
+   * If connect setting param 'autoDiscovery' is true(default),
+   * services are automatically disvocer on connection established.
+   *
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.ble.initWait({});
+   * obniz.ble.scan.onfind = function(peripheral){
+   * if(peripheral.localName == "my peripheral"){
+   *      peripheral.onconnect = async function(){
+   *          console.log("success");
+   *          await peripheral.discoverAllServicesWait(); //manually discover
+   *          let service = peripheral.getService("1800");
+   *      }
+   *      peripheral.connect({autoDiscovery:false});
+   *     }
+   * }
+   * obniz.ble.scan.start();
+   * ```
    */
-  public discoverAllServicesWait() {
+  public discoverAllServicesWait(): Promise<BleRemoteService[]> {
     return new Promise((resolve: any) => {
       this.emitter.once("discoverfinished", () => {
         const children: any = this._services.filter((elm: any) => {

@@ -6071,7 +6071,7 @@ class ObnizBLE {
     }
     async onConnect(peripheralUuid, error) {
         const peripheral = this.findPeripheral(peripheralUuid);
-        if (!error) {
+        if (!error && peripheral._connectSetting.autoDiscovery) {
             await peripheral.discoverAllHandlesWait();
         }
         peripheral.notifyFromServer("statusupdate", {
@@ -6923,11 +6923,6 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
         else {
             this.properties = obj.properties || [];
         }
-        //
-        // this.permissions = obj.permissions || [];
-        // if (!Array.isArray(this.permissions)) {
-        //   this.permissions = [this.permissions];
-        // }
     }
     /**
      * @ignore
@@ -7007,18 +7002,18 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
             return elm !== param;
         });
     }
-    //
-    // public addPermission(param: any) {
-    //   if (!this.permissions.includes(param)) {
-    //     this.permissions.push(param);
-    //   }
-    // }
-    //
-    // public removePermission(param: any) {
-    //   this.permissions = this.permissions.filter((elm: any) => {
-    //     return elm !== param;
-    //   });
-    // }
+    /**
+     * @ignore
+     * @param param
+     */
+    addPermission(param) {
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    removePermission(param) {
+    }
     /**
      * @ignore
      * @param name
@@ -8059,8 +8054,31 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         return this.discoverChildren();
     }
     /**
-     * @ignore
+     * Discover services.
      *
+     * If connect setting param 'autoDiscovery' is true(default),
+     * services are automatically disvocer on connection established.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.discoverAllServicesWait(); //manually discover
+     *          let service = peripheral.getService("1800");
+     *          await service.discoverAllCharacteristicsWait(); //manually discover
+     *          let characteristics = service.getCharacteristic("ff00");
+     *          await characteristics.discoverAllDescriptorsWait(); //manually discover
+     *          let descriptor = characteristics.getDescriptor("fff1");
+     *      }
+     *      peripheral.connect({autoDiscovery:false});
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
      */
     discoverAllDescriptorsWait() {
         return this.discoverChildrenWait();
@@ -8333,6 +8351,10 @@ const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz
  */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
+        /**
+         * @ignore
+         */
+        this._connectSetting = {};
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -8356,7 +8378,8 @@ class BleRemotePeripheral {
         this.emitter = new eventemitter3_1.default();
     }
     /**
-     * It contains all discovered services in a peripheral as an array. It is discovered when connection automatically.
+     * It contains all discovered services in a peripheral as an array.
+     * It is discovered when connection automatically.
      *
      * ```javascript
      * // Javascript Example
@@ -8434,7 +8457,9 @@ class BleRemotePeripheral {
      * obniz.ble.scan.start();
      * ```
      */
-    connect() {
+    connect(setting) {
+        this._connectSetting = setting || {};
+        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         this.obnizBle.scan.end();
         this.obnizBle.centralBindings.connect(this.address);
     }
@@ -8468,7 +8493,7 @@ class BleRemotePeripheral {
      * ```
      *
      */
-    connectWait() {
+    connectWait(setting) {
         return new Promise((resolve, reject) => {
             // if (this.connected) {
             //   resolve();
@@ -8482,7 +8507,7 @@ class BleRemotePeripheral {
                     reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
                 }
             });
-            this.connect();
+            this.connect(setting);
         });
     }
     /**
@@ -8638,7 +8663,27 @@ class BleRemotePeripheral {
         this.obnizBle.centralBindings.discoverServices(this.address);
     }
     /**
-     * @ignore
+     * Discover services.
+     *
+     * If connect setting param 'autoDiscovery' is true(default),
+     * services are automatically disvocer on connection established.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.discoverAllServicesWait(); //manually discover
+     *          let service = peripheral.getService("1800");
+     *      }
+     *      peripheral.connect({autoDiscovery:false});
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
      */
     discoverAllServicesWait() {
         return new Promise((resolve) => {
@@ -8959,7 +9004,29 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
         return this.discoverChildren();
     }
     /**
-     * @ignore
+     * Discover services.
+     *
+     * If connect setting param 'autoDiscovery' is true(default),
+     * services are automatically disvocer on connection established.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.discoverAllServicesWait(); //manually discover
+     *          let service = peripheral.getService("1800");
+     *          await service.discoverAllCharacteristicsWait(); //manually discover
+     *          let characteristics = service.getCharacteristic("ff00")
+     *      }
+     *      peripheral.connect({autoDiscovery:false});
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
      */
     discoverAllCharacteristicsWait() {
         return this.discoverChildrenWait();
@@ -9097,6 +9164,7 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  */
 class BleScan {
     constructor(obnizBle) {
+        this._delayNotifyTimers = [];
         this.scanTarget = {};
         this.scanSettings = {};
         this.obnizBle = obnizBle;
@@ -9138,6 +9206,7 @@ class BleScan {
         this.obnizBle.warningIfNotInitialize();
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
+        settings.filterOnDevice = !!settings.filterOnDevice;
         settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
         this.scanTarget = target;
@@ -9147,7 +9216,13 @@ class BleScan {
             });
         }
         this.scanedPeripherals = [];
-        this._setTargetFilterOnDevice();
+        this._clearDelayNotifyTimer();
+        if (settings.filterOnDevice) {
+            this._setTargetFilterOnDevice(this.scanTarget);
+        }
+        else {
+            this._setTargetFilterOnDevice({}); // clear
+        }
         this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
         if (timeout !== null) {
@@ -9252,23 +9327,30 @@ class BleScan {
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onfind": {
-                if (this.scanSettings.duplicate === false) {
-                    // duplicate filter
-                    if (this.scanedPeripherals.find((e) => e.address === params.address)) {
-                        break;
-                    }
+                const peripheral = params;
+                const alreadyGotCompleteAdveData = peripheral.adv_data && peripheral.adv_data.length > 0
+                    && peripheral.scan_resp && peripheral.scan_resp.length > 0;
+                const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
+                const maybeAdvOnly = this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address)
+                    && (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
+                // wait for adv_data + scan resp
+                // 10 seconds timeout
+                if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
+                    this._removeDelayNotifyTimer(peripheral.address);
+                    this._notifyOnFind(peripheral);
                 }
-                if (this.isTarget(params)) {
-                    this.scanedPeripherals.push(params);
-                    this.emitter.emit(notifyName, params);
-                    if (this.onfind) {
-                        this.onfind(params);
-                    }
+                else {
+                    const timer = setInterval(() => {
+                        this._notifyOnFind(peripheral);
+                    }, 10000);
+                    this._delayNotifyTimers.push({ timer, peripheral });
                 }
                 break;
             }
             case "onfinish": {
                 this.clearTimeoutTimer();
+                this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+                this._clearDelayNotifyTimer();
                 this.emitter.emit(notifyName, this.scanedPeripherals);
                 if (this.onfinish) {
                     this.onfinish(this.scanedPeripherals);
@@ -9359,40 +9441,40 @@ class BleScan {
             return [val];
         }
     }
-    _setTargetFilterOnDevice() {
+    _setTargetFilterOnDevice(scanTarget) {
         // < 3.2.0
         if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
             return;
         }
         const adFilters = [];
-        if (this.scanTarget.uuids) {
-            this.scanTarget.uuids.map((elm) => {
+        if (scanTarget.uuids) {
+            scanTarget.uuids.map((elm) => {
                 adFilters.push({ uuid: bleHelper_1.default.uuidFilter(elm) });
             });
         }
-        if (this.scanTarget.localName) {
-            this._arrayWrapper(this.scanTarget.localName).forEach((name) => {
+        if (scanTarget.localName) {
+            this._arrayWrapper(scanTarget.localName).forEach((name) => {
                 adFilters.push({ localNamePrefix: name });
             });
         }
-        if (this.scanTarget.deviceAddress) {
-            this._arrayWrapper(this.scanTarget.deviceAddress).forEach((address) => {
+        if (scanTarget.deviceAddress) {
+            this._arrayWrapper(scanTarget.deviceAddress).forEach((address) => {
                 adFilters.push({ deviceAddress: address });
             });
         }
-        if (this.scanTarget.localNamePrefix) {
-            this._arrayWrapper(this.scanTarget.localNamePrefix).forEach((name) => {
+        if (scanTarget.localNamePrefix) {
+            this._arrayWrapper(scanTarget.localNamePrefix).forEach((name) => {
                 adFilters.push({ localNamePrefix: name });
             });
         }
-        if (this.scanTarget.binary) {
-            if (Array.isArray(this.scanTarget.binary[0])) {
-                this.scanTarget.binary.forEach((e) => {
+        if (scanTarget.binary) {
+            if (Array.isArray(scanTarget.binary[0])) {
+                scanTarget.binary.forEach((e) => {
                     adFilters.push({ binary: e });
                 });
             }
             else {
-                adFilters.push({ binary: this.scanTarget.binary });
+                adFilters.push({ binary: scanTarget.binary });
             }
         }
         this._setAdvertisementFilter(adFilters);
@@ -9413,6 +9495,21 @@ class BleScan {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
             this._timeoutTimer = undefined;
+        }
+    }
+    _notifyOnFind(peripheral) {
+        if (this.scanSettings.duplicate === false) {
+            // duplicate filter
+            if (this.scanedPeripherals.find((e) => e.address === peripheral.address)) {
+                return;
+            }
+        }
+        if (this.isTarget(peripheral)) {
+            this.scanedPeripherals.push(peripheral);
+            this.emitter.emit("onfind", peripheral);
+            if (this.onfind) {
+                this.onfind(peripheral);
+            }
         }
     }
     isLocalNameTarget(peripheral) {
@@ -9464,6 +9561,21 @@ class BleScan {
             }
         }
         return false;
+    }
+    _clearDelayNotifyTimer() {
+        this._delayNotifyTimers.forEach((e) => {
+            clearTimeout(e.timer);
+        });
+        this._delayNotifyTimers = [];
+    }
+    _removeDelayNotifyTimer(targetAddress) {
+        this._delayNotifyTimers = this._delayNotifyTimers.filter((e) => {
+            if (e.peripheral.address === targetAddress) {
+                clearTimeout(e.timer);
+                return false;
+            }
+            return true;
+        });
     }
 }
 exports.default = BleScan;

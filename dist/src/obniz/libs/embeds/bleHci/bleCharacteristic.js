@@ -47,11 +47,6 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
         else {
             this.properties = obj.properties || [];
         }
-        //
-        // this.permissions = obj.permissions || [];
-        // if (!Array.isArray(this.permissions)) {
-        //   this.permissions = [this.permissions];
-        // }
     }
     /**
      * @ignore
@@ -131,18 +126,18 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
             return elm !== param;
         });
     }
-    //
-    // public addPermission(param: any) {
-    //   if (!this.permissions.includes(param)) {
-    //     this.permissions.push(param);
-    //   }
-    // }
-    //
-    // public removePermission(param: any) {
-    //   this.permissions = this.permissions.filter((elm: any) => {
-    //     return elm !== param;
-    //   });
-    // }
+    /**
+     * @ignore
+     * @param param
+     */
+    addPermission(param) {
+    }
+    /**
+     * @ignore
+     * @param param
+     */
+    removePermission(param) {
+    }
     /**
      * @ignore
      * @param name
@@ -229,5 +224,4 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
 }
 exports.default = BleCharacteristic;
-
 //# sourceMappingURL=bleCharacteristic.js.map

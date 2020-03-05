@@ -269,14 +269,14 @@ describe('8-ble', function() {
 
   it('unknown service error', async () => {
     let service = await this.peripheral.getService('FF00');
-    expect(service).to.be.undefined;
+    expect(service).to.be.null;
   });
 
   it('unknown char error', async () => {
     let char = await this.peripheral
       .getService('FFF0')
       .getCharacteristic('FF00');
-    expect(char).to.be.undefined;
+    expect(char).to.be.null;
   });
 
   it('unknown desc error', async () => {
@@ -284,7 +284,7 @@ describe('8-ble', function() {
       .getService('fff0')
       .getCharacteristic('fff1')
       .getDescriptor('2902');
-    expect(desc).to.be.undefined;
+    expect(desc).to.be.null;
   });
 
   it('close', async () => {
