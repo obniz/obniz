@@ -4,6 +4,54 @@
 
 
 
+##  request: <a name="-request-ble-hci-init">init</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.hci.initialize` |  boolean  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "hci": {
+                "initialize": true
+            }
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-ble-hci-deinit">deinit</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.hci` |  null  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "hci": null
+        }
+    }
+]
+```
+
+
 ##  request: <a name="-request-ble-hci-write">write</a>
 
 

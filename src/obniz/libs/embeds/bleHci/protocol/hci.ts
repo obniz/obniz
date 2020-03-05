@@ -5,7 +5,7 @@
 
 // let debug = require('debug')('hci');
 const debug: any = (...params: any[]) => {
-  console.log(...params);
+  // console.log(...params);
 };
 
 import events = require("events");
@@ -629,12 +629,12 @@ class Hci extends events.EventEmitter {
 
     const eventType: any = data.readUInt8(0);
 
-    debug("\tevent type = " + eventType);
+    debug("\tevent type = 0x" + eventType.toString(16));
 
     if (COMMANDS.HCI_EVENT_PKT === eventType) {
       const subEventType: any = data.readUInt8(1);
 
-      debug("\tsub event type = " + subEventType);
+      debug("\tsub event type = 0x" + subEventType.toString(16));
 
       if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
         const handle: any = data.readUInt16LE(4);
@@ -674,10 +674,10 @@ class Hci extends events.EventEmitter {
         const status: any = data.readUInt8(6);
         const result: any = data.slice(7);
 
-        debug("\t\tncmd = " + ncmd);
-        debug("\t\tcmd = " + cmd);
-        debug("\t\tstatus = " + status);
-        debug("\t\tresult = " + result.toString("hex"));
+        debug("\t\tncmd = 0x" + ncmd.toString(16));
+        debug("\t\tcmd = 0x" + cmd.toString(16));
+        debug("\t\tstatus = 0x" + status.toString(16));
+        debug("\t\tresult = 0x" + result.toString("hex"));
 
         this.processCmdCompleteEvent(cmd, status, result);
       } else if (subEventType === COMMANDS.EVT_CMD_STATUS) {

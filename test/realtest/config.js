@@ -7,8 +7,8 @@ const LOCAL_IP = '';
 //Select Test Board
 //const json = require('./board/esp32devkitc_check_io.json');
 //const json = require('./board/m5stickc_check_io.json');
-// const json = require('./board/obniz_check_io.json');
-const json = require('./board/obniz_1y_check_io.json');
+const json = require('./board/obniz_check_io.json');
+// const json = require('./board/obniz_1y_check_io.json');
 //const json = require('./board/esp32lte_check_io.json');
 //const json = require('./board/esp32pikokitv4_check_io.json');
 
@@ -19,7 +19,7 @@ if (json.name === 'ESP32 Dev Kit') {
 } else if (json.name === 'M5STICK C') {
   checkBoard_ID = '88801217';
 } else if (json.name === 'obniz board') {
-  checkBoard_ID = '95147341';
+  checkBoard_ID = '13928575';
 } else if (json.name === 'obniz 1Y') {
   checkBoard_ID = '54371148';
 } else if (json.name === 'ESP32 Pico Kit v4') {
@@ -28,7 +28,7 @@ if (json.name === 'ESP32 Dev Kit') {
   checkBoard_ID = '41232281';
 }
 
-const obnizA_ID = '16438366';
+const obnizA_ID = '73566823';
 const obnizB_ID = '00747253';
 
 let obnizA, obnizB, checkBoard;
