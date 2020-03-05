@@ -9,6 +9,7 @@ import CentralBindings from "./protocol/central/bindings";
 import HciProtocol from "./protocol/hci";
 import PeripheralBindings from "./protocol/peripheral/bindings";
 
+import semver from "semver";
 import Obniz from "../../../index";
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
@@ -129,6 +130,14 @@ export default class ObnizBLE {
   public async initWait(): Promise<void> {
     if (!this._initialized) {
       this._initialized = true;
+
+      // force initialize on obnizOS < 3.2.0
+      if (semver.lt(this.Obniz.firmware_ver!, "3.2.0")) {
+        this.hci.init();
+        this.hci.end();   // disable once
+        this.hci.init();
+      }
+
       await this.hciProtocol.initWait();
     }
   }
