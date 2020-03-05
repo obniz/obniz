@@ -1,31 +1,15 @@
-# MatrixLED_HT16K33
+# Keyestudio_HT16K33
 複数LEDを操作するHT16K33チップと連携するクラスです。
-マトリックスLEDとセットで販売されていることが多く、色々な表示が可能です。
+Keyestudioの製品のサポートになります。
+![](image.jpg)
 
-## wired(obniz,  { vcc, gnd, sda, scl, address　});
+## wired(obniz,  { vcc, gnd, sda, scl　});
 
 obniz BoardにマトリックスLEDを接続します。
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-```
-
-```Javascript
-// Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3, address: 0x71 });
-```
-
-
-## init(width)
-
-マトリックスを初期化します。
-HT16K33チップでは8*16までのLEDを制御できます。7-16の間で指定してください。
-
-```Javascript
-// Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-matrix.init(8);
+const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 ```
 
 ## brightness(value)
@@ -33,8 +17,7 @@ matrix.init(8);
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-matrix.init(8);
+const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 matrix.brightness(7);
 ```
 
@@ -48,8 +31,7 @@ HTML5のcanvasをそのまま描画します。html上でobniz Boardを使って
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-matrix.init(8);
+const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 matrix.brightness(7);
 
 const ctx = obniz.util.createCanvasContext(matrix.width, matrix.height);
@@ -68,7 +50,7 @@ matrix.draw(ctx);
  
  ```Javascript
  // Javascript Example
- const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+ const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
  const dots = [1,2,4,8,16,32,64,128]
  matrix.draw(dots);
  ```
@@ -77,7 +59,6 @@ matrix.draw(ctx);
 すべてを消去します。
 
 ```Javascript
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-matrix.init(8);
+const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 matrix.clear();
 ```

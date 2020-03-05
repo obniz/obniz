@@ -36,6 +36,7 @@ import InfraredLED, {InfraredLEDOptions} from "../parts/Infrared/InfraredLED";
 import IRModule, {IRModuleOptions} from "../parts/Infrared/IRModule";
 import IRSensor, {IRSensorOptions} from "../parts/Infrared/IRSensor";
 import YG1006, {YG1006Options} from "../parts/Infrared/YG1006";
+
 import FullColorLED, {FullColorLEDOptions} from "../parts/Light/FullColorLED";
 import LED, {LEDOptions} from "../parts/Light/LED";
 import WS2811, {WS2811Options} from "../parts/Light/WS2811";
@@ -109,6 +110,7 @@ import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
 // Keyestudio
 import Keyestudio_Button, {Keyestudio_ButtonOptions} from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, {Keyestudio_BuzzerOptions} from "../parts/Keyestudio/Keyestudio_Buzzer";
+import Keyestudio_HT16K33, {Keyestudio_HT16K33Options} from "../parts/Keyestudio/Keyestudio_HT16K33";
 import Keyestudio_MoistureSensor, {Keyestudio_MoistureSensorOptions} from "../parts/Keyestudio/Keyestudio_MoistureSensor";
 import Keyestudio_PIR, {Keyestudio_PIROptions} from "../parts/Keyestudio/Keyestudio_PIR";
 import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
@@ -249,6 +251,7 @@ export interface WiredNameMap {
   "DPS310": DPS310;
   // KeyeStudio
   "MatrixLED_HT16K33": MatrixLED_HT16K33;
+  "Keyestudio_HT16K33": Keyestudio_HT16K33;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -386,4 +389,5 @@ export interface WiredNameOptionsMap {
   "DPS310": DPS310Options;
   // KeyeStudio
   "MatrixLED_HT16K33": MatrixLED_HT16K33Options;
+  "Keyestudio_HT16K33": Keyestudio_HT16K33Options;
 }

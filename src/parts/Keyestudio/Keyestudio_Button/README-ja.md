@@ -16,7 +16,7 @@ gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(- pin of Keyestudio)
 
 ```Javascript
 // Javascript Example
-var button = obniz.wired("Keyestudio_Button", {gnd:2, vcc:1, signal: 0});
+var button = obniz.wired("Keyestudio_Button", {signal:0, vcc:1, gnd:2});
 button.onchange = function(voltage) {
   console.log(voltage);
 }
@@ -28,7 +28,7 @@ button.onchange = function(voltage) {
 
 ```Javascript
 // Javascript Example
-var button = obniz.wired("Keyestudio_Button", {gnd:2, vcc:1, signal: 0});
+var button = obniz.wired("Keyestudio_Button", {signal:0, vcc:1, gnd:2});
 button.onchange = function(pressed){
   console.log("pressed:" + pressed)
 };
@@ -40,7 +40,7 @@ button.onchange = function(pressed){
 
 ```Javascript
 // Javascript Example
-var button = obniz.wired("Keyestudio_Button", {gnd:2, vcc:1, signal: 0});
+var button = obniz.wired("Keyestudio_Button", {signal:0, vcc:1, gnd:2});
 var pressed = await button.isPressedWait();
 console.log("Pressed = " + pressed);
 ```
@@ -52,7 +52,7 @@ console.log("Pressed = " + pressed);
 
 ```Javascript
 // Javascript Example
-var button = obniz.wired("Keyestudio_Button", {gnd:2, vcc:1, signal: 0});
+var button = obniz.wired("Keyestudio_Button", {signal:0, vcc:1, gnd:2});
 await button.stateWait(false); 
 console.log("button pushed!");
 await button.stateWait(true); 

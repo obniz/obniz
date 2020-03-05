@@ -1,36 +1,22 @@
-# MatrixLED_HT16K33
+# Keyestudio_HT16K33
 Dot matrix LED. driver: HT16K33
 ![](image.jpg)
-## wired(obniz,  { vcc, gnd, sda, scl, address　});
+## wired(obniz,  { vcc, gnd, sda, scl　});
 
 Connect a driver to an obniz.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 ```
 
-```Javascript
-// Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3, address: 0x71 });
-```
-
-## init(width)
-initialize module.
-if one module has 8*8 led and two modules are connected then
-```Javascript
-// Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-matrix.init(8);
-```
 
 ## brightness(value)
 value: 0 to 15;
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-matrix.init(8);
+const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 matrix.brightness(7);
 ```
 
@@ -43,8 +29,7 @@ See more detail on obniz util document's.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-matrix.init(8);
+const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 matrix.brightness(7);
 
 const ctx = obniz.util.createCanvasContext(matrix.width, matrix.height);
@@ -63,7 +48,7 @@ Can be turned on in dot units.
  
  ```Javascript
  // Javascript Example
- const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+ const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
  const dots = [1,2,4,8,16,32,64,128]
  matrix.draw(dots);
  ```
@@ -73,7 +58,6 @@ clear all.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
-matrix.init(8);
+const matrix = obniz.wired("Keyestudio_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 matrix.clear();
 ```

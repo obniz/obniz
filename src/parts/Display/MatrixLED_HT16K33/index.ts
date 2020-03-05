@@ -1,7 +1,5 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 import {I2cPartsAbstructOptions} from "../../i2cParts";
 
@@ -25,9 +23,9 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
 
   protected obniz!: Obniz;
   protected i2c!: PeripheralI2C;
+  protected vram: number[];
   private command: any;
   private blink_mode: any;
-  private vram: number[];
 
   constructor() {
     this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
@@ -57,7 +55,6 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
   }
 
   public init(width: number) { // 8 or 16
-    console.log(width);
     this.width = width;
     this.height = 8; // IC static setting
     this.prepareVram(width, this.height);
@@ -97,20 +94,33 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
   public draw(ctx: CanvasRenderingContext2D) {
     const imageData = ctx.getImageData(0, 0, this.width, this.height);
     const data = imageData.data;
-
     for (let i = 0; i < this.height; i++) {
       this.vram[i] = 0;
       for (let j = 0; j < this.width; j++) {
         const pos = i * this.height * 4 + j * 4;
         const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
-        this.vram[i] =  this.vram[i] << 1;
         if (brightness > 0x7f) {
-          this.vram[i] |= 0x1;
+          this.vram[i] |= 0x1 << j;
         }
       }
-      this.vram[i] =  this.vram[i] << 16 - this.width;
     }
     this.writeVram();
+  }
+
+  public dots(data: number[]) {
+    for (let i = 0; i < this.height ; i++) {
+      this.vram[i] = data[i];
+    }
+    this.writeVram();
+  }
+
+  protected writeVram() {
+    const data = [0x00];
+    for (let i = 0; i < this.height ; i++) {
+      data.push(this.vram[i] & 0xFF);
+      data.push((this.vram[i] >> 8) & 0xFF);
+    }
+    this.i2c.write(this.address, data);
   }
 
   private prepareVram(width: number, height: number) {
@@ -118,15 +128,6 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
     for (let i = 0; i < height; i++) {
       this.vram.push(0);
     }
-  }
-
-  private writeVram() {
-    const data = [0x00];
-    for (let i = 0; i < 8; i++) {
-      data.push((this.vram[i] >> 8) & 0xFF);
-      data.push(this.vram[i] & 0xFF);
-    }
-    this.i2c.write(this.address, data);
   }
 
 }
