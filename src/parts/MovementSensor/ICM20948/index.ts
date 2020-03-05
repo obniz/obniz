@@ -1,7 +1,7 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 import i2cParts, {I2cPartsAbstructOptions} from "../../i2cParts";
-import AK09916, {AK09916Options} from "../ak09916/index";
+import AK09916, {AK09916Options} from "../AK09916/index";
 
 export interface ICM20948Options extends I2cPartsAbstructOptions {
 }
