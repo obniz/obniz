@@ -15,6 +15,8 @@ class WSCommandBleHci {
     }
     schemaData() {
         return [
+            { uri: "/request/ble/hci/init", onValid: this.init.bind(this) },
+            { uri: "/request/ble/hci/deinit", onValid: this.deinit.bind(this) },
             { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
             { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
         ];
@@ -23,6 +25,14 @@ class WSCommandBleHci {
         const funcList = {};
         funcList[this._CommandHCIRecv] = this.recv.bind(this);
         return funcList;
+    }
+    init(params, module) {
+        const buf = new Uint8Array(0);
+        this._delegate.sendCommand(this._CommandHCIInit, buf);
+    }
+    deinit(params, module) {
+        const buf = new Uint8Array(0);
+        this._delegate.sendCommand(this._CommandHCIDeinit, buf);
     }
     send(params, module) {
         const buf = new Uint8Array(params.hci.write.length);

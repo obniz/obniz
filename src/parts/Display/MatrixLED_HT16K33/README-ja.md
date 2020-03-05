@@ -2,7 +2,7 @@
 複数LEDを操作するHT16K33チップと連携するクラスです。
 マトリックスLEDとセットで販売されていることが多く、色々な表示が可能です。
 
-## wired(obniz,  { vcc, gnd, sda, scl　});
+## wired(obniz,  { vcc, gnd, sda, scl, address　});
 
 obniz BoardにマトリックスLEDを接続します。
 
@@ -10,6 +10,12 @@ obniz BoardにマトリックスLEDを接続します。
 // Javascript Example
 const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
 ```
+
+```Javascript
+// Javascript Example
+const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3, address: 0x71 });
+```
+
 
 ## init(width)
 
@@ -55,6 +61,17 @@ ctx.fillText('Hello World', 0, 7);
 
 matrix.draw(ctx);
 ```
+
+## dots(dotsArray)
+
+ ドット単位で点灯させることができます。
+ 
+ ```Javascript
+ // Javascript Example
+ const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+ const dots = [1,2,4,8,16,32,64,128]
+ matrix.draw(dots);
+ ```
 
 ## clear()
 すべてを消去します。

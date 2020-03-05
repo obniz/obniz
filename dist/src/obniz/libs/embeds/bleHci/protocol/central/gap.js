@@ -12,7 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => { };
+const debug = () => {
+};
 const events_1 = __importDefault(require("events"));
 const hci_1 = __importDefault(require("../hci"));
 /**
@@ -43,7 +44,7 @@ class Gap extends events_1.default.EventEmitter {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         this._hci.setScanEnabled(false, true);
-        console.log("scan enable false");
+        // console.log("scan enable false");
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
             this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {

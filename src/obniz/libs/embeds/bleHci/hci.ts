@@ -9,7 +9,36 @@ export default class ObnizBLEHci {
     this.Obniz = Obniz;
   }
 
-  public write(hciCommand: any) {
+  /**
+   * Initialize BLE HCI module
+   */
+  public init() {
+    this.Obniz.send({
+      ble: {
+        hci: {
+          initialize: true,
+        },
+      },
+    });
+  }
+
+  /**
+   * Deinitalize BLE HCI module
+   */
+  public end() {
+    this.Obniz.send({
+      ble: {
+        hci: null,
+      },
+    });
+
+  }
+
+  /**
+   * write HCI command to HCI module
+   * @param hciCommand
+   */
+  public write(hciCommand: number[]) {
     this.Obniz.send({
       ble: {
         hci: {
@@ -19,12 +48,20 @@ export default class ObnizBLEHci {
     });
   }
 
+  /**
+   * @ignore
+   * @param obj
+   */
   public notified(obj: any) {
     if (obj.read && obj.read.data) {
       this.onread(obj.read.data);
     }
   }
 
+  /**
+   * Callback on HCI command received.
+   * @param data
+   */
   public onread(data: any) {
   }
 }

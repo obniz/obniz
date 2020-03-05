@@ -33,7 +33,6 @@ class MatrixLED_HT16K33 {
         this.obniz.wait(1000);
     }
     init(width) {
-        console.log(width);
         this.width = width;
         this.height = 8; // IC static setting
         this.prepareVram(width, this.height);
@@ -74,28 +73,32 @@ class MatrixLED_HT16K33 {
             for (let j = 0; j < this.width; j++) {
                 const pos = i * this.height * 4 + j * 4;
                 const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
-                this.vram[i] = this.vram[i] << 1;
                 if (brightness > 0x7f) {
-                    this.vram[i] |= 0x1;
+                    this.vram[i] |= 0x1 << j;
                 }
             }
-            this.vram[i] = this.vram[i] << 16 - this.width;
         }
         this.writeVram();
+    }
+    dots(data) {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = data[i];
+        }
+        this.writeVram();
+    }
+    writeVram() {
+        const data = [0x00];
+        for (let i = 0; i < this.height; i++) {
+            data.push(this.vram[i] & 0xFF);
+            data.push((this.vram[i] >> 8) & 0xFF);
+        }
+        this.i2c.write(this.address, data);
     }
     prepareVram(width, height) {
         this.vram = [];
         for (let i = 0; i < height; i++) {
             this.vram.push(0);
         }
-    }
-    writeVram() {
-        const data = [0x00];
-        for (let i = 0; i < 8; i++) {
-            data.push((this.vram[i] >> 8) & 0xFF);
-            data.push(this.vram[i] & 0xFF);
-        }
-        this.i2c.write(this.address, data);
     }
 }
 exports.default = MatrixLED_HT16K33;

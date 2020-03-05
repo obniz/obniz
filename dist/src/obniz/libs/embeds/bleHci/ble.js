@@ -12,6 +12,7 @@ const hci_1 = __importDefault(require("./hci"));
 const bindings_1 = __importDefault(require("./protocol/central/bindings"));
 const hci_2 = __importDefault(require("./protocol/hci"));
 const bindings_2 = __importDefault(require("./protocol/peripheral/bindings"));
+const semver_1 = __importDefault(require("semver"));
 const bleAdvertisement_1 = __importDefault(require("./bleAdvertisement"));
 const bleCharacteristic_1 = __importDefault(require("./bleCharacteristic"));
 const bleDescriptor_1 = __importDefault(require("./bleDescriptor"));
@@ -90,6 +91,12 @@ class ObnizBLE {
     async initWait() {
         if (!this._initialized) {
             this._initialized = true;
+            // force initialize on obnizOS < 3.2.0
+            if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
+                this.hci.init();
+                this.hci.end(); // disable once
+                this.hci.init();
+            }
             await this.hciProtocol.initWait();
         }
     }

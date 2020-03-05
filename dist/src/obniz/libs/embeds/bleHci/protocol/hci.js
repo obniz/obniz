@@ -461,10 +461,10 @@ class Hci extends events.EventEmitter {
         const data = Buffer.from(array);
         debug("onSocketData: " + data.toString("hex"));
         const eventType = data.readUInt8(0);
-        debug("\tevent type = " + eventType);
+        debug("\tevent type = 0x" + eventType.toString(16));
         if (COMMANDS.HCI_EVENT_PKT === eventType) {
             const subEventType = data.readUInt8(1);
-            debug("\tsub event type = " + subEventType);
+            debug("\tsub event type = 0x" + subEventType.toString(16));
             if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
                 const handle = data.readUInt16LE(4);
                 const reason = data.readUInt8(6);
@@ -500,10 +500,10 @@ class Hci extends events.EventEmitter {
                 const cmd = data.readUInt16LE(4);
                 const status = data.readUInt8(6);
                 const result = data.slice(7);
-                debug("\t\tncmd = " + ncmd);
-                debug("\t\tcmd = " + cmd);
-                debug("\t\tstatus = " + status);
-                debug("\t\tresult = " + result.toString("hex"));
+                debug("\t\tncmd = 0x" + ncmd.toString(16));
+                debug("\t\tcmd = 0x" + cmd.toString(16));
+                debug("\t\tstatus = 0x" + status.toString(16));
+                debug("\t\tresult = 0x" + result.toString("hex"));
                 this.processCmdCompleteEvent(cmd, status, result);
             }
             else if (subEventType === COMMANDS.EVT_CMD_STATUS) {

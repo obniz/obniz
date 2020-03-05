@@ -21,3 +21,5 @@ log
 dist/**/*.map
 dist/**/*.ts
 dist/**/*.yml
+.vscode
+

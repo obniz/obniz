@@ -261,7 +261,9 @@ var map = {
 	"./request/ble/central/scan_stop.yml": "./dist/src/json_schema/request/ble/central/scan_stop.yml",
 	"./request/ble/central/service_get.yml": "./dist/src/json_schema/request/ble/central/service_get.yml",
 	"./request/ble/hci/advertisement_filter.yml": "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml",
+	"./request/ble/hci/deinit.yml": "./dist/src/json_schema/request/ble/hci/deinit.yml",
 	"./request/ble/hci/index.yml": "./dist/src/json_schema/request/ble/hci/index.yml",
+	"./request/ble/hci/init.yml": "./dist/src/json_schema/request/ble/hci/init.yml",
 	"./request/ble/hci/write.yml": "./dist/src/json_schema/request/ble/hci/write.yml",
 	"./request/ble/index.yml": "./dist/src/json_schema/request/ble/index.yml",
 	"./request/ble/peripheral/advertisement_start.yml": "./dist/src/json_schema/request/ble/peripheral/advertisement_start.yml",
@@ -565,10 +567,24 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/ble/hci/deinit.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/deinit","type":"object","required":["hci"],"properties":{"hci":{"type":"null"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/ble/hci/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"},{"$ref":"/request/ble/hci/advertisement_filter"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/init"},{"$ref":"/request/ble/hci/deinit"},{"$ref":"/request/ble/hci/write"},{"$ref":"/request/ble/hci/advertisement_filter"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/ble/hci/init.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/init","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["initialize"],"properties":{"initialize":{"type":"boolean"}}}}}
 
 /***/ }),
 
@@ -5844,6 +5860,7 @@ const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/
 const bindings_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/bindings.js"));
 const hci_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const bindings_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
@@ -5922,6 +5939,12 @@ class ObnizBLE {
     async initWait() {
         if (!this._initialized) {
             this._initialized = true;
+            // force initialize on obnizOS < 3.2.0
+            if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
+                this.hci.init();
+                this.hci.end(); // disable once
+                this.hci.init();
+            }
             await this.hciProtocol.initWait();
         }
     }
@@ -9679,6 +9702,32 @@ class ObnizBLEHci {
     constructor(Obniz) {
         this.Obniz = Obniz;
     }
+    /**
+     * Initialize BLE HCI module
+     */
+    init() {
+        this.Obniz.send({
+            ble: {
+                hci: {
+                    initialize: true,
+                },
+            },
+        });
+    }
+    /**
+     * Deinitalize BLE HCI module
+     */
+    end() {
+        this.Obniz.send({
+            ble: {
+                hci: null,
+            },
+        });
+    }
+    /**
+     * write HCI command to HCI module
+     * @param hciCommand
+     */
     write(hciCommand) {
         this.Obniz.send({
             ble: {
@@ -9688,11 +9737,19 @@ class ObnizBLEHci {
             },
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.read && obj.read.data) {
             this.onread(obj.read.data);
         }
     }
+    /**
+     * Callback on HCI command received.
+     * @param data
+     */
     onread(data) {
     }
 }
@@ -10323,7 +10380,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => { };
+const debug = () => {
+};
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 /**
@@ -10354,7 +10412,7 @@ class Gap extends events_1.default.EventEmitter {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         this._hci.setScanEnabled(false, true);
-        console.log("scan enable false");
+        // console.log("scan enable false");
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
             this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
@@ -12168,10 +12226,10 @@ class Hci extends events.EventEmitter {
         const data = Buffer.from(array);
         debug("onSocketData: " + data.toString("hex"));
         const eventType = data.readUInt8(0);
-        debug("\tevent type = " + eventType);
+        debug("\tevent type = 0x" + eventType.toString(16));
         if (COMMANDS.HCI_EVENT_PKT === eventType) {
             const subEventType = data.readUInt8(1);
-            debug("\tsub event type = " + subEventType);
+            debug("\tsub event type = 0x" + subEventType.toString(16));
             if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
                 const handle = data.readUInt16LE(4);
                 const reason = data.readUInt8(6);
@@ -12207,10 +12265,10 @@ class Hci extends events.EventEmitter {
                 const cmd = data.readUInt16LE(4);
                 const status = data.readUInt8(6);
                 const result = data.slice(7);
-                debug("\t\tncmd = " + ncmd);
-                debug("\t\tcmd = " + cmd);
-                debug("\t\tstatus = " + status);
-                debug("\t\tresult = " + result.toString("hex"));
+                debug("\t\tncmd = 0x" + ncmd.toString(16));
+                debug("\t\tcmd = 0x" + cmd.toString(16));
+                debug("\t\tstatus = 0x" + status.toString(16));
+                debug("\t\tresult = 0x" + result.toString("hex"));
                 this.processCmdCompleteEvent(cmd, status, result);
             }
             else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
@@ -20802,6 +20860,8 @@ class WSCommandBleHci {
     }
     schemaData() {
         return [
+            { uri: "/request/ble/hci/init", onValid: this.init.bind(this) },
+            { uri: "/request/ble/hci/deinit", onValid: this.deinit.bind(this) },
             { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
             { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
         ];
@@ -20810,6 +20870,14 @@ class WSCommandBleHci {
         const funcList = {};
         funcList[this._CommandHCIRecv] = this.recv.bind(this);
         return funcList;
+    }
+    init(params, module) {
+        const buf = new Uint8Array(0);
+        this._delegate.sendCommand(this._CommandHCIInit, buf);
+    }
+    deinit(params, module) {
+        const buf = new Uint8Array(0);
+        this._delegate.sendCommand(this._CommandHCIDeinit, buf);
     }
     send(params, module) {
         const buf = new Uint8Array(params.hci.write.length);
@@ -22921,6 +22989,7 @@ var map = {
 	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
 	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
 	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
+	"./Keyestudio/Keyestudio_HT16K33/index.js": "./dist/src/parts/Keyestudio/Keyestudio_HT16K33/index.js",
 	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
 	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
 	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
@@ -22934,10 +23003,12 @@ var map = {
 	"./Magnet/CT10/index.js": "./dist/src/parts/Magnet/CT10/index.js",
 	"./Magnet/HMC5883L/index.js": "./dist/src/parts/Magnet/HMC5883L/index.js",
 	"./Memory/24LC256/index.js": "./dist/src/parts/Memory/24LC256/index.js",
+	"./MovementSensor/AK09916/index.js": "./dist/src/parts/MovementSensor/AK09916/index.js",
 	"./MovementSensor/AK8963/index.js": "./dist/src/parts/MovementSensor/AK8963/index.js",
 	"./MovementSensor/Button/index.js": "./dist/src/parts/MovementSensor/Button/index.js",
 	"./MovementSensor/FlickHat/index.js": "./dist/src/parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./dist/src/parts/MovementSensor/HC-SR505/index.js",
+	"./MovementSensor/ICM20948/index.js": "./dist/src/parts/MovementSensor/ICM20948/index.js",
 	"./MovementSensor/IPM-165/index.js": "./dist/src/parts/MovementSensor/IPM-165/index.js",
 	"./MovementSensor/JoyStick/index.js": "./dist/src/parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./dist/src/parts/MovementSensor/KXR94-2050/index.js",
@@ -29058,7 +29129,6 @@ class MatrixLED_HT16K33 {
         this.obniz.wait(1000);
     }
     init(width) {
-        console.log(width);
         this.width = width;
         this.height = 8; // IC static setting
         this.prepareVram(width, this.height);
@@ -29099,28 +29169,32 @@ class MatrixLED_HT16K33 {
             for (let j = 0; j < this.width; j++) {
                 const pos = i * this.height * 4 + j * 4;
                 const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
-                this.vram[i] = this.vram[i] << 1;
                 if (brightness > 0x7f) {
-                    this.vram[i] |= 0x1;
+                    this.vram[i] |= 0x1 << j;
                 }
             }
-            this.vram[i] = this.vram[i] << 16 - this.width;
         }
         this.writeVram();
+    }
+    dots(data) {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = data[i];
+        }
+        this.writeVram();
+    }
+    writeVram() {
+        const data = [0x00];
+        for (let i = 0; i < this.height; i++) {
+            data.push(this.vram[i] & 0xFF);
+            data.push((this.vram[i] >> 8) & 0xFF);
+        }
+        this.i2c.write(this.address, data);
     }
     prepareVram(width, height) {
         this.vram = [];
         for (let i = 0; i < height; i++) {
             this.vram.push(0);
         }
-    }
-    writeVram() {
-        const data = [0x00];
-        for (let i = 0; i < 8; i++) {
-            data.push((this.vram[i] >> 8) & 0xFF);
-            data.push(this.vram[i] & 0xFF);
-        }
-        this.i2c.write(this.address, data);
     }
 }
 exports.default = MatrixLED_HT16K33;
@@ -36252,6 +36326,64 @@ exports.default = Keyestudio_Buzzer;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_HT16K33/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const MatrixLED_HT16K33_1 = __importDefault(__webpack_require__("./dist/src/parts/Display/MatrixLED_HT16K33/index.js"));
+class Keyestudio_HT16K33 extends MatrixLED_HT16K33_1.default {
+    constructor() {
+        super(...arguments);
+        this.bitArray = [7, 0, 1, 2, 3, 4, 5, 6];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_HT16K33",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        super.init(8);
+    }
+    draw(ctx) {
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                const pos = i * this.height * 4 + j * 4;
+                const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
+                if (brightness > 0x7f) {
+                    this.vram[i] |= 0x1 << this.bitArray[j];
+                }
+            }
+        }
+        super.writeVram();
+    }
+    dots(data) {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                if (data[i] & (1 << j)) {
+                    this.vram[i] |= 0x1 << this.bitArray[j];
+                }
+            }
+        }
+        super.writeVram();
+    }
+}
+exports.default = Keyestudio_HT16K33;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -37385,6 +37517,124 @@ exports.default = _24LC256;
 
 /***/ }),
 
+/***/ "./dist/src/parts/MovementSensor/AK09916/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class AK09916 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.ADDR = 0x0c;
+        this._WIA = (0x01);
+        this._HXL = (0x11);
+        this._HXH = (0x12);
+        this._HYL = (0x13);
+        this._HYH = (0x14);
+        this._HZL = (0x15);
+        this._HZH = (0x16);
+        this._ST2 = (0x18);
+        this._CNTL2 = (0x31);
+        this._ASAX = (0x60);
+        this._ASAY = (0x61);
+        this._ASAZ = (0x62);
+        this._MODE_POWER_DOWN = 0b00000000;
+        this.MODE_SINGLE_MEASURE = 0b00000001;
+        this.MODE_CONTINOUS_MEASURE_1 = 0b00000010; // 10Hz
+        this.MODE_CONTINOUS_MEASURE_2 = 0b00001000; // 100Hz
+        this.MODE_EXTERNAL_TRIGGER_MEASURE = 0b00000100;
+        this._MODE_SELF_TEST = 0b00001000;
+        this._MODE_FUSE_ROM_ACCESS = 0b00011111;
+        this.OUTPUT_14_BIT = 0b00000000;
+        this.OUTPUT_16_BIT = 0b00010000;
+        this._SO_14BIT = 0.6; // per digit when 14bit mode
+        this._SO_16BIT = 0.15; //  per digit when 16bit mode
+        this.offset = [0, 0, 0];
+        this.scale = [1, 1, 1];
+        this.so = this._SO_16BIT;
+    }
+    static info() {
+        return {
+            name: "AK09916",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        this.write(this._CNTL2, this.MODE_CONTINOUS_MEASURE_1);
+    }
+    i2cInfo() {
+        return {
+            address: 0x0c,
+            clock: 100000,
+            voltage: "3v",
+        };
+    }
+    async magnetic() {
+        // 0111 1111 1111 0000 4912 uT
+        // 1111 1111 1111 1111 -1 uT
+        // 1000 0000 0001 0000 -4912 uT
+        // data[0]下位ビット data[1] 上位ビット
+        const raw3 = (await this.readThreeInt16Wait(this._HXL, "l"));
+        this.readWait(this._ST2, 1);
+        const xyz = raw3.map((d, i) => {
+            return (d * this.so - this.offset[i]) * this.scale[i];
+        });
+        return xyz;
+    }
+    async whoamiWait() {
+        const result = await this.readWait(this._WIA, 1);
+        return result[0];
+    }
+    async calibrateWait(count = 256, delay = 200) {
+        this.offset = [0, 0, 0];
+        this.scale = [1, 1, 1];
+        let reading = await this.magnetic();
+        let minx = reading[0];
+        let maxx = reading[0];
+        let miny = reading[1];
+        let maxy = reading[1];
+        let minz = reading[2];
+        let maxz = reading[2];
+        while (count > 0) {
+            await new Promise((r) => setTimeout(r, delay));
+            reading = await this.magnetic();
+            minx = Math.min(minx, reading[0]);
+            maxx = Math.max(maxx, reading[0]);
+            miny = Math.min(miny, reading[1]);
+            maxy = Math.max(maxy, reading[1]);
+            minz = Math.min(minz, reading[2]);
+            maxz = Math.max(maxz, reading[2]);
+            count -= 1;
+        }
+        // Hard iron correction
+        const offset_x = (maxx + minx) / 2;
+        const offset_y = (maxy + miny) / 2;
+        const offset_z = (maxz + minz) / 2;
+        this.offset = [offset_x, offset_y, offset_z];
+        // Soft iron correction
+        const avg_delta_x = (maxx - minx) / 2;
+        const avg_delta_y = (maxy - miny) / 2;
+        const avg_delta_z = (maxz - minz) / 2;
+        const avg_delta = (avg_delta_x + avg_delta_y + avg_delta_z) / 3;
+        const scale_x = avg_delta / avg_delta_x;
+        const scale_y = avg_delta / avg_delta_y;
+        const scale_z = avg_delta / avg_delta_z;
+        this.scale = [scale_x, scale_y, scale_z];
+        return { offset: this.offset, scale: this.scale };
+    }
+}
+exports.default = AK09916;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/MovementSensor/AK8963/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -37917,6 +38167,272 @@ class HCSR505 {
     }
 }
 exports.default = HCSR505;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/ICM20948/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class ICM20948 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.g = 9.80665;
+        this._ADDR = 0x69;
+        this._WHO_AM_I = (0x00);
+        this._GYRO_CONFIG = (0x01);
+        this._ACCEL_CONFIG = (0x14);
+        this._ACCEL_CONFIG2 = (0x15);
+        this._INT_PIN_CFG = (0x0f);
+        this._ACCEL_XOUT_H = (0x2d);
+        this._ACCEL_XOUT_L = (0x2e);
+        this._ACCEL_YOUT_H = (0x2f);
+        this._ACCEL_YOUT_L = (0x30);
+        this._ACCEL_ZOUT_H = (0x31);
+        this._ACCEL_ZOUT_L = (0x32);
+        this._GYRO_XOUT_H = (0x33);
+        this._GYRO_XOUT_L = (0x34);
+        this._GYRO_YOUT_H = (0x35);
+        this._GYRO_YOUT_L = (0x36);
+        this._GYRO_ZOUT_H = (0x37);
+        this._GYRO_ZOUT_L = (0x38);
+        // #_ACCEL_FS_MASK = const(0b00011000)
+        this._ACCEL_FS_SEL_2G = (0b00000000);
+        this._ACCEL_FS_SEL_4G = (0b00000010);
+        this._ACCEL_FS_SEL_8G = (0b00000100);
+        this._ACCEL_FS_SEL_16G = (0b00000110);
+        this._ACCEL_SO_2G = 16384; // 1 / 16384 ie. 0.061 mg / digit
+        this._ACCEL_SO_4G = 8192; // 1 / 8192 ie. 0.122 mg / digit
+        this._ACCEL_SO_8G = 4096; // 1 / 4096 ie. 0.244 mg / digit
+        this._ACCEL_SO_16G = 2048; // 1 / 2048 ie. 0.488 mg / digit
+        this._GYRO_FS_MASK = (0b00000110);
+        this._GYRO_FS_SEL_250DPS = (0b00110001);
+        this._GYRO_FS_SEL_500DPS = (0b00110011);
+        this._GYRO_FS_SEL_1000DPS = (0b00110101);
+        this._GYRO_FS_SEL_2000DPS = (0b00110111);
+        this._GYRO_SO_250DPS = 131;
+        this._GYRO_SO_500DPS = 62.5;
+        this._GYRO_SO_1000DPS = 32.8;
+        this._GYRO_SO_2000DPS = 16.4;
+        // # Used for enablind and disabling the i2c bypass access
+        this._I2C_BYPASS_MASK = (0b00000010);
+        this._I2C_BYPASS_EN = (0b00000010);
+        this._I2C_BYPASS_DIS = (0b00000000);
+        this._SF_G = 1; //    g
+        this._SF_MG = 1000; //    mg
+        this._SF_M_S2 = 9.80665; // 1 g = 9.80665 m/s2 ie. standard gravity
+        this._SF_DEG_S = 1; // deg / s
+        this._SF_RAD_S = 57.295779578552; // 1 rad / s is 57.295779578552 deg / s;
+        this._accel_sf = this._SF_M_S2;
+        this._accel_so = this._ACCEL_SO_2G;
+        this._gyro_sf = this._SF_DEG_S;
+        this._gyro_so = this._GYRO_SO_250DPS;
+    }
+    static info() {
+        return {
+            name: "ICM20948",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
+        this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
+    }
+    i2cInfo() {
+        return {
+            address: 0x69,
+            clock: 100000,
+            voltage: "3v",
+        };
+    }
+    async initWait() {
+        const data = await this.whoamiWait();
+        if (data !== 0xea) {
+            throw new Error("ICM20948 not found in I2C bus.");
+        }
+        this.write(0x06, [0x01]); // wake;
+        this.write(0x0f, [0x02]); // passthrough;
+        this.write(0x03, [0x00]);
+        // this.write(12, 0x31, [0x00]);  // power down mode
+        // const buf3 = await this._studuinoI2C.readFromMem(12, 0x60, 3);
+        this._ak09916 = this.obniz.wired("AK09916", { i2c: this.i2c });
+    }
+    accelFs(value) {
+        if (value === "2g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
+        }
+        else if (value === "4g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_4G);
+        }
+        else if (value === "8g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_8G);
+        }
+        else if (value === "16g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_16G);
+        }
+        else {
+            throw new Error("must be '2g'/'4g'/'8g'/'16g'");
+        }
+    }
+    accelSf(value) {
+        if (value === "g") {
+            this._accel_sf = this._SF_G;
+        }
+        else if (value === "mg") {
+            this._accel_sf = this._SF_MG;
+        }
+        else if (value === "ms2") {
+            this._accel_sf = this._SF_M_S2;
+        }
+        else {
+            throw new Error("must be 'g'/'mg'/'ms2'");
+        }
+    }
+    async accelerationWait() {
+        /*
+        Acceleration measured by the sensor. By default will return a
+        3-tuple of X, Y, Z axis accelerationWait values in mG as integer.
+        */
+        const so = this._accel_so;
+        const sf = this._accel_sf;
+        const xyz = await this.readThreeInt16Wait(this._ACCEL_XOUT_H);
+        return xyz.map((e) => e / so * sf);
+    }
+    async gyroWait() {
+        // """
+        // X, Y, Z radians per second as floats.
+        // """
+        const so = this._gyro_so;
+        const sf = this._gyro_sf;
+        const xyz = await this.readThreeInt16Wait(this._GYRO_XOUT_H);
+        return xyz.map((e) => e / so * sf);
+    }
+    async magneticWait() {
+        return this._ak09916.magnetic();
+    }
+    async calibrateWait() {
+        return (await this._ak09916.calibrateWait());
+    }
+    async whoamiWait() {
+        // Value of the whoamiWait register. """
+        const result = await this.readWait(this._WHO_AM_I, 1);
+        return result[0];
+    }
+    gyroFs(value) {
+        if (value === "250dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
+        }
+        else if (value === "500dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_500DPS);
+        }
+        else if (value === "1000dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_1000DPS);
+        }
+        else if (value === "2000dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_2000DPS);
+        }
+        else {
+            throw new Error("must be '250dps'/'500dps'/'1000dps'/'2000dps'");
+        }
+    }
+    gyroSf(value) {
+        if (value === "dps") {
+            this._gyro_sf = this._SF_DEG_S;
+        }
+        else if (value === "rps") {
+            this._gyro_sf = this._SF_RAD_S;
+        }
+        else {
+            throw new Error("must be 'dps'/'rps'");
+        }
+    }
+    async _gyroDlpfWait(dlpfcfg = -1) {
+        this.write(0x7f, [0x20]);
+        // # get ICM20948 gyroWait configuration.
+        let char = (await this.readWait(this._GYRO_CONFIG, 1))[0];
+        char &= this._GYRO_FS_MASK; // clear DLDF bits
+        if (dlpfcfg === -1) {
+            char |= 0x00000000;
+        }
+        else if (dlpfcfg === 0) {
+            char |= 0x00000001;
+        }
+        else if (dlpfcfg === 1) {
+            char |= 0x00001001;
+        }
+        else if (dlpfcfg === 2) {
+            char |= 0x00010001;
+        }
+        else if (dlpfcfg === 3) {
+            char |= 0x00011001;
+        }
+        else if (dlpfcfg === 4) {
+            char |= 0x00100001;
+        }
+        else if (dlpfcfg === 5) {
+            char |= 0x00101001;
+        }
+        else if (dlpfcfg === 6) {
+            char |= 0x00110001;
+        }
+        else if (dlpfcfg === 7) {
+            char |= 0x00111001;
+        }
+        else {
+            char |= 0x00000000;
+        }
+        this.write(this._GYRO_CONFIG, [char]);
+        this.write(0x7f, [0x00]);
+    }
+    _accelFs(value) {
+        this.write(0x7f, [0x20]);
+        this.write(this._ACCEL_CONFIG, [value]);
+        this.write(0x7f, [0x00]);
+        // # Return the sensitivity divider
+        if (this._ACCEL_FS_SEL_2G === value) {
+            return this._ACCEL_SO_2G;
+        }
+        else if (this._ACCEL_FS_SEL_4G === value) {
+            return this._ACCEL_SO_4G;
+        }
+        else if (this._ACCEL_FS_SEL_8G === value) {
+            return this._ACCEL_SO_8G;
+        }
+        else if (this._ACCEL_FS_SEL_16G === value) {
+            return this._ACCEL_SO_16G;
+        }
+        return 0;
+    }
+    _gyroFs(value) {
+        this.write(0x7f, [0x20]);
+        this.write(this._GYRO_CONFIG, [value]);
+        this.write(0x7f, [0x00]);
+        // # Return the sensitivity divider
+        if (this._GYRO_FS_SEL_250DPS === value) {
+            return this._GYRO_SO_250DPS;
+        }
+        else if (this._GYRO_FS_SEL_500DPS === value) {
+            return this._GYRO_SO_500DPS;
+        }
+        else if (this._GYRO_FS_SEL_1000DPS === value) {
+            return this._GYRO_SO_1000DPS;
+        }
+        else if (this._GYRO_FS_SEL_2000DPS === value) {
+            return this._GYRO_SO_2000DPS;
+        }
+        return 0;
+    }
+}
+exports.default = ICM20948;
 
 //# sourceMappingURL=index.js.map
 
@@ -42605,6 +43121,13 @@ class I2cPartsAbstruct {
         this.i2cinfo = this.i2cInfo();
         this.address = this.i2cinfo.address;
     }
+    static charArrayToInt16(values, endian = "b") {
+        const buffer = new ArrayBuffer(2);
+        const dv = new DataView(buffer);
+        dv.setUint8(0, values[0]);
+        dv.setUint8(1, values[1]);
+        return dv.getInt16(0, endian !== "b");
+    }
     i2cInfo() {
         throw new Error("abstruct class");
         // eslint-disable-next-line no-unreachable
@@ -42634,15 +43157,23 @@ class I2cPartsAbstruct {
         this.i2c.write(this.address, [command]);
         return await this.i2c.readWait(this.address, length);
     }
-    // public async readUint16Wait(command: number, length: number): Promise<number[]> {
-    //   this.i2c.write(this.address, [command]);
-    //   return await this.i2c.readWait(this.address, length);
-    // }
     write(command, buf) {
         if (!Array.isArray(buf)) {
             buf = [buf];
         }
         this.i2c.write(this.address, [command, ...buf]);
+    }
+    async readInt16Wait(register, endian = "b") {
+        const data = await this.readWait(register, 2);
+        return I2cPartsAbstruct.charArrayToInt16(data, endian);
+    }
+    async readThreeInt16Wait(register, endian = "b") {
+        const data = await this.readWait(register, 6);
+        const results = [0, 0, 0];
+        results[0] = (I2cPartsAbstruct.charArrayToInt16(data.slice(0, 2), endian));
+        results[1] = (I2cPartsAbstruct.charArrayToInt16(data.slice(2, 4), endian));
+        results[2] = (I2cPartsAbstruct.charArrayToInt16(data.slice(4, 6), endian));
+        return results;
     }
 }
 exports.default = I2cPartsAbstruct;

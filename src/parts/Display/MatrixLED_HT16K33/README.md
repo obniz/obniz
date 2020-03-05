@@ -1,13 +1,18 @@
 # MatrixLED_HT16K33
 Dot matrix LED. driver: HT16K33
 ![](image.jpg)
-## wired(obniz,  { vcc, gnd, sda, scl　});
+## wired(obniz,  { vcc, gnd, sda, scl, address　});
 
 Connect a driver to an obniz.
 
 ```Javascript
 // Javascript Example
 const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+```
+
+```Javascript
+// Javascript Example
+const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3, address: 0x71 });
 ```
 
 ## init(width)
@@ -51,6 +56,17 @@ ctx.fillText('Hello World', 0, 7);
 
 matrix.draw(ctx);
 ```
+
+## dots(dotsArray)
+
+Can be turned on in dot units.
+ 
+ ```Javascript
+ // Javascript Example
+ const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+ const dots = [1,2,4,8,16,32,64,128]
+ matrix.draw(dots);
+ ```
 
 ## clear()
 clear all.
