@@ -694,8 +694,8 @@
       ]
     },
     {
-      "name": "Keyestudio",
-      "image_url": "https://obniz.io/sdk/parts/StickC_JoyStick/index.jpg",
+      "name": "M5StickC HAT",
+      "image_url": "https://obniz.io/sdk/parts/StickC_ADC/index.jpg",
       "parts": [
         {
           "name": "StickC_JoyStick",
