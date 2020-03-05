@@ -1,25 +1,30 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @module Parts.DHT12
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 const i2cParts_1 = __importDefault(require("../../../i2cParts"));
 class DHT12 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.i2cinfo = {
+            address: 0x5c,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+    }
     static info() {
         return {
             name: "DHT12",
         };
     }
     i2cInfo() {
-        return {
-            address: 0x5c,
-            clock: 100000,
-            voltage: "3v",
-        };
+        return this.i2cinfo;
     }
     async getAllDataWait() {
         const data = await this.readWait(0x00, 5);

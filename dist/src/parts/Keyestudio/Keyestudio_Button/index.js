@@ -8,7 +8,8 @@ class Keyestudio_Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.onChangeForStateWait = (pressed) => { };
+        this.onChangeForStateWait = (pressed) => {
+        };
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
     }

@@ -8,7 +8,7 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  Keyestudio_MoistureSensorOptions {
+export interface Keyestudio_MoistureSensorOptions {
   vcc?: number;
   signal: number;
   gnd?: number;

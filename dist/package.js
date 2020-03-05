@@ -141,5 +141,4 @@ module.exports = {
     "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser"
   }
-}
-;
+};

@@ -7,7 +7,7 @@ import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  S11059Options {
+export interface S11059Options {
   vcc?: number;
   sda?: number;
   scl?: number;
@@ -29,7 +29,7 @@ export default class S11059 implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public address: number;
-  public regAdrs: {[key: string]: number};
+  public regAdrs: { [key: string]: number };
   public obniz!: Obniz;
   public params: any;
   public i2c!: PeripheralI2C;

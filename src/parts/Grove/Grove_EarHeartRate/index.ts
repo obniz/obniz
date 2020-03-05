@@ -6,7 +6,7 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  Grove_EarHeartRateOptions {
+export interface Grove_EarHeartRateOptions {
   gnd: number;
   vcc: number;
   signal?: number;

@@ -59,6 +59,7 @@ import JoyStick, {JoyStickOptions} from "../parts/MovementSensor/JoyStick";
 import KXR94_2050, {KXR94_2050Options} from "../parts/MovementSensor/KXR94-2050";
 import KXSC7_2050, {KXSC7_2050Options} from "../parts/MovementSensor/KXSC7-2050";
 import MPU6050, {MPU6050Options} from "../parts/MovementSensor/MPU6050";
+import MPU6500, { MPU6500Options } from "../parts/MovementSensor/MPU6500";
 import MPU6886, {MPU6886Options} from "../parts/MovementSensor/MPU6886";
 import MPU9250, {MPU9250Options} from "../parts/MovementSensor/MPU9250";
 import PaPIRsVZ, {PaPIRsVZOptions} from "../parts/MovementSensor/PaPIRsVZ";
@@ -181,6 +182,7 @@ export interface WiredNameMap {
   "Button": Button;
   "AK8963": AK8963;
   "MPU6050": MPU6050;
+  "MPU6500": MPU6500;
   "MPU6886": MPU6886;
   "MPU9250": MPU9250;
   "SH200Q": SH200Q;
@@ -333,6 +335,7 @@ export interface WiredNameOptionsMap {
   "Button": ButtonOptions;
   "AK8963": AK8963Options;
   "MPU6050": MPU6050Options;
+  "MPU6500": MPU6500Options;
   "MPU6886": MPU6886Options;
   "MPU9250": MPU9250Options;
   "SH200Q": SH200QOptions;

@@ -67,7 +67,8 @@ class LinkingServiceNotification {
                 }
             }
         }
-        catch (e) { }
+        catch (e) {
+        }
         return parameters;
     }
     _parseParameter(pid, buf, notify_cateogory_id) {

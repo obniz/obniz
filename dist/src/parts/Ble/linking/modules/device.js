@@ -62,7 +62,8 @@ class LinkingDevice {
         }
         let onprogress = this.onconnectprogress;
         if (!this._isFunction(this.onconnectprogress)) {
-            onprogress = () => { };
+            onprogress = () => {
+            };
         }
         const peripheral = this._peripheral;
         onprogress({ step: 1, desc: "CONNECTING" });

@@ -7,7 +7,7 @@ import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  Puls08M5stickcSOptions {
+export interface Puls08M5stickcSOptions {
   vcc?: number;
   gnd?: number;
   rx: number;

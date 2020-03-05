@@ -8,9 +8,9 @@ import {PullType} from "../../../../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstructOptions} from "../../../i2cParts";
+import {I2cPartsAbstractOptions} from "../../../i2cParts";
 
-export interface  SHT31Options extends I2cPartsAbstructOptions {
+export interface SHT31Options extends I2cPartsAbstractOptions {
   adr: number;
   addressmode: number;
   pull?: PullType;

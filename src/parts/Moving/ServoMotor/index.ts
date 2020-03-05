@@ -8,7 +8,7 @@ import PeripheralPWM, {PWMInterface} from "../../../obniz/libs/io_peripherals/pw
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  ServoMotorOptions {
+export interface ServoMotorOptions {
   vcc?: number;
   gnd?: number;
   signal?: number;

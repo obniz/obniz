@@ -1,9 +1,9 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstructOptions} from "../../i2cParts";
+import {I2cPartsAbstractOptions} from "../../i2cParts";
 
-export interface MatrixLED_HT16K33Options extends I2cPartsAbstructOptions {
+export interface MatrixLED_HT16K33Options extends I2cPartsAbstractOptions {
 }
 
 export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
@@ -108,7 +108,7 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
   }
 
   public dots(data: number[]) {
-    for (let i = 0; i < this.height ; i++) {
+    for (let i = 0; i < this.height; i++) {
       this.vram[i] = data[i];
     }
     this.writeVram();
@@ -116,7 +116,7 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
 
   protected writeVram() {
     const data = [0x00];
-    for (let i = 0; i < this.height ; i++) {
+    for (let i = 0; i < this.height; i++) {
       data.push(this.vram[i] & 0xFF);
       data.push((this.vram[i] >> 8) & 0xFF);
     }

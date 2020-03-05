@@ -14,7 +14,8 @@ import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInte
 import LinkingAdvertising from "./modules/advertising";
 import LinkingDevice from "./modules/device";
 
-export interface  LinkingOptions {}
+export interface LinkingOptions {
+}
 
 export default class Linking {
 
@@ -112,8 +113,8 @@ export default class Linking {
       this._scanDevices();
       this._discover_status = true;
       timer = setTimeout(() => {
-          finishDiscovery();
-        }, duration);
+        finishDiscovery();
+      }, duration);
     });
   }
 

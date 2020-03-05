@@ -3,16 +3,24 @@
  * @packageDocumentation
  * @module Parts.HMC5883L
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class HMC5883L {
+const i2cCompass_1 = __importDefault(require("../../i2cCompass"));
+class HMC5883L extends i2cCompass_1.default {
     constructor() {
-        this.address = {
-            device: 0x1e,
-            reset: [0x02, 0x00],
-            xMSB: [0x03],
+        super();
+        this.defaultUnit = "G";
+        this.i2cinfo = {
+            address: 0x1e,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
         };
-        this.keys = ["gnd", "sda", "scl", "i2c"];
-        this.requiredKeys = [];
+        this.sf = this.defaultUnit;
+        this.so = HMC5883L.scales[1];
+        this.range = "8G";
     }
     static info() {
         return {
@@ -20,33 +28,47 @@ class HMC5883L {
         };
     }
     wired(obniz) {
-        this.obniz = obniz;
-        obniz.setVccGnd(null, this.params.gnd, "3v");
-        this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
-        this.i2c = obniz.getI2CWithConfig(this.params);
-        this.obniz.wait(500);
+        super.wired(obniz);
+        // this.obniz.wait(500);
+        this.init();
     }
     init() {
-        this.i2c.write(this.address.device, this.address.reset);
-        this.obniz.wait(500);
+        this.reset();
+        // this.obniz.wait(500);
     }
+    reset() {
+        this.write(HMC5883L.commands.mode, 0x00);
+    }
+    async getAdcWait() {
+        const raw = await this.readWait(HMC5883L.commands.x_MSB, 6);
+        return HMC5883L.charArrayToXyz(raw, "b");
+    }
+    setRange(index) {
+        this.write(HMC5883L.commands.config_b, index << 5);
+        this.so = HMC5883L.scales[index];
+    }
+    // legacy
     async get() {
-        this.i2c.write(this.address.device, this.address.xMSB);
-        const readed = await this.i2c.readWait(this.address.device, 2 * 3);
-        const obj = {};
-        const keys = ["x", "y", "z"];
-        for (let i = 0; i < 3; i++) {
-            let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
-            if (val & 0x8000) {
-                val = val - 65536;
-            }
-            obj[keys[i]] = val;
-        }
-        return obj;
+        return await this.getWait();
     }
 }
 exports.default = HMC5883L;
+HMC5883L.commands = {
+    config_a: 0x00,
+    config_b: 0x01,
+    mode: 0x02,
+    x_MSB: 0x03,
+    status: 0x09,
+};
+HMC5883L.scales = [
+    1 / 1370,
+    1 / 1090,
+    1 / 820,
+    1 / 660,
+    1 / 440,
+    1 / 390,
+    1 / 330,
+    1 / 230,
+];
 
 //# sourceMappingURL=index.js.map

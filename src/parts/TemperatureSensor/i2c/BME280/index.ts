@@ -9,7 +9,7 @@ import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
-export interface  BME280Options {
+export interface BME280Options {
   vio?: number;
   vcore?: number;
   gnd?: number;
@@ -19,7 +19,7 @@ export interface  BME280Options {
   sdo?: number;
   address?: number;
   i2c?: any;
- }
+}
 
 export default class BME280 implements ObnizPartsInterface {
 
@@ -205,9 +205,9 @@ export default class BME280 implements ObnizPartsInterface {
 
   public write(data: any) {
     this.i2c.write(this.address, data);
-}
+  }
 
-public async getData() {
+  public async getData() {
     this.i2c.write(this.address, [0xf7]);
     return await this.i2c.readWait(this.address, 8);
   }

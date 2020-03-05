@@ -3,13 +3,13 @@ import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstructOptions} from "../../i2cParts";
+import {I2cPartsAbstractOptions} from "../../i2cParts";
 
 interface GroveInterface {
 grove: PeripheralGrove;
 }
 
-export type  Grove_JoyStickOptions = I2cPartsAbstructOptions | GroveInterface;
+export type  Grove_JoyStickOptions = I2cPartsAbstractOptions | GroveInterface;
 
 export default class Grove_JoyStick implements ObnizPartsInterface {
 

@@ -1,9 +1,9 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import i2cParts, {I2cPartsAbstructOptions} from "../../i2cParts";
+import i2cParts, {I2cInfo, I2cPartsAbstractOptions} from "../../i2cParts";
 import AK09916, {AK09916Options} from "../AK09916/index";
 
-export interface ICM20948Options extends I2cPartsAbstructOptions {
+export interface ICM20948Options extends I2cPartsAbstractOptions {
 }
 
 export default class ICM20948 extends i2cParts implements ObnizPartsInterface {
@@ -15,6 +15,13 @@ export default class ICM20948 extends i2cParts implements ObnizPartsInterface {
   }
 
   public g = 9.80665;
+
+  public i2cinfo: I2cInfo = {
+    address: 0x69,
+    clock: 100000,
+    voltage: "3v",
+    pull: "3v",
+  };
 
   protected obniz!: Obniz;
 
@@ -89,14 +96,6 @@ export default class ICM20948 extends i2cParts implements ObnizPartsInterface {
     super.wired(obniz);
     this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
     this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
-  }
-
-  public i2cInfo() {
-    return {
-      address: 0x69,
-      clock: 100000,
-      voltage: "3v",
-    };
   }
 
   public async initWait() {

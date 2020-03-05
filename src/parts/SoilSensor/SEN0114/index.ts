@@ -8,7 +8,7 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  SEN0114Options {
+export interface SEN0114Options {
   vcc?: number;
   output: number;
   gnd?: number;

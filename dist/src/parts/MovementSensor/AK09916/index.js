@@ -7,6 +7,12 @@ const i2cParts_1 = __importDefault(require("../../i2cParts"));
 class AK09916 extends i2cParts_1.default {
     constructor() {
         super();
+        this.i2cinfo = {
+            address: 0x0c,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
         this.ADDR = 0x0c;
         this._WIA = (0x01);
         this._HXL = (0x11);
@@ -43,13 +49,6 @@ class AK09916 extends i2cParts_1.default {
     wired(obniz) {
         super.wired(obniz);
         this.write(this._CNTL2, this.MODE_CONTINOUS_MEASURE_1);
-    }
-    i2cInfo() {
-        return {
-            address: 0x0c,
-            clock: 100000,
-            voltage: "3v",
-        };
     }
     async magnetic() {
         // 0111 1111 1111 0000 4912 uT

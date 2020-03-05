@@ -8,7 +8,7 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  Keyestudio_PIROptions {
+export interface Keyestudio_PIROptions {
   signal: number;
   vcc?: number;
   gnd?: number;

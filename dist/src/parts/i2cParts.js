@@ -4,12 +4,10 @@
  * @module Parts
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class I2cPartsAbstruct {
+class I2cPartsAbstract {
     constructor() {
-        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "vcc"];
+        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "pull", "clock", "voltage", "address"];
         this.requiredKeys = [];
-        this.i2cinfo = this.i2cInfo();
-        this.address = this.i2cinfo.address;
     }
     static charArrayToInt16(values, endian = "b") {
         const buffer = new ArrayBuffer(2);
@@ -18,23 +16,32 @@ class I2cPartsAbstruct {
         dv.setUint8(1, values[1]);
         return dv.getInt16(0, endian !== "b");
     }
-    i2cInfo() {
-        throw new Error("abstruct class");
-        // eslint-disable-next-line no-unreachable
+    static charArrayToXyz(data, endian = "b", scaleFunc = (d) => d) {
         return {
-            address: 0x00,
-            clock: 100000,
-            voltage: "3v",
+            x: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian)),
+            y: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian)),
+            z: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian)),
         };
+    }
+    // public abstract info(): ObnizPartsInfo;
+    i2cInfo() {
+        return this.i2cinfo;
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.i2cinfo.voltage);
-        this.params.clock = this.i2cinfo.clock;
-        this.params.pull = this.i2cinfo.voltage;
+        Object.keys(this.i2cinfo).map((k) => {
+            if (typeof this.params[k] === "undefined") {
+                this.params[k] = this.i2cinfo[k];
+            }
+            else {
+                // @ts-ignore
+                this.i2cinfo[k] = this.params[k];
+            }
+        });
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.params.voltage);
         this.params.mode = "master";
-        // @ts-ignore
         this.i2c = this.obniz.getI2CWithConfig(this.params);
+        this.address = this.i2cinfo.address;
     }
     char2short(val1, val2) {
         const buffer = new ArrayBuffer(2);
@@ -53,19 +60,29 @@ class I2cPartsAbstruct {
         }
         this.i2c.write(this.address, [command, ...buf]);
     }
+    async writeFlagWait(address, index) {
+        const tempdata = await this.readWait(address, 1);
+        tempdata[0] = tempdata[0] | (0b1 << index);
+        this.write(address, tempdata);
+    }
+    async clearFlagWait(address, index) {
+        const tempdata = await this.readWait(address, 1);
+        tempdata[0] = tempdata[0] & (0xff - (0b1 << index));
+        this.write(address, tempdata);
+    }
     async readInt16Wait(register, endian = "b") {
         const data = await this.readWait(register, 2);
-        return I2cPartsAbstruct.charArrayToInt16(data, endian);
+        return I2cPartsAbstract.charArrayToInt16(data, endian);
     }
     async readThreeInt16Wait(register, endian = "b") {
         const data = await this.readWait(register, 6);
         const results = [0, 0, 0];
-        results[0] = (I2cPartsAbstruct.charArrayToInt16(data.slice(0, 2), endian));
-        results[1] = (I2cPartsAbstruct.charArrayToInt16(data.slice(2, 4), endian));
-        results[2] = (I2cPartsAbstruct.charArrayToInt16(data.slice(4, 6), endian));
+        results[0] = (I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian));
+        results[1] = (I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian));
+        results[2] = (I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian));
         return results;
     }
 }
-exports.default = I2cPartsAbstruct;
+exports.default = I2cPartsAbstract;
 
 //# sourceMappingURL=i2cParts.js.map

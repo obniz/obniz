@@ -3,12 +3,24 @@
  * @packageDocumentation
  * @module Parts.AK8963
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class AK8963 {
+const i2cCompass_1 = __importDefault(require("../../i2cCompass"));
+class AK8963 extends i2cCompass_1.default {
     constructor() {
-        this._adc_cycle = 0;
-        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address", "adb_cycle"];
-        this.requiredKeys = [];
+        super();
+        this.defaultUnit = "uT";
+        this.i2cinfo = {
+            address: 0x0c,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+        this.sf = this.defaultUnit;
+        this.so = AK8963.scales.so_16bit;
+        this.range = "4912uT";
     }
     static info() {
         return {
@@ -16,45 +28,30 @@ class AK8963 {
         };
     }
     wired(obniz) {
-        this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
-        this._address = this.params.address || 0x0c;
-        this.i2c = obniz.getI2CWithConfig(this.params);
+        super.wired(obniz);
         this.setConfig(this.params.adc_cycle || 8);
     }
     setConfig(ADC_cycle) {
         switch (ADC_cycle) {
             case 8:
-                this.i2c.write(this._address, [0x0a, 0x12]);
+                this.write(0x0a, [0x12]); // 16bit
                 break;
             case 100:
-                this.i2c.write(this._address, [0x0a, 0x16]);
+                this.write(0x0a, [0x16]); // 16bit
                 break;
             default:
-                throw new Error("ADC_cycle variable 8,100 setting");
+                throw new Error("Invalid ADC_cycle value. Valid values are 8,100.");
         }
-        this._adc_cycle = ADC_cycle;
     }
-    async getWait() {
-        this.i2c.write(this._address, [0x03]); // request AK8963 data
-        const raw_data_AK8963 = await this.i2c.readWait(this._address, 7); // read 7byte(read mag_data[6] to refresh)
-        return {
-            x: this.char2short(raw_data_AK8963[0], raw_data_AK8963[1]),
-            y: this.char2short(raw_data_AK8963[2], raw_data_AK8963[3]),
-            z: this.char2short(raw_data_AK8963[4], raw_data_AK8963[5]),
-        };
-    }
-    char2short(valueH, valueL) {
-        const buffer = new ArrayBuffer(2);
-        const dv = new DataView(buffer);
-        dv.setUint8(0, valueH);
-        dv.setUint8(1, valueL);
-        return dv.getInt16(0, false);
+    async getAdcWait() {
+        const raw = await this.readWait(0x03, 7);
+        return AK8963.charArrayToXyz(raw, "l");
     }
 }
 exports.default = AK8963;
+AK8963.scales = {
+    so_14bit: 4912 / 8190,
+    so_16bit: 4912 / 32760,
+};
 
 //# sourceMappingURL=index.js.map

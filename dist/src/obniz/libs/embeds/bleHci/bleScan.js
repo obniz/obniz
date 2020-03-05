@@ -317,7 +317,8 @@ class BleScan {
         this._setAdvertisementFilter(adFilters);
     }
     isTarget(peripheral) {
-        if (Object.keys(this.scanTarget).length === 0
+        if (!this.scanTarget ||
+            Object.keys(this.scanTarget).length === 0
             || this.isLocalNamePrefixTarget(peripheral)
             || this.isLocalNameTarget(peripheral)
             || this.isUuidTarget(peripheral)
