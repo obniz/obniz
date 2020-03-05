@@ -4,7 +4,6 @@
 
 加速度3軸，ジャイロ3軸，地磁気(磁界)3軸の計9軸を検出します。
 
-![](image.jpg)
 
 ## wired("ICM20948", { [gnd , vcc , sda , scl , i2c, address]})
 obniz Boardにセンサーを接続します。

@@ -4,7 +4,6 @@ This is a 9-axis sensor module that combines the acceleration / gyro sensor and 
 
 A total of 9 axes consisted of 3 axes of acceleration, 3 axes of gyro, 3 axes of geomagnetic (magnetic field) are detected.
 
-![](image.jpg)
 
 ## wired("ICM20948", { [gnd , vcc , sda , scl , i2c, address]})
 
