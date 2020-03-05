@@ -23100,10 +23100,12 @@ var map = {
 	"./Magnet/CT10/index.js": "./dist/src/parts/Magnet/CT10/index.js",
 	"./Magnet/HMC5883L/index.js": "./dist/src/parts/Magnet/HMC5883L/index.js",
 	"./Memory/24LC256/index.js": "./dist/src/parts/Memory/24LC256/index.js",
+	"./MovementSensor/AK09916/index.js": "./dist/src/parts/MovementSensor/AK09916/index.js",
 	"./MovementSensor/AK8963/index.js": "./dist/src/parts/MovementSensor/AK8963/index.js",
 	"./MovementSensor/Button/index.js": "./dist/src/parts/MovementSensor/Button/index.js",
 	"./MovementSensor/FlickHat/index.js": "./dist/src/parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./dist/src/parts/MovementSensor/HC-SR505/index.js",
+	"./MovementSensor/ICM20948/index.js": "./dist/src/parts/MovementSensor/ICM20948/index.js",
 	"./MovementSensor/IPM-165/index.js": "./dist/src/parts/MovementSensor/IPM-165/index.js",
 	"./MovementSensor/JoyStick/index.js": "./dist/src/parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./dist/src/parts/MovementSensor/KXR94-2050/index.js",
@@ -37712,6 +37714,138 @@ exports.default = _24LC256;
 
 /***/ }),
 
+/***/ "./dist/src/parts/MovementSensor/AK09916/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class AK09916 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.i2cinfo = {
+            address: 0x0c,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+        this.ADDR = 0x0c;
+        this._WIA = (0x01);
+        this._HXL = (0x11);
+        this._HXH = (0x12);
+        this._HYL = (0x13);
+        this._HYH = (0x14);
+        this._HZL = (0x15);
+        this._HZH = (0x16);
+        this._ST2 = (0x18);
+        this._CNTL2 = (0x31);
+        this._ASAX = (0x60);
+        this._ASAY = (0x61);
+        this._ASAZ = (0x62);
+        this._MODE_POWER_DOWN = 0b00000000;
+        this.MODE_SINGLE_MEASURE = 0b00000001;
+        this.MODE_CONTINOUS_MEASURE_1 = 0b00000010; // 10Hz
+        this.MODE_CONTINOUS_MEASURE_2 = 0b00001000; // 100Hz
+        this.MODE_EXTERNAL_TRIGGER_MEASURE = 0b00000100;
+        this._MODE_SELF_TEST = 0b00001000;
+        this._MODE_FUSE_ROM_ACCESS = 0b00011111;
+        this.OUTPUT_14_BIT = 0b00000000;
+        this.OUTPUT_16_BIT = 0b00010000;
+        this._SO_14BIT = 0.6; // per digit when 14bit mode
+        this._SO_16BIT = 0.15; //  per digit when 16bit mode
+        this.offset = [0, 0, 0];
+        this.scale = [1, 1, 1];
+        this.so = this._SO_16BIT;
+    }
+    static info() {
+        return {
+            name: "AK09916",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        this.write(this._CNTL2, this.MODE_CONTINOUS_MEASURE_1);
+    }
+    magnetic() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // 0111 1111 1111 0000 4912 uT
+            // 1111 1111 1111 1111 -1 uT
+            // 1000 0000 0001 0000 -4912 uT
+            // data[0]下位ビット data[1] 上位ビット
+            const raw3 = (yield this.readThreeInt16Wait(this._HXL, "l"));
+            this.readWait(this._ST2, 1);
+            const xyz = raw3.map((d, i) => {
+                return (d * this.so - this.offset[i]) * this.scale[i];
+            });
+            return xyz;
+        });
+    }
+    whoamiWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.readWait(this._WIA, 1);
+            return result[0];
+        });
+    }
+    calibrateWait(count = 256, delay = 200) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.offset = [0, 0, 0];
+            this.scale = [1, 1, 1];
+            let reading = yield this.magnetic();
+            let minx = reading[0];
+            let maxx = reading[0];
+            let miny = reading[1];
+            let maxy = reading[1];
+            let minz = reading[2];
+            let maxz = reading[2];
+            while (count > 0) {
+                yield new Promise((r) => setTimeout(r, delay));
+                reading = yield this.magnetic();
+                minx = Math.min(minx, reading[0]);
+                maxx = Math.max(maxx, reading[0]);
+                miny = Math.min(miny, reading[1]);
+                maxy = Math.max(maxy, reading[1]);
+                minz = Math.min(minz, reading[2]);
+                maxz = Math.max(maxz, reading[2]);
+                count -= 1;
+            }
+            // Hard iron correction
+            const offset_x = (maxx + minx) / 2;
+            const offset_y = (maxy + miny) / 2;
+            const offset_z = (maxz + minz) / 2;
+            this.offset = [offset_x, offset_y, offset_z];
+            // Soft iron correction
+            const avg_delta_x = (maxx - minx) / 2;
+            const avg_delta_y = (maxy - miny) / 2;
+            const avg_delta_z = (maxz - minz) / 2;
+            const avg_delta = (avg_delta_x + avg_delta_y + avg_delta_z) / 3;
+            const scale_x = avg_delta / avg_delta_x;
+            const scale_y = avg_delta / avg_delta_y;
+            const scale_z = avg_delta / avg_delta_z;
+            this.scale = [scale_x, scale_y, scale_z];
+            return { offset: this.offset, scale: this.scale };
+        });
+    }
+}
+exports.default = AK09916;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/MovementSensor/AK8963/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -38287,6 +38421,294 @@ class HCSR505 {
     }
 }
 exports.default = HCSR505;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/ICM20948/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class ICM20948 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.g = 9.80665;
+        this.i2cinfo = {
+            address: 0x69,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+        this._ADDR = 0x69;
+        this._WHO_AM_I = (0x00);
+        this._GYRO_CONFIG = (0x01);
+        this._ACCEL_CONFIG = (0x14);
+        this._ACCEL_CONFIG2 = (0x15);
+        this._INT_PIN_CFG = (0x0f);
+        this._ACCEL_XOUT_H = (0x2d);
+        this._ACCEL_XOUT_L = (0x2e);
+        this._ACCEL_YOUT_H = (0x2f);
+        this._ACCEL_YOUT_L = (0x30);
+        this._ACCEL_ZOUT_H = (0x31);
+        this._ACCEL_ZOUT_L = (0x32);
+        this._GYRO_XOUT_H = (0x33);
+        this._GYRO_XOUT_L = (0x34);
+        this._GYRO_YOUT_H = (0x35);
+        this._GYRO_YOUT_L = (0x36);
+        this._GYRO_ZOUT_H = (0x37);
+        this._GYRO_ZOUT_L = (0x38);
+        // #_ACCEL_FS_MASK = const(0b00011000)
+        this._ACCEL_FS_SEL_2G = (0b00000000);
+        this._ACCEL_FS_SEL_4G = (0b00000010);
+        this._ACCEL_FS_SEL_8G = (0b00000100);
+        this._ACCEL_FS_SEL_16G = (0b00000110);
+        this._ACCEL_SO_2G = 16384; // 1 / 16384 ie. 0.061 mg / digit
+        this._ACCEL_SO_4G = 8192; // 1 / 8192 ie. 0.122 mg / digit
+        this._ACCEL_SO_8G = 4096; // 1 / 4096 ie. 0.244 mg / digit
+        this._ACCEL_SO_16G = 2048; // 1 / 2048 ie. 0.488 mg / digit
+        this._GYRO_FS_MASK = (0b00000110);
+        this._GYRO_FS_SEL_250DPS = (0b00110001);
+        this._GYRO_FS_SEL_500DPS = (0b00110011);
+        this._GYRO_FS_SEL_1000DPS = (0b00110101);
+        this._GYRO_FS_SEL_2000DPS = (0b00110111);
+        this._GYRO_SO_250DPS = 131;
+        this._GYRO_SO_500DPS = 62.5;
+        this._GYRO_SO_1000DPS = 32.8;
+        this._GYRO_SO_2000DPS = 16.4;
+        // # Used for enablind and disabling the i2c bypass access
+        this._I2C_BYPASS_MASK = (0b00000010);
+        this._I2C_BYPASS_EN = (0b00000010);
+        this._I2C_BYPASS_DIS = (0b00000000);
+        this._SF_G = 1; //    g
+        this._SF_MG = 1000; //    mg
+        this._SF_M_S2 = 9.80665; // 1 g = 9.80665 m/s2 ie. standard gravity
+        this._SF_DEG_S = 1; // deg / s
+        this._SF_RAD_S = 57.295779578552; // 1 rad / s is 57.295779578552 deg / s;
+        this._accel_sf = this._SF_M_S2;
+        this._accel_so = this._ACCEL_SO_2G;
+        this._gyro_sf = this._SF_DEG_S;
+        this._gyro_so = this._GYRO_SO_250DPS;
+    }
+    static info() {
+        return {
+            name: "ICM20948",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
+        this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
+    }
+    initWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.whoamiWait();
+            if (data !== 0xea) {
+                throw new Error("ICM20948 not found in I2C bus.");
+            }
+            this.write(0x06, [0x01]); // wake;
+            this.write(0x0f, [0x02]); // passthrough;
+            this.write(0x03, [0x00]);
+            // this.write(12, 0x31, [0x00]);  // power down mode
+            // const buf3 = await this._studuinoI2C.readFromMem(12, 0x60, 3);
+            this._ak09916 = this.obniz.wired("AK09916", { i2c: this.i2c });
+        });
+    }
+    accelFs(value) {
+        if (value === "2g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
+        }
+        else if (value === "4g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_4G);
+        }
+        else if (value === "8g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_8G);
+        }
+        else if (value === "16g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_16G);
+        }
+        else {
+            throw new Error("must be '2g'/'4g'/'8g'/'16g'");
+        }
+    }
+    accelSf(value) {
+        if (value === "g") {
+            this._accel_sf = this._SF_G;
+        }
+        else if (value === "mg") {
+            this._accel_sf = this._SF_MG;
+        }
+        else if (value === "ms2") {
+            this._accel_sf = this._SF_M_S2;
+        }
+        else {
+            throw new Error("must be 'g'/'mg'/'ms2'");
+        }
+    }
+    accelerationWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            /*
+            Acceleration measured by the sensor. By default will return a
+            3-tuple of X, Y, Z axis accelerationWait values in mG as integer.
+            */
+            const so = this._accel_so;
+            const sf = this._accel_sf;
+            const xyz = yield this.readThreeInt16Wait(this._ACCEL_XOUT_H);
+            return xyz.map((e) => e / so * sf);
+        });
+    }
+    gyroWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // """
+            // X, Y, Z radians per second as floats.
+            // """
+            const so = this._gyro_so;
+            const sf = this._gyro_sf;
+            const xyz = yield this.readThreeInt16Wait(this._GYRO_XOUT_H);
+            return xyz.map((e) => e / so * sf);
+        });
+    }
+    magneticWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this._ak09916.magnetic();
+        });
+    }
+    calibrateWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this._ak09916.calibrateWait());
+        });
+    }
+    whoamiWait() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Value of the whoamiWait register. """
+            const result = yield this.readWait(this._WHO_AM_I, 1);
+            return result[0];
+        });
+    }
+    gyroFs(value) {
+        if (value === "250dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
+        }
+        else if (value === "500dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_500DPS);
+        }
+        else if (value === "1000dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_1000DPS);
+        }
+        else if (value === "2000dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_2000DPS);
+        }
+        else {
+            throw new Error("must be '250dps'/'500dps'/'1000dps'/'2000dps'");
+        }
+    }
+    gyroSf(value) {
+        if (value === "dps") {
+            this._gyro_sf = this._SF_DEG_S;
+        }
+        else if (value === "rps") {
+            this._gyro_sf = this._SF_RAD_S;
+        }
+        else {
+            throw new Error("must be 'dps'/'rps'");
+        }
+    }
+    _gyroDlpfWait(dlpfcfg = -1) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.write(0x7f, [0x20]);
+            // # get ICM20948 gyroWait configuration.
+            let char = (yield this.readWait(this._GYRO_CONFIG, 1))[0];
+            char &= this._GYRO_FS_MASK; // clear DLDF bits
+            if (dlpfcfg === -1) {
+                char |= 0x00000000;
+            }
+            else if (dlpfcfg === 0) {
+                char |= 0x00000001;
+            }
+            else if (dlpfcfg === 1) {
+                char |= 0x00001001;
+            }
+            else if (dlpfcfg === 2) {
+                char |= 0x00010001;
+            }
+            else if (dlpfcfg === 3) {
+                char |= 0x00011001;
+            }
+            else if (dlpfcfg === 4) {
+                char |= 0x00100001;
+            }
+            else if (dlpfcfg === 5) {
+                char |= 0x00101001;
+            }
+            else if (dlpfcfg === 6) {
+                char |= 0x00110001;
+            }
+            else if (dlpfcfg === 7) {
+                char |= 0x00111001;
+            }
+            else {
+                char |= 0x00000000;
+            }
+            this.write(this._GYRO_CONFIG, [char]);
+            this.write(0x7f, [0x00]);
+        });
+    }
+    _accelFs(value) {
+        this.write(0x7f, [0x20]);
+        this.write(this._ACCEL_CONFIG, [value]);
+        this.write(0x7f, [0x00]);
+        // # Return the sensitivity divider
+        if (this._ACCEL_FS_SEL_2G === value) {
+            return this._ACCEL_SO_2G;
+        }
+        else if (this._ACCEL_FS_SEL_4G === value) {
+            return this._ACCEL_SO_4G;
+        }
+        else if (this._ACCEL_FS_SEL_8G === value) {
+            return this._ACCEL_SO_8G;
+        }
+        else if (this._ACCEL_FS_SEL_16G === value) {
+            return this._ACCEL_SO_16G;
+        }
+        return 0;
+    }
+    _gyroFs(value) {
+        this.write(0x7f, [0x20]);
+        this.write(this._GYRO_CONFIG, [value]);
+        this.write(0x7f, [0x00]);
+        // # Return the sensitivity divider
+        if (this._GYRO_FS_SEL_250DPS === value) {
+            return this._GYRO_SO_250DPS;
+        }
+        else if (this._GYRO_FS_SEL_500DPS === value) {
+            return this._GYRO_SO_500DPS;
+        }
+        else if (this._GYRO_FS_SEL_1000DPS === value) {
+            return this._GYRO_SO_1000DPS;
+        }
+        else if (this._GYRO_FS_SEL_2000DPS === value) {
+            return this._GYRO_SO_2000DPS;
+        }
+        return 0;
+    }
+}
+exports.default = ICM20948;
 
 //# sourceMappingURL=index.js.map
 
