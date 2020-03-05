@@ -120,6 +120,7 @@ import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from 
 import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/Keyestudio/Keyestudio_TrafficLight";
 import StickC_ADC, {StickC_ADCOptions} from "../parts/StickCHat/StickC_ADC";
 import StickC_DAC, {StickC_DACOptions} from "../parts/StickCHat/StickC_DAC";
+import StickC_FINGER, {StickC_FINGEROptions} from "../parts/StickCHat/StickC_FINGER";
 import StickC_JoyStick, {StickC_JoyStickOptions} from "../parts/StickCHat/StickC_JoyStick";
 import StickC_ToF, {StickC_ToFOptions} from "../parts/StickCHat/StickC_ToF";
 
@@ -246,6 +247,7 @@ export interface WiredNameMap {
   "StickC_ADC": StickC_ADC;
   "StickC_DAC": StickC_DAC;
   "StickC_ToF": StickC_ToF;
+  "StickC_FINGER": StickC_FINGER;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -392,6 +394,7 @@ export interface WiredNameOptionsMap {
   "StickC_ADC": StickC_ADCOptions;
   "StickC_DAC": StickC_DACOptions;
   "StickC_ToF": StickC_ToFOptions;
+  "StickC_FINGER": StickC_FINGEROptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;

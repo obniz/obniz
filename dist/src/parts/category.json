@@ -712,6 +712,10 @@
         {
           "name": "StickC_ToF",
           "store": {}
+        },
+        {
+          "name": "StickC_FINGER",
+          "store": {}
         }
       ]
     },
