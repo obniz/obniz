@@ -14621,7 +14621,7 @@ class Display {
      * But 16 bit color mode is 16 times data bytes needed for same size rendering.
      *
      * ```javascript
-     * obniz.display.colorDepth(4); // => 4bit color mode.
+     * obniz.display.setColorDepth(4); // => 4bit color mode.
      * ```
      *
      * @param depth monochrome display always 1. For color display 1(monochrome) and 4 and 16 can be selected.
