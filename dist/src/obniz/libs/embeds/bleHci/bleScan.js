@@ -58,6 +58,7 @@ class BleScan {
         this.obnizBle.warningIfNotInitialize();
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
+        settings.filterOnDevice = !!settings.filterOnDevice;
         settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
         this.scanTarget = target;
@@ -68,7 +69,12 @@ class BleScan {
         }
         this.scanedPeripherals = [];
         this._clearDelayNotifyTimer();
-        this._setTargetFilterOnDevice();
+        if (settings.filterOnDevice) {
+            this._setTargetFilterOnDevice(this.scanTarget);
+        }
+        else {
+            this._setTargetFilterOnDevice({}); // clear
+        }
         this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
         if (timeout !== null) {
@@ -174,12 +180,14 @@ class BleScan {
         switch (notifyName) {
             case "onfind": {
                 const peripheral = params;
-                const alreadyGotCompleteAdverData = peripheral.adv_data && peripheral.adv_data.length > 0
+                const alreadyGotCompleteAdveData = peripheral.adv_data && peripheral.adv_data.length > 0
                     && peripheral.scan_resp && peripheral.scan_resp.length > 0;
                 const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
+                const maybeAdvOnly = this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address)
+                    && (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
                 // wait for adv_data + scan resp
                 // 10 seconds timeout
-                if (alreadyGotCompleteAdverData || nonConnectable) {
+                if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
                     this._removeDelayNotifyTimer(peripheral.address);
                     this._notifyOnFind(peripheral);
                 }
@@ -285,40 +293,40 @@ class BleScan {
             return [val];
         }
     }
-    _setTargetFilterOnDevice() {
+    _setTargetFilterOnDevice(scanTarget) {
         // < 3.2.0
         if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
             return;
         }
         const adFilters = [];
-        if (this.scanTarget.uuids) {
-            this.scanTarget.uuids.map((elm) => {
+        if (scanTarget.uuids) {
+            scanTarget.uuids.map((elm) => {
                 adFilters.push({ uuid: bleHelper_1.default.uuidFilter(elm) });
             });
         }
-        if (this.scanTarget.localName) {
-            this._arrayWrapper(this.scanTarget.localName).forEach((name) => {
+        if (scanTarget.localName) {
+            this._arrayWrapper(scanTarget.localName).forEach((name) => {
                 adFilters.push({ localNamePrefix: name });
             });
         }
-        if (this.scanTarget.deviceAddress) {
-            this._arrayWrapper(this.scanTarget.deviceAddress).forEach((address) => {
+        if (scanTarget.deviceAddress) {
+            this._arrayWrapper(scanTarget.deviceAddress).forEach((address) => {
                 adFilters.push({ deviceAddress: address });
             });
         }
-        if (this.scanTarget.localNamePrefix) {
-            this._arrayWrapper(this.scanTarget.localNamePrefix).forEach((name) => {
+        if (scanTarget.localNamePrefix) {
+            this._arrayWrapper(scanTarget.localNamePrefix).forEach((name) => {
                 adFilters.push({ localNamePrefix: name });
             });
         }
-        if (this.scanTarget.binary) {
-            if (Array.isArray(this.scanTarget.binary[0])) {
-                this.scanTarget.binary.forEach((e) => {
+        if (scanTarget.binary) {
+            if (Array.isArray(scanTarget.binary[0])) {
+                scanTarget.binary.forEach((e) => {
                     adFilters.push({ binary: e });
                 });
             }
             else {
-                adFilters.push({ binary: this.scanTarget.binary });
+                adFilters.push({ binary: scanTarget.binary });
             }
         }
         this._setAdvertisementFilter(adFilters);

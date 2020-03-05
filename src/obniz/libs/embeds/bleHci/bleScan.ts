@@ -19,7 +19,7 @@ export type BleBinary = number[];
 /**
  * All parameters are OR. If you set uuid and localName, obniz find uuid match but localName not match device.
  *
- * If obnizOS >= 3.2.0, filters are apply on obniz device. So it reduce traffic.
+ * If you set BleScanSetting.filterOnDevice 'true', filters are apply on obniz device. So it reduce traffic.
  */
 export interface BleScanTarget {
   uuids?: UUID[];
@@ -78,6 +78,17 @@ export interface BleScanSetting {
    *
    */
   activeScan?: boolean;
+
+  /**
+   * (obnizOS >= 3.2.0 only)
+   * filters are apply on obniz device
+   *
+   * True: filter on device and JavaScript.
+   * False : filter on JavaScript only.
+   *
+   * Default is false : filter on JavaScript only.
+   */
+  filterOnDevice?: boolean;
 }
 
 /**
@@ -174,6 +185,7 @@ export default class BleScan {
 
     const timeout: number | null = settings.duration === undefined ? 30 : settings.duration;
     settings.duplicate = !!settings.duplicate;
+    settings.filterOnDevice = !!settings.filterOnDevice;
     settings.activeScan = settings.activeScan !== false;
     this.scanSettings = settings;
 
@@ -185,8 +197,11 @@ export default class BleScan {
     }
     this.scanedPeripherals = [];
     this._clearDelayNotifyTimer();
-    this._setTargetFilterOnDevice();
-
+    if (settings.filterOnDevice) {
+      this._setTargetFilterOnDevice(this.scanTarget);
+    } else {
+      this._setTargetFilterOnDevice({}); // clear
+    }
     this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
 
     this.clearTimeoutTimer();
@@ -302,13 +317,15 @@ export default class BleScan {
       case "onfind": {
         const peripheral: BleRemotePeripheral = params;
 
-        const alreadyGotCompleteAdverData = peripheral.adv_data && peripheral.adv_data.length > 0
+        const alreadyGotCompleteAdveData = peripheral.adv_data && peripheral.adv_data.length > 0
           && peripheral.scan_resp && peripheral.scan_resp.length > 0;
         const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
+        const maybeAdvOnly = this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address)
+          && (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
 
         // wait for adv_data + scan resp
         // 10 seconds timeout
-        if (alreadyGotCompleteAdverData || nonConnectable) {
+        if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
           this._removeDelayNotifyTimer(peripheral.address);
           this._notifyOnFind(peripheral);
         } else {
@@ -428,7 +445,7 @@ export default class BleScan {
     }
   }
 
-  protected _setTargetFilterOnDevice() {
+  protected _setTargetFilterOnDevice(scanTarget: BleScanTarget) {
 
     // < 3.2.0
     if (semver.lt(this.obnizBle.Obniz.firmware_ver!, "3.2.0")) {
@@ -436,34 +453,34 @@ export default class BleScan {
     }
 
     const adFilters: BleScanAdvertisementFilterParam[] = [];
-    if (this.scanTarget.uuids) {
-      this.scanTarget.uuids.map((elm: UUID) => {
+    if (scanTarget.uuids) {
+      scanTarget.uuids.map((elm: UUID) => {
         adFilters.push({uuid: BleHelper.uuidFilter(elm)});
       });
     }
-    if (this.scanTarget.localName) {
-      this._arrayWrapper(this.scanTarget.localName).forEach((name) => {
+    if (scanTarget.localName) {
+      this._arrayWrapper(scanTarget.localName).forEach((name) => {
         adFilters.push({localNamePrefix: name});
       });
     }
-    if (this.scanTarget.deviceAddress) {
-      this._arrayWrapper(this.scanTarget.deviceAddress).forEach((address) => {
+    if (scanTarget.deviceAddress) {
+      this._arrayWrapper(scanTarget.deviceAddress).forEach((address) => {
         adFilters.push({deviceAddress: address});
       });
     }
 
-    if (this.scanTarget.localNamePrefix) {
-      this._arrayWrapper(this.scanTarget.localNamePrefix).forEach((name) => {
+    if (scanTarget.localNamePrefix) {
+      this._arrayWrapper(scanTarget.localNamePrefix).forEach((name) => {
         adFilters.push({localNamePrefix: name});
       });
     }
-    if (this.scanTarget.binary) {
-      if (Array.isArray(this.scanTarget.binary[0])) {
-        this.scanTarget.binary.forEach((e: any) => {
+    if (scanTarget.binary) {
+      if (Array.isArray(scanTarget.binary[0])) {
+        scanTarget.binary.forEach((e: any) => {
           adFilters.push({binary: e});
         });
       } else {
-        adFilters.push({binary: this.scanTarget.binary as number[]});
+        adFilters.push({binary: scanTarget.binary as number[]});
       }
     }
     this._setAdvertisementFilter(adFilters);

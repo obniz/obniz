@@ -132,4 +132,5 @@ class WSCommandTcp extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandTcp;
+
 //# sourceMappingURL=WSCommandTcp.js.map

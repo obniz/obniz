@@ -47,4 +47,5 @@ class Solenoid {
     }
 }
 exports.default = Solenoid;
+
 //# sourceMappingURL=index.js.map

@@ -86,4 +86,5 @@ class OMRON_2JCIE {
     }
 }
 exports.default = OMRON_2JCIE;
+
 //# sourceMappingURL=index.js.map

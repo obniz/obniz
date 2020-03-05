@@ -190,4 +190,5 @@ class PCA9685 {
     }
 }
 exports.default = PCA9685;
+
 //# sourceMappingURL=index.js.map

@@ -1553,4 +1553,5 @@ const _qrcode = (() => {
     };
 })();
 exports.default = _qrcode;
+
 //# sourceMappingURL=qr.js.map

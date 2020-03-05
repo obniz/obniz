@@ -12,4 +12,5 @@ class StickC_DAC extends MCP4725_1.default {
     }
 }
 exports.default = StickC_DAC;
+
 //# sourceMappingURL=index.js.map

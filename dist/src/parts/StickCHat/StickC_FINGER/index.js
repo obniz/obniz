@@ -241,4 +241,5 @@ class StickC_FINGER {
     }
 }
 exports.default = StickC_FINGER;
+
 //# sourceMappingURL=index.js.map

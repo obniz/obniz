@@ -86,4 +86,5 @@ class HCSR04 {
     }
 }
 exports.default = HCSR04;
+
 //# sourceMappingURL=index.js.map
