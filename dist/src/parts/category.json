@@ -441,6 +441,12 @@
             "akizuki": "http://akizukidenshi.com/catalog/g/gI-02551/",
             "adafruit": "https://www.adafruit.com/product/164"
           }
+        },
+        {
+          "name": "VL53L0X",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-12590/"
+          }
         }
       ]
     },
@@ -701,6 +707,10 @@
         },
         {
           "name": "StickC_DAC",
+          "store": {}
+        },
+        {
+          "name": "StickC_ToF",
           "store": {}
         }
       ]

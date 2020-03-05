@@ -21,6 +21,7 @@ import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
 // DistanceSensor
 import GP2Y0A21YK0F, {GP2Y0A21YK0FOptions} from "../parts/DistanceSensor/GP2Y0A21YK0F";
 import HCSR04, {HCSR04Options} from "../parts/DistanceSensor/HC-SR04";
+import VL53L0X, {VL53L0XOptions} from "../parts/DistanceSensor/VL53L0X";
 // GasSensor
 import MQ135, {MQ135Options} from "../parts/GasSensor/MQ135";
 import MQ2, {MQ2Options} from "../parts/GasSensor/MQ2";
@@ -120,6 +121,7 @@ import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/
 import StickC_ADC, {StickC_ADCOptions} from "../parts/StickCHat/StickC_ADC";
 import StickC_DAC, {StickC_DACOptions} from "../parts/StickCHat/StickC_DAC";
 import StickC_JoyStick, {StickC_JoyStickOptions} from "../parts/StickCHat/StickC_JoyStick";
+import StickC_ToF, {StickC_ToFOptions} from "../parts/StickCHat/StickC_ToF";
 
 export interface WiredNameMap {
   // Light
@@ -194,6 +196,7 @@ export interface WiredNameMap {
   // Distance Sensor
   "HC-SR04": HCSR04;
   "GP2Y0A21YK0F": GP2Y0A21YK0F;
+  "VL53L0X": VL53L0X;
   // GPS
   "GYSFDMAXB": GYSFDMAXB;
   // MagnetSensor
@@ -242,6 +245,7 @@ export interface WiredNameMap {
   "StickC_JoyStick": StickC_JoyStick;
   "StickC_ADC": StickC_ADC;
   "StickC_DAC": StickC_DAC;
+  "StickC_ToF": StickC_ToF;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -340,6 +344,7 @@ export interface WiredNameOptionsMap {
   // Distance Sensor
   "HC-SR04": HCSR04Options;
   "GP2Y0A21YK0F": GP2Y0A21YK0FOptions;
+  "VL53L0X": VL53L0XOptions;
   // GPS
   "GYSFDMAXB": GYSFDMAXBOptions;
   // MagnetSensor
@@ -386,6 +391,7 @@ export interface WiredNameOptionsMap {
   "StickC_JoyStick": StickC_JoyStickOptions;
   "StickC_ADC": StickC_ADCOptions;
   "StickC_DAC": StickC_DACOptions;
+  "StickC_ToF": StickC_ToFOptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;

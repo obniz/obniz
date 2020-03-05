@@ -22894,6 +22894,7 @@ var map = {
 	"./Display/SharpMemoryTFT/index.js": "./dist/src/parts/Display/SharpMemoryTFT/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./dist/src/parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./dist/src/parts/DistanceSensor/HC-SR04/index.js",
+	"./DistanceSensor/VL53L0X/index.js": "./dist/src/parts/DistanceSensor/VL53L0X/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./dist/src/parts/GPS/GYSFDMAXB/index.js",
 	"./GasSensor/MQ135/index.js": "./dist/src/parts/GasSensor/MQ135/index.js",
 	"./GasSensor/MQ2/index.js": "./dist/src/parts/GasSensor/MQ2/index.js",
@@ -22960,6 +22961,7 @@ var map = {
 	"./StickCHat/StickC_ADC/index.js": "./dist/src/parts/StickCHat/StickC_ADC/index.js",
 	"./StickCHat/StickC_DAC/index.js": "./dist/src/parts/StickCHat/StickC_DAC/index.js",
 	"./StickCHat/StickC_JoyStick/index.js": "./dist/src/parts/StickCHat/StickC_JoyStick/index.js",
+	"./StickCHat/StickC_ToF/index.js": "./dist/src/parts/StickCHat/StickC_ToF/index.js",
 	"./TemperatureSensor/analog/AnalogTemperatureSensor.js": "./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js",
 	"./TemperatureSensor/analog/LM35DZ/index.js": "./dist/src/parts/TemperatureSensor/analog/LM35DZ/index.js",
 	"./TemperatureSensor/analog/LM60/index.js": "./dist/src/parts/TemperatureSensor/analog/LM60/index.js",
@@ -34157,6 +34159,81 @@ exports.default = HCSR04;
 
 /***/ }),
 
+/***/ "./dist/src/parts/DistanceSensor/VL53L0X/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class VL53L0X {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.address = 0x29;
+        this.regs = {
+            IDENTIFICATION_MODEL_ID: 0xc0,
+            IDENTIFICATION_REVISION_ID: 0xc2,
+            PRE_RANGE_CONFIG_VCSEL_PERIOD: 0x50,
+            FINAL_RANGE_CONFIG_VCSEL_PERIOD: 0x70,
+            SYSRANGE_START: 0x00,
+            RESULT_INTERRUPT_STATUS: 0x13,
+            RESULT_RANGE_STATUS: 0x14,
+        };
+        this.acnt = 0;
+        this.scnt = 0;
+        this.status = 0;
+    }
+    static info() {
+        return {
+            name: "VL53L0X",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.obniz.wait(100);
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+    }
+    async getWait() {
+        this.i2c.write(this.address, [this.regs.SYSRANGE_START, 0x01]);
+        let val = [0];
+        let cnt = 0;
+        while (cnt < 10) {
+            await this.obniz.wait(10);
+            this.i2c.write(this.address, [this.regs.RESULT_RANGE_STATUS]);
+            val = await this.i2c.readWait(this.address, 1);
+            if (val[0] & 0x01) {
+                break;
+            }
+            else {
+                cnt++;
+            }
+        }
+        if (!(val[0] & 0x01)) {
+            return null;
+        } // sensor not ready
+        this.i2c.write(this.address, [0x14]);
+        const gbuf = await this.i2c.readWait(this.address, 12);
+        this.acnt = this.makeuint16(gbuf[7], gbuf[6]);
+        this.scnt = this.makeuint16(gbuf[9], gbuf[8]);
+        const dist = this.makeuint16(gbuf[11], gbuf[10]);
+        this.status = ((gbuf[0] & 0x78) >> 3);
+        return dist;
+    }
+    makeuint16(lsb, msb) {
+        return ((msb & 0xFF) << 8) | (lsb & 0xFF);
+    }
+}
+exports.default = VL53L0X;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/GPS/GYSFDMAXB/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -40227,6 +40304,30 @@ class StickC_JoyStick {
     }
 }
 exports.default = StickC_JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/StickCHat/StickC_ToF/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const VL53L0X_1 = __importDefault(__webpack_require__("./dist/src/parts/DistanceSensor/VL53L0X/index.js"));
+class StickC_ToF extends VL53L0X_1.default {
+    static info() {
+        return {
+            name: "StickC_ToF",
+        };
+    }
+}
+exports.default = StickC_ToF;
 
 //# sourceMappingURL=index.js.map
 
