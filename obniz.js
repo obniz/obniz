@@ -100,8 +100,7 @@ module.exports = {
     "dist",
     "!dist/**/*.map",
     "index.js",
-    "obniz.js",
-    "obniz.min.js"
+    "obniz.js"
   ],
   "engines": {
     "node": ">=8.17.0"
@@ -119,12 +118,12 @@ module.exports = {
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
     "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "version": "npm run build && npm run doc && git add docs && git add obniz.js && git add obniz.min.js",
+    "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
-    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "precommit": "lint-staged && npm run build && git add obniz.js",
+    "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -2651,15 +2650,6 @@ exports.default = ObnizConnection;
  * @packageDocumentation
  * @module ObnizCore
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -2829,16 +2819,14 @@ class ObnizDevice extends ObnizUIs_1.default {
             },
         });
     }
-    loop() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof this.looper === "function" && this.onConnectCalled) {
-                const prom = this.looper();
-                if (prom instanceof Promise) {
-                    yield prom;
-                }
-                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+    async loop() {
+        if (typeof this.looper === "function" && this.onConnectCalled) {
+            const prom = this.looper();
+            if (prom instanceof Promise) {
+                await prom;
             }
-        });
+            setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+        }
     }
     _callOnConnect() {
         super._callOnConnect();
@@ -3630,15 +3618,6 @@ exports.ObnizHciBLE = ObnizHciBLE;
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.old
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -3693,19 +3672,15 @@ class ObnizBLE {
         return str;
     }
     // dummy
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
+    async initWait() {
     }
     _reset() {
     }
     directConnect(uuid, addressType) {
         throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
     }
-    directConnectWait(uuid, addressType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            throw new Error("directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS");
-        });
+    async directConnectWait(uuid, addressType) {
+        throw new Error("directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS");
     }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
@@ -4791,15 +4766,6 @@ exports.default = BleRemoteAttributeAbstract;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -4846,22 +4812,20 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     getDescriptor(uuid) {
         return this.getChild(uuid);
     }
-    registerNotify(callback) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.onnotify = callback;
-            const cccd = this.getDescriptor("2902");
-            yield cccd.writeWait([0x01, 0x00]);
-            const obj = {
-                ble: {
-                    register_notify_characteristic: {
-                        address: this.service.peripheral.address,
-                        service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    },
+    async registerNotify(callback) {
+        this.onnotify = callback;
+        const cccd = this.getDescriptor("2902");
+        await cccd.writeWait([0x01, 0x00]);
+        const obj = {
+            ble: {
+                register_notify_characteristic: {
+                    address: this.service.peripheral.address,
+                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
+                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
                 },
-            };
-            this.service.peripheral.Obniz.send(obj);
-        });
+            },
+        };
+        this.service.peripheral.Obniz.send(obj);
     }
     registerNotifyWait(callback) {
         return new Promise((resolve) => {
@@ -5077,15 +5041,6 @@ exports.default = BleRemoteDescriptor;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -5352,30 +5307,28 @@ class BleRemotePeripheral {
             this.discoverAllServices();
         });
     }
-    discoverAllHandlesWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ArrayFlat = (array, depth) => {
-                const flattend = [];
-                const flat = (_array, _depth) => {
-                    for (const el of _array) {
-                        if (Array.isArray(el) && _depth > 0) {
-                            flat(el, _depth - 1);
-                        }
-                        else {
-                            flattend.push(el);
-                        }
+    async discoverAllHandlesWait() {
+        const ArrayFlat = (array, depth) => {
+            const flattend = [];
+            const flat = (_array, _depth) => {
+                for (const el of _array) {
+                    if (Array.isArray(el) && _depth > 0) {
+                        flat(el, _depth - 1);
                     }
-                };
-                flat(array, Math.floor(depth) || 1);
-                return flattend;
+                    else {
+                        flattend.push(el);
+                    }
+                }
             };
-            const services = yield this.discoverAllServicesWait();
-            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-            const chars = ArrayFlat(charsNest);
-            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-            // eslint-disable-next-line no-unused-vars
-            const descriptors = ArrayFlat(descriptorsNest);
-        });
+            flat(array, Math.floor(depth) || 1);
+            return flattend;
+        };
+        const services = await this.discoverAllServicesWait();
+        const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
+        const chars = ArrayFlat(charsNest);
+        const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
+        // eslint-disable-next-line no-unused-vars
+        const descriptors = ArrayFlat(descriptorsNest);
     }
     onconnect() {
     }
@@ -5389,44 +5342,42 @@ class BleRemotePeripheral {
     }
     ondiscoverfinished() {
     }
-    notifyFromServer(notifyName, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.emitter.emit(notifyName, params);
-            switch (notifyName) {
-                case "statusupdate": {
-                    if (params.status === "connected") {
-                        this.connected = true;
-                        yield this.discoverAllHandlesWait();
-                        this.onconnect();
-                    }
-                    if (params.status === "disconnected") {
-                        this.connected = false;
-                        this.ondisconnect();
-                    }
-                    break;
+    async notifyFromServer(notifyName, params) {
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "statusupdate": {
+                if (params.status === "connected") {
+                    this.connected = true;
+                    await this.discoverAllHandlesWait();
+                    this.onconnect();
                 }
-                case "discover": {
-                    const uuid = params.service_uuid;
-                    let child = this.getService(uuid);
-                    if (!child) {
-                        const newService = new bleRemoteService_1.default({ uuid });
-                        newService.parent = this;
-                        this._services.push(newService);
-                        child = newService;
-                    }
-                    child.discoverdOnRemote = true;
-                    this.ondiscoverservice(child);
-                    break;
+                if (params.status === "disconnected") {
+                    this.connected = false;
+                    this.ondisconnect();
                 }
-                case "discoverfinished": {
-                    const children = this._services.filter((elm) => {
-                        return elm.discoverdOnRemote;
-                    });
-                    this.ondiscoverservicefinished(children);
-                    break;
-                }
+                break;
             }
-        });
+            case "discover": {
+                const uuid = params.service_uuid;
+                let child = this.getService(uuid);
+                if (!child) {
+                    const newService = new bleRemoteService_1.default({ uuid });
+                    newService.parent = this;
+                    this._services.push(newService);
+                    child = newService;
+                }
+                child.discoverdOnRemote = true;
+                this.ondiscoverservice(child);
+                break;
+            }
+            case "discoverfinished": {
+                const children = this._services.filter((elm) => {
+                    return elm.discoverdOnRemote;
+                });
+                this.ondiscoverservicefinished(children);
+                break;
+            }
+        }
     }
     onerror() {
     }
@@ -5900,15 +5851,6 @@ exports.default = BleService;
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -5994,19 +5936,17 @@ class ObnizBLE {
      * await obniz.ble.initWait();
      * ```
      */
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this._initialized) {
-                this._initialized = true;
-                // force initialize on obnizOS < 3.2.0
-                if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
-                    this.hci.init();
-                    this.hci.end(); // disable once
-                    this.hci.init();
-                }
-                yield this.hciProtocol.initWait();
+    async initWait() {
+        if (!this._initialized) {
+            this._initialized = true;
+            // force initialize on obnizOS < 3.2.0
+            if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
+                this.hci.init();
+                this.hci.end(); // disable once
+                this.hci.init();
             }
-        });
+            await this.hciProtocol.initWait();
+        }
     }
     /**
      * @ignore
@@ -6075,12 +6015,10 @@ class ObnizBLE {
      * @param address peripheral device address
      * @param addressType "random" or "public"
      */
-    directConnectWait(address, addressType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const peripheral = this.directConnect(address, addressType);
-            yield peripheral.connectWait();
-            return peripheral;
-        });
+    async directConnectWait(address, addressType) {
+        const peripheral = this.directConnect(address, addressType);
+        await peripheral.connectWait();
+        return peripheral;
     }
     /**
      * @ignore
@@ -6132,15 +6070,13 @@ class ObnizBLE {
         val._adv_data_filtered = advertisement;
         this.scan.notifyFromServer("onfind", val);
     }
-    onConnect(peripheralUuid, error) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const peripheral = this.findPeripheral(peripheralUuid);
-            if (!error) {
-                yield peripheral.discoverAllHandlesWait();
-            }
-            peripheral.notifyFromServer("statusupdate", {
-                status: error ? "disconnected" : "connected",
-            });
+    async onConnect(peripheralUuid, error) {
+        const peripheral = this.findPeripheral(peripheralUuid);
+        if (!error) {
+            await peripheral.discoverAllHandlesWait();
+        }
+        peripheral.notifyFromServer("statusupdate", {
+            status: error ? "disconnected" : "connected",
         });
     }
     onDisconnect(peripheralUuid) {
@@ -8385,15 +8321,6 @@ exports.default = BleRemoteDescriptor;
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8728,29 +8655,27 @@ class BleRemotePeripheral {
     /**
      * @ignore
      */
-    discoverAllHandlesWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ArrayFlat = (array, depth) => {
-                const flattend = [];
-                (function flat(_array, _depth) {
-                    for (const el of _array) {
-                        if (Array.isArray(el) && _depth > 0) {
-                            flat(el, _depth - 1);
-                        }
-                        else {
-                            flattend.push(el);
-                        }
+    async discoverAllHandlesWait() {
+        const ArrayFlat = (array, depth) => {
+            const flattend = [];
+            (function flat(_array, _depth) {
+                for (const el of _array) {
+                    if (Array.isArray(el) && _depth > 0) {
+                        flat(el, _depth - 1);
                     }
-                })(array, Math.floor(depth) || 1);
-                return flattend;
-            };
-            const services = yield this.discoverAllServicesWait();
-            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-            const chars = ArrayFlat(charsNest);
-            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-            // eslint-disable-next-line no-unused-vars
-            const descriptors = ArrayFlat(descriptorsNest);
-        });
+                    else {
+                        flattend.push(el);
+                    }
+                }
+            })(array, Math.floor(depth) || 1);
+            return flattend;
+        };
+        const services = await this.discoverAllServicesWait();
+        const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
+        const chars = ArrayFlat(charsNest);
+        const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
+        // eslint-disable-next-line no-unused-vars
+        const descriptors = ArrayFlat(descriptorsNest);
     }
     /**
      * @ignore
@@ -11843,15 +11768,6 @@ module.exports = JSON.parse("[\"Success\",\"Unknown HCI Command\",\"Unknown Conn
  * @packageDocumentation
  * @ignore
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('hci');
 const debug = (...params) => {
@@ -11946,20 +11862,18 @@ class Hci extends events.EventEmitter {
         };
         this._obnizHci.onread = this.onSocketData.bind(this);
     }
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.reset();
-            // this.setEventMask();
-            // this.setLeEventMask();
-            // this.readLocalVersion();
-            // this.writeLeHostSupported();
-            // this.readLeHostSupported();
-            // this.readBdAddr();
-            return new Promise((resolve) => {
-                this.once("stateChange", () => {
-                    // console.log('te');
-                    resolve();
-                });
+    async initWait() {
+        this.reset();
+        // this.setEventMask();
+        // this.setLeEventMask();
+        // this.readLocalVersion();
+        // this.writeLeHostSupported();
+        // this.readLeHostSupported();
+        // this.readBdAddr();
+        return new Promise((resolve) => {
+            this.once("stateChange", () => {
+                // console.log('te');
+                resolve();
             });
         });
     }
@@ -15177,15 +15091,6 @@ exports.default = HW;
  * @packageDocumentation
  * @module ObnizCore.Hardware
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -15220,7 +15125,7 @@ class M5StickC extends ObnizDevice_1.default {
         const p2 = new Promise((resolve, reject) => {
             i2c.onerror = reject;
         });
-        return Promise.race([p1, p2]).then((val) => __awaiter(this, void 0, void 0, function* () {
+        return Promise.race([p1, p2]).then(async (val) => {
             // restore
             i2c.onerror = onerror;
             if (!val) {
@@ -15228,7 +15133,7 @@ class M5StickC extends ObnizDevice_1.default {
             }
             switch (imuName) {
                 case "SH200Q":
-                    yield this.imu.initWait();
+                    await this.imu.initWait();
                     break;
                 case "MPU6886":
                     this.imu.init();
@@ -15237,7 +15142,7 @@ class M5StickC extends ObnizDevice_1.default {
                     break;
             }
             return this.imu;
-        }));
+        });
     }
     _prepareComponents() {
         // @ts-ignore
@@ -15251,27 +15156,6 @@ class M5StickC extends ObnizDevice_1.default {
         this._m5i2c.start(i2cParams);
         this.axp = this.wired("AXP192", { i2c: this._m5i2c });
         this.led.off();
-        this._addToAllComponentKeys();
-    }
-    _addToAllComponentKeys() {
-        const keys = [
-            "buttonA",
-            "buttonB",
-            "ir",
-            "led",
-            "axp",
-            "imu",
-        ];
-        for (const key of keys) {
-            this._allComponentKeys.push(key);
-            // @ts-ignore
-            if (this[key] && !this[key]._reset) {
-                // @ts-ignore
-                this[key]._reset = () => {
-                    return;
-                };
-            }
-        }
     }
 }
 exports.M5StickC = M5StickC;
@@ -15649,6 +15533,12 @@ class PeripheralGrove {
         const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
         return { primary, secondary };
     }
+    getAnalogDigital(drive = "5v") {
+        this.useWithType("analog-digital", drive);
+        const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
+        const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        return { analog, digital };
+    }
     getI2c(frequency, drive = "5v") {
         this.useWithType("i2c", drive);
         if (!this._current.i2c) {
@@ -15687,6 +15577,14 @@ class PeripheralGrove {
             if (this.Obniz.isValidAD(this._params.pin2)) {
                 this.Obniz.getAD(this._params.pin2).end();
             }
+        }
+        else if (this._current.type === "analog-digital") {
+            if (this.Obniz.isValidAD(this._params.pin1)) {
+                this.Obniz.getAD(this._params.pin1).end();
+            }
+            // if (this.Obniz.isValidIO(this._params.pin2)) {
+            //   this.Obniz.getIO(this._params.pin2).end();
+            // }
         }
         this._current = {};
     }
@@ -23053,6 +22951,7 @@ var map = {
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
 	"./ColorSensor/S11059/index.js": "./dist/src/parts/ColorSensor/S11059/index.js",
+	"./DAConverter/MCP4725/index.js": "./dist/src/parts/DAConverter/MCP4725/index.js",
 	"./Display/7SegmentLED/index.js": "./dist/src/parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./dist/src/parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./dist/src/parts/Display/7SegmentLED_MAX7219/index.js",
@@ -23063,6 +22962,7 @@ var map = {
 	"./Display/SharpMemoryTFT/index.js": "./dist/src/parts/Display/SharpMemoryTFT/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./dist/src/parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./dist/src/parts/DistanceSensor/HC-SR04/index.js",
+	"./DistanceSensor/VL53L0X/index.js": "./dist/src/parts/DistanceSensor/VL53L0X/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./dist/src/parts/GPS/GYSFDMAXB/index.js",
 	"./GasSensor/MQ135/index.js": "./dist/src/parts/GasSensor/MQ135/index.js",
 	"./GasSensor/MQ2/index.js": "./dist/src/parts/GasSensor/MQ2/index.js",
@@ -23077,8 +22977,10 @@ var map = {
 	"./Grove/Grove_3AxisAccelerometer/index.js": "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js",
 	"./Grove/Grove_Button/index.js": "./dist/src/parts/Grove/Grove_Button/index.js",
 	"./Grove/Grove_Buzzer/index.js": "./dist/src/parts/Grove/Grove_Buzzer/index.js",
+	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
+	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
@@ -23127,6 +23029,11 @@ var map = {
 	"./PressureSensor/FSR-40X/index.js": "./dist/src/parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./dist/src/parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./dist/src/parts/Sound/Speaker/index.js",
+	"./StickCHat/StickC_ADC/index.js": "./dist/src/parts/StickCHat/StickC_ADC/index.js",
+	"./StickCHat/StickC_DAC/index.js": "./dist/src/parts/StickCHat/StickC_DAC/index.js",
+	"./StickCHat/StickC_FINGER/index.js": "./dist/src/parts/StickCHat/StickC_FINGER/index.js",
+	"./StickCHat/StickC_JoyStick/index.js": "./dist/src/parts/StickCHat/StickC_JoyStick/index.js",
+	"./StickCHat/StickC_ToF/index.js": "./dist/src/parts/StickCHat/StickC_ToF/index.js",
 	"./TemperatureSensor/analog/AnalogTemperatureSensor.js": "./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js",
 	"./TemperatureSensor/analog/LM35DZ/index.js": "./dist/src/parts/TemperatureSensor/analog/LM35DZ/index.js",
 	"./TemperatureSensor/analog/LM60/index.js": "./dist/src/parts/TemperatureSensor/analog/LM60/index.js",
@@ -23182,15 +23089,6 @@ webpackContext.id = "./dist/src/parts sync recursive \\.js$";
  * @packageDocumentation
  * @module Parts.hx711
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Hx711 {
     constructor() {
@@ -23219,40 +23117,38 @@ class Hx711 {
         this.sck.output(true);
         obniz.wait(500);
     }
-    readWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.sck.output(false);
-            while (true) {
-                const val = yield this.dout.inputWait();
-                if (val === false) {
-                    break;
-                }
+    async readWait() {
+        this.sck.output(false);
+        while (true) {
+            const val = await this.dout.inputWait();
+            if (val === false) {
+                break;
             }
-            this.spi.start({
-                mode: "master",
-                mosi: this.params.sck,
-                miso: this.params.dout,
-                frequency: 500 * 1000,
-            });
-            const ret_double = yield this.spi.writeWait([
-                0xaa,
-                0xaa,
-                0xaa,
-                0xaa,
-                0xaa,
-                0xaa,
-                0x80,
-            ]);
-            this.spi.end(true);
-            this.sck.output(false);
-            const ret = [
-                this.doubleBit2singleBit(ret_double[0], ret_double[1]),
-                this.doubleBit2singleBit(ret_double[2], ret_double[3]),
-                this.doubleBit2singleBit(ret_double[4], ret_double[5]),
-            ];
-            const flag = (ret[0] & 0x80) === 0 ? 1 : -1;
-            return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
+        }
+        this.spi.start({
+            mode: "master",
+            mosi: this.params.sck,
+            miso: this.params.dout,
+            frequency: 500 * 1000,
         });
+        const ret_double = await this.spi.writeWait([
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0xaa,
+            0x80,
+        ]);
+        this.spi.end(true);
+        this.sck.output(false);
+        const ret = [
+            this.doubleBit2singleBit(ret_double[0], ret_double[1]),
+            this.doubleBit2singleBit(ret_double[2], ret_double[3]),
+            this.doubleBit2singleBit(ret_double[4], ret_double[5]),
+        ];
+        const flag = (ret[0] & 0x80) === 0 ? 1 : -1;
+        return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
     }
     doubleBit2singleBit(a, b) {
         return ((this.bit(a, 7) << 7) |
@@ -23267,16 +23163,14 @@ class Hx711 {
     bit(a, n) {
         return a & (1 << n) ? 1 : 0;
     }
-    readAverageWait(times) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const results = [];
-            for (let i = 0; i < times; i++) {
-                results.push(yield this.readWait());
-            }
-            return (results.reduce((prev, current, i) => {
-                return prev + current;
-            }, 0) / results.length);
-        });
+    async readAverageWait(times) {
+        const results = [];
+        for (let i = 0; i < times; i++) {
+            results.push(await this.readWait());
+        }
+        return (results.reduce((prev, current, i) => {
+            return prev + current;
+        }, 0) / results.length);
     }
     powerDown() {
         this.sck.output(true);
@@ -23284,18 +23178,14 @@ class Hx711 {
     powerUp() {
         this.sck.output(false);
     }
-    zeroAdjustWait(times) {
-        return __awaiter(this, void 0, void 0, function* () {
-            times = parseInt(times) || 1;
-            this._offset = yield this.readAverageWait(times);
-        });
+    async zeroAdjustWait(times) {
+        times = parseInt(times) || 1;
+        this._offset = await this.readAverageWait(times);
     }
-    getValueWait(times) {
-        return __awaiter(this, void 0, void 0, function* () {
-            times = parseInt(times) || 1;
-            const val = yield this.readAverageWait(times);
-            return (val - this._offset) / this._scale;
-        });
+    async getValueWait(times) {
+        times = parseInt(times) || 1;
+        const val = await this.readAverageWait(times);
+        return (val - this._offset) / this._scale;
     }
     setOffset(offset) {
         if (typeof offset !== "number") {
@@ -23455,15 +23345,6 @@ exports.default = Puls08M5stickcS;
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class OMRON_2JCIE {
     constructor() {
@@ -23479,38 +23360,32 @@ class OMRON_2JCIE {
     wired(obniz) {
         this.obniz = obniz;
     }
-    findWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const target = {
-                localName: "Env",
-            };
-            yield this.obniz.ble.initWait();
-            this.periperal = yield this.obniz.ble.scan.startOneWait(target);
-            return this.periperal;
-        });
+    async findWait() {
+        const target = {
+            localName: "Env",
+        };
+        await this.obniz.ble.initWait();
+        this.periperal = await this.obniz.ble.scan.startOneWait(target);
+        return this.periperal;
     }
     omron_uuid(uuid) {
         return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
     }
-    connectWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.periperal) {
-                yield this.findWait();
-            }
-            if (!this.periperal) {
-                throw new Error("2JCIE not found");
-            }
-            if (!this.periperal.connected) {
-                yield this.periperal.connectWait();
-            }
-        });
+    async connectWait() {
+        if (!this.periperal) {
+            await this.findWait();
+        }
+        if (!this.periperal) {
+            throw new Error("2JCIE not found");
+        }
+        if (!this.periperal.connected) {
+            await this.periperal.connectWait();
+        }
     }
-    disconnectWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.periperal && this.periperal.connected) {
-                this.periperal.disconnectWait();
-            }
-        });
+    async disconnectWait() {
+        if (this.periperal && this.periperal.connected) {
+            this.periperal.disconnectWait();
+        }
     }
     signedNumberFromBinary(data) {
         // little adian
@@ -23531,27 +23406,25 @@ class OMRON_2JCIE {
         }
         return val;
     }
-    getLatestData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.connectWait();
-            const c = this.periperal
-                .getService(this.omron_uuid("3000"))
-                .getCharacteristic(this.omron_uuid("3001"));
-            const data = yield c.readWait();
-            const json = {
-                row_number: data[0],
-                temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
-                relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
-                light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
-                uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
-                barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
-                soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
-                discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
-                heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
-                battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
-            };
-            return json;
-        });
+    async getLatestData() {
+        await this.connectWait();
+        const c = this.periperal
+            .getService(this.omron_uuid("3000"))
+            .getCharacteristic(this.omron_uuid("3001"));
+        const data = await c.readWait();
+        const json = {
+            row_number: data[0],
+            temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+            relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+            light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
+            uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
+            barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
+            soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+            discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
+            heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
+            battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+        };
+        return json;
     }
 }
 exports.default = OMRON_2JCIE;
@@ -23573,15 +23446,6 @@ exports.default = OMRON_2JCIE;
  * Released under the MIT license
  * Date: 2019-10-24
  * ---------------------------------------------------------------- */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -23611,11 +23475,9 @@ class Linking {
     wired(obniz) {
         this.obniz = obniz;
     }
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.obniz.ble.initWait();
-            this.initialized = true;
-        });
+    async init() {
+        await this.obniz.ble.initWait();
+        this.initialized = true;
     }
     discover(p) {
         this._checkInitialized();
@@ -23995,15 +23857,6 @@ exports.default = LinkingAdvertising;
 * Date: 2019-11-03
 * ---------------------------------------------------------------- */
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -24054,112 +23907,110 @@ class LinkingDevice {
         this.advertisement = advertising_1.default.parse(peripheral);
         this._peripheral = peripheral;
     }
-    connect() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.connected === true) {
-                throw new Error("The device has been already connected.");
+    async connect() {
+        if (this.connected === true) {
+            throw new Error("The device has been already connected.");
+        }
+        let onprogress = this.onconnectprogress;
+        if (!this._isFunction(this.onconnectprogress)) {
+            onprogress = () => { };
+        }
+        const peripheral = this._peripheral;
+        onprogress({ step: 1, desc: "CONNECTING" });
+        try {
+            peripheral.ondisconnect = async () => {
+                await this._clean();
+                if (this._isFunction(this.ondisconnect)) {
+                    this.ondisconnect({ wasClean: false });
+                }
+            };
+            await peripheral.connectWait();
+            onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
+            onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
+            await this._getServicesAndChars();
+            onprogress({ step: 4, desc: "SUBSCRIBING" });
+            await this._subscribeForIndicate();
+            onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
+            let res;
+            res = await this.write("GET_DEVICE_INFORMATION");
+            this.info.id = "";
+            if ("deviceId" in res.data) {
+                this.info.id = res.data.deviceId;
             }
-            let onprogress = this.onconnectprogress;
-            if (!this._isFunction(this.onconnectprogress)) {
-                onprogress = () => { };
+            this.info.uid = "";
+            if ("deviceUid" in res.data) {
+                this.info.uid = res.data.deviceUid;
             }
-            const peripheral = this._peripheral;
-            onprogress({ step: 1, desc: "CONNECTING" });
-            try {
-                peripheral.ondisconnect = () => __awaiter(this, void 0, void 0, function* () {
-                    yield this._clean();
-                    if (this._isFunction(this.ondisconnect)) {
-                        this.ondisconnect({ wasClean: false });
-                    }
+            this.info.services = {};
+            if ("serviceList" in res.data) {
+                res.data.serviceList.forEach((o) => {
+                    this.info.services[o.name] = o.id;
                 });
-                yield peripheral.connectWait();
-                onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
-                onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
-                yield this._getServicesAndChars();
-                onprogress({ step: 4, desc: "SUBSCRIBING" });
-                yield this._subscribeForIndicate();
-                onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
-                let res;
-                res = yield this.write("GET_DEVICE_INFORMATION");
-                this.info.id = "";
-                if ("deviceId" in res.data) {
-                    this.info.id = res.data.deviceId;
-                }
-                this.info.uid = "";
-                if ("deviceUid" in res.data) {
-                    this.info.uid = res.data.deviceUid;
-                }
-                this.info.services = {};
-                if ("serviceList" in res.data) {
-                    res.data.serviceList.forEach((o) => {
-                        this.info.services[o.name] = o.id;
-                    });
-                }
-                this.info.capabilities = {};
-                if ("deviceCapability" in res.data) {
-                    res.data.deviceCapability.forEach((o) => {
-                        this.info.capabilities[o.name] = o.id;
-                    });
-                }
-                this.info.exsensors = {};
-                if ("exSensorType" in res.data) {
-                    res.data.exSensorType.forEach((o) => {
-                        this.info.exsensors[o.name] = o.id;
-                    });
-                }
-                onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
-                res = yield this._writeConfirmNotifyCategory();
-                this.info.notifyCategories = {};
-                if (res) {
-                    if ("notifyCategory" in res.data) {
-                        res.data.notifyCategory.forEach((o) => {
-                            this.info.notifyCategories[o.name] = o.id;
-                        });
-                    }
-                }
-                onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
-                res = yield this._writeGetSettingInformation();
-                this.info.settings = {};
-                if (res) {
-                    if ("settingInformationData" in res.data) {
-                        res.data.settingInformationData.forEach((o) => {
-                            this.info.settings[o.name] = o;
-                        });
-                    }
-                }
-                onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
-                res = yield this._writeGetSettingName("LEDColorName");
-                if (res) {
-                    this.info.settings.LED.colors = res.data.settingNameData;
-                }
-                onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
-                res = yield this._writeGetSettingName("LEDPatternName");
-                if (res) {
-                    this.info.settings.LED.patterns = res.data.settingNameData;
-                }
-                onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
-                res = yield this._writeGetSettingName("VibrationPatternName");
-                if (res) {
-                    this.info.settings.Vibration.patterns = res.data.settingNameData;
-                }
-                onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
-                res = yield this._writeGetSettingName("BeepPatternName");
-                if (res) {
-                    this.info.settings.Beep.patterns = res.data.settingNameData;
-                }
-                this._LinkingService.setDeviceInfo(this.info);
-                this._initServices();
-                this.connected = true;
-                if (this._isFunction(this.onconnect)) {
-                    this.onconnect();
-                }
-                onprogress({ step: 12, desc: "COMPLETED" });
             }
-            catch (e) {
-                onprogress({ step: 0, desc: "FAILED" });
-                throw e;
+            this.info.capabilities = {};
+            if ("deviceCapability" in res.data) {
+                res.data.deviceCapability.forEach((o) => {
+                    this.info.capabilities[o.name] = o.id;
+                });
             }
-        });
+            this.info.exsensors = {};
+            if ("exSensorType" in res.data) {
+                res.data.exSensorType.forEach((o) => {
+                    this.info.exsensors[o.name] = o.id;
+                });
+            }
+            onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
+            res = await this._writeConfirmNotifyCategory();
+            this.info.notifyCategories = {};
+            if (res) {
+                if ("notifyCategory" in res.data) {
+                    res.data.notifyCategory.forEach((o) => {
+                        this.info.notifyCategories[o.name] = o.id;
+                    });
+                }
+            }
+            onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
+            res = await this._writeGetSettingInformation();
+            this.info.settings = {};
+            if (res) {
+                if ("settingInformationData" in res.data) {
+                    res.data.settingInformationData.forEach((o) => {
+                        this.info.settings[o.name] = o;
+                    });
+                }
+            }
+            onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
+            res = await this._writeGetSettingName("LEDColorName");
+            if (res) {
+                this.info.settings.LED.colors = res.data.settingNameData;
+            }
+            onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
+            res = await this._writeGetSettingName("LEDPatternName");
+            if (res) {
+                this.info.settings.LED.patterns = res.data.settingNameData;
+            }
+            onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
+            res = await this._writeGetSettingName("VibrationPatternName");
+            if (res) {
+                this.info.settings.Vibration.patterns = res.data.settingNameData;
+            }
+            onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
+            res = await this._writeGetSettingName("BeepPatternName");
+            if (res) {
+                this.info.settings.Beep.patterns = res.data.settingNameData;
+            }
+            this._LinkingService.setDeviceInfo(this.info);
+            this._initServices();
+            this.connected = true;
+            if (this._isFunction(this.onconnect)) {
+                this.onconnect();
+            }
+            onprogress({ step: 12, desc: "COMPLETED" });
+        }
+        catch (e) {
+            onprogress({ step: 0, desc: "FAILED" });
+            throw e;
+        }
     }
     _wait(msec) {
         const promise = new Promise((resolve, reject) => {
@@ -24262,11 +24113,9 @@ class LinkingDevice {
             }
         }
     }
-    _subscribeForIndicate() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.char_indicate.registerNotifyWait((data) => {
-                this._receivedPacket(Buffer.from(data));
-            });
+    async _subscribeForIndicate() {
+        await this.char_indicate.registerNotifyWait((data) => {
+            this._receivedPacket(Buffer.from(data));
         });
     }
     _receivedPacket(buf) {
@@ -24438,38 +24287,34 @@ class LinkingDevice {
             }
         }
     }
-    disconnect() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.connected === false) {
-                yield this._clean();
-                return;
-            }
-            yield this._peripheral.disconnectWait();
-            if (this._isFunction(this.ondisconnect)) {
-                this.ondisconnect({ wasClean: true });
-            }
-        });
+    async disconnect() {
+        if (this.connected === false) {
+            await this._clean();
+            return;
+        }
+        await this._peripheral.disconnectWait();
+        if (this._isFunction(this.ondisconnect)) {
+            this.ondisconnect({ wasClean: true });
+        }
     }
-    _clean() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const p = this._peripheral;
-            if (!p) {
-                return;
-            }
-            if (this.char_indicate) {
-                yield this.char_indicate.unregisterNotifyWait();
-            }
-            // p.removeAllListeners();
-            this.connected = false;
-            this._service = null;
-            this.char_write = null;
-            this.char_indicate = null;
-            this._div_packet_queue = [];
-            this._onresponse = null;
-        });
+    async _clean() {
+        const p = this._peripheral;
+        if (!p) {
+            return;
+        }
+        if (this.char_indicate) {
+            await this.char_indicate.unregisterNotifyWait();
+        }
+        // p.removeAllListeners();
+        this.connected = false;
+        this._service = null;
+        this.char_write = null;
+        this.char_indicate = null;
+        this._div_packet_queue = [];
+        this._onresponse = null;
     }
     write(message_name, params) {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+        return new Promise(async (resolve, reject) => {
             const buf = this._LinkingService.createRequest(message_name, params);
             if (!buf) {
                 reject(new Error("The specified parameters are invalid."));
@@ -24493,12 +24338,12 @@ class LinkingDevice {
                 }
             };
             try {
-                yield this.char_write.writeWait(buf, true);
+                await this.char_write.writeWait(buf, true);
             }
             catch (e) {
                 reject(e);
             }
-        }));
+        });
     }
     _margeResponsePrameters(res) {
         if (!res) {
@@ -27680,15 +27525,6 @@ exports.default = LinkingService;
  * @packageDocumentation
  * @module Parts.ArduCAMMini
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ArduCAMMini {
     constructor() {
@@ -28353,16 +28189,14 @@ class ArduCAMMini {
         this.spi.write(data);
         this.io_cs.output(true);
     }
-    spi_readWait(addr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = [];
-            data.push(addr);
-            data.push(0x00);
-            this.io_cs.output(false);
-            const recv = yield this.spi.writeWait(data);
-            this.io_cs.output(true);
-            return recv[1];
-        });
+    async spi_readWait(addr) {
+        const data = [];
+        data.push(addr);
+        data.push(0x00);
+        this.io_cs.output(false);
+        const recv = await this.spi.writeWait(data);
+        this.io_cs.output(true);
+        return recv[1];
     }
     i2c_byte_write(addr, byteData) {
         this.i2c.write(this.sensor_addr, [addr, byteData]);
@@ -28375,20 +28209,16 @@ class ArduCAMMini {
     spi_write_reg(addr, byteData) {
         this.spi_write(addr | 0x80, byteData);
     }
-    spi_read_regWait(addr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.spi_readWait(addr & 0x7f);
-        });
+    async spi_read_regWait(addr) {
+        return await this.spi_readWait(addr & 0x7f);
     }
-    spi_pingpongWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const testVal = 0x55;
-            this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
-            const val = yield this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
-            if (val !== testVal) {
-                throw new Error("spi bus fail");
-            }
-        });
+    async spi_pingpongWait() {
+        const testVal = 0x55;
+        this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
+        const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
+        if (val !== testVal) {
+            throw new Error("spi bus fail");
+        }
     }
     setMode(mode) {
         const modes = {
@@ -28401,14 +28231,12 @@ class ArduCAMMini {
         }
         this.spi_write_reg(this.regs.ARDUCHIP_MODE, modes[mode]);
     }
-    getChipIdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.sensor_addr, [0x0a]);
-            const val0 = yield this.i2c.readWait(this.sensor_addr, 1);
-            this.i2c.write(this.sensor_addr, [0x0b]);
-            const val1 = yield this.i2c.readWait(this.sensor_addr, 1);
-            return (val0[0] << 8) + val1[0];
-        });
+    async getChipIdWait() {
+        this.i2c.write(this.sensor_addr, [0x0a]);
+        const val0 = await this.i2c.readWait(this.sensor_addr, 1);
+        this.i2c.write(this.sensor_addr, [0x0b]);
+        const val1 = await this.i2c.readWait(this.sensor_addr, 1);
+        return (val0[0] << 8) + val1[0];
     }
     init() {
         this.i2c_byte_write(0xff, 0x01);
@@ -28421,33 +28249,29 @@ class ArduCAMMini {
         this.i2c_byte_write(0x15, 0x00);
         this.setSize("320x240");
     }
-    startupWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.spi_pingpongWait();
-            this.setMode("MCU2LCD");
-            const chipid = yield this.getChipIdWait();
-            if (chipid !== 0x2642 && chipid !== 0x2641) {
-                throw new Error("unknown chip " + chipid);
-            }
-            this.init();
-        });
+    async startupWait() {
+        await this.spi_pingpongWait();
+        this.setMode("MCU2LCD");
+        const chipid = await this.getChipIdWait();
+        if (chipid !== 0x2642 && chipid !== 0x2641) {
+            throw new Error("unknown chip " + chipid);
+        }
+        this.init();
     }
-    takeWait(size) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof size === "string" && this._size !== size) {
-                this.setSize(size);
-                this.obniz.wait(1000);
+    async takeWait(size) {
+        if (typeof size === "string" && this._size !== size) {
+            this.setSize(size);
+            this.obniz.wait(1000);
+        }
+        this.flushFIFO();
+        this.flushFIFO();
+        this.startCapture();
+        while (true) {
+            if (await this.isCaptureDoneWait()) {
+                break;
             }
-            this.flushFIFO();
-            this.flushFIFO();
-            this.startCapture();
-            while (true) {
-                if (yield this.isCaptureDoneWait()) {
-                    break;
-                }
-            }
-            return yield this.readFIFOWait();
-        });
+        }
+        return await this.readFIFOWait();
     }
     setSize(string) {
         if (this._size === string) {
@@ -28482,49 +28306,43 @@ class ArduCAMMini {
     flushFIFO() {
         this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x01);
     }
-    readFIFOLengthWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const len1 = yield this.spi_read_regWait(this.regs.FIFO_SIZE1);
-            const len2 = yield this.spi_read_regWait(this.regs.FIFO_SIZE2);
-            const len3 = (yield this.spi_read_regWait(this.regs.FIFO_SIZE3)) & 0x07;
-            return ((len3 << 16) | (len2 << 8) | len1) & 0x07ffff;
-        });
+    async readFIFOLengthWait() {
+        const len1 = await this.spi_read_regWait(this.regs.FIFO_SIZE1);
+        const len2 = await this.spi_read_regWait(this.regs.FIFO_SIZE2);
+        const len3 = (await this.spi_read_regWait(this.regs.FIFO_SIZE3)) & 0x07;
+        return ((len3 << 16) | (len2 << 8) | len1) & 0x07ffff;
     }
     startCapture() {
         this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x02);
     }
-    isCaptureDoneWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const CAP_DONE_MASK = 0x08;
-            const val = yield this.spi_read_regWait(this.regs.ARDUCHIP_TRIG);
-            return val & CAP_DONE_MASK ? true : false;
-        });
+    async isCaptureDoneWait() {
+        const CAP_DONE_MASK = 0x08;
+        const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TRIG);
+        return val & CAP_DONE_MASK ? true : false;
     }
-    readFIFOWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // get length of image data
-            const length = yield this.readFIFOLengthWait();
-            // start bust
-            this.io_cs.output(false);
-            this.spi.write([this.regs.BURST_FIFO_READ]);
-            if (this.params.module_version === 0) {
-                this.spi.write([0xff]); // dummy read
+    async readFIFOWait() {
+        // get length of image data
+        const length = await this.readFIFOLengthWait();
+        // start bust
+        this.io_cs.output(false);
+        this.spi.write([this.regs.BURST_FIFO_READ]);
+        if (this.params.module_version === 0) {
+            this.spi.write([0xff]); // dummy read
+        }
+        const buf = [];
+        while (buf.length < length) {
+            let mustRead = length - buf.length;
+            if (mustRead > 1024) {
+                mustRead = 1024;
             }
-            const buf = [];
-            while (buf.length < length) {
-                let mustRead = length - buf.length;
-                if (mustRead > 1024) {
-                    mustRead = 1024;
-                }
-                const arr = new Array(mustRead);
-                arr.fill(0);
-                const sliced = yield this.spi.writeWait(arr);
-                buf.push(...sliced);
-            }
-            // end burst
-            this.io_cs.output(true);
-            return buf;
-        });
+            const arr = new Array(mustRead);
+            arr.fill(0);
+            const sliced = await this.spi.writeWait(arr);
+            buf.push(...sliced);
+        }
+        // end burst
+        this.io_cs.output(true);
+        return buf;
     }
     arrayToBase64(array) {
         return Buffer.from(array).toString("base64");
@@ -28547,15 +28365,6 @@ exports.default = ArduCAMMini;
  * @packageDocumentation
  * @module Parts.JpegSerialCam
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class JpegSerialCam {
     constructor() {
@@ -28578,22 +28387,20 @@ class JpegSerialCam {
         this.obniz.getIO(this.my_tx).drive("3v");
         this.uart = this.obniz.getFreeUart();
     }
-    _drainUntil(uart, search, recv) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!recv) {
-                recv = [];
+    async _drainUntil(uart, search, recv) {
+        if (!recv) {
+            recv = [];
+        }
+        while (true) {
+            const readed = uart.readBytes();
+            recv = recv.concat(readed);
+            const tail = this._seekTail(search, recv);
+            if (tail >= 0) {
+                recv.splice(0, tail);
+                return recv;
             }
-            while (true) {
-                const readed = uart.readBytes();
-                recv = recv.concat(readed);
-                const tail = this._seekTail(search, recv);
-                if (tail >= 0) {
-                    recv.splice(0, tail);
-                    return recv;
-                }
-                yield this.obniz.wait(10);
-            }
-        });
+            await this.obniz.wait(10);
+        }
     }
     _seekTail(search, src) {
         let f = 0;
@@ -28613,169 +28420,157 @@ class JpegSerialCam {
     arrayToBase64(array) {
         return Buffer.from(array).toString("base64");
     }
-    startWait(obj) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!obj) {
-                obj = {};
-            }
-            this.uart.start({
-                tx: this.my_tx,
-                rx: this.my_rx,
-                baud: obj.baud || 38400,
-            });
-            this.obniz.display.setPinName(this.my_tx, "JpegSerialCam", "camRx");
-            this.obniz.display.setPinName(this.my_rx, "JpegSerialCam", "camTx");
-            yield this.obniz.wait(2500);
+    async startWait(obj) {
+        if (!obj) {
+            obj = {};
+        }
+        this.uart.start({
+            tx: this.my_tx,
+            rx: this.my_rx,
+            baud: obj.baud || 38400,
+        });
+        this.obniz.display.setPinName(this.my_tx, "JpegSerialCam", "camRx");
+        this.obniz.display.setPinName(this.my_rx, "JpegSerialCam", "camTx");
+        await this.obniz.wait(2500);
+    }
+    async resetwait() {
+        this.uart.send([0x56, 0x00, 0x26, 0x00]);
+        await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
+        await this.obniz.wait(2500);
+    }
+    async setSizeWait(resolution) {
+        let val;
+        if (resolution === "640x480") {
+            val = 0x00;
+        }
+        else if (resolution === "320x240") {
+            val = 0x11;
+        }
+        else if (resolution === "160x120") {
+            val = 0x22;
+        }
+        else {
+            throw new Error("unsupported size");
+        }
+        this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
+        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        await this.resetwait();
+    }
+    async setCompressibilityWait(compress) {
+        const val = Math.floor((compress / 100) * 0xff);
+        this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        await this.resetwait();
+    }
+    async setBaudWait(baud) {
+        let val;
+        switch (baud) {
+            case 9600:
+                val = [0xae, 0xc8];
+                break;
+            case 19200:
+                val = [0x56, 0xe4];
+                break;
+            case 38400:
+                val = [0x2a, 0xf2];
+                break;
+            case 57600:
+                val = [0x1c, 0x4c];
+                break;
+            case 115200:
+                val = [0x0d, 0xa6];
+                break;
+            default:
+                throw new Error("invalid baud rate");
+        }
+        this.uart.send([
+            0x56,
+            0x00,
+            0x31,
+            0x06,
+            0x04,
+            0x02,
+            0x00,
+            0x08,
+            val[0],
+            val[1],
+        ]);
+        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        // await this.obniz.wait(1000);
+        await this.startWait({
+            baud,
         });
     }
-    resetwait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.uart.send([0x56, 0x00, 0x26, 0x00]);
-            yield this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
-            yield this.obniz.wait(2500);
-        });
-    }
-    setSizeWait(resolution) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let val;
-            if (resolution === "640x480") {
-                val = 0x00;
+    async takeWait() {
+        const uart = this.uart;
+        // console.log("stop a photo")
+        uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
+        await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+        // console.log("take a photo")
+        uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
+        await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+        // console.log("read length")
+        uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
+        let recv = await this._drainUntil(uart, [
+            0x76,
+            0x00,
+            0x34,
+            0x00,
+            0x04,
+            0x00,
+            0x00,
+        ]); // ack
+        let XX;
+        let YY;
+        while (true) {
+            const readed = uart.readBytes();
+            // console.log(recv);
+            recv = recv.concat(readed);
+            if (recv.length >= 2) {
+                XX = recv[0];
+                YY = recv[1];
+                break;
             }
-            else if (resolution === "320x240") {
-                val = 0x11;
+            await this.obniz.wait(1000);
+        }
+        const databytes = XX * 256 + YY;
+        // console.log("image: " + databytes + " Bytes");
+        // const high = (databytes >> 8) & 0xff;
+        // const low = databytes & 0xff;
+        // console.log("start reading image")
+        uart.send([
+            0x56,
+            0x00,
+            0x32,
+            0x0c,
+            0x00,
+            0x0a,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            XX,
+            YY,
+            0x00,
+            0xff,
+        ]);
+        recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+        // console.log("reading...");
+        while (true) {
+            const readed = uart.readBytes();
+            recv = recv.concat(readed);
+            // console.log(readed.length);
+            if (recv.length >= databytes) {
+                break;
             }
-            else if (resolution === "160x120") {
-                val = 0x22;
-            }
-            else {
-                throw new Error("unsupported size");
-            }
-            this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
-            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-            yield this.resetwait();
-        });
-    }
-    setCompressibilityWait(compress) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const val = Math.floor((compress / 100) * 0xff);
-            this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
-            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-            yield this.resetwait();
-        });
-    }
-    setBaudWait(baud) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let val;
-            switch (baud) {
-                case 9600:
-                    val = [0xae, 0xc8];
-                    break;
-                case 19200:
-                    val = [0x56, 0xe4];
-                    break;
-                case 38400:
-                    val = [0x2a, 0xf2];
-                    break;
-                case 57600:
-                    val = [0x1c, 0x4c];
-                    break;
-                case 115200:
-                    val = [0x0d, 0xa6];
-                    break;
-                default:
-                    throw new Error("invalid baud rate");
-            }
-            this.uart.send([
-                0x56,
-                0x00,
-                0x31,
-                0x06,
-                0x04,
-                0x02,
-                0x00,
-                0x08,
-                val[0],
-                val[1],
-            ]);
-            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-            // await this.obniz.wait(1000);
-            yield this.startWait({
-                baud,
-            });
-        });
-    }
-    takeWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const uart = this.uart;
-            // console.log("stop a photo")
-            uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-            yield this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-            // console.log("take a photo")
-            uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-            yield this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-            // console.log("read length")
-            uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-            let recv = yield this._drainUntil(uart, [
-                0x76,
-                0x00,
-                0x34,
-                0x00,
-                0x04,
-                0x00,
-                0x00,
-            ]); // ack
-            let XX;
-            let YY;
-            while (true) {
-                const readed = uart.readBytes();
-                // console.log(recv);
-                recv = recv.concat(readed);
-                if (recv.length >= 2) {
-                    XX = recv[0];
-                    YY = recv[1];
-                    break;
-                }
-                yield this.obniz.wait(1000);
-            }
-            const databytes = XX * 256 + YY;
-            // console.log("image: " + databytes + " Bytes");
-            // const high = (databytes >> 8) & 0xff;
-            // const low = databytes & 0xff;
-            // console.log("start reading image")
-            uart.send([
-                0x56,
-                0x00,
-                0x32,
-                0x0c,
-                0x00,
-                0x0a,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                XX,
-                YY,
-                0x00,
-                0xff,
-            ]);
-            recv = yield this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
-            // console.log("reading...");
-            while (true) {
-                const readed = uart.readBytes();
-                recv = recv.concat(readed);
-                // console.log(readed.length);
-                if (recv.length >= databytes) {
-                    break;
-                }
-                yield this.obniz.wait(10);
-            }
-            // console.log("done");
-            recv = recv.splice(0, databytes); // remove tail
-            recv = recv.concat([0xff, 0xd9]);
-            return recv;
-        });
+            await this.obniz.wait(10);
+        }
+        // console.log("done");
+        recv = recv.splice(0, databytes); // remove tail
+        recv = recv.concat([0xff, 0xd9]);
+        return recv;
     }
 }
 exports.default = JpegSerialCam;
@@ -28795,15 +28590,6 @@ exports.default = JpegSerialCam;
  * @packageDocumentation
  * @module Parts.PT550
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class PT550 {
     constructor() {
@@ -28827,10 +28613,8 @@ class PT550 {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.signal.getWait();
-        });
+    async getWait() {
+        return await this.signal.getWait();
     }
 }
 exports.default = PT550;
@@ -28849,15 +28633,6 @@ exports.default = PT550;
  * @packageDocumentation
  * @module Parts.S11059
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class S11059 {
     constructor() {
@@ -28890,20 +28665,77 @@ class S11059 {
         const val = (gain << 3) | intergerTime;
         this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
     }
-    getVal() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [this.regAdrs.sensorRed]);
-            const ret = yield this.i2c.readWait(this.address, 8);
-            const level = [0, 0, 0, 0];
-            level[0] = (ret[0] << 8) | ret[1];
-            level[1] = (ret[2] << 8) | ret[3];
-            level[2] = (ret[4] << 8) | ret[5];
-            level[3] = (ret[6] << 8) | ret[7];
-            return level;
-        });
+    async getVal() {
+        this.i2c.write(this.address, [this.regAdrs.sensorRed]);
+        const ret = await this.i2c.readWait(this.address, 8);
+        const level = [0, 0, 0, 0];
+        level[0] = (ret[0] << 8) | ret[1];
+        level[1] = (ret[2] << 8) | ret[3];
+        level[2] = (ret[4] << 8) | ret[5];
+        level[3] = (ret[6] << 8) | ret[7];
+        return level;
     }
 }
 exports.default = S11059;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/DAConverter/MCP4725/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MCP4725 {
+    constructor() {
+        this.cmd = {
+            WRITEDAC: 0x40,
+            WRITEDACEEPROM: 0x60,
+        };
+        this._vcc_voltage = 5.0;
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.requiredKeys = [];
+        this.address = 0x60;
+    }
+    static info() {
+        return {
+            name: "MCP4725",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(100);
+    }
+    setVCCVoltage(voltage) {
+        this._vcc_voltage = voltage;
+    }
+    setVoltage(voltage, writeEEPROM = false) {
+        if (voltage > (this._vcc_voltage)) {
+            voltage = this._vcc_voltage;
+        }
+        else if (voltage < 0) {
+            voltage = 0;
+        }
+        const mv = Math.round(voltage / this._vcc_voltage * (4096 - 1));
+        const hbits = mv >> 4;
+        const lbits = (mv & 0x0F) << 4;
+        if (writeEEPROM) {
+            this.i2c.write(this.address, [this.cmd.WRITEDACEEPROM, hbits, lbits]);
+        }
+        else {
+            this.i2c.write(this.address, [this.cmd.WRITEDAC, hbits, lbits]);
+        }
+    }
+}
+exports.default = MCP4725;
 
 //# sourceMappingURL=index.js.map
 
@@ -29515,15 +29347,6 @@ exports.default = MatrixLED_MAX7219;
  * @packageDocumentation
  * @module Parts.ST7735S
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ST7735S {
     constructor() {
@@ -29599,10 +29422,8 @@ class ST7735S {
         this.writeCommand(cmd);
         this.writeData(data);
     }
-    asyncwait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.spi.writeWait([0x00]);
-        });
+    async asyncwait() {
+        return await this.spi.writeWait([0x00]);
     }
     _writeFlush() {
         while (this.writeBuffer.length > 0) {
@@ -31734,15 +31555,6 @@ const font = [
  * @packageDocumentation
  * @module Parts.SainSmartTFT18LCD
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class SainSmartTFT18LCD {
     constructor() {
@@ -31823,10 +31635,8 @@ class SainSmartTFT18LCD {
         this.writeCommand(cmd);
         this.writeData(data);
     }
-    asyncwait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.spi.writeWait([0x00]);
-        });
+    async asyncwait() {
+        return await this.spi.writeWait([0x00]);
     }
     _writeFlush() {
         while (this.writeBuffer.length > 0) {
@@ -34249,15 +34059,6 @@ exports.default = SharpMemoryTFT;
  * @packageDocumentation
  * @module Parts.GP2Y0A21YK0F
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class GP2Y0A21YK0F {
     constructor() {
@@ -34305,16 +34106,16 @@ class GP2Y0A21YK0F {
         return distance;
     }
     getWait() {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+        return new Promise(async (resolve, reject) => {
             try {
-                const val = yield this.ad_signal.getWait();
+                const val = await this.ad_signal.getWait();
                 const distance = this._volt2distance(val);
                 resolve(distance);
             }
             catch (e) {
                 reject(e);
             }
-        }));
+        });
     }
     unit(unit) {
         if (unit === "mm") {
@@ -34344,15 +34145,6 @@ exports.default = GP2Y0A21YK0F;
  * @packageDocumentation
  * @module Parts.HC-SR04
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR04 {
     constructor() {
@@ -34391,7 +34183,7 @@ class HCSR04 {
             pulse_width: 0.011,
             measure_edges: 3,
             timeout: (10 / 340) * 1000,
-            callback: (edges) => __awaiter(this, void 0, void 0, function* () {
+            callback: async (edges) => {
                 if (this.reset_alltime) {
                     this.vccIO.output(false);
                     this.obniz.wait(100);
@@ -34413,15 +34205,13 @@ class HCSR04 {
                 if (typeof callback === "function") {
                     callback(distance);
                 }
-            }),
+            },
         });
     }
-    measureWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve) => {
-                this.measure((distance) => {
-                    resolve(distance);
-                });
+    async measureWait() {
+        return new Promise((resolve) => {
+            this.measure((distance) => {
+                resolve(distance);
             });
         });
     }
@@ -34438,6 +34228,81 @@ class HCSR04 {
     }
 }
 exports.default = HCSR04;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/DistanceSensor/VL53L0X/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class VL53L0X {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.address = 0x29;
+        this.regs = {
+            IDENTIFICATION_MODEL_ID: 0xc0,
+            IDENTIFICATION_REVISION_ID: 0xc2,
+            PRE_RANGE_CONFIG_VCSEL_PERIOD: 0x50,
+            FINAL_RANGE_CONFIG_VCSEL_PERIOD: 0x70,
+            SYSRANGE_START: 0x00,
+            RESULT_INTERRUPT_STATUS: 0x13,
+            RESULT_RANGE_STATUS: 0x14,
+        };
+        this.acnt = 0;
+        this.scnt = 0;
+        this.status = 0;
+    }
+    static info() {
+        return {
+            name: "VL53L0X",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.obniz.wait(100);
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+    }
+    async getWait() {
+        this.i2c.write(this.address, [this.regs.SYSRANGE_START, 0x01]);
+        let val = [0];
+        let cnt = 0;
+        while (cnt < 10) {
+            await this.obniz.wait(10);
+            this.i2c.write(this.address, [this.regs.RESULT_RANGE_STATUS]);
+            val = await this.i2c.readWait(this.address, 1);
+            if (val[0] & 0x01) {
+                break;
+            }
+            else {
+                cnt++;
+            }
+        }
+        if (!(val[0] & 0x01)) {
+            return null;
+        } // sensor not ready
+        this.i2c.write(this.address, [0x14]);
+        const gbuf = await this.i2c.readWait(this.address, 12);
+        this.acnt = this.makeuint16(gbuf[7], gbuf[6]);
+        this.scnt = this.makeuint16(gbuf[9], gbuf[8]);
+        const dist = this.makeuint16(gbuf[11], gbuf[10]);
+        this.status = ((gbuf[0] & 0x78) >> 3);
+        return dist;
+    }
+    makeuint16(lsb, msb) {
+        return ((msb & 0xFF) << 8) | (lsb & 0xFF);
+    }
+}
+exports.default = VL53L0X;
 
 //# sourceMappingURL=index.js.map
 
@@ -35164,15 +35029,6 @@ exports.default = MQGasSensor;
  * @packageDocumentation
  * @module Parts.Grove_3AxisAccelerometer
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_3AxisAccelerometer {
     constructor() {
@@ -35218,79 +35074,71 @@ class Grove_3AxisAccelerometer {
             name: "Grove_3AxisAccelerometer",
         };
     }
-    wired(obniz) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.obniz = obniz;
-            if (this.params.grove) {
-                this.i2c = this.params.grove.getI2c(400000, "5v");
-            }
-            else {
-                this.vcc = this.params.vcc;
-                this.gnd = this.params.gnd;
-                this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-                this.params.clock = 400000;
-                this.params.mode = "master";
-                this.i2c = obniz.getI2CWithConfig(this.params);
-            }
-            this.obniz.wait(100);
-            // power on
-            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
-            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
-            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 8]);
-            this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
-            this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
-            this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
-            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
-            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
-            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
-            this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
-            this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
-            this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
-            this.i2c.write(this.address, [this.regAdrs.WINDOW, 200]); // setDoubleTapWindow
-            this.i2c.write(this.address, [this.regAdrs.THRESH_FF, 7]); // setFreeFallThreshold
-            this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
-            // setInterruptMapping
-            yield this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
-            yield this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
-            yield this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
-            yield this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
-            yield this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
-            // setInterrupt
-            yield this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
-            yield this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
-            yield this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
-            yield this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
-            yield this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
-        });
+    async wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            this.i2c = this.params.grove.getI2c(400000, "5v");
+        }
+        else {
+            this.vcc = this.params.vcc;
+            this.gnd = this.params.gnd;
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.params.clock = 400000;
+            this.params.mode = "master";
+            this.i2c = obniz.getI2CWithConfig(this.params);
+        }
+        this.obniz.wait(100);
+        // power on
+        this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
+        this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
+        this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 8]);
+        this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
+        this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
+        this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
+        await this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
+        await this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
+        await this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+        this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
+        this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
+        this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
+        this.i2c.write(this.address, [this.regAdrs.WINDOW, 200]); // setDoubleTapWindow
+        this.i2c.write(this.address, [this.regAdrs.THRESH_FF, 7]); // setFreeFallThreshold
+        this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
+        // setInterruptMapping
+        await this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
+        // setInterrupt
+        await this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
+        await this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
+        await this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
+        await this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
+        await this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
     }
-    setRegisterBit(regAddr, bitPos, state) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [regAddr]);
-            let b = yield this.i2c.readWait(this.address, 1);
-            if (state) {
-                b = b | (1 << bitPos); // forces nth bit of b to be 1.  all other bits left alone.
-            }
-            else {
-                b = b & ~(1 << bitPos); // forces nth bit of b to be 0.  all other bits left alone.
-            }
-            this.i2c.write(this.address, [b]);
-        });
+    async setRegisterBit(regAddr, bitPos, state) {
+        this.i2c.write(this.address, [regAddr]);
+        let b = await this.i2c.readWait(this.address, 1);
+        if (state) {
+            b = b | (1 << bitPos); // forces nth bit of b to be 1.  all other bits left alone.
+        }
+        else {
+            b = b & ~(1 << bitPos); // forces nth bit of b to be 0.  all other bits left alone.
+        }
+        this.i2c.write(this.address, [b]);
     }
-    setInterruptMapping(interruptBit, interruptPin) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
-        });
+    async setInterruptMapping(interruptBit, interruptPin) {
+        await this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
     }
-    setInterrupt(interruptBit, state) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
-        });
+    async setInterrupt(interruptBit, state) {
+        await this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
     }
     signHandling(val) {
         const sign = val >> 15;
@@ -35299,26 +35147,22 @@ class Grove_3AxisAccelerometer {
         }
         return val;
     }
-    getRawVal() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [this.regAdrs.DATAX0]);
-            const buff = yield this.i2c.readWait(this.address, 6);
-            const rawVal = [0, 0, 0];
-            rawVal[0] = this.signHandling((buff[1] << 8) | buff[0]);
-            rawVal[1] = this.signHandling((buff[3] << 8) | buff[2]);
-            rawVal[2] = this.signHandling((buff[5] << 8) | buff[4]);
-            return rawVal;
-        });
+    async getRawVal() {
+        this.i2c.write(this.address, [this.regAdrs.DATAX0]);
+        const buff = await this.i2c.readWait(this.address, 6);
+        const rawVal = [0, 0, 0];
+        rawVal[0] = this.signHandling((buff[1] << 8) | buff[0]);
+        rawVal[1] = this.signHandling((buff[3] << 8) | buff[2]);
+        rawVal[2] = this.signHandling((buff[5] << 8) | buff[4]);
+        return rawVal;
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const accelVal = [0, 0, 0];
-            const raw = yield this.getRawVal();
-            accelVal[0] = raw[0] * this.constVal.gainX;
-            accelVal[1] = raw[1] * this.constVal.gainY;
-            accelVal[2] = raw[2] * this.constVal.gainZ;
-            return accelVal;
-        });
+    async getWait() {
+        const accelVal = [0, 0, 0];
+        const raw = await this.getRawVal();
+        accelVal[0] = raw[0] * this.constVal.gainX;
+        accelVal[1] = raw[1] * this.constVal.gainY;
+        accelVal[2] = raw[2] * this.constVal.gainZ;
+        return accelVal;
     }
 }
 exports.default = Grove_3AxisAccelerometer;
@@ -35337,15 +35181,6 @@ exports.default = Grove_3AxisAccelerometer;
  * @packageDocumentation
  * @module Parts.Grove_Button
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Button {
     constructor() {
@@ -35379,10 +35214,8 @@ class Grove_Button {
             this.onChangeForStateWait(value);
         });
     }
-    isPressedWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.io_signal.inputWait();
-        });
+    async isPressedWait() {
+        return await this.io_signal.inputWait();
     }
     stateWait(isPressed) {
         return new Promise((resolve, reject) => {
@@ -35447,6 +35280,55 @@ class Grove_Buzzer {
     }
 }
 exports.default = Grove_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_EARTH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_EARTH {
+    constructor() {
+        this.keys = ["vcc", "aout", "dout", "gnd", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_EARTH",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            const groveIOs = this.params.grove.getAnalogDigital();
+            this.ad = groveIOs.analog;
+            this.io = groveIOs.digital;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.aout);
+            this.io = obniz.getIO(this.params.dout);
+        }
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    async getHumidityWait() {
+        return await this.ad.getWait();
+    }
+    async getDigitalHumidityWait() {
+        return await this.io.inputWait();
+    }
+}
+exports.default = Grove_EARTH;
 
 //# sourceMappingURL=index.js.map
 
@@ -35864,6 +35746,57 @@ exports.default = Grove_GPS;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_JoyStick/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_JoyStick {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_JoyStick",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        const speed = 400000;
+        if (this.params.grove) {
+            this.i2c = this.params.grove.getI2c(speed, "5v");
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.wait(100); // wait for booting of MEGA328
+            this.params.mode = "master";
+            this.params.clock = speed;
+            this.params.pull = "5v";
+            this.i2c = this.obniz.getI2CWithConfig(this.params);
+        }
+    }
+    async getXWait() {
+        const ret = await this.i2c.readWait(0x52, 3);
+        return ret[0];
+    }
+    async getYWait() {
+        const ret = await this.i2c.readWait(0x52, 3);
+        return ret[1];
+    }
+    async isPressedWait() {
+        const ret = await this.i2c.readWait(0x52, 3);
+        return Boolean(ret[2]);
+    }
+}
+exports.default = Grove_JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_MP3/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -35873,15 +35806,6 @@ exports.default = Grove_GPS;
  * @packageDocumentation
  * @module Parts.Grove_MP3
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_MP3 {
     constructor() {
@@ -35903,31 +35827,29 @@ class Grove_MP3 {
         this.my_rx = this.params.mp3_tx;
         this.uart = this.obniz.getFreeUart();
     }
-    initWait(strage) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.uart.start({
-                tx: this.my_tx,
-                rx: this.my_rx,
-                baud: 9600,
-            });
-            yield this.obniz.wait(100);
-            this.uartSend(0x0c, 0);
-            yield this.obniz.wait(500);
-            this.uartSend(0x0b, 0);
-            yield this.obniz.wait(100);
-            if (strage) {
-                if (strage === "usb") {
-                    this.uartSend(0x09, 1);
-                }
-                else if (strage === "sd") {
-                    this.uartSend(0x09, 2);
-                }
+    async initWait(strage) {
+        this.uart.start({
+            tx: this.my_tx,
+            rx: this.my_rx,
+            baud: 9600,
+        });
+        await this.obniz.wait(100);
+        this.uartSend(0x0c, 0);
+        await this.obniz.wait(500);
+        this.uartSend(0x0b, 0);
+        await this.obniz.wait(100);
+        if (strage) {
+            if (strage === "usb") {
+                this.uartSend(0x09, 1);
             }
-            else {
+            else if (strage === "sd") {
                 this.uartSend(0x09, 2);
             }
-            yield this.obniz.wait(200);
-        });
+        }
+        else {
+            this.uartSend(0x09, 2);
+        }
+        await this.obniz.wait(200);
     }
     setVolume(vol) {
         if (vol >= 0 && vol <= 31) {
@@ -35990,15 +35912,6 @@ exports.default = Grove_MP3;
  * @packageDocumentation
  * @module Parts.ENC03R_Module
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ENC03R_Module {
     constructor() {
@@ -36032,18 +35945,18 @@ class ENC03R_Module {
         });
     }
     get1Wait() {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad0.getWait();
+        return new Promise(async (resolve) => {
+            const value = await this.ad0.getWait();
             this.sens1 = (value - 1.45) / this.Sens;
             resolve(this.sens1);
-        }));
+        });
     }
     get2Wait() {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad1.getWait();
+        return new Promise(async (resolve) => {
+            const value = await this.ad1.getWait();
             this.sens2 = (value - 1.35) / this.Sens;
             resolve(this.sens2);
-        }));
+        });
     }
 }
 exports.default = ENC03R_Module;
@@ -36266,15 +36179,6 @@ exports.default = InfraredLED;
  * @packageDocumentation
  * @module Parts.YG1006
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class YG1006 {
     constructor() {
@@ -36297,10 +36201,8 @@ class YG1006 {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.signal.getWait();
-        });
+    async getWait() {
+        return await this.signal.getWait();
     }
 }
 exports.default = YG1006;
@@ -36319,15 +36221,6 @@ exports.default = YG1006;
  * @packageDocumentation
  * @module Parts.Keyestudio_Button
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_Button {
     constructor() {
@@ -36361,10 +36254,8 @@ class Keyestudio_Button {
             this.onChangeForStateWait(value);
         });
     }
-    isPressedWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.io_signal.inputWait();
-        });
+    async isPressedWait() {
+        return await this.io_signal.inputWait();
     }
     stateWait(isPressed) {
         return new Promise((resolve, reject) => {
@@ -36502,15 +36393,6 @@ exports.default = Keyestudio_HT16K33;
  * @packageDocumentation
  * @module Parts.Keyestudio_MoistureSensor
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_MoistureSensor {
     constructor() {
@@ -36533,10 +36415,8 @@ class Keyestudio_MoistureSensor {
             }
         });
     }
-    getHumidityWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.ad.getWait();
-        });
+    async getHumidityWait() {
+        return await this.ad.getWait();
     }
 }
 exports.default = Keyestudio_MoistureSensor;
@@ -36590,15 +36470,6 @@ exports.default = Keyestudio_PIR;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Keyestudio_TemperatureSensor {
     constructor() {
@@ -36621,12 +36492,10 @@ class Keyestudio_TemperatureSensor {
             this.onchange(this.temp);
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const voltage = yield this.ad.getWait();
-            this.temp = this.calc(voltage);
-            return this.temp;
-        });
+    async getWait() {
+        const voltage = await this.ad.getWait();
+        this.temp = this.calc(voltage);
+        return this.temp;
     }
     onchange(temp) {
     }
@@ -37483,15 +37352,6 @@ exports.default = SNx4HC595;
  * @packageDocumentation
  * @module Parts.CT10
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class CT10 {
     constructor() {
@@ -37526,10 +37386,8 @@ class CT10 {
             this.onChangeForStateWait(value);
         });
     }
-    isNearWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.io_signal.inputWait();
-        });
+    async isNearWait() {
+        return await this.io_signal.inputWait();
     }
     stateWait(isNear) {
         return new Promise((resolve) => {
@@ -37559,15 +37417,6 @@ exports.default = CT10;
  * @packageDocumentation
  * @module Parts.HMC5883L
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class HMC5883L {
     constructor() {
@@ -37597,21 +37446,19 @@ class HMC5883L {
         this.i2c.write(this.address.device, this.address.reset);
         this.obniz.wait(500);
     }
-    get() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address.device, this.address.xMSB);
-            const readed = yield this.i2c.readWait(this.address.device, 2 * 3);
-            const obj = {};
-            const keys = ["x", "y", "z"];
-            for (let i = 0; i < 3; i++) {
-                let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
-                if (val & 0x8000) {
-                    val = val - 65536;
-                }
-                obj[keys[i]] = val;
+    async get() {
+        this.i2c.write(this.address.device, this.address.xMSB);
+        const readed = await this.i2c.readWait(this.address.device, 2 * 3);
+        const obj = {};
+        const keys = ["x", "y", "z"];
+        for (let i = 0; i < 3; i++) {
+            let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
+            if (val & 0x8000) {
+                val = val - 65536;
             }
-            return obj;
-        });
+            obj[keys[i]] = val;
+        }
+        return obj;
     }
 }
 exports.default = HMC5883L;
@@ -37630,15 +37477,6 @@ exports.default = HMC5883L;
  * @packageDocumentation
  * @module Parts.24LC256
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class _24LC256 {
     constructor() {
@@ -37664,14 +37502,12 @@ class _24LC256 {
         this.i2c.write(0x50, array);
         this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
     }
-    getWait(address, length) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const array = [];
-            array.push((address >> 8) & 0xff);
-            array.push(address & 0xff);
-            this.i2c.write(0x50, array);
-            return yield this.i2c.readWait(0x50, length);
-        });
+    async getWait(address, length) {
+        const array = [];
+        array.push((address >> 8) & 0xff);
+        array.push(address & 0xff);
+        this.i2c.write(0x50, array);
+        return await this.i2c.readWait(0x50, length);
     }
 }
 exports.default = _24LC256;
@@ -37686,15 +37522,6 @@ exports.default = _24LC256;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -37747,64 +37574,58 @@ class AK09916 extends i2cParts_1.default {
             voltage: "3v",
         };
     }
-    magnetic() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // 0111 1111 1111 0000 4912 uT
-            // 1111 1111 1111 1111 -1 uT
-            // 1000 0000 0001 0000 -4912 uT
-            // data[0]下位ビット data[1] 上位ビット
-            const raw3 = (yield this.readThreeInt16Wait(this._HXL, "l"));
-            this.readWait(this._ST2, 1);
-            const xyz = raw3.map((d, i) => {
-                return (d * this.so - this.offset[i]) * this.scale[i];
-            });
-            return xyz;
+    async magnetic() {
+        // 0111 1111 1111 0000 4912 uT
+        // 1111 1111 1111 1111 -1 uT
+        // 1000 0000 0001 0000 -4912 uT
+        // data[0]下位ビット data[1] 上位ビット
+        const raw3 = (await this.readThreeInt16Wait(this._HXL, "l"));
+        this.readWait(this._ST2, 1);
+        const xyz = raw3.map((d, i) => {
+            return (d * this.so - this.offset[i]) * this.scale[i];
         });
+        return xyz;
     }
-    whoamiWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.readWait(this._WIA, 1);
-            return result[0];
-        });
+    async whoamiWait() {
+        const result = await this.readWait(this._WIA, 1);
+        return result[0];
     }
-    calibrateWait(count = 256, delay = 200) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.offset = [0, 0, 0];
-            this.scale = [1, 1, 1];
-            let reading = yield this.magnetic();
-            let minx = reading[0];
-            let maxx = reading[0];
-            let miny = reading[1];
-            let maxy = reading[1];
-            let minz = reading[2];
-            let maxz = reading[2];
-            while (count > 0) {
-                yield new Promise((r) => setTimeout(r, delay));
-                reading = yield this.magnetic();
-                minx = Math.min(minx, reading[0]);
-                maxx = Math.max(maxx, reading[0]);
-                miny = Math.min(miny, reading[1]);
-                maxy = Math.max(maxy, reading[1]);
-                minz = Math.min(minz, reading[2]);
-                maxz = Math.max(maxz, reading[2]);
-                count -= 1;
-            }
-            // Hard iron correction
-            const offset_x = (maxx + minx) / 2;
-            const offset_y = (maxy + miny) / 2;
-            const offset_z = (maxz + minz) / 2;
-            this.offset = [offset_x, offset_y, offset_z];
-            // Soft iron correction
-            const avg_delta_x = (maxx - minx) / 2;
-            const avg_delta_y = (maxy - miny) / 2;
-            const avg_delta_z = (maxz - minz) / 2;
-            const avg_delta = (avg_delta_x + avg_delta_y + avg_delta_z) / 3;
-            const scale_x = avg_delta / avg_delta_x;
-            const scale_y = avg_delta / avg_delta_y;
-            const scale_z = avg_delta / avg_delta_z;
-            this.scale = [scale_x, scale_y, scale_z];
-            return { offset: this.offset, scale: this.scale };
-        });
+    async calibrateWait(count = 256, delay = 200) {
+        this.offset = [0, 0, 0];
+        this.scale = [1, 1, 1];
+        let reading = await this.magnetic();
+        let minx = reading[0];
+        let maxx = reading[0];
+        let miny = reading[1];
+        let maxy = reading[1];
+        let minz = reading[2];
+        let maxz = reading[2];
+        while (count > 0) {
+            await new Promise((r) => setTimeout(r, delay));
+            reading = await this.magnetic();
+            minx = Math.min(minx, reading[0]);
+            maxx = Math.max(maxx, reading[0]);
+            miny = Math.min(miny, reading[1]);
+            maxy = Math.max(maxy, reading[1]);
+            minz = Math.min(minz, reading[2]);
+            maxz = Math.max(maxz, reading[2]);
+            count -= 1;
+        }
+        // Hard iron correction
+        const offset_x = (maxx + minx) / 2;
+        const offset_y = (maxy + miny) / 2;
+        const offset_z = (maxz + minz) / 2;
+        this.offset = [offset_x, offset_y, offset_z];
+        // Soft iron correction
+        const avg_delta_x = (maxx - minx) / 2;
+        const avg_delta_y = (maxy - miny) / 2;
+        const avg_delta_z = (maxz - minz) / 2;
+        const avg_delta = (avg_delta_x + avg_delta_y + avg_delta_z) / 3;
+        const scale_x = avg_delta / avg_delta_x;
+        const scale_y = avg_delta / avg_delta_y;
+        const scale_z = avg_delta / avg_delta_z;
+        this.scale = [scale_x, scale_y, scale_z];
+        return { offset: this.offset, scale: this.scale };
     }
 }
 exports.default = AK09916;
@@ -37823,15 +37644,6 @@ exports.default = AK09916;
  * @packageDocumentation
  * @module Parts.AK8963
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AK8963 {
     constructor() {
@@ -37867,16 +37679,14 @@ class AK8963 {
         }
         this._adc_cycle = ADC_cycle;
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this._address, [0x03]); // request AK8963 data
-            const raw_data_AK8963 = yield this.i2c.readWait(this._address, 7); // read 7byte(read mag_data[6] to refresh)
-            return {
-                x: this.char2short(raw_data_AK8963[0], raw_data_AK8963[1]),
-                y: this.char2short(raw_data_AK8963[2], raw_data_AK8963[3]),
-                z: this.char2short(raw_data_AK8963[4], raw_data_AK8963[5]),
-            };
-        });
+    async getWait() {
+        this.i2c.write(this._address, [0x03]); // request AK8963 data
+        const raw_data_AK8963 = await this.i2c.readWait(this._address, 7); // read 7byte(read mag_data[6] to refresh)
+        return {
+            x: this.char2short(raw_data_AK8963[0], raw_data_AK8963[1]),
+            y: this.char2short(raw_data_AK8963[2], raw_data_AK8963[3]),
+            z: this.char2short(raw_data_AK8963[4], raw_data_AK8963[5]),
+        };
     }
     char2short(valueH, valueL) {
         const buffer = new ArrayBuffer(2);
@@ -37902,15 +37712,6 @@ exports.default = AK8963;
  * @packageDocumentation
  * @module Parts.Button
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Button {
     constructor() {
@@ -37950,11 +37751,9 @@ class Button {
             this.onChangeForStateWait(value === false);
         });
     }
-    isPressedWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.io_signal.inputWait();
-            return ret === false;
-        });
+    async isPressedWait() {
+        const ret = await this.io_signal.inputWait();
+        return ret === false;
     }
     stateWait(isPressed) {
         return new Promise((resolve, reject) => {
@@ -37984,15 +37783,6 @@ exports.default = Button;
  * @packageDocumentation
  * @module Parts.FlickHat
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class FlickHat {
     constructor() {
@@ -38037,61 +37827,59 @@ class FlickHat {
             this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
         }
     }
-    start(callback) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.io_ts.pull("3v");
-            this.io_reset.output(false);
-            yield this.obniz.wait(50);
-            this.io_reset.output(true);
-            yield this.obniz.wait(50);
-            this.onfwinfo = callback;
-            this.fwInfo = {
-                fwValid: 0,
-                fwInfoReceived: false,
-            };
-            this.rotation = 0;
-            this.lastRotation = 0;
-            this.readSize = 132;
-            yield this.polling();
-            yield this.obniz.wait(200);
-            this.i2c.write(this.address, [
-                0x10,
-                0x00,
-                0x00,
-                0xa2,
-                0xa1,
-                0x00,
-                0x00,
-                0x00,
-                0x1f,
-                0x00,
-                0x00,
-                0x00,
-                0xff,
-                0xff,
-                0xff,
-                0xff,
-            ]);
-            yield this.obniz.wait(100);
-            this.i2c.write(this.address, [
-                0x10,
-                0x00,
-                0x00,
-                0xa2,
-                0x80,
-                0x00,
-                0x00,
-                0x00,
-                0x3f,
-                0x00,
-                0x00,
-                0x00,
-                0x3f,
-                0x00,
-                0x00,
-                0x00,
-            ]);
-        });
+    async start(callback) {
+        this.io_ts.pull("3v");
+        this.io_reset.output(false);
+        await this.obniz.wait(50);
+        this.io_reset.output(true);
+        await this.obniz.wait(50);
+        this.onfwinfo = callback;
+        this.fwInfo = {
+            fwValid: 0,
+            fwInfoReceived: false,
+        };
+        this.rotation = 0;
+        this.lastRotation = 0;
+        this.readSize = 132;
+        await this.polling();
+        await this.obniz.wait(200);
+        this.i2c.write(this.address, [
+            0x10,
+            0x00,
+            0x00,
+            0xa2,
+            0xa1,
+            0x00,
+            0x00,
+            0x00,
+            0x1f,
+            0x00,
+            0x00,
+            0x00,
+            0xff,
+            0xff,
+            0xff,
+            0xff,
+        ]);
+        await this.obniz.wait(100);
+        this.i2c.write(this.address, [
+            0x10,
+            0x00,
+            0x00,
+            0xa2,
+            0x80,
+            0x00,
+            0x00,
+            0x00,
+            0x3f,
+            0x00,
+            0x00,
+            0x00,
+            0x3f,
+            0x00,
+            0x00,
+            0x00,
+        ]);
     }
     _dataArray2string(data) {
         let result = "";
@@ -38100,243 +37888,241 @@ class FlickHat {
         }
         return result;
     }
-    polling(timeout) {
-        return __awaiter(this, void 0, void 0, function* () {
-            timeout = timeout || 3000; // default: 3s
-            // DataOutputConfigMask	2byte
-            // const maskDSPStatus = 1;
-            const maskGestureInfo = 1 << 1;
-            const maskTouchInfo = 1 << 2;
-            const maskAirWheelInfo = 1 << 3;
-            const maskXYZPosition = 1 << 4;
-            // SystemInfo	1byte
-            const sysPositionValid = 1;
-            const sysAirWheelValid = 1 << 1;
-            // const sysDSPRunning = 1 << 7;
-            const startTime = new Date();
-            let ts = true;
-            while (ts && new Date() - startTime < timeout) {
-                ts = yield this.io_ts.inputWait();
-            }
-            if (!ts) {
-                this.io_ts.pull("0v");
-                // await this.obniz.wait(1);
-                const data = yield this.i2c.readWait(this.address, this.readSize);
-                const size = data[0];
-                // let flag = data[1];
-                const seq = data[2];
-                const msgID = data[3];
-                if (size !== 0xff && size > 0) {
-                    if (this.debugprint || this.obniz.debugprint) {
-                        console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
-                    }
-                    let configmask;
-                    let sysinfo;
-                    let gesture;
-                    let touch;
-                    let airwheel;
-                    let statusInfo;
-                    let fwInfo;
-                    switch (msgID) {
-                        case 0x91: // sensor data output
-                            configmask = data[4] | (data[5] << 8); // little endian
-                            // let timestamp = data[6]; // 200hz, 8-bit counter, max ~1.25sec
-                            sysinfo = data[7];
-                            // let dspstatus = data.slice(8, 10);
-                            gesture = data.slice(10, 14);
-                            touch = data.slice(14, 18);
-                            airwheel = data.slice(18, 20);
-                            // let xyz = data.slice(20, 26);
-                            // let noisepow = data.slice(27, 30);
-                            if (gesture[0] === 255 &&
-                                gesture[1] === 255 &&
-                                gesture[2] === 255 &&
-                                gesture[3] === 255) {
+    async polling(timeout) {
+        timeout = timeout || 3000; // default: 3s
+        // DataOutputConfigMask	2byte
+        // const maskDSPStatus = 1;
+        const maskGestureInfo = 1 << 1;
+        const maskTouchInfo = 1 << 2;
+        const maskAirWheelInfo = 1 << 3;
+        const maskXYZPosition = 1 << 4;
+        // SystemInfo	1byte
+        const sysPositionValid = 1;
+        const sysAirWheelValid = 1 << 1;
+        // const sysDSPRunning = 1 << 7;
+        const startTime = new Date();
+        let ts = true;
+        while (ts && new Date() - startTime < timeout) {
+            ts = await this.io_ts.inputWait();
+        }
+        if (!ts) {
+            this.io_ts.pull("0v");
+            // await this.obniz.wait(1);
+            const data = await this.i2c.readWait(this.address, this.readSize);
+            const size = data[0];
+            // let flag = data[1];
+            const seq = data[2];
+            const msgID = data[3];
+            if (size !== 0xff && size > 0) {
+                if (this.debugprint || this.obniz.debugprint) {
+                    console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
+                }
+                let configmask;
+                let sysinfo;
+                let gesture;
+                let touch;
+                let airwheel;
+                let statusInfo;
+                let fwInfo;
+                switch (msgID) {
+                    case 0x91: // sensor data output
+                        configmask = data[4] | (data[5] << 8); // little endian
+                        // let timestamp = data[6]; // 200hz, 8-bit counter, max ~1.25sec
+                        sysinfo = data[7];
+                        // let dspstatus = data.slice(8, 10);
+                        gesture = data.slice(10, 14);
+                        touch = data.slice(14, 18);
+                        airwheel = data.slice(18, 20);
+                        // let xyz = data.slice(20, 26);
+                        // let noisepow = data.slice(27, 30);
+                        if (gesture[0] === 255 &&
+                            gesture[1] === 255 &&
+                            gesture[2] === 255 &&
+                            gesture[3] === 255) {
+                            break;
+                        }
+                        if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
+                            const xyz = {
+                                // little endian
+                                x: (data[20] | (data[21] << 8)) / 65536,
+                                y: (data[22] | (data[23] << 8)) / 65536,
+                                z: (data[24] | (data[25] << 8)) / 65536,
+                                seq,
+                            };
+                            this.xyz = xyz;
+                            if (typeof this.onxyz === "function") {
+                                this.onxyz(xyz);
+                            }
+                        }
+                        if (configmask & maskGestureInfo && gesture[0] > 0) {
+                            this.lastGesture = gesture[0];
+                            const gestures = [
+                                ["", "", ""],
+                                ["garbage", "", ""],
+                                ["flick", "west", "east"],
+                                ["flick", "east", "west"],
+                                ["flick", "south", "north"],
+                                ["flick", "north", "south"],
+                                ["circle", "clockwise", ""],
+                                ["circle", "counter-clockwise", ""],
+                                ["wave", "x", ""],
+                                ["wave", "y", ""],
+                                ["hold", "", ""],
+                            ];
+                            for (const index in gestures) {
+                                if (index === gesture[0] &&
+                                    typeof this.ongestureall === "function") {
+                                    this.ongestureall({
+                                        action: gestures[index][0],
+                                        from: gestures[index][1],
+                                        to: gestures[index][2],
+                                        raw: gesture,
+                                        seq,
+                                    });
+                                }
+                                if (index === gesture[0] &&
+                                    gestures[index][0] === "flick" &&
+                                    typeof this.ongesture === "function") {
+                                    this.ongesture({
+                                        action: "gesture",
+                                        from: gestures[index][1],
+                                        to: gestures[index][2],
+                                        raw: gesture,
+                                        seq,
+                                    });
+                                }
+                            }
+                        }
+                        if (configmask & maskTouchInfo &&
+                            !(touch[0] === 0 && touch[1] === 0) &&
+                            touch[3] === 0) {
+                            // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
+                            const touchAction = touch[0] | (touch[1] << 8); // little endian
+                            if (touchAction === 0xffff) {
                                 break;
                             }
-                            if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
-                                const xyz = {
-                                    // little endian
-                                    x: (data[20] | (data[21] << 8)) / 65536,
-                                    y: (data[22] | (data[23] << 8)) / 65536,
-                                    z: (data[24] | (data[25] << 8)) / 65536,
+                            // let touchCount = touch[2] * 5; // touch counter value * 5[ms]
+                            const actions = [
+                                ["touch", "south"],
+                                ["touch", "west"],
+                                ["touch", "north"],
+                                ["touch", "east"],
+                                ["touch", "center"],
+                                ["tap", "south"],
+                                ["tap", "west"],
+                                ["tap", "north"],
+                                ["tap", "east"],
+                                ["tap", "center"],
+                                ["doubletap", "south"],
+                                ["doubletap", "west"],
+                                ["doubletap", "north"],
+                                ["doubletap", "east"],
+                                ["doubletap", "center"],
+                            ];
+                            const touches = [];
+                            const taps = [];
+                            const doubletaps = [];
+                            this.lastTouch = touchAction;
+                            let comp = 1;
+                            for (const index in actions) {
+                                const value = actions[index];
+                                if (touchAction & comp) {
+                                    // console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
+                                    switch (value[0]) {
+                                        case "touch":
+                                            touches.push(value[1]);
+                                            break;
+                                        case "tap":
+                                            taps.push(value[1]);
+                                            break;
+                                        case "doubletap":
+                                            doubletaps.push(value[1]);
+                                            break;
+                                        default:
+                                    }
+                                }
+                                comp <<= 1;
+                            }
+                            if (touches.length > 0 && typeof this.ontouch === "function") {
+                                this.ontouch({
+                                    action: "touch",
+                                    positions: touches,
+                                    raw: touch,
                                     seq,
-                                };
-                                this.xyz = xyz;
-                                if (typeof this.onxyz === "function") {
-                                    this.onxyz(xyz);
-                                }
+                                });
                             }
-                            if (configmask & maskGestureInfo && gesture[0] > 0) {
-                                this.lastGesture = gesture[0];
-                                const gestures = [
-                                    ["", "", ""],
-                                    ["garbage", "", ""],
-                                    ["flick", "west", "east"],
-                                    ["flick", "east", "west"],
-                                    ["flick", "south", "north"],
-                                    ["flick", "north", "south"],
-                                    ["circle", "clockwise", ""],
-                                    ["circle", "counter-clockwise", ""],
-                                    ["wave", "x", ""],
-                                    ["wave", "y", ""],
-                                    ["hold", "", ""],
-                                ];
-                                for (const index in gestures) {
-                                    if (index === gesture[0] &&
-                                        typeof this.ongestureall === "function") {
-                                        this.ongestureall({
-                                            action: gestures[index][0],
-                                            from: gestures[index][1],
-                                            to: gestures[index][2],
-                                            raw: gesture,
-                                            seq,
-                                        });
-                                    }
-                                    if (index === gesture[0] &&
-                                        gestures[index][0] === "flick" &&
-                                        typeof this.ongesture === "function") {
-                                        this.ongesture({
-                                            action: "gesture",
-                                            from: gestures[index][1],
-                                            to: gestures[index][2],
-                                            raw: gesture,
-                                            seq,
-                                        });
-                                    }
-                                }
+                            if (taps.length > 0 && typeof this.ontap === "function") {
+                                this.ontap({
+                                    action: "tap",
+                                    positions: taps,
+                                    raw: touch,
+                                    seq,
+                                });
                             }
-                            if (configmask & maskTouchInfo &&
-                                !(touch[0] === 0 && touch[1] === 0) &&
-                                touch[3] === 0) {
-                                // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
-                                const touchAction = touch[0] | (touch[1] << 8); // little endian
-                                if (touchAction === 0xffff) {
-                                    break;
-                                }
-                                // let touchCount = touch[2] * 5; // touch counter value * 5[ms]
-                                const actions = [
-                                    ["touch", "south"],
-                                    ["touch", "west"],
-                                    ["touch", "north"],
-                                    ["touch", "east"],
-                                    ["touch", "center"],
-                                    ["tap", "south"],
-                                    ["tap", "west"],
-                                    ["tap", "north"],
-                                    ["tap", "east"],
-                                    ["tap", "center"],
-                                    ["doubletap", "south"],
-                                    ["doubletap", "west"],
-                                    ["doubletap", "north"],
-                                    ["doubletap", "east"],
-                                    ["doubletap", "center"],
-                                ];
-                                const touches = [];
-                                const taps = [];
-                                const doubletaps = [];
-                                this.lastTouch = touchAction;
-                                let comp = 1;
-                                for (const index in actions) {
-                                    const value = actions[index];
-                                    if (touchAction & comp) {
-                                        // console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
-                                        switch (value[0]) {
-                                            case "touch":
-                                                touches.push(value[1]);
-                                                break;
-                                            case "tap":
-                                                taps.push(value[1]);
-                                                break;
-                                            case "doubletap":
-                                                doubletaps.push(value[1]);
-                                                break;
-                                            default:
-                                        }
-                                    }
-                                    comp <<= 1;
-                                }
-                                if (touches.length > 0 && typeof this.ontouch === "function") {
-                                    this.ontouch({
-                                        action: "touch",
-                                        positions: touches,
-                                        raw: touch,
-                                        seq,
-                                    });
-                                }
-                                if (taps.length > 0 && typeof this.ontap === "function") {
-                                    this.ontap({
-                                        action: "tap",
-                                        positions: taps,
-                                        raw: touch,
-                                        seq,
-                                    });
-                                }
-                                if (doubletaps.length > 0 &&
-                                    typeof this.ondoubletap === "function") {
-                                    this.ondoubletap({
-                                        action: "doubletap",
-                                        positions: doubletaps,
-                                        raw: touch,
+                            if (doubletaps.length > 0 &&
+                                typeof this.ondoubletap === "function") {
+                                this.ondoubletap({
+                                    action: "doubletap",
+                                    positions: doubletaps,
+                                    raw: touch,
+                                    seq,
+                                });
+                            }
+                        }
+                        if (configmask & maskAirWheelInfo && sysinfo & sysAirWheelValid) {
+                            const delta = (airwheel[0] - this.lastRotation) / 32.0;
+                            this.rotation += delta * 360.0;
+                            this.rotation %= 360;
+                            if (delta !== 0 && delta > -0.5 && delta < 0.5) {
+                                if (typeof this.onairwheel === "function") {
+                                    this.onairwheel({
+                                        delta: delta * 360.0,
+                                        rotation: this.rotation,
+                                        raw: airwheel,
                                         seq,
                                     });
                                 }
                             }
-                            if (configmask & maskAirWheelInfo && sysinfo & sysAirWheelValid) {
-                                const delta = (airwheel[0] - this.lastRotation) / 32.0;
-                                this.rotation += delta * 360.0;
-                                this.rotation %= 360;
-                                if (delta !== 0 && delta > -0.5 && delta < 0.5) {
-                                    if (typeof this.onairwheel === "function") {
-                                        this.onairwheel({
-                                            delta: delta * 360.0,
-                                            rotation: this.rotation,
-                                            raw: airwheel,
-                                            seq,
-                                        });
-                                    }
-                                }
-                                this.lastRotation = airwheel[0];
-                            }
-                            break;
-                        case 0x15: // system status
-                            statusInfo = {
-                                msgId: data[4],
-                                maxCmdSize: data[5],
-                                error: data[6] | (data[7] << 8),
-                            };
-                            this.statusInfo = statusInfo;
-                            if (this.debugprint || this.obniz.debugprint) {
-                                console.log(`flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`);
-                            }
-                            break;
-                        case 0x83: // farmware information
-                            fwInfo = {
-                                fwValid: data[4] === 0xaa,
-                                hwRev: [data[5], data[6]],
-                                paramStartAddr: data[7] * 128,
-                                libLoaderVer: [data[8], data[9]],
-                                libLoaderPlatform: data[10],
-                                fwStartAddr: data[11] * 128,
-                                fwVersion: this._dataArray2string(data.slice(12, 132)).split("\0")[0],
-                                fwInfoReceived: true,
-                            };
-                            this.fwInfo = fwInfo;
-                            if (typeof this.onfwinfo === "function") {
-                                this.onfwinfo(fwInfo);
-                            }
-                            this.readSize = 26;
-                            break;
-                        default:
-                            console.error(`unknown message: 0x${msgID.toString(16)}, data:${data
-                                .slice(0, size)
-                                .map((v) => "0x" + v.toString(16))}`);
-                    }
+                            this.lastRotation = airwheel[0];
+                        }
+                        break;
+                    case 0x15: // system status
+                        statusInfo = {
+                            msgId: data[4],
+                            maxCmdSize: data[5],
+                            error: data[6] | (data[7] << 8),
+                        };
+                        this.statusInfo = statusInfo;
+                        if (this.debugprint || this.obniz.debugprint) {
+                            console.log(`flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`);
+                        }
+                        break;
+                    case 0x83: // farmware information
+                        fwInfo = {
+                            fwValid: data[4] === 0xaa,
+                            hwRev: [data[5], data[6]],
+                            paramStartAddr: data[7] * 128,
+                            libLoaderVer: [data[8], data[9]],
+                            libLoaderPlatform: data[10],
+                            fwStartAddr: data[11] * 128,
+                            fwVersion: this._dataArray2string(data.slice(12, 132)).split("\0")[0],
+                            fwInfoReceived: true,
+                        };
+                        this.fwInfo = fwInfo;
+                        if (typeof this.onfwinfo === "function") {
+                            this.onfwinfo(fwInfo);
+                        }
+                        this.readSize = 26;
+                        break;
+                    default:
+                        console.error(`unknown message: 0x${msgID.toString(16)}, data:${data
+                            .slice(0, size)
+                            .map((v) => "0x" + v.toString(16))}`);
                 }
-                this.io_ts.pull("3v");
-                // await this.obniz.wait(1);
             }
-        });
+            this.io_ts.pull("3v");
+            // await this.obniz.wait(1);
+        }
     }
 }
 exports.default = FlickHat;
@@ -38355,15 +38141,6 @@ exports.default = FlickHat;
  * @packageDocumentation
  * @module Parts.HC-SR505
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR505 {
     constructor() {
@@ -38385,10 +38162,8 @@ class HCSR505 {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.io_signal.inputWait();
-        });
+    async getWait() {
+        return await this.io_signal.inputWait();
     }
 }
 exports.default = HCSR505;
@@ -38403,15 +38178,6 @@ exports.default = HCSR505;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -38488,19 +38254,17 @@ class ICM20948 extends i2cParts_1.default {
             voltage: "3v",
         };
     }
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.whoamiWait();
-            if (data !== 0xea) {
-                throw new Error("ICM20948 not found in I2C bus.");
-            }
-            this.write(0x06, [0x01]); // wake;
-            this.write(0x0f, [0x02]); // passthrough;
-            this.write(0x03, [0x00]);
-            // this.write(12, 0x31, [0x00]);  // power down mode
-            // const buf3 = await this._studuinoI2C.readFromMem(12, 0x60, 3);
-            this._ak09916 = this.obniz.wired("AK09916", { i2c: this.i2c });
-        });
+    async initWait() {
+        const data = await this.whoamiWait();
+        if (data !== 0xea) {
+            throw new Error("ICM20948 not found in I2C bus.");
+        }
+        this.write(0x06, [0x01]); // wake;
+        this.write(0x0f, [0x02]); // passthrough;
+        this.write(0x03, [0x00]);
+        // this.write(12, 0x31, [0x00]);  // power down mode
+        // const buf3 = await this._studuinoI2C.readFromMem(12, 0x60, 3);
+        this._ak09916 = this.obniz.wired("AK09916", { i2c: this.i2c });
     }
     accelFs(value) {
         if (value === "2g") {
@@ -38533,45 +38297,35 @@ class ICM20948 extends i2cParts_1.default {
             throw new Error("must be 'g'/'mg'/'ms2'");
         }
     }
-    accelerationWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            /*
-            Acceleration measured by the sensor. By default will return a
-            3-tuple of X, Y, Z axis accelerationWait values in mG as integer.
-            */
-            const so = this._accel_so;
-            const sf = this._accel_sf;
-            const xyz = yield this.readThreeInt16Wait(this._ACCEL_XOUT_H);
-            return xyz.map((e) => e / so * sf);
-        });
+    async accelerationWait() {
+        /*
+        Acceleration measured by the sensor. By default will return a
+        3-tuple of X, Y, Z axis accelerationWait values in mG as integer.
+        */
+        const so = this._accel_so;
+        const sf = this._accel_sf;
+        const xyz = await this.readThreeInt16Wait(this._ACCEL_XOUT_H);
+        return xyz.map((e) => e / so * sf);
     }
-    gyroWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // """
-            // X, Y, Z radians per second as floats.
-            // """
-            const so = this._gyro_so;
-            const sf = this._gyro_sf;
-            const xyz = yield this.readThreeInt16Wait(this._GYRO_XOUT_H);
-            return xyz.map((e) => e / so * sf);
-        });
+    async gyroWait() {
+        // """
+        // X, Y, Z radians per second as floats.
+        // """
+        const so = this._gyro_so;
+        const sf = this._gyro_sf;
+        const xyz = await this.readThreeInt16Wait(this._GYRO_XOUT_H);
+        return xyz.map((e) => e / so * sf);
     }
-    magneticWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this._ak09916.magnetic();
-        });
+    async magneticWait() {
+        return this._ak09916.magnetic();
     }
-    calibrateWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this._ak09916.calibrateWait());
-        });
+    async calibrateWait() {
+        return (await this._ak09916.calibrateWait());
     }
-    whoamiWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Value of the whoamiWait register. """
-            const result = yield this.readWait(this._WHO_AM_I, 1);
-            return result[0];
-        });
+    async whoamiWait() {
+        // Value of the whoamiWait register. """
+        const result = await this.readWait(this._WHO_AM_I, 1);
+        return result[0];
     }
     gyroFs(value) {
         if (value === "250dps") {
@@ -38601,45 +38355,43 @@ class ICM20948 extends i2cParts_1.default {
             throw new Error("must be 'dps'/'rps'");
         }
     }
-    _gyroDlpfWait(dlpfcfg = -1) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.write(0x7f, [0x20]);
-            // # get ICM20948 gyroWait configuration.
-            let char = (yield this.readWait(this._GYRO_CONFIG, 1))[0];
-            char &= this._GYRO_FS_MASK; // clear DLDF bits
-            if (dlpfcfg === -1) {
-                char |= 0x00000000;
-            }
-            else if (dlpfcfg === 0) {
-                char |= 0x00000001;
-            }
-            else if (dlpfcfg === 1) {
-                char |= 0x00001001;
-            }
-            else if (dlpfcfg === 2) {
-                char |= 0x00010001;
-            }
-            else if (dlpfcfg === 3) {
-                char |= 0x00011001;
-            }
-            else if (dlpfcfg === 4) {
-                char |= 0x00100001;
-            }
-            else if (dlpfcfg === 5) {
-                char |= 0x00101001;
-            }
-            else if (dlpfcfg === 6) {
-                char |= 0x00110001;
-            }
-            else if (dlpfcfg === 7) {
-                char |= 0x00111001;
-            }
-            else {
-                char |= 0x00000000;
-            }
-            this.write(this._GYRO_CONFIG, [char]);
-            this.write(0x7f, [0x00]);
-        });
+    async _gyroDlpfWait(dlpfcfg = -1) {
+        this.write(0x7f, [0x20]);
+        // # get ICM20948 gyroWait configuration.
+        let char = (await this.readWait(this._GYRO_CONFIG, 1))[0];
+        char &= this._GYRO_FS_MASK; // clear DLDF bits
+        if (dlpfcfg === -1) {
+            char |= 0x00000000;
+        }
+        else if (dlpfcfg === 0) {
+            char |= 0x00000001;
+        }
+        else if (dlpfcfg === 1) {
+            char |= 0x00001001;
+        }
+        else if (dlpfcfg === 2) {
+            char |= 0x00010001;
+        }
+        else if (dlpfcfg === 3) {
+            char |= 0x00011001;
+        }
+        else if (dlpfcfg === 4) {
+            char |= 0x00100001;
+        }
+        else if (dlpfcfg === 5) {
+            char |= 0x00101001;
+        }
+        else if (dlpfcfg === 6) {
+            char |= 0x00110001;
+        }
+        else if (dlpfcfg === 7) {
+            char |= 0x00111001;
+        }
+        else {
+            char |= 0x00000000;
+        }
+        this.write(this._GYRO_CONFIG, [char]);
+        this.write(0x7f, [0x00]);
     }
     _accelFs(value) {
         this.write(0x7f, [0x20]);
@@ -38696,15 +38448,6 @@ exports.default = ICM20948;
  * @packageDocumentation
  * @module Parts.IPM-165
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class IPM_165 {
     constructor() {
@@ -38726,10 +38469,8 @@ class IPM_165 {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.signal.getWait();
-        });
+    async getWait() {
+        return await this.signal.getWait();
     }
 }
 exports.default = IPM_165;
@@ -38748,15 +38489,6 @@ exports.default = IPM_165;
  * @packageDocumentation
  * @module Parts.JoyStick
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class JoyStick {
     constructor() {
@@ -38797,25 +38529,19 @@ class JoyStick {
             }
         });
     }
-    isPressedWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.io_sig_sw.inputWait();
-            return ret === false;
-        });
+    async isPressedWait() {
+        const ret = await this.io_sig_sw.inputWait();
+        return ret === false;
     }
-    getXWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad_x.getWait();
-            this.positionX = value / 5.0;
-            return this.positionX * 2 - 1;
-        });
+    async getXWait() {
+        const value = await this.ad_x.getWait();
+        this.positionX = value / 5.0;
+        return this.positionX * 2 - 1;
     }
-    getYWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad_y.getWait();
-            this.positionY = value / 5.0;
-            return this.positionY * 2 - 1;
-        });
+    async getYWait() {
+        const value = await this.ad_y.getWait();
+        this.positionY = value / 5.0;
+        return this.positionY * 2 - 1;
     }
 }
 exports.default = JoyStick;
@@ -38834,15 +38560,6 @@ exports.default = JoyStick;
  * @packageDocumentation
  * @module Parts.KXR94-2050
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class KXR94_2050 {
     constructor() {
@@ -38919,13 +38636,11 @@ class KXR94_2050 {
             z: this.voltage2gravity(this._z_val),
         };
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this._x_val = yield this.ad_x.getWait();
-            this._y_val = yield this.ad_y.getWait();
-            this._z_val = yield this.ad_z.getWait();
-            return this._get();
-        });
+    async getWait() {
+        this._x_val = await this.ad_x.getWait();
+        this._y_val = await this.ad_y.getWait();
+        this._z_val = await this.ad_z.getWait();
+        return this._get();
     }
 }
 exports.default = KXR94_2050;
@@ -38944,15 +38659,6 @@ exports.default = KXR94_2050;
  * @packageDocumentation
  * @module Parts.KXSC7-2050
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class KXSC7_2050 {
     constructor() {
@@ -38964,38 +38670,36 @@ class KXSC7_2050 {
             name: "KXSC7-2050",
         };
     }
-    wired(obniz) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.obniz = obniz;
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
-            this.ad_x = obniz.getAD(this.params.x);
-            this.ad_y = obniz.getAD(this.params.y);
-            this.ad_z = obniz.getAD(this.params.z);
-            yield obniz.wait(500);
-            const ad = obniz.getAD(this.params.vcc);
-            const pwrVoltage = yield ad.getWait();
-            const horizontalZ = yield this.ad_z.getWait();
-            const sensitivity = pwrVoltage / 5; // Set sensitivity (unit:V)
-            const offsetVoltage = horizontalZ - sensitivity; // Set offset voltage (Output voltage at 0g, unit:V)
-            const self = this;
-            this.ad_x.start((value) => {
-                self.gravity = (value - offsetVoltage) / sensitivity;
-                if (self.onchangex) {
-                    self.onchangex(self.gravity);
-                }
-            });
-            this.ad_y.start((value) => {
-                self.gravity = (value - offsetVoltage) / sensitivity;
-                if (self.onchangey) {
-                    self.onchangey(self.gravity);
-                }
-            });
-            this.ad_z.start((value) => {
-                self.gravity = (value - offsetVoltage) / sensitivity;
-                if (self.onchangez) {
-                    self.onchangez(self.gravity);
-                }
-            });
+    async wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.ad_x = obniz.getAD(this.params.x);
+        this.ad_y = obniz.getAD(this.params.y);
+        this.ad_z = obniz.getAD(this.params.z);
+        await obniz.wait(500);
+        const ad = obniz.getAD(this.params.vcc);
+        const pwrVoltage = await ad.getWait();
+        const horizontalZ = await this.ad_z.getWait();
+        const sensitivity = pwrVoltage / 5; // Set sensitivity (unit:V)
+        const offsetVoltage = horizontalZ - sensitivity; // Set offset voltage (Output voltage at 0g, unit:V)
+        const self = this;
+        this.ad_x.start((value) => {
+            self.gravity = (value - offsetVoltage) / sensitivity;
+            if (self.onchangex) {
+                self.onchangex(self.gravity);
+            }
+        });
+        this.ad_y.start((value) => {
+            self.gravity = (value - offsetVoltage) / sensitivity;
+            if (self.onchangey) {
+                self.onchangey(self.gravity);
+            }
+        });
+        this.ad_z.start((value) => {
+            self.gravity = (value - offsetVoltage) / sensitivity;
+            if (self.onchangez) {
+                self.onchangez(self.gravity);
+            }
         });
     }
 }
@@ -39015,15 +38719,6 @@ exports.default = KXSC7_2050;
  * @packageDocumentation
  * @module Parts.MPU6050
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class MPU6050 {
     constructor() {
@@ -39095,28 +38790,26 @@ class MPU6050 {
         this._accel_range = accelerometer_range;
         this._gyro_range = gyroscope_range;
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this._address, [0x3b]); // request MPU6050 data
-            const raw_data_MPU6050 = yield this.i2c.readWait(this._address, 14); // read 14byte
-            const ac_scale = this._accel_range / 32768;
-            const gy_scale = this._gyro_range / 32768;
-            return {
-                accelerometer: {
-                    x: this.char2short(raw_data_MPU6050[0], raw_data_MPU6050[1]) * ac_scale,
-                    y: this.char2short(raw_data_MPU6050[2], raw_data_MPU6050[3]) * ac_scale,
-                    z: this.char2short(raw_data_MPU6050[4], raw_data_MPU6050[5]) * ac_scale,
-                },
-                temp: this.char2short(raw_data_MPU6050[6], raw_data_MPU6050[7]) / 333.87 + 21,
-                gyroscope: {
-                    x: this.char2short(raw_data_MPU6050[8], raw_data_MPU6050[9]) * gy_scale,
-                    y: this.char2short(raw_data_MPU6050[10], raw_data_MPU6050[11]) *
-                        gy_scale,
-                    z: this.char2short(raw_data_MPU6050[12], raw_data_MPU6050[13]) *
-                        gy_scale,
-                },
-            };
-        });
+    async getWait() {
+        this.i2c.write(this._address, [0x3b]); // request MPU6050 data
+        const raw_data_MPU6050 = await this.i2c.readWait(this._address, 14); // read 14byte
+        const ac_scale = this._accel_range / 32768;
+        const gy_scale = this._gyro_range / 32768;
+        return {
+            accelerometer: {
+                x: this.char2short(raw_data_MPU6050[0], raw_data_MPU6050[1]) * ac_scale,
+                y: this.char2short(raw_data_MPU6050[2], raw_data_MPU6050[3]) * ac_scale,
+                z: this.char2short(raw_data_MPU6050[4], raw_data_MPU6050[5]) * ac_scale,
+            },
+            temp: this.char2short(raw_data_MPU6050[6], raw_data_MPU6050[7]) / 333.87 + 21,
+            gyroscope: {
+                x: this.char2short(raw_data_MPU6050[8], raw_data_MPU6050[9]) * gy_scale,
+                y: this.char2short(raw_data_MPU6050[10], raw_data_MPU6050[11]) *
+                    gy_scale,
+                z: this.char2short(raw_data_MPU6050[12], raw_data_MPU6050[13]) *
+                    gy_scale,
+            },
+        };
     }
     char2short(valueH, valueL) {
         const buffer = new ArrayBuffer(2);
@@ -39142,15 +38835,6 @@ exports.default = MPU6050;
  * @packageDocumentation
  * @module Parts.MPU6886
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -39204,11 +38888,9 @@ class MPU6886 extends i2cParts_1.default {
             voltage: "3v",
         };
     }
-    whoamiWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.readWait(this.commands.whoami, 1);
-            return result[0];
-        });
+    async whoamiWait() {
+        const result = await this.readWait(this.commands.whoami, 1);
+        return result[0];
     }
     init() {
         this.write(this.commands.pwrMgmt1, 0x00);
@@ -39274,43 +38956,35 @@ class MPU6886 extends i2cParts_1.default {
         this._accel_range = accelerometer_range;
         this._gyro_range = gyroscope_range;
     }
-    getAllDataWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const raw_data = yield this.readWait(this.commands.accelXoutH, 14); // request all data
-            const ac_scale = this._accel_range / 32768;
-            const gy_scale = this._gyro_range / 32768;
-            const accelerometer = {
-                x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
-                y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
-                z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
-            };
-            const temperature = this.char2short(raw_data[6], raw_data[7]) / 326.8 + 25.0;
-            const gyroscope = {
-                x: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
-                y: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
-                z: this.char2short(raw_data[12], raw_data[13]) * gy_scale,
-            };
-            return {
-                accelerometer,
-                temperature,
-                gyroscope,
-            };
-        });
+    async getAllDataWait() {
+        const raw_data = await this.readWait(this.commands.accelXoutH, 14); // request all data
+        const ac_scale = this._accel_range / 32768;
+        const gy_scale = this._gyro_range / 32768;
+        const accelerometer = {
+            x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
+            y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
+            z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+        };
+        const temperature = this.char2short(raw_data[6], raw_data[7]) / 326.8 + 25.0;
+        const gyroscope = {
+            x: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
+            y: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+            z: this.char2short(raw_data[12], raw_data[13]) * gy_scale,
+        };
+        return {
+            accelerometer,
+            temperature,
+            gyroscope,
+        };
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).temperature;
-        });
+    async getTempWait() {
+        return (await this.getAllDataWait()).temperature;
     }
-    getAccelWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).accelerometer;
-        });
+    async getAccelWait() {
+        return (await this.getAllDataWait()).accelerometer;
     }
-    getGyroWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).gyroscope;
-        });
+    async getGyroWait() {
+        return (await this.getAllDataWait()).gyroscope;
     }
 }
 exports.default = MPU6886;
@@ -39329,15 +39003,6 @@ exports.default = MPU6886;
  * @packageDocumentation
  * @module Parts.MPU9250
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class MPU9250 {
     constructor() {
@@ -39368,37 +39033,27 @@ class MPU9250 {
         this.mpu6050.setConfig(accel_range, gyro_range);
         this.ak8963.setConfig(ADC_cycle);
     }
-    _getAK8963Wait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.i2c.write(this._address, [0x02]); // request AK8983 data
-            const ST1 = yield this.i2c.readWait(this._address, 1); // confirm magnet value readable
-            if (ST1 & 0x01) {
-                return yield this.ak8963.getWait();
-            }
-            return {};
-        });
+    async _getAK8963Wait() {
+        await this.i2c.write(this._address, [0x02]); // request AK8983 data
+        const ST1 = await this.i2c.readWait(this._address, 1); // confirm magnet value readable
+        if (ST1 & 0x01) {
+            return await this.ak8963.getWait();
+        }
+        return {};
     }
-    getAllWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.mpu6050.getWait();
-            data.compass = yield this.ak8963.getWait();
-            return data;
-        });
+    async getAllWait() {
+        const data = await this.mpu6050.getWait();
+        data.compass = await this.ak8963.getWait();
+        return data;
     }
-    getCompassWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.ak8963.getWait();
-        });
+    async getCompassWait() {
+        return await this.ak8963.getWait();
     }
-    getAccelerometerWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.mpu6050.getWait()).accelerometer;
-        });
+    async getAccelerometerWait() {
+        return (await this.mpu6050.getWait()).accelerometer;
     }
-    getGyroscopeWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.mpu6050.getWait()).gyroscope;
-        });
+    async getGyroscopeWait() {
+        return (await this.mpu6050.getWait()).gyroscope;
     }
 }
 exports.default = MPU9250;
@@ -39499,15 +39154,6 @@ exports.default = Potentiometer;
  * @packageDocumentation
  * @module Parts.SH200Q
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -39548,37 +39194,33 @@ class SH200Q extends i2cParts_1.default {
             voltage: "3v",
         };
     }
-    whoamiWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.readWait(this.commands.whoami, 1);
-            return result[0];
-        });
+    async whoamiWait() {
+        const result = await this.readWait(this.commands.whoami, 1);
+        return result[0];
     }
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.resetAdcWait();
-            yield this.writeFlagWait(0xd8, 7);
-            yield this.obniz.wait(1);
-            yield this.clearFlagWait(0xd8, 7);
-            yield this.write(0x78, 0x61);
-            yield this.obniz.wait(1);
-            yield this.write(0x78, 0x00);
-            // set acc odr 256hz
-            yield this.write(this.commands.accConfig, 0x91);
-            // set gyro odr 500hz
-            yield this.write(this.commands.gyroConfig, 0x13);
-            // set gyro dlpf 50hz
-            yield this.write(this.commands.gyroDlpf, 0x03);
-            // set no buffer mode
-            yield this.write(this.commands.fifoConfig, 0x00);
-            this.setConfig(8, 2000);
-            yield this.write(this.commands.regSet1, 0xc0);
-            // ADC Reset
-            yield this.writeFlagWait(this.commands.regSet2, 4);
-            yield this.obniz.wait(1);
-            yield this.clearFlagWait(this.commands.regSet2, 4);
-            yield this.obniz.wait(10);
-        });
+    async initWait() {
+        await this.resetAdcWait();
+        await this.writeFlagWait(0xd8, 7);
+        await this.obniz.wait(1);
+        await this.clearFlagWait(0xd8, 7);
+        await this.write(0x78, 0x61);
+        await this.obniz.wait(1);
+        await this.write(0x78, 0x00);
+        // set acc odr 256hz
+        await this.write(this.commands.accConfig, 0x91);
+        // set gyro odr 500hz
+        await this.write(this.commands.gyroConfig, 0x13);
+        // set gyro dlpf 50hz
+        await this.write(this.commands.gyroDlpf, 0x03);
+        // set no buffer mode
+        await this.write(this.commands.fifoConfig, 0x00);
+        this.setConfig(8, 2000);
+        await this.write(this.commands.regSet1, 0xc0);
+        // ADC Reset
+        await this.writeFlagWait(this.commands.regSet2, 4);
+        await this.obniz.wait(1);
+        await this.clearFlagWait(this.commands.regSet2, 4);
+        await this.obniz.wait(10);
     }
     setConfig(accelerometer_range, gyroscope_range) {
         // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
@@ -39618,55 +39260,45 @@ class SH200Q extends i2cParts_1.default {
         this._accel_range = accelerometer_range;
         this._gyro_range = gyroscope_range;
     }
-    resetAdcWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // set 0xC2 bit2 1-->0
-            const tempdata = yield this.readWait(this.commands.adcReset, 1);
-            tempdata[0] = tempdata[0] | 0x04; // tempdata[0] = 0x0E; //CC
-            this.write(this.commands.adcReset, tempdata);
-            yield this.obniz.wait(1);
-            tempdata[0] = tempdata[0] & 0xfb; // tempdata[0] = 0x0A; //C8
-            this.write(this.commands.adcReset, tempdata);
-        });
+    async resetAdcWait() {
+        // set 0xC2 bit2 1-->0
+        const tempdata = await this.readWait(this.commands.adcReset, 1);
+        tempdata[0] = tempdata[0] | 0x04; // tempdata[0] = 0x0E; //CC
+        this.write(this.commands.adcReset, tempdata);
+        await this.obniz.wait(1);
+        tempdata[0] = tempdata[0] & 0xfb; // tempdata[0] = 0x0A; //C8
+        this.write(this.commands.adcReset, tempdata);
     }
-    getAllDataWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const raw_data = yield this.readWait(this.commands.outputAcc, 14); // request all data
-            const ac_scale = this._accel_range / 32768;
-            const gy_scale = this._gyro_range / 32768;
-            const accelerometer = {
-                x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
-                y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
-                z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
-            };
-            const gyroscope = {
-                x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
-                y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
-                z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
-            };
-            const temperature = this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
-            return {
-                accelerometer,
-                temperature,
-                gyroscope,
-            };
-        });
+    async getAllDataWait() {
+        const raw_data = await this.readWait(this.commands.outputAcc, 14); // request all data
+        const ac_scale = this._accel_range / 32768;
+        const gy_scale = this._gyro_range / 32768;
+        const accelerometer = {
+            x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
+            y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
+            z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+        };
+        const gyroscope = {
+            x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
+            y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
+            z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+        };
+        const temperature = this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
+        return {
+            accelerometer,
+            temperature,
+            gyroscope,
+        };
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const raw_data = yield this.readWait(this.commands.outputTemp, 2); // request all data
-            return this.char2short(raw_data[1], raw_data[0]) / 333.87 + 21.0;
-        });
+    async getTempWait() {
+        const raw_data = await this.readWait(this.commands.outputTemp, 2); // request all data
+        return this.char2short(raw_data[1], raw_data[0]) / 333.87 + 21.0;
     }
-    getAccelWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).accelerometer;
-        });
+    async getAccelWait() {
+        return (await this.getAllDataWait()).accelerometer;
     }
-    getGyroWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).gyroscope;
-        });
+    async getGyroWait() {
+        return (await this.getAllDataWait()).gyroscope;
     }
 }
 exports.default = SH200Q;
@@ -40108,15 +39740,6 @@ exports.default = Solenoid;
  * @packageDocumentation
  * @module Parts.StepperMotor
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class StepperMotor {
     constructor() {
@@ -40164,92 +39787,84 @@ class StepperMotor {
         this.ios.push(obniz.getIO(this.params.aa));
         this.ios.push(obniz.getIO(this.params.bb));
     }
-    stepWait(step_count) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof step_count !== "number") {
-                throw new Error("must provide number");
-            }
-            step_count = Math.round(step_count);
-            if (step_count === 0) {
-                return;
-            }
-            const step_count_abs = Math.abs(step_count);
-            const instructions = this._getStepInstructions();
-            const instruction_length = instructions.length;
-            const array = [];
-            // set instructions
-            let currentPhase = this.currentStep % instruction_length;
-            if (currentPhase < 0) {
-                currentPhase = instruction_length - currentPhase * -1;
-            }
-            if (step_count > 0) {
-                for (let i = 0; i < instructions.length; i++) {
-                    if (++currentPhase >= instruction_length) {
-                        currentPhase = 0;
-                    }
-                    array.push(instructions[currentPhase]);
+    async stepWait(step_count) {
+        if (typeof step_count !== "number") {
+            throw new Error("must provide number");
+        }
+        step_count = Math.round(step_count);
+        if (step_count === 0) {
+            return;
+        }
+        const step_count_abs = Math.abs(step_count);
+        const instructions = this._getStepInstructions();
+        const instruction_length = instructions.length;
+        const array = [];
+        // set instructions
+        let currentPhase = this.currentStep % instruction_length;
+        if (currentPhase < 0) {
+            currentPhase = instruction_length - currentPhase * -1;
+        }
+        if (step_count > 0) {
+            for (let i = 0; i < instructions.length; i++) {
+                if (++currentPhase >= instruction_length) {
+                    currentPhase = 0;
                 }
+                array.push(instructions[currentPhase]);
             }
-            else {
-                for (let i = 0; i < instructions.length; i++) {
-                    if (--currentPhase < 0) {
-                        currentPhase = instruction_length - 1;
-                    }
-                    array.push(instructions[currentPhase]);
+        }
+        else {
+            for (let i = 0; i < instructions.length; i++) {
+                if (--currentPhase < 0) {
+                    currentPhase = instruction_length - 1;
                 }
+                array.push(instructions[currentPhase]);
             }
-            // prepare animation
-            let msec = 1000 / this.frequency;
-            msec = parseInt(msec);
-            if (msec < 1) {
-                msec = 1;
-            }
-            const state = (index) => {
-                const instruction = array[index];
-                for (let i = 0; i < this.ios.length; i++) {
-                    this.ios[i].output(instruction[i]);
-                }
-            };
-            const states = [];
-            for (let i = 0; i < instruction_length; i++) {
-                states.push({
-                    duration: msec,
-                    state,
-                });
-            }
-            // execute and wait
-            yield this.obniz.io.repeatWait(states, step_count_abs);
-            this.currentStep += step_count;
-        });
-    }
-    stepToWait(destination) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const mustmove = destination - this.currentStep;
-            yield this.stepWait(mustmove);
-        });
-    }
-    holdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const instructions = this._getStepInstructions();
-            const instruction_length = instructions.length;
-            // set instructions
-            let currentPhase = this.currentStep % instruction_length;
-            if (currentPhase < 0) {
-                currentPhase = instruction_length - currentPhase * -1;
-            }
+        }
+        // prepare animation
+        let msec = 1000 / this.frequency;
+        msec = parseInt(msec);
+        if (msec < 1) {
+            msec = 1;
+        }
+        const state = (index) => {
+            const instruction = array[index];
             for (let i = 0; i < this.ios.length; i++) {
-                this.ios[i].output(instructions[currentPhase][i] === 1);
+                this.ios[i].output(instruction[i]);
             }
-            yield this.obniz.pingWait();
-        });
+        };
+        const states = [];
+        for (let i = 0; i < instruction_length; i++) {
+            states.push({
+                duration: msec,
+                state,
+            });
+        }
+        // execute and wait
+        await this.obniz.io.repeatWait(states, step_count_abs);
+        this.currentStep += step_count;
     }
-    freeWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            for (let i = 0; i < this.ios.length; i++) {
-                this.ios[i].output(true);
-            }
-            yield this.obniz.pingWait();
-        });
+    async stepToWait(destination) {
+        const mustmove = destination - this.currentStep;
+        await this.stepWait(mustmove);
+    }
+    async holdWait() {
+        const instructions = this._getStepInstructions();
+        const instruction_length = instructions.length;
+        // set instructions
+        let currentPhase = this.currentStep % instruction_length;
+        if (currentPhase < 0) {
+            currentPhase = instruction_length - currentPhase * -1;
+        }
+        for (let i = 0; i < this.ios.length; i++) {
+            this.ios[i].output(instructions[currentPhase][i] === 1);
+        }
+        await this.obniz.pingWait();
+    }
+    async freeWait() {
+        for (let i = 0; i < this.ios.length; i++) {
+            this.ios[i].output(true);
+        }
+        await this.obniz.pingWait();
     }
     stepType(stepType) {
         const newType = this._stepInstructions[stepType];
@@ -40273,38 +39888,30 @@ class StepperMotor {
         }
         return angle;
     }
-    rotateWait(rotation) {
-        return __awaiter(this, void 0, void 0, function* () {
-            rotation /= 360;
-            const needed = rotation * this.rotationStepCount;
-            yield this.stepWait(needed);
-        });
+    async rotateWait(rotation) {
+        rotation /= 360;
+        const needed = rotation * this.rotationStepCount;
+        await this.stepWait(needed);
     }
-    rotateToWait(angle) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let needed = angle - this.currentAngle();
-            if (Math.abs(needed) > 180) {
-                needed = needed > 0 ? needed - 360 : 360 + needed;
-            }
-            needed = (needed / 360) * this.rotationStepCount;
-            yield this.stepWait(needed);
-        });
+    async rotateToWait(angle) {
+        let needed = angle - this.currentAngle();
+        if (Math.abs(needed) > 180) {
+            needed = needed > 0 ? needed - 360 : 360 + needed;
+        }
+        needed = (needed / 360) * this.rotationStepCount;
+        await this.stepWait(needed);
     }
     currentDistance() {
         // => mm
         return this.currentStep / this.milliMeterStepCount;
     }
-    moveWait(distance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const needed = distance * this.milliMeterStepCount;
-            yield this.stepWait(needed);
-        });
+    async moveWait(distance) {
+        const needed = distance * this.milliMeterStepCount;
+        await this.stepWait(needed);
     }
-    moveToWait(destination) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const needed = (destination - this.currentDistance()) * this.milliMeterStepCount;
-            yield this.stepWait(needed);
-        });
+    async moveToWait(destination) {
+        const needed = (destination - this.currentDistance()) * this.milliMeterStepCount;
+        await this.stepWait(needed);
     }
     _getStepInstructions() {
         return this._stepInstructions[this._stepType];
@@ -40326,15 +39933,6 @@ exports.default = StepperMotor;
  * @packageDocumentation
  * @module Parts.AXP192
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AXP192 {
     constructor() {
@@ -40355,46 +39953,40 @@ class AXP192 {
     set(address, data) {
         this.i2c.write(AXP192_ADDRESS, [address, data]);
     }
-    getWait(address) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(AXP192_ADDRESS, [address]);
-            return yield this.i2c.readWait(AXP192_ADDRESS, 1);
-        });
+    async getWait(address) {
+        this.i2c.write(AXP192_ADDRESS, [address]);
+        return await this.i2c.readWait(AXP192_ADDRESS, 1);
     }
-    setLDO2Voltage(voltage) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (voltage < 1.8) {
-                voltage = 1.8;
-            }
-            if (voltage > 3.3) {
-                voltage = 3.3;
-            }
-            let set = yield this.getWait(REG_VOLT_SET_LDO2_3);
-            let offset = (voltage - 1.8) * 10;
-            if (offset > 15) {
-                offset = 15;
-            }
-            set = (set & 0x0f) | (offset << 4);
-            console.log("set voltage to ", set);
-            this.set(REG_VOLT_SET_LDO2_3, set);
-        });
+    async setLDO2Voltage(voltage) {
+        if (voltage < 1.8) {
+            voltage = 1.8;
+        }
+        if (voltage > 3.3) {
+            voltage = 3.3;
+        }
+        let set = await this.getWait(REG_VOLT_SET_LDO2_3);
+        let offset = (voltage - 1.8) * 10;
+        if (offset > 15) {
+            offset = 15;
+        }
+        set = (set & 0x0f) | (offset << 4);
+        console.log("set voltage to ", set);
+        this.set(REG_VOLT_SET_LDO2_3, set);
     }
-    setLDO3Voltage(voltage) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (voltage < 1.8) {
-                voltage = 1.8;
-            }
-            if (voltage > 3.3) {
-                voltage = 3.3;
-            }
-            let set = yield this.getWait(REG_VOLT_SET_LDO2_3);
-            let offset = (voltage - 1.8) * 10;
-            if (offset > 15) {
-                offset = 15;
-            }
-            set = (set & 0xf0) | offset;
-            this.set(REG_VOLT_SET_LDO2_3, set);
-        });
+    async setLDO3Voltage(voltage) {
+        if (voltage < 1.8) {
+            voltage = 1.8;
+        }
+        if (voltage > 3.3) {
+            voltage = 3.3;
+        }
+        let set = await this.getWait(REG_VOLT_SET_LDO2_3);
+        let offset = (voltage - 1.8) * 10;
+        if (offset > 15) {
+            offset = 15;
+        }
+        set = (set & 0xf0) | offset;
+        this.set(REG_VOLT_SET_LDO2_3, set);
     }
     set3VLDO2_3() {
         this.set(REG_VOLT_SET_LDO2_3, 0xcc);
@@ -40402,21 +39994,17 @@ class AXP192 {
     enableLDO2_3() {
         this.set(REG_EN_DC1_LDO2_3, 0x4d);
     }
-    toggleLDO2(val) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const bit = val ? 1 : 0;
-            let state = yield this.getWait(REG_EN_DC1_LDO2_3);
-            state = (state & LDO2_EN_MASK) | (bit << 2);
-            this.set(REG_EN_DC1_LDO2_3, state);
-        });
+    async toggleLDO2(val) {
+        const bit = val ? 1 : 0;
+        let state = await this.getWait(REG_EN_DC1_LDO2_3);
+        state = (state & LDO2_EN_MASK) | (bit << 2);
+        this.set(REG_EN_DC1_LDO2_3, state);
     }
-    toggleLDO3(val) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const bit = val ? 1 : 0;
-            let state = yield this.getWait(REG_EN_DC1_LDO2_3);
-            state = (state & LDO3_EN_MASK) | (bit << 3);
-            this.set(REG_EN_DC1_LDO2_3, state);
-        });
+    async toggleLDO3(val) {
+        const bit = val ? 1 : 0;
+        let state = await this.getWait(REG_EN_DC1_LDO2_3);
+        state = (state & LDO3_EN_MASK) | (bit << 3);
+        this.set(REG_EN_DC1_LDO2_3, state);
     }
     initM5StickC() {
         this.i2c.write(AXP192_ADDRESS, [REG_EN_EXT_DC2, 0xff]);
@@ -40431,14 +40019,12 @@ class AXP192 {
         this.i2c.write(AXP192_ADDRESS, [REG_CHARGE_OVTEMP, 0xfc]);
         this.i2c.write(AXP192_ADDRESS, [REG_BCKUP_BAT, 0xa2]);
     }
-    getVbat() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
-            const vbat_lsb = yield this.i2c.readWait(AXP192_ADDRESS, 1);
-            this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
-            const vbat_msb = yield this.i2c.readWait(AXP192_ADDRESS, 1);
-            return (vbat_lsb << 4) + vbat_msb;
-        });
+    async getVbat() {
+        this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
+        const vbat_lsb = await this.i2c.readWait(AXP192_ADDRESS, 1);
+        this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
+        const vbat_msb = await this.i2c.readWait(AXP192_ADDRESS, 1);
+        return (vbat_lsb << 4) + vbat_msb;
     }
 }
 exports.default = AXP192;
@@ -40473,15 +40059,6 @@ const LDO3_EN_MASK = 0xf7;
  * @packageDocumentation
  * @module Parts.DPS310
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class DPS310 {
     constructor() {
@@ -40638,232 +40215,200 @@ class DPS310 {
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(10);
     }
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const prodId = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PROD_ID);
-            if (prodId !== 0) {
-                throw new Error("invalid prodId");
-            }
-            yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
-            yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
-            yield this.readCoeffsWait();
-            yield this.standbyWait();
-            yield this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
-            yield this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
-            yield this.standbyWait();
-            yield this.measureTempOnceWait();
-            yield this.standbyWait();
-            yield this.correctTempWait();
-        });
+    async initWait() {
+        const prodId = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PROD_ID);
+        if (prodId !== 0) {
+            throw new Error("invalid prodId");
+        }
+        await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
+        await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
+        await this.readCoeffsWait();
+        await this.standbyWait();
+        await this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
+        await this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
+        await this.standbyWait();
+        await this.measureTempOnceWait();
+        await this.standbyWait();
+        await this.correctTempWait();
     }
-    measurePressureOnceWait(oversamplingRate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (oversamplingRate === undefined) {
-                oversamplingRate = this.prsOsr;
-            }
-            yield this.startMeasurePressureOnceWait(oversamplingRate);
-            yield this.obniz.wait(100);
-            const ret = yield this.getSingleResultWait();
+    async measurePressureOnceWait(oversamplingRate) {
+        if (oversamplingRate === undefined) {
+            oversamplingRate = this.prsOsr;
+        }
+        await this.startMeasurePressureOnceWait(oversamplingRate);
+        await this.obniz.wait(100);
+        const ret = await this.getSingleResultWait();
+        return ret;
+    }
+    async readByteWait(regAddress) {
+        this.i2c.write(this.address, [regAddress]);
+        await this.obniz.wait(1);
+        const results = await this.i2c.readWait(this.address, 1);
+        return results[0];
+    }
+    async readByteBitfieldWait(field) {
+        const regAddress = field.address;
+        const mask = field.mask;
+        const shift = field.shift;
+        let ret = await this.readByteWait(regAddress);
+        if (ret < 0) {
             return ret;
-        });
+        }
+        if (mask !== undefined) {
+            ret = ret & mask;
+        }
+        if (shift !== undefined) {
+            ret = ret >> shift;
+        }
+        return ret;
     }
-    readByteWait(regAddress) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [regAddress]);
-            yield this.obniz.wait(1);
-            const results = yield this.i2c.readWait(this.address, 1);
-            return results[0];
-        });
+    async readBlockWait(datablock) {
+        const address = datablock.address;
+        const length = datablock.length;
+        await this.obniz.wait(1);
+        this.i2c.write(this.address, [address]);
+        const results = await this.i2c.readWait(this.address, length);
+        return results;
     }
-    readByteBitfieldWait(field) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const regAddress = field.address;
-            const mask = field.mask;
-            const shift = field.shift;
-            let ret = yield this.readByteWait(regAddress);
-            if (ret < 0) {
-                return ret;
+    async writeByteWait(regAddress, data, check) {
+        this.i2c.write(this.address, [regAddress, data]);
+        if (check) {
+            if ((await this.readByteWait(regAddress)) !== data) {
+                throw new Error("DPS310 data write failed");
             }
-            if (mask !== undefined) {
-                ret = ret & mask;
-            }
-            if (shift !== undefined) {
-                ret = ret >> shift;
-            }
-            return ret;
-        });
+        }
     }
-    readBlockWait(datablock) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const address = datablock.address;
-            const length = datablock.length;
-            yield this.obniz.wait(1);
-            this.i2c.write(this.address, [address]);
-            const results = yield this.i2c.readWait(this.address, length);
-            return results;
-        });
+    async writeByteBitfield(field, data, check) {
+        const old = await this.readByteWait(field.address);
+        const sendData = (old & ~field.mask) | ((data << field.shift) & field.mask);
+        await this.writeByteWait(field.address, sendData, check);
     }
-    writeByteWait(regAddress, data, check) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [regAddress, data]);
-            if (check) {
-                if ((yield this.readByteWait(regAddress)) !== data) {
-                    throw new Error("DPS310 data write failed");
+    async setOpModeDetailWait(background, temperature, pressure) {
+        const opMode = ((background & this.DPS310__LSB) << 2) |
+            ((temperature & this.DPS310__LSB) << 1) |
+            (pressure & this.DPS310__LSB);
+        return await this.setOpModeWait(opMode);
+    }
+    async setOpModeWait(opMode) {
+        opMode &=
+            this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
+                this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
+        await this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
+        this.opMode = opMode;
+    }
+    async standbyWait() {
+        this.setOpModeWait(this.mode.IDLE);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
+    }
+    async configTempWait(tempMr, tempOsr) {
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
+        if (tempOsr > this.DPS310__OSR_SE) {
+            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
+        }
+        else {
+            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
+        }
+        this.tempMr = tempMr;
+        this.tempOsr = tempOsr;
+    }
+    async configPressureWait(prsMr, prsOsr) {
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
+        if (prsOsr > this.DPS310__OSR_SE) {
+            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
+        }
+        else {
+            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
+        }
+        this.prsMr = prsMr;
+        this.prsOsr = prsOsr;
+    }
+    async readCoeffsWait() {
+        const buffer = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_COEF);
+        this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
+        if (this.coeffs.m_c0Half & (1 << 11)) {
+            this.coeffs.m_c0Half -= 1 << 12;
+        }
+        this.coeffs.m_c0Half = this.coeffs.m_c0Half / 2;
+        this.coeffs.m_c1 = ((buffer[1] & 0x0f) << 8) | buffer[2];
+        if (this.coeffs.m_c1 & (1 << 11)) {
+            this.coeffs.m_c1 -= 1 << 12;
+        }
+        this.coeffs.m_c00 =
+            (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+        if (this.coeffs.m_c00 & (1 << 19)) {
+            this.coeffs.m_c00 -= 1 << 20;
+        }
+        this.coeffs.m_c10 =
+            ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+        if (this.coeffs.m_c10 & (1 << 19)) {
+            this.coeffs.m_c10 -= 1 << 20;
+        }
+        this.coeffs.m_c01 = (buffer[8] << 8) | buffer[9];
+        if (this.coeffs.m_c01 & (1 << 15)) {
+            this.coeffs.m_c01 -= 1 << 16;
+        }
+        this.coeffs.m_c11 = (buffer[10] << 8) | buffer[11];
+        if (this.coeffs.m_c11 & (1 << 15)) {
+            this.coeffs.m_c11 -= 1 << 16;
+        }
+        this.coeffs.m_c20 = (buffer[12] << 8) | buffer[13];
+        if (this.coeffs.m_c20 & (1 << 15)) {
+            this.coeffs.m_c20 -= 1 << 16;
+        }
+        this.coeffs.m_c21 = (buffer[14] << 8) | buffer[15];
+        if (this.coeffs.m_c21 & (1 << 15)) {
+            this.coeffs.m_c21 -= 1 << 16;
+        }
+        this.coeffs.m_c30 = (buffer[16] << 8) | buffer[17];
+        if (this.coeffs.m_c30 & (1 << 15)) {
+            this.coeffs.m_c30 -= 1 << 16;
+        }
+    }
+    async getSingleResultWait() {
+        let rdy;
+        switch (this.opMode) {
+            case this.mode.CMD_TEMP:
+                rdy = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_RDY);
+                break;
+            case this.mode.CMD_PRS:
+                rdy = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_RDY);
+                break;
+            default:
+                return this.DPS310__FAIL_TOOBUSY;
+        }
+        let oldMode;
+        switch (rdy) {
+            case this.DPS310__FAIL_UNKNOWN:
+                throw new Error("DPS310__FAIL_UNKNOWN");
+            case 0:
+                return this.obniz.wait(10).then(() => {
+                    return this.getSingleResultWait();
+                });
+            case 1:
+                oldMode = this.opMode;
+                this.opMode = this.mode.IDLE;
+                switch (oldMode) {
+                    case this.mode.CMD_TEMP:
+                        return await this.getTempWait();
+                    case this.mode.CMD_PRS:
+                        return await this.getPressureWait();
+                    default:
+                        throw new Error("DPS310__FAIL_UNKNOWN");
                 }
-            }
-        });
+        }
+        throw new Error("DPS310__FAIL_UNKNOWN");
     }
-    writeByteBitfield(field, data, check) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const old = yield this.readByteWait(field.address);
-            const sendData = (old & ~field.mask) | ((data << field.shift) & field.mask);
-            yield this.writeByteWait(field.address, sendData, check);
-        });
+    async startMeasureTempOnceWait(oversamplingRate) {
+        await this.configTempWait(0, oversamplingRate);
+        await this.setOpModeDetailWait(0, 1, 0);
     }
-    setOpModeDetailWait(background, temperature, pressure) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const opMode = ((background & this.DPS310__LSB) << 2) |
-                ((temperature & this.DPS310__LSB) << 1) |
-                (pressure & this.DPS310__LSB);
-            return yield this.setOpModeWait(opMode);
-        });
-    }
-    setOpModeWait(opMode) {
-        return __awaiter(this, void 0, void 0, function* () {
-            opMode &=
-                this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
-                    this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
-            yield this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
-            this.opMode = opMode;
-        });
-    }
-    standbyWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.setOpModeWait(this.mode.IDLE);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
-        });
-    }
-    configTempWait(tempMr, tempOsr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
-            if (tempOsr > this.DPS310__OSR_SE) {
-                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
-            }
-            else {
-                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
-            }
-            this.tempMr = tempMr;
-            this.tempOsr = tempOsr;
-        });
-    }
-    configPressureWait(prsMr, prsOsr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
-            if (prsOsr > this.DPS310__OSR_SE) {
-                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
-            }
-            else {
-                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
-            }
-            this.prsMr = prsMr;
-            this.prsOsr = prsOsr;
-        });
-    }
-    readCoeffsWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const buffer = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_COEF);
-            this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
-            if (this.coeffs.m_c0Half & (1 << 11)) {
-                this.coeffs.m_c0Half -= 1 << 12;
-            }
-            this.coeffs.m_c0Half = this.coeffs.m_c0Half / 2;
-            this.coeffs.m_c1 = ((buffer[1] & 0x0f) << 8) | buffer[2];
-            if (this.coeffs.m_c1 & (1 << 11)) {
-                this.coeffs.m_c1 -= 1 << 12;
-            }
-            this.coeffs.m_c00 =
-                (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
-            if (this.coeffs.m_c00 & (1 << 19)) {
-                this.coeffs.m_c00 -= 1 << 20;
-            }
-            this.coeffs.m_c10 =
-                ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
-            if (this.coeffs.m_c10 & (1 << 19)) {
-                this.coeffs.m_c10 -= 1 << 20;
-            }
-            this.coeffs.m_c01 = (buffer[8] << 8) | buffer[9];
-            if (this.coeffs.m_c01 & (1 << 15)) {
-                this.coeffs.m_c01 -= 1 << 16;
-            }
-            this.coeffs.m_c11 = (buffer[10] << 8) | buffer[11];
-            if (this.coeffs.m_c11 & (1 << 15)) {
-                this.coeffs.m_c11 -= 1 << 16;
-            }
-            this.coeffs.m_c20 = (buffer[12] << 8) | buffer[13];
-            if (this.coeffs.m_c20 & (1 << 15)) {
-                this.coeffs.m_c20 -= 1 << 16;
-            }
-            this.coeffs.m_c21 = (buffer[14] << 8) | buffer[15];
-            if (this.coeffs.m_c21 & (1 << 15)) {
-                this.coeffs.m_c21 -= 1 << 16;
-            }
-            this.coeffs.m_c30 = (buffer[16] << 8) | buffer[17];
-            if (this.coeffs.m_c30 & (1 << 15)) {
-                this.coeffs.m_c30 -= 1 << 16;
-            }
-        });
-    }
-    getSingleResultWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let rdy;
-            switch (this.opMode) {
-                case this.mode.CMD_TEMP:
-                    rdy = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_RDY);
-                    break;
-                case this.mode.CMD_PRS:
-                    rdy = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_RDY);
-                    break;
-                default:
-                    return this.DPS310__FAIL_TOOBUSY;
-            }
-            let oldMode;
-            switch (rdy) {
-                case this.DPS310__FAIL_UNKNOWN:
-                    throw new Error("DPS310__FAIL_UNKNOWN");
-                case 0:
-                    return this.obniz.wait(10).then(() => {
-                        return this.getSingleResultWait();
-                    });
-                case 1:
-                    oldMode = this.opMode;
-                    this.opMode = this.mode.IDLE;
-                    switch (oldMode) {
-                        case this.mode.CMD_TEMP:
-                            return yield this.getTempWait();
-                        case this.mode.CMD_PRS:
-                            return yield this.getPressureWait();
-                        default:
-                            throw new Error("DPS310__FAIL_UNKNOWN");
-                    }
-            }
-            throw new Error("DPS310__FAIL_UNKNOWN");
-        });
-    }
-    startMeasureTempOnceWait(oversamplingRate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.configTempWait(0, oversamplingRate);
-            yield this.setOpModeDetailWait(0, 1, 0);
-        });
-    }
-    startMeasurePressureOnceWait(oversamplingRate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.configPressureWait(0, oversamplingRate);
-            yield this.setOpModeDetailWait(0, 0, 1);
-        });
+    async startMeasurePressureOnceWait(oversamplingRate) {
+        await this.configPressureWait(0, oversamplingRate);
+        await this.setOpModeDetailWait(0, 0, 1);
     }
     calcPressure(raw) {
         let prs = raw;
@@ -40885,45 +40430,37 @@ class DPS310 {
         temp = this.coeffs.m_c0Half + this.coeffs.m_c1 * temp;
         return temp;
     }
-    correctTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.writeByteWait(0x0e, 0xe5);
-            this.writeByteWait(0x0f, 0x96);
-            this.writeByteWait(0x62, 0x02);
-            this.writeByteWait(0x0e, 0x00);
-            this.writeByteWait(0x0f, 0x00);
-            yield this.measureTempOnceWait();
-        });
+    async correctTempWait() {
+        this.writeByteWait(0x0e, 0xe5);
+        this.writeByteWait(0x0f, 0x96);
+        this.writeByteWait(0x62, 0x02);
+        this.writeByteWait(0x0e, 0x00);
+        this.writeByteWait(0x0f, 0x00);
+        await this.measureTempOnceWait();
     }
-    measureTempOnceWait(oversamplingRate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (oversamplingRate === undefined) {
-                oversamplingRate = this.tempOsr;
-            }
-            yield this.startMeasureTempOnceWait(oversamplingRate);
-            yield this.obniz.wait(100);
-            return yield this.getSingleResultWait();
-        });
+    async measureTempOnceWait(oversamplingRate) {
+        if (oversamplingRate === undefined) {
+            oversamplingRate = this.tempOsr;
+        }
+        await this.startMeasureTempOnceWait(oversamplingRate);
+        await this.obniz.wait(100);
+        return await this.getSingleResultWait();
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_TEMP);
-            let temp = (data[0] << 16) | (data[1] << 8) | data[2];
-            if (temp & (1 << 23)) {
-                temp -= 1 << 24;
-            }
-            return this.calcTemp(temp);
-        });
+    async getTempWait() {
+        const data = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_TEMP);
+        let temp = (data[0] << 16) | (data[1] << 8) | data[2];
+        if (temp & (1 << 23)) {
+            temp -= 1 << 24;
+        }
+        return this.calcTemp(temp);
     }
-    getPressureWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_PRS);
-            let prs = (data[0] << 16) | (data[1] << 8) | data[2];
-            if (prs & (1 << 23)) {
-                prs -= 1 << 24;
-            }
-            return this.calcPressure(prs);
-        });
+    async getPressureWait() {
+        const data = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_PRS);
+        let prs = (data[0] << 16) | (data[1] << 8) | data[2];
+        if (prs & (1 << 23)) {
+            prs -= 1 << 24;
+        }
+        return this.calcPressure(prs);
     }
 }
 exports.default = DPS310;
@@ -40942,15 +40479,6 @@ exports.default = DPS310;
  * @packageDocumentation
  * @module Parts.FSR40X
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class FSR40X {
     constructor() {
@@ -40977,13 +40505,11 @@ class FSR40X {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad.getWait();
-            const pressure = value * 100;
-            this.pressure = pressure;
-            return this.pressure;
-        });
+    async getWait() {
+        const value = await this.ad.getWait();
+        const pressure = value * 100;
+        this.pressure = pressure;
+        return this.pressure;
     }
 }
 exports.default = FSR40X;
@@ -41002,15 +40528,6 @@ exports.default = FSR40X;
  * @packageDocumentation
  * @module Parts.SEN0114
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class SEN0114 {
     constructor() {
@@ -41033,10 +40550,8 @@ class SEN0114 {
             }
         });
     }
-    getHumidityWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.ad.getWait();
-        });
+    async getHumidityWait() {
+        return await this.ad.getWait();
     }
 }
 exports.default = SEN0114;
@@ -41096,20 +40611,504 @@ exports.default = Speaker;
 
 /***/ }),
 
+/***/ "./dist/src/parts/StickCHat/StickC_ADC/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class StickC_ADC {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.requiredKeys = [];
+        this.address = 0x48;
+        this.conversionDelay = 100;
+        this.config_regs = {
+            OS_MASK: 0x80,
+            OS_NOEFFECT: 0x00,
+            OS_SINGLE: 0x80,
+            OS_BUSY: 0x00,
+            OS_NOTBUSY: 0x80,
+            MODE_MASK: 0x10,
+            MODE_CONTIN: 0x00,
+            MODE_SINGLE: 0x10,
+            DR_MASK: 0x0C,
+            DR_128SPS: 0x00,
+            DR_32SPS: 0x04,
+            DR_16SPS: 0x08,
+            DR_8SPS: 0x0C,
+            PGA_MASK: 0x03,
+            PGA_1: 0x00,
+            PGA_2: 0x01,
+            PGA_4: 0x02,
+            PGA_8: 0x03,
+        };
+        this.os = this.config_regs.OS_SINGLE;
+        this.mode = this.config_regs.MODE_CONTIN;
+        this.dataRate = this.config_regs.DR_8SPS;
+        this.pga = this.config_regs.PGA_1;
+        this.minCode = 32768;
+        this.updateConfig();
+    }
+    static info() {
+        return {
+            name: "StickC_ADC",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.mode = "master";
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(100);
+    }
+    async getVoltageWait() {
+        const raw = await this.getWait();
+        const voltage = raw * 3.3 / (this.minCode) * 4;
+        return voltage;
+    }
+    setRate(dataRate) {
+        switch (dataRate) {
+            case 8:
+                this.dataRate = this.config_regs.DR_8SPS;
+                this.minCode = 32768;
+                break;
+            case 16:
+                this.dataRate = this.config_regs.DR_16SPS;
+                this.minCode = 16384;
+                break;
+            case 32:
+                this.dataRate = this.config_regs.DR_32SPS;
+                this.minCode = 8192;
+                break;
+            case 128:
+                this.dataRate = this.config_regs.DR_128SPS;
+                this.minCode = 2048;
+                break;
+            default:
+                throw new Error(`argument must be selected from 8, 16, 32, 128.`);
+        }
+    }
+    setGain(gain) {
+        switch (gain) {
+            case 1:
+                this.pga = this.config_regs.PGA_1;
+                break;
+            case 2:
+                this.pga = this.config_regs.PGA_2;
+                break;
+            case 4:
+                this.pga = this.config_regs.PGA_4;
+                break;
+            case 8:
+                this.pga = this.config_regs.PGA_8;
+                break;
+            default:
+                throw new Error(`argument must be selected from 1, 2, 4, 8.`);
+        }
+    }
+    setMode(mode) {
+        switch (mode) {
+            case "CONTIN":
+                this.mode = this.config_regs.MODE_CONTIN;
+                break;
+            case "SINGLE":
+                this.mode = this.config_regs.MODE_SINGLE;
+                break;
+            default:
+                throw new Error(`argument must be selected from "CONTIN" or "SINGLE".`);
+        }
+    }
+    async getWait() {
+        this.updateConfig();
+        this.i2c.write(this.address, [this.config]);
+        await this.obniz.wait(this.conversionDelay);
+        const ret = await this.i2c.readWait(this.address, 2);
+        return ((ret[0] << 8) | ret[1]);
+    }
+    updateConfig() {
+        this.config = 0x00;
+        this.config |= this.os;
+        this.config |= this.mode;
+        this.config |= this.dataRate;
+        this.config |= this.pga;
+    }
+}
+exports.default = StickC_ADC;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/StickCHat/StickC_DAC/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const MCP4725_1 = __importDefault(__webpack_require__("./dist/src/parts/DAConverter/MCP4725/index.js"));
+class StickC_DAC extends MCP4725_1.default {
+    static info() {
+        return {
+            name: "StickC_DAC",
+        };
+    }
+}
+exports.default = StickC_DAC;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/StickCHat/StickC_FINGER/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class StickC_FINGER {
+    constructor() {
+        this.HEAD = 0;
+        this.CMD = 1;
+        this.CHK = 6;
+        this.TAIL = 7;
+        this.P1 = 2;
+        this.P2 = 3;
+        this.P3 = 4;
+        this.Q1 = 2;
+        this.Q2 = 3;
+        this.Q3 = 4;
+        this.TxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.RxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.requiredKeys = ["tx", "rx"];
+        this.keys = ["tx", "rx", "gnd"];
+        this.ack = {
+            SUCCESS: 0x00,
+            FAIL: 0x01,
+            FULL: 0x04,
+            NOUSER: 0x05,
+            USER_EXIST: 0x07,
+            TIMEOUT: 0x08,
+            GO_OUT: 0x0F,
+            ALL_USER: 0x00,
+            GUEST_USER: 0x01,
+            NORMAL_USER: 0x02,
+            MASTER_USER: 0x03,
+        };
+        this.cmd = {
+            HEAD: 0xF5,
+            TAIL: 0xF5,
+            ADD_1: 0x01,
+            ADD_2: 0x02,
+            ADD_3: 0x03,
+            GET_PERMISSION: 0x0A,
+            MATCH: 0x0C,
+            DEL: 0x04,
+            DEL_ALL: 0x05,
+            USER_CNT: 0x09,
+            SECURITY_LEVEL: 0x28,
+            SLEEP_MODE: 0x2C,
+            ADD_MODE: 0x2D,
+            FINGER_DETECTED: 0x14,
+        };
+    }
+    static info() {
+        return {
+            name: "StickC_FINGER",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(null, this.params.gnd, "3v");
+        this.uart = this.obniz.getFreeUart();
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: 19200,
+        });
+    }
+    async getUserNumWait() {
+        this.TxBuf[this.CMD] = this.cmd.USER_CNT;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0;
+        const res = await this.sendAndReceiveWait(200);
+        if (res === this.ack.SUCCESS && this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.RxBuf[this.Q2];
+        }
+        else {
+            return 0xFF;
+        }
+    }
+    async addUserWait(userNum, userPermission) {
+        this.TxBuf[this.CMD] = this.cmd.ADD_1;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = userNum;
+        this.TxBuf[this.P3] = userPermission;
+        let res = await this.sendAndReceiveWait(3000);
+        if (res === this.ack.SUCCESS) {
+            if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                this.TxBuf[this.CMD] = this.cmd.ADD_2;
+                res = await this.sendAndReceiveWait(3000);
+                if (res === this.ack.SUCCESS) {
+                    this.TxBuf[this.CMD] = this.cmd.ADD_3;
+                    res = await this.sendAndReceiveWait(3000);
+                    if (this.ack.SUCCESS) {
+                        return this.RxBuf[this.Q3];
+                    }
+                }
+            }
+        }
+        return res;
+    }
+    async compareFingerWait() {
+        this.TxBuf[this.CMD] = this.cmd.MATCH;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0;
+        const res = await this.sendAndReceiveWait(3000);
+        if (res === this.ack.SUCCESS) {
+            if (this.RxBuf[this.Q3] === this.ack.NOUSER) {
+                return this.ack.NOUSER;
+            }
+            if (this.RxBuf[this.Q3] === this.ack.TIMEOUT) {
+                return this.ack.TIMEOUT;
+            }
+            return this.RxBuf[this.Q3];
+        }
+        return res;
+    }
+    async sleepWait() {
+        this.TxBuf[this.CMD] = this.cmd.SLEEP_MODE;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0;
+        const res = await this.sendAndReceiveWait(500);
+        if (res === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        else {
+            return this.ack.FAIL;
+        }
+    }
+    async setAddModeWait(mode) {
+        this.TxBuf[this.CMD] = this.cmd.ADD_MODE;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = mode;
+        this.TxBuf[this.P3] = 0;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        throw Error("failed to set add mode.");
+    }
+    async readAddModeWait() {
+        this.TxBuf[this.CMD] = this.cmd.ADD_MODE;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0x01;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.RxBuf[this.Q2];
+        }
+        throw Error("failed to read add mode.");
+    }
+    async deleteAllUserWait() {
+        this.TxBuf[this.CMD] = this.cmd.DEL_ALL;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        throw Error("failed to delete all users.");
+    }
+    async deleteUserWait(userNum) {
+        this.TxBuf[this.CMD] = this.cmd.DEL;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = userNum;
+        this.TxBuf[this.P3] = 0;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        throw Error("failed to delete user: " + userNum);
+    }
+    async getUserPermissionWait(userNum) {
+        this.TxBuf[this.CMD] = this.cmd.GET_PERMISSION;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = userNum;
+        this.TxBuf[this.P3] = 0;
+        await this.sendAndReceiveWait(200);
+        return this.RxBuf[this.Q3];
+    }
+    async setSecurityLevelWait(level) {
+        if (level < 0 || level > 9) {
+            throw Error("security level argument must be between 0 and 9");
+        }
+        this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = level;
+        this.TxBuf[this.P3] = 0x00;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        throw Error("failed to set security level.");
+    }
+    async getSecurityLevelWait() {
+        this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0x01;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.RxBuf[this.Q2];
+        }
+        throw Error("failed to get security level.");
+    }
+    async sendAndReceiveWait(timeout) {
+        let checkSum = 0;
+        this.TxBuf[5] = 0;
+        this.uart.send(this.cmd.HEAD);
+        for (let i = 1; i < 6; i++) {
+            this.uart.send(this.TxBuf[i]);
+            checkSum ^= this.TxBuf[i];
+        }
+        this.uart.send(checkSum);
+        this.uart.send(this.cmd.TAIL);
+        await this.obniz.wait(timeout);
+        if (!this.uart.isDataExists()) {
+            return this.ack.TIMEOUT;
+        }
+        this.RxBuf = this.uart.readBytes();
+        // console.log("RxBuf: " + this.RxBuf);
+        if (this.RxBuf.length !== 8) {
+            return this.ack.TIMEOUT;
+        }
+        if (this.RxBuf[this.HEAD] !== this.cmd.HEAD) {
+            throw Error("communication failed.");
+        }
+        if (this.RxBuf[this.TAIL] !== this.cmd.TAIL) {
+            throw Error("communication failed.");
+        }
+        if (this.RxBuf[this.CMD] !== this.TxBuf[this.CMD]) {
+            throw Error("communication failed.");
+        }
+        checkSum = 0;
+        for (let i = 1; i < this.CHK; i++) {
+            checkSum ^= this.RxBuf[i];
+        }
+        if (checkSum !== this.RxBuf[this.CHK]) {
+            throw Error("communication failed.");
+        }
+        return this.ack.SUCCESS;
+    }
+}
+exports.default = StickC_FINGER;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/StickCHat/StickC_JoyStick/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class StickC_JoyStick {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "StickC_JoyStick",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.wait(100); // wait for booting of STM32F030F4
+        this.params.mode = "master";
+        this.params.clock = 100000;
+        this.params.pull = "5v";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+    }
+    async getXWait() {
+        const ret = await this.getXYWait();
+        let val = ret[0];
+        if (val > 0x7F) {
+            val = val - 0x100;
+        }
+        return val;
+    }
+    async getYWait() {
+        const ret = await this.getXYWait();
+        let val = ret[1];
+        if (val > 0x7F) {
+            val = val - 0x100;
+        }
+        return val;
+    }
+    async isPressedWait() {
+        this.i2c.write(0x38, [0x02]);
+        const ret = await this.i2c.readWait(0x38, 3);
+        return !Boolean(ret[2]);
+    }
+    async getXYWait() {
+        this.i2c.write(0x38, [0x02]);
+        const ret = await this.i2c.readWait(0x38, 3);
+        return ret;
+    }
+}
+exports.default = StickC_JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/StickCHat/StickC_ToF/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const VL53L0X_1 = __importDefault(__webpack_require__("./dist/src/parts/DistanceSensor/VL53L0X/index.js"));
+class StickC_ToF extends VL53L0X_1.default {
+    static info() {
+        return {
+            name: "StickC_ToF",
+        };
+    }
+}
+exports.default = StickC_ToF;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/TemperatureSensor/analog/AnalogTemperatureSensor.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AnalogTemperatureSensor {
     constructor() {
@@ -41127,12 +41126,10 @@ class AnalogTemperatureSensor {
             this.onchange(this.temp);
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const voltage = yield this.ad.getWait();
-            this.temp = this.calc(voltage);
-            return this.temp;
-        });
+    async getWait() {
+        const voltage = await this.ad.getWait();
+        this.temp = this.calc(voltage);
+        return this.temp;
     }
     onchange(temp) {
     }
@@ -41380,15 +41377,6 @@ exports.default = S8120C;
  * @packageDocumentation
  * @module Parts.ADT7410
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ADT7410 {
     constructor() {
@@ -41417,17 +41405,15 @@ class ADT7410 {
         this.params.mode = "master";
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.i2c.readWait(this.address, 2);
-            let tempBin = ret[0] << 8;
-            tempBin |= ret[1];
-            tempBin = tempBin >> 3;
-            if (tempBin & 0x1000) {
-                tempBin = tempBin - 8192;
-            }
-            return tempBin / 16;
-        });
+    async getTempWait() {
+        const ret = await this.i2c.readWait(this.address, 2);
+        let tempBin = ret[0] << 8;
+        tempBin |= ret[1];
+        tempBin = tempBin >> 3;
+        if (tempBin & 0x1000) {
+            tempBin = tempBin - 8192;
+        }
+        return tempBin / 16;
     }
 }
 exports.default = ADT7410;
@@ -41446,15 +41432,6 @@ exports.default = ADT7410;
  * @packageDocumentation
  * @module Parts.AM2320
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AM2320 {
     constructor() {
@@ -41475,35 +41452,29 @@ class AM2320 {
         this.params.clock = this.params.clock || 100 * 1000;
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
-    getAllWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const i2cOnerror = this.i2c.onerror;
-            this.i2c.onerror = () => {
-            };
-            this.i2c.write(this.address, [0]); // wake
-            this.obniz.wait(2);
-            this.i2c.write(this.address, [0x03, 0x00, 0x04]);
-            this.obniz.wait(2);
-            this.i2c.write(this.address, [0x03, 0x00, 0x04]);
-            const ret = yield this.i2c.readWait(this.address, 6);
-            this.i2c.onerror = i2cOnerror;
-            if (ret[0] !== 3 || ret[1] !== 4) {
-                throw new Error(`Could not receive data correctly`);
-            }
-            const humidity = (ret[2] * 256 + ret[3]) / 10.0;
-            const temperature = (ret[4] * 256 + ret[5]) / 10.0;
-            return { temperature, humidity };
-        });
+    async getAllWait() {
+        const i2cOnerror = this.i2c.onerror;
+        this.i2c.onerror = () => {
+        };
+        this.i2c.write(this.address, [0]); // wake
+        this.obniz.wait(2);
+        this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+        this.obniz.wait(2);
+        this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+        const ret = await this.i2c.readWait(this.address, 6);
+        this.i2c.onerror = i2cOnerror;
+        if (ret[0] !== 3 || ret[1] !== 4) {
+            throw new Error(`Could not receive data correctly`);
+        }
+        const humidity = (ret[2] * 256 + ret[3]) / 10.0;
+        const temperature = (ret[4] * 256 + ret[5]) / 10.0;
+        return { temperature, humidity };
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).temperature;
-        });
+    async getTempWait() {
+        return (await this.getAllWait()).temperature;
     }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).humidity;
-        });
+    async getHumdWait() {
+        return (await this.getAllWait()).humidity;
     }
 }
 exports.default = AM2320;
@@ -41522,15 +41493,6 @@ exports.default = AM2320;
  * @packageDocumentation
  * @module Parts.AMG8833
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AMG8833 {
     constructor() {
@@ -41580,56 +41542,52 @@ class AMG8833 {
         this.i2c.write(this.address, this.commands.frameRate_10fps);
         this.i2c.write(this.address, this.commands.int_disable);
     }
-    getOnePixWait(pixel) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let pixelAddrL = 0x80;
-            let pixelAddrH = 0x81;
-            if (pixel >= 0 && pixel <= 63) {
-                pixelAddrL = 0x80 + pixel * 2;
-                pixelAddrH = 0x81 + pixel * 2;
-            }
-            else {
-                throw new Error("pixel number must be range of 0 to 63");
-            }
-            this.i2c.write(this.address, [pixelAddrL]);
-            const dataL = yield this.i2c.readWait(this.address, 1);
-            this.i2c.write(this.address, [pixelAddrH]);
-            const dataH = yield this.i2c.readWait(this.address, 1);
-            let temp12bit = (dataH << 8) | dataL;
-            if (dataH & 0x08) {
+    async getOnePixWait(pixel) {
+        let pixelAddrL = 0x80;
+        let pixelAddrH = 0x81;
+        if (pixel >= 0 && pixel <= 63) {
+            pixelAddrL = 0x80 + pixel * 2;
+            pixelAddrH = 0x81 + pixel * 2;
+        }
+        else {
+            throw new Error("pixel number must be range of 0 to 63");
+        }
+        this.i2c.write(this.address, [pixelAddrL]);
+        const dataL = await this.i2c.readWait(this.address, 1);
+        this.i2c.write(this.address, [pixelAddrH]);
+        const dataH = await this.i2c.readWait(this.address, 1);
+        let temp12bit = (dataH << 8) | dataL;
+        if (dataH & 0x08) {
+            // negative temperature
+            temp12bit = temp12bit - 1;
+            temp12bit = 0xfff - temp12bit; // bit inverting
+            return temp12bit * -0.25;
+        }
+        else {
+            // positive temperature
+            return temp12bit * 0.25;
+        }
+    }
+    async getAllPixWait() {
+        const tempArray = new Array(64);
+        this.i2c.write(this.address, [0x80]);
+        const datas = await this.i2c.readWait(this.address, 64 * 2);
+        for (let i = 0; i < 64; i++) {
+            let temp12bit = (datas[i * 2 + 1] << 8) | datas[i * 2];
+            let temp = 0;
+            if (datas[i * 2 + 1] & 0x08) {
                 // negative temperature
                 temp12bit = temp12bit - 1;
                 temp12bit = 0xfff - temp12bit; // bit inverting
-                return temp12bit * -0.25;
+                temp = temp12bit * -0.25;
             }
             else {
                 // positive temperature
-                return temp12bit * 0.25;
+                temp = temp12bit * 0.25;
             }
-        });
-    }
-    getAllPixWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const tempArray = new Array(64);
-            this.i2c.write(this.address, [0x80]);
-            const datas = yield this.i2c.readWait(this.address, 64 * 2);
-            for (let i = 0; i < 64; i++) {
-                let temp12bit = (datas[i * 2 + 1] << 8) | datas[i * 2];
-                let temp = 0;
-                if (datas[i * 2 + 1] & 0x08) {
-                    // negative temperature
-                    temp12bit = temp12bit - 1;
-                    temp12bit = 0xfff - temp12bit; // bit inverting
-                    temp = temp12bit * -0.25;
-                }
-                else {
-                    // positive temperature
-                    temp = temp12bit * 0.25;
-                }
-                tempArray[i] = temp;
-            }
-            return tempArray;
-        });
+            tempArray[i] = temp;
+        }
+        return tempArray;
     }
 }
 exports.default = AMG8833;
@@ -41648,15 +41606,6 @@ exports.default = AMG8833;
  * @packageDocumentation
  * @module Parts.BME280
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class BME280 {
     constructor() {
@@ -41738,64 +41687,58 @@ class BME280 {
         this.config();
         this.obniz.wait(10);
     }
-    config() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.write([
-                this.commands.addresses.config,
-                (this.configration.interval << 5) |
-                    (this.configration.iir_strength << 2) |
-                    0,
-            ]);
-            this.write([
-                this.commands.addresses.ctrl_hum,
-                this.configration.sampling.hum,
-            ]);
-            this.write([
-                this.commands.addresses.ctrl_meas,
-                (this.configration.sampling.temp << 5) |
-                    (this.configration.sampling.pres << 2) |
-                    this.configration.mode,
-            ]);
-        });
+    async config() {
+        this.write([
+            this.commands.addresses.config,
+            (this.configration.interval << 5) |
+                (this.configration.iir_strength << 2) |
+                0,
+        ]);
+        this.write([
+            this.commands.addresses.ctrl_hum,
+            this.configration.sampling.hum,
+        ]);
+        this.write([
+            this.commands.addresses.ctrl_meas,
+            (this.configration.sampling.temp << 5) |
+                (this.configration.sampling.pres << 2) |
+                this.configration.mode,
+        ]);
     }
-    setIIRStrength(strengh) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.configration.iir_strength = strengh;
-            this.config();
-        });
+    async setIIRStrength(strengh) {
+        this.configration.iir_strength = strengh;
+        this.config();
     }
-    applyCalibration() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [0x88]);
-            const data = yield this.i2c.readWait(this.address, 24);
-            this.i2c.write(this.address, [0xa1]);
-            let data_next = yield this.i2c.readWait(this.address, 1);
-            data.push(...data_next);
-            this.i2c.write(this.address, [0xe1]);
-            data_next = yield this.i2c.readWait(this.address, 7);
-            data.push(...data_next);
-            this._calibrated = {
-                dig_T1: (data[1] << 8) | data[0],
-                dig_T2: this._readSigned16((data[3] << 8) | data[2]),
-                dig_T3: this._readSigned16((data[5] << 8) | data[4]),
-                dig_P1: (data[7] << 8) | data[6],
-                dig_P2: this._readSigned16((data[9] << 8) | data[8]),
-                dig_P3: this._readSigned16((data[11] << 8) | data[10]),
-                dig_P4: this._readSigned16((data[13] << 8) | data[12]),
-                dig_P5: this._readSigned16((data[15] << 8) | data[14]),
-                dig_P6: this._readSigned16((data[17] << 8) | data[16]),
-                dig_P7: this._readSigned16((data[19] << 8) | data[18]),
-                dig_P8: this._readSigned16((data[21] << 8) | data[20]),
-                dig_P9: this._readSigned16((data[23] << 8) | data[22]),
-                dig_H1: this._readSigned8(data[24]),
-                dig_H2: this._readSigned16((data[26] << 8) | data[25]),
-                dig_H3: this._readSigned8(data[27]),
-                dig_H4: this._readSigned16((data[28] << 4) | (0x0f & data[29])),
-                dig_H5: this._readSigned16((data[30] << 4) | ((data[29] >> 4) & 0x0f)),
-                dig_H6: this._readSigned8(data[31]),
-            };
-            this._t_fine = 0;
-        });
+    async applyCalibration() {
+        this.i2c.write(this.address, [0x88]);
+        const data = await this.i2c.readWait(this.address, 24);
+        this.i2c.write(this.address, [0xa1]);
+        let data_next = await this.i2c.readWait(this.address, 1);
+        data.push(...data_next);
+        this.i2c.write(this.address, [0xe1]);
+        data_next = await this.i2c.readWait(this.address, 7);
+        data.push(...data_next);
+        this._calibrated = {
+            dig_T1: (data[1] << 8) | data[0],
+            dig_T2: this._readSigned16((data[3] << 8) | data[2]),
+            dig_T3: this._readSigned16((data[5] << 8) | data[4]),
+            dig_P1: (data[7] << 8) | data[6],
+            dig_P2: this._readSigned16((data[9] << 8) | data[8]),
+            dig_P3: this._readSigned16((data[11] << 8) | data[10]),
+            dig_P4: this._readSigned16((data[13] << 8) | data[12]),
+            dig_P5: this._readSigned16((data[15] << 8) | data[14]),
+            dig_P6: this._readSigned16((data[17] << 8) | data[16]),
+            dig_P7: this._readSigned16((data[19] << 8) | data[18]),
+            dig_P8: this._readSigned16((data[21] << 8) | data[20]),
+            dig_P9: this._readSigned16((data[23] << 8) | data[22]),
+            dig_H1: this._readSigned8(data[24]),
+            dig_H2: this._readSigned16((data[26] << 8) | data[25]),
+            dig_H3: this._readSigned8(data[27]),
+            dig_H4: this._readSigned16((data[28] << 4) | (0x0f & data[29])),
+            dig_H5: this._readSigned16((data[30] << 4) | ((data[29] >> 4) & 0x0f)),
+            dig_H6: this._readSigned8(data[31]),
+        };
+        this._t_fine = 0;
     }
     _readSigned16(value) {
         if (value >= 0x8000) {
@@ -41812,23 +41755,19 @@ class BME280 {
     write(data) {
         this.i2c.write(this.address, data);
     }
-    getData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [0xf7]);
-            return yield this.i2c.readWait(this.address, 8);
-        });
+    async getData() {
+        this.i2c.write(this.address, [0xf7]);
+        return await this.i2c.readWait(this.address, 8);
     }
-    getAllWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.getData();
-            const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
-            const temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
-            const hum_raw = (data[6] << 8) | data[7];
-            const temperature = this.calibration_T(temp_raw) / 100.0;
-            const pressure = this.calibration_P(press_raw) / 100.0;
-            const humidity = this.calibration_H(hum_raw);
-            return { temperature, humidity, pressure };
-        });
+    async getAllWait() {
+        const data = await this.getData();
+        const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
+        const temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
+        const hum_raw = (data[6] << 8) | data[7];
+        const temperature = this.calibration_T(temp_raw) / 100.0;
+        const pressure = this.calibration_P(press_raw) / 100.0;
+        const humidity = this.calibration_H(hum_raw);
+        return { temperature, humidity, pressure };
     }
     calibration_T(adc_T) {
         let var1;
@@ -41882,26 +41821,18 @@ class BME280 {
         h = h * (1 - (this._calibrated.dig_H1 * h) / 524288);
         return h;
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).temperature;
-        });
+    async getTempWait() {
+        return (await this.getAllWait()).temperature;
     }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).humidity;
-        });
+    async getHumdWait() {
+        return (await this.getAllWait()).humidity;
     }
-    getPressureWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).pressure;
-        });
+    async getPressureWait() {
+        return (await this.getAllWait()).pressure;
     }
-    getAltitudeWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const pressure = yield this.getPressureWait();
-            return this.calcAltitude(pressure);
-        });
+    async getAltitudeWait() {
+        const pressure = await this.getPressureWait();
+        return this.calcAltitude(pressure);
     }
     calcAltitude(pressure, seaPressure) {
         if (typeof seaPressure !== "number") {
@@ -41926,15 +41857,6 @@ exports.default = BME280;
  * @packageDocumentation
  * @module Parts.D6T44L
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class D6T44L {
     constructor() {
@@ -41959,23 +41881,19 @@ class D6T44L {
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(50);
     }
-    getOnePixWait(pixcel) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.getAllPixWait();
-            return data[pixcel];
-        });
+    async getOnePixWait(pixcel) {
+        const data = await this.getAllPixWait();
+        return data[pixcel];
     }
-    getAllPixWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [0x4c]);
-            // await obniz.wait(160);
-            const raw = yield this.i2c.readWait(this.address, 35);
-            const data = [];
-            for (let i = 0; i < 16; i++) {
-                data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
-            }
-            return data;
-        });
+    async getAllPixWait() {
+        this.i2c.write(this.address, [0x4c]);
+        // await obniz.wait(160);
+        const raw = await this.i2c.readWait(this.address, 35);
+        const data = [];
+        for (let i = 0; i < 16; i++) {
+            data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
+        }
+        return data;
     }
 }
 exports.default = D6T44L;
@@ -41990,15 +41908,6 @@ exports.default = D6T44L;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -42021,33 +41930,27 @@ class DHT12 extends i2cParts_1.default {
             voltage: "3v",
         };
     }
-    getAllDataWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.readWait(0x00, 5);
-            const humidity = data[0] + data[1] * 0.1;
-            let temperature = data[2] + (data[3] & 0x7f) * 0.1;
-            if (data[3] & 0x80) {
-                temperature *= -1;
-            }
-            const checksum = data[0] + data[1] + data[2] + data[3];
-            if (checksum !== data[4]) {
-                throw new Error(`checksum does not match`);
-            }
-            return {
-                humidity,
-                temperature,
-            };
-        });
+    async getAllDataWait() {
+        const data = await this.readWait(0x00, 5);
+        const humidity = data[0] + data[1] * 0.1;
+        let temperature = data[2] + (data[3] & 0x7f) * 0.1;
+        if (data[3] & 0x80) {
+            temperature *= -1;
+        }
+        const checksum = data[0] + data[1] + data[2] + data[3];
+        if (checksum !== data[4]) {
+            throw new Error(`checksum does not match`);
+        }
+        return {
+            humidity,
+            temperature,
+        };
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).temperature;
-        });
+    async getTempWait() {
+        return (await this.getAllDataWait()).temperature;
     }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).humidity;
-        });
+    async getHumdWait() {
+        return (await this.getAllDataWait()).humidity;
     }
 }
 exports.default = DHT12;
@@ -42066,15 +41969,6 @@ exports.default = DHT12;
  * @packageDocumentation
  * @module Parts.S5851A
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class S5851A {
     constructor() {
@@ -42145,27 +42039,23 @@ class S5851A {
         this.i2c = obniz.getI2CWithConfig(this.params);
         // obniz.i2c0.write(address, [0x20, 0x24]);
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // console.log("gettempwait");
-            // obniz.i2c0.write(address, [0x20, 0x24]);
-            // obniz.i2c0.write(address, [0xE0, 0x00]);
-            const ret = yield this.i2c0.readWait(this.address, 2);
-            // console.log('ret:' + ret);
-            const tempBin = ret[0].toString(2) + ("00000000" + ret[1].toString(2)).slice(-8);
-            const temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
-            return temperature;
-        });
+    async getTempWait() {
+        // console.log("gettempwait");
+        // obniz.i2c0.write(address, [0x20, 0x24]);
+        // obniz.i2c0.write(address, [0xE0, 0x00]);
+        const ret = await this.i2c0.readWait(this.address, 2);
+        // console.log('ret:' + ret);
+        const tempBin = ret[0].toString(2) + ("00000000" + ret[1].toString(2)).slice(-8);
+        const temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
+        return temperature;
     }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [0x20, 0x24]);
-            this.i2c.write(this.address, [0xe0, 0x00]);
-            const ret = yield this.i2c.readWait(this.address, 4);
-            const humdBin = ret[2].toString(2) + ("00000000" + ret[3].toString(2)).slice(-8);
-            const humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
-            return humidity;
-        });
+    async getHumdWait() {
+        this.i2c.write(this.address, [0x20, 0x24]);
+        this.i2c.write(this.address, [0xe0, 0x00]);
+        const ret = await this.i2c.readWait(this.address, 4);
+        const humdBin = ret[2].toString(2) + ("00000000" + ret[3].toString(2)).slice(-8);
+        const humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
+        return humidity;
     }
 }
 exports.default = S5851A;
@@ -42184,15 +42074,6 @@ exports.default = S5851A;
  * @packageDocumentation
  * @module Parts.SHT31
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class SHT31 {
     constructor() {
@@ -42252,37 +42133,27 @@ class SHT31 {
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.i2c.write(this.address, this.commands.softReset);
     }
-    getData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, this.commands.highRepeat);
-            yield this.obniz.wait(this.waitTime.highRepeat);
-            return yield this.i2c.readWait(this.address, 6);
-        });
+    async getData() {
+        this.i2c.write(this.address, this.commands.highRepeat);
+        await this.obniz.wait(this.waitTime.highRepeat);
+        return await this.i2c.readWait(this.address, 6);
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).temperature;
-        });
+    async getTempWait() {
+        return (await this.getAllWait()).temperature;
     }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.getHumidWait();
-        });
+    async getHumdWait() {
+        return await this.getHumidWait();
     }
-    getHumidWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).humidity;
-        });
+    async getHumidWait() {
+        return (await this.getAllWait()).humidity;
     }
-    getAllWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.getData();
-            const tempBin = ret[0] * 256 + ret[1];
-            const temperature = -45 + 175 * (tempBin / (65536 - 1));
-            const humdBin = ret[3] * 256 + ret[4];
-            const humidity = 100 * (humdBin / (65536 - 1));
-            return { temperature, humidity };
-        });
+    async getAllWait() {
+        const ret = await this.getData();
+        const tempBin = ret[0] * 256 + ret[1];
+        const temperature = -45 + 175 * (tempBin / (65536 - 1));
+        const humdBin = ret[3] * 256 + ret[4];
+        const humidity = 100 * (humdBin / (65536 - 1));
+        return { temperature, humidity };
     }
 }
 exports.default = SHT31;
@@ -42301,15 +42172,6 @@ exports.default = SHT31;
  * @packageDocumentation
  * @module Parts.ADT7310
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ADT7310 {
     constructor() {
@@ -42330,19 +42192,17 @@ class ADT7310 {
         this.params.miso = this.params.dout;
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.spi.writeWait([0x54]); // send before each commands for stable
-            yield this.obniz.wait(200);
-            const ret = yield this.spi.writeWait([0x00, 0x00]);
-            let tempBin = ret[0] << 8;
-            tempBin |= ret[1];
-            tempBin = tempBin >> 3;
-            if (tempBin & 0x1000) {
-                tempBin = tempBin - 8192;
-            }
-            return tempBin / 16;
-        });
+    async getTempWait() {
+        await this.spi.writeWait([0x54]); // send before each commands for stable
+        await this.obniz.wait(200);
+        const ret = await this.spi.writeWait([0x00, 0x00]);
+        let tempBin = ret[0] << 8;
+        tempBin |= ret[1];
+        tempBin = tempBin >> 3;
+        if (tempBin & 0x1000) {
+            tempBin = tempBin - 8192;
+        }
+        return tempBin / 16;
     }
 }
 exports.default = ADT7310;
@@ -42361,15 +42221,6 @@ exports.default = ADT7310;
  * @packageDocumentation
  * @module Parts.MFRC522
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const OK = true;
 const ERROR = false;
@@ -42526,24 +42377,22 @@ class MFRC522 {
         this.params.frequency = this.params.spi_frequency || 5 * 1000 * 1000;
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Initializes the MFRC522 chip
-            // Hardware and Software reset
-            this.rst.output(false);
-            yield this.obniz.wait(50); // 8.8.2 says the oscillator start-up time is the start up time of the crystal + 37,74us: 50ms.
-            this.rst.output(true);
-            this.writeRegister(this.CommandReg, this.PCD_SoftReset);
-            // Timer setup: When communicating with a PICC we need a timeout if something goes wrong.
-            // f_timer = 13.56 MHz / (2*TPreScaler+1) where TPreScaler = [TPrescaler_Hi:TPrescaler_Lo].
-            this.writeRegister(this.TModeReg, 0x80); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
-            this.writeRegister(this.TPrescalerReg, 0xa9); // TPreScaler = TModeReg[3..0]: TPrescalerReg, ie 0x0A9 = 169 => f_timer=40kHz, ie a timer period of 25us.
-            this.writeRegister(this.TReloadRegHi, 0x03);
-            this.writeRegister(this.TReloadRegLo, 0xe8); // Reload timer with 0x3E8 = 1000, ie. 25ms before timeout
-            this.writeRegister(this.TxASKReg, 0x40); // Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
-            this.writeRegister(this.ModeReg, 0x3d); // Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (6.2.4)
-            yield this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
-        });
+    async init() {
+        // Initializes the MFRC522 chip
+        // Hardware and Software reset
+        this.rst.output(false);
+        await this.obniz.wait(50); // 8.8.2 says the oscillator start-up time is the start up time of the crystal + 37,74us: 50ms.
+        this.rst.output(true);
+        this.writeRegister(this.CommandReg, this.PCD_SoftReset);
+        // Timer setup: When communicating with a PICC we need a timeout if something goes wrong.
+        // f_timer = 13.56 MHz / (2*TPreScaler+1) where TPreScaler = [TPrescaler_Hi:TPrescaler_Lo].
+        this.writeRegister(this.TModeReg, 0x80); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
+        this.writeRegister(this.TPrescalerReg, 0xa9); // TPreScaler = TModeReg[3..0]: TPrescalerReg, ie 0x0A9 = 169 => f_timer=40kHz, ie a timer period of 25us.
+        this.writeRegister(this.TReloadRegHi, 0x03);
+        this.writeRegister(this.TReloadRegLo, 0xe8); // Reload timer with 0x3E8 = 1000, ie. 25ms before timeout
+        this.writeRegister(this.TxASKReg, 0x40); // Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
+        this.writeRegister(this.ModeReg, 0x3d); // Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (6.2.4)
+        await this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
     }
     writeRegister(addr, val) {
         let data;
@@ -42558,371 +42407,327 @@ class MFRC522 {
         this.spi.write(data);
         this.cs.output(true);
     }
-    readRegister(addr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = [((addr << 1) & 0x7e) | 0x80, 0];
-            this.cs.output(false);
-            const response = yield this.spi.writeWait(data);
-            this.cs.output(true);
-            return response[1];
-        });
+    async readRegister(addr) {
+        const data = [((addr << 1) & 0x7e) | 0x80, 0];
+        this.cs.output(false);
+        const response = await this.spi.writeWait(data);
+        this.cs.output(true);
+        return response[1];
     }
-    readRegister_nByte(addr, n) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const dataArray = [];
-            if (addr instanceof Array) {
-                // Multiple addresses(If addr is Array)
-                for (let i = 0; i < addr.length; i++) {
-                    dataArray.push(((addr[i] << 1) & 0x7e) | 0x80);
-                }
+    async readRegister_nByte(addr, n) {
+        const dataArray = [];
+        if (addr instanceof Array) {
+            // Multiple addresses(If addr is Array)
+            for (let i = 0; i < addr.length; i++) {
+                dataArray.push(((addr[i] << 1) & 0x7e) | 0x80);
             }
-            else {
-                // Single address & read n times
-                for (let i = 0; i < n; i++) {
-                    dataArray.push(((addr << 1) & 0x7e) | 0x80);
-                }
+        }
+        else {
+            // Single address & read n times
+            for (let i = 0; i < n; i++) {
+                dataArray.push(((addr << 1) & 0x7e) | 0x80);
             }
-            dataArray.push(0); // End reading
-            this.cs.output(false);
-            const values = yield this.spi.writeWait(dataArray);
-            this.cs.output(true);
-            values.shift();
-            return values;
-        });
+        }
+        dataArray.push(0); // End reading
+        this.cs.output(false);
+        const values = await this.spi.writeWait(dataArray);
+        this.cs.output(true);
+        values.shift();
+        return values;
     }
-    setRegisterBitMask(reg, mask) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = yield this.readRegister(reg);
-            this.writeRegister(reg, response | mask);
-        });
+    async setRegisterBitMask(reg, mask) {
+        const response = await this.readRegister(reg);
+        this.writeRegister(reg, response | mask);
     }
-    clearRegisterBitMask(reg, mask) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = yield this.readRegister(reg);
-            this.writeRegister(reg, response & ~mask);
-        });
+    async clearRegisterBitMask(reg, mask) {
+        const response = await this.readRegister(reg);
+        this.writeRegister(reg, response & ~mask);
     }
-    antennaOn() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Turns the antenna on by enabling pins TX1 and TX2
-            const response = yield this.readRegister(this.TxControlReg);
-            if ((response & 0x03) !== 0x03) {
-                // If TX1 and TX2 down
-                yield this.setRegisterBitMask(this.TxControlReg, response | 0x03);
-            }
-        });
+    async antennaOn() {
+        // Turns the antenna on by enabling pins TX1 and TX2
+        const response = await this.readRegister(this.TxControlReg);
+        if ((response & 0x03) !== 0x03) {
+            // If TX1 and TX2 down
+            await this.setRegisterBitMask(this.TxControlReg, response | 0x03);
+        }
     }
-    antennaOff() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Turns the antenna off by disabling pins TX1 and TX2
-            yield this.clearRegisterBitMask(this.TxControlReg, 0x03);
-        });
+    async antennaOff() {
+        // Turns the antenna off by disabling pins TX1 and TX2
+        await this.clearRegisterBitMask(this.TxControlReg, 0x03);
     }
     // RC522 and ISO14443 card communication
-    toCard(command, bitsToSend) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let data = [];
-            let bitSize = 0;
-            let status = ERROR;
-            let irqEn = 0x00;
-            let waitIRq = 0x00;
-            if (command === this.PCD_MFAuthent) {
-                irqEn = 0x12;
-                waitIRq = 0x10;
-            }
-            if (command === this.PCD_Transceive) {
-                irqEn = 0x77;
-                waitIRq = 0x30;
-            }
-            this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
-            this.writeRegister(this.ComlEnReg, irqEn | 0x80); // Interrupt request is enabled
-            this.writeRegister(this.ComIrqReg, 0x7f); // Clear all seven interrupt request bits
-            this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
-            this.writeRegister(this.FIFODataReg, bitsToSend); // Write sendData to the FIFO
-            this.writeRegister(this.CommandReg, command); // Execute the command
-            if (command === this.PCD_Transceive) {
-                yield this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
-            }
-            let TryingTimes = 10;
-            let n = 0;
-            do {
-                // Wait for the received data complete
-                n = yield this.readRegister(this.ComIrqReg);
-                TryingTimes--;
-            } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
-            // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
-            const response = yield this.readRegister_nByte([
-                this.ErrorReg,
-                this.FIFOLevelReg,
-                this.ControlReg,
-            ]);
-            if (TryingTimes !== 0) {
-                if ((response[0] & 0x1b) === 0x00) {
-                    // BufferOvfl CollErr ParityErr ProtocolErr
-                    status = n & irqEn & 0x01 ? ERROR : OK;
-                    if (command === this.PCD_Transceive) {
-                        n = response[1]; // Number of bytes in the FIFO
-                        const lastBits = response[2] & 0x07; // RxLastBits[2:0] indicates the number of valid bits in the last received byte. If this value is 000b, the whole byte is valid.
-                        if (lastBits) {
-                            bitSize = (n - 1) * 8 + lastBits;
-                        }
-                        else {
-                            bitSize = n * 8;
-                        }
-                        if (n === 0) {
-                            n = 1;
-                        }
-                        if (n > 16) {
-                            n = 16;
-                        } // Restrict until 16bytes
-                        data = yield this.readRegister_nByte(this.FIFODataReg, n); // Get received data from FIFO buffer
+    async toCard(command, bitsToSend) {
+        let data = [];
+        let bitSize = 0;
+        let status = ERROR;
+        let irqEn = 0x00;
+        let waitIRq = 0x00;
+        if (command === this.PCD_MFAuthent) {
+            irqEn = 0x12;
+            waitIRq = 0x10;
+        }
+        if (command === this.PCD_Transceive) {
+            irqEn = 0x77;
+            waitIRq = 0x30;
+        }
+        this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
+        this.writeRegister(this.ComlEnReg, irqEn | 0x80); // Interrupt request is enabled
+        this.writeRegister(this.ComIrqReg, 0x7f); // Clear all seven interrupt request bits
+        this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
+        this.writeRegister(this.FIFODataReg, bitsToSend); // Write sendData to the FIFO
+        this.writeRegister(this.CommandReg, command); // Execute the command
+        if (command === this.PCD_Transceive) {
+            await this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
+        }
+        let TryingTimes = 10;
+        let n = 0;
+        do {
+            // Wait for the received data complete
+            n = await this.readRegister(this.ComIrqReg);
+            TryingTimes--;
+        } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
+        // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
+        const response = await this.readRegister_nByte([
+            this.ErrorReg,
+            this.FIFOLevelReg,
+            this.ControlReg,
+        ]);
+        if (TryingTimes !== 0) {
+            if ((response[0] & 0x1b) === 0x00) {
+                // BufferOvfl CollErr ParityErr ProtocolErr
+                status = n & irqEn & 0x01 ? ERROR : OK;
+                if (command === this.PCD_Transceive) {
+                    n = response[1]; // Number of bytes in the FIFO
+                    const lastBits = response[2] & 0x07; // RxLastBits[2:0] indicates the number of valid bits in the last received byte. If this value is 000b, the whole byte is valid.
+                    if (lastBits) {
+                        bitSize = (n - 1) * 8 + lastBits;
                     }
+                    else {
+                        bitSize = n * 8;
+                    }
+                    if (n === 0) {
+                        n = 1;
+                    }
+                    if (n > 16) {
+                        n = 16;
+                    } // Restrict until 16bytes
+                    data = await this.readRegister_nByte(this.FIFODataReg, n); // Get received data from FIFO buffer
                 }
-                else {
-                    status = ERROR;
-                }
-            }
-            return { status, data, bitSize };
-        });
-    }
-    findCardWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
-            yield this.searchTagWait();
-            const uid = yield this.getUidWait();
-            const PICC_Type = yield this.identifyCardTypeWait(uid);
-            return { uid, PICC_Type };
-        });
-    }
-    searchTagWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.writeRegister(this.BitFramingReg, 0x07);
-            const tagType = [this.PICC_REQA];
-            const response = yield this.toCard(this.PCD_Transceive, tagType);
-            if (response.bitSize !== 0x10) {
-                throw new Error("card_search_ERROR");
-            }
-        });
-    }
-    getUidWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.writeRegister(this.BitFramingReg, 0x00);
-            let uid = [this.PICC_SEL_CL1, 0x20];
-            const response = yield this.toCard(this.PCD_Transceive, uid);
-            if (!response.status) {
-                throw new Error("uid_scan_ERROR");
-            }
-            const uidCheck = response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
-            if (uidCheck !== response.data[4]) {
-                throw new Error("uid_check_ERROR");
-            }
-            uid = response.data;
-            // (uid).pop();
-            return uid;
-        });
-    }
-    calculateCRCWait(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
-            this.writeRegister(this.DivIrqReg, 0x04); // Clear the CRCIRq interrupt request bit
-            this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
-            this.writeRegister(this.FIFODataReg, data); // Write data to the FIFO
-            this.writeRegister(this.CommandReg, this.PCD_CalcCRC); // Start the calculation
-            let i = 0xff;
-            let n;
-            // Wait for the CRC calculation to complete
-            do {
-                n = yield this.readRegister(this.DivIrqReg);
-                i--;
-            } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
-            // CRC calculation result
-            return yield this.readRegister_nByte([
-                this.CRCResultRegLSB,
-                this.CRCResultRegMSB,
-            ]);
-        });
-    }
-    identifySoftwareWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let version = yield this.readRegister(this.VersionReg);
-            switch (version) {
-                case 0x88:
-                    version = "(clone)";
-                    break;
-                case 0x90:
-                    version = "v0.0";
-                    break;
-                case 0x91:
-                    version = "v1.0";
-                    break;
-                case 0x92:
-                    version = "v2.0";
-                    break;
-                case 0x12:
-                    version = "counterfeit chip";
-                    break;
-                default:
-                    version = "(unknown)";
-            }
-            // When 0x00 or 0xFF is returned, communication probably failed
-            if (version === 0x00 || version === 0xff) {
-                throw new Error("software_version_ERROR");
-            }
-            return version;
-        });
-    }
-    identifyCardTypeWait(uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Identify type of the scanned card
-            let buffer = [this.PICC_SElECTTAG, 0x70].concat(uid);
-            buffer = buffer.concat(yield this.calculateCRCWait(buffer));
-            const response = yield this.toCard(this.PCD_Transceive, buffer);
-            let PICC_Type;
-            if (response.status && response.bitSize === 0x18) {
-                PICC_Type = response.data[0];
-            }
-            switch (PICC_Type) {
-                case 0x04:
-                    PICC_Type = "SAK indicates UID is not complete.";
-                    break; // UID not complete
-                case 0x09:
-                    PICC_Type = "MIFARE Mini, 320 bytes";
-                    break;
-                case 0x08:
-                    PICC_Type = "MIFARE 1KB";
-                    break;
-                case 0x18:
-                    PICC_Type = "MIFARE 4KB";
-                    break;
-                case 0x00:
-                    PICC_Type = "MIFARE Ultralight or Ultralight C";
-                    break;
-                case 0x11:
-                    PICC_Type = "MIFARE Plus";
-                    break;
-                case 0x01:
-                    PICC_Type = "MIFARE TNP3XXX";
-                    break;
-                case 0x20:
-                    PICC_Type = "PICC compliant with ISO/IEC 14443-4";
-                    break;
-                case 0x40:
-                    PICC_Type = "PICC compliant with ISO/IEC 18092 (NFC)";
-                    break;
-                default:
-                    throw new Error("PICC_type_ERROR");
-            }
-            return PICC_Type;
-        });
-    }
-    readSectorDataWait(Sector, uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.authenticateSectorWait(Sector, uid);
-            return yield this.getSectorDataWait(Sector);
-        });
-    }
-    readBlockDataWait(Block, uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.authenticateBlockWait(Block, uid);
-            return yield this.getBlockDataWait(Block);
-        });
-    }
-    authenticateSectorWait(Sector, uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            /* Password authentication mode (A or B)
-                 * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
-                 * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
-                 */
-            const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
-            // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
-            const Block = Sector * 4;
-            let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
-            uid = uid.slice(0, 4); // Append the first 4 bit of the UID
-            buffer = buffer.concat(uid); // 12byte
-            // Start authentication itself
-            yield this.toCard(this.PCD_MFAuthent, buffer);
-            if (!((yield this.readRegister(this.Status2Reg)) & 0x08)) {
-                throw new Error("password_authentication_ERROR");
-            }
-        });
-    }
-    authenticateBlockWait(Block, uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            /* Password authentication mode (A or B)
-                 * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
-                 * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
-                 */
-            const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
-            // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
-            let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
-            uid = uid.slice(0, 4); // Append the first 4 bit of the UID
-            buffer = buffer.concat(uid); // 12byte
-            // Start authentication itself
-            yield this.toCard(this.PCD_MFAuthent, buffer);
-            if (!((yield this.readRegister(this.Status2Reg)) & 0x08)) {
-                throw new Error("password_authentication_ERROR");
-            }
-        });
-    }
-    readAgainWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // If you finish reading and want to read again, this can use instead of init()
-            yield this.clearRegisterBitMask(this.Status2Reg, 0x08);
-        });
-    }
-    getSectorDataWait(address) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = [];
-            const blockData = [];
-            for (let i = 0; i < 4; i++) {
-                let request = [this.PICC_READ, address * 4 + i];
-                request = request.concat(yield this.calculateCRCWait(request));
-                response[i] = yield this.toCard(this.PCD_Transceive, request);
-                if (!response[i].status) {
-                    throw new Error("data_read_ERROR");
-                }
-                blockData[i] = response[i].data;
-            }
-            return blockData;
-        });
-    }
-    getBlockDataWait(address) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let request = [this.PICC_READ, address];
-            request = request.concat(yield this.calculateCRCWait(request));
-            const response = yield this.toCard(this.PCD_Transceive, request);
-            if (!response.status) {
-                throw new Error("data_read_ERROR");
-            }
-            return response.data;
-        });
-    }
-    appendCRCtoBufferAndSendToCardWait(buffer) {
-        return __awaiter(this, void 0, void 0, function* () {
-            buffer = buffer.concat(yield this.calculateCRCWait(buffer));
-            const response = yield this.toCard(this.PCD_Transceive, buffer);
-            if (!response.status ||
-                response.bitSize !== 4 ||
-                (response.data[0] & 0x0f) !== 0x0a) {
-                response.status = ERROR;
-            }
-            return response;
-        });
-    }
-    writeBlockDataWait(Block, sixteenBytes) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (Block === 0 || Block % 4 === 3) {
-                throw new Error("deny_Write");
-            }
-            const buffer = [this.PICC_WRITE, Block];
-            let response = yield this.appendCRCtoBufferAndSendToCardWait(buffer);
-            if (response.status) {
-                response = yield this.appendCRCtoBufferAndSendToCardWait(sixteenBytes);
             }
             else {
-                throw new Error("data_write_ERROR");
+                status = ERROR;
             }
-        });
+        }
+        return { status, data, bitSize };
+    }
+    async findCardWait() {
+        await this.init();
+        await this.searchTagWait();
+        const uid = await this.getUidWait();
+        const PICC_Type = await this.identifyCardTypeWait(uid);
+        return { uid, PICC_Type };
+    }
+    async searchTagWait() {
+        this.writeRegister(this.BitFramingReg, 0x07);
+        const tagType = [this.PICC_REQA];
+        const response = await this.toCard(this.PCD_Transceive, tagType);
+        if (response.bitSize !== 0x10) {
+            throw new Error("card_search_ERROR");
+        }
+    }
+    async getUidWait() {
+        this.writeRegister(this.BitFramingReg, 0x00);
+        let uid = [this.PICC_SEL_CL1, 0x20];
+        const response = await this.toCard(this.PCD_Transceive, uid);
+        if (!response.status) {
+            throw new Error("uid_scan_ERROR");
+        }
+        const uidCheck = response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
+        if (uidCheck !== response.data[4]) {
+            throw new Error("uid_check_ERROR");
+        }
+        uid = response.data;
+        // (uid).pop();
+        return uid;
+    }
+    async calculateCRCWait(data) {
+        this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
+        this.writeRegister(this.DivIrqReg, 0x04); // Clear the CRCIRq interrupt request bit
+        this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
+        this.writeRegister(this.FIFODataReg, data); // Write data to the FIFO
+        this.writeRegister(this.CommandReg, this.PCD_CalcCRC); // Start the calculation
+        let i = 0xff;
+        let n;
+        // Wait for the CRC calculation to complete
+        do {
+            n = await this.readRegister(this.DivIrqReg);
+            i--;
+        } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
+        // CRC calculation result
+        return await this.readRegister_nByte([
+            this.CRCResultRegLSB,
+            this.CRCResultRegMSB,
+        ]);
+    }
+    async identifySoftwareWait() {
+        let version = await this.readRegister(this.VersionReg);
+        switch (version) {
+            case 0x88:
+                version = "(clone)";
+                break;
+            case 0x90:
+                version = "v0.0";
+                break;
+            case 0x91:
+                version = "v1.0";
+                break;
+            case 0x92:
+                version = "v2.0";
+                break;
+            case 0x12:
+                version = "counterfeit chip";
+                break;
+            default:
+                version = "(unknown)";
+        }
+        // When 0x00 or 0xFF is returned, communication probably failed
+        if (version === 0x00 || version === 0xff) {
+            throw new Error("software_version_ERROR");
+        }
+        return version;
+    }
+    async identifyCardTypeWait(uid) {
+        // Identify type of the scanned card
+        let buffer = [this.PICC_SElECTTAG, 0x70].concat(uid);
+        buffer = buffer.concat(await this.calculateCRCWait(buffer));
+        const response = await this.toCard(this.PCD_Transceive, buffer);
+        let PICC_Type;
+        if (response.status && response.bitSize === 0x18) {
+            PICC_Type = response.data[0];
+        }
+        switch (PICC_Type) {
+            case 0x04:
+                PICC_Type = "SAK indicates UID is not complete.";
+                break; // UID not complete
+            case 0x09:
+                PICC_Type = "MIFARE Mini, 320 bytes";
+                break;
+            case 0x08:
+                PICC_Type = "MIFARE 1KB";
+                break;
+            case 0x18:
+                PICC_Type = "MIFARE 4KB";
+                break;
+            case 0x00:
+                PICC_Type = "MIFARE Ultralight or Ultralight C";
+                break;
+            case 0x11:
+                PICC_Type = "MIFARE Plus";
+                break;
+            case 0x01:
+                PICC_Type = "MIFARE TNP3XXX";
+                break;
+            case 0x20:
+                PICC_Type = "PICC compliant with ISO/IEC 14443-4";
+                break;
+            case 0x40:
+                PICC_Type = "PICC compliant with ISO/IEC 18092 (NFC)";
+                break;
+            default:
+                throw new Error("PICC_type_ERROR");
+        }
+        return PICC_Type;
+    }
+    async readSectorDataWait(Sector, uid) {
+        await this.authenticateSectorWait(Sector, uid);
+        return await this.getSectorDataWait(Sector);
+    }
+    async readBlockDataWait(Block, uid) {
+        await this.authenticateBlockWait(Block, uid);
+        return await this.getBlockDataWait(Block);
+    }
+    async authenticateSectorWait(Sector, uid) {
+        /* Password authentication mode (A or B)
+             * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
+             * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
+             */
+        const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
+        // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+        const Block = Sector * 4;
+        let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
+        uid = uid.slice(0, 4); // Append the first 4 bit of the UID
+        buffer = buffer.concat(uid); // 12byte
+        // Start authentication itself
+        await this.toCard(this.PCD_MFAuthent, buffer);
+        if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
+            throw new Error("password_authentication_ERROR");
+        }
+    }
+    async authenticateBlockWait(Block, uid) {
+        /* Password authentication mode (A or B)
+             * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
+             * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
+             */
+        const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
+        // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+        let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
+        uid = uid.slice(0, 4); // Append the first 4 bit of the UID
+        buffer = buffer.concat(uid); // 12byte
+        // Start authentication itself
+        await this.toCard(this.PCD_MFAuthent, buffer);
+        if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
+            throw new Error("password_authentication_ERROR");
+        }
+    }
+    async readAgainWait() {
+        // If you finish reading and want to read again, this can use instead of init()
+        await this.clearRegisterBitMask(this.Status2Reg, 0x08);
+    }
+    async getSectorDataWait(address) {
+        const response = [];
+        const blockData = [];
+        for (let i = 0; i < 4; i++) {
+            let request = [this.PICC_READ, address * 4 + i];
+            request = request.concat(await this.calculateCRCWait(request));
+            response[i] = await this.toCard(this.PCD_Transceive, request);
+            if (!response[i].status) {
+                throw new Error("data_read_ERROR");
+            }
+            blockData[i] = response[i].data;
+        }
+        return blockData;
+    }
+    async getBlockDataWait(address) {
+        let request = [this.PICC_READ, address];
+        request = request.concat(await this.calculateCRCWait(request));
+        const response = await this.toCard(this.PCD_Transceive, request);
+        if (!response.status) {
+            throw new Error("data_read_ERROR");
+        }
+        return response.data;
+    }
+    async appendCRCtoBufferAndSendToCardWait(buffer) {
+        buffer = buffer.concat(await this.calculateCRCWait(buffer));
+        const response = await this.toCard(this.PCD_Transceive, buffer);
+        if (!response.status ||
+            response.bitSize !== 4 ||
+            (response.data[0] & 0x0f) !== 0x0a) {
+            response.status = ERROR;
+        }
+        return response;
+    }
+    async writeBlockDataWait(Block, sixteenBytes) {
+        if (Block === 0 || Block % 4 === 3) {
+            throw new Error("deny_Write");
+        }
+        const buffer = [this.PICC_WRITE, Block];
+        let response = await this.appendCRCtoBufferAndSendToCardWait(buffer);
+        if (response.status) {
+            response = await this.appendCRCtoBufferAndSendToCardWait(sixteenBytes);
+        }
+        else {
+            throw new Error("data_write_ERROR");
+        }
     }
 }
 exports.default = MFRC522;
@@ -43152,15 +42957,6 @@ exports.default = RN42;
  * @packageDocumentation
  * @module Parts.XBee
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class XBee {
     constructor() {
@@ -43265,41 +43061,39 @@ class XBee {
     exitAtMode() {
         this.addCommand("CN");
     }
-    configWait(config) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.isAtMode) {
-                throw new Error("Xbee : duplicate config setting");
-            }
-            return new Promise((resolve, reject) => {
-                const standaloneKeys = {
-                    destination_address_high: "DH",
-                    destination_address_low: "DL",
-                    source_address: "MY",
-                };
-                const highLowKeys = ["destination_address"];
-                this.enterAtMode();
-                for (const key in config) {
-                    if (key.length === 2) {
-                        this.addCommand(key, config[key]);
-                    }
-                    else if (standaloneKeys[key]) {
-                        this.addCommand(standaloneKeys[key], config[key]);
-                    }
-                    else if (highLowKeys.includes(key)) {
-                        let high = config[key].slice(0, -8);
-                        if (!high) {
-                            high = "0";
-                        }
-                        const low = config[key].slice(-8);
-                        this.addCommand(standaloneKeys[key + "_high"], high);
-                        this.addCommand(standaloneKeys[key + "_low"], low);
-                    }
+    async configWait(config) {
+        if (this.isAtMode) {
+            throw new Error("Xbee : duplicate config setting");
+        }
+        return new Promise((resolve, reject) => {
+            const standaloneKeys = {
+                destination_address_high: "DH",
+                destination_address_low: "DL",
+                source_address: "MY",
+            };
+            const highLowKeys = ["destination_address"];
+            this.enterAtMode();
+            for (const key in config) {
+                if (key.length === 2) {
+                    this.addCommand(key, config[key]);
                 }
-                this.exitAtMode();
-                this.onFinishAtModeCallback = () => {
-                    resolve();
-                };
-            });
+                else if (standaloneKeys[key]) {
+                    this.addCommand(standaloneKeys[key], config[key]);
+                }
+                else if (highLowKeys.includes(key)) {
+                    let high = config[key].slice(0, -8);
+                    if (!high) {
+                        high = "0";
+                    }
+                    const low = config[key].slice(-8);
+                    this.addCommand(standaloneKeys[key + "_high"], high);
+                    this.addCommand(standaloneKeys[key + "_low"], low);
+                }
+            }
+            this.exitAtMode();
+            this.onFinishAtModeCallback = () => {
+                resolve();
+            };
         });
     }
 }
@@ -43319,15 +43113,6 @@ exports.default = XBee;
  * @packageDocumentation
  * @module Parts
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class I2cPartsAbstruct {
     constructor() {
@@ -43368,11 +43153,9 @@ class I2cPartsAbstruct {
         dv.setUint8(1, val2);
         return dv.getInt16(0, false);
     }
-    readWait(command, length) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [command]);
-            return yield this.i2c.readWait(this.address, length);
-        });
+    async readWait(command, length) {
+        this.i2c.write(this.address, [command]);
+        return await this.i2c.readWait(this.address, length);
     }
     write(command, buf) {
         if (!Array.isArray(buf)) {
@@ -43380,21 +43163,17 @@ class I2cPartsAbstruct {
         }
         this.i2c.write(this.address, [command, ...buf]);
     }
-    readInt16Wait(register, endian = "b") {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.readWait(register, 2);
-            return I2cPartsAbstruct.charArrayToInt16(data, endian);
-        });
+    async readInt16Wait(register, endian = "b") {
+        const data = await this.readWait(register, 2);
+        return I2cPartsAbstruct.charArrayToInt16(data, endian);
     }
-    readThreeInt16Wait(register, endian = "b") {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.readWait(register, 6);
-            const results = [0, 0, 0];
-            results[0] = (I2cPartsAbstruct.charArrayToInt16(data.slice(0, 2), endian));
-            results[1] = (I2cPartsAbstruct.charArrayToInt16(data.slice(2, 4), endian));
-            results[2] = (I2cPartsAbstruct.charArrayToInt16(data.slice(4, 6), endian));
-            return results;
-        });
+    async readThreeInt16Wait(register, endian = "b") {
+        const data = await this.readWait(register, 6);
+        const results = [0, 0, 0];
+        results[0] = (I2cPartsAbstruct.charArrayToInt16(data.slice(0, 2), endian));
+        results[1] = (I2cPartsAbstruct.charArrayToInt16(data.slice(2, 4), endian));
+        results[2] = (I2cPartsAbstruct.charArrayToInt16(data.slice(4, 6), endian));
+        return results;
     }
 }
 exports.default = I2cPartsAbstruct;

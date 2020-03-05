@@ -8,8 +8,7 @@ module.exports = {
     "dist",
     "!dist/**/*.map",
     "index.js",
-    "obniz.js",
-    "obniz.min.js"
+    "obniz.js"
   ],
   "engines": {
     "node": ">=8.17.0"
@@ -27,12 +26,12 @@ module.exports = {
     "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
     "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "version": "npm run build && npm run doc && git add docs && git add obniz.js && git add obniz.min.js",
+    "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
-    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "precommit": "lint-staged && npm run build && git add obniz.js",
+    "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [

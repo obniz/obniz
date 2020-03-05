@@ -4,7 +4,18 @@
 ![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
 
-[obniz Board](https://obniz.io/ja/) や[obnizOS](https://obniz.io/ja/doc/obnizos)を[obniz api](https://obniz.io/ja/doc/obniz_api/about_obniz_api)を使いJavaScriptから操作するためのsdkです。
+[obniz](https://obniz.io/ja/) や[obnizOS](https://obniz.io/ja/doc/obnizos)をobniz websocket APIを使いJavaScriptから操作するためのsdkです。
+
+Docs
+
+- [ガイド](https://docs.obniz.io/ja/guides/)
+- [クラスリファレンス](https://obniz.github.io/obniz/obnizjs/index.html)
+
+Related Sites
+
+- [obniz ウェブサイト](https://obniz.io/ja)
+- [デバイス一覧](https://obniz.io/ja/products)
+- [制作例](https://blog.obniz.io/example-2/)
 
 ## 使い方
 
@@ -216,3 +227,10 @@ obnizA.onconnect = async function () {
   }
 }
 ```
+
+## Lisence
+See [LICENSE.txt](./LICENSE.txt)
+
+## Contribute
+
+[https://www.notion.so/cambrianrobotics/584462928c0943acadbe2531d221fd62](https://www.notion.so/cambrianrobotics/584462928c0943acadbe2531d221fd62)

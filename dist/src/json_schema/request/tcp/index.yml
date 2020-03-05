@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/tcp"
+basePath: "tcp0"
+description: "tcp command"
+
+"anyOf":
+  - {$ref: "/request/tcp/connect"}
+  - {$ref: "/request/tcp/disconnect"}
+  - {$ref: "/request/tcp/write"}

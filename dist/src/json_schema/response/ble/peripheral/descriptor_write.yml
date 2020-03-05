@@ -1,0 +1,26 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/peripheral/descriptor_write"
+description: "callback of write descriptor"
+deprecated: 3.0.0
+
+type: object
+required: [peripheral]
+properties:
+  peripheral:
+    type: object
+    additionalProperties: false
+    required: [write_descriptor_result]
+    properties:
+      write_descriptor_result:
+        type: object
+        required: [service_uuid, characteristic_uuid,descriptor_uuid,  result]
+        additionalProperties: false
+        properties:
+          service_uuid: {$ref: "/uuid"}
+          characteristic_uuid: {$ref: "/uuid"}
+          descriptor_uuid: {$ref: "/uuid"}
+          result:
+            type: string
+            enum: [success , failed]

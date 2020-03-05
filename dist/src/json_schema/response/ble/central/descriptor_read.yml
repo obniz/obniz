@@ -1,0 +1,22 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/descriptor_read"
+deprecated: 3.0.0
+
+type: object
+required: [read_descriptor_result]
+properties:
+  read_descriptor_results:
+    type: object
+    required: [address,service_uuid,characteristic_uuid,descriptor_uuid, result, data]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress" }
+      service_uuid: {$ref: "/uuid"}
+      characteristic_uuid: {$ref: "/uuid"}
+      descriptor_uuid: {$ref: "/uuid"}
+      result:
+        type: string
+        enum: [success, failed]
+      data: {$ref: "/dataArray" }

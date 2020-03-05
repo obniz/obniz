@@ -1,0 +1,21 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/security/devices_clear"
+description: "Clear bonding devices list"
+deprecated: 3.0.0
+
+type: object
+required: [security]
+properties:
+  security:
+    type: object
+    required: [devices]
+    properties:
+      devices:
+        type: object
+        required: [clear]
+        properties:
+          clear:
+            type: boolean
+            enum: [true]

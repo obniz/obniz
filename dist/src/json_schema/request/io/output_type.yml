@@ -1,0 +1,15 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/io/output_type"
+
+type: object
+required: [output_type]
+properties:
+  output_type:
+    type: string
+    enum:
+      - push-pull5v
+      - push-pull3v
+      - open-drain
+    description: "drive type"
