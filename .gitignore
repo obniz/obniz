@@ -18,4 +18,6 @@ log
 /test/test*.html
 /test/test*.js
 /test/test*.ts
-dist
+dist/**/*.map
+dist/**/*.ts
+dist/**/*.yml
