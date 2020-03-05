@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_EarHeartRate
+ */
+
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 

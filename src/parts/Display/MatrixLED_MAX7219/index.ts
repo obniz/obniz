@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MatrixLED_MAX7219
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";

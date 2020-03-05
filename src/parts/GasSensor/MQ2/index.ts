@@ -1,6 +1,11 @@
-import MQGas, { MQGasSensorOptions } from "../MQGas";
+/**
+ * @packageDocumentation
+ * @module Parts.MQ2
+ */
+import MQGas, {MQGasSensorOptions} from "../MQGas";
 
-export interface MQ2Options extends MQGasSensorOptions { }
+export interface MQ2Options extends MQGasSensorOptions {
+}
 
 export default class MQ2 extends MQGas {
 

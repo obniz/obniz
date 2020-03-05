@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.ADT7310
+ */
+
 import Obniz from "../../../../obniz";
 import PeripheralSPI from "../../../../obniz/libs/io_peripherals/spi";
 

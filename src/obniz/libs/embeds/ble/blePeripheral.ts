@@ -1,7 +1,16 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleHelper from "./bleHelper";
 import BleService from "./bleService";
 
-class BlePeripheral {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Peripheral
+ */
+export default  class BlePeripheral {
   public Obniz: any;
   public _services: any;
 
@@ -90,5 +99,3 @@ class BlePeripheral {
   public onerror() {
   }
 }
-
-export default BlePeripheral;

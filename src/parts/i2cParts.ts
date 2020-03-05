@@ -1,9 +1,18 @@
-import Obniz from "../obniz";
-import { DriveType, PullType } from "../obniz/libs/io_peripherals/common";
-import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../obniz/ObnizPartsInterface";
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 
-export interface Xyz { x: number; y: number; z: number; }
+import Obniz from "../obniz";
+import {DriveType, PullType} from "../obniz/libs/io_peripherals/common";
+import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../obniz/ObnizPartsInterface";
+
+export interface Xyz {
+  x: number;
+  y: number;
+  z: number;
+}
 
 export interface I2cPartsAbstractOptions {
   vcc?: number;
@@ -32,6 +41,7 @@ export default abstract class I2cPartsAbstract implements ObnizPartsInterface {
     dv.setUint8(1, values[1]);
     return dv.getInt16(0, endian !== "b");
   }
+
   public static charArrayToXyz(data: number[], endian = "b", scaleFunc = (d: number): number => d): Xyz {
     return {
       x: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(0, 2) as [number, number], endian)),
@@ -39,6 +49,7 @@ export default abstract class I2cPartsAbstract implements ObnizPartsInterface {
       z: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(4, 6) as [number, number], endian)),
     };
   }
+
   public keys: string[];
   public requiredKeys: string[];
   public abstract i2cinfo: I2cInfo;
@@ -52,6 +63,7 @@ export default abstract class I2cPartsAbstract implements ObnizPartsInterface {
     this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "pull", "clock", "voltage", "address"];
     this.requiredKeys = [];
   }
+
   // public abstract info(): ObnizPartsInfo;
   public i2cInfo(): I2cInfo {
     return this.i2cinfo;
@@ -98,15 +110,18 @@ export default abstract class I2cPartsAbstract implements ObnizPartsInterface {
     tempdata[0] = tempdata[0] | (0b1 << index);
     this.write(address, tempdata);
   }
+
   public async clearFlagWait(address: number, index: number) {
     const tempdata = await this.readWait(address, 1);
     tempdata[0] = tempdata[0] & (0xff - (0b1 << index));
     this.write(address, tempdata);
   }
+
   protected async readInt16Wait(register: number, endian: string = "b"): Promise<number> {
     const data = await this.readWait(register, 2) as [number, number];
     return I2cPartsAbstract.charArrayToInt16(data, endian);
   }
+
   protected async readThreeInt16Wait(register: number, endian: string = "b"): Promise<[number, number, number]> {
     const data: number[] = await this.readWait(register, 6);
     const results: [number, number, number] = [0, 0, 0];

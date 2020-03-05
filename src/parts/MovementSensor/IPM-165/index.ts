@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.IPM-165
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 

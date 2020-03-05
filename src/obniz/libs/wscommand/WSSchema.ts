@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import tv4 = require("tv4");
 import {ValidationError} from "tv4";
 

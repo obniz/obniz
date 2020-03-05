@@ -1,7 +1,12 @@
+/**
+ * @packageDocumentation
+ * @module Parts.HMC5883L
+ */
+
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from "../../i2cCompass";
-import { I2cInfo, Xyz } from "../../i2cParts";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import i2cCompass, {compassUnit, I2cCompassAbstractOptions} from "../../i2cCompass";
+import {I2cInfo, Xyz} from "../../i2cParts";
 
 export interface HMC5883LOptions extends I2cCompassAbstractOptions {
 }

@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MQGas
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
@@ -76,9 +81,9 @@ export default class MQGasSensor implements ObnizPartsInterface {
     this.obniz.setVccGnd(this.vcc, this.gnd, "5v");
   }
 
-  public heatWait(seconds: any) {
+  public heatWait(seconds?: number): Promise<void> {
     this.startHeating();
-    if (seconds > 0) {
+    if (typeof seconds === "number" && seconds > 0) {
       seconds *= 1000;
     } else {
       seconds = 2 * 60 * 1000;

@@ -1,10 +1,16 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MPU6050
+ */
+
 import Obniz from "../../../obniz";
-import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import I2cImu6, { accelRange, gyroRange, I2cImu6AbstractOptions, Inertia6, Xyz } from "../../i2cImu6";
-import { I2cInfo } from "../../i2cParts";
+import {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import I2cImu6, {accelRange, gyroRange, I2cImu6AbstractOptions, Inertia6, Xyz} from "../../i2cImu6";
+import {I2cInfo} from "../../i2cParts";
 
 export interface MPU6050Options extends I2cImu6AbstractOptions {
 }
+
 export default class MPU6050 extends I2cImu6 {
   public static info(): ObnizPartsInfo {
     return {
@@ -139,14 +145,17 @@ export default class MPU6050 extends I2cImu6 {
     const raw = await this.readWait(MPU6050.commands.accel_x_h, 6);
     return MPU6050.charArrayToXyz(raw, "b");
   }
+
   public async getGyroAdcWait(): Promise<Xyz> {
     const raw = await this.readWait(MPU6050.commands.gyro_x_h, 6);
     return MPU6050.charArrayToXyz(raw, "b");
   }
+
   public async getTempAdcWait(): Promise<number> {
     const raw = await this.readWait(MPU6050.commands.temp_h, 2);
     return MPU6050.charArrayToInt16(raw as [number, number], "b");
   }
+
   public async getAllAdcWait(): Promise<Inertia6> {
     const raw = await this.readWait(MPU6050.commands.accel_x_h, 14);
     return {
@@ -164,6 +173,7 @@ export default class MPU6050 extends I2cImu6 {
       throw new Error(`Invalid accel range. Valid values are: ${Object.keys(MPU6050.commands.accel_fs_sel).join()}`);
     }
   }
+
   public setGyroRange(gyro_range: gyroRange): void {
     if (gyro_range in MPU6050.commands.gyro_fs_sel) {
       this.write(MPU6050.commands.gyro_config, MPU6050.commands.gyro_fs_sel[gyro_range]);

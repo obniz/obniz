@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Puls08M5stickcS
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";

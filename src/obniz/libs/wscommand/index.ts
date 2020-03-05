@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import WSCommand from "./WSCommand";
 import WSCommandAD from "./WSCommandAD";
 import WSCommandBle from "./WSCommandBle";
@@ -30,4 +35,4 @@ WSCommand.addCommandClass("WSCommandBle", WSCommandBle);
 WSCommand.addCommandClass("WSCommandMeasurement", WSCommandMeasurement);
 WSCommand.addCommandClass("WSCommandTcp", WSCommandTcp);
 
-export = WSCommand;
+export default WSCommand;

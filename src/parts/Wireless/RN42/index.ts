@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.RN42
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 

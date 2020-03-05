@@ -1,7 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleHelper from "./bleHelper";
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
-
-class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
+export default class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   public characteristic: any;
   public uuid: any;
 
@@ -46,5 +54,3 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
     this.characteristic.service.peripheral.Obniz.send(obj);
   }
 }
-
-export default BleRemoteDescriptor;

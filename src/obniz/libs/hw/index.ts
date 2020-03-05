@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+
 export default class HW {
 
   public static getDefinitionFor(hw: any) {
@@ -9,6 +14,8 @@ export default class HW {
       return require("./esp32w.json");
     } else if (hw === "esp32p") {
       return require("./esp32p.json");
+    } else if (hw === "m5stickc") {
+      return require("./m5stickc.json");
     } else if (hw === "encored") {
       return require("./encored.json");
     }

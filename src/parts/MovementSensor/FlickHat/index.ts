@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.FlickHat
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
@@ -93,7 +98,7 @@ export default class FlickHat implements ObnizPartsInterface {
   public ontouch?: (touch: FlickHat_Touch) => void;
   public ontap?: ((tap: FlickHat_Tap) => void);
   public ondoubletap: any;
-  public onairwheel?: (airwheel: FlickHat_AirWheel) => void ;
+  public onairwheel?: (airwheel: FlickHat_AirWheel) => void;
   public statusInfo: any;
 
   protected obniz!: Obniz;

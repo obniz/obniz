@@ -1,6 +1,11 @@
+/**
+ * @packageDocumentation
+ * @module Parts.LED
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
 export interface LEDOptions {
   anode?: number;
@@ -71,7 +76,7 @@ export default class LED implements ObnizPartsInterface {
   }
 
   public endBlink() {
-    this.obniz.io.animation(this.animationName, "pause");
+    this.obniz.io!.animation(this.animationName, "pause");
   }
 
   public blink(interval?: number) {
@@ -95,7 +100,7 @@ export default class LED implements ObnizPartsInterface {
       },
     ];
 
-    this.obniz.io.animation(this.animationName, "loop", frames);
+    this.obniz.io!.animation(this.animationName, "loop", frames);
   }
 
   private _on() {

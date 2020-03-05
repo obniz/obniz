@@ -15,7 +15,7 @@ items:
     "^pwm[0-5]$": {$ref: "/request/pwm" }
     "^uart[0-1]$": {$ref: "/request/uart" }
     "^spi[0-1]$": {$ref: "/request/spi" }
-    "^i2c0$": {$ref: "/request/i2c" }
+    "^i2c[0-1]$": {$ref: "/request/i2c" }
     "^tcp[0-7]$": {$ref: "/request/tcp" }
 
   properties:

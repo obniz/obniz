@@ -1,8 +1,16 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleHelper from "./bleHelper";
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
-
-class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
+export default class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   public properties: any;
   public children: any;
   public addChild: any;
@@ -227,5 +235,3 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     }
   }
 }
-
-export default BleRemoteCharacteristic;

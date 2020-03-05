@@ -1,10 +1,15 @@
-// Todo: add weight and calc pressure(kg)
+/**
+ * @packageDocumentation
+ * @module Parts.FSR40X
+ */
 
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+
+// Todo: add weight and calc pressure(kg)
 
 export interface FSR40XOptions {
   pin0: number;

@@ -1,8 +1,12 @@
-import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
+/**
+ * @packageDocumentation
+ * @module Parts.SH200Q
+ */
+import i2cParts, {I2cInfo, I2cPartsAbstractOptions} from "../../i2cParts";
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
-import I2cImu6, { accelRange, gyroRange, Inertia6, Xyz } from "../../i2cImu6";
+import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import I2cImu6, {accelRange, gyroRange, Inertia6, Xyz} from "../../i2cImu6";
 
 export type SH200QAccelRange = "4g" | "8g" | "16g";
 export type SH200QGyroRange = "125dps" | "250dps" | "500dps" | "1000dps" | "2000dps";
@@ -41,6 +45,7 @@ export default class SH200Q extends I2cImu6 {
       "2000dps": 0b000,
     },
   };
+
   public static info(): ObnizPartsInfo {
     return {
       name: "SH200Q",
@@ -157,6 +162,7 @@ export default class SH200Q extends I2cImu6 {
       throw new Error(`Invalid accel range. Valid values are: ${Object.keys(SH200Q.commands.accel_fs_sel).join()}`);
     }
   }
+
   public setGyroRange(gyro_range: SH200QGyroRange): void {
     if (gyro_range in SH200Q.commands.gyro_fs_sel) {
       this.write(SH200Q.commands.gyro_range, SH200Q.commands.gyro_fs_sel[gyro_range]);
@@ -166,6 +172,7 @@ export default class SH200Q extends I2cImu6 {
       throw new Error(`Invalid gyro range. Valid values are: ${Object.keys(SH200Q.commands.gyro_fs_sel).join()}`);
     }
   }
+
   public calcTemp(data?: number | null | undefined): number | null {
     if (typeof data === "undefined" || data === null) {
       return null;
@@ -177,10 +184,12 @@ export default class SH200Q extends I2cImu6 {
     const raw = await this.readWait(SH200Q.commands.output_acc, 6);
     return SH200Q.charArrayToXyz(raw, "l");
   }
+
   public async getGyroAdcWait(): Promise<Xyz> {
     const raw = await this.readWait(SH200Q.commands.output_gyro, 6);
     return SH200Q.charArrayToXyz(raw, "l");
   }
+
   public async getTempAdcWait(): Promise<number> {
     const raw = await this.readWait(SH200Q.commands.output_temp, 2);
     return SH200Q.charArrayToInt16(raw as [number, number], "l");

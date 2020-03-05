@@ -1,144 +1,49 @@
-import ObnizUtil from "./libs/utils/util";
-import ObnizApi from "./ObnizApi";
-import ObnizUIs from "./ObnizUIs";
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
 
-declare global {
-  var showObnizDebugError: any;
-  var MozWebSocket: any;
+import {M5StickC} from "./libs/hw/m5stickc";
+import ObnizDevice from "./ObnizDevice";
 
-  interface Window {
-    userAppLoaded?: any;
-    logger?: any;
-    WebSocket: any;
-    MozWebSocket: any;
-  }
-}
-
-const isNode: any = typeof window === "undefined";
-
-class Obniz extends ObnizUIs {
-  public util: any;
-  public looper: any;
-  public repeatInterval: any;
-  public onConnectCalled: any;
-  public send: any;
-  public onmessage: any;
-  public ondebug: any;
-  public isNode: any;
-  public showAlertUI: any;
-
-  constructor(id: any, options?: any) {
-    super(id, options);
-    this.util = new ObnizUtil(this);
-  }
-
-  public repeat(callback: any, interval: any) {
-    if (this.looper) {
-      this.looper = callback;
-      this.repeatInterval = interval || this.repeatInterval || 100;
-      return;
-    }
-    this.looper = callback;
-    this.repeatInterval = interval || 100;
-
-    if (this.onConnectCalled) {
-      this.loop();
-    }
-  }
-
-  public async loop() {
-    if (typeof this.looper === "function" && this.onConnectCalled) {
-      const prom: any = this.looper();
-      if (prom instanceof Promise) {
-        await prom;
-      }
-      setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-    }
-  }
-
-  public _callOnConnect() {
-    super._callOnConnect();
-    this.loop();
-  }
-
-  public message(target: any, message: any) {
-    let targets: any = [];
-    if (typeof target === "string") {
-      targets.push(target);
-    } else {
-      targets = target;
-    }
-    this.send({
-      message: {
-        to: targets,
-        data: message,
-      },
-    });
-  }
-
-  public notifyToModule(obj: any) {
-    super.notifyToModule(obj);
-    // notify messaging
-    if (typeof obj.message === "object" && this.onmessage) {
-      this.onmessage(obj.message.data, obj.message.from);
-    }
-    // debug
-    if (typeof obj.debug === "object") {
-      if (obj.debug.warning) {
-        const msg: any = "Warning: " + obj.debug.warning.message;
-        this.warning({alert: "warning", message: msg});
-      }
-
-      if (obj.debug.error) {
-        const msg: any = "Error: " + obj.debug.error.message;
-        this.error({alert: "error", message: msg});
-      }
-      if (this.ondebug) {
-        this.ondebug(obj.debug);
-      }
-    }
-  }
-
-  public warning(msg: any) {
-    if (this.isNode) {
-      console.error(msg);
-    } else {
-      if (msg && typeof msg === "object" && msg.alert) {
-        this.showAlertUI(msg);
-        console.log(msg.message);
-        return;
-      }
-      if (typeof showObnizDebugError === "function") {
-        showObnizDebugError(new Error(msg));
-      }
-      console.log(`Warning: ${msg}`);
-    }
-  }
-
-  public error(msg: any) {
-    if (this.isNode) {
-      console.error(msg);
-    } else {
-      if (msg && typeof msg === "object" && msg.alert) {
-        this.showAlertUI(msg);
-        msg = msg.message;
-      }
-      if (typeof showObnizDebugError === "function") {
-        showObnizDebugError(new Error(msg));
-        console.error(new Error(msg));
-      } else {
-        throw new Error(msg);
-      }
-    }
-  }
+/**
+ * obniz class is the abstract version of obniz Board hardware within JavaScript.
+ *
+ * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
+ * without the details of websocket api.
+ *
+ *
+ * ### obnizOS version and obniz.js version
+ *
+ * obniz cloud compare your obniz.js version and target device obnizOS version.
+ * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
+ * It will work somehow but some functions looses compatibility.
+ *
+ * ### one device from two program
+ *
+ * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
+ * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
+ *
+ * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
+ *
+ * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
+ *
+ */
+class Obniz extends ObnizDevice {
 
   /**
-   *
+   * M5StickC device
+   */
+  public static M5StickC = M5StickC;
+
+  /**
+   * obniz REST api class
    * @returns {ObnizApi}
    */
-  static get api() {
+  public static get api() {
     return ObnizApi;
   }
+
 }
 
 export = Obniz;
@@ -147,7 +52,7 @@ export = Obniz;
 /* Utils */
 /*===================*/
 try {
-  if (!isNode) {
+  if (typeof window !== "undefined") {
     if (window && window.parent && window.parent.userAppLoaded) {
       window.parent.userAppLoaded(window);
     }
@@ -169,13 +74,20 @@ try {
 /*===================*/
 /* ReadParts */
 /*===================*/
+/**
+ * @ignore
+ */
 import requireContext = require( "./libs/webpackReplace/require-context");
+import ObnizApi from "./ObnizApi";
 
 require.context = requireContext.default;
 if (requireContext.setBaseDir) {
   requireContext.setBaseDir(__dirname);
 }
 
+/**
+ * @ignore
+ */
 const context: any = require.context("../parts", true, /\.js$/);
 /* webpack loader */
 for (const path of context.keys()) {

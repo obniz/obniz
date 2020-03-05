@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import WSCommand from "./WSCommand";
 
 class WSCommandI2C extends WSCommand {
@@ -112,7 +117,7 @@ class WSCommandI2C extends WSCommand {
 
   public parseFromJson(json: any) {
     // 0
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 2; i++) {
       const module: any = json["i2c" + i];
       if (module === undefined) {
         continue;

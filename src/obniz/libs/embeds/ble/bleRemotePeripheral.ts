@@ -1,8 +1,16 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import emitter = require("eventemitter3");
 import BleHelper from "./bleHelper";
 import BleRemoteService from "./bleRemoteService";
-
-class BleRemotePeripheral {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
+export default class BleRemotePeripheral {
   public Obniz: any;
   public address: any;
   public connected: any;
@@ -382,5 +390,3 @@ class BleRemotePeripheral {
   public onerror() {
   }
 }
-
-export default BleRemotePeripheral;

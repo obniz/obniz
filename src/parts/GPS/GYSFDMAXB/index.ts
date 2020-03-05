@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.GYSFDMAXB
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
@@ -12,14 +17,16 @@ export interface GYSFDMAXBOptions {
 
 export interface GYSFDMAXBEditedData {
   enable: boolean;
-  GPGGA: number;
-  GPGLL: number;
-  GPGSA: number;
+  GPGGA: any[];
+  GPGLL: any[];
+  GPGSA: any[];
   GPGSV: any[];
-  GPRMC: number;
-  GPVTG: number;
-  GPZDA: number;
+  GPRMC: any[];
+  GPVTG: any[];
+  GPZDA: any[];
+
   [key: string]: any;
+
   timestamp: Date;
 }
 

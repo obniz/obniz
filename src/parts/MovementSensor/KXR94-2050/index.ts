@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.KXR94-2050
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 

@@ -1,4 +1,8 @@
-// SainSmart ST7735 1.8" TFT LCD 128x160 pixel
+/**
+ * @packageDocumentation
+ * @module Parts.ST7735S
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
@@ -15,6 +19,7 @@ export interface ST7735SOptions {
 
 export type RGB16 = number;
 export type RGB24 = number;
+
 export interface PresetColor {
   AliceBlue: RGB16;
   AntiqueWhite: RGB16;

@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Potentiometer
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 

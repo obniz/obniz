@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.XBee
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
@@ -7,7 +12,7 @@ export interface XBeeOptions {
   tx: number;
   rx: number;
   gnd?: number;
- }
+}
 
 export interface XBeeConfig {
   [key: string]: string;

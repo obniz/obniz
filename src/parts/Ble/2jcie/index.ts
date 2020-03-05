@@ -1,9 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module Parts.OMRON_2JCIE
+ */
+
 import Obniz from "../../../obniz";
 import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface OMRON_2JCIEOptions {}
+export interface OMRON_2JCIEOptions {
+}
 
 export interface OMRON_2JCIE_Data {
   row_number: number;
@@ -46,6 +52,7 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
       localName: "Env",
     };
 
+    await this.obniz.ble!.initWait();
     this.periperal = await this.obniz.ble!.scan.startOneWait(target);
 
     return this.periperal;

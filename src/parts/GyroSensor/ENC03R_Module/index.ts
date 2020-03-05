@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.ENC03R_Module
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";

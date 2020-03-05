@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.7SegmentLED
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
@@ -26,7 +31,7 @@ class _7SegmentLED implements ObnizPartsInterface {
   public keys: string[];
   public requiredKeys: string[];
   public digits: number[];
-  public displayIoNames: {[key: string]: string};
+  public displayIoNames: { [key: string]: string };
   public obniz!: Obniz;
   public ios: PeripheralIO[];
   public params: any;

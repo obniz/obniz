@@ -1,12 +1,24 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Button
+ */
+
 import Obniz from "../../../obniz";
+import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_ButtonOptions {
+interface Grove_ButtonOptionsA {
   signal: number;
   vcc?: number;
   gnd?: number;
 }
+
+interface Grove_ButtonOptionsB {
+  grove: PeripheralGrove;
+}
+
+export type Grove_ButtonOptions = Grove_ButtonOptionsA | Grove_ButtonOptionsB;
 
 export default class Grove_Button implements ObnizPartsInterface {
 
@@ -28,22 +40,20 @@ export default class Grove_Button implements ObnizPartsInterface {
   private io_supply?: PeripheralIO;
 
   constructor() {
-    this.keys = ["signal", "gnd", "vcc"];
-    this.requiredKeys = ["signal"];
+    this.keys = ["signal", "gnd", "vcc", "grove"];
+    this.requiredKeys = [];
   }
-  public onChangeForStateWait = (pressed: boolean) => {};
+
+  public onChangeForStateWait = (pressed: boolean) => {
+  }
 
   public wired(obniz: Obniz) {
-    this.io_signal = obniz.getIO(this.params.signal);
-
-    if (obniz.isValidIO(this.params.vcc)) {
-      this.io_vcc = obniz.getIO(this.params.vcc);
-      this.io_vcc.output(true);
-    }
-
-    if (obniz.isValidIO(this.params.gnd)) {
-      this.io_supply = obniz.getIO(this.params.gnd);
-      this.io_supply.output(false);
+    if (this.params.grove) {
+      const groveIOs = this.params.grove.getDigital("5v");
+      this.io_signal = groveIOs.primary;
+    } else {
+      this.io_signal = obniz.getIO(this.params.signal);
+      obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     }
 
     this.io_signal.pull("5v");

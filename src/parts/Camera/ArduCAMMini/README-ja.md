@@ -15,16 +15,16 @@ ArduCAM-Mini-2MP-Plusを使用する場合はwiredの引数で```module_version:
 つながっているioを指定してオブジェクト化します。
 
 このカメラの電源はobniz Board以外から供給する方法がおすすめです。
-obniz Boardから電源を供給する場合は過電流に気をつける必要があります。
-電源は以下のように供給して下さい
+電源は以下のように供給して下さい。
 
 - obniz Board以外の外部電源に接続する
 - obniz BoardのJ1ピンに接続する
-- vccを2つ以上のobniz Boardのioから供給する
 
-このドキュメントではio11もvcc供給に使用する方法でカメラを動かしています。
+また、obniz Board 1Yを使用すれば、以下のように電源ピンから電源を供給することも可能です。  
+その場合は、電源ピンの+と-からvcc/gndを供給して下さい。
 
 ![](wire.jpg)
+
 
 このモジュールはSPIとI2Cがそれぞれ１つずつ必要です。
 
@@ -64,7 +64,6 @@ module_version | `number` | no | 0 | ArduCAM-Mini-2MP-Plusを使用する場合�
 <script>
 var obniz = new Obniz("OBNIZ_ID_HERE");
 obniz.onconnect = async function () {
-  obniz.io11.output(true);
   var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
   await cam.startupWait();
   const data = await cam.takeWait('1024x768');

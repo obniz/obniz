@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Speaker
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 

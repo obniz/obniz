@@ -1,6 +1,6 @@
 /* tslint:disable:class-name max-classes-per-file */
 
-import Obniz from "../../../obniz";
+import Obniz from "../../../dist/src/obniz/index";
 
 const OBNIZ_ID = "1234-5678";
 
@@ -90,8 +90,8 @@ class XBeeTest {
   public configWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io11.output(true);
-      obniz.io8.output(false);
+      obniz.io11!.output(true);
+      obniz.io8!.output(false);
       const xbee = obniz.wired("XBee", { tx: 9, rx: 10 });
       await xbee.configWait({
         destination_address: "52",
@@ -103,8 +103,8 @@ class XBeeTest {
   public send() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io11.output(true);
-      obniz.io8.output(false);
+      obniz.io11!.output(true);
+      obniz.io8!.output(false);
       const xbee = obniz.wired("XBee", { tx: 9, rx: 10 });
       xbee.send("Hi");
       xbee.send(0x11);
@@ -116,8 +116,8 @@ class XBeeTest {
   public onreceive() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.io11.output(true);
-      obniz.io8.output(false);
+      obniz.io11!.output(true);
+      obniz.io8!.output(false);
       const xbee = obniz.wired("XBee", { tx: 9, rx: 10 });
       xbee.onreceive = (data: any, text: string) => {
         console.log("recieved : " + text);

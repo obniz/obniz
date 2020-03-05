@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.IRSensor
+ */
+
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
@@ -42,8 +47,10 @@ export default class IRSensor implements ObnizPartsInterface {
     }
   }
 
-  public start(callback: (array: number[]) => void) {
-    this.ondetect = callback;
+  public start(callback?: (array: number[]) => void) {
+    if (callback) {
+      this.ondetect = callback;
+    }
     if (this.output_pullup) {
       this.obniz.getIO(this.params.output).pull("5v");
     }

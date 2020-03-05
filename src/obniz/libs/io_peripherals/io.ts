@@ -1,12 +1,22 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 import {DriveType, PullType} from "./common";
 
-class PeripheralIO {
-  public Obniz: Obniz;
-  public id: number;
-  public value!: boolean;
-  public observers!: Array<(value: boolean) => void>;
-  public onchange?: (value: boolean) => void;
+/**
+ * General purpose IO
+ * This is available on each io (for obniz Board series, it's io0 to io11)
+ * @category Peripherals
+ */
+export default class PeripheralIO {
+  private value!: boolean;
+  private onchange?: (value: boolean) => void;
+  private Obniz: Obniz;
+  private id: number;
+  private observers!: Array<(value: boolean) => void>;
 
   constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
@@ -14,18 +24,29 @@ class PeripheralIO {
     this._reset();
   }
 
+  /**
+   * @ignore
+   * @private
+   */
   public _reset() {
     this.value = false;
     this.observers = [];
   }
 
-  public addObserver(callback: any) {
-    if (callback) {
-      this.observers.push(callback);
-    }
-  }
-
-  public output(value: boolean) {
+  /**
+   * Make ioX to output mode and put out 1 or 0.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.io1.output(true); // io1 is 5v
+   * obniz.io2.output(1); //  io2 is 5v
+   * obniz.io3.drive("3v");
+   * obniz.io3.output(1); // io3 is around 3v.
+   * ```
+   *
+   * @param value output value
+   */
+  public output(value: boolean | 0 | 1) {
     value = !!value;
     const obj: any = {};
     obj["io" + this.id] = value;
@@ -33,6 +54,25 @@ class PeripheralIO {
     this.Obniz.send(obj);
   }
 
+  /**
+   * This allows you to change output drive method.
+   * By default, it is set as push-pull 5v.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.io0.output(true); // output push-pull 5v
+   *
+   * obniz.io1.drive("3v");
+   * obniz.io1.output(true); // output push-pull 3v
+   *
+   * obniz.io2.pull("5v");
+   * obniz.io2.drive("open-drain");
+   * obniz.io2.output(true); // output open-drain with 5v pull-up
+   * ```
+   *
+   * @param drive
+   *
+   */
   public drive(drive: DriveType) {
     if (typeof drive !== "string") {
       throw new Error("please specify drive methods in string");
@@ -59,6 +99,19 @@ class PeripheralIO {
     this.Obniz.send(obj);
   }
 
+  /**
+   * This enables/disables internal weak pull up/down resistors.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.io0.pull("3v");
+   * obniz.io0.drive("open-drain"); // output open-drain
+   * obniz.io0.output(false);
+   * ```
+   *
+   * @param updown
+   *
+   */
   public pull(updown: PullType) {
     if (typeof updown !== "string" && updown !== null) {
       throw new Error("please specify pull methods in string");
@@ -88,6 +141,13 @@ class PeripheralIO {
     this.Obniz.send(obj);
   }
 
+  /**
+   * Make ioX to input mode.
+   * Callback function will be called when io changes its input value.
+   *
+   *
+   * @param callback
+   */
   public input(callback: (value: boolean) => void) {
     this.onchange = callback;
     const obj: any = {};
@@ -99,6 +159,18 @@ class PeripheralIO {
     return this.value;
   }
 
+  /**
+   * Make ioX to input mode.
+   *
+   * And this will return the current input value.
+   * It pauses the process until the value is returned.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var value = await obniz.io0.inputWait();
+   * console.log(value);
+   * ```
+   */
   public inputWait(): Promise<boolean> {
     const self: any = this;
     return new Promise((resolve: any, reject: any) => {
@@ -112,12 +184,31 @@ class PeripheralIO {
     });
   }
 
+  /**
+   * This ends output/input on ioX.
+   *
+   *
+   * This function is effective only when using ioX.output() or ioX.input().
+   * This won't be called when AD/UART/etc are used.
+   * Pull-up down also will not affected.
+   *
+   * ```
+   * // Javascript Example
+   * obniz.io0.output(true)
+   * obniz.io0.end();
+   * ```
+   *
+   */
   public end() {
     const obj: any = {};
     obj["io" + this.id] = null;
     this.Obniz.send(obj);
   }
 
+  /**
+   * @ignore
+   * @param obj
+   */
   public notified(obj: any) {
     if (typeof obj === "boolean") {
       this.value = obj;
@@ -143,6 +234,10 @@ class PeripheralIO {
       }
     }
   }
-}
 
-export default PeripheralIO;
+  private addObserver(callback: any) {
+    if (callback) {
+      this.observers.push(callback);
+    }
+  }
+}

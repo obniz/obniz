@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.DCMotor
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 

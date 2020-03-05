@@ -1,4 +1,13 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // var debug = require('debug')('bindings');
+
+/**
+ * @ignore
+ */
 const debug: any = () => {
 };
 
@@ -8,6 +17,9 @@ import AclStream from "./acl-stream";
 import Gap from "./gap";
 import Gatt from "./gatt";
 
+/**
+ * @ignore
+ */
 class BlenoBindings extends events.EventEmitter {
   public _state: any;
   public _advertising: any;

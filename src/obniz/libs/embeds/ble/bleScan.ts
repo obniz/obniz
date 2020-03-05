@@ -1,7 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import emitter = require("eventemitter3");
 import BleHelper from "./bleHelper";
-
-class BleScan {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
+export default class BleScan {
   public scanTarget: any;
   public Obniz: any;
   public emitter: any;
@@ -109,6 +117,14 @@ class BleScan {
   public onfind(params: any) {
   } // dummy
 
+  public setAdvertisementFilter() {
+    throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
+  }
+
+  public setScanMode(mode: any) {
+    throw new Error("setScanMode is not support obnizOS < 3.2.0");
+  }
+
   public notifyFromServer(notifyName: any, params: any) {
     switch (notifyName) {
       case "onfind": {
@@ -127,5 +143,3 @@ class BleScan {
     }
   }
 }
-
-export default BleScan;

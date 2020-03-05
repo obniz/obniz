@@ -1,10 +1,21 @@
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
 // let debug = require('debug')('gap');
+/**
+ * @ignore
+ */
 const debug: any = () => {
 };
 
 import events from "events";
 import Hci from "../hci";
 
+/**
+ * @ignore
+ */
 class Gap extends events.EventEmitter {
   public _hci: any;
   public _scanState: any;
@@ -51,7 +62,7 @@ class Gap extends events.EventEmitter {
     );
   }
 
-  public startScanning(allowDuplicates: boolean) {
+  public startScanning(allowDuplicates: boolean, activeScan: boolean) {
     this._scanState = "starting";
     this._scanFilterDuplicates = !allowDuplicates;
     this._discoveries = {};
@@ -60,15 +71,13 @@ class Gap extends events.EventEmitter {
     // p106 - p107
     this._hci.setScanEnabled(false, true);
 
+    // console.log("scan enable false");
     this._hci.once("leScanEnableSet", (scanStopStatus: number) => {
-      this._hci.setScanParameters();
+      this._hci.setScanParameters(activeScan);
       this._hci.once("leScanParametersSet", (setParamStatus: number) => {
         setTimeout(() => {
           this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-          this._hci.once("leScanEnableSet", (scanStartStatus: number) => {
-            console.log("stan start ", scanStopStatus, setParamStatus, scanStartStatus);
-          });
-        }, 10);
+        }, 1000);
       });
     });
 
@@ -352,23 +361,15 @@ class Gap extends events.EventEmitter {
       hasScanResponse,
     };
 
-    // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-    if (
-      type === 0x04 ||
-      !connectable ||
-      (discoveryCount > 1 && !hasScanResponse) ||
-      process.env.NOBLE_REPORT_ALL_HCI_EVENTS
-    ) {
-      this.emit(
-        "discover",
-        status,
-        address,
-        addressType,
-        connectable,
-        advertisement,
-        rssi,
-      );
-    }
+    this.emit(
+      "discover",
+      status,
+      address,
+      addressType,
+      connectable,
+      advertisement,
+      rssi,
+    );
   }
 
   public startAdvertising(name: any, serviceUuids: any) {
