@@ -1,0 +1,24 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/i2c/read"
+description: "if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode."
+related: "/response/i2c/master"
+
+type: object
+required: [address, read]
+properties:
+  address:
+    type: integer
+    minimum: 0
+    maximum: 1023
+
+  address_bits:
+    type: integer
+    enum: [7]
+    default: 7
+
+  read:
+    type: integer
+    minimum: 0
+    maximum: 1024

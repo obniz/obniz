@@ -463,7 +463,7 @@ export default class BleScan {
 
   protected isTarget(peripheral: BleRemotePeripheral) {
 
-    if (
+    if ( !this.scanTarget ||
       Object.keys(this.scanTarget).length === 0
       || this.isLocalNamePrefixTarget(peripheral)
       || this.isLocalNameTarget(peripheral)

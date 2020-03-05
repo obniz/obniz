@@ -208,19 +208,19 @@ gulp.task('obniz.js', function obnizJsBuild(done) {
     });
 });
 
-gulp.task('obniz.min.js', function obnizJsBuild(done) {
-  const webpackConfigProduction = require('../webpack.production.js');
-  return gulp
-    .src(obnizMain)
-    .pipe(plumber({ errorHandler: reportError }))
-    .pipe(webpackStream(webpackConfigProduction, webpack))
-    .pipe(rename('obniz.min.js'))
-    .pipe(gulp.dest(path.join(__dirname, '../../')))
-    .on('end', function() {
-      console.log('obniz.min.js compiled!');
-      done();
-    });
-});
+// gulp.task('obniz.min.js', function obnizJsBuild(done) {
+//   const webpackConfigProduction = require('../webpack.production.js');
+//   return gulp
+//     .src(obnizMain)
+//     .pipe(plumber({ errorHandler: reportError }))
+//     .pipe(webpackStream(webpackConfigProduction, webpack))
+//     .pipe(rename('obniz.min.js'))
+//     .pipe(gulp.dest(path.join(__dirname, '../../')))
+//     .on('end', function() {
+//       console.log('obniz.min.js compiled!');
+//       done();
+//     });
+// });
 
 gulp.task('readMe', function readMeBuild(done) {
   return gulp
@@ -258,15 +258,12 @@ gulp.task('watch', () => {
       packageJsonPath,
       schemaSrcPath,
     ],
-    gulp.parallel('obniz.js', 'obniz.min.js')
+    gulp.parallel('obniz.js')
   );
 });
 
 gulp.task(
   'build',
-  gulp.series(
-    'tsc',
-    gulp.parallel('jsonSchemaDoc', 'obniz.js', 'obniz.min.js', 'readMe')
-  )
+  gulp.series('tsc', gulp.parallel('jsonSchemaDoc', 'obniz.js', 'readMe'))
 );
 gulp.task('default', gulp.parallel('server', 'build', 'watch'));

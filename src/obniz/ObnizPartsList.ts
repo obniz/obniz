@@ -8,6 +8,7 @@ import HX711, {Hx711Options} from "../parts/ADConverter/hx711";
 // Camera
 import ArduCAMMini, {ArduCAMMiniOptions} from "../parts/Camera/ArduCAMMini";
 import JpegSerialCam, {JpegSerialCamOptions} from "../parts/Camera/JpegSerialCam";
+import MCP4725, {MCP4725Options} from "../parts/DAConverter/MCP4725";
 // Display
 import _7SegmentLED, {_7SegmentLEDOptions} from "../parts/Display/7SegmentLED";
 import _7SegmentLED_MAX7219, {_7SegmentLED_MAX7219Options} from "../parts/Display/7SegmentLED_MAX7219";
@@ -20,6 +21,7 @@ import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
 // DistanceSensor
 import GP2Y0A21YK0F, {GP2Y0A21YK0FOptions} from "../parts/DistanceSensor/GP2Y0A21YK0F";
 import HCSR04, {HCSR04Options} from "../parts/DistanceSensor/HC-SR04";
+import VL53L0X, {VL53L0XOptions} from "../parts/DistanceSensor/VL53L0X";
 // GasSensor
 import MQ135, {MQ135Options} from "../parts/GasSensor/MQ135";
 import MQ2, {MQ2Options} from "../parts/GasSensor/MQ2";
@@ -108,8 +110,11 @@ import Grove_3AxisAccelerometer, {Grove_3AxisAccelerometerOptions} from "../part
 import Grove_Button, {Grove_ButtonOptions} from "../parts/Grove/Grove_Button";
 import Grove_Buzzer, {Grove_BuzzerOptions} from "../parts/Grove/Grove_Buzzer";
 import Grove_EarHeartRate, {Grove_EarHeartRateOptions} from "../parts/Grove/Grove_EarHeartRate";
+import Grove_EARTH, {Grove_EARTHOptions} from "../parts/Grove/Grove_EARTH";
 import Grove_GPS, {Grove_GPSOptions} from "../parts/Grove/Grove_GPS";
+import Grove_JoyStick, {Grove_JoyStickOptions} from "../parts/Grove/Grove_JoyStick";
 import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
+
 // Keyestudio
 import Keyestudio_Button, {Keyestudio_ButtonOptions} from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, {Keyestudio_BuzzerOptions} from "../parts/Keyestudio/Keyestudio_Buzzer";
@@ -118,6 +123,11 @@ import Keyestudio_MoistureSensor, {Keyestudio_MoistureSensorOptions} from "../pa
 import Keyestudio_PIR, {Keyestudio_PIROptions} from "../parts/Keyestudio/Keyestudio_PIR";
 import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
 import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/Keyestudio/Keyestudio_TrafficLight";
+import StickC_ADC, {StickC_ADCOptions} from "../parts/StickCHat/StickC_ADC";
+import StickC_DAC, {StickC_DACOptions} from "../parts/StickCHat/StickC_DAC";
+import StickC_FINGER, {StickC_FINGEROptions} from "../parts/StickCHat/StickC_FINGER";
+import StickC_JoyStick, {StickC_JoyStickOptions} from "../parts/StickCHat/StickC_JoyStick";
+import StickC_ToF, {StickC_ToFOptions} from "../parts/StickCHat/StickC_ToF";
 
 export interface WiredNameMap {
   // Light
@@ -195,6 +205,7 @@ export interface WiredNameMap {
   // Distance Sensor
   "HC-SR04": HCSR04;
   "GP2Y0A21YK0F": GP2Y0A21YK0F;
+  "VL53L0X": VL53L0X;
   // GPS
   "GYSFDMAXB": GYSFDMAXB;
   // MagnetSensor
@@ -202,6 +213,8 @@ export interface WiredNameMap {
   "HMC5883L": HMC5883L;
   // ADConverter
   "hx711": HX711;
+  // DAConverter
+  "MCP4725": MCP4725;
   // SoilSensor
   "SEN0114": SEN0114;
   // Temperature Sensor
@@ -233,8 +246,16 @@ export interface WiredNameMap {
   "Grove_Buzzer": Grove_Buzzer;
   "Grove_EarHeartRate": Grove_EarHeartRate;
   "Grove_MP3": Grove_MP3;
+  "Grove_EARTH": Grove_EARTH;
+  "Grove_JoyStick": Grove_JoyStick;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  // StickCHat
+  "StickC_JoyStick": StickC_JoyStick;
+  "StickC_ADC": StickC_ADC;
+  "StickC_DAC": StickC_DAC;
+  "StickC_ToF": StickC_ToF;
+  "StickC_FINGER": StickC_FINGER;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -337,6 +358,7 @@ export interface WiredNameOptionsMap {
   // Distance Sensor
   "HC-SR04": HCSR04Options;
   "GP2Y0A21YK0F": GP2Y0A21YK0FOptions;
+  "VL53L0X": VL53L0XOptions;
   // GPS
   "GYSFDMAXB": GYSFDMAXBOptions;
   // MagnetSensor
@@ -344,6 +366,8 @@ export interface WiredNameOptionsMap {
   "HMC5883L": HMC5883LOptions;
   // ADConverter
   "hx711": Hx711Options;
+  // DAConverter
+  "MCP4725": MCP4725Options;
   // SoilSensor
   "SEN0114": SEN0114Options;
   // Temperature Sensor
@@ -374,7 +398,15 @@ export interface WiredNameOptionsMap {
   "Grove_EarHeartRate": Grove_EarHeartRateOptions;
   "Grove_MP3": Grove_MP3Options;
   "Grove_GPS": Grove_GPSOptions;
+  "Grove_EARTH": Grove_EARTHOptions;
+  "Grove_JoyStick": Grove_JoyStickOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  // StickCHat
+  "StickC_JoyStick": StickC_JoyStickOptions;
+  "StickC_ADC": StickC_ADCOptions;
+  "StickC_DAC": StickC_DACOptions;
+  "StickC_ToF": StickC_ToFOptions;
+  "StickC_FINGER": StickC_FINGEROptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;
