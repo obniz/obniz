@@ -1,9 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+
 import BleHelper from "./bleHelper";
 import ObnizBLEHci from "./hci";
 import CentralBindings from "./protocol/central/bindings";
 import HciProtocol from "./protocol/hci";
 import PeripheralBindings from "./protocol/peripheral/bindings";
 
+import semver from "semver";
 import Obniz from "../../../index";
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
@@ -13,10 +19,21 @@ import BleRemotePeripheral from "./bleRemotePeripheral";
 import BleScan from "./bleScan";
 import BleSecurity from "./bleSecurity";
 import BleService from "./bleService";
-import {BleDeviceAddressType, UUID} from "./bleTypes";
+import {BleDeviceAddress, BleDeviceAddressType, UUID} from "./bleTypes";
 
-class ObnizBLE {
+/**
+ * Use a obniz device as a BLE device.
+ * Peripheral and Central mode are supported
+ */
+export default class ObnizBLE {
 
+  /**
+   * @ignore
+   *
+   * @param data
+   * @param reverse
+   * @private
+   */
   public static _dataArray2uuidHex(data: number[], reverse: boolean): UUID {
     let uuid: any = [];
     for (let i = 0; i < data.length; i++) {
@@ -41,21 +58,33 @@ class ObnizBLE {
     return str;
   }
 
-  public Obniz: Obniz;
   public hci: ObnizBLEHci;
-  public hciProtocol: HciProtocol;
-  public centralBindings: CentralBindings;
-  public peripheralBindings: PeripheralBindings;
-  public _initialized: boolean;
-  public _initializeWarning: boolean;
-  public remotePeripherals: BleRemotePeripheral[];
-  public service: typeof BleService;
-  public characteristic: typeof BleCharacteristic;
-  public descriptor: typeof BleDescriptor;
   public peripheral: BlePeripheral;
-  public advertisement: any;
   public scan: BleScan;
-  public security: any;
+  public security: BleSecurity;
+
+  /**
+   * @ignore
+   */
+  public centralBindings: CentralBindings;
+
+  /**
+   * @ignore
+   */
+  public peripheralBindings: PeripheralBindings;
+
+  /**
+   * @ignore
+   */
+  public Obniz: Obniz;
+  protected advertisement: any;
+  protected hciProtocol: HciProtocol;
+  protected _initialized: boolean;
+  protected _initializeWarning: boolean;
+  protected remotePeripherals: BleRemotePeripheral[];
+  protected service: typeof BleService;
+  protected characteristic: typeof BleCharacteristic;
+  protected descriptor: typeof BleDescriptor;
 
   constructor(obniz: Obniz) {
     this.Obniz = obniz;
@@ -90,32 +119,63 @@ class ObnizBLE {
     this._reset();
   }
 
+  /**
+   * Initialize BLE module. You need call this first everything before.
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.ble.initWait();
+   * ```
+   */
   public async initWait(): Promise<void> {
     if (!this._initialized) {
       this._initialized = true;
+
+      // force initialize on obnizOS < 3.2.0
+      if (semver.lt(this.Obniz.firmware_ver!, "3.2.0")) {
+        this.hci.init();
+        this.hci.end();   // disable once
+        this.hci.init();
+      }
+
       await this.hciProtocol.initWait();
     }
   }
 
-  public warningIfNotInitialize() {
-    if (!this._initialized && this._initializeWarning) {
-      this._initializeWarning = true;
-      this.Obniz.warning({
-        alert: "warning",
-        message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
-      });
-    }
-  }
-
+  /**
+   * @ignore
+   * @param obj
+   */
   public notified(obj: any) {
     if (obj.hci) {
       this.hci.notified(obj.hci);
     }
   }
 
+  /**
+   * @ignore
+   * @private
+   */
   public _reset() {
   }
 
+  /**
+   * Connect to peripheral without scanning.
+   * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+   *
+   * ```javascript
+   * // Javascript Example
+   *
+   * await obniz.ble.initWait();
+   * var peripheral = obniz.ble.directConnect("e4b9efb29218","random");
+   * peripheral.onconnect = ()=>{
+   *   console.log("connected");
+   * }
+   * ```
+   *
+   * @param uuid peripheral device address
+   * @param addressType "random" or "public"
+   */
   public directConnect(uuid: UUID, addressType: BleDeviceAddressType) {
     let peripheral: any = this.findPeripheral(uuid);
     if (!peripheral) {
@@ -132,13 +192,49 @@ class ObnizBLE {
     return peripheral;
   }
 
-  public async directConnectWait(uuid: any, addressType: any) {
-    const peripheral: any = this.directConnect(uuid, addressType);
+  /**
+   * Connect to peripheral without scanning, and wait to finish connecting.
+   *
+   * It throws when connection establish failed.
+   * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.ble.initWait();
+   * try {
+   *   var peripheral = await obniz.ble.directConnectWait("e4b9efb29218","random");
+   *   console.log("connected");
+   * } catch(e) {
+   *   console.log("can't connect");
+   * }
+   * ```
+   *
+   * @param address peripheral device address
+   * @param addressType "random" or "public"
+   */
+  public async directConnectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType) {
+    const peripheral: any = this.directConnect(address, addressType);
     await peripheral.connectWait();
     return peripheral;
   }
 
-  public findPeripheral(address: any) {
+  /**
+   * @ignore
+   */
+  public warningIfNotInitialize() {
+    if (!this._initialized && this._initializeWarning) {
+      this._initializeWarning = true;
+      this.Obniz.warning({
+        alert: "warning",
+        message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
+      });
+    }
+  }
+
+  protected onStateChange() {
+  }
+
+  protected findPeripheral(address: BleDeviceAddress) {
     for (const key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
         return this.remotePeripherals[key];
@@ -147,20 +243,17 @@ class ObnizBLE {
     return null;
   }
 
-  public onStateChange() {
+  protected onAddressChange() {
   }
 
-  public onAddressChange() {
+  protected onScanStart() {
   }
 
-  public onScanStart() {
-  }
-
-  public onScanStop() {
+  protected onScanStop() {
     this.scan.notifyFromServer("onfinish", null);
   }
 
-  public onDiscover(uuid: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any) {
+  protected onDiscover(uuid: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any) {
     let val: any = this.findPeripheral(uuid);
     if (!val) {
       val = new BleRemotePeripheral(this, uuid);
@@ -185,7 +278,7 @@ class ObnizBLE {
     this.scan.notifyFromServer("onfind", val);
   }
 
-  public async onConnect(peripheralUuid: any, error?: any) {
+  protected async onConnect(peripheralUuid: any, error?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     if (!error) {
       await peripheral.discoverAllHandlesWait();
@@ -195,15 +288,15 @@ class ObnizBLE {
     });
   }
 
-  public onDisconnect(peripheralUuid: any) {
+  protected onDisconnect(peripheralUuid: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     peripheral.notifyFromServer("statusupdate", {status: "disconnected"});
   }
 
-  public onRssiUpdate() {
+  protected onRssiUpdate() {
   }
 
-  public onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
+  protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     for (const serviceUuid of serviceUuids) {
       peripheral.notifyFromServer("discover", {service_uuid: serviceUuid});
@@ -211,14 +304,14 @@ class ObnizBLE {
     peripheral.notifyFromServer("discoverfinished", {});
   }
 
-  public onIncludedServicesDiscover(
+  protected onIncludedServicesDiscover(
     peripheralUuid: any,
     serviceUuid?: any,
     includedServiceUuids?: any,
   ) {
   }
 
-  public onCharacteristicsDiscover(peripheralUuid: any, serviceUuid?: any, characteristics?: any) {
+  protected onCharacteristicsDiscover(peripheralUuid: any, serviceUuid?: any, characteristics?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     const service: any = peripheral.findService({service_uuid: serviceUuid});
     for (const char of characteristics) {
@@ -231,7 +324,7 @@ class ObnizBLE {
     service.notifyFromServer("discoverfinished", {});
   }
 
-  public onRead(
+  protected onRead(
     peripheralUuid: any,
     serviceUuid?: any,
     characteristicUuid?: any,
@@ -259,7 +352,7 @@ class ObnizBLE {
     }
   }
 
-  public onWrite(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, isSuccess?: any) {
+  protected onWrite(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, isSuccess?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     const characteristic: any = peripheral.findCharacteristic({
       service_uuid: serviceUuid,
@@ -270,10 +363,10 @@ class ObnizBLE {
     });
   }
 
-  public onBroadcast(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
+  protected onBroadcast(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
   }
 
-  public onNotify(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
+  protected onNotify(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     const char: any = peripheral.findCharacteristic({
       service_uuid: serviceUuid,
@@ -287,7 +380,7 @@ class ObnizBLE {
     }
   }
 
-  public onDescriptorsDiscover(
+  protected onDescriptorsDiscover(
     peripheralUuid: any,
     serviceUuid?: any,
     characteristicUuid?: any,
@@ -307,7 +400,7 @@ class ObnizBLE {
     char.notifyFromServer("discoverfinished", {});
   }
 
-  public onValueRead(
+  protected onValueRead(
     peripheralUuid: any,
     serviceUuid?: any,
     characteristicUuid?: any,
@@ -329,7 +422,7 @@ class ObnizBLE {
     descriptor.notifyFromServer("onread", obj);
   }
 
-  public onValueWrite(
+  protected onValueWrite(
     peripheralUuid: any,
     serviceUuid?: any,
     characteristicUuid?: any,
@@ -349,64 +442,68 @@ class ObnizBLE {
     descriptor.notifyFromServer("onwrite", obj);
   }
 
-  public onHandleRead(peripheralUuid: any, handle?: any, data?: any) {
+  protected onHandleRead(peripheralUuid: any, handle?: any, data?: any) {
   }
 
-  public onHandleWrite(peripheralUuid: any, handle?: any) {
+  protected onHandleWrite(peripheralUuid: any, handle?: any) {
   }
 
-  public onHandleNotify(peripheralUuid: any, handle?: any, data?: any) {
+  protected onHandleNotify(peripheralUuid: any, handle?: any, data?: any) {
   }
 
-  public onPeripheralStateChange(state: any) {
+  protected onPeripheralStateChange(state: any) {
     // console.error("onPeripheralStateChange")
   }
 
-  public onPeripheralAddressChange(address: any) {
+  protected onPeripheralAddressChange(address: any) {
     // console.error("onPeripheralAddressChange")
   }
 
-  public onPeripheralPlatform(platform: any) {
+  protected onPeripheralPlatform(platform: any) {
     // console.error("onPeripheralPlatform")
   }
 
-  public onPeripheralAdvertisingStart(error: any) {
+  protected onPeripheralAdvertisingStart(error: any) {
     // console.error("onPeripheralAdvertisingStart")
   }
 
-  public onPeripheralAdvertisingStop() {
+  protected onPeripheralAdvertisingStop() {
     // console.error("onPeripheralAdvertisingStop")
   }
 
-  public onPeripheralServicesSet(error: any) {
+  protected onPeripheralServicesSet(error: any) {
     // console.error("onPeripheralServicesSet")
   }
 
-  public onPeripheralAccept(clientAddress: any) {
+  protected onPeripheralAccept(clientAddress: any) {
     this.peripheral.currentConnectedDeviceAddress = clientAddress;
-    this.peripheral.onconnectionupdates({
-      address: clientAddress,
-      status: "connected",
-    });
+    if (this.peripheral.onconnectionupdates) {
+      this.peripheral.onconnectionupdates({
+        address: clientAddress,
+        status: "connected",
+      });
+    }
   }
 
-  public onPeripheralMtuChange(mtu: any) {
+  protected onPeripheralMtuChange(mtu: any) {
     // console.error("onPeripheralMtuChange")
   }
 
-  public onPeripheralDisconnect(clientAddress: any) {
+  protected onPeripheralDisconnect(clientAddress: any) {
     this.peripheral.currentConnectedDeviceAddress = null;
-    this.peripheral.onconnectionupdates({
-      address: clientAddress,
-      status: "disconnected",
-    });
+    if (this.peripheral.onconnectionupdates) {
+      this.peripheral.onconnectionupdates({
+        address: clientAddress,
+        status: "disconnected",
+      });
+    }
   }
 
-  public onPeripheralRssiUpdate(rssi: any) {
+  protected onPeripheralRssiUpdate(rssi: any) {
     // console.error("onPeripheralRssiUpdate")
   }
 
-  public _bind() {
+  protected _bind() {
     this.centralBindings.on("stateChange", this.onStateChange.bind(this));
 
     this.centralBindings.on("addressChange", this.onAddressChange.bind(this));
@@ -484,5 +581,3 @@ class ObnizBLE {
     );
   }
 }
-
-export default ObnizBLE;

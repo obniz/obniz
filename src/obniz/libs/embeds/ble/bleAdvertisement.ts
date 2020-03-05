@@ -1,6 +1,16 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
+
 import Builder from "./bleAdvertisementBuilder";
 
-class BleAdvertisement {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
+export default class BleAdvertisement {
   public Obniz: any;
   public adv_data: any;
   public scan_resp: any;
@@ -57,5 +67,3 @@ class BleAdvertisement {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
 }
-
-export default BleAdvertisement;

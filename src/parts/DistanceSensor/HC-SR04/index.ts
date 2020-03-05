@@ -1,8 +1,13 @@
+/**
+ * @packageDocumentation
+ * @module Parts.HC-SR04
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface HCSR04Options {
+export interface  HCSR04Options {
   gnd?: number;
   echo: number;
   trigger: number;
@@ -90,7 +95,7 @@ export default class HCSR04 implements ObnizPartsInterface {
     });
   }
 
-  public async measureWait() {
+  public async measureWait(): Promise<number> {
     return new Promise((resolve: any) => {
       this.measure((distance: number) => {
         resolve(distance);

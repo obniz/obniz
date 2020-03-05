@@ -1,9 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module Parts.hx711
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface Hx711Options {
+export interface  Hx711Options {
   vcc?: number;
   gnd?: number;
   sck: number;
@@ -126,7 +131,7 @@ export default class Hx711 implements ObnizPartsInterface {
     this.sck.output(false);
   }
 
-  public async zeroAdjustWait(times: number | any) {
+  public async zeroAdjustWait(times: number | any): Promise<void>  {
     times = parseInt(times) || 1;
     this._offset = await this.readAverageWait(times);
   }

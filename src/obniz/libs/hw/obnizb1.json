@@ -1,5 +1,5 @@
 {
-  "rev": "1",
+  "rev": "2",
   "hw": "obnizb1",
   "peripherals": {
     "io": {
@@ -64,7 +64,15 @@
   },
   "embeds": {
     "ble": {},
-    "display": {},
+    "display": {
+      "paper_white": false,
+      "raw_alternate": false,
+      "width": 128,
+      "height": 64,
+      "color_depth": [
+        1
+      ]
+    },
     "switch": {}
   },
   "protocol": {

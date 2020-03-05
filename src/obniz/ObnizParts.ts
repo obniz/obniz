@@ -1,16 +1,34 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
 import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
+import {ObnizOptions} from "./ObnizOptions";
+import ObnizPartsInterface from "./ObnizPartsInterface";
 import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
 
+/**
+ * @ignore
+ */
 const _parts: any = {};
 
 export default class ObnizParts extends ObnizConnection {
 
+  /**
+   * @ignore
+   * @private
+   */
   public static _parts(): any {
     return _parts;
   }
 
-  public static PartsRegistrate(arg0: any, arg1?: any) {
+  /**
+   * Register Parts class
+   * @param arg0 Parts class
+   */
+  public static PartsRegistrate(arg0: typeof ObnizPartsInterface, arg1?: any) {
     if (
       arg0 &&
       typeof arg0.info === "function" &&
@@ -22,6 +40,11 @@ export default class ObnizParts extends ObnizConnection {
     }
   }
 
+  /**
+   * @ignore
+   * @param name
+   * @constructor
+   */
   public static Parts(name: any): any {
     if (!_parts[name]) {
       throw new Error(`unknown parts [${name}]`);
@@ -29,14 +52,32 @@ export default class ObnizParts extends ObnizConnection {
     return new _parts[name]();
   }
 
-  constructor(id: any, options?: any) {
+  constructor(id: string, options?: ObnizOptions) {
     super(id, options);
   }
 
+  /**
+   * Check the param is valid io pin no.
+   * @param io
+   */
   public isValidIO(io: any): boolean {
     return typeof io === "number" && (this as any)["io" + io] !== null;
   }
 
+  /**
+   * Check the param is valid ad pin no.
+   * @param io
+   */
+  public isValidAD(ad: any): boolean {
+    return typeof ad === "number" && (this as any)["ad" + ad] !== null;
+  }
+
+  /**
+   * Setup Parts of parts library
+   *
+   * @param partsname
+   * @param options
+   */
   public wired<K extends keyof WiredNameMap>(partsname: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K] {
     const parts: any = ObnizParts.Parts(partsname);
     if (!parts) {

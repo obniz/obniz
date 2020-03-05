@@ -1,6 +1,16 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
+
 import BleHelper from "./bleHelper";
 
-class BleAdvertisementBuilder {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Central
+ */
+export default class BleAdvertisementBuilder {
   public Obniz: any;
   public rows: any;
 
@@ -185,5 +195,3 @@ class BleAdvertisementBuilder {
     this.setFlags(0x10);
   }
 }
-
-export default BleAdvertisementBuilder;

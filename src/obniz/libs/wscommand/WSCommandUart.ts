@@ -1,3 +1,8 @@
+
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 import WSCommand from "./WSCommand";
 
 class WSCommandUart extends WSCommand {

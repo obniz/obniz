@@ -1,11 +1,17 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 import BleHelper from "./bleHelper";
+import {BleAdvertisementData, BleScanResponseData, UUID} from "./bleTypes";
 
-class BleAdvertisementBuilder {
-  public Obniz: any;
-  public rows: any;
+/**
+ * @category Use as Peripheral
+ */
+export default class BleAdvertisementBuilder {
+  protected rows: { [key: number]: number[] };
 
-  constructor(Obniz: any, json: any) {
-    this.Obniz = Obniz;
+  constructor(json: BleAdvertisementData | BleScanResponseData) {
     this.rows = {};
 
     if (json) {
@@ -33,15 +39,15 @@ class BleAdvertisementBuilder {
     }
   }
 
-  public setRow(type: any, data: any) {
+  public setRow(type: number, data: number[]) {
     this.rows[type] = data;
   }
 
-  public getRow(type: any) {
+  public getRow(type: number): number[] {
     return this.rows[type] || [];
   }
 
-  public build() {
+  public build(): number[] {
     const data: any = [];
     for (const key in this.rows) {
       if (this.rows[key].length === 0) {
@@ -53,7 +59,7 @@ class BleAdvertisementBuilder {
       Array.prototype.push.apply(data, this.rows[key]);
     }
     if (data.length > 31) {
-      this.Obniz.error(
+      throw new Error(
         "Too large data. Advertise/ScanResponse data are must be less than 32 byte.",
       );
     }
@@ -61,7 +67,7 @@ class BleAdvertisementBuilder {
     return data;
   }
 
-  public setStringData(type: any, string: any) {
+  public setStringData(type: number, string: string) {
     const data: any = [];
 
     for (let i = 0; i < string.length; i++) {
@@ -71,15 +77,15 @@ class BleAdvertisementBuilder {
     this.setRow(type, data);
   }
 
-  public setShortenedLocalName(name: any) {
+  public setShortenedLocalName(name: string) {
     this.setStringData(0x08, name);
   }
 
-  public setCompleteLocalName(name: any) {
+  public setCompleteLocalName(name: string) {
     this.setStringData(0x09, name);
   }
 
-  public setManufacturerSpecificData(companyCode: any, data: any) {
+  public setManufacturerSpecificData(companyCode: number, data: number[]) {
     const row: any = [];
     row.push(companyCode & 0xff);
     row.push((companyCode >> 8) & 0xff);
@@ -87,20 +93,20 @@ class BleAdvertisementBuilder {
     this.setRow(0xff, row);
   }
 
-  public setUuid(uuid: any) {
+  public setUuid(uuid: UUID) {
     const uuidData: any = this.convertUuid(uuid);
     const type: any = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length as (16 | 4 | 2)];
     this.setRow(type, uuidData);
   }
 
-  public convertUuid(uuid: any) {
+  public convertUuid(uuid: UUID) {
     const uuidNumeric: any = BleHelper.uuidFilter(uuid);
     if (
       uuidNumeric.length !== 32 &&
       uuidNumeric.length !== 8 &&
       uuidNumeric.length !== 4
     ) {
-      this.Obniz.error(
+      throw new Error(
         "BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)",
       );
     }
@@ -112,7 +118,7 @@ class BleAdvertisementBuilder {
     return data;
   }
 
-  public setIbeaconData(uuid: any, major: any, minor: any, txPower: any) {
+  public setIbeaconData(uuid: UUID, major: number, minor: number, txPower: number) {
     const data: any = [];
     data.push(0x02, 0x15); // fixed data
 
@@ -127,34 +133,6 @@ class BleAdvertisementBuilder {
 
     this.setManufacturerSpecificData(0x004c, data);
     return;
-  }
-
-  public extendEvalJson(json: any) {
-    if (json) {
-      if (json.flags) {
-        if (json.flags.includes("limited_discoverable_mode")) {
-          this.setLeLimitedDiscoverableModeFlag();
-        }
-        if (json.flags.includes("general_discoverable_mode")) {
-          this.setLeGeneralDiscoverableModeFlag();
-        }
-        if (json.flags.includes("br_edr_not_supported")) {
-          this.setBrEdrNotSupportedFlag();
-        }
-        if (json.flags.includes("le_br_edr_controller")) {
-          this.setLeBrEdrControllerFlag();
-        }
-        if (json.flags.includes("le_br_edr_host")) {
-          this.setLeBrEdrHostFlag();
-        }
-      }
-    }
-  }
-
-  public setFlags(flag: any) {
-    const data: any = this.getRow(0x01);
-    data[0] = (data[0] || 0) | flag;
-    this.setRow(0x01, data);
   }
 
   public setLeLimitedDiscoverableModeFlag() {
@@ -176,6 +154,32 @@ class BleAdvertisementBuilder {
   public setLeBrEdrHostFlag() {
     this.setFlags(0x10);
   }
-}
 
-export default BleAdvertisementBuilder;
+  protected extendEvalJson(json: BleAdvertisementData) {
+    if (json) {
+      if (json.flags) {
+        if (json.flags.includes("limited_discoverable_mode")) {
+          this.setLeLimitedDiscoverableModeFlag();
+        }
+        if (json.flags.includes("general_discoverable_mode")) {
+          this.setLeGeneralDiscoverableModeFlag();
+        }
+        if (json.flags.includes("br_edr_not_supported")) {
+          this.setBrEdrNotSupportedFlag();
+        }
+        if (json.flags.includes("le_br_edr_controller")) {
+          this.setLeBrEdrControllerFlag();
+        }
+        if (json.flags.includes("le_br_edr_host")) {
+          this.setLeBrEdrHostFlag();
+        }
+      }
+    }
+  }
+
+  protected setFlags(flag: number) {
+    const data: any = this.getRow(0x01);
+    data[0] = (data[0] || 0) | flag;
+    this.setRow(0x01, data);
+  }
+}

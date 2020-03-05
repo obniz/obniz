@@ -1,11 +1,50 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+
 import ObnizComponents from "./ObnizComponents";
+import {ObnizOptions} from "./ObnizOptions";
 
 export default class ObnizSystemMethods extends ObnizComponents {
-  constructor(id: any, options?: any) {
+  constructor(id: string, options?: ObnizOptions) {
     super(id, options);
   }
 
-  public wait(msec: any) {
+  /**
+   * This pauses obniz Board for a period given in terms of ms (millisecond).
+   *
+   * ```javascript
+   * // Javascript Example
+   * led.on();
+   * obniz.wait(1000); // led ON 1sec.
+   * led.off();
+   * ```
+   *
+   * This method pauses only obniz Board, not JavaScript.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var time = new Date();
+   * led.on();
+   * obniz.wait(1000); // led ON 1sec.
+   * led.off();
+   * console.log((new Date()).getTime() - time.getTime()) // 0 or very few ms. not 1000ms.
+   * ```
+   *
+   * However, when you call this method together with the await function, JavaScript will pause for the given period in ms.
+   *
+   * ```javascript
+   * // Javascript Example
+   * var time = new Date();
+   * led.on();
+   * await obniz.wait(1000); // led ON 1sec.
+   * led.off();
+   * console.log((new Date()).getTime() - time.getTime()) // => about 1000
+   * ```
+   * @param msec
+   */
+  public wait(msec: any): Promise<void> {
     if (msec < 0) {
       msec = 0;
     } else if (msec > 60 * 1000) {
@@ -15,27 +54,90 @@ export default class ObnizSystemMethods extends ObnizComponents {
     return new Promise((resolve) => setTimeout(resolve, msec));
   }
 
+  /**
+   * This forces the obniz Board to go back to the initial state when the power was just turned on.
+   *
+   * ```javascript
+   * // Example
+   * obniz = new Obniz("1234-5678");
+   * obniz.onconnect = function() {
+   *   obniz.reset();
+   * }
+   * ```
+   */
   public reset() {
     this.send({system: {reset: true}});
     this._resetComponents();
   }
 
+  /**
+   * reboot device
+   *
+   * ```javascript
+   * obniz.reboot();
+   * ```
+   */
   public reboot() {
     this.send({system: {reboot: true}});
   }
 
+  /**
+   * @ignore
+   */
   public selfCheck() {
     this.send({system: {self_check: true}});
   }
 
+  /**
+   * By default, obniz Board resets after disconnection from the cloud.
+   * It means the output value and pwm will all stop at that point.
+   * But the above function with the argument true can nullify that default setting and change it to "do not reset when offline".
+   * This configuration remains as long as obniz Board is on.
+   *
+   * ```javascript
+   * // Example
+   * obniz.keepWorkingAtOffline(true);
+   * ```
+   * @param working
+   */
   public keepWorkingAtOffline(working: any) {
     this.send({system: {keep_working_at_offline: working}});
   }
 
+  /**
+   *
+   * This lets you change the setting of `reset_obniz_on_ws_disconnection` after connection is established.
+   *
+   * By default, obniz cloud resets target obniz Board when the all websocket to obniz cloud was closed.
+   * It means the output value and pwm will all stop at that point.
+   * With the above function, you can nullify these resetting activities.
+   * This configuration will remain until target obniz Board gets disconnected.
+   * Set this function to false to keep working without any of the websocket connections.
+   *
+   *
+   * ```javascript
+   * // Example
+   * obniz.resetOnDisconnect(false);
+   * ```
+   *
+   * @param reset
+   */
   public resetOnDisconnect(reset: any) {
     this.send({ws: {reset_obniz_on_ws_disconnection: reset}});
   }
 
+  /**
+   * Action only with obniz Board 1Y.
+   *
+   * Obniz Board sleeps for the value specified in seconds.
+   *
+   * ```javascript
+   * // JavaScript example
+   * obniz.sleepSeconds (60); // 60 seconds
+   * ```
+   *
+   * @param sec up to 64800 seconds (18 hours).
+   */
   public sleepSeconds(sec: any) {
     if (sec < 1) {
       // min 1s
@@ -47,6 +149,19 @@ export default class ObnizSystemMethods extends ObnizComponents {
     this.send({system: {sleep_seconds: sec}});
   }
 
+  /**
+   * Action only with obniz Board 1Y.
+   *
+   * Obniz Board sleeps for the value specified in minutes.
+   *
+   *
+   *
+   * ```javascript
+   * // JavaScript example
+   * obniz.sleepMinute （60）; // 60 minutes
+   * ```
+   * @param minute up to 64800 minutes(45 days ).
+   */
   public sleepMinute(minute: any) {
     if (minute < 1) {
       // min 1m
@@ -58,7 +173,22 @@ export default class ObnizSystemMethods extends ObnizComponents {
     this.send({system: {sleep_minute: minute}});
   }
 
-  public sleep(date: any) {
+  /**
+   * Action only with obniz Board 1Y.
+   *
+   * Obniz Board sleeps for the value specified in Date type.
+   * Sleep for up to 45 days (64800 minutes).
+   *
+   * ```javascript
+   * // JavaScript example
+   * let dt = new Date();
+   * dt.setHours(dt.getHours () + 1,0,0,0);
+   * obniz.sleep(dt);
+   * ```
+   *
+   * @param date
+   */
+  public sleep(date: Date) {
     if (!(date instanceof Date)) {
       throw new Error("Date instance argument required");
     }
@@ -80,6 +210,22 @@ export default class ObnizSystemMethods extends ObnizComponents {
     }
   }
 
+  /**
+   * Action only with obniz Board 1Y.
+   *
+   * It returns from sleep depending on the pin state of IO0.
+   *
+   *
+   * ```javascript
+   * // JavaScript example
+   * obniz.sleepIoTrigger (true);
+   * ```
+   *
+   * @param trigger
+   *
+   *  - true: Rise （LOW -> HIGH）
+   *  - false: Falling （HIGH -> LOW）
+   */
   public sleepIoTrigger(trigger: any) {
     if (typeof trigger !== "boolean") {
       throw new Error("sleepIoTrigger need boolean arg");
@@ -87,7 +233,20 @@ export default class ObnizSystemMethods extends ObnizComponents {
     this.send({system: {sleep_io_trigger: trigger}});
   }
 
-  public pingWait(unixtime?: any, rand?: any, forceGlobalNetwork?: any) {
+  /**
+   * Ping to obniz device and wait pong response.
+   *
+   * If debugprint option enabled, it display ping/pong response time on console.
+   *
+   * ```javascript
+   * await obniz.pingWait(); //waiting pong.
+   * ```
+   *
+   * @param unixtime start time of measure response time
+   * @param rand Unique identifier of ping data
+   * @param forceGlobalNetwork
+   */
+  public pingWait(unixtime?: number, rand?: number, forceGlobalNetwork?: boolean): Promise<void> {
     unixtime = unixtime || new Date().getTime();
     const upper: any = Math.floor(unixtime / Math.pow(2, 32));
     const lower: any = unixtime - upper * Math.pow(2, 32);
@@ -117,7 +276,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
 
     this.send(obj, {local_connect: forceGlobalNetwork ? false : true});
 
-    return new Promise ((resolve: any ) => {
+    return new Promise((resolve: any) => {
       const callback: any = (systemObj: any) => {
         for (let i = 0; i < buf.length; i++) {
           if (buf[i] !== systemObj.pong.key[i]) {

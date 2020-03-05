@@ -1,9 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Speaker
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface SpeakerOptions {
+export interface  SpeakerOptions {
   signal: number;
   gnd?: number;
 }

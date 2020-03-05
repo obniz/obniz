@@ -1,7 +1,15 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.old
+ */
 import BleAttributeAbstract from "./bleAttributeAbstract";
 import BleHelper from "./bleHelper";
-
-class BleDescriptor extends BleAttributeAbstract {
+/**
+ * Deprecated class.
+ * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
+ * @category Use as Peripheral
+ */
+export default class BleDescriptor extends BleAttributeAbstract {
   public permissions: any;
   public characteristic: any;
   public uuid: any;
@@ -73,5 +81,3 @@ class BleDescriptor extends BleAttributeAbstract {
     });
   }
 }
-
-export default BleDescriptor;

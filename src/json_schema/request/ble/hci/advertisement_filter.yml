@@ -1,0 +1,31 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/hci/advertisement_filter"
+
+type: object
+required: [hci]
+properties:
+  hci:
+    type: object
+    required: [advertisement_filter]
+    properties:
+      advertisement_filter:
+        type: array
+        items:
+          type: object
+          required: [range]
+          properties:
+            range:
+              type: object
+              required: [index, length]
+              properties:
+                index:
+                  type: integer
+                  minimum: 0
+                  maximum: 255
+                length:
+                  type: integer
+                  minimum: 0
+                  maximum: 255
+            value: {$ref: "/dataArray"}

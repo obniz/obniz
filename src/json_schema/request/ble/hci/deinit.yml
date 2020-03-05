@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/hci/deinit"
+
+type: object
+required: [hci]
+properties:
+  hci:
+    type: "null"
+

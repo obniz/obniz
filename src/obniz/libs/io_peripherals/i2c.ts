@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 import {PullType} from "./common";
@@ -21,14 +26,57 @@ interface PeripheralI2COptions extends PeripheralI2CState {
   slave_address_length?: number;
 }
 
+/**
+ * i2c can be used.
+ *  Master/Slave mode.
+ *  But slave mode only works with "written" events. You can't set data to be read.
+ * @category Peripherals
+ */
 class PeripheralI2C {
-  public Obniz: Obniz;
-  public id: number;
+
+  /**
+   * from obniz.js 1.14.0
+   *
+   * It sets a function to receive error when i2c bus error occurs.
+   * By setting a function, obniz.error will never be called.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000});
+   * obniz.i2c0.onerror = function(err) {
+   *   console.log('Error', err);
+   * }
+   * var ret = await obniz.i2c0.readWait(0x50, 1);
+   * ```
+   */
   public onerror?: (error: any) => void;
-  public observers: any;
-  public state!: PeripheralI2CState;
+
+  /**
+   * @ignore
+   */
   public used!: boolean;
-  public onwritten?: (data: any[], address: string) => void;
+
+  /**
+   * Slave mode only.
+   *
+   * It is a callback that is called when data is written.
+   * Received data is fragmented.
+   * When written data is 100byte, you possibly receive it in 56 byte and 44 byte.
+   * For data over 1024 bytes, few bytes may be dropped.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
+   * obniz.i2c0.onwritten = function(data){
+   *   console.log(data);
+   * }
+   * ```
+   */
+  public onwritten?: (data: number[], address: number) => void;
+  private state!: PeripheralI2CState;
+  private Obniz: Obniz;
+  private id: number;
+  private observers: any;
 
   constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
@@ -37,18 +85,51 @@ class PeripheralI2C {
     this.onerror = undefined;
   }
 
+  /**
+   * @ignore
+   * @private
+   */
   public _reset() {
     this.observers = [];
     this.used = false;
     this.onwritten = undefined;
   }
 
-  public addObserver(callback: any) {
-    if (callback) {
-      this.observers.push(callback);
-    }
-  }
-
+  /**
+   * It starts i2c on given io sda, scl.
+   *
+   *
+   * Internal pull up is optional for io output setting.
+   * By default it is pull:null.
+   * See more on obniz.ioX.pull().
+   *
+   * For using internal-pull-up, you should specify "3v" to connect to 3.3v targets, and "5v" for 5v targets.
+   * When you choose internal pull up, speed is limited to up to 100khz, because internal pull up is not so tough.
+   * Please add external pull-up resistor on scl/sda and choose pull:null when you need more speed.
+   *
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000});
+   * obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
+   * var ret = await obniz.i2c0.readWait(0x50, 1);
+   * console.log("read "+ret);
+   * ```
+   *
+   * - use internal pull up
+   *
+   * ```javascript
+   * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000, pull:"5v"});
+   * ```
+   *
+   * - save mode
+   *
+   * ```javascript
+   * obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
+   * ```
+   *
+   * @param arg
+   */
   public start(arg: PeripheralI2COptions) {
     const err: any = ObnizUtil._requiredKeys(arg, ["mode", "sda", "scl"]);
     if (err) {
@@ -151,11 +232,22 @@ class PeripheralI2C {
     this.Obniz.send(obj);
   }
 
-  public write(address: any, data: any) {
+  /**
+   * It sends data to device which has the address
+   *
+   * ```
+   * // Javascript Example
+   * obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null});
+   * obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
+   * ```
+   * @param address 7bit address only.
+   * @param data Max length is 1024;
+   */
+  public write(address: number, data: number[]) {
     if (!this.used) {
       throw new Error(`i2c${this.id} is not started`);
     }
-    address = parseInt(address);
+    address = parseInt(address as any);
     if (isNaN(address)) {
       throw new Error("i2c: please specify address");
     }
@@ -176,18 +268,32 @@ class PeripheralI2C {
     this.Obniz.send(obj);
   }
 
-  public readWait(address: any, length: any): Promise<number[]> {
+  /**
+   * It reads data from the device. length defines the length of bytes. The treatment of address is same as write() function.
+   * This function will wait until data is received.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null});
+   * var ret = await obniz.i2c0.readWait(0x50, 1);
+   * console.log("read "+ret);
+   * ```
+   *
+   * @param address
+   * @param length Max is 1024;
+   */
+  public readWait(address: number, length: number): Promise<number[]> {
     if (!this.used) {
       throw new Error(`i2c${this.id} is not started`);
     }
-    address = parseInt(address);
+    address = parseInt(address as any);
     if (isNaN(address)) {
       throw new Error("i2c: please specify address");
     }
     if (address < 0 || address > 0x7f) {
       throw new Error("i2c: invalid address");
     }
-    length = parseInt(length);
+    length = parseInt(length as any);
     if (isNaN(length) || length < 0) {
       throw new Error("i2c: invalid length to read");
     }
@@ -206,6 +312,10 @@ class PeripheralI2C {
     });
   }
 
+  /**
+   * @ignore
+   * @param obj
+   */
   public notified(obj: any) {
     if (obj && typeof obj === "object") {
       if (obj.data) {
@@ -239,15 +349,33 @@ class PeripheralI2C {
     }
   }
 
+  /**
+   * @ignore
+   */
   public isUsed() {
     return this.used;
   }
 
+  /**
+   * end i2c .
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000});
+   * obniz.i2c0.end();
+   * ```
+   */
   public end() {
     const obj: any = {};
     obj["i2c" + this.id] = null;
     this.Obniz.send(obj);
     this.used = false;
+  }
+
+  private addObserver(callback: any) {
+    if (callback) {
+      this.observers.push(callback);
+    }
   }
 }
 

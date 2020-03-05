@@ -1,31 +1,114 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 import {BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType} from "./common";
 
-const isNode: any = typeof window === "undefined";
-
-interface PeripheralUARTOptions {
+export interface PeripheralUARTOptions {
+  /**
+   *  Pin no of tx is used for sending data from obniz Board to parts.
+   */
   tx: number;
+
+  /**
+   * Pin no of used for receiving data from parts to obniz Board.
+   */
   rx: number;
+
+  /**
+   * Gnd pin no
+   */
   gnd?: number;
+
+  /**
+   * Uart baud rate. efault is 115200bps
+   */
   baud?: number;
+
+  /**
+   * Uart stop bit type.
+   * Default is 1 Stop bit
+   */
   stop?: StopBitType;
+
+  /**
+   * Uart bits. Default is 8bit
+   */
   bits?: BitType;
+
+  /**
+   * Uart parity check. Default is "off"
+   */
   parity?: ParityType;
+
+  /**
+   * Uart flow control type.
+   * Default is off.
+   */
   flowcontrol?: FlowControlType;
+
+  /**
+   * Pin no of rts
+   */
   rts?: number;
+
+  /**
+   * Pin no of cts
+   */
   cts?: number;
+
+  /**
+   * Pin drive type.
+   */
   drive?: DriveType;
+
+  /**
+   * Pin pull type
+   */
   pull?: PullType;
 }
 
-class PeripheralUART {
-  public Obniz: Obniz;
-  public id: number;
+/**
+ * Uart module
+ * @category Peripherals
+ */
+export default class PeripheralUART {
   public received: any;
+
+  /**
+   * @ignore
+   */
   public used!: boolean;
-  public params: any;
-  public onreceive?: (data: any, text: string) => void;
+
+  /**
+   * It is called when data is received.
+   * Data is array of bytes.
+   * Text is the same data but in text representation.
+   *
+   *
+   * So, if obniz Board receives 'A'.
+   * - Data is [0x41]
+   * - Text is "A"
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.uart0.start({tx:0, rx:1})
+   * obniz.uart0.onreceive = function(data, text) {
+   *   console.log(data);
+   *   console.log(text);
+   * }
+   * obniz.uart0.send("Hello");
+   * ```
+   *
+   */
+  public onreceive?: (data: number[], text: string) => void;
+
+  private Obniz: Obniz;
+  private id: number;
+  private params: any;
 
   constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
@@ -33,11 +116,21 @@ class PeripheralUART {
     this._reset();
   }
 
+  /**
+   * @ignore
+   * @private
+   */
   public _reset() {
     this.received = new Uint8Array([]);
     this.used = false;
   }
 
+  /**
+   * It starts uart on io tx, rx.
+   *
+   * You can start uart without much configuration. Just use as below.
+   * @param params
+   */
   public start(params: PeripheralUARTOptions) {
     const err: any = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
     if (err) {
@@ -110,7 +203,34 @@ class PeripheralUART {
     this.used = true;
   }
 
-  public send(data: any) {
+  /**
+   * This sends data.
+   *
+   * Available formats are
+   *
+   * - string
+   * utf8 encoded byte array. Does not include null terminate
+   *
+   * - number
+   * will be one byte data
+   *
+   * - array of number
+   * array of bytes
+   *
+   * - Buffer
+   * array of bytes
+   *
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.uart0.start({tx:0, rx:1})
+   * obniz.uart0.send("Hi");
+   * obniz.uart0.send(0x11);
+   * obniz.uart0.send([0x11, 0x45, 0x44]);
+   * ```
+   * @param data
+   */
+  public send(data: string | number | number[] | Buffer) {
     if (!this.used) {
       throw new Error(`uart${this.id} is not started`);
     }
@@ -121,7 +241,7 @@ class PeripheralUART {
     if (typeof data === "number") {
       data = [data];
     }
-    if (isNode && data instanceof Buffer) {
+    if (this.Obniz.isNode && data instanceof Buffer) {
       send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
@@ -136,10 +256,45 @@ class PeripheralUART {
     this.Obniz.send(obj);
   }
 
+  /**
+   * It checks if there are data received but not yet used.
+   * If there are, it returns true.
+   *
+   * If you are using onreceive callback, it will always be false because you receive the data with the callback function as the data arrives.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.uart0.start({tx:0, rx:1})
+   *
+   * while(1){
+   *   if(obniz.uart0.isDataExists()){
+   *      console.log(obniz.uart0.readText());
+   *   }
+   *   await obniz.wait(10);  //wait for 10ms
+   * }
+   * ```
+   *
+   */
   public isDataExists(): boolean {
     return this.received && this.received.length > 0;
   }
 
+  /**
+   * It returns the data array that are received but not yet used.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.uart0.start({tx:0, rx:1})
+   *
+   * while(1){
+   *   if(obniz.uart0.isDataExists()){
+   *      console.log(obniz.uart0.readBytes());
+   *   }
+   *   await obniz.wait(10);  //wait for 10ms
+   * }
+   * ```
+   * @return received data. If not exist data, return [].
+   */
   public readBytes(): number[] {
     const results: number[] = [];
     if (this.isDataExists()) {
@@ -151,6 +306,23 @@ class PeripheralUART {
     return results;
   }
 
+  /**
+   * It returns the one byte that are received but not yet used.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.uart0.start({tx:0, rx:1})
+   *
+   * while(1){
+   *    if(obniz.uart0.isDataExists()){
+   *      console.log(obniz.uart0.readBytes());
+   *    }
+   *    await obniz.wait(10);  //wait for 10ms
+   * }
+   * ```
+   *
+   * @return received data. If not exist data, return null.
+   */
   public readByte(): number | null {
     const results: any = [];
     if (this.isDataExists()) {
@@ -159,6 +331,23 @@ class PeripheralUART {
     return null;
   }
 
+  /**
+   * It returns the data that are received but not yet used as string.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.uart0.start({tx:0, rx:1})
+   *
+   * while(1){
+   *   if(obniz.uart0.isDataExists()){
+   *     console.log(obniz.uart0.readText());
+   *   }
+   *   await obniz.wait(10);  //wait for 10ms
+   * }
+   * ```
+   *
+   * @return received text data. If not exist data, return null.
+   */
   public readText(): string | null {
     let string: string | null = null;
     if (this.isDataExists()) {
@@ -169,10 +358,10 @@ class PeripheralUART {
     return string;
   }
 
-  public tryConvertString(data: any) {
-    return ObnizUtil.dataArray2string(data);
-  }
-
+  /**
+   * @ignore
+   * @param obj
+   */
   public notified(obj: any) {
     if (this.onreceive) {
       const string: any = this.tryConvertString(obj.data);
@@ -186,10 +375,23 @@ class PeripheralUART {
     }
   }
 
+  /**
+   * @ignore
+   */
   public isUsed(): boolean {
     return this.used;
   }
 
+  /**
+   * It stops uart and releases io.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.uart0.start({tx:0, rx:1})
+   * obniz.uart0.send("Hi");
+   * obniz.uart0.end();
+   * ```
+   */
   public end() {
     const obj: any = {};
     obj["uart" + this.id] = null;
@@ -197,6 +399,15 @@ class PeripheralUART {
     this.Obniz.send(obj);
     this.used = false;
   }
-}
 
-export default PeripheralUART;
+  /**
+   * Convert data array to string.
+   *
+   * @param data data array
+   *
+   * @return converted string. If convert failed, return null.
+   */
+  public tryConvertString(data: number[]): string | null {
+    return ObnizUtil.dataArray2string(data);
+  }
+}
