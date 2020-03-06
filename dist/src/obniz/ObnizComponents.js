@@ -136,6 +136,16 @@ class ObnizComponents extends ObnizParts_1.default {
     getFreeTcp() {
         return this._getFreePeripheralUnit("tcp");
     }
+    hasExtraInterface(interfaceName) {
+        return !!this.getExtraInterface(interfaceName);
+    }
+    getExtraInterface(interfaceName) {
+        if (this._hwDefinition.extraInterface
+            && this._hwDefinition.extraInterface[interfaceName]) {
+            return this._hwDefinition.extraInterface[interfaceName];
+        }
+        return null;
+    }
     _callOnConnect() {
         this._prepareComponents();
         super._callOnConnect();
@@ -144,14 +154,14 @@ class ObnizComponents extends ObnizParts_1.default {
         if (this._allComponentKeys.length !== 0) {
             return;
         }
-        const hwDefinition = hw_1.default.getDefinitionFor(this.hw);
-        if (!hwDefinition) {
+        this._hwDefinition = hw_1.default.getDefinitionFor(this.hw);
+        if (!this._hwDefinition) {
             throw new Error(`unkown hw ${this.hw}`);
         }
-        const hw_peripherals = hwDefinition.peripherals;
+        const hw_peripherals = this._hwDefinition.peripherals;
         this._hw_peripherals = hw_peripherals;
-        const hw_embeds = hwDefinition.embeds;
-        const hw_protocol = hwDefinition.protocol;
+        const hw_embeds = this._hwDefinition.embeds;
+        const hw_protocol = this._hwDefinition.protocol;
         const shared_map = {
             io: directive_1.default,
             logicAnalyzer: logicanalyzer_1.default,

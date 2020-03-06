@@ -36,6 +36,7 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
   public requiredKeys: string[];
   public periperal: bleRemotePeripheral | null;
   public obniz!: Obniz;
+  public params: any;
 
   constructor() {
     this.keys = [];

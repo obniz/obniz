@@ -7,8 +7,18 @@
 
 ## wired(obniz, {[scl, sda, vcc, gnd, i2c]})
 obnizデバイスと接続します。  
-M5StickCと接続する場合は、G0をsdaに、G26をsclに指定してください。
-その他の場合には，更にvccとgndを適切なピンに指定してください．  
+もしM5StickCを使用している場合、ピン指定を省略することができます。
+
+
+```javascript
+// JavaScript Examples
+var sensor = obniz.wired("StickC_ToF");
+var distance = await sensor.getWait();
+console.log(distance);
+```
+
+
+他のデバイスの場合は、下記のようにピン指定を行ってください。 
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -22,6 +32,7 @@ var sensor = obniz.wired("StickC_ToF", {scl:26, sda:0});
 var distance = await sensor.getWait();
 console.log(distance);
 ```
+
 
 ## [await] getWait()
 距離(mm)を一度だけ取得します。

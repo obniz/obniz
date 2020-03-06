@@ -22,6 +22,8 @@ export default class DPS310 implements ObnizPartsInterface {
   public requiredKeys: string[];
   public keys: string[];
   public ioKeys: string[];
+  public params: any;
+
   private configration = {
     DPS310__STD_SLAVE_ADDRESS: 0x77,
   };
@@ -159,7 +161,6 @@ export default class DPS310 implements ObnizPartsInterface {
   private coeffs: any;
   private obniz!: Obniz;
   private address: any;
-  private params: any;
   private i2c!: PeripheralI2C;
 
   constructor() {

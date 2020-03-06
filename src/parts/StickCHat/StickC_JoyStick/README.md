@@ -5,10 +5,29 @@ It uses the I2C communication.
 
 ![](./image.jpg)
 
-## wired(obniz, {[scl, sda, vcc, gnd, grove]})
+## wired(obniz, {[scl, sda, vcc, gnd]})
 
 connect to the obniz device.  
-White, yellow, red and black wires correspond to scl, sda, vcc and gnd respectively.  
+When using M5StickC, You do not need to assign pins. 
+
+```javascript
+// JavaScript Examples
+var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
+obniz.onconnect = async function() {
+  var joystick = obniz.wired("StickC_JoyStick");
+  while(true) {
+    var x = await joystick.getXWait()
+    var y = await joystick.getYWait()
+    console.log(`${x}x${y}`);
+    await obniz.wait(1);
+  }
+}
+```
+
+
+When using other devices, White, yellow, red and black wires correspond to scl, sda, vcc and gnd respectively.  
+
+
 
 name | type | required | default | description
 --- | --- | --- | --- | ---

@@ -9,8 +9,19 @@ M5StickC用ADコンバータです。+と-の間の電位差を読み取りま�
 
 ## wired(obniz, {[scl, sda, vcc, gnd, i2c]})
 obnizデバイスと接続します。  
-M5StickCと接続する場合は、G0をsdaに、G26をsclに指定してください。
-その他の場合には，更にvccとgndを適切なピンに指定してください．  
+もしM5StickCを使用している場合、ピン指定を省略することができます。
+
+```javascript
+// JavaScript Examples
+var adc = obniz.wired("StickC_ADC");
+while(true) {
+  var vol = await adc.getVoltageWait();
+  console.log(vol + " V");
+  await obniz.wait(1);
+}
+```
+
+他のデバイスの場合には、下記のようにピンを指定してください。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -29,6 +40,7 @@ while(true) {
   await obniz.wait(1);
 }
 ```
+
 
 ## setGain(number)
 

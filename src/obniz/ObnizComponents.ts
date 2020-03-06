@@ -238,6 +238,8 @@ export default class ObnizComponents extends ObnizParts {
    */
   public ble?: ObnizOldBLE.default | ObnizHciBLE.default;
 
+  protected _hwDefinition: any;
+
   protected pongObservers: any;
   protected _allComponentKeys: any;
   protected _hw_peripherals: any;
@@ -366,6 +368,18 @@ export default class ObnizComponents extends ObnizParts {
     return this._getFreePeripheralUnit("tcp");
   }
 
+  public hasExtraInterface(interfaceName: string): boolean {
+    return !!this.getExtraInterface(interfaceName);
+  }
+
+  public getExtraInterface(interfaceName: string): any {
+    if (this._hwDefinition.extraInterface
+      && this._hwDefinition.extraInterface[interfaceName]) {
+      return this._hwDefinition.extraInterface[interfaceName];
+    }
+    return null;
+  }
+
   protected _callOnConnect() {
     this._prepareComponents();
     super._callOnConnect();
@@ -376,15 +390,15 @@ export default class ObnizComponents extends ObnizParts {
       return;
     }
 
-    const hwDefinition: any = HW.getDefinitionFor(this.hw);
-    if (!hwDefinition) {
+    this._hwDefinition = HW.getDefinitionFor(this.hw);
+    if (!this._hwDefinition) {
       throw new Error(`unkown hw ${this.hw}`);
     }
 
-    const hw_peripherals: any = hwDefinition.peripherals;
+    const hw_peripherals: any = this._hwDefinition.peripherals;
     this._hw_peripherals = hw_peripherals;
-    const hw_embeds: any = hwDefinition.embeds;
-    const hw_protocol: any = hwDefinition.protocol;
+    const hw_embeds: any = this._hwDefinition.embeds;
+    const hw_protocol: any = this._hwDefinition.protocol;
 
     const shared_map: any = {
       io: PeripheralDirective,
