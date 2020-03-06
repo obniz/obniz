@@ -14,7 +14,7 @@ obnizデバイスと接続します。
 
 ```javascript
 // JavaScript Examples
-var sensor = obniz.wired("StickC_FINGER");
+var sensor = obniz.wired("M5StickC_FINGER");
 ```
 
 その他のデバイスの場合は、ux,rxを指定してください

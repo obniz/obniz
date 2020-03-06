@@ -13,7 +13,7 @@ obnizデバイスと接続します。
 
 ```javascript
 // JavaScript Examples
-var adc = obniz.wired("StickC_ADC");
+var adc = obniz.wired("M5StickC_ADC");
 while(true) {
   var vol = await adc.getVoltageWait();
   console.log(vol + " V");

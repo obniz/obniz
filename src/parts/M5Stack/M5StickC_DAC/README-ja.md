@@ -13,7 +13,7 @@ obnizデバイスと接続します。
 
 ```javascript
 // JavaScript Examples
-var dac = obniz.wired("StickC_DAC");
+var dac = obniz.wired("M5StickC_DAC");
 dac.setVoltage(1.5);
 ```
 
