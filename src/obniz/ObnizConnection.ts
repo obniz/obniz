@@ -7,12 +7,11 @@ import EventEmitter from "eventemitter3";
 import wsClient from "ws";
 
 // @ts-ignore
-import packageJson from "../../package";  // pakcage.js will be created from package.json on build.
+import packageJson from "../../package"; // pakcage.js will be created from package.json on build.
 import WSCommand from "./libs/wscommand";
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 
 export default class ObnizConnection {
-
   /**
    * obniz.js version
    */
@@ -186,8 +185,7 @@ export default class ObnizConnection {
       auto_connect: options.auto_connect === false ? false : true,
       access_token: options.access_token || null,
       obniz_server: options.obniz_server || "wss://obniz.io",
-      reset_obniz_on_ws_disconnection:
-        options.reset_obniz_on_ws_disconnection === false ? false : true,
+      reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
     };
     if (this.options.binary) {
       this.wscommand = (this.constructor as typeof ObnizConnection).WSCommand;
@@ -345,22 +343,14 @@ export default class ObnizConnection {
       }
 
       /* compress */
-      if (
-        this.wscommand &&
-        (typeof options !== "object" || options.local_connect !== false)
-      ) {
+      if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
         let compressed: any;
         try {
-          compressed = this.wscommand.compress(
-            this.wscommands,
-            JSON.parse(sendData)[0],
-          );
+          compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
           if (compressed) {
             sendData = compressed;
             if (this.debugprintBinary) {
-              console.log(
-                "Obniz: binalized: " + new Uint8Array(compressed).toString(),
-              );
+              console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
             }
           }
         } catch (e) {
@@ -514,7 +504,6 @@ export default class ObnizConnection {
 
     let socket: any;
     if (this.isNode) {
-
       socket = new wsClient(url);
       socket.on("open", this.wsOnOpen.bind(this));
       socket.on("message", this.wsOnMessage.bind(this));
@@ -612,13 +601,7 @@ export default class ObnizConnection {
     }
     /* unbind */
     if (this.isNode) {
-      const shouldRemoveObservers: any = [
-        "open",
-        "message",
-        "close",
-        "error",
-        "unexpected-response",
-      ];
+      const shouldRemoveObservers: any = ["open", "message", "close", "error", "unexpected-response"];
       for (let i = 0; i < shouldRemoveObservers.length; i++) {
         socket.removeAllListeners(shouldRemoveObservers[i]);
       }
@@ -669,17 +652,11 @@ export default class ObnizConnection {
   }
 
   protected _sendRouted(data: any) {
-    if (
-      this.socket_local &&
-      this.socket_local.readyState === 1 &&
-      typeof data !== "string"
-    ) {
+    if (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string") {
       this.print_debug("send via local");
       this.socket_local.send(data);
       if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.warning(
-          "over " + this.socket_local.bufferedAmount + " bytes queued",
-        );
+        this.warning("over " + this.socket_local.bufferedAmount + " bytes queued");
       }
       return;
     }
@@ -785,8 +762,7 @@ export default class ObnizConnection {
     }
   }
 
-  protected handleSystemCommand(wsObj: any) {
-  }
+  protected handleSystemCommand(wsObj: any) {}
 
   protected binary2Json(binary: any) {
     let data: any = new Uint8Array(binary);

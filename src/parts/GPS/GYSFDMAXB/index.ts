@@ -5,7 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface GYSFDMAXBOptions {
   vcc?: number;
@@ -50,7 +50,7 @@ export default class GYSFDMAXB implements ObnizPartsInterface {
   public requiredKeys: string[];
   public ioKeys: string[];
   public displayName = "gps";
-  public displayIoNames = {txd: "txd", rxd: "rxd", Opps: "1pps"};
+  public displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
   public params: any;
 
   public editedData: any;
@@ -250,10 +250,7 @@ export default class GYSFDMAXB implements ObnizPartsInterface {
 
             this.gpsInfo.satelliteInfo.inView = sat_count;
             let nsat: any = (pack_index - 1) * NMEA_SATINSENTENCE;
-            nsat =
-              nsat + NMEA_SATINSENTENCE > sat_count
-                ? sat_count - nsat
-                : NMEA_SATINSENTENCE;
+            nsat = nsat + NMEA_SATINSENTENCE > sat_count ? sat_count - nsat : NMEA_SATINSENTENCE;
 
             for (let isat = 0; isat < nsat; ++isat) {
               const isi: any = (pack_index - 1) * NMEA_SATINSENTENCE + isat;

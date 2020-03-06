@@ -5,7 +5,7 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface AnalogTemperatureSensorOptions {
   vcc?: number;
@@ -34,12 +34,10 @@ export default class AnalogTemperatureSensor implements ObnizPartsInterface {
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
     this.ad = obniz.getAD(this.params.output);
 
-    this.ad.start(
-      (voltage: any) => {
-        this.temp = this.calc(voltage);
-        this.onchange(this.temp);
-      },
-    );
+    this.ad.start((voltage: any) => {
+      this.temp = this.calc(voltage);
+      this.onchange(this.temp);
+    });
   }
 
   public async getWait() {
@@ -48,8 +46,7 @@ export default class AnalogTemperatureSensor implements ObnizPartsInterface {
     return this.temp;
   }
 
-  public onchange(temp: number) {
-  }
+  public onchange(temp: number) {}
 
   public calc(voltage: any) {
     return 0;

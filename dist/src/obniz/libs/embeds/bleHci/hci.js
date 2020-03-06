@@ -56,8 +56,7 @@ class ObnizBLEHci {
      * Callback on HCI command received.
      * @param data
      */
-    onread(data) {
-    }
+    onread(data) { }
 }
 exports.default = ObnizBLEHci;
 

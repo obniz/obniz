@@ -101,5 +101,4 @@ class AMG8833 {
     }
 }
 exports.default = AMG8833;
-
 //# sourceMappingURL=index.js.map

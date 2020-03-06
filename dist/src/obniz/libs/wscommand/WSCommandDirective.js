@@ -35,8 +35,7 @@ class WSCommandDirective extends WSCommand_1.default {
             frame.set(nameArray, offset);
             offset += nameArray.length;
             frame[offset++] = 0; // null string
-            if (params.animation.status === "registrate" ||
-                typeof params.animation.repeat === "number") {
+            if (params.animation.status === "registrate" || typeof params.animation.repeat === "number") {
                 throw new Error("you need to update your firmware >= 2.0.0");
             }
         }
@@ -180,5 +179,4 @@ class WSCommandDirective extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandDirective;
-
 //# sourceMappingURL=WSCommandDirective.js.map

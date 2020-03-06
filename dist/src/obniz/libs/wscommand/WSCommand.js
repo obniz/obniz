@@ -55,8 +55,7 @@ class WSCommand {
         let index = 0;
         result[index++] = module & 0x7f;
         result[index++] = func;
-        result[index++] =
-            (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+        result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
         while (length_extra_bytse > 0) {
             length_extra_bytse--;
             result[index++] = payload_length >> (length_extra_bytse * 8);
@@ -223,8 +222,7 @@ class WSCommand {
         const messages = [];
         for (const error of validateError.errors) {
             if (error.code === WSSchema_1.default.errorCodes.INVALID_TYPE) {
-                if (error.params.type === "object" ||
-                    error.params.expected === "object") {
+                if (error.params.type === "object" || error.params.expected === "object") {
                     return false;
                 }
             }
@@ -285,5 +283,4 @@ exports.default = WSCommand;
 // tslint:disable:max-classes-per-file
 class WSCommandNotFoundError extends Error {
 }
-
 //# sourceMappingURL=WSCommand.js.map

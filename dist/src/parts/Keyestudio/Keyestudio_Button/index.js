@@ -8,8 +8,7 @@ class Keyestudio_Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.onChangeForStateWait = (pressed) => {
-        };
+        this.onChangeForStateWait = (pressed) => { };
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
     }
@@ -44,8 +43,7 @@ class Keyestudio_Button {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -53,5 +51,4 @@ class Keyestudio_Button {
     }
 }
 exports.default = Keyestudio_Button;
-
 //# sourceMappingURL=index.js.map

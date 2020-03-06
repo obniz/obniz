@@ -50,13 +50,7 @@ class ObnizMeasure {
      * @param params
      */
     echo(params) {
-        const err = util_1.default._requiredKeys(params, [
-            "io_pulse",
-            "pulse",
-            "pulse_width",
-            "io_echo",
-            "measure_edges",
-        ]);
+        const err = util_1.default._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
         if (err) {
             throw new Error("Measure start param '" + err + "' required, but not found ");
         }
@@ -99,5 +93,4 @@ class ObnizMeasure {
     }
 }
 exports.default = ObnizMeasure;
-
 //# sourceMappingURL=measure.js.map

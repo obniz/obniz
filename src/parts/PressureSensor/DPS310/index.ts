@@ -5,13 +5,11 @@
 
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface DPS310Options {
-}
+export interface DPS310Options {}
 
 export default class DPS310 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "DPS310",
@@ -147,16 +145,7 @@ export default class DPS310 implements ObnizPartsInterface {
       length: 3,
     },
   };
-  private scaling_facts = [
-    524288,
-    1572864,
-    3670016,
-    7864320,
-    253952,
-    516096,
-    1040384,
-    2088960,
-  ];
+  private scaling_facts = [524288, 1572864, 3670016, 7864320, 253952, 516096, 1040384, 2088960];
   private opMode: any;
   private coeffs: any;
   private obniz!: Obniz;
@@ -186,33 +175,20 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   public async initWait(): Promise<void> {
-    const prodId: any = await this.readByteBitfieldWait(
-      this.bitFileds.DPS310__REG_INFO_PROD_ID,
-    );
+    const prodId: any = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PROD_ID);
     if (prodId !== 0) {
       throw new Error("invalid prodId");
     }
     await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
 
-    await this.readByteBitfieldWait(
-      this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC,
-    );
+    await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
 
-    await this.writeByteBitfield(
-      this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR,
-      0,
-    );
+    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
 
     await this.readCoeffsWait();
     await this.standbyWait();
-    await this.configTempWait(
-      this.DPS310__TEMP_STD_MR,
-      this.DPS310__TEMP_STD_OSR,
-    );
-    await this.configPressureWait(
-      this.DPS310__PRS_STD_MR,
-      this.DPS310__PRS_STD_OSR,
-    );
+    await this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
+    await this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
     await this.standbyWait();
     await this.measureTempOnceWait();
     await this.standbyWait();
@@ -280,21 +256,14 @@ export default class DPS310 implements ObnizPartsInterface {
 
   private async setOpModeDetailWait(background: any, temperature: any, pressure: any): Promise<void> {
     const opMode: any =
-      ((background & this.DPS310__LSB) << 2) |
-      ((temperature & this.DPS310__LSB) << 1) |
-      (pressure & this.DPS310__LSB);
+      ((background & this.DPS310__LSB) << 2) | ((temperature & this.DPS310__LSB) << 1) | (pressure & this.DPS310__LSB);
     return await this.setOpModeWait(opMode);
   }
 
   private async setOpModeWait(opMode: any): Promise<void> {
-    opMode &=
-      this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
-      this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
+    opMode &= this.bitFileds.DPS310__REG_INFO_OPMODE.mask >> this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
 
-    await this.writeByteWait(
-      this.bitFileds.DPS310__REG_INFO_OPMODE.address,
-      opMode,
-    );
+    await this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
     this.opMode = opMode;
   }
 
@@ -305,14 +274,8 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   private async configTempWait(tempMr: any, tempOsr: any): Promise<void> {
-    await this.writeByteBitfield(
-      this.bitFileds.DPS310__REG_INFO_TEMP_MR,
-      tempMr,
-    );
-    await this.writeByteBitfield(
-      this.bitFileds.DPS310__REG_INFO_TEMP_OSR,
-      tempOsr,
-    );
+    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
+    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
 
     if (tempOsr > this.DPS310__OSR_SE) {
       await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
@@ -326,10 +289,7 @@ export default class DPS310 implements ObnizPartsInterface {
 
   private async configPressureWait(prsMr: any, prsOsr: any): Promise<void> {
     await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
-    await this.writeByteBitfield(
-      this.bitFileds.DPS310__REG_INFO_PRS_OSR,
-      prsOsr,
-    );
+    await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
 
     if (prsOsr > this.DPS310__OSR_SE) {
       await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
@@ -353,14 +313,12 @@ export default class DPS310 implements ObnizPartsInterface {
     if (this.coeffs.m_c1 & (1 << 11)) {
       this.coeffs.m_c1 -= 1 << 12;
     }
-    this.coeffs.m_c00 =
-      (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+    this.coeffs.m_c00 = (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
     if (this.coeffs.m_c00 & (1 << 19)) {
       this.coeffs.m_c00 -= 1 << 20;
     }
 
-    this.coeffs.m_c10 =
-      ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+    this.coeffs.m_c10 = ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
     if (this.coeffs.m_c10 & (1 << 19)) {
       this.coeffs.m_c10 -= 1 << 20;
     }
@@ -395,14 +353,10 @@ export default class DPS310 implements ObnizPartsInterface {
     let rdy: any;
     switch (this.opMode) {
       case this.mode.CMD_TEMP:
-        rdy = await this.readByteBitfieldWait(
-          this.bitFileds.DPS310__REG_INFO_TEMP_RDY,
-        );
+        rdy = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_RDY);
         break;
       case this.mode.CMD_PRS:
-        rdy = await this.readByteBitfieldWait(
-          this.bitFileds.DPS310__REG_INFO_PRS_RDY,
-        );
+        rdy = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_RDY);
         break;
       default:
         return this.DPS310__FAIL_TOOBUSY;
@@ -446,12 +400,8 @@ export default class DPS310 implements ObnizPartsInterface {
     prs /= this.scaling_facts[this.prsOsr];
     prs =
       this.coeffs.m_c00 +
-      prs *
-      (this.coeffs.m_c10 +
-        prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
-      this.m_lastTempScal *
-      (this.coeffs.m_c01 +
-        prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
+      prs * (this.coeffs.m_c10 + prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
+      this.m_lastTempScal * (this.coeffs.m_c01 + prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
     return prs;
   }
 

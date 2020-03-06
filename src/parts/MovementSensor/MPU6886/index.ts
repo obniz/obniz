@@ -3,13 +3,12 @@
  * @module Parts.MPU6886
  */
 
-import {I2cInfo, Xyz} from "../../i2cParts";
-import MPU6050, {MPU6050Options} from "../MPU6050";
+import { I2cInfo, Xyz } from "../../i2cParts";
+import MPU6050, { MPU6050Options } from "../MPU6050";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface MPU6886Options extends MPU6050Options {
-}
+export interface MPU6886Options extends MPU6050Options {}
 
 export default class MPU6886 extends MPU6050 {
   public i2cinfo: I2cInfo;

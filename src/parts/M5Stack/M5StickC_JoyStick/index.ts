@@ -1,18 +1,17 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstractOptions} from "../../i2cParts";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import { I2cPartsAbstractOptions } from "../../i2cParts";
 
-export type  M5StickC_JoyStickOptions = I2cPartsAbstractOptions ;
+export type M5StickC_JoyStickOptions = I2cPartsAbstractOptions;
 
 export default class M5StickC_JoyStick implements ObnizPartsInterface {
-
-    public static info(): ObnizPartsInfo {
-        return {
-            name: "M5StickC_JoyStick",
-        };
-    }
+  public static info(): ObnizPartsInfo {
+    return {
+      name: "M5StickC_JoyStick",
+    };
+  }
 
   public requiredKeys: string[];
   public keys: string[];
@@ -29,9 +28,7 @@ export default class M5StickC_JoyStick implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    if (!this.obniz.isValidIO(this.params.sda)
-      && !this.obniz.isValidIO(this.params.scl)
-      && !this.params.i2c) {
+    if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
       if (this.obniz.hasExtraInterface("m5stickc_hat")) {
         const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
         this.params.sda = hatI2c.sda;
@@ -52,7 +49,7 @@ export default class M5StickC_JoyStick implements ObnizPartsInterface {
   public async getXWait(): Promise<number> {
     const ret = await this.getXYWait();
     let val = ret[0];
-    if (val > 0x7F) {
+    if (val > 0x7f) {
       val = val - 0x100;
     }
     return val;
@@ -61,7 +58,7 @@ export default class M5StickC_JoyStick implements ObnizPartsInterface {
   public async getYWait(): Promise<number> {
     const ret = await this.getXYWait();
     let val = ret[1];
-    if (val > 0x7F) {
+    if (val > 0x7f) {
       val = val - 0x100;
     }
     return val;

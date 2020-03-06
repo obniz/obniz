@@ -5,7 +5,7 @@
 
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
-import {BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType} from "./common";
+import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from "./common";
 
 export interface PeripheralUARTOptions {
   /**
@@ -134,9 +134,7 @@ export default class PeripheralUART {
   public start(params: PeripheralUARTOptions) {
     const err: any = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
     if (err) {
-      throw new Error(
-        "uart start param '" + err + "' required, but not found ",
-      );
+      throw new Error("uart start param '" + err + "' required, but not found ");
     }
     this.params = ObnizUtil._keyFilter(params, [
       "tx",

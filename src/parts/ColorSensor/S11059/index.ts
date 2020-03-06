@@ -5,7 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface S11059Options {
   vcc?: number;
@@ -19,7 +19,6 @@ export type S11059Gain = 0 | 1;
 export type S11059IntergerTime = 0 | 1 | 2 | 3;
 
 export default class S11059 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "S11059",

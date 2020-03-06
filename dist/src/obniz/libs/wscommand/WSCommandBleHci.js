@@ -18,7 +18,10 @@ class WSCommandBleHci {
             { uri: "/request/ble/hci/init", onValid: this.init.bind(this) },
             { uri: "/request/ble/hci/deinit", onValid: this.deinit.bind(this) },
             { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
-            { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
+            {
+                uri: "/request/ble/hci/advertisement_filter",
+                onValid: this.advertisementFilter.bind(this),
+            },
         ];
     }
     notifyFunctionList() {
@@ -60,5 +63,4 @@ class WSCommandBleHci {
     }
 }
 exports.default = WSCommandBleHci;
-
 //# sourceMappingURL=WSCommandBleHci.js.map

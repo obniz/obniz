@@ -10,8 +10,7 @@ class CT10 {
         this.onchange = null;
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
-        this.onChangeForStateWait = () => {
-        };
+        this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
@@ -44,8 +43,7 @@ class CT10 {
         return new Promise((resolve) => {
             this.onChangeForStateWait = (near) => {
                 if (isNear === near) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -53,5 +51,4 @@ class CT10 {
     }
 }
 exports.default = CT10;
-
 //# sourceMappingURL=index.js.map

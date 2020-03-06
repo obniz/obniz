@@ -5,7 +5,7 @@
 
 import ObnizUtil from "./libs/utils/util";
 import ObnizApi from "./ObnizApi";
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 import ObnizUIs from "./ObnizUIs";
 
 /**
@@ -24,7 +24,6 @@ declare global {
 }
 
 export default class ObnizDevice extends ObnizUIs {
-
   /**
    * @ignore
    */
@@ -242,12 +241,12 @@ export default class ObnizDevice extends ObnizUIs {
     if (typeof obj.debug === "object") {
       if (obj.debug.warning) {
         const msg: any = "Warning: " + obj.debug.warning.message;
-        this.warning({alert: "warning", message: msg});
+        this.warning({ alert: "warning", message: msg });
       }
 
       if (obj.debug.error) {
         const msg: any = "Error: " + obj.debug.error.message;
-        this.error({alert: "error", message: msg});
+        this.error({ alert: "error", message: msg });
       }
       if (this.ondebug) {
         this.ondebug(obj.debug);

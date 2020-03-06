@@ -66,9 +66,7 @@ class OMRON_2JCIE {
     }
     async getLatestData() {
         await this.connectWait();
-        const c = this.periperal
-            .getService(this.omron_uuid("3000"))
-            .getCharacteristic(this.omron_uuid("3001"));
+        const c = this.periperal.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
         const data = await c.readWait();
         const json = {
             row_number: data[0],
@@ -86,5 +84,4 @@ class OMRON_2JCIE {
     }
 }
 exports.default = OMRON_2JCIE;
-
 //# sourceMappingURL=index.js.map

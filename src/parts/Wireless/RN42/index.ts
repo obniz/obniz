@@ -6,7 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface RN42Options {
   tx: number;
@@ -36,7 +36,6 @@ export interface RN42Config {
 }
 
 export default class RN42 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "RN42",
@@ -175,15 +174,7 @@ export default class RN42 implements ObnizPartsInterface {
     if (typeof mode === "number") {
       val = mode;
     } else if (typeof mode === "string") {
-      const modes: any = [
-        "SPP",
-        "DUN-DCE",
-        "DUN-DTE",
-        "MDM-SPP",
-        "SPP-DUN-DCE",
-        "APL",
-        "HID",
-      ];
+      const modes: any = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
       for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;

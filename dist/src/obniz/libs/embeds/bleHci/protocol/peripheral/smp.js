@@ -75,11 +75,7 @@ class Smp extends events.EventEmitter {
         if (encrypted) {
             if (this._stk && this._diversifier && this._random) {
                 this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
-                this.write(Buffer.concat([
-                    Buffer.from([SMP.MASTER_IDENT]),
-                    this._diversifier,
-                    this._random,
-                ]));
+                this.write(Buffer.concat([Buffer.from([SMP.MASTER_IDENT]), this._diversifier, this._random]));
             }
         }
     }
@@ -141,5 +137,4 @@ class Smp extends events.EventEmitter {
     }
 }
 exports.default = Smp;
-
 //# sourceMappingURL=smp.js.map

@@ -86,8 +86,7 @@ class Directive {
      * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
      */
     animation(name, status, animations, repeat) {
-        if ((typeof repeat === "number" || status === "registrate") &&
-            semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
+        if ((typeof repeat === "number" || status === "registrate") && semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
         const obj = {};
@@ -190,5 +189,4 @@ class Directive {
     }
 }
 exports.default = Directive;
-
 //# sourceMappingURL=directive.js.map

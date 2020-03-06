@@ -1,16 +1,15 @@
 /* ------------------------------------------------------------------
-* node-linking - advertising.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-02
-* ---------------------------------------------------------------- */
+ * node-linking - advertising.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
 "use strict";
 
 import LinkingIEEE754 from "./ieee754";
 
 export default class LinkingAdvertising {
-
   public static parse(peripheral: any) {
     const ad = peripheral;
     const manu = ad.manufacturerData;
@@ -20,15 +19,15 @@ export default class LinkingAdvertising {
     // Company identifier
     const company_id = manu.readUInt16LE(0);
     let company_name = "Unknown";
-    if (company_id === 0x02E2) {
+    if (company_id === 0x02e2) {
       company_name = "NTT docomo";
     }
     // Version
-    const version = (manu.readUInt8(2) >>> 4);
+    const version = manu.readUInt8(2) >>> 4;
     // Vendor identifier
-    const vendor_id = ((manu.readUInt16BE(2) >>> 4) & 0b11111111);
+    const vendor_id = (manu.readUInt16BE(2) >>> 4) & 0b11111111;
     // Individual number
-    const indi_num = ((manu.readUInt32BE(3) >>> 8) & (Math.pow(2, 20) - 1));
+    const indi_num = (manu.readUInt32BE(3) >>> 8) & (Math.pow(2, 20) - 1);
     // Beacon Data
     const beacon_data_list = [];
     for (let offset = 6; offset < manu.length; offset += 2) {
@@ -59,7 +58,7 @@ export default class LinkingAdvertising {
 
   public static _parseBeaconServiceData(buf: any) {
     const bufn = buf.readUInt16BE(0);
-    const service_id = (bufn >>> 12);
+    const service_id = bufn >>> 12;
     const n = bufn & 0b0000111111111111;
     let res: any = {};
     if (service_id === 0) {
@@ -84,7 +83,7 @@ export default class LinkingAdvertising {
     } else if (service_id === 4) {
       res = {
         name: "Remaining battery power (Threshold value or less)",
-        chargeRequired: (n & 0b0000100000000000) ? true : false,
+        chargeRequired: n & 0b0000100000000000 ? true : false,
         chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
       };
     } else if (service_id === 5) {
@@ -110,17 +109,17 @@ export default class LinkingAdvertising {
         text = "Pause";
       } else if (code === 0x09) {
         text = "LongPressRelease";
-      } else if (code === 0x0A) {
+      } else if (code === 0x0a) {
         text = "FastForward";
-      } else if (code === 0x0B) {
+      } else if (code === 0x0b) {
         text = "ReWind";
-      } else if (code === 0x0C) {
+      } else if (code === 0x0c) {
         text = "Shutter";
-      } else if (code === 0x0D) {
+      } else if (code === 0x0d) {
         text = "Up";
-      } else if (code === 0x0E) {
+      } else if (code === 0x0e) {
         text = "Down";
-      } else if (code === 0x0F) {
+      } else if (code === 0x0f) {
         text = "Left";
       } else if (code === 0x10) {
         text = "Right";
@@ -142,25 +141,25 @@ export default class LinkingAdvertising {
     } else if (service_id === 6) {
       res = {
         name: "Opening/closing",
-        openingStatus: (n & 0b0000100000000000) ? true : false,
-        openingCount: (n & 0b0000011111111111),
+        openingStatus: n & 0b0000100000000000 ? true : false,
+        openingCount: n & 0b0000011111111111,
       };
     } else if (service_id === 7) {
       res = {
         name: "Human detection",
-        humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
-        humanDetectionCount: (n & 0b0000011111111111),
+        humanDetectionResponse: n & 0b0000100000000000 ? true : false,
+        humanDetectionCount: n & 0b0000011111111111,
       };
     } else if (service_id === 8) {
       res = {
         name: "Vibration",
-        moveResponse: (n & 0b0000100000000000) ? true : false,
-        moveCount: (n & 0b0000011111111111),
+        moveResponse: n & 0b0000100000000000 ? true : false,
+        moveCount: n & 0b0000011111111111,
       };
     } else if (service_id === 9) {
       let illuminance = n;
       if (n >> 11) {
-        illuminance = ((n - 2047) * 50) + 2000;
+        illuminance = (n - 2047) * 50 + 2000;
       }
       res = {
         name: "Illuminance (lx)",
@@ -176,7 +175,5 @@ export default class LinkingAdvertising {
     return res;
   }
 
-  constructor() {
-
-  }
+  constructor() {}
 }

@@ -7,8 +7,7 @@
 /**
  * @ignore
  */
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 /**
  * @ignore
@@ -40,7 +39,15 @@ export default class Mgmt {
     debug("on error ->" + error.message);
   }
 
-  public ddLongTermKey(address: any, addressType: any, authenticated: any, master: any, ediv: any, rand: any, key: any) {
+  public ddLongTermKey(
+    address: any,
+    addressType: any,
+    authenticated: any,
+    master: any,
+    ediv: any,
+    rand: any,
+    key: any,
+  ) {
     const ltkInfo: any = Buffer.alloc(LTK_INFO_SIZE);
 
     address.copy(ltkInfo, 0);

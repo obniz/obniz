@@ -13,7 +13,7 @@ obnizデバイスと接続します。
 ```javascript
 var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
 obniz.onconnect = async function() {
-  var joystick = obniz.wired("StickC_JoyStick");  // auto assign option params  on m5stickc
+  var joystick = obniz.wired("M5StickC_JoyStick");  // auto assign option params  on m5stickc
   while(true) {
     var x = await joystick.getXWait();
     var y = await joystick.getYWait();

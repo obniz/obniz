@@ -21,12 +21,10 @@ class AnalogTemperatureSensor {
         this.temp = this.calc(voltage);
         return this.temp;
     }
-    onchange(temp) {
-    }
+    onchange(temp) { }
     calc(voltage) {
         return 0;
     }
 }
 exports.default = AnalogTemperatureSensor;
-
 //# sourceMappingURL=AnalogTemperatureSensor.js.map

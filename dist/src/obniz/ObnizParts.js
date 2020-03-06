@@ -26,9 +26,7 @@ class ObnizParts extends ObnizConnection_1.default {
      * @param arg0 Parts class
      */
     static PartsRegistrate(arg0, arg1) {
-        if (arg0 &&
-            typeof arg0.info === "function" &&
-            typeof arg0.info().name === "string") {
+        if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
             _parts[arg0.info().name] = arg0;
         }
         else if (typeof arg0 === "string" && typeof arg1 === "object") {
@@ -114,5 +112,4 @@ class ObnizParts extends ObnizConnection_1.default {
     }
 }
 exports.default = ObnizParts;
-
 //# sourceMappingURL=ObnizParts.js.map

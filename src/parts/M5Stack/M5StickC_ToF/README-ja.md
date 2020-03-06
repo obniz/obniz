@@ -12,7 +12,7 @@ obnizデバイスと接続します。
 
 ```javascript
 // JavaScript Examples
-var sensor = obniz.wired("StickC_ToF");
+var sensor = obniz.wired("M5StickC_ToF");
 var distance = await sensor.getWait();
 console.log(distance);
 ```

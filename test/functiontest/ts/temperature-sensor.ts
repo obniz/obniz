@@ -1,4 +1,3 @@
-
 /* tslint:disable:class-name max-classes-per-file */
 import Obniz from "../../../dist/src/obniz/index";
 
@@ -161,7 +160,12 @@ class AMG8833Test {
   public getAllPixWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const grideye = obniz.wired("AMG8833", { vcc: 0, gnd: 1, sda: 2, scl: 3 });
+      const grideye = obniz.wired("AMG8833", {
+        vcc: 0,
+        gnd: 1,
+        sda: 2,
+        scl: 3,
+      });
       const temps = await grideye.getAllPixWait();
       console.log("temperature:" + temps);
 
@@ -184,7 +188,12 @@ class AMG8833Test {
   public getOnePixWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const grideye = obniz.wired("AMG8833", { vcc: 0, gnd: 1, sda: 2, scl: 3 });
+      const grideye = obniz.wired("AMG8833", {
+        vcc: 0,
+        gnd: 1,
+        sda: 2,
+        scl: 3,
+      });
       const temp = await grideye.getOnePixWait(10);
       console.log("temperature:" + temp);
     };
@@ -207,7 +216,15 @@ class BME280Test {
   public applyCalibration() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const bme280 = obniz.wired("BME280", { vio: 0, vcore: 1, gnd: 2, csb: 3, sdi: 4, sck: 5, sdo: 6 });
+      const bme280 = obniz.wired("BME280", {
+        vio: 0,
+        vcore: 1,
+        gnd: 2,
+        csb: 3,
+        sdi: 4,
+        sck: 5,
+        sdo: 6,
+      });
       await bme280.applyCalibration();
     };
   }
@@ -215,7 +232,15 @@ class BME280Test {
   public setIIRStrength() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const bme280 = obniz.wired("BME280", { vio: 0, vcore: 1, gnd: 2, csb: 3, sdi: 4, sck: 5, sdo: 6 });
+      const bme280 = obniz.wired("BME280", {
+        vio: 0,
+        vcore: 1,
+        gnd: 2,
+        csb: 3,
+        sdi: 4,
+        sck: 5,
+        sdo: 6,
+      });
       await bme280.applyCalibration();
       await bme280.setIIRStrength(1); // start using minimum IIR
     };
@@ -224,7 +249,15 @@ class BME280Test {
   public getAllWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const bme280 = obniz.wired("BME280", { vio: 0, vcore: 1, gnd: 2, csb: 3, sdi: 4, sck: 5, sdo: 6 });
+      const bme280 = obniz.wired("BME280", {
+        vio: 0,
+        vcore: 1,
+        gnd: 2,
+        csb: 3,
+        sdi: 4,
+        sck: 5,
+        sdo: 6,
+      });
       await bme280.applyCalibration();
       const obj = await bme280.getAllWait();
       console.log("temp: " + obj.temperature + " degree");
@@ -236,7 +269,15 @@ class BME280Test {
   public calcAltitude() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const bme280 = obniz.wired("BME280", { vio: 0, vcore: 1, gnd: 2, csb: 3, sdi: 4, sck: 5, sdo: 6 });
+      const bme280 = obniz.wired("BME280", {
+        vio: 0,
+        vcore: 1,
+        gnd: 2,
+        csb: 3,
+        sdi: 4,
+        sck: 5,
+        sdo: 6,
+      });
       await bme280.applyCalibration();
       const obj = await bme280.getAllWait();
       const airPressure = obj.pressure;
@@ -292,7 +333,14 @@ class SHT31Test {
   public getTempWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("SHT31", { vcc: 0, sda: 1, scl: 2, adr: 3, gnd: 4, addressmode: 5 });
+      const sensor = obniz.wired("SHT31", {
+        vcc: 0,
+        sda: 1,
+        scl: 2,
+        adr: 3,
+        gnd: 4,
+        addressmode: 5,
+      });
       const temp = await sensor.getTempWait();
       const humd = await sensor.getHumidWait();
       console.log("temperature:" + temp);
@@ -303,7 +351,14 @@ class SHT31Test {
   public getHumdWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const sensor = obniz.wired("SHT31", { vcc: 0, sda: 1, scl: 2, adr: 3, gnd: 4, addressmode: 5 });
+      const sensor = obniz.wired("SHT31", {
+        vcc: 0,
+        sda: 1,
+        scl: 2,
+        adr: 3,
+        gnd: 4,
+        addressmode: 5,
+      });
       const temp = await sensor.getTempWait();
       const humd = await sensor.getHumidWait();
       console.log("temperature:" + temp);

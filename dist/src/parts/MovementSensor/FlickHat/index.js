@@ -155,10 +155,7 @@ class FlickHat {
                         airwheel = data.slice(18, 20);
                         // let xyz = data.slice(20, 26);
                         // let noisepow = data.slice(27, 30);
-                        if (gesture[0] === 255 &&
-                            gesture[1] === 255 &&
-                            gesture[2] === 255 &&
-                            gesture[3] === 255) {
+                        if (gesture[0] === 255 && gesture[1] === 255 && gesture[2] === 255 && gesture[3] === 255) {
                             break;
                         }
                         if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
@@ -190,8 +187,7 @@ class FlickHat {
                                 ["hold", "", ""],
                             ];
                             for (const index in gestures) {
-                                if (index === gesture[0] &&
-                                    typeof this.ongestureall === "function") {
+                                if (index === gesture[0] && typeof this.ongestureall === "function") {
                                     this.ongestureall({
                                         action: gestures[index][0],
                                         from: gestures[index][1],
@@ -200,9 +196,7 @@ class FlickHat {
                                         seq,
                                     });
                                 }
-                                if (index === gesture[0] &&
-                                    gestures[index][0] === "flick" &&
-                                    typeof this.ongesture === "function") {
+                                if (index === gesture[0] && gestures[index][0] === "flick" && typeof this.ongesture === "function") {
                                     this.ongesture({
                                         action: "gesture",
                                         from: gestures[index][1],
@@ -213,9 +207,7 @@ class FlickHat {
                                 }
                             }
                         }
-                        if (configmask & maskTouchInfo &&
-                            !(touch[0] === 0 && touch[1] === 0) &&
-                            touch[3] === 0) {
+                        if (configmask & maskTouchInfo && !(touch[0] === 0 && touch[1] === 0) && touch[3] === 0) {
                             // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
                             const touchAction = touch[0] | (touch[1] << 8); // little endian
                             if (touchAction === 0xffff) {
@@ -279,8 +271,7 @@ class FlickHat {
                                     seq,
                                 });
                             }
-                            if (doubletaps.length > 0 &&
-                                typeof this.ondoubletap === "function") {
+                            if (doubletaps.length > 0 && typeof this.ondoubletap === "function") {
                                 this.ondoubletap({
                                     action: "doubletap",
                                     positions: doubletaps,
@@ -346,5 +337,4 @@ class FlickHat {
     }
 }
 exports.default = FlickHat;
-
 //# sourceMappingURL=index.js.map

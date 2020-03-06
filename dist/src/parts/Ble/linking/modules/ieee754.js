@@ -1,15 +1,15 @@
 /* ------------------------------------------------------------------
-* node-linking - ieee754.js
-*
-* Copyright (c) 2017, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2017-04-13
-* ---------------------------------------------------------------- */
+ * node-linking - ieee754.js
+ *
+ * Copyright (c) 2017, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2017-04-13
+ * ---------------------------------------------------------------- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingIEEE754 {
     static read(n, slen, elen, flen) {
-        const sgn = slen ? ((n >>> 11) & 0b1) : 0; // sign
+        const sgn = slen ? (n >>> 11) & 0b1 : 0; // sign
         const max = Math.pow(2, elen) - 1; // maximum of exponent
         const exp = (n >>> flen) & max; // exponent
         let fra = 0; // fraction
@@ -23,12 +23,12 @@ class LinkingIEEE754 {
         }
         else if (exp === 0 && fra !== 0) {
             const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
-            const v = Math.pow(-1, sgn) * fra * Math.pow(2, (1 - m));
+            const v = Math.pow(-1, sgn) * fra * Math.pow(2, 1 - m);
             return v;
         }
         else if (exp >= 1 && exp <= max - 1) {
             const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
-            const v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, (exp - m));
+            const v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, exp - m);
             return v;
         }
         else if (exp === max && fra === 0) {
@@ -38,8 +38,7 @@ class LinkingIEEE754 {
             return NaN;
         }
     }
-    constructor() {
-    }
+    constructor() { }
 }
 exports.default = LinkingIEEE754;
 

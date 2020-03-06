@@ -50,8 +50,7 @@ class ST7735S {
     }
     _deadSleep(waitMsec) {
         const startMsec = new Date();
-        while (new Date() - startMsec < waitMsec) {
-        }
+        while (new Date() - startMsec < waitMsec) { }
     }
     _reset() {
         this.io_res.output(false);
@@ -2196,5 +2195,4 @@ const font = [
     0x00,
     0x00,
 ];
-
 //# sourceMappingURL=index.js.map

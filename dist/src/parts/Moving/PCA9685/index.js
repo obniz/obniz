@@ -27,17 +27,7 @@ class PCA9685 {
         this.pwms = [];
         this._freq = 0;
         /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
-        this.keys = [
-            "gnd",
-            "vcc",
-            "scl",
-            "sda",
-            "oe",
-            "i2c",
-            "enabled",
-            "address",
-            "drive",
-        ];
+        this.keys = ["gnd", "vcc", "scl", "sda", "oe", "i2c", "enabled", "address", "drive"];
         this.requiredKeys = [];
         this.address = 0x40;
         this._commands = {
@@ -92,18 +82,12 @@ class PCA9685 {
             this.io_oe.output(false);
         }
         if (this.params.drive === "open-drain") {
-            this.i2c.write(this.address, [
-                this._commands.MODE2,
-                this._commands.bits.OUTDRV,
-            ]);
+            this.i2c.write(this.address, [this._commands.MODE2, this._commands.bits.OUTDRV]);
         }
         let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
         mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
         this.i2c.write(this.address, [this._commands.MODE1, mode1]);
-        this.i2c.write(this.address, [
-            this._commands.MODE1,
-            mode1 | this._commands.bits.RESTART,
-        ]);
+        this.i2c.write(this.address, [this._commands.MODE1, mode1 | this._commands.bits.RESTART]);
         this._regs[this._commands.MODE1] = mode1;
         obniz.wait(10);
     }
@@ -137,10 +121,7 @@ class PCA9685 {
         prescaleval -= 1.0;
         const prescale = Math.floor(Math.floor(prescaleval + 0.5));
         const mode1 = this._regs[this._commands.MODE1];
-        this.i2c.write(this.address, [
-            this._commands.MODE1,
-            (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE,
-        ]); // enter sleep
+        this.i2c.write(this.address, [this._commands.MODE1, (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE]); // enter sleep
         this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
         this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
         this.obniz.wait(5);
@@ -174,13 +155,7 @@ class PCA9685 {
         this.writeSingleONOFF(index, 0, (duty / 100.0) * 4095);
     }
     writeSingleONOFF(index, on, off) {
-        this.i2c.write(this.address, [
-            this._commands.LED0_ON_L + 4 * index,
-            on & 0xff,
-            on >> 8,
-            off & 0xff,
-            off >> 8,
-        ]);
+        this.i2c.write(this.address, [this._commands.LED0_ON_L + 4 * index, on & 0xff, on >> 8, off & 0xff, off >> 8]);
     }
     setEnable(enable) {
         if (!this.io_oe && enable === false) {
@@ -190,5 +165,4 @@ class PCA9685 {
     }
 }
 exports.default = PCA9685;
-
 //# sourceMappingURL=index.js.map

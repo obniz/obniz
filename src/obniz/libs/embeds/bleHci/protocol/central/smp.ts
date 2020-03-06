@@ -38,13 +38,7 @@ class Smp extends events.EventEmitter {
   public _r: any;
   public _pcnf: any;
 
-  constructor(
-    aclStream: any,
-    localAddressType: any,
-    localAddress: any,
-    remoteAddressType: any,
-    remoteAddress: any,
-  ) {
+  constructor(aclStream: any, localAddressType: any, localAddress: any, remoteAddressType: any, remoteAddress: any) {
     super();
     this._aclStream = aclStream;
 
@@ -124,16 +118,7 @@ class Smp extends events.EventEmitter {
     this.write(
       Buffer.concat([
         Buffer.from([SMP.PAIRING_CONFIRM]),
-        crypto.c1(
-          this._tk,
-          this._r,
-          this._pres,
-          this._preq,
-          this._iat,
-          this._ia,
-          this._rat,
-          this._ra,
-        ),
+        crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
       ]),
     );
   }
@@ -149,16 +134,7 @@ class Smp extends events.EventEmitter {
 
     const pcnf: any = Buffer.concat([
       Buffer.from([SMP.PAIRING_CONFIRM]),
-      crypto.c1(
-        this._tk,
-        r,
-        this._pres,
-        this._preq,
-        this._iat,
-        this._ia,
-        this._rat,
-        this._ra,
-      ),
+      crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
     ]);
 
     if (this._pcnf.toString("hex") === pcnf.toString("hex")) {

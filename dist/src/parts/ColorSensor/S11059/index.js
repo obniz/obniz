@@ -47,5 +47,4 @@ class S11059 {
     }
 }
 exports.default = S11059;
-
 //# sourceMappingURL=index.js.map

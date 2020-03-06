@@ -5,7 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface Keyestudio_ButtonOptions {
   signal: number;
@@ -14,7 +14,6 @@ export interface Keyestudio_ButtonOptions {
 }
 
 export default class Keyestudio_Button implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Keyestudio_Button",
@@ -37,8 +36,7 @@ export default class Keyestudio_Button implements ObnizPartsInterface {
     this.requiredKeys = ["signal"];
   }
 
-  public onChangeForStateWait = (pressed: boolean) => {
-  }
+  public onChangeForStateWait = (pressed: boolean) => {};
 
   public wired(obniz: Obniz) {
     this.io_signal = obniz.getIO(this.params.signal);
@@ -72,8 +70,7 @@ export default class Keyestudio_Button implements ObnizPartsInterface {
     return new Promise((resolve, reject) => {
       this.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
-          this.onChangeForStateWait = () => {
-          };
+          this.onChangeForStateWait = () => {};
           resolve();
         }
       };

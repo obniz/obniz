@@ -83,11 +83,8 @@ class BlePeripheral {
     end() {
         this.Obniz.send({ ble: { peripheral: null } });
     }
-    onconnectionupdates() {
-    }
-    onerror() {
-    }
+    onconnectionupdates() { }
+    onerror() { }
 }
 exports.default = BlePeripheral;
-
 //# sourceMappingURL=blePeripheral.js.map

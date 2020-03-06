@@ -117,9 +117,7 @@ class WSCommandBle extends WSCommand_1.default {
     }
     /* CENTRAL   */
     centralScanStart(params) {
-        const schema = [
-            { path: "scan.duration", length: 4, type: "int", default: 30 },
-        ];
+        const schema = [{ path: "scan.duration", length: 4, type: "int", default: 30 }];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandStartScan, buf);
     }
@@ -960,8 +958,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "data", type: "dataArray", length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
     }
     notifyFromBinaryWriteChacateristics(objToSend, payload) {
@@ -972,8 +969,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
     }
     notifyFromBinaryRegisterNotifyChacateristic(objToSend, payload) {
@@ -984,8 +980,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.register_notify_characteristic_result", results);
     }
     notifyFromBinaryUnregisterNotifyChacateristic(objToSend, payload) {
@@ -996,8 +991,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.unregister_notify_characteristic_result", results);
     }
     notifyFromBinaryNotifyChacateristic(objToSend, payload) {
@@ -1038,8 +1032,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "data", type: "dataArray", length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
     }
     notifyFromBinaryWriteDescriptor(objToSend, payload) {
@@ -1051,8 +1044,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
     }
     notifyFromBinaryServerConnectionState(objToSend, payload) {
@@ -1075,8 +1067,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
     }
     notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
@@ -1127,8 +1118,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
     }
     notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
@@ -1214,10 +1204,7 @@ class WSCommandBle extends WSCommand_1.default {
             39: "on set security io capability",
             40: "on clear bonding devices list",
         };
-        results.message =
-            errorMessage[results.error_code] +
-                " " +
-                functionMessage[results.function_code];
+        results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
         this.envelopError(objToSend, "ble", results);
     }
     _addRowForPath(sendObj, path, row) {
@@ -1231,5 +1218,4 @@ class WSCommandBle extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandBle;
-
 //# sourceMappingURL=WSCommandBle.js.map

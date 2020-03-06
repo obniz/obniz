@@ -9,7 +9,6 @@ import nodeDir = require("node-dir");
 import path = require("path");
 
 export default (directory: string, recursive: boolean, regExp: RegExp): any => {
-
   // Assume absolute path by default
   let basepath: any = directory;
 

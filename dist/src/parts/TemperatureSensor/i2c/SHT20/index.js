@@ -3,14 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SHT20 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = [
-            "vcc",
-            "sda",
-            "scl",
-            "gnd",
-            "i2c",
-            "pull",
-        ];
+        this.keys = ["vcc", "sda", "scl", "gnd", "i2c", "pull"];
         this.ioKeys = ["vcc", "sda", "scl", "gnd"];
         this.commands = {};
         this.commands.softReset = [0xfe];
@@ -41,13 +34,13 @@ class SHT20 {
         if (this.checkCRC(rawValue, data[2]) !== 0) {
             return -2;
         }
-        return rawValue & 0xFFFC;
+        return rawValue & 0xfffc;
     }
     async getTempWait() {
         const rawTemperature = await this.getData(this.commands.tempNoHold);
         if (rawTemperature < 0) {
             console.log("error sht20", rawTemperature);
-            return (rawTemperature);
+            return rawTemperature;
         }
         return rawTemperature * (175.72 / 65536.0) - 46.85;
     }
@@ -55,7 +48,7 @@ class SHT20 {
         const rawHumidity = await this.getData(this.commands.humidityNoHold);
         if (rawHumidity < 0) {
             console.log("error sht20", rawHumidity);
-            return (rawHumidity);
+            return rawHumidity;
         }
         return rawHumidity * (125.0 / 65536.0) - 6.0;
     }
@@ -64,7 +57,7 @@ class SHT20 {
         remainder |= check_value_from_sensor;
         let divsor = 0x988000;
         for (let i = 0; i < 16; i++) {
-            if (remainder & 1 << (23 - i)) {
+            if (remainder & (1 << (23 - i))) {
                 remainder ^= divsor;
             }
             divsor >>= 1;
@@ -73,5 +66,4 @@ class SHT20 {
     }
 }
 exports.default = SHT20;
-
 //# sourceMappingURL=index.js.map

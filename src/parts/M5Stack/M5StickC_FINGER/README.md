@@ -11,7 +11,7 @@ When using M5StickC, You do not need to assign pins.
 
 ```javascript
 // JavaScript Examples
-var sensor = obniz.wired("StickC_FINGER");
+var sensor = obniz.wired("M5StickC_FINGER");
 ```
 
 

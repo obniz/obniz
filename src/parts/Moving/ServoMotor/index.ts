@@ -4,9 +4,9 @@
  */
 
 import Obniz from "../../../obniz";
-import PeripheralPWM, {PWMInterface} from "../../../obniz/libs/io_peripherals/pwm";
+import PeripheralPWM, { PWMInterface } from "../../../obniz/libs/io_peripherals/pwm";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface ServoMotorOptions {
   vcc?: number;
@@ -16,7 +16,6 @@ export interface ServoMotorOptions {
 }
 
 export default class ServoMotor implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "ServoMotor",
@@ -59,7 +58,7 @@ export default class ServoMotor implements ObnizPartsInterface {
       if (typeof this.pwm_io_num !== "number") {
         throw new Error(`no io specified for pwm`);
       }
-      this.pwm.start({io: this.pwm_io_num});
+      this.pwm.start({ io: this.pwm_io_num });
     }
     this.pwm.freq(50);
   }

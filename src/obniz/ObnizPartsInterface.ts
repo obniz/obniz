@@ -11,7 +11,7 @@ export interface ObnizPartsInfo {
 }
 
 export default abstract class ObnizPartsInterface {
-  public static info: (() => ObnizPartsInfo);
+  public static info: () => ObnizPartsInfo;
 
   public abstract keys: string[];
   public abstract requiredKeys: string[];

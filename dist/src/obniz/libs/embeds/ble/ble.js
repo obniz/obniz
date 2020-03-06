@@ -57,10 +57,8 @@ class ObnizBLE {
         return str;
     }
     // dummy
-    async initWait() {
-    }
-    _reset() {
-    }
+    async initWait() { }
+    _reset() { }
     directConnect(uuid, addressType) {
         throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
     }
@@ -226,9 +224,7 @@ class ObnizBLE {
                 peripheral = this.findPeripheral(params.address);
             }
             if (peripheral) {
-                if (params.service_uuid &&
-                    params.characteristic_uuid &&
-                    params.descriptor_uuid) {
+                if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
                     target = peripheral.findDescriptor(params);
                 }
                 else if (params.service_uuid && params.characteristic_uuid) {
@@ -257,5 +253,4 @@ class ObnizBLE {
     }
 }
 exports.default = ObnizBLE;
-
 //# sourceMappingURL=ble.js.map

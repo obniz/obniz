@@ -71,18 +71,17 @@ class I2cPartsAbstract {
         this.write(address, tempdata);
     }
     async readInt16Wait(register, endian = "b") {
-        const data = await this.readWait(register, 2);
+        const data = (await this.readWait(register, 2));
         return I2cPartsAbstract.charArrayToInt16(data, endian);
     }
     async readThreeInt16Wait(register, endian = "b") {
         const data = await this.readWait(register, 6);
         const results = [0, 0, 0];
-        results[0] = (I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian));
-        results[1] = (I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian));
-        results[2] = (I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian));
+        results[0] = I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian);
+        results[1] = I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian);
+        results[2] = I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian);
         return results;
     }
 }
 exports.default = I2cPartsAbstract;
-
 //# sourceMappingURL=i2cParts.js.map

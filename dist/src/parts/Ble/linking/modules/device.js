@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - device.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-03
-* ---------------------------------------------------------------- */
+ * node-linking - device.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-03
+ * ---------------------------------------------------------------- */
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -62,8 +62,7 @@ class LinkingDevice {
         }
         let onprogress = this.onconnectprogress;
         if (!this._isFunction(this.onconnectprogress)) {
-            onprogress = () => {
-            };
+            onprogress = () => { };
         }
         const peripheral = this._peripheral;
         onprogress({ step: 1, desc: "CONNECTING" });
@@ -176,9 +175,11 @@ class LinkingDevice {
                 resolve(null);
                 return;
             }
-            this.write("CONFIRM_NOTIFY_CATEGORY").then((res) => {
+            this.write("CONFIRM_NOTIFY_CATEGORY")
+                .then((res) => {
                 resolve(res);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -190,9 +191,11 @@ class LinkingDevice {
                 resolve(null);
                 return;
             }
-            this.write("GET_SETTING_INFORMATION").then((res) => {
+            this.write("GET_SETTING_INFORMATION")
+                .then((res) => {
                 resolve(res);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -206,39 +209,41 @@ class LinkingDevice {
             }
             const s = this.info.settings;
             if (name === "LEDColorName") {
-                if (!(("LED" in s) && s.LED.colorMax)) {
+                if (!("LED" in s && s.LED.colorMax)) {
                     resolve(null);
                     return;
                 }
             }
             else if (name === "LEDPatternName") {
-                if (!(("LED" in s) && s.LED.patternMax)) {
+                if (!("LED" in s && s.LED.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
             else if (name === "VibrationPatternName") {
-                if (!(("Vibration" in s) && s.Vibration.patternMax)) {
+                if (!("Vibration" in s && s.Vibration.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
             else if (name === "BeepPatternName") {
-                if (!(("Beep" in s) && s.Beep.patternMax)) {
+                if (!("Beep" in s && s.Beep.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
-            this.write("GET_SETTING_NAME", { SettingNameType: name }).then((res) => {
+            this.write("GET_SETTING_NAME", { SettingNameType: name })
+                .then((res) => {
                 resolve(res);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
         return promise;
     }
     _isFunction(o) {
-        return (o && typeof (o) === "function") ? true : false;
+        return o && typeof o === "function" ? true : false;
     }
     _getServicesAndChars() {
         const peripheral = this._peripheral;
@@ -282,7 +287,7 @@ class LinkingDevice {
     }
     _isExecutedPacket(buf) {
         const ph = buf.readUInt8(0);
-        return (ph & 0x00000001) ? true : false;
+        return ph & 0x00000001 ? true : false;
     }
     _receivedIndicate(buf) {
         const parsed = this._LinkingService.parseResponse(buf);
@@ -300,8 +305,10 @@ class LinkingDevice {
                 this.onnotify(parsed);
             }
             // Button
-            if (parsed.serviceId === 2) { // PeripheralDeviceOperation Service
-                if (parsed.messageId === 0) { // NOTIFY_PD_OPERATION
+            if (parsed.serviceId === 2) {
+                // PeripheralDeviceOperation Service
+                if (parsed.messageId === 0) {
+                    // NOTIFY_PD_OPERATION
                     // let f = this.services['button']['onnotify'];
                     let f = null;
                     if (this.services.button) {
@@ -312,7 +319,8 @@ class LinkingDevice {
                     if (f) {
                         let button = null;
                         parsed.parameters.forEach((p) => {
-                            if (p.parameterId === 2) { // ButtonId
+                            if (p.parameterId === 2) {
+                                // ButtonId
                                 button = {
                                     buttonId: p.buttonId,
                                     buttonName: p.buttonName,
@@ -324,52 +332,67 @@ class LinkingDevice {
                 }
                 // Sensors
             }
-            else if (parsed.serviceId === 3) { // PeripheralDeviceSensorInformation Service
-                if (parsed.messageId === 4) { // NOTIFY_PD_SENSOR_INFO
+            else if (parsed.serviceId === 3) {
+                // PeripheralDeviceSensorInformation Service
+                if (parsed.messageId === 4) {
+                    // NOTIFY_PD_SENSOR_INFO
                     let sensor_type = -1;
                     let res = {};
                     parsed.parameters.forEach((p) => {
                         const pid = p.parameterId;
-                        if (pid === 2) { // SensorType
+                        if (pid === 2) {
+                            // SensorType
                             sensor_type = p.sensorTypeCode;
                         }
                         else {
-                            if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
-                                if (pid === 4) { // X_value
+                            if (sensor_type.toString().match(/^(0|1|2)$/)) {
+                                // Gyroscope, Accelerometer, Orientation
+                                if (pid === 4) {
+                                    // X_value
                                     res.x = p.xValue;
                                 }
-                                else if (pid === 5) { // Y_value
+                                else if (pid === 5) {
+                                    // Y_value
                                     res.y = p.yValue;
                                 }
-                                else if (pid === 6) { // Z_value
+                                else if (pid === 6) {
+                                    // Z_value
                                     res.z = p.zValue;
                                 }
                             }
-                            else if (sensor_type === 3) { // Battery
+                            else if (sensor_type === 3) {
+                                // Battery
                                 res = {
                                     charge: p.charge,
                                     level: p.level,
                                 };
                             }
-                            else if (sensor_type === 4) { // Temperature
+                            else if (sensor_type === 4) {
+                                // Temperature
                                 res.temperature = p.temperature;
                             }
-                            else if (sensor_type === 5) { // Humidity
+                            else if (sensor_type === 5) {
+                                // Humidity
                                 res.humidity = p.humidity;
                             }
-                            else if (sensor_type === 6) { // Aire pressure
+                            else if (sensor_type === 6) {
+                                // Aire pressure
                                 res.pressure = p.pressure;
                             }
-                            else if (sensor_type === 7) { // Opening and closing
+                            else if (sensor_type === 7) {
+                                // Opening and closing
                                 res.openclose = p.openclose;
                             }
-                            else if (sensor_type === 8) { // Human detection
+                            else if (sensor_type === 8) {
+                                // Human detection
                                 res.human = p.human;
                             }
-                            else if (sensor_type === 9) { // Move
+                            else if (sensor_type === 9) {
+                                // Move
                                 res.move = p.move;
                             }
-                            else if (sensor_type === 0x0a) { // Illuminance
+                            else if (sensor_type === 0x0a) {
+                                // Illuminance
                                 res.illuminance = p.illuminance;
                             }
                         }
@@ -632,7 +655,7 @@ class LinkingDevice {
                 reject(new Error("Device name is required."));
                 return;
             }
-            else if (typeof (name) !== "string") {
+            else if (typeof name !== "string") {
                 reject(new Error("Device name must be a string."));
                 return;
             }
@@ -657,7 +680,7 @@ class LinkingDevice {
         let color_number = 1;
         if (color) {
             const colors = this.services.led.colors;
-            if (typeof (color) === "number") {
+            if (typeof color === "number") {
                 for (const name in colors) {
                     if (colors[name] === color) {
                         color_number = color;
@@ -665,7 +688,7 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof (color) === "string") {
+            else if (typeof color === "string") {
                 if (color in colors) {
                     color_number = colors[color];
                 }
@@ -674,7 +697,7 @@ class LinkingDevice {
         let pattern_number = 2;
         if (pattern) {
             const patterns = this.services.led.patterns;
-            if (typeof (pattern) === "number") {
+            if (typeof pattern === "number") {
                 for (const name in patterns) {
                     if (patterns[name] === pattern) {
                         pattern_number = pattern;
@@ -682,13 +705,13 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof (pattern) === "string") {
+            else if (typeof pattern === "string") {
                 if (pattern in patterns) {
                     pattern_number = patterns[pattern];
                 }
             }
         }
-        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+        if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
             duration = 5;
         }
         const promise = new Promise((resolve, reject) => {
@@ -704,9 +727,11 @@ class LinkingDevice {
                         duration,
                     },
                 ],
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -718,9 +743,11 @@ class LinkingDevice {
                 SettingInformationRequest: {
                     requestName: "STOP_DEMONSTRATION",
                 },
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -730,7 +757,7 @@ class LinkingDevice {
         let pattern_number = 2;
         if (pattern) {
             const patterns = this.services.vibration.patterns;
-            if (typeof (pattern) === "number") {
+            if (typeof pattern === "number") {
                 for (const name in patterns) {
                     if (patterns[name] === pattern) {
                         pattern_number = pattern;
@@ -738,13 +765,13 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof (pattern) === "string") {
+            else if (typeof pattern === "string") {
                 if (pattern in patterns) {
                     pattern_number = patterns[pattern];
                 }
             }
         }
-        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+        if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
             duration = 5;
         }
         const promise = new Promise((resolve, reject) => {
@@ -759,9 +786,11 @@ class LinkingDevice {
                         duration,
                     },
                 ],
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -773,9 +802,11 @@ class LinkingDevice {
                 SettingInformationRequest: {
                     requestName: "STOP_DEMONSTRATION",
                 },
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -800,9 +831,11 @@ class LinkingDevice {
             this.write("SET_NOTIFY_SENSOR_INFO", {
                 SensorType: sensor_type,
                 Status: status,
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -812,8 +845,10 @@ class LinkingDevice {
         const promise = new Promise((resolve, reject) => {
             this.write("GET_SENSOR_INFO", {
                 SensorType: sensor_type,
-            }).then((res) => {
-                if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
+            })
+                .then((res) => {
+                if (sensor_type.toString().match(/^(0|1|2)$/)) {
+                    // Gyroscope, Accelerometer, Orientation
                     const d = res.data;
                     const data = {
                         x: d.xValue,
@@ -825,7 +860,8 @@ class LinkingDevice {
                 else {
                     resolve(res.data);
                 }
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -833,5 +869,4 @@ class LinkingDevice {
     }
 }
 exports.default = LinkingDevice;
-
 //# sourceMappingURL=device.js.map

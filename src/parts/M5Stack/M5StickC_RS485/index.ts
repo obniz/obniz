@@ -6,9 +6,9 @@
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  M5StickC_RS485Options {
+export interface M5StickC_RS485Options {
   tx: number;
   rx: number;
   gnd?: number;
@@ -17,7 +17,6 @@ export interface  M5StickC_RS485Options {
 }
 
 export default class M5StickC_RS485 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "M5StickC_RS485",

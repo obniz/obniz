@@ -9,16 +9,14 @@
 import Obniz from "../../../obniz";
 import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 import LinkingAdvertising from "./modules/advertising";
 import LinkingDevice from "./modules/device";
 
-export interface LinkingOptions {
-}
+export interface LinkingOptions {}
 
 export default class Linking {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Linking",
@@ -40,7 +38,6 @@ export default class Linking {
   public obniz!: Obniz;
 
   constructor(params: any) {
-
     this.keys = [];
     this.requiredKeys = [];
     this.periperal = null;
@@ -124,18 +121,12 @@ export default class Linking {
       return;
     }
     if (this._discover_status === true) {
-      throw new Error(
-        "The `discover()` or the `startScan()` method is in progress.",
-      );
+      throw new Error("The `discover()` or the `startScan()` method is in progress.");
       return;
     }
   }
 
-  public _discoveredDevice(
-    peripheral: bleRemotePeripheral,
-    name_filter: any,
-    id_filter: any,
-  ) {
+  public _discoveredDevice(peripheral: bleRemotePeripheral, name_filter: any, id_filter: any) {
     if (!peripheral.localName) {
       return null;
     }

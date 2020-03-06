@@ -1,19 +1,17 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstractOptions} from "../../i2cParts";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import { I2cPartsAbstractOptions } from "../../i2cParts";
 
-export interface M5StickC_ADCOptions extends I2cPartsAbstractOptions {
-}
+export interface M5StickC_ADCOptions extends I2cPartsAbstractOptions {}
 
 export default class M5StickC_ADC implements ObnizPartsInterface {
-
-    public static info(): ObnizPartsInfo {
-        return {
-            name: "M5StickC_ADC",
-        };
-    }
+  public static info(): ObnizPartsInfo {
+    return {
+      name: "M5StickC_ADC",
+    };
+  }
 
   public keys: string[];
   public requiredKeys: string[];
@@ -39,27 +37,27 @@ export default class M5StickC_ADC implements ObnizPartsInterface {
     this.address = 0x48;
     this.conversionDelay = 100;
     this.config_regs = {
-      OS_MASK: 0x80,   // Conversion
-      OS_NOEFFECT: 0x00,   // Write: Bit = 0 No effect
-      OS_SINGLE: 0x80,   // Write: Bit = 1 Begin a conversion (default)
-      OS_BUSY: 0x00,   // Read: Bit = 0 Device is not performing a conversion
-      OS_NOTBUSY: 0x80,   // Read: Bit = 1 Device is busy performing a conversion
+      OS_MASK: 0x80, // Conversion
+      OS_NOEFFECT: 0x00, // Write: Bit = 0 No effect
+      OS_SINGLE: 0x80, // Write: Bit = 1 Begin a conversion (default)
+      OS_BUSY: 0x00, // Read: Bit = 0 Device is not performing a conversion
+      OS_NOTBUSY: 0x80, // Read: Bit = 1 Device is busy performing a conversion
 
-      MODE_MASK: 0x10,   // Device operating mode
-      MODE_CONTIN: 0x00,   // Continuous conversion mode (default)
-      MODE_SINGLE: 0x10,   // Single-conversion mode
+      MODE_MASK: 0x10, // Device operating mode
+      MODE_CONTIN: 0x00, // Continuous conversion mode (default)
+      MODE_SINGLE: 0x10, // Single-conversion mode
 
-      DR_MASK: 0x0C,   // Data rate
-      DR_128SPS: 0x00,   // 128 samples per second
-      DR_32SPS: 0x04,   // 32 samples per second
-      DR_16SPS: 0x08,   // 16 samples per second
-      DR_8SPS: 0x0C,   // 8 samples per second (default)
+      DR_MASK: 0x0c, // Data rate
+      DR_128SPS: 0x00, // 128 samples per second
+      DR_32SPS: 0x04, // 32 samples per second
+      DR_16SPS: 0x08, // 16 samples per second
+      DR_8SPS: 0x0c, // 8 samples per second (default)
 
-      PGA_MASK: 0x03,   // Programmable gain amplifier configuration
-      PGA_1: 0x00,   // Gain 1 (default)
-      PGA_2: 0x01,   // Gain 2
-      PGA_4: 0x02,   // Gain 4
-      PGA_8: 0x03,   // Gain 8
+      PGA_MASK: 0x03, // Programmable gain amplifier configuration
+      PGA_1: 0x00, // Gain 1 (default)
+      PGA_2: 0x01, // Gain 2
+      PGA_4: 0x02, // Gain 4
+      PGA_8: 0x03, // Gain 8
     };
     this.os = this.config_regs.OS_SINGLE;
     this.mode = this.config_regs.MODE_CONTIN;
@@ -72,9 +70,7 @@ export default class M5StickC_ADC implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
 
-    if (!this.obniz.isValidIO(this.params.sda)
-      && !this.obniz.isValidIO(this.params.scl)
-      && !this.params.i2c) {
+    if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
       if (this.obniz.hasExtraInterface("m5stickc_hat")) {
         const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
         this.params.sda = hatI2c.sda;
@@ -95,7 +91,7 @@ export default class M5StickC_ADC implements ObnizPartsInterface {
 
   public async getVoltageWait() {
     const raw = await this.getWait();
-    const voltage = raw * 3.3 / (this.minCode) * 4;
+    const voltage = ((raw * 3.3) / this.minCode) * 4;
     return voltage;
   }
 
@@ -159,7 +155,7 @@ export default class M5StickC_ADC implements ObnizPartsInterface {
     this.i2c.write(this.address, [this.config]);
     await this.obniz.wait(this.conversionDelay);
     const ret = await this.i2c.readWait(this.address, 2);
-    return ((ret[0] << 8) | ret[1]);
+    return (ret[0] << 8) | ret[1];
   }
 
   private updateConfig() {

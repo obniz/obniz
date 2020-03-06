@@ -102,6 +102,7 @@ module.exports = {
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
+    "tslint-plugin-prettier": "^2.1.0",
     "typescript": "^3.7.5",
     "typedoc": "^0.16.9",
     "typedoc-plugin-external-module-name": "^3.0.0",
@@ -141,4 +142,5 @@ module.exports = {
     "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser"
   }
-};
+}
+;

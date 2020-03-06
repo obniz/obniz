@@ -45,15 +45,7 @@ class Hx711 {
             miso: this.params.dout,
             frequency: 500 * 1000,
         });
-        const ret_double = await this.spi.writeWait([
-            0xaa,
-            0xaa,
-            0xaa,
-            0xaa,
-            0xaa,
-            0xaa,
-            0x80,
-        ]);
+        const ret_double = await this.spi.writeWait([0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x80]);
         this.spi.end(true);
         this.sck.output(false);
         const ret = [
@@ -115,5 +107,4 @@ class Hx711 {
     }
 }
 exports.default = Hx711;
-
 //# sourceMappingURL=index.js.map

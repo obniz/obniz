@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - service-property.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-10-24
-* ---------------------------------------------------------------- */
+ * node-linking - service-property.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
 "use strict";
 
 export default class LinkingServiceProperty {
@@ -21,9 +21,7 @@ export default class LinkingServiceProperty {
   };
   private _device: any = {};
 
-  constructor() {
-
-  }
+  constructor() {}
 
   public setDeviceInfo(info: any) {
     this._device = info;
@@ -43,8 +41,7 @@ export default class LinkingServiceProperty {
         offset += plen;
         parameters.push(this._parseParameter(pid, pvalue_buf));
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     return parameters;
   }
 
@@ -113,19 +110,19 @@ export default class LinkingServiceProperty {
     const v = buf.readUInt8(0);
     const list = [];
     if (v & 0b00000001) {
-      list.push({id: 0, name: "PeripheralDevicePropertyInformation"});
+      list.push({ id: 0, name: "PeripheralDevicePropertyInformation" });
     }
     if (v & 0b00000010) {
-      list.push({id: 1, name: "PeripheralDeviceNotification"});
+      list.push({ id: 1, name: "PeripheralDeviceNotification" });
     }
     if (v & 0b00000100) {
-      list.push({id: 2, name: "PeripheralDeviceOperation"});
+      list.push({ id: 2, name: "PeripheralDeviceOperation" });
     }
     if (v & 0b00001000) {
-      list.push({id: 3, name: "PeripheralDeviceSensorInformation"});
+      list.push({ id: 3, name: "PeripheralDeviceSensorInformation" });
     }
     if (v & 0b00010000) {
-      list.push({id: 4, name: "PeripheralDeviceSettingOperation"});
+      list.push({ id: 4, name: "PeripheralDeviceSettingOperation" });
     }
     return {
       name: "ServiceList",
@@ -151,25 +148,25 @@ export default class LinkingServiceProperty {
     const v = buf.readUInt8(0);
     const list = [];
     if (v & 0b00000010) {
-      list.push({id: 1, name: "Gyroscope"});
+      list.push({ id: 1, name: "Gyroscope" });
     }
     if (v & 0b00000100) {
-      list.push({id: 2, name: "Accelerometer"});
+      list.push({ id: 2, name: "Accelerometer" });
     }
     if (v & 0b00001000) {
-      list.push({id: 3, name: "Orientation"});
+      list.push({ id: 3, name: "Orientation" });
     }
     if (v & 0b00010000) {
-      list.push({id: 4, name: "Battery"});
+      list.push({ id: 4, name: "Battery" });
     }
     if (v & 0b00100000) {
-      list.push({id: 5, name: "Temperature"});
+      list.push({ id: 5, name: "Temperature" });
     }
     if (v & 0b01000000) {
-      list.push({id: 6, name: "Humidity"});
+      list.push({ id: 6, name: "Humidity" });
     }
     if (v & 0b10000000) {
-      list.push({id: 7, name: "Atmospheric pressure"});
+      list.push({ id: 7, name: "Atmospheric pressure" });
     }
     return {
       name: "DeviceCapability",
@@ -211,28 +208,28 @@ export default class LinkingServiceProperty {
     const v = buf.readUInt8(0);
     const list = [];
     if (v & 0b00000001) {
-      list.push({id: 0, name: "Version"});
+      list.push({ id: 0, name: "Version" });
     }
     if (v & 0b00000010) {
-      list.push({id: 1, name: "Version"});
+      list.push({ id: 1, name: "Version" });
     }
     if (v & 0b00000100) {
-      list.push({id: 2, name: "Flag"});
+      list.push({ id: 2, name: "Flag" });
     }
     if (v & 0b00001000) {
-      list.push({id: 3, name: "Button"});
+      list.push({ id: 3, name: "Button" });
     }
     if (v & 0b00010000) {
-      list.push({id: 4, name: "Opening and closing"});
+      list.push({ id: 4, name: "Opening and closing" });
     }
     if (v & 0b00100000) {
-      list.push({id: 5, name: "Human detection"});
+      list.push({ id: 5, name: "Human detection" });
     }
     if (v & 0b01000000) {
-      list.push({id: 6, name: "Move"});
+      list.push({ id: 6, name: "Move" });
     }
     if (v & 0b10000000) {
-      list.push({id: 7, name: "Illuminance"});
+      list.push({ id: 7, name: "Illuminance" });
     }
     return {
       name: "ExSensorType",

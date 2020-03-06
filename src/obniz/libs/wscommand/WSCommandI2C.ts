@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -124,11 +123,11 @@ class WSCommandI2C extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/i2c/init_master", onValid: this.initMaster},
-        {uri: "/request/i2c/init_slave", onValid: this.initSlave},
-        {uri: "/request/i2c/write", onValid: this.write},
-        {uri: "/request/i2c/read", onValid: this.read},
-        {uri: "/request/i2c/deinit", onValid: this.deinit},
+        { uri: "/request/i2c/init_master", onValid: this.initMaster },
+        { uri: "/request/i2c/init_slave", onValid: this.initSlave },
+        { uri: "/request/i2c/write", onValid: this.write },
+        { uri: "/request/i2c/read", onValid: this.read },
+        { uri: "/request/i2c/deinit", onValid: this.deinit },
       ];
       const res: any = this.validateCommandSchema(schemaData, module, "i2c" + i, i);
 
@@ -178,21 +177,15 @@ class WSCommandI2C extends WSCommand {
       const err: any = payload[1];
       const ref_func_id: any = payload[2];
 
-      if (
-        ref_func_id === this._CommandWrite ||
-        ref_func_id === this._CommandRead
-      ) {
-        let reason: any =
-          "" +
-          (ref_func_id === this._CommandWrite ? "writing" : "reading") +
-          " error. ";
+      if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
+        let reason: any = "" + (ref_func_id === this._CommandWrite ? "writing" : "reading") + " error. ";
         if (err === 7) {
           // in fact. it is 0x107. but truncated
           reason += "Communication Timeout. Maybe, target is not connected.";
         } else if (err === 255) {
           reason += "Communication Failed. Maybe, target is not connected.";
         }
-        this.envelopError(objToSend, `i2c0`, {message: reason});
+        this.envelopError(objToSend, `i2c0`, { message: reason });
       } else {
         super.notifyFromBinary(objToSend, func, payload);
       }

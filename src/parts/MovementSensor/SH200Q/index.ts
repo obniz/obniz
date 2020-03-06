@@ -2,17 +2,16 @@
  * @packageDocumentation
  * @module Parts.SH200Q
  */
-import i2cParts, {I2cInfo, I2cPartsAbstractOptions} from "../../i2cParts";
+import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import I2cImu6, {accelRange, gyroRange, Inertia6, Xyz} from "../../i2cImu6";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import I2cImu6, { accelRange, gyroRange, Inertia6, Xyz } from "../../i2cImu6";
 
 export type SH200QAccelRange = "4g" | "8g" | "16g";
 export type SH200QGyroRange = "125dps" | "250dps" | "500dps" | "1000dps" | "2000dps";
 
-export interface SH200QOptions extends I2cPartsAbstractOptions {
-}
+export interface SH200QOptions extends I2cPartsAbstractOptions {}
 
 export default class SH200Q extends I2cImu6 {
   public static commands = {
@@ -61,7 +60,6 @@ export default class SH200Q extends I2cImu6 {
 
   constructor() {
     super();
-
   }
 
   public wired(obniz: Obniz) {
@@ -138,9 +136,7 @@ export default class SH200Q extends I2cImu6 {
         this.setGyroRange("2000dps");
         break;
       default:
-        throw new Error(
-          "gyroscope_range variable 125,250,500,1000,2000 setting",
-        );
+        throw new Error("gyroscope_range variable 125,250,500,1000,2000 setting");
     }
   }
 

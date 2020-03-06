@@ -555,7 +555,7 @@ class Display {
         }
     }
     _draw(ctx) {
-        const raw = new Array(this.width * this.height * this._colorDepth / 8);
+        const raw = new Array((this.width * this.height * this._colorDepth) / 8);
         const imageData = ctx.getImageData(0, 0, this.width, this.height);
         const data = imageData.data;
         if (this._colorDepth === 16) {
@@ -564,8 +564,8 @@ class Display {
                 const green = data[pixel_index * 4 + 1];
                 const blue = data[pixel_index * 4 + 2];
                 const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
-                raw[pixel_index * 2] = (hexColor >> 8) & 0xFF;
-                raw[pixel_index * 2 + 1] = hexColor & 0xFF;
+                raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
+                raw[pixel_index * 2 + 1] = hexColor & 0xff;
             }
         }
         else if (this._colorDepth === 4) {
@@ -579,16 +579,16 @@ class Display {
                 const col = Math.floor((pixel_index - line * this.width) / 2);
                 const bits = Math.floor(pixel_index - line * this.width) % 2;
                 let pixel = 0b0000;
-                if (red > 0x7F) {
+                if (red > 0x7f) {
                     pixel |= 0b1000;
                 }
-                if (green > 0x7F) {
+                if (green > 0x7f) {
                     pixel |= 0b0100;
                 }
-                if (blue > 0x7F) {
+                if (blue > 0x7f) {
                     pixel |= 0b0010;
                 }
-                if (brightness > 0x7F) {
+                if (brightness > 0x7f) {
                     pixel |= 0b0001;
                 }
                 if (bits === 0) {
@@ -612,19 +612,18 @@ class Display {
                 if (bits === 0) {
                     raw[row * stride + col] = 0x00;
                 }
-                if (brightness > 0x7F) {
+                if (brightness > 0x7f) {
                     raw[row * stride + col] |= 0x80 >> bits;
                 }
             }
         }
         if (this._raw_alternate) {
             for (let i = 0; i < raw.length; i++) {
-                raw[i] = (~raw[i]) & 0xFF;
+                raw[i] = ~raw[i] & 0xff;
             }
         }
         this.raw(raw);
     }
 }
 exports.default = Display;
-
 //# sourceMappingURL=display.js.map

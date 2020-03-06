@@ -49,14 +49,18 @@ class PeripheralGrove {
     getUart(baud, drive = "5v") {
         this.useWithType("uart", drive);
         this._current.uart = this.Obniz.getFreeUart();
-        this._current.uart.start({ rx: this._params.pin1, tx: this._params.pin2, baud, drive });
+        this._current.uart.start({
+            rx: this._params.pin1,
+            tx: this._params.pin2,
+            baud,
+            drive,
+        });
         return this._current.uart;
     }
     /**
      * @ignore
      */
-    _reset() {
-    }
+    _reset() { }
     end() {
         this.used = false;
         if (this._current.uart) {
@@ -109,5 +113,4 @@ class PeripheralGrove {
     }
 }
 exports.default = PeripheralGrove;
-
 //# sourceMappingURL=grove.js.map

@@ -21,9 +21,7 @@ class BleAdvertisementBuilder {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
             }
-            if (json.manufacturerData &&
-                json.manufacturerData.companyCode &&
-                json.manufacturerData.data) {
+            if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
                 this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
             }
             if (json.serviceUuids) {
@@ -93,9 +91,7 @@ class BleAdvertisementBuilder {
     }
     convertUuid(uuid) {
         const uuidNumeric = bleHelper_1.default.uuidFilter(uuid);
-        if (uuidNumeric.length !== 32 &&
-            uuidNumeric.length !== 8 &&
-            uuidNumeric.length !== 4) {
+        if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
             this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
         }
         const data = [];
@@ -160,5 +156,4 @@ class BleAdvertisementBuilder {
     }
 }
 exports.default = BleAdvertisementBuilder;
-
 //# sourceMappingURL=bleAdvertisementBuilder.js.map

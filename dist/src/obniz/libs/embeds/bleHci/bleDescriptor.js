@@ -70,5 +70,4 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
     }
 }
 exports.default = BleDescriptor;
-
 //# sourceMappingURL=bleDescriptor.js.map

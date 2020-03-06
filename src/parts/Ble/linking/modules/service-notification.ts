@@ -1,18 +1,17 @@
 /* ------------------------------------------------------------------
-* node-linking - service-notification.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-10-24
-* ---------------------------------------------------------------- */
+ * node-linking - service-notification.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
 "use strict";
 
 /* ------------------------------------------------------------------
-* Constructor: LinkingServiceNotification()
-* ---------------------------------------------------------------- */
+ * Constructor: LinkingServiceNotification()
+ * ---------------------------------------------------------------- */
 
 export default class LinkingServiceNotification {
-
   public SERVICE_ID = 0x01;
   public SERVICE_NAME = "PeripheralDeviceNotification";
   public MESSAGE_NAME_MAP = {
@@ -46,9 +45,7 @@ export default class LinkingServiceNotification {
   };
   private _device: any = {};
 
-  constructor() {
-
-  }
+  constructor() {}
 
   public setDeviceInfo(info: any) {
     this._device = info;
@@ -69,12 +66,11 @@ export default class LinkingServiceNotification {
         offset += plen;
         const p = this._parseParameter(pid, pvalue_buf);
         parameters.push(this._parseParameter(pid, pvalue_buf, notify_cateogry_id));
-        if (pid === 0x04 && ("id" in p)) {
+        if (pid === 0x04 && "id" in p) {
           notify_cateogry_id = p.id;
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     return parameters;
   }
 
@@ -100,17 +96,17 @@ export default class LinkingServiceNotification {
       parsed = this._parseUniqueId(buf);
     } else if (pid === 0x09) {
       parsed = this._parseNotifyId(buf);
-    } else if (pid === 0x0A) {
+    } else if (pid === 0x0a) {
       parsed = this._parseNotificationOperation(buf);
-    } else if (pid === 0x0B) {
+    } else if (pid === 0x0b) {
       parsed = this._parseTittle(buf);
-    } else if (pid === 0x0C) {
+    } else if (pid === 0x0c) {
       parsed = this._parseText(buf);
-    } else if (pid === 0x0D) {
+    } else if (pid === 0x0d) {
       parsed = this._parseAppName(buf);
-    } else if (pid === 0x0E) {
+    } else if (pid === 0x0e) {
       parsed = this._parseAppNameLocal(buf);
-    } else if (pid === 0x0F) {
+    } else if (pid === 0x0f) {
       parsed = this._parseNotifyApp(buf);
     } else if (pid === 0x10) {
       parsed = this._parseRumblingSetting(buf);
@@ -132,13 +128,13 @@ export default class LinkingServiceNotification {
       parsed = this._parseArea(buf);
     } else if (pid === 0x19) {
       parsed = this._parsePerson(buf);
-    } else if (pid === 0x1A) {
+    } else if (pid === 0x1a) {
       parsed = this._parseMimeTypeForImage(buf);
-    } else if (pid === 0x1B) {
+    } else if (pid === 0x1b) {
       parsed = this._parseMimeTypeForMedia(buf);
-    } else if (pid === 0x1C) {
+    } else if (pid === 0x1c) {
       parsed = this._parseImage(buf);
-    } else if (pid >= 0x1D && pid <= 0x26) {
+    } else if (pid >= 0x1d && pid <= 0x26) {
       parsed = this._parseContents(buf, pid);
     } else if (pid === 0x27) {
       parsed = this._parseMedia(buf);
@@ -146,9 +142,9 @@ export default class LinkingServiceNotification {
       parsed = this._parsePackage(buf);
     } else if (pid === 0x29) {
       parsed = this._parseClass(buf);
-    } else if (pid === 0x2A) {
+    } else if (pid === 0x2a) {
       parsed = this._parseSharingInformation(buf);
-    } else if (pid === 0x2B) {
+    } else if (pid === 0x2b) {
       parsed = this._parseBeepPattern(buf);
     }
     if (parsed) {
@@ -289,23 +285,23 @@ export default class LinkingServiceNotification {
     const v1 = buf.readUInt8(0);
     const v2 = buf.readUInt8(1);
     if (v1 & 0b00000001) {
-      res = {id: 0, text: "NotNotify"};
+      res = { id: 0, text: "NotNotify" };
     } else if (v1 & 0b00000010) {
-      res = {id: 1, text: "All"};
+      res = { id: 1, text: "All" };
     } else if (v1 & 0b00000100) {
-      res = {id: 2, text: "PhoneIncomingCall"};
+      res = { id: 2, text: "PhoneIncomingCall" };
     } else if (v1 & 0b00001000) {
-      res = {id: 3, text: "PhoneInCall"};
+      res = { id: 3, text: "PhoneInCall" };
     } else if (v1 & 0b00010000) {
-      res = {id: 4, text: "PhoneIdle"};
+      res = { id: 4, text: "PhoneIdle" };
     } else if (v1 & 0b00100000) {
-      res = {id: 5, text: "Mail"};
+      res = { id: 5, text: "Mail" };
     } else if (v1 & 0b01000000) {
-      res = {id: 6, text: "Schedule"};
+      res = { id: 6, text: "Schedule" };
     } else if (v1 & 0b10000000) {
-      res = {id: 7, text: "General"};
+      res = { id: 7, text: "General" };
     } else if (v2 & 0b00000001) {
-      res = {id: 8, text: "Etc"};
+      res = { id: 8, text: "Etc" };
     }
 
     return {
@@ -332,157 +328,162 @@ export default class LinkingServiceNotification {
   public _parseParameterIdList(buf: any, notify_cateogry_id: any) {
     const v = buf.readUInt16LE(0);
     const list = [];
-    if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) { // PhoneIncomingCall/PhoneInCall/PhoneIdle
+    if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) {
+      // PhoneIncomingCall/PhoneInCall/PhoneIdle
       if (v & 0b0000000000000001) {
-        list.push({id: 0x09, name: "NotifyId"});
+        list.push({ id: 0x09, name: "NotifyId" });
       }
       if (v & 0b0000000000000010) {
-        list.push({id: 0x04, name: "NotifyCategoryID"});
+        list.push({ id: 0x04, name: "NotifyCategoryID" });
       }
-    } else if (notify_cateogry_id === 5) { // Mail
+    } else if (notify_cateogry_id === 5) {
+      // Mail
       if (v & 0b0000000000000001) {
-        list.push({id: 0x0D, name: "AppName"});
+        list.push({ id: 0x0d, name: "AppName" });
       }
       if (v & 0b0000000000000010) {
-        list.push({id: 0x0E, name: "AppNameLocal"});
+        list.push({ id: 0x0e, name: "AppNameLocal" });
       }
       if (v & 0b0000000000000100) {
-        list.push({id: 0x28, name: "Package"});
+        list.push({ id: 0x28, name: "Package" });
       }
       if (v & 0b0000000000001000) {
-        list.push({id: 0x0B, name: "Tittle"});
+        list.push({ id: 0x0b, name: "Tittle" });
       }
       if (v & 0b0000000000010000) {
-        list.push({id: 0x0C, name: "Text"});
+        list.push({ id: 0x0c, name: "Text" });
       }
       if (v & 0b0000000000100000) {
-        list.push({id: 0x13, name: "Sender"});
+        list.push({ id: 0x13, name: "Sender" });
       }
       if (v & 0b0000000001000000) {
-        list.push({id: 0x14, name: "SenderAddress"});
+        list.push({ id: 0x14, name: "SenderAddress" });
       }
       if (v & 0b0000000010000000) {
-        list.push({id: 0x15, name: "ReceiveDate"});
+        list.push({ id: 0x15, name: "ReceiveDate" });
       }
       if (v & 0b0000000100000000) {
-        list.push({id: 0x09, name: "NotifyId"});
+        list.push({ id: 0x09, name: "NotifyId" });
       }
       if (v & 0b0000001000000000) {
-        list.push({id: 0x04, name: "NotifyCategoryID"});
+        list.push({ id: 0x04, name: "NotifyCategoryID" });
       }
-    } else if (notify_cateogry_id === 6) { // Schedule
+    } else if (notify_cateogry_id === 6) {
+      // Schedule
       if (v & 0b0000000000000001) {
-        list.push({id: 0x0D, name: "AppName"});
+        list.push({ id: 0x0d, name: "AppName" });
       }
       if (v & 0b0000000000000010) {
-        list.push({id: 0x0E, name: "AppNameLocal"});
+        list.push({ id: 0x0e, name: "AppNameLocal" });
       }
       if (v & 0b0000000000000100) {
-        list.push({id: 0x28, name: "Package"});
+        list.push({ id: 0x28, name: "Package" });
       }
       if (v & 0b0000000000001000) {
-        list.push({id: 0x0B, name: "Tittle"});
+        list.push({ id: 0x0b, name: "Tittle" });
       }
       if (v & 0b0000000000010000) {
-        list.push({id: 0x16, name: "StartDate"});
+        list.push({ id: 0x16, name: "StartDate" });
       }
       if (v & 0b0000000000100000) {
-        list.push({id: 0x17, name: "EndDate"});
+        list.push({ id: 0x17, name: "EndDate" });
       }
       if (v & 0b0000000001000000) {
-        list.push({id: 0x18, name: "Area"});
+        list.push({ id: 0x18, name: "Area" });
       }
       if (v & 0b0000000010000000) {
-        list.push({id: 0x19, name: "Person"});
+        list.push({ id: 0x19, name: "Person" });
       }
       if (v & 0b0000000100000000) {
-        list.push({id: 0x0C, name: "Text"});
+        list.push({ id: 0x0c, name: "Text" });
       }
       if (v & 0b0000001000000000) {
-        list.push({id: 0x1D, name: "Contents1"});
+        list.push({ id: 0x1d, name: "Contents1" });
       }
       if (v & 0b0000010000000000) {
-        list.push({id: 0x1E, name: "Contents2"});
+        list.push({ id: 0x1e, name: "Contents2" });
       }
       if (v & 0b0000100000000000) {
-        list.push({id: 0x1F, name: "Contents3"});
+        list.push({ id: 0x1f, name: "Contents3" });
       }
       if (v & 0b0001000000000000) {
-        list.push({id: 0x09, name: "NotifyId"});
+        list.push({ id: 0x09, name: "NotifyId" });
       }
       if (v & 0b0010000000000000) {
-        list.push({id: 0x04, name: "NotifyCategoryID"});
+        list.push({ id: 0x04, name: "NotifyCategoryID" });
       }
-    } else if (notify_cateogry_id === 7) { // General
+    } else if (notify_cateogry_id === 7) {
+      // General
       if (v & 0b0000000000000001) {
-        list.push({id: 0x0D, name: "AppName"});
+        list.push({ id: 0x0d, name: "AppName" });
       }
       if (v & 0b0000000000000010) {
-        list.push({id: 0x0E, name: "AppNameLocal"});
+        list.push({ id: 0x0e, name: "AppNameLocal" });
       }
       if (v & 0b0000000000000100) {
-        list.push({id: 0x28, name: "Package"});
+        list.push({ id: 0x28, name: "Package" });
       }
       if (v & 0b0000000000001000) {
-        list.push({id: 0x0B, name: "Tittle"});
+        list.push({ id: 0x0b, name: "Tittle" });
       }
       if (v & 0b0000000000010000) {
-        list.push({id: 0x0C, name: "Text"});
+        list.push({ id: 0x0c, name: "Text" });
       }
       if (v & 0b0000000000100000) {
-        list.push({id: 0x09, name: "NotifyId"});
+        list.push({ id: 0x09, name: "NotifyId" });
       }
       if (v & 0b0000000001000000) {
-        list.push({id: 0x04, name: "NotifyCategoryID"});
+        list.push({ id: 0x04, name: "NotifyCategoryID" });
       }
-    } else if (notify_cateogry_id === 8) { // Etc
+    } else if (notify_cateogry_id === 8) {
+      // Etc
       if (v & 0b0000000000000001) {
-        list.push({id: 0x0D, name: "AppName"});
+        list.push({ id: 0x0d, name: "AppName" });
       }
       if (v & 0b0000000000000010) {
-        list.push({id: 0x0E, name: "AppNameLocal"});
+        list.push({ id: 0x0e, name: "AppNameLocal" });
       }
       if (v & 0b0000000000000100) {
-        list.push({id: 0x28, name: "Package"});
+        list.push({ id: 0x28, name: "Package" });
       }
       if (v & 0b0000000000001000) {
-        list.push({id: 0x1D, name: "Contents1"});
+        list.push({ id: 0x1d, name: "Contents1" });
       }
       if (v & 0b0000000000010000) {
-        list.push({id: 0x1E, name: "Contents2"});
+        list.push({ id: 0x1e, name: "Contents2" });
       }
       if (v & 0b0000000000100000) {
-        list.push({id: 0x1F, name: "Contents3"});
+        list.push({ id: 0x1f, name: "Contents3" });
       }
       if (v & 0b0000000001000000) {
-        list.push({id: 0x20, name: "Contents4"});
+        list.push({ id: 0x20, name: "Contents4" });
       }
       if (v & 0b0000000010000000) {
-        list.push({id: 0x21, name: "Contents5"});
+        list.push({ id: 0x21, name: "Contents5" });
       }
       if (v & 0b0000000100000000) {
-        list.push({id: 0x22, name: "Contents6"});
+        list.push({ id: 0x22, name: "Contents6" });
       }
       if (v & 0b0000001000000000) {
-        list.push({id: 0x23, name: "Contents7"});
+        list.push({ id: 0x23, name: "Contents7" });
       }
       if (v & 0b0000010000000000) {
-        list.push({id: 0x1B, name: "MimeTypeForMedia"});
+        list.push({ id: 0x1b, name: "MimeTypeForMedia" });
       }
       if (v & 0b0000100000000000) {
-        list.push({id: 0x27, name: "Media"});
+        list.push({ id: 0x27, name: "Media" });
       }
       if (v & 0b0001000000000000) {
-        list.push({id: 0x1A, name: "MimeTypeForImage"});
+        list.push({ id: 0x1a, name: "MimeTypeForImage" });
       }
       if (v & 0b0010000000000000) {
-        list.push({id: 0x1C, name: "Image"});
+        list.push({ id: 0x1c, name: "Image" });
       }
       if (v & 0b0100000000000000) {
-        list.push({id: 0x09, name: "NotifyId"});
+        list.push({ id: 0x09, name: "NotifyId" });
       }
       if (v & 0b1000000000000000) {
-        list.push({id: 0x04, name: "NotifyCategoryID"});
+        list.push({ id: 0x04, name: "NotifyCategoryID" });
       }
     }
 
@@ -560,13 +561,13 @@ export default class LinkingServiceNotification {
     const list = [];
     const v = buf.readUInt8(0);
     if (v & 0b00000001) {
-      list.push({id: 0, name: "LED"});
+      list.push({ id: 0, name: "LED" });
     }
     if (v & 0b00000010) {
-      list.push({id: 1, name: "Vibration"});
+      list.push({ id: 1, name: "Vibration" });
     }
     if (v & 0b00000100) {
-      list.push({id: 2, name: "Beep"});
+      list.push({ id: 2, name: "Beep" });
     }
     return {
       name: "RumblingSetting",
@@ -928,14 +929,26 @@ export default class LinkingServiceNotification {
   public _createPayloadGetPdNotifyDetailDataResp(params: any) {
     let pnum = 0;
     let rcode = null;
-    if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+    if (
+      "ResultCode" in params &&
+      typeof params.ResultCode === "number" &&
+      params.ResultCode >= 0 &&
+      params.ResultCode <= 0xff &&
+      params.ResultCode % 1 === 0
+    ) {
       rcode = params.ResultCode;
       pnum++;
     } else {
       return null;
     }
     let uid = null;
-    if (("UniqueId" in params) && typeof (params.UniqueId) === "number" && params.UniqueId >= 0 && params.UniqueId <= 0xFF && params.UniqueId % 1 === 0) {
+    if (
+      "UniqueId" in params &&
+      typeof params.UniqueId === "number" &&
+      params.UniqueId >= 0 &&
+      params.UniqueId <= 0xff &&
+      params.UniqueId % 1 === 0
+    ) {
       uid = params.UniqueId;
       pnum++;
     } else {
@@ -965,7 +978,13 @@ export default class LinkingServiceNotification {
   public _createPayloadStartPdApplicationResp(params: any) {
     let pnum = 0;
     let rcode: any;
-    if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+    if (
+      "ResultCode" in params &&
+      typeof params.ResultCode === "number" &&
+      params.ResultCode >= 0 &&
+      params.ResultCode <= 0xff &&
+      params.ResultCode % 1 === 0
+    ) {
       rcode = params.ResultCode;
       pnum++;
     } else {

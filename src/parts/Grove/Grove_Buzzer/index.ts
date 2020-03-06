@@ -5,7 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface Grove_BuzzerOptions {
   signal: number;
@@ -14,7 +14,6 @@ export interface Grove_BuzzerOptions {
 }
 
 export default class Grove_Buzzer implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Grove_Buzzer",
@@ -38,7 +37,7 @@ export default class Grove_Buzzer implements ObnizPartsInterface {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.pwm = obniz.getFreePwm();
-    this.pwm.start({io: this.params.signal});
+    this.pwm.start({ io: this.params.signal });
   }
 
   public play(freq: number) {

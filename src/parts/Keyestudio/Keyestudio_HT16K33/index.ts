@@ -1,12 +1,10 @@
 import Obniz from "../../../obniz";
-import {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import MatrixLED_HT16K33, {MatrixLED_HT16K33Options} from "../../Display/MatrixLED_HT16K33";
+import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import MatrixLED_HT16K33, { MatrixLED_HT16K33Options } from "../../Display/MatrixLED_HT16K33";
 
-export interface Keyestudio_HT16K33Options extends MatrixLED_HT16K33Options {
-}
+export interface Keyestudio_HT16K33Options extends MatrixLED_HT16K33Options {}
 
 export default class Keyestudio_HT16K33 extends MatrixLED_HT16K33 {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Keyestudio_HT16K33",
@@ -47,5 +45,4 @@ export default class Keyestudio_HT16K33 extends MatrixLED_HT16K33 {
     }
     super.writeVram();
   }
-
 }

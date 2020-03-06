@@ -187,10 +187,7 @@ class GYSFDMAXB {
                         }
                         this.gpsInfo.satelliteInfo.inView = sat_count;
                         let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
-                        nsat =
-                            nsat + NMEA_SATINSENTENCE > sat_count
-                                ? sat_count - nsat
-                                : NMEA_SATINSENTENCE;
+                        nsat = nsat + NMEA_SATINSENTENCE > sat_count ? sat_count - nsat : NMEA_SATINSENTENCE;
                         for (let isat = 0; isat < nsat; ++isat) {
                             const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
                             if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
@@ -348,5 +345,4 @@ class GYSFDMAXB {
     }
 }
 exports.default = GYSFDMAXB;
-
 //# sourceMappingURL=index.js.map

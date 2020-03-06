@@ -4,12 +4,12 @@
  */
 
 import semver from "semver";
-import {ObnizHciBLE, ObnizOldBLE} from "./libs/embeds/ble";
+import { ObnizHciBLE, ObnizOldBLE } from "./libs/embeds/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";
 
 import PeripheralAD from "./libs/io_peripherals/ad";
-import {DriveType} from "./libs/io_peripherals/common";
+import { DriveType } from "./libs/io_peripherals/common";
 import PeripheralDirective from "./libs/io_peripherals/directive";
 import PeripheralI2C from "./libs/io_peripherals/i2c";
 import PeripheralIO from "./libs/io_peripherals/io";
@@ -25,10 +25,9 @@ import ObnizParts from "./ObnizParts";
 
 import HW from "./libs/hw";
 import PeripheralGrove from "./libs/io_peripherals/grove";
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 
 export default class ObnizComponents extends ObnizParts {
-
   /* board peripherals */
 
   /**
@@ -373,8 +372,7 @@ export default class ObnizComponents extends ObnizParts {
   }
 
   public getExtraInterface(interfaceName: string): any {
-    if (this._hwDefinition.extraInterface
-      && this._hwDefinition.extraInterface[interfaceName]) {
+    if (this._hwDefinition.extraInterface && this._hwDefinition.extraInterface[interfaceName]) {
       return this._hwDefinition.extraInterface[interfaceName];
     }
     return null;

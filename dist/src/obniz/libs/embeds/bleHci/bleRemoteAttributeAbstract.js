@@ -31,8 +31,7 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     /**
      * @ignore
      */
-    discoverChildren() {
-    }
+    discoverChildren() { }
     /**
      * @ignore
      */
@@ -51,14 +50,12 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
      * @ignore
      * @param child
      */
-    ondiscover(child) {
-    }
+    ondiscover(child) { }
     /**
      * @ignore
      * @param children
      */
-    ondiscoverfinished(children) {
-    }
+    ondiscoverfinished(children) { }
     /**
      * @ignore
      * @param notifyName
@@ -89,5 +86,4 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     }
 }
 exports.default = BleRemoteAttributeAbstract;
-
 //# sourceMappingURL=bleRemoteAttributeAbstract.js.map

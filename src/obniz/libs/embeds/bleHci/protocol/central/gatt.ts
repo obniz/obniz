@@ -4,8 +4,7 @@
  * @ignore
  */
 // let debug = require('debug')('att');
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 /* eslint-disable no-unused-vars */
 
@@ -123,60 +122,32 @@ class Gatt extends events.EventEmitter {
       return;
     }
 
-    if (
-      this._currentCommand &&
-      data.toString("hex") === this._currentCommand.buffer.toString("hex")
-    ) {
+    if (this._currentCommand && data.toString("hex") === this._currentCommand.buffer.toString("hex")) {
       debug(this._address + ": echo ... echo ... echo ...");
     } else if (data[0] % 2 === 0) {
       if (process.env.NOBLE_MULTI_ROLE) {
-        debug(
-          this._address +
-          ": multi-role flag in use, ignoring command meant for peripheral role.",
-        );
+        debug(this._address + ": multi-role flag in use, ignoring command meant for peripheral role.");
       } else {
         const requestType: any = data[0];
-        debug(
-          this._address +
-          ": replying with REQ_NOT_SUPP to 0x" +
-          requestType.toString(16),
-        );
-        this.writeAtt(
-          this.errorResponse(requestType, 0x0000, ATT.ECODE_REQ_NOT_SUPP),
-        );
+        debug(this._address + ": replying with REQ_NOT_SUPP to 0x" + requestType.toString(16));
+        this.writeAtt(this.errorResponse(requestType, 0x0000, ATT.ECODE_REQ_NOT_SUPP));
       }
-    } else if (
-      data[0] === ATT.OP_HANDLE_NOTIFY ||
-      data[0] === ATT.OP_HANDLE_IND
-    ) {
+    } else if (data[0] === ATT.OP_HANDLE_NOTIFY || data[0] === ATT.OP_HANDLE_IND) {
       const valueHandle: any = data.readUInt16LE(1);
       const valueData: any = data.slice(3);
 
       this.emit("handleNotify", this._address, valueHandle, valueData);
 
       if (data[0] === ATT.OP_HANDLE_IND) {
-        this._queueCommand(
-          this.handleConfirmation(),
-          null,
-          () => {
-            this.emit("handleConfirmation", this._address, valueHandle);
-          },
-        );
+        this._queueCommand(this.handleConfirmation(), null, () => {
+          this.emit("handleConfirmation", this._address, valueHandle);
+        });
       }
 
       for (const serviceUuid in this._services) {
         for (const characteristicUuid in this._characteristics[serviceUuid]) {
-          if (
-            this._characteristics[serviceUuid][characteristicUuid]
-              .valueHandle === valueHandle
-          ) {
-            this.emit(
-              "notification",
-              this._address,
-              serviceUuid,
-              characteristicUuid,
-              valueData,
-            );
+          if (this._characteristics[serviceUuid][characteristicUuid].valueHandle === valueHandle) {
+            this.emit("notification", this._address, serviceUuid, characteristicUuid, valueData);
           }
         }
       }
@@ -224,16 +195,12 @@ class Gatt extends events.EventEmitter {
     }
   }
 
-  public onAclStreamEncryptFail() {
-  }
+  public onAclStreamEncryptFail() {}
 
   public onAclStreamEnd() {
     this._aclStream.removeListener("data", this.onAclStreamDataBinded);
     this._aclStream.removeListener("encrypt", this.onAclStreamEncryptBinded);
-    this._aclStream.removeListener(
-      "encryptFail",
-      this.onAclStreamEncryptFailBinded,
-    );
+    this._aclStream.removeListener("encryptFail", this.onAclStreamEncryptFailBinded);
     this._aclStream.removeListener("end", this.onAclStreamEndBinded);
   }
 
@@ -383,28 +350,25 @@ class Gatt extends events.EventEmitter {
   }
 
   public exchangeMtu(mtu: any) {
-    this._queueCommand(
-      this.mtuRequest(mtu),
-      (data: any ) => {
-        const opcode: any = data[0];
+    this._queueCommand(this.mtuRequest(mtu), (data: any) => {
+      const opcode: any = data[0];
 
-        if (opcode === ATT.OP_MTU_RESP) {
-          const newMtu: any = data.readUInt16LE(1);
+      if (opcode === ATT.OP_MTU_RESP) {
+        const newMtu: any = data.readUInt16LE(1);
 
-          debug(this._address + ": new MTU is " + newMtu);
+        debug(this._address + ": new MTU is " + newMtu);
 
-          this._mtu = newMtu;
-        }
+        this._mtu = newMtu;
+      }
 
-        this.emit("mtu", this._address, this._mtu);
-      },
-    );
+      this.emit("mtu", this._address, this._mtu);
+    });
   }
 
   public discoverServices(uuids: any) {
     const services: any = [];
 
-    const callback: any = (data: any ) => {
+    const callback: any = (data: any) => {
       const opcode: any = data[0];
       let i: any = 0;
 
@@ -420,20 +384,17 @@ class Gatt extends events.EventEmitter {
               type === 6
                 ? data.readUInt16LE(2 + i * type + 4).toString(16)
                 : data
-                  .slice(2 + i * type + 4)
-                  .slice(0, 16)
-                  .toString("hex")
-                  .match(/.{1,2}/g)
-                  .reverse()
-                  .join(""),
+                    .slice(2 + i * type + 4)
+                    .slice(0, 16)
+                    .toString("hex")
+                    .match(/.{1,2}/g)
+                    .reverse()
+                    .join(""),
           });
         }
       }
 
-      if (
-        opcode !== ATT.OP_READ_BY_GROUP_RESP ||
-        services[services.length - 1].endHandle === 0xffff
-      ) {
+      if (opcode !== ATT.OP_READ_BY_GROUP_RESP || services[services.length - 1].endHandle === 0xffff) {
         const serviceUuids: any = [];
         for (i = 0; i < services.length; i++) {
           if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
@@ -445,27 +406,20 @@ class Gatt extends events.EventEmitter {
         this.emit("servicesDiscover", this._address, serviceUuids);
       } else {
         this._queueCommand(
-          this.readByGroupRequest(
-            services[services.length - 1].endHandle + 1,
-            0xffff,
-            GATT.PRIM_SVC_UUID,
-          ),
+          this.readByGroupRequest(services[services.length - 1].endHandle + 1, 0xffff, GATT.PRIM_SVC_UUID),
           callback,
         );
       }
     };
 
-    this._queueCommand(
-      this.readByGroupRequest(0x0001, 0xffff, GATT.PRIM_SVC_UUID),
-      callback,
-    );
+    this._queueCommand(this.readByGroupRequest(0x0001, 0xffff, GATT.PRIM_SVC_UUID), callback);
   }
 
   public discoverIncludedServices(serviceUuid: any, uuids: any) {
     const service: any = this._services[serviceUuid];
     const includedServices: any = [];
 
-    const callback: any = (data: any ) => {
+    const callback: any = (data: any) => {
       const opcode: any = data[0];
       let i: any = 0;
 
@@ -481,38 +435,29 @@ class Gatt extends events.EventEmitter {
               type === 8
                 ? data.readUInt16LE(2 + i * type + 6).toString(16)
                 : data
-                  .slice(2 + i * type + 6)
-                  .slice(0, 16)
-                  .toString("hex")
-                  .match(/.{1,2}/g)
-                  .reverse()
-                  .join(""),
+                    .slice(2 + i * type + 6)
+                    .slice(0, 16)
+                    .toString("hex")
+                    .match(/.{1,2}/g)
+                    .reverse()
+                    .join(""),
           });
         }
       }
 
       if (
         opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-        includedServices[includedServices.length - 1].endHandle ===
-        service.endHandle
+        includedServices[includedServices.length - 1].endHandle === service.endHandle
       ) {
         const includedServiceUuids: any = [];
 
         for (i = 0; i < includedServices.length; i++) {
-          if (
-            uuids.length === 0 ||
-            uuids.indexOf(includedServices[i].uuid) !== -1
-          ) {
+          if (uuids.length === 0 || uuids.indexOf(includedServices[i].uuid) !== -1) {
             includedServiceUuids.push(includedServices[i].uuid);
           }
         }
 
-        this.emit(
-          "includedServicesDiscover",
-          this._address,
-          service.uuid,
-          includedServiceUuids,
-        );
+        this.emit("includedServicesDiscover", this._address, service.uuid, includedServiceUuids);
       } else {
         this._queueCommand(
           this.readByTypeRequest(
@@ -525,25 +470,17 @@ class Gatt extends events.EventEmitter {
       }
     };
 
-    this._queueCommand(
-      this.readByTypeRequest(
-        service.startHandle,
-        service.endHandle,
-        GATT.INCLUDE_UUID,
-      ),
-      callback,
-    );
+    this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.INCLUDE_UUID), callback);
   }
 
   public discoverCharacteristics(serviceUuid: any, characteristicUuids: any) {
     const service: any = this._services[serviceUuid];
     const characteristics: any = [];
 
-    this._characteristics[serviceUuid] =
-      this._characteristics[serviceUuid] || {};
+    this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
     this._descriptors[serviceUuid] = this._descriptors[serviceUuid] || {};
 
-    const callback: any = (data: any ) => {
+    const callback: any = (data: any) => {
       const opcode: any = data[0];
       let i: any = 0;
 
@@ -560,20 +497,19 @@ class Gatt extends events.EventEmitter {
               type === 7
                 ? data.readUInt16LE(2 + i * type + 5).toString(16)
                 : data
-                  .slice(2 + i * type + 5)
-                  .slice(0, 16)
-                  .toString("hex")
-                  .match(/.{1,2}/g)
-                  .reverse()
-                  .join(""),
+                    .slice(2 + i * type + 5)
+                    .slice(0, 16)
+                    .toString("hex")
+                    .match(/.{1,2}/g)
+                    .reverse()
+                    .join(""),
           });
         }
       }
 
       if (
         opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-        characteristics[characteristics.length - 1].valueHandle ===
-        service.endHandle
+        characteristics[characteristics.length - 1].valueHandle === service.endHandle
       ) {
         const characteristicsDiscovered: any = [];
         for (i = 0; i < characteristics.length; i++) {
@@ -585,16 +521,14 @@ class Gatt extends events.EventEmitter {
           };
 
           if (i !== 0) {
-            characteristics[i - 1].endHandle =
-              characteristics[i].startHandle - 1;
+            characteristics[i - 1].endHandle = characteristics[i].startHandle - 1;
           }
 
           if (i === characteristics.length - 1) {
             characteristics[i].endHandle = service.endHandle;
           }
 
-          this._characteristics[serviceUuid][characteristics[i].uuid] =
-            characteristics[i];
+          this._characteristics[serviceUuid][characteristics[i].uuid] = characteristics[i];
 
           if (properties & 0x01) {
             characteristic.properties.push("broadcast");
@@ -628,20 +562,12 @@ class Gatt extends events.EventEmitter {
             characteristic.properties.push("extendedProperties");
           }
 
-          if (
-            characteristicUuids.length === 0 ||
-            characteristicUuids.indexOf(characteristic.uuid) !== -1
-          ) {
+          if (characteristicUuids.length === 0 || characteristicUuids.indexOf(characteristic.uuid) !== -1) {
             characteristicsDiscovered.push(characteristic);
           }
         }
 
-        this.emit(
-          "characteristicsDiscover",
-          this._address,
-          serviceUuid,
-          characteristicsDiscovered,
-        );
+        this.emit("characteristicsDiscover", this._address, serviceUuid, characteristicsDiscovered);
       } else {
         this._queueCommand(
           this.readByTypeRequest(
@@ -654,29 +580,12 @@ class Gatt extends events.EventEmitter {
       }
     };
 
-    this._queueCommand(
-      this.readByTypeRequest(
-        service.startHandle,
-        service.endHandle,
-        GATT.CHARAC_UUID,
-      ),
-      callback,
-    );
+    this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.CHARAC_UUID), callback);
   }
 
   public read(serviceUuid: any, characteristicUuid: any) {
-    if (
-      !this._characteristics[serviceUuid] ||
-      !this._characteristics[serviceUuid][characteristicUuid]
-    ) {
-      this.emit(
-        "read",
-        this._address,
-        serviceUuid,
-        characteristicUuid,
-        Buffer.alloc(0),
-        false,
-      );
+    if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
+      this.emit("read", this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
       return;
     }
 
@@ -684,48 +593,21 @@ class Gatt extends events.EventEmitter {
 
     let readData: any = Buffer.alloc(0);
 
-    const callback: any = (data: any ) => {
+    const callback: any = (data: any) => {
       const opcode: any = data[0];
 
       if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_READ_BLOB_RESP) {
-        readData = Buffer.from(
-          readData.toString("hex") + data.slice(1).toString("hex"),
-          "hex",
-        );
+        readData = Buffer.from(readData.toString("hex") + data.slice(1).toString("hex"), "hex");
 
         if (data.length === this._mtu) {
-          this._queueCommand(
-            this.readBlobRequest(characteristic.valueHandle, readData.length),
-            callback,
-          );
+          this._queueCommand(this.readBlobRequest(characteristic.valueHandle, readData.length), callback);
         } else {
-          this.emit(
-            "read",
-            this._address,
-            serviceUuid,
-            characteristicUuid,
-            readData,
-            true,
-          );
+          this.emit("read", this._address, serviceUuid, characteristicUuid, readData, true);
         }
       } else if (opcode === ATT.OP_ERROR) {
-        this.emit(
-          "read",
-          this._address,
-          serviceUuid,
-          characteristicUuid,
-          Buffer.alloc(0),
-          false,
-        );
+        this.emit("read", this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
       } else {
-        this.emit(
-          "read",
-          this._address,
-          serviceUuid,
-          characteristicUuid,
-          readData,
-          true,
-        );
+        this.emit("read", this._address, serviceUuid, characteristicUuid, readData, true);
       }
     };
 
@@ -733,47 +615,26 @@ class Gatt extends events.EventEmitter {
   }
 
   public write(serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any) {
-    if (
-      !this._characteristics[serviceUuid] ||
-      !this._characteristics[serviceUuid][characteristicUuid]
-    ) {
+    if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
       this.emit("write", this._address, serviceUuid, characteristicUuid, false);
       return;
     }
 
     const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
     if (withoutResponse) {
-      this._queueCommand(
-        this.writeRequest(characteristic.valueHandle, data, true),
-        null,
-        () => {
-          this.emit("write", this._address, serviceUuid, characteristicUuid);
-        },
-      );
+      this._queueCommand(this.writeRequest(characteristic.valueHandle, data, true), null, () => {
+        this.emit("write", this._address, serviceUuid, characteristicUuid);
+      });
     } else if (data.length + 3 > this._mtu) {
-      return this.longWrite(
-        serviceUuid,
-        characteristicUuid,
-        data,
-        withoutResponse,
-      );
+      return this.longWrite(serviceUuid, characteristicUuid, data, withoutResponse);
     } else {
-      this._queueCommand(
-        this.writeRequest(characteristic.valueHandle, data, false),
-        (_data: any) => {
-          const opcode: any = _data[0];
+      this._queueCommand(this.writeRequest(characteristic.valueHandle, data, false), (_data: any) => {
+        const opcode: any = _data[0];
 
-          if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
-            this.emit(
-              "write",
-              this._address,
-              serviceUuid,
-              characteristicUuid,
-              opcode === ATT.OP_WRITE_RESP,
-            );
-          }
-        },
-      );
+        if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
+          this.emit("write", this._address, serviceUuid, characteristicUuid, opcode === ATT.OP_WRITE_RESP);
+        }
+      });
     }
   }
 
@@ -782,24 +643,19 @@ class Gatt extends events.EventEmitter {
     const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
     const limit: any = this._mtu - 5;
 
-    const prepareWriteCallback: any = (data_chunk: any ) => {
+    const prepareWriteCallback: any = (data_chunk: any) => {
       return (resp: any) => {
         const opcode: any = resp[0];
 
         if (opcode !== ATT.OP_PREPARE_WRITE_RESP) {
-          debug(
-            this._address +
-            ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)",
-            opcode,
-          );
+          debug(this._address + ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)", opcode);
         } else {
           const expected_length: any = data_chunk.length + 5;
 
           if (resp.length !== expected_length) {
             /* the response should contain the data packet echoed back to the caller */
             debug(
-              this._address +
-              ": unexpected prepareWriteResponse length %d (expecting %d)",
+              this._address + ": unexpected prepareWriteResponse length %d (expecting %d)",
               resp.length,
               expected_length,
             );
@@ -822,27 +678,20 @@ class Gatt extends events.EventEmitter {
     }
 
     /* queue the execute command with a callback to emit the write signal when done */
-    this._queueCommand(
-      this.executeWriteRequest(characteristic.valueHandle),
-      (resp: any) => {
-        const opcode: any = resp[0];
+    this._queueCommand(this.executeWriteRequest(characteristic.valueHandle), (resp: any) => {
+      const opcode: any = resp[0];
 
-        if (opcode === ATT.OP_EXECUTE_WRITE_RESP && !withoutResponse) {
-          this.emit("write", this._address, serviceUuid, characteristicUuid);
-        }
-      },
-    );
+      if (opcode === ATT.OP_EXECUTE_WRITE_RESP && !withoutResponse) {
+        this.emit("write", this._address, serviceUuid, characteristicUuid);
+      }
+    });
   }
 
   public broadcast(serviceUuid: any, characteristicUuid: any, broadcast: any) {
     const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
 
     this._queueCommand(
-      this.readByTypeRequest(
-        characteristic.startHandle,
-        characteristic.endHandle,
-        GATT.SERVER_CHARAC_CFG_UUID,
-      ),
+      this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.SERVER_CHARAC_CFG_UUID),
       (data: any) => {
         const opcode: any = data[0];
         if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
@@ -859,22 +708,13 @@ class Gatt extends events.EventEmitter {
           const valueBuffer: any = Buffer.alloc(2);
           valueBuffer.writeUInt16LE(value, 0);
 
-          this._queueCommand(
-            this.writeRequest(handle, valueBuffer, false),
-            (_data: any ) => {
-              const _opcode: any = _data[0];
+          this._queueCommand(this.writeRequest(handle, valueBuffer, false), (_data: any) => {
+            const _opcode: any = _data[0];
 
-              if (_opcode === ATT.OP_WRITE_RESP) {
-                this.emit(
-                  "broadcast",
-                  this._address,
-                  serviceUuid,
-                  characteristicUuid,
-                  broadcast,
-                );
-              }
-            },
-          );
+            if (_opcode === ATT.OP_WRITE_RESP) {
+              this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
+            }
+          });
         }
       },
     );
@@ -884,12 +724,8 @@ class Gatt extends events.EventEmitter {
     const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
 
     this._queueCommand(
-      this.readByTypeRequest(
-        characteristic.startHandle,
-        characteristic.endHandle,
-        GATT.CLIENT_CHARAC_CFG_UUID,
-      ),
-      (data: any ) => {
+      this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID),
+      (data: any) => {
         const opcode: any = data[0];
         if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
           // let type = data[1];
@@ -916,24 +752,13 @@ class Gatt extends events.EventEmitter {
           const valueBuffer: any = Buffer.alloc(2);
           valueBuffer.writeUInt16LE(value, 0);
 
-          this._queueCommand(
-            this.writeRequest(handle, valueBuffer, false),
-            (_data: any ) => {
-              const _opcode: any = _data[0];
-              debug(
-                "set notify write results: " + (_opcode === ATT.OP_WRITE_RESP),
-              );
-              // if (opcode === ATT.OP_WRITE_RESP) {
-              this.emit(
-                "notify",
-                this._address,
-                serviceUuid,
-                characteristicUuid,
-                notify,
-              );
-              // }
-            },
-          );
+          this._queueCommand(this.writeRequest(handle, valueBuffer, false), (_data: any) => {
+            const _opcode: any = _data[0];
+            debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
+            // if (opcode === ATT.OP_WRITE_RESP) {
+            this.emit("notify", this._address, serviceUuid, characteristicUuid, notify);
+            // }
+          });
         }
       },
     );
@@ -960,44 +785,24 @@ class Gatt extends events.EventEmitter {
         }
       }
 
-      if (
-        opcode !== ATT.OP_FIND_INFO_RESP ||
-        descriptors[descriptors.length - 1].handle === characteristic.endHandle
-      ) {
+      if (opcode !== ATT.OP_FIND_INFO_RESP || descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
         const descriptorUuids: any = [];
         for (i = 0; i < descriptors.length; i++) {
           descriptorUuids.push(descriptors[i].uuid);
 
-          this._descriptors[serviceUuid][characteristicUuid][
-            descriptors[i].uuid
-            ] = descriptors[i];
+          this._descriptors[serviceUuid][characteristicUuid][descriptors[i].uuid] = descriptors[i];
         }
 
-        this.emit(
-          "descriptorsDiscover",
-          this._address,
-          serviceUuid,
-          characteristicUuid,
-          descriptorUuids,
-        );
+        this.emit("descriptorsDiscover", this._address, serviceUuid, characteristicUuid, descriptorUuids);
       } else {
         this._queueCommand(
-          this.findInfoRequest(
-            descriptors[descriptors.length - 1].handle + 1,
-            characteristic.endHandle,
-          ),
+          this.findInfoRequest(descriptors[descriptors.length - 1].handle + 1, characteristic.endHandle),
           callback,
         );
       }
     };
 
-    this._queueCommand(
-      this.findInfoRequest(
-        characteristic.valueHandle + 1,
-        characteristic.endHandle,
-      ),
-      callback,
-    );
+    this._queueCommand(this.findInfoRequest(characteristic.valueHandle + 1, characteristic.endHandle), callback);
   }
 
   public readValue(serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
@@ -1006,40 +811,27 @@ class Gatt extends events.EventEmitter {
       !this._descriptors[serviceUuid][characteristicUuid] ||
       !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]
     ) {
-      this.emit(
-        "valueRead",
-        this._address,
-        serviceUuid,
-        characteristicUuid,
-        descriptorUuid,
-        Buffer.alloc(0),
-        false,
-      );
+      this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, Buffer.alloc(0), false);
       return;
     }
 
-    const descriptor: any = this._descriptors[serviceUuid][characteristicUuid][
-      descriptorUuid
-      ];
+    const descriptor: any = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
 
-    this._queueCommand(
-      this.readRequest(descriptor.handle),
-      (data: any ) => {
-        const opcode: any = data[0];
+    this._queueCommand(this.readRequest(descriptor.handle), (data: any) => {
+      const opcode: any = data[0];
 
-        if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_ERROR) {
-          this.emit(
-            "valueRead",
-            this._address,
-            serviceUuid,
-            characteristicUuid,
-            descriptorUuid,
-            data.slice(1),
-            opcode === ATT.OP_READ_RESP,
-          );
-        }
-      },
-    );
+      if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_ERROR) {
+        this.emit(
+          "valueRead",
+          this._address,
+          serviceUuid,
+          characteristicUuid,
+          descriptorUuid,
+          data.slice(1),
+          opcode === ATT.OP_READ_RESP,
+        );
+      }
+    });
   }
 
   public writeValue(serviceUuid: any, characteristicUuid: any, descriptorUuid: any, data: any) {
@@ -1048,73 +840,51 @@ class Gatt extends events.EventEmitter {
       !this._descriptors[serviceUuid][characteristicUuid] ||
       !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]
     ) {
-      this.emit(
-        "valueWrite",
-        this._address,
-        serviceUuid,
-        characteristicUuid,
-        descriptorUuid,
-        false,
-      );
+      this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, false);
       return;
     }
 
-    const descriptor: any = this._descriptors[serviceUuid][characteristicUuid][
-      descriptorUuid
-      ];
+    const descriptor: any = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
 
-    this._queueCommand(
-      this.writeRequest(descriptor.handle, data, false),
-      (_data: any ) => {
-        const opcode: any = _data[0];
+    this._queueCommand(this.writeRequest(descriptor.handle, data, false), (_data: any) => {
+      const opcode: any = _data[0];
 
-        if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
-          this.emit(
-            "valueWrite",
-            this._address,
-            serviceUuid,
-            characteristicUuid,
-            descriptorUuid,
-            opcode === ATT.OP_WRITE_RESP,
-          );
-        }
-      },
-    );
+      if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
+        this.emit(
+          "valueWrite",
+          this._address,
+          serviceUuid,
+          characteristicUuid,
+          descriptorUuid,
+          opcode === ATT.OP_WRITE_RESP,
+        );
+      }
+    });
   }
 
   public readHandle(handle: any) {
-    this._queueCommand(
-      this.readRequest(handle),
-      (data: any ) => {
-        const opcode: any = data[0];
+    this._queueCommand(this.readRequest(handle), (data: any) => {
+      const opcode: any = data[0];
 
-        if (opcode === ATT.OP_READ_RESP) {
-          this.emit("handleRead", this._address, handle, data.slice(1));
-        }
-      },
-    );
+      if (opcode === ATT.OP_READ_RESP) {
+        this.emit("handleRead", this._address, handle, data.slice(1));
+      }
+    });
   }
 
   public writeHandle(handle: any, data: any, withoutResponse: any) {
     if (withoutResponse) {
-      this._queueCommand(
-        this.writeRequest(handle, data, true),
-        null,
-        () => {
-          this.emit("handleWrite", this._address, handle);
-        },
-      );
+      this._queueCommand(this.writeRequest(handle, data, true), null, () => {
+        this.emit("handleWrite", this._address, handle);
+      });
     } else {
-      this._queueCommand(
-        this.writeRequest(handle, data, false),
-        (_data: any ) => {
-          const opcode: any = _data[0];
+      this._queueCommand(this.writeRequest(handle, data, false), (_data: any) => {
+        const opcode: any = _data[0];
 
-          if (opcode === ATT.OP_WRITE_RESP) {
-            this.emit("handleWrite", this._address, handle);
-          }
-        },
-      );
+        if (opcode === ATT.OP_WRITE_RESP) {
+          this.emit("handleWrite", this._address, handle);
+        }
+      });
     }
   }
 }

@@ -23,26 +23,26 @@ class M5StickC_FINGER {
             NOUSER: 0x05,
             USER_EXIST: 0x07,
             TIMEOUT: 0x08,
-            GO_OUT: 0x0F,
+            GO_OUT: 0x0f,
             ALL_USER: 0x00,
             GUEST_USER: 0x01,
             NORMAL_USER: 0x02,
             MASTER_USER: 0x03,
         };
         this.cmd = {
-            HEAD: 0xF5,
-            TAIL: 0xF5,
+            HEAD: 0xf5,
+            TAIL: 0xf5,
             ADD_1: 0x01,
             ADD_2: 0x02,
             ADD_3: 0x03,
-            GET_PERMISSION: 0x0A,
-            MATCH: 0x0C,
+            GET_PERMISSION: 0x0a,
+            MATCH: 0x0c,
             DEL: 0x04,
             DEL_ALL: 0x05,
             USER_CNT: 0x09,
             SECURITY_LEVEL: 0x28,
-            SLEEP_MODE: 0x2C,
-            ADD_MODE: 0x2D,
+            SLEEP_MODE: 0x2c,
+            ADD_MODE: 0x2d,
             FINGER_DETECTED: 0x14,
         };
     }
@@ -54,8 +54,7 @@ class M5StickC_FINGER {
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(null, this.params.gnd, "3v");
-        if (!this.obniz.isValidIO(this.params.tx)
-            && !this.obniz.isValidIO(this.params.rx)) {
+        if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
                 this.params.tx = hatI2c.tx;
@@ -82,7 +81,7 @@ class M5StickC_FINGER {
             return this.RxBuf[this.Q2];
         }
         else {
-            return 0xFF;
+            return 0xff;
         }
     }
     async addUserWait(userNum, userPermission) {
@@ -252,5 +251,4 @@ class M5StickC_FINGER {
     }
 }
 exports.default = M5StickC_FINGER;
-
 //# sourceMappingURL=index.js.map

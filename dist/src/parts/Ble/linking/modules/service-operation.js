@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - service-operation.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-02
-* ---------------------------------------------------------------- */
+ * node-linking - service-operation.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceOperation {
@@ -34,8 +34,7 @@ class LinkingServiceOperation {
                 parameters.push(this._parseParameter(pid, pvalue_buf));
             }
         }
-        catch (e) {
-        }
+        catch (e) { }
         return parameters;
     }
     _parseParameter(pid, buf) {
@@ -126,22 +125,22 @@ class LinkingServiceOperation {
         else if (code === 0x09) {
             text = "LongPressRelease";
         }
-        else if (code === 0x0A) {
+        else if (code === 0x0a) {
             text = "FastForward";
         }
-        else if (code === 0x0B) {
+        else if (code === 0x0b) {
             text = "ReWind";
         }
-        else if (code === 0x0C) {
+        else if (code === 0x0c) {
             text = "Shutter";
         }
-        else if (code === 0x0D) {
+        else if (code === 0x0d) {
             text = "Up";
         }
-        else if (code === 0x0E) {
+        else if (code === 0x0e) {
             text = "Down";
         }
-        else if (code === 0x0F) {
+        else if (code === 0x0f) {
             text = "Left";
         }
         else if (code === 0x10) {

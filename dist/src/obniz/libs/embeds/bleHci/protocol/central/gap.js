@@ -12,8 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(require("events"));
 const hci_1 = __importDefault(require("../hci"));
 /**
@@ -58,8 +57,7 @@ class Gap extends events_1.default.EventEmitter {
         this._scanState = "stopping";
         this._hci.setScanEnabled(false, true);
     }
-    onHciLeScanParametersSet() {
-    }
+    onHciLeScanParametersSet() { }
     // Called when receive an event "Command Complete" for "LE Set Scan Enable"
     onHciLeScanEnableSet(status) {
         // Check the status we got from the command complete function.
@@ -92,8 +90,7 @@ class Gap extends events_1.default.EventEmitter {
                 this.emit("scanStart", this._scanFilterDuplicates);
             }
         }
-        else if ((this._scanState === "stopping" || this._scanState === "stopped") &&
-            enable) {
+        else if ((this._scanState === "stopping" || this._scanState === "stopped") && enable) {
             // Someone started scanning on us.
             this.emit("scanStart", this._scanFilterDuplicates);
         }
@@ -113,12 +110,8 @@ class Gap extends events_1.default.EventEmitter {
                 scanResponseRaw: [],
                 raw: [],
             };
-        let discoveryCount = previouslyDiscovered
-            ? this._discoveries[address].count
-            : 0;
-        let hasScanResponse = previouslyDiscovered
-            ? this._discoveries[address].hasScanResponse
-            : false;
+        let discoveryCount = previouslyDiscovered ? this._discoveries[address].count : 0;
+        let hasScanResponse = previouslyDiscovered ? this._discoveries[address].hasScanResponse : false;
         if (type === 0x04) {
             hasScanResponse = true;
             if (eir.length > 0) {
@@ -269,9 +262,7 @@ class Gap extends events_1.default.EventEmitter {
             i += length + 1;
         }
         debug("advertisement = " + JSON.stringify(advertisement, null, 0));
-        const connectable = type === 0x04 && previouslyDiscovered
-            ? this._discoveries[address].connectable
-            : type !== 0x03;
+        const connectable = type === 0x04 && previouslyDiscovered ? this._discoveries[address].connectable : type !== 0x03;
         this._discoveries[address] = {
             address,
             addressType,
@@ -284,10 +275,7 @@ class Gap extends events_1.default.EventEmitter {
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     startAdvertising(name, serviceUuids) {
-        debug("startAdvertising: name = " +
-            name +
-            ", serviceUuids = " +
-            JSON.stringify(serviceUuids, null, 2));
+        debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;
         let scanDataLength = 0;
         const serviceUuids16bit = [];
@@ -405,14 +393,10 @@ class Gap extends events_1.default.EventEmitter {
         this._advertiseState = "stopping";
         this._hci.setAdvertiseEnable(false);
     }
-    onHciError(error) {
-    }
-    onHciLeAdvertisingParametersSet(status) {
-    }
-    onHciLeAdvertisingDataSet(status) {
-    }
-    onHciLeScanResponseDataSet(status) {
-    }
+    onHciError(error) { }
+    onHciLeAdvertisingParametersSet(status) { }
+    onHciLeAdvertisingDataSet(status) { }
+    onHciLeScanResponseDataSet(status) { }
     onHciLeAdvertiseEnableSet(status) {
         if (this._advertiseState === "starting") {
             this._advertiseState = "started";
@@ -429,5 +413,4 @@ class Gap extends events_1.default.EventEmitter {
     }
 }
 exports.default = Gap;
-
 //# sourceMappingURL=gap.js.map

@@ -136,20 +136,17 @@ class WSCommandIO extends WSCommand_1.default {
             const err = payload[1];
             // const ref_func_id = payload[2];
             const module_index = payload[3];
-            if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH ||
-                err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
+            if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH || err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
                 this.envelopWarning(objToSend, `io${module_index}`, {
                     message: COMMAND_IO_ERROR_MESSAGES[err],
                 });
             }
-            else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW ||
-                err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
+            else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
                 this.envelopError(objToSend, `io${module_index}`, {
                     message: COMMAND_IO_ERROR_MESSAGES[err],
                 });
             }
-            else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED &&
-                payload.byteLength >= 6) {
+            else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6) {
                 const oldMutexOwner = payload[4];
                 const newMutexOwner = payload[5];
                 this.envelopWarning(objToSend, "debug", {
@@ -163,5 +160,4 @@ class WSCommandIO extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandIO;
-
 //# sourceMappingURL=WSCommandIO.js.map

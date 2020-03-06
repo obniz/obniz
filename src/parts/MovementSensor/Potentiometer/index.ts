@@ -6,7 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface PotentiometerOptions {
   pin0: number;
@@ -15,7 +15,6 @@ export interface PotentiometerOptions {
 }
 
 export default class Potentiometer implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Potentiometer",

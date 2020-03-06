@@ -126,16 +126,7 @@ class DPS310 {
                 length: 3,
             },
         };
-        this.scaling_facts = [
-            524288,
-            1572864,
-            3670016,
-            7864320,
-            253952,
-            516096,
-            1040384,
-            2088960,
-        ];
+        this.scaling_facts = [524288, 1572864, 3670016, 7864320, 253952, 516096, 1040384, 2088960];
         this.requiredKeys = ["sda", "scl"];
         this.keys = ["gpio3", "vcc", "gnd", "scl", "sda"];
         this.ioKeys = ["gpio3", "vcc", "gnd", "scl", "sda"];
@@ -229,15 +220,11 @@ class DPS310 {
         await this.writeByteWait(field.address, sendData, check);
     }
     async setOpModeDetailWait(background, temperature, pressure) {
-        const opMode = ((background & this.DPS310__LSB) << 2) |
-            ((temperature & this.DPS310__LSB) << 1) |
-            (pressure & this.DPS310__LSB);
+        const opMode = ((background & this.DPS310__LSB) << 2) | ((temperature & this.DPS310__LSB) << 1) | (pressure & this.DPS310__LSB);
         return await this.setOpModeWait(opMode);
     }
     async setOpModeWait(opMode) {
-        opMode &=
-            this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
-                this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
+        opMode &= this.bitFileds.DPS310__REG_INFO_OPMODE.mask >> this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
         await this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
         this.opMode = opMode;
     }
@@ -281,13 +268,11 @@ class DPS310 {
         if (this.coeffs.m_c1 & (1 << 11)) {
             this.coeffs.m_c1 -= 1 << 12;
         }
-        this.coeffs.m_c00 =
-            (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+        this.coeffs.m_c00 = (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
         if (this.coeffs.m_c00 & (1 << 19)) {
             this.coeffs.m_c00 -= 1 << 20;
         }
-        this.coeffs.m_c10 =
-            ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+        this.coeffs.m_c10 = ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
         if (this.coeffs.m_c10 & (1 << 19)) {
             this.coeffs.m_c10 -= 1 << 20;
         }
@@ -359,12 +344,8 @@ class DPS310 {
         prs /= this.scaling_facts[this.prsOsr];
         prs =
             this.coeffs.m_c00 +
-                prs *
-                    (this.coeffs.m_c10 +
-                        prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
-                this.m_lastTempScal *
-                    (this.coeffs.m_c01 +
-                        prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
+                prs * (this.coeffs.m_c10 + prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
+                this.m_lastTempScal * (this.coeffs.m_c01 + prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
         return prs;
     }
     calcTemp(raw) {
@@ -408,5 +389,4 @@ class DPS310 {
     }
 }
 exports.default = DPS310;
-
 //# sourceMappingURL=index.js.map

@@ -14,14 +14,14 @@ class M5StickC extends ObnizDevice_1.default {
     }
     gyroWait() {
         const supportedIMUNameArr = ["MPU6886", "SH200Q"];
-        if (!(supportedIMUNameArr.includes(this.imu.constructor.name))) {
+        if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
             throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
         }
         return this.imu.getGyroWait();
     }
     accelerationWait() {
         const supportedIMUNameArr = ["MPU6886", "SH200Q"];
-        if (!(supportedIMUNameArr.includes(this.imu.constructor.name))) {
+        if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
             throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
         }
         return this.imu.getAccelWait();
@@ -31,8 +31,7 @@ class M5StickC extends ObnizDevice_1.default {
         const onerror = i2c.onerror;
         this.imu = this.wired(imuName, { i2c });
         // @ts-ignore
-        this.imu._reset = () => {
-        };
+        this.imu._reset = () => { };
         const p1 = this.imu.whoamiWait();
         const p2 = new Promise((resolve, reject) => {
             i2c.onerror = reject;
@@ -63,7 +62,13 @@ class M5StickC extends ObnizDevice_1.default {
         this.led = this.wired("LED", { cathode: 10 });
         this.buttonA = this.wired("Button", { signal: 37 });
         this.buttonB = this.wired("Button", { signal: 39 });
-        const i2cParams = { sda: 21, scl: 22, clock: 100000, pull: "3v", mode: "master" };
+        const i2cParams = {
+            sda: 21,
+            scl: 22,
+            clock: 100000,
+            pull: "3v",
+            mode: "master",
+        };
         this._m5i2c = this.i2c1;
         this._m5i2c.start(i2cParams);
         this.axp = this.wired("AXP192", { i2c: this._m5i2c });
@@ -71,5 +76,4 @@ class M5StickC extends ObnizDevice_1.default {
     }
 }
 exports.M5StickC = M5StickC;
-
 //# sourceMappingURL=m5stickc.js.map

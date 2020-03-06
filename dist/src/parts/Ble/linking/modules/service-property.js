@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - service-property.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-10-24
-* ---------------------------------------------------------------- */
+ * node-linking - service-property.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceProperty {
@@ -39,8 +39,7 @@ class LinkingServiceProperty {
                 parameters.push(this._parseParameter(pid, pvalue_buf));
             }
         }
-        catch (e) {
-        }
+        catch (e) { }
         return parameters;
     }
     _parseParameter(pid, buf) {

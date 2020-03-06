@@ -17,7 +17,6 @@ import BleService from "./bleService";
  * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  */
 export default class ObnizBLE {
-
   public static _dataArray2uuidHex(data: any, reverse: any) {
     let uuid: any = [];
     for (let i = 0; i < data.length; i++) {
@@ -71,22 +70,16 @@ export default class ObnizBLE {
   }
 
   // dummy
-  public async initWait() {
-  }
+  public async initWait() {}
 
-  public _reset() {
-  }
+  public _reset() {}
 
   public directConnect(uuid: any, addressType: any) {
-    throw new Error(
-      "directConnect cannot use obnizOS < 3.0.0. Please update obnizOS",
-    );
+    throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
   }
 
   public async directConnectWait(uuid: any, addressType: any) {
-    throw new Error(
-      "directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS",
-    );
+    throw new Error("directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS");
   }
 
   public findPeripheral(address: any) {
@@ -140,19 +133,19 @@ export default class ObnizBLE {
     };
 
     const paramList: any = {
-      status_update: {name: "statusupdate", obj: "peripheral"},
-      get_service_result: {name: "discover", obj: "peripheral"},
+      status_update: { name: "statusupdate", obj: "peripheral" },
+      get_service_result: { name: "discover", obj: "peripheral" },
       get_service_result_finish: {
         name: "discoverfinished",
         obj: "peripheral",
       },
-      get_characteristic_result: {name: "discover", obj: "service"},
+      get_characteristic_result: { name: "discover", obj: "service" },
       get_characteristic_result_finish: {
         name: "discoverfinished",
         obj: "service",
       },
-      write_characteristic_result: {name: "onwrite", obj: "characteristic"},
-      read_characteristic_result: {name: "onread", obj: "characteristic"},
+      write_characteristic_result: { name: "onwrite", obj: "characteristic" },
+      read_characteristic_result: { name: "onread", obj: "characteristic" },
       register_notify_characteristic_result: {
         name: "onregisternotify",
         obj: "characteristic",
@@ -171,16 +164,16 @@ export default class ObnizBLE {
         name: "onunregisternotify",
         obj: "characteristic",
       },
-      notify_characteristic: {name: "onnotify", obj: "characteristic"},
+      notify_characteristic: { name: "onnotify", obj: "characteristic" },
       // for typo
-      nofity_characteristic: {name: "onnotify", obj: "characteristic"},
-      get_descriptor_result: {name: "discover", obj: "characteristic"},
+      nofity_characteristic: { name: "onnotify", obj: "characteristic" },
+      get_descriptor_result: { name: "discover", obj: "characteristic" },
       get_descriptor_result_finish: {
         name: "discoverfinished",
         obj: "characteristic",
       },
-      write_descriptor_result: {name: "onwrite", obj: "descriptor"},
-      read_descriptor_result: {name: "onread", obj: "descriptor"},
+      write_descriptor_result: { name: "onwrite", obj: "descriptor" },
+      read_descriptor_result: { name: "onread", obj: "descriptor" },
     };
 
     for (const paramListKey in paramList) {
@@ -223,8 +216,8 @@ export default class ObnizBLE {
       );
 
       const centralParamList: any = {
-        read_characteristic_result: {name: "onread", obj: "characteristic"},
-        write_characteristic_result: {name: "onwrite", obj: "characteristic"},
+        read_characteristic_result: { name: "onread", obj: "characteristic" },
+        write_characteristic_result: { name: "onwrite", obj: "characteristic" },
         notify_read_characteristic: {
           name: "onreadfromremote",
           obj: "characteristic",
@@ -233,9 +226,9 @@ export default class ObnizBLE {
           name: "onwritefromremote",
           obj: "characteristic",
         },
-        read_descriptor_result: {name: "onread", obj: "descriptor"},
-        write_descriptor_result: {name: "onwrite", obj: "descriptor"},
-        notify_read_descriptor: {name: "onreadfromremote", obj: "descriptor"},
+        read_descriptor_result: { name: "onread", obj: "descriptor" },
+        write_descriptor_result: { name: "onwrite", obj: "descriptor" },
+        notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
         notify_write_descriptor: {
           name: "onwritefromremote",
           obj: "descriptor",
@@ -265,11 +258,7 @@ export default class ObnizBLE {
       }
 
       if (peripheral) {
-        if (
-          params.service_uuid &&
-          params.characteristic_uuid &&
-          params.descriptor_uuid
-        ) {
+        if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
           target = peripheral.findDescriptor(params);
         } else if (params.service_uuid && params.characteristic_uuid) {
           target = peripheral.findCharacteristic(params);
@@ -291,11 +280,7 @@ export default class ObnizBLE {
       }
       if (!handled) {
         this.Obniz.error(
-          `ble ${params.message} service=${
-            params.service_uuid
-          } characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${
-            params.descriptor_uuid
-          }`,
+          `ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`,
         );
       }
     }

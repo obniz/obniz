@@ -7,8 +7,7 @@
 /**
  * @ignore
  */
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 import events from "events";
 import Hci from "../hci";
@@ -32,34 +31,16 @@ class Gap extends events.EventEmitter {
     this._discoveries = {};
 
     this._hci.on("error", this.onHciError.bind(this));
-    this._hci.on(
-      "leScanParametersSet",
-      this.onHciLeScanParametersSet.bind(this),
-    );
+    this._hci.on("leScanParametersSet", this.onHciLeScanParametersSet.bind(this));
     this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
-    this._hci.on(
-      "leAdvertisingReport",
-      this.onHciLeAdvertisingReport.bind(this),
-    );
+    this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
 
     this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
 
-    this._hci.on(
-      "leAdvertisingParametersSet",
-      this.onHciLeAdvertisingParametersSet.bind(this),
-    );
-    this._hci.on(
-      "leAdvertisingDataSet",
-      this.onHciLeAdvertisingDataSet.bind(this),
-    );
-    this._hci.on(
-      "leScanResponseDataSet",
-      this.onHciLeScanResponseDataSet.bind(this),
-    );
-    this._hci.on(
-      "leAdvertiseEnableSet",
-      this.onHciLeAdvertiseEnableSet.bind(this),
-    );
+    this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
+    this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
+    this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
+    this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
   }
 
   public startScanning(allowDuplicates: boolean, activeScan: boolean) {
@@ -80,7 +61,6 @@ class Gap extends events.EventEmitter {
         }, 1000);
       });
     });
-
   }
 
   public stopScanning() {
@@ -89,8 +69,7 @@ class Gap extends events.EventEmitter {
     this._hci.setScanEnabled(false, true);
   }
 
-  public onHciLeScanParametersSet() {
-  }
+  public onHciLeScanParametersSet() {}
 
   // Called when receive an event "Command Complete" for "LE Set Scan Enable"
   public onHciLeScanEnableSet(status: any) {
@@ -126,10 +105,7 @@ class Gap extends events.EventEmitter {
 
         this.emit("scanStart", this._scanFilterDuplicates);
       }
-    } else if (
-      (this._scanState === "stopping" || this._scanState === "stopped") &&
-      enable
-    ) {
+    } else if ((this._scanState === "stopping" || this._scanState === "stopped") && enable) {
       // Someone started scanning on us.
       this.emit("scanStart", this._scanFilterDuplicates);
     }
@@ -140,23 +116,19 @@ class Gap extends events.EventEmitter {
     const advertisement: any = previouslyDiscovered
       ? this._discoveries[address].advertisement
       : {
-        localName: undefined,
-        txPowerLevel: undefined,
-        manufacturerData: undefined,
-        serviceData: [],
-        serviceUuids: [],
-        solicitationServiceUuids: [],
-        advertisementRaw: [],
-        scanResponseRaw: [],
-        raw: [],
-      };
+          localName: undefined,
+          txPowerLevel: undefined,
+          manufacturerData: undefined,
+          serviceData: [],
+          serviceUuids: [],
+          solicitationServiceUuids: [],
+          advertisementRaw: [],
+          scanResponseRaw: [],
+          raw: [],
+        };
 
-    let discoveryCount: any = previouslyDiscovered
-      ? this._discoveries[address].count
-      : 0;
-    let hasScanResponse: any = previouslyDiscovered
-      ? this._discoveries[address].hasScanResponse
-      : false;
+    let discoveryCount: any = previouslyDiscovered ? this._discoveries[address].count : 0;
+    let hasScanResponse: any = previouslyDiscovered ? this._discoveries[address].hasScanResponse : false;
 
     if (type === 0x04) {
       hasScanResponse = true;
@@ -239,14 +211,8 @@ class Gap extends events.EventEmitter {
           // List of 16 bit solicitation UUIDs
           for (j = 0; j < bytes.length; j += 2) {
             serviceSolicitationUuid = bytes.readUInt16LE(j).toString(16);
-            if (
-              advertisement.serviceSolicitationUuids.indexOf(
-                serviceSolicitationUuid,
-              ) === -1
-            ) {
-              advertisement.serviceSolicitationUuids.push(
-                serviceSolicitationUuid,
-              );
+            if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
+              advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
             }
           }
           break;
@@ -260,14 +226,8 @@ class Gap extends events.EventEmitter {
               .match(/.{1,2}/g)
               .reverse()
               .join("");
-            if (
-              advertisement.serviceSolicitationUuids.indexOf(
-                serviceSolicitationUuid,
-              ) === -1
-            ) {
-              advertisement.serviceSolicitationUuids.push(
-                serviceSolicitationUuid,
-              );
+            if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
+              advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
             }
           }
           break;
@@ -324,14 +284,8 @@ class Gap extends events.EventEmitter {
         case 0x1f: // List of 32 bit solicitation UUIDs
           for (j = 0; j < bytes.length; j += 4) {
             serviceSolicitationUuid = bytes.readUInt32LE(j).toString(16);
-            if (
-              advertisement.serviceSolicitationUuids.indexOf(
-                serviceSolicitationUuid,
-              ) === -1
-            ) {
-              advertisement.serviceSolicitationUuids.push(
-                serviceSolicitationUuid,
-              );
+            if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
+              advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
             }
           }
           break;
@@ -347,9 +301,7 @@ class Gap extends events.EventEmitter {
     debug("advertisement = " + JSON.stringify(advertisement, null, 0));
 
     const connectable: any =
-      type === 0x04 && previouslyDiscovered
-        ? this._discoveries[address].connectable
-        : type !== 0x03;
+      type === 0x04 && previouslyDiscovered ? this._discoveries[address].connectable : type !== 0x03;
 
     this._discoveries[address] = {
       address,
@@ -361,24 +313,11 @@ class Gap extends events.EventEmitter {
       hasScanResponse,
     };
 
-    this.emit(
-      "discover",
-      status,
-      address,
-      addressType,
-      connectable,
-      advertisement,
-      rssi,
-    );
+    this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
   }
 
   public startAdvertising(name: any, serviceUuids: any) {
-    debug(
-      "startAdvertising: name = " +
-      name +
-      ", serviceUuids = " +
-      JSON.stringify(serviceUuids, null, 2),
-    );
+    debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
 
     let advertisementDataLength: any = 3;
     let scanDataLength: any = 0;
@@ -428,10 +367,7 @@ class Gap extends events.EventEmitter {
     let advertisementDataOffset: any = 3;
 
     if (serviceUuids16bit.length) {
-      advertisementData.writeUInt8(
-        1 + 2 * serviceUuids16bit.length,
-        advertisementDataOffset,
-      );
+      advertisementData.writeUInt8(1 + 2 * serviceUuids16bit.length, advertisementDataOffset);
       advertisementDataOffset++;
 
       advertisementData.writeUInt8(0x03, advertisementDataOffset);
@@ -444,10 +380,7 @@ class Gap extends events.EventEmitter {
     }
 
     if (serviceUuids128bit.length) {
-      advertisementData.writeUInt8(
-        1 + 16 * serviceUuids128bit.length,
-        advertisementDataOffset,
-      );
+      advertisementData.writeUInt8(1 + 16 * serviceUuids128bit.length, advertisementDataOffset);
       advertisementDataOffset++;
 
       advertisementData.writeUInt8(0x06, advertisementDataOffset);
@@ -503,9 +436,9 @@ class Gap extends events.EventEmitter {
 
     debug(
       "startAdvertisingWithEIRData: advertisement data = " +
-      advertisementData.toString("hex") +
-      ", scan data = " +
-      scanData.toString("hex"),
+        advertisementData.toString("hex") +
+        ", scan data = " +
+        scanData.toString("hex"),
     );
 
     let error: any = null;
@@ -542,17 +475,13 @@ class Gap extends events.EventEmitter {
     this._hci.setAdvertiseEnable(false);
   }
 
-  public onHciError(error: any) {
-  }
+  public onHciError(error: any) {}
 
-  public onHciLeAdvertisingParametersSet(status: any) {
-  }
+  public onHciLeAdvertisingParametersSet(status: any) {}
 
-  public onHciLeAdvertisingDataSet(status: any) {
-  }
+  public onHciLeAdvertisingDataSet(status: any) {}
 
-  public onHciLeScanResponseDataSet(status: any) {
-  }
+  public onHciLeScanResponseDataSet(status: any) {}
 
   public onHciLeAdvertiseEnableSet(status: any) {
     if (this._advertiseState === "starting") {
@@ -561,9 +490,7 @@ class Gap extends events.EventEmitter {
       let error: any = null;
 
       if (status) {
-        error = new Error(
-          Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")",
-        );
+        error = new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
       }
 
       this.emit("advertisingStart", error);

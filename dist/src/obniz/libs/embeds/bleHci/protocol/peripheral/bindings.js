@@ -12,8 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(require("events"));
 const os_1 = __importDefault(require("os"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
@@ -101,8 +100,7 @@ class BlenoBindings extends events_1.default.EventEmitter {
     onAddressChange(address) {
         this.emit("addressChange", address);
     }
-    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) {
-    }
+    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) { }
     onAdvertisingStart(error) {
         this.emit("advertisingStart", error);
     }
@@ -164,5 +162,4 @@ class BlenoBindings extends events_1.default.EventEmitter {
     }
 }
 exports.default = BlenoBindings;
-
 //# sourceMappingURL=bindings.js.map

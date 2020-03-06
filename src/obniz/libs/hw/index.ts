@@ -4,7 +4,6 @@
  */
 
 export default class HW {
-
   public static getDefinitionFor(hw: any) {
     if (hw === "obnizb1") {
       return require("./obnizb1.json");

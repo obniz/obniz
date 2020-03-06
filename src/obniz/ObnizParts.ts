@@ -5,9 +5,9 @@
 
 import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 import ObnizPartsInterface from "./ObnizPartsInterface";
-import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
+import { WiredNameMap, WiredNameOptionsMap } from "./ObnizPartsList";
 
 /**
  * @ignore
@@ -15,7 +15,6 @@ import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
 const _parts: any = {};
 
 export default class ObnizParts extends ObnizConnection {
-
   /**
    * @ignore
    * @private
@@ -29,11 +28,7 @@ export default class ObnizParts extends ObnizConnection {
    * @param arg0 Parts class
    */
   public static PartsRegistrate(arg0: typeof ObnizPartsInterface, arg1?: any) {
-    if (
-      arg0 &&
-      typeof arg0.info === "function" &&
-      typeof arg0.info().name === "string"
-    ) {
+    if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
       _parts[arg0.info().name] = arg0;
     } else if (typeof arg0 === "string" && typeof arg1 === "object") {
       _parts[arg0] = arg1;
@@ -93,9 +88,7 @@ export default class ObnizParts extends ObnizConnection {
       if (parts.requiredKeys) {
         const err: any = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
         if (err) {
-          throw new Error(
-            partsname + " wired param '" + err + "' required, but not found ",
-          );
+          throw new Error(partsname + " wired param '" + err + "' required, but not found ");
         }
       }
       parts.params = ObnizUtil._keyFilter(args[1], parts.keys);

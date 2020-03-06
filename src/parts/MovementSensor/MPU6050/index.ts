@@ -4,12 +4,11 @@
  */
 
 import Obniz from "../../../obniz";
-import {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import I2cImu6, {accelRange, gyroRange, I2cImu6AbstractOptions, Inertia6, Xyz} from "../../i2cImu6";
-import {I2cInfo} from "../../i2cParts";
+import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import I2cImu6, { accelRange, gyroRange, I2cImu6AbstractOptions, Inertia6, Xyz } from "../../i2cImu6";
+import { I2cInfo } from "../../i2cParts";
 
-export interface MPU6050Options extends I2cImu6AbstractOptions {
-}
+export interface MPU6050Options extends I2cImu6AbstractOptions {}
 
 export default class MPU6050 extends I2cImu6 {
   public static info(): ObnizPartsInfo {
@@ -119,9 +118,7 @@ export default class MPU6050 extends I2cImu6 {
     await this.writeFlagWait(MPU6050.commands.pwr_mgmt_1, 7);
   }
 
-  public async configDlpfWait() {
-
-  }
+  public async configDlpfWait() {}
 
   public async bypassMagnetometerWait(flag: boolean = true): Promise<void> {
     // Enable I2C bypass to access for MPU9250 magnetometer access.

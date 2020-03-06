@@ -1,13 +1,11 @@
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstractOptions} from "../../../i2cParts";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
+import { I2cPartsAbstractOptions } from "../../../i2cParts";
 
-export interface SHT20Options extends I2cPartsAbstractOptions {
-}
+export interface SHT20Options extends I2cPartsAbstractOptions {}
 
 export default class SHT20 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "SHT20",
@@ -19,7 +17,7 @@ export default class SHT20 implements ObnizPartsInterface {
   public params: any;
 
   public ioKeys: string[];
-  public commands: {[key: string]: [number]};
+  public commands: { [key: string]: [number] };
   public address!: number;
 
   protected obniz!: Obniz;
@@ -27,14 +25,7 @@ export default class SHT20 implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = [
-      "vcc",
-      "sda",
-      "scl",
-      "gnd",
-      "i2c",
-      "pull",
-    ];
+    this.keys = ["vcc", "sda", "scl", "gnd", "i2c", "pull"];
 
     this.ioKeys = ["vcc", "sda", "scl", "gnd"];
     this.commands = {};
@@ -66,23 +57,23 @@ export default class SHT20 implements ObnizPartsInterface {
     if (this.checkCRC(rawValue, data[2]) !== 0) {
       return -2;
     }
-    return rawValue & 0xFFFC;
+    return rawValue & 0xfffc;
   }
 
   public async getTempWait(): Promise<number> {
     const rawTemperature = await this.getData(this.commands.tempNoHold);
     if (rawTemperature < 0) {
       console.log("error sht20", rawTemperature);
-      return(rawTemperature);
+      return rawTemperature;
     }
     return rawTemperature * (175.72 / 65536.0) - 46.85;
   }
 
   public async getHumidWait(): Promise<number> {
-    const rawHumidity  = await this.getData(this.commands.humidityNoHold);
-    if (rawHumidity  < 0) {
-      console.log("error sht20", rawHumidity );
-      return(rawHumidity);
+    const rawHumidity = await this.getData(this.commands.humidityNoHold);
+    if (rawHumidity < 0) {
+      console.log("error sht20", rawHumidity);
+      return rawHumidity;
     }
     return rawHumidity * (125.0 / 65536.0) - 6.0;
   }
@@ -92,12 +83,11 @@ export default class SHT20 implements ObnizPartsInterface {
     remainder |= check_value_from_sensor;
     let divsor = 0x988000;
     for (let i = 0; i < 16; i++) {
-      if (remainder & 1 << (23 - i)) {
+      if (remainder & (1 << (23 - i))) {
         remainder ^= divsor;
       }
       divsor >>= 1;
     }
     return remainder;
   }
-
 }

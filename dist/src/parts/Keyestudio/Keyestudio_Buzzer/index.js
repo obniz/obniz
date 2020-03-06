@@ -38,5 +38,4 @@ class Keyestudio_Buzzer {
     }
 }
 exports.default = Keyestudio_Buzzer;
-
 //# sourceMappingURL=index.js.map

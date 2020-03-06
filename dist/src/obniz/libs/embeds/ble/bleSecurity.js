@@ -49,9 +49,7 @@ class BleSecurity {
                 // keys = ['LTK', 'IRK','CSRK'];
             }
         }
-        if (auth !== undefined &&
-            indicateSecurityLevel !== undefined &&
-            keys !== undefined) {
+        if (auth !== undefined && indicateSecurityLevel !== undefined && keys !== undefined) {
             this.setAuth(auth);
             this.setIndicateSecurityLevel(indicateSecurityLevel);
             this.setEnableKeyTypes(keys);
@@ -151,8 +149,7 @@ class BleSecurity {
             },
         });
     }
-    onerror(params) {
-    } // dummy
+    onerror(params) { } // dummy
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {
@@ -163,5 +160,4 @@ class BleSecurity {
     }
 }
 exports.default = BleSecurity;
-
 //# sourceMappingURL=bleSecurity.js.map

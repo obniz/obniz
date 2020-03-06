@@ -70,13 +70,7 @@ class PeripheralI2C {
         if (err) {
             throw new Error("I2C start param '" + err + "' required, but not found ");
         }
-        this.state = util_1.default._keyFilter(arg, [
-            "mode",
-            "sda",
-            "scl",
-            "pull",
-            "gnd",
-        ]);
+        this.state = util_1.default._keyFilter(arg, ["mode", "sda", "scl", "pull", "gnd"]);
         const ioKeys = ["sda", "scl", "gnd"];
         for (const key of ioKeys) {
             if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
@@ -85,12 +79,8 @@ class PeripheralI2C {
         }
         const mode = this.state.mode;
         const clock = typeof arg.clock === "number" ? Math.floor(arg.clock) : null;
-        const slave_address = typeof arg.slave_address === "number"
-            ? Math.floor(arg.slave_address)
-            : null;
-        const slave_address_length = typeof arg.slave_address_length === "number"
-            ? Math.floor(arg.slave_address_length)
-            : null;
+        const slave_address = typeof arg.slave_address === "number" ? Math.floor(arg.slave_address) : null;
+        const slave_address_length = typeof arg.slave_address_length === "number" ? Math.floor(arg.slave_address_length) : null;
         if (mode !== "master" && mode !== "slave") {
             throw new Error("i2c: invalid mode " + mode);
         }
@@ -299,5 +289,4 @@ class PeripheralI2C {
     }
 }
 exports.default = PeripheralI2C;
-
 //# sourceMappingURL=i2c.js.map

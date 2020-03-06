@@ -5,13 +5,12 @@
 import BleCharacteristic from "./bleCharacteristic";
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 import BlePeripheral from "./blePeripheral";
-import {BleCharacteristicDefine, BleServiceDefine, UUID} from "./bleTypes";
+import { BleCharacteristicDefine, BleServiceDefine, UUID } from "./bleTypes";
 
 /**
  * @category Use as Peripheral
  */
 export default class BleService extends BleLocalAttributeAbstract<null, BleCharacteristic> {
-
   /**
    * Peripheral instance.
    *

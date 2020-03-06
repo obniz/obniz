@@ -4,9 +4,9 @@
  */
 
 import Obniz from "../obniz";
-import {DriveType, PullType} from "../obniz/libs/io_peripherals/common";
+import { DriveType, PullType } from "../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../obniz/ObnizPartsInterface";
 
 export interface Xyz {
   x: number;
@@ -118,16 +118,16 @@ export default abstract class I2cPartsAbstract implements ObnizPartsInterface {
   }
 
   protected async readInt16Wait(register: number, endian: string = "b"): Promise<number> {
-    const data = await this.readWait(register, 2) as [number, number];
+    const data = (await this.readWait(register, 2)) as [number, number];
     return I2cPartsAbstract.charArrayToInt16(data, endian);
   }
 
   protected async readThreeInt16Wait(register: number, endian: string = "b"): Promise<[number, number, number]> {
     const data: number[] = await this.readWait(register, 6);
     const results: [number, number, number] = [0, 0, 0];
-    results[0] = (I2cPartsAbstract.charArrayToInt16(data.slice(0, 2) as [number, number], endian));
-    results[1] = (I2cPartsAbstract.charArrayToInt16(data.slice(2, 4) as [number, number], endian));
-    results[2] = (I2cPartsAbstract.charArrayToInt16(data.slice(4, 6) as [number, number], endian));
+    results[0] = I2cPartsAbstract.charArrayToInt16(data.slice(0, 2) as [number, number], endian);
+    results[1] = I2cPartsAbstract.charArrayToInt16(data.slice(2, 4) as [number, number], endian);
+    results[2] = I2cPartsAbstract.charArrayToInt16(data.slice(4, 6) as [number, number], endian);
     return results;
   }
 }

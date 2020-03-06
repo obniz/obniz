@@ -9,7 +9,12 @@ class S11059Test {
   public init() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const colorSens = obniz.wired("S11059", { vcc: 0, sda: 1, scl: 2, gnd: 3 });
+      const colorSens = obniz.wired("S11059", {
+        vcc: 0,
+        sda: 1,
+        scl: 2,
+        gnd: 3,
+      });
       colorSens.init(1, 2); // ゲイン高感度, 積分時間22.4msで初期化
     };
   }
@@ -17,7 +22,12 @@ class S11059Test {
   public getVal() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const colorSens = obniz.wired("S11059", { vcc: 0, sda: 1, scl: 2, gnd: 3 });
+      const colorSens = obniz.wired("S11059", {
+        vcc: 0,
+        sda: 1,
+        scl: 2,
+        gnd: 3,
+      });
       colorSens.init(1, 2);
       const ret = await colorSens.getVal(); // 各色の値を取得
       console.log("getVal:" + ret); // 取得した配列を表示

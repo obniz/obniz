@@ -65,8 +65,7 @@ class MPU6050 extends i2cImu6_1.default {
     async resetWait() {
         await this.writeFlagWait(MPU6050.commands.pwr_mgmt_1, 7);
     }
-    async configDlpfWait() {
-    }
+    async configDlpfWait() { }
     async bypassMagnetometerWait(flag = true) {
         // Enable I2C bypass to access for MPU9250 magnetometer access.
         if (flag === true) {
@@ -200,5 +199,4 @@ MPU6050.commands = {
         "2000dps": 0x18,
     },
 };
-
 //# sourceMappingURL=index.js.map

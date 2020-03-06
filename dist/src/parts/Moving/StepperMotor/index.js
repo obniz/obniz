@@ -12,8 +12,18 @@ class StepperMotor {
         this.milliMeterStepCount = 1;
         this.ios = [];
         this._stepInstructions = {
-            "1": [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
-            "2": [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
+            "1": [
+                [0, 1, 1, 1],
+                [1, 0, 1, 1],
+                [1, 1, 0, 1],
+                [1, 1, 1, 0],
+            ],
+            "2": [
+                [0, 0, 1, 1],
+                [1, 0, 0, 1],
+                [1, 1, 0, 0],
+                [0, 1, 1, 0],
+            ],
             "1-2": [
                 [0, 1, 1, 1],
                 [0, 0, 1, 1],
@@ -181,5 +191,4 @@ class StepperMotor {
     }
 }
 exports.default = StepperMotor;
-
 //# sourceMappingURL=index.js.map

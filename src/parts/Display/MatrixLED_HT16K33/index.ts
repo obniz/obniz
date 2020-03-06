@@ -1,13 +1,11 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstractOptions} from "../../i2cParts";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import { I2cPartsAbstractOptions } from "../../i2cParts";
 
-export interface MatrixLED_HT16K33Options extends I2cPartsAbstractOptions {
-}
+export interface MatrixLED_HT16K33Options extends I2cPartsAbstractOptions {}
 
 export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "MatrixLED_HT16K33",
@@ -32,7 +30,7 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
     this.requiredKeys = [];
     this.command = {};
     this.command.blink = 0x80;
-    this.command.brightness = 0xE0;
+    this.command.brightness = 0xe0;
 
     this.blink_mode = {};
     this.blink_mode.display_on = 0x01;
@@ -54,7 +52,8 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
     this.obniz.wait(1000);
   }
 
-  public init(width: number) { // 8 or 16
+  public init(width: number) {
+    // 8 or 16
     this.width = width;
     this.height = 8; // IC static setting
     this.prepareVram(width, this.height);
@@ -117,8 +116,8 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
   protected writeVram() {
     const data = [0x00];
     for (let i = 0; i < this.height; i++) {
-      data.push(this.vram[i] & 0xFF);
-      data.push((this.vram[i] >> 8) & 0xFF);
+      data.push(this.vram[i] & 0xff);
+      data.push((this.vram[i] >> 8) & 0xff);
     }
     this.i2c.write(this.address, data);
   }
@@ -129,5 +128,4 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
       this.vram.push(0);
     }
   }
-
 }

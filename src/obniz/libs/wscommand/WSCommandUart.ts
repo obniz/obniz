@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -97,9 +96,9 @@ class WSCommandUart extends WSCommand {
         continue;
       }
       const schemaData: any = [
-        {uri: "/request/uart/init", onValid: this.init},
-        {uri: "/request/uart/send", onValid: this.send},
-        {uri: "/request/uart/deinit", onValid: this.deinit},
+        { uri: "/request/uart/init", onValid: this.init },
+        { uri: "/request/uart/send", onValid: this.send },
+        { uri: "/request/uart/deinit", onValid: this.deinit },
       ];
       const res: any = this.validateCommandSchema(schemaData, module, "uart" + i, i);
 

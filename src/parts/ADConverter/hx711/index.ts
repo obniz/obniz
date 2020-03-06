@@ -6,7 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface Hx711Options {
   vcc?: number;
@@ -16,7 +16,6 @@ export interface Hx711Options {
 }
 
 export default class Hx711 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "hx711",
@@ -74,15 +73,7 @@ export default class Hx711 implements ObnizPartsInterface {
       frequency: 500 * 1000,
     });
 
-    const ret_double: any = await this.spi.writeWait([
-      0xaa,
-      0xaa,
-      0xaa,
-      0xaa,
-      0xaa,
-      0xaa,
-      0x80,
-    ]);
+    const ret_double: any = await this.spi.writeWait([0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x80]);
     this.spi.end(true);
     this.sck.output(false);
     const ret: any = [

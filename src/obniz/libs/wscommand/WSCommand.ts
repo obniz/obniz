@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -8,7 +7,6 @@ import WSSchema from "./WSSchema";
 
 const commandClasses: any = {};
 export default abstract class WSCommand {
-
   static get schema() {
     return WSSchema;
   }
@@ -46,8 +44,7 @@ export default abstract class WSCommand {
     let index: any = 0;
     result[index++] = module & 0x7f;
     result[index++] = func;
-    result[index++] =
-      (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+    result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
     while (length_extra_bytse > 0) {
       length_extra_bytse--;
       result[index++] = payload_length >> (length_extra_bytse * 8);
@@ -89,10 +86,7 @@ export default abstract class WSCommand {
     return {
       module,
       func,
-      payload: buf.slice(
-        3 + length_extra_bytse,
-        3 + length_extra_bytse + length,
-      ),
+      payload: buf.slice(3 + length_extra_bytse, 3 + length_extra_bytse + length),
       next: buf.slice(3 + length_extra_bytse + length),
     };
   }
@@ -165,9 +159,7 @@ export default abstract class WSCommand {
         err.err0 = payload[0];
         err.err1 = payload[1];
         err.function = payload[2];
-        err.message = `Error module=${this.module} func=${err.function} err0=${
-          err.err0
-        } returned=${err.err1}`;
+        err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
       } else {
         err.message = `Error module=${this.module} with + ${err._args}`;
       }
@@ -202,7 +194,7 @@ export default abstract class WSCommand {
   }
 
   public validateCommandSchema(uriList: any, json: any, rootPath: any, customArg: any) {
-    const res: any = {valid: 0, invalid: 0, results: [], invalidButLike: []};
+    const res: any = { valid: 0, invalid: 0, results: [], invalidButLike: [] };
     for (const oneRow of uriList) {
       const errors: any = this.validate(oneRow.uri, json);
       res.results.push(errors);
@@ -215,7 +207,7 @@ export default abstract class WSCommand {
         res.invalid++;
         const message: any = this.onlyTypeErrorMessage(errors, rootPath);
         if (message) {
-          res.invalidButLike.push({uri: oneRow.uri, message});
+          res.invalidButLike.push({ uri: oneRow.uri, message });
         }
       }
     }
@@ -252,10 +244,7 @@ export default abstract class WSCommand {
     const messages: any = [];
     for (const error of validateError.errors) {
       if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
-        if (
-          (error as any).params.type === "object" ||
-          (error as any).params.expected === "object"
-        ) {
+        if ((error as any).params.type === "object" || (error as any).params.expected === "object") {
           return false;
         }
       } else if (badErrorCodes.includes(error.code)) {
@@ -312,10 +301,7 @@ export default abstract class WSCommand {
         const reg: any = new RegExp(pattern);
         for (const key of Object.keys(json)) {
           if (reg.test(key)) {
-            results[key] = this._filterSchema(
-              schema.patternProperties[pattern],
-              json[key],
-            );
+            results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]);
           }
         }
       }
@@ -328,5 +314,4 @@ export default abstract class WSCommand {
 
 // tslint:disable:max-classes-per-file
 
-class WSCommandNotFoundError extends Error {
-}
+class WSCommandNotFoundError extends Error {}

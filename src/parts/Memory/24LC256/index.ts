@@ -5,7 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface _24LC256Options {
   sda?: number;
@@ -17,7 +17,6 @@ export interface _24LC256Options {
 }
 
 export default class _24LC256 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "24LC256",

@@ -6,7 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface MQGasSensorOptions {
   gnd?: number;
@@ -16,7 +16,6 @@ export interface MQGasSensorOptions {
 }
 
 export default class MQGasSensor implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "MQGas",

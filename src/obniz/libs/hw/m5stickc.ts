@@ -26,7 +26,6 @@ import LogicAnalyzer from "../measurements/logicanalyzer";
 import ObnizMeasure from "../measurements/measure";
 
 export class M5StickC extends ObnizDevice {
-
   /**
    * @category Embeds
    */
@@ -324,20 +323,19 @@ export class M5StickC extends ObnizDevice {
 
   constructor(id: string, options?: any) {
     super(id, options);
-
   }
 
-  public gyroWait(): Promise<{ x: number, y: number, z: number }> {
+  public gyroWait(): Promise<{ x: number; y: number; z: number }> {
     const supportedIMUNameArr = ["MPU6886", "SH200Q"];
-    if (!(supportedIMUNameArr.includes(this.imu!.constructor.name))) {
+    if (!supportedIMUNameArr.includes(this.imu!.constructor.name)) {
       throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
     }
     return this.imu!.getGyroWait();
   }
 
-  public accelerationWait(): Promise<{ x: number, y: number, z: number }> {
+  public accelerationWait(): Promise<{ x: number; y: number; z: number }> {
     const supportedIMUNameArr = ["MPU6886", "SH200Q"];
-    if (!(supportedIMUNameArr.includes(this.imu!.constructor.name))) {
+    if (!supportedIMUNameArr.includes(this.imu!.constructor.name)) {
       throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
     }
     return this.imu!.getAccelWait();
@@ -346,11 +344,10 @@ export class M5StickC extends ObnizDevice {
   public setupIMUWait(imuName: "MPU6886" | "SH200Q" = "MPU6886"): Promise<MPU6886 | SH200Q> {
     const i2c = this._m5i2c!;
     const onerror = i2c.onerror;
-    this.imu = this.wired(imuName, {i2c});
+    this.imu = this.wired(imuName, { i2c });
 
     // @ts-ignore
-    this.imu._reset = () => {
-    };
+    this.imu._reset = () => {};
     const p1 = this.imu.whoamiWait();
     const p2 = new Promise((resolve, reject) => {
       i2c.onerror = reject;
@@ -373,24 +370,28 @@ export class M5StickC extends ObnizDevice {
       }
       return this.imu!;
     });
-
   }
 
   protected _prepareComponents() {
-
     // @ts-ignore
     super._prepareComponents();
 
-    this.ir = this.wired("InfraredLED", {anode: 9});
-    this.led = this.wired("LED", {cathode: 10});
-    this.buttonA = this.wired("Button", {signal: 37});
-    this.buttonB = this.wired("Button", {signal: 39});
+    this.ir = this.wired("InfraredLED", { anode: 9 });
+    this.led = this.wired("LED", { cathode: 10 });
+    this.buttonA = this.wired("Button", { signal: 37 });
+    this.buttonB = this.wired("Button", { signal: 39 });
 
-    const i2cParams = {sda: 21, scl: 22, clock: 100000, pull: "3v", mode: "master"};
+    const i2cParams = {
+      sda: 21,
+      scl: 22,
+      clock: 100000,
+      pull: "3v",
+      mode: "master",
+    };
 
     this._m5i2c = this.i2c1;
     this._m5i2c.start(i2cParams as any);
-    this.axp = this.wired("AXP192", {i2c: this._m5i2c});
+    this.axp = this.wired("AXP192", { i2c: this._m5i2c });
     this.led!.off();
   }
 }

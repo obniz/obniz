@@ -130,14 +130,12 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      * @param param
      */
-    addPermission(param) {
-    }
+    addPermission(param) { }
     /**
      * @ignore
      * @param param
      */
-    removePermission(param) {
-    }
+    removePermission(param) { }
     /**
      * @ignore
      * @param name
@@ -188,14 +186,12 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      * @private
      */
-    _onNotify() {
-    }
+    _onNotify() { }
     /**
      * @ignore
      * @private
      */
-    _onIndicate() {
-    }
+    _onIndicate() { }
     /**
      * This sends notify to the connected central.
      *
@@ -224,5 +220,4 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
     }
 }
 exports.default = BleCharacteristic;
-
 //# sourceMappingURL=bleCharacteristic.js.map

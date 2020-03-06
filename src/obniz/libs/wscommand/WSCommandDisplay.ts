@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -7,7 +6,6 @@ import qrcode from "../utils/qr";
 import WSCommand from "./WSCommand";
 
 class WSCommandDisplay extends WSCommand {
-
   public module = 8;
 
   public _CommandClear = 0;
@@ -83,8 +81,7 @@ class WSCommandDisplay extends WSCommand {
       for (let row = 0; row < size; row++) {
         for (let col = 0; col < size; col++) {
           if (!modules[Math.floor(row / 2)][Math.floor(col / 2)]) {
-            vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |=
-              0x80 >> (col + 2) % 8;
+            vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |= 0x80 >> (col + 2) % 8;
           }
         }
       }
@@ -95,11 +92,7 @@ class WSCommandDisplay extends WSCommand {
   public pinName(params: any) {
     for (let i = 0; i < 40; i++) {
       if (typeof params.pin_assign[i] === "object") {
-        this.setPinName(
-          i,
-          params.pin_assign[i].module_name || "?",
-          params.pin_assign[i].pin_name || "?",
-        );
+        this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
       }
     }
   }
@@ -146,11 +139,11 @@ class WSCommandDisplay extends WSCommand {
     }
 
     const schemaData: any = [
-      {uri: "/request/display/clear", onValid: this.clear},
-      {uri: "/request/display/text", onValid: this.text},
-      {uri: "/request/display/raw", onValid: this.raw},
-      {uri: "/request/display/pin_assign", onValid: this.pinName},
-      {uri: "/request/display/qr", onValid: this.qr},
+      { uri: "/request/display/clear", onValid: this.clear },
+      { uri: "/request/display/text", onValid: this.text },
+      { uri: "/request/display/raw", onValid: this.raw },
+      { uri: "/request/display/pin_assign", onValid: this.pinName },
+      { uri: "/request/display/qr", onValid: this.qr },
     ];
     const res: any = this.validateCommandSchema(schemaData, module, "display");
 

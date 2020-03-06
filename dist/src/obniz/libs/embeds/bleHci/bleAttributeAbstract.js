@@ -102,13 +102,11 @@ class BleAttributeAbstract {
     /**
      * @ignore
      */
-    read() {
-    }
+    read() { }
     /**
      * @ignore
      */
-    write(data, needResponse) {
-    }
+    write(data, needResponse) { }
     /**
      * @ignore
      */
@@ -253,8 +251,7 @@ class BleAttributeAbstract {
     setFunctions() {
         let childrenName = this.childrenName;
         if (childrenName) {
-            childrenName =
-                childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+            childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
             const childName = childrenName.slice(0, -1);
             let funcName = "add" + childName;
             this[funcName] = this.addChild;
@@ -275,5 +272,4 @@ class BleAttributeAbstract {
     }
 }
 exports.default = BleAttributeAbstract;
-
 //# sourceMappingURL=bleAttributeAbstract.js.map

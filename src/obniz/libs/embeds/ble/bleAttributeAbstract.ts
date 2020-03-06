@@ -50,8 +50,7 @@ export default class BleAttributeAbstract {
   public setFunctions() {
     let childrenName: any = this.childrenName;
     if (childrenName) {
-      childrenName =
-        childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+      childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
       const childName: any = childrenName.slice(0, -1);
 
       let funcName: any = "add" + childName;
@@ -69,8 +68,7 @@ export default class BleAttributeAbstract {
         },
         set(newValue: any) {
           this.parent = newValue;
-        }
-        ,
+        },
       });
     }
   }
@@ -126,11 +124,9 @@ export default class BleAttributeAbstract {
    * WS COMMANDS
    */
 
-  public read() {
-  }
+  public read() {}
 
-  public write(val: any, needResponse?: any) {
-  }
+  public write(val: any, needResponse?: any) {}
 
   public writeNumber(val: any, needResponse?: any) {
     this.write([val], needResponse);
@@ -193,7 +189,7 @@ export default class BleAttributeAbstract {
   }
 
   public readFromRemoteWait() {
-    return new Promise ((resolve: any ) => {
+    return new Promise((resolve: any) => {
       this.emitter.once("onreadfromremote", () => {
         resolve();
       });
@@ -201,7 +197,7 @@ export default class BleAttributeAbstract {
   }
 
   public writeFromRemoteWait() {
-    return new Promise ((resolve: any ) => {
+    return new Promise((resolve: any) => {
       this.emitter.once("onreadfromremote", (params: any) => {
         resolve(params.data);
       });
@@ -211,17 +207,13 @@ export default class BleAttributeAbstract {
   /**
    * CALLBACKS
    */
-  public onwrite(result: any) {
-  }
+  public onwrite(result: any) {}
 
-  public onread(data: any) {
-  }
+  public onread(data: any) {}
 
-  public onwritefromremote(address: any, data: any) {
-  }
+  public onwritefromremote(address: any, data: any) {}
 
-  public onreadfromremote(address: any) {
-  }
+  public onreadfromremote(address: any) {}
 
   public onerror(err: any) {
     console.error(err.message);

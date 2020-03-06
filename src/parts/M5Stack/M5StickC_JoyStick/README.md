@@ -14,7 +14,7 @@ When using M5StickC, You do not need to assign pins.
 // JavaScript Examples
 var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
 obniz.onconnect = async function() {
-  var joystick = obniz.wired("StickC_JoyStick");
+  var joystick = obniz.wired("M5StickC_JoyStick");
   while(true) {
     var x = await joystick.getXWait()
     var y = await joystick.getYWait()

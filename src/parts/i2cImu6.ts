@@ -1,4 +1,4 @@
-import i2cParts, {I2cPartsAbstractOptions} from "./i2cParts";
+import i2cParts, { I2cPartsAbstractOptions } from "./i2cParts";
 
 export type accelRange = "2g" | "4g" | "8g" | "16g";
 export type gyroRange = "250dps" | "500dps" | "1000dps" | "2000dps";
@@ -18,18 +18,17 @@ export interface Inertia6 {
   temperature?: number | null;
 }
 
-export interface I2cImu6AbstractOptions extends I2cPartsAbstractOptions {
-}
+export interface I2cImu6AbstractOptions extends I2cPartsAbstractOptions {}
 
 export default abstract class I2cImu6Abstract extends i2cParts {
   // d/so*sf
   protected static scales = {
     accel: {
       so: {
-        "2g": 16384,  // 1 / 16384 ie. 0.061 mg / digit
-        "4g": 8192,   //  1 / 8192 ie. 0.122 mg / digit
-        "8g": 4096,   // 1 / 4096 ie. 0.244 mg / digit
-        "16g": 2048,  // 1 / 2048 ie. 0.488 mg / digit
+        "2g": 16384, // 1 / 16384 ie. 0.061 mg / digit
+        "4g": 8192, //  1 / 8192 ie. 0.122 mg / digit
+        "8g": 4096, // 1 / 4096 ie. 0.244 mg / digit
+        "16g": 2048, // 1 / 2048 ie. 0.488 mg / digit
       },
       sf: {
         m_s2: 9.80665,
@@ -53,11 +52,11 @@ export default abstract class I2cImu6Abstract extends i2cParts {
   };
 
   private static _accelS(value: number, accel_so: accelRange, accel_sf: accelUnit): number {
-    return value / I2cImu6Abstract.scales.accel.so[accel_so] * I2cImu6Abstract.scales.accel.sf[accel_sf];
+    return (value / I2cImu6Abstract.scales.accel.so[accel_so]) * I2cImu6Abstract.scales.accel.sf[accel_sf];
   }
 
   private static _gyroS(value: number, gyro_so: gyroRange, gyro_sf: gyroUnit): number {
-    return value / I2cImu6Abstract.scales.gyro.so[gyro_so] * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
+    return (value / I2cImu6Abstract.scales.gyro.so[gyro_so]) * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
   }
 
   protected accel_so: accelRange = "2g";

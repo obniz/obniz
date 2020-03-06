@@ -12,7 +12,7 @@ When using M5StickC, You do not need to assign pins.
 
 ```javascript
 // JavaScript Examples
-var dac = obniz.wired("StickC_DAC", {sda:0, scl:26});
+var dac = obniz.wired("M5StickC_DAC", {sda:0, scl:26});
 dac.setVoltage(1.5);
 ```
 

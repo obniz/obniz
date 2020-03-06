@@ -5,7 +5,7 @@
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BleService from "./bleService";
-import {BleDeviceAddress, BleServiceDefine, UUID} from "./bleTypes";
+import { BleDeviceAddress, BleServiceDefine, UUID } from "./bleTypes";
 
 export type BleConnectionState = "connected" | "disconnected";
 
@@ -18,7 +18,6 @@ export interface BleConnectionUpdateParam {
  * @category Use as Peripheral
  */
 export default class BlePeripheral {
-
   /**
    * Current connected device address
    */
@@ -192,6 +191,5 @@ export default class BlePeripheral {
    * @ignore
    * @param error
    */
-  public onerror(error: any) {
-  }
+  public onerror(error: any) {}
 }

@@ -27,8 +27,7 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
-    discoverChildren() {
-    }
+    discoverChildren() { }
     discoverChildrenWait() {
         return new Promise((resolve) => {
             this.emitter.once("discoverfinished", () => {
@@ -43,10 +42,8 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     /**
      * CALLBACKS
      */
-    ondiscover(child) {
-    }
-    ondiscoverfinished(children) {
-    }
+    ondiscover(child) { }
+    ondiscoverfinished(children) { }
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {

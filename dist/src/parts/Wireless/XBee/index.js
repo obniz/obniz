@@ -86,9 +86,7 @@ class XBee {
         }
     }
     sendCommand() {
-        if (this.isAtMode === true &&
-            this.currentCommand === null &&
-            this.commands.length > 0) {
+        if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
             this.currentCommand = "AT" + this.commands.shift();
             this.uart.send(this.currentCommand + "\r");
         }
@@ -144,5 +142,4 @@ class XBee {
     }
 }
 exports.default = XBee;
-
 //# sourceMappingURL=index.js.map

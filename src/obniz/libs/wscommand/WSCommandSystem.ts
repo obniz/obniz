@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -96,18 +95,18 @@ class WSCommandSystem extends WSCommand {
     }
 
     const schemaData: any = [
-      {uri: "/request/system/reboot", onValid: this.reboot},
-      {uri: "/request/system/reset", onValid: this.reset},
-      {uri: "/request/system/wait", onValid: this.wait},
-      {uri: "/request/system/selfCheck", onValid: this.selfCheck},
+      { uri: "/request/system/reboot", onValid: this.reboot },
+      { uri: "/request/system/reset", onValid: this.reset },
+      { uri: "/request/system/wait", onValid: this.wait },
+      { uri: "/request/system/selfCheck", onValid: this.selfCheck },
       {
         uri: "/request/system/keepWorkingAtOffline",
         onValid: this.keepWorkingAtOffline,
       },
-      {uri: "/request/system/ping", onValid: this.ping},
-      {uri: "/request/system/sleepSeconds", onValid: this.sleepSeconds},
-      {uri: "/request/system/sleepMinute", onValid: this.sleepMinute},
-      {uri: "/request/system/sleepIoTrigger", onValid: this.sleepIoTrigger},
+      { uri: "/request/system/ping", onValid: this.ping },
+      { uri: "/request/system/sleepSeconds", onValid: this.sleepSeconds },
+      { uri: "/request/system/sleepMinute", onValid: this.sleepMinute },
+      { uri: "/request/system/sleepIoTrigger", onValid: this.sleepIoTrigger },
     ];
     const res: any = this.validateCommandSchema(schemaData, module, "system");
 
@@ -126,10 +125,8 @@ class WSCommandSystem extends WSCommand {
 
     if (payload.length >= 16) {
       payload = Buffer.from(payload);
-      const obnizTime: any =
-        payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
-      const pingServerTime: any =
-        payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
+      const obnizTime: any = payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
+      const pingServerTime: any = payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
       const key: any = [];
       for (let i = 16; i < payload.length; i++) {
         key.push(payload[i]);

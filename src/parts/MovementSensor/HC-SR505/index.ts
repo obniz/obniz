@@ -5,7 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface HCSR505Options {
   signal: number;
@@ -14,7 +14,6 @@ export interface HCSR505Options {
 }
 
 export default class HCSR505 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "HC-SR505",

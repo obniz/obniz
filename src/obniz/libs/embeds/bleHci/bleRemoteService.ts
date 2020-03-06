@@ -5,13 +5,12 @@
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
 import BleRemotePeripheral from "./bleRemotePeripheral";
-import {UUID} from "./bleTypes";
+import { UUID } from "./bleTypes";
 
 /**
  * @category Use as Central
  */
 export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemotePeripheral, BleRemoteCharacteristic> {
-
   /**
    * Peripheral instance
    */
@@ -156,10 +155,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    */
   public discoverChildren() {
-    this.parent!.obnizBle.centralBindings.discoverCharacteristics(
-      this.peripheral.address,
-      this.uuid,
-    );
+    this.parent!.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
   }
 
   /**
@@ -182,13 +178,11 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    * @param characteristic
    */
-  public ondiscovercharacteristic(characteristic: any) {
-  }
+  public ondiscovercharacteristic(characteristic: any) {}
 
   /**
    * @ignore
    * @param characteristics
    */
-  public ondiscovercharacteristicfinished(characteristics: any[]) {
-  }
+  public ondiscovercharacteristicfinished(characteristics: any[]) {}
 }

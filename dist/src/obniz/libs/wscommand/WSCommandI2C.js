@@ -149,11 +149,8 @@ class WSCommandI2C extends WSCommand_1.default {
             // const _esperr = payload[0];
             const err = payload[1];
             const ref_func_id = payload[2];
-            if (ref_func_id === this._CommandWrite ||
-                ref_func_id === this._CommandRead) {
-                let reason = "" +
-                    (ref_func_id === this._CommandWrite ? "writing" : "reading") +
-                    " error. ";
+            if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
+                let reason = "" + (ref_func_id === this._CommandWrite ? "writing" : "reading") + " error. ";
                 if (err === 7) {
                     // in fact. it is 0x107. but truncated
                     reason += "Communication Timeout. Maybe, target is not connected.";
@@ -173,5 +170,4 @@ class WSCommandI2C extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandI2C;
-
 //# sourceMappingURL=WSCommandI2C.js.map

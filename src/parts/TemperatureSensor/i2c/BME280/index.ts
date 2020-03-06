@@ -7,7 +7,7 @@ import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 
 export interface BME280Options {
   vio?: number;
@@ -22,12 +22,10 @@ export interface BME280Options {
 }
 
 export default class BME280 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "BME280",
-      datasheet:
-        "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf",
+      datasheet: "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf",
     };
   }
 
@@ -49,17 +47,7 @@ export default class BME280 implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = [
-      "vcore",
-      "vio",
-      "gnd",
-      "csb",
-      "sdi",
-      "sck",
-      "sdo",
-      "i2c",
-      "address",
-    ];
+    this.keys = ["vcore", "vio", "gnd", "csb", "sdi", "sck", "sdo", "i2c", "address"];
 
     this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
 
@@ -136,19 +124,12 @@ export default class BME280 implements ObnizPartsInterface {
   public async config() {
     this.write([
       this.commands.addresses.config,
-      (this.configration.interval << 5) |
-      (this.configration.iir_strength << 2) |
-      0,
+      (this.configration.interval << 5) | (this.configration.iir_strength << 2) | 0,
     ]);
-    this.write([
-      this.commands.addresses.ctrl_hum,
-      this.configration.sampling.hum,
-    ]);
+    this.write([this.commands.addresses.ctrl_hum, this.configration.sampling.hum]);
     this.write([
       this.commands.addresses.ctrl_meas,
-      (this.configration.sampling.temp << 5) |
-      (this.configration.sampling.pres << 2) |
-      this.configration.mode,
+      (this.configration.sampling.temp << 5) | (this.configration.sampling.pres << 2) | this.configration.mode,
     ]);
   }
 
@@ -212,7 +193,11 @@ export default class BME280 implements ObnizPartsInterface {
     return await this.i2c.readWait(this.address, 8);
   }
 
-  public async getAllWait(): Promise<{ temperature: number; humidity: number; pressure: number }> {
+  public async getAllWait(): Promise<{
+    temperature: number;
+    humidity: number;
+    pressure: number;
+  }> {
     const data = await this.getData();
 
     const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
@@ -223,21 +208,16 @@ export default class BME280 implements ObnizPartsInterface {
     const pressure = this.calibration_P(press_raw) / 100.0;
     const humidity = this.calibration_H(hum_raw);
 
-    return {temperature, humidity, pressure};
+    return { temperature, humidity, pressure };
   }
 
   public calibration_T(adc_T: any) {
     let var1: any;
     let var2: any;
     let T: any;
-    var1 =
-      (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
-        this._calibrated.dig_T2) >>
-      11;
+    var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) * this._calibrated.dig_T2) >> 11;
     var2 =
-      (((((adc_T >> 4) - this._calibrated.dig_T1) *
-        ((adc_T >> 4) - this._calibrated.dig_T1)) >>
-        12) *
+      (((((adc_T >> 4) - this._calibrated.dig_T1) * ((adc_T >> 4) - this._calibrated.dig_T1)) >> 12) *
         this._calibrated.dig_T3) >>
       14;
 
@@ -251,10 +231,7 @@ export default class BME280 implements ObnizPartsInterface {
     let pvar2: any = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
     pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
     pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
-    pvar1 =
-      ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 +
-        this._calibrated.dig_P2 * pvar1) /
-      524288;
+    pvar1 = ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 + this._calibrated.dig_P2 * pvar1) / 524288;
     pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
 
     if (pvar1 !== 0) {
@@ -271,14 +248,9 @@ export default class BME280 implements ObnizPartsInterface {
   public calibration_H(adc_H: any) {
     let h: any = this._t_fine - 76800;
     h =
-      (adc_H -
-        (this._calibrated.dig_H4 * 64 +
-          (this._calibrated.dig_H5 / 16384) * h)) *
+      (adc_H - (this._calibrated.dig_H4 * 64 + (this._calibrated.dig_H5 / 16384) * h)) *
       ((this._calibrated.dig_H2 / 65536) *
-        (1 +
-          (this._calibrated.dig_H6 / 67108864) *
-          h *
-          (1 + (this._calibrated.dig_H3 / 67108864) * h)));
+        (1 + (this._calibrated.dig_H6 / 67108864) * h * (1 + (this._calibrated.dig_H3 / 67108864) * h)));
     h = h * (1 - (this._calibrated.dig_H1 * h) / 524288);
     return h;
   }
@@ -304,8 +276,6 @@ export default class BME280 implements ObnizPartsInterface {
     if (typeof seaPressure !== "number") {
       seaPressure = 1013.25;
     }
-    return (
-      (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048
-    );
+    return (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048;
   }
 }

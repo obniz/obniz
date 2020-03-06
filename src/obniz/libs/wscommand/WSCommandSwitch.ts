@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -33,7 +32,7 @@ class WSCommandSwitch extends WSCommand {
     if (module === undefined) {
       return;
     }
-    const schemaData: any = [{uri: "/request/switch/get", onValid: this.get}];
+    const schemaData: any = [{ uri: "/request/switch/get", onValid: this.get }];
     const res: any = this.validateCommandSchema(schemaData, module, "switch");
 
     if (res.valid === 0) {
@@ -46,10 +45,7 @@ class WSCommandSwitch extends WSCommand {
   }
 
   public notifyFromBinary(objToSend: any, func: any, payload: any) {
-    if (
-      (func === this._CommandOnece || func === this._CommandNotifyValue) &&
-      payload.byteLength === 1
-    ) {
+    if ((func === this._CommandOnece || func === this._CommandNotifyValue) && payload.byteLength === 1) {
       const state: any = parseInt(payload[0]);
       const states: any = ["none", "push", "left", "right"];
       objToSend.switch = {

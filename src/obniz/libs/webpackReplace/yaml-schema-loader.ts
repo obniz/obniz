@@ -5,7 +5,6 @@
 const yaml: any = require("js-yaml");
 
 export default (source: any) => {
-
   // @ts-ignore
   const self: any = this;
   if (self.cacheable) {

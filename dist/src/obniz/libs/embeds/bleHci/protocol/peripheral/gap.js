@@ -12,8 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(require("events"));
 const hci_1 = __importDefault(require("../hci"));
 /**
@@ -31,10 +30,7 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
     startAdvertising(name, serviceUuids) {
-        debug("startAdvertising: name = " +
-            name +
-            ", serviceUuids = " +
-            JSON.stringify(serviceUuids, null, 2));
+        debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;
         let scanDataLength = 0;
         const serviceUuids16bit = [];
@@ -153,14 +149,10 @@ class Gap extends events_1.default.EventEmitter {
         this._advertiseState = "stopping";
         this._hci.setAdvertiseEnable(false);
     }
-    onHciError(error) {
-    }
-    onHciLeAdvertisingParametersSet(status) {
-    }
-    onHciLeAdvertisingDataSet(status) {
-    }
-    onHciLeScanResponseDataSet(status) {
-    }
+    onHciError(error) { }
+    onHciLeAdvertisingParametersSet(status) { }
+    onHciLeAdvertisingDataSet(status) { }
+    onHciLeScanResponseDataSet(status) { }
     onHciLeAdvertiseEnableSet(status) {
         if (this._advertiseState === "starting") {
             this._advertiseState = "started";
@@ -177,5 +169,4 @@ class Gap extends events_1.default.EventEmitter {
     }
 }
 exports.default = Gap;
-
 //# sourceMappingURL=gap.js.map

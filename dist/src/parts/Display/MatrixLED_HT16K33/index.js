@@ -8,7 +8,7 @@ class MatrixLED_HT16K33 {
         this.requiredKeys = [];
         this.command = {};
         this.command.blink = 0x80;
-        this.command.brightness = 0xE0;
+        this.command.brightness = 0xe0;
         this.blink_mode = {};
         this.blink_mode.display_on = 0x01;
         this.blink_mode.blink_off = 0x00;
@@ -33,6 +33,7 @@ class MatrixLED_HT16K33 {
         this.obniz.wait(1000);
     }
     init(width) {
+        // 8 or 16
         this.width = width;
         this.height = 8; // IC static setting
         this.prepareVram(width, this.height);
@@ -89,8 +90,8 @@ class MatrixLED_HT16K33 {
     writeVram() {
         const data = [0x00];
         for (let i = 0; i < this.height; i++) {
-            data.push(this.vram[i] & 0xFF);
-            data.push((this.vram[i] >> 8) & 0xFF);
+            data.push(this.vram[i] & 0xff);
+            data.push((this.vram[i] >> 8) & 0xff);
         }
         this.i2c.write(this.address, data);
     }
@@ -102,5 +103,4 @@ class MatrixLED_HT16K33 {
     }
 }
 exports.default = MatrixLED_HT16K33;
-
 //# sourceMappingURL=index.js.map

@@ -6,7 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface Keyestudio_MoistureSensorOptions {
   vcc?: number;
@@ -15,7 +15,6 @@ export interface Keyestudio_MoistureSensorOptions {
 }
 
 export default class Keyestudio_MoistureSensor implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Keyestudio_MoistureSensor",

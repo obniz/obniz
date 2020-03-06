@@ -9,4 +9,4 @@
 import * as ObnizOldBLE from "./ble/ble";
 import * as ObnizHciBLE from "./bleHci/ble";
 
-export {ObnizOldBLE, ObnizHciBLE};
+export { ObnizOldBLE, ObnizHciBLE };

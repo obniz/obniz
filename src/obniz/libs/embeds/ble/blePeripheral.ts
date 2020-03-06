@@ -10,7 +10,7 @@ import BleService from "./bleService";
  * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  * @category Use as Peripheral
  */
-export default  class BlePeripheral {
+export default class BlePeripheral {
   public Obniz: any;
   public _services: any;
 
@@ -29,7 +29,7 @@ export default  class BlePeripheral {
     }
     this._services.push(obj);
     obj.peripheral = this;
-    this.Obniz.send({ble: {peripheral: {services: [obj]}}});
+    this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
   }
 
   public setJson(json: any) {
@@ -50,7 +50,7 @@ export default  class BlePeripheral {
   }
 
   public removeService(uuid: any) {
-    this._services = this._services.filter ((element: any ) => {
+    this._services = this._services.filter((element: any) => {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
   }
@@ -90,12 +90,10 @@ export default  class BlePeripheral {
   }
 
   public end() {
-    this.Obniz.send({ble: {peripheral: null}});
+    this.Obniz.send({ ble: { peripheral: null } });
   }
 
-  public onconnectionupdates() {
-  }
+  public onconnectionupdates() {}
 
-  public onerror() {
-  }
+  public onerror() {}
 }

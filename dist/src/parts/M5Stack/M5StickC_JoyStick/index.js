@@ -12,9 +12,7 @@ class M5StickC_JoyStick {
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda)
-            && !this.obniz.isValidIO(this.params.scl)
-            && !this.params.i2c) {
+        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
                 this.params.sda = hatI2c.sda;
@@ -34,7 +32,7 @@ class M5StickC_JoyStick {
     async getXWait() {
         const ret = await this.getXYWait();
         let val = ret[0];
-        if (val > 0x7F) {
+        if (val > 0x7f) {
             val = val - 0x100;
         }
         return val;
@@ -42,7 +40,7 @@ class M5StickC_JoyStick {
     async getYWait() {
         const ret = await this.getXYWait();
         let val = ret[1];
-        if (val > 0x7F) {
+        if (val > 0x7f) {
             val = val - 0x100;
         }
         return val;
@@ -59,5 +57,4 @@ class M5StickC_JoyStick {
     }
 }
 exports.default = M5StickC_JoyStick;
-
 //# sourceMappingURL=index.js.map
