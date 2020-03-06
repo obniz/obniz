@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface _7SegmentLED_MAX7219Options {
   clk: number;
@@ -119,12 +117,7 @@ export default class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
     this.cs.output(true);
   }
 
-  public setNumber(
-    display: number,
-    digit: number,
-    number: number | MAX7219NumberType,
-    dp: boolean,
-  ) {
+  public setNumber(display: number, digit: number, number: number | MAX7219NumberType, dp: boolean) {
     if (digit >= 0 && digit <= this.digits - 1) {
       this.writeOneDisp(display, [digit + 1, this.encodeBCD(number, dp)]);
     }

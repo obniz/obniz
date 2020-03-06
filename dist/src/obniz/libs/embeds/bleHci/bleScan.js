@@ -394,9 +394,7 @@ class BleScan {
     }
     isUuidTarget(peripheral) {
         if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral
-                .advertisementServiceUuids()
-                .map((e) => {
+            const uuids = peripheral.advertisementServiceUuids().map((e) => {
                 return bleHelper_1.default.uuidFilter(e);
             });
             for (const uuid of this.scanTarget.uuids) {
@@ -432,5 +430,4 @@ class BleScan {
     }
 }
 exports.default = BleScan;
-
 //# sourceMappingURL=bleScan.js.map

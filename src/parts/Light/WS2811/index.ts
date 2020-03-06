@@ -5,9 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface WS2811Options {
   gnd?: number;
@@ -133,9 +131,7 @@ export default class WS2811 implements ObnizPartsInterface {
     let bytes: number[] = [];
     for (let i = 0; i < array.length; i++) {
       const oneArray: number[] = array[i];
-      bytes = bytes.concat(
-        WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]),
-      );
+      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }
@@ -144,9 +140,7 @@ export default class WS2811 implements ObnizPartsInterface {
     let bytes: number[] = [];
     for (let i = 0; i < array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(
-        WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]),
-      );
+      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }

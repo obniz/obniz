@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 interface Grove_3AxisAccelerometerOptionsA {
   gnd?: number;
@@ -21,9 +19,7 @@ interface Grove_3AxisAccelerometerOptionsB {
   grove: PeripheralGrove;
 }
 
-export type Grove_3AxisAccelerometerOptions =
-  | Grove_3AxisAccelerometerOptionsA
-  | Grove_3AxisAccelerometerOptionsB;
+export type Grove_3AxisAccelerometerOptions = Grove_3AxisAccelerometerOptionsA | Grove_3AxisAccelerometerOptionsB;
 
 export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
@@ -133,26 +129,11 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
 
     // setInterruptMapping
-    await this.setInterruptMapping(
-      this.regAdrs.INT_SINGLE_TAP_BIT,
-      this.constVal.INT1_PIN,
-    );
-    await this.setInterruptMapping(
-      this.regAdrs.INT_DOUBLE_TAP_BIT,
-      this.constVal.INT1_PIN,
-    );
-    await this.setInterruptMapping(
-      this.regAdrs.INT_FREE_FALL_BIT,
-      this.constVal.INT1_PIN,
-    );
-    await this.setInterruptMapping(
-      this.regAdrs.INT_ACTIVITY_BIT,
-      this.constVal.INT1_PIN,
-    );
-    await this.setInterruptMapping(
-      this.regAdrs.INT_INACTIVITY_BIT,
-      this.constVal.INT1_PIN,
-    );
+    await this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
+    await this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
+    await this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
+    await this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
+    await this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
 
     // setInterrupt
     await this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);

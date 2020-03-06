@@ -49,9 +49,7 @@ class MatrixLED_HT16K33 {
         if (val > 3) {
             val = 3;
         }
-        this.i2c.write(this.address, [
-            this.command.blink | this.blink_mode.display_on | (val << 1),
-        ]);
+        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
     }
     brightness(val) {
         if (val < 0) {
@@ -105,5 +103,4 @@ class MatrixLED_HT16K33 {
     }
 }
 exports.default = MatrixLED_HT16K33;
-
 //# sourceMappingURL=index.js.map

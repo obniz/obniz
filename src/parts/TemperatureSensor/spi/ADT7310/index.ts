@@ -6,9 +6,7 @@
 import Obniz from "../../../../obniz";
 import PeripheralSPI from "../../../../obniz/libs/io_peripherals/spi";
 
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 
 export interface ADT7310Options {
   vcc: number;

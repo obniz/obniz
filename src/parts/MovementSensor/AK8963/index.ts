@@ -4,13 +4,8 @@
  */
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
-import i2cCompass, {
-  compassUnit,
-  I2cCompassAbstractOptions,
-} from "../../i2cCompass";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from "../../i2cCompass";
 import { I2cInfo, Xyz } from "../../i2cParts";
 
 export interface AK8963Options extends I2cCompassAbstractOptions {

@@ -9,7 +9,8 @@
     "prettier": [true, {
       "trailingComma": "all",
       "arrowParens": "always",
-      "quoteProps": "consistent"
+      "quoteProps": "consistent",
+      "printWidth": 120
     }],
     "no-console": [
       false

@@ -4,13 +4,8 @@
  */
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
-import i2cCompass, {
-  compassUnit,
-  I2cCompassAbstractOptions,
-} from "../../i2cCompass";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import i2cCompass, { compassUnit, I2cCompassAbstractOptions } from "../../i2cCompass";
 import { I2cInfo, Xyz } from "../../i2cParts";
 
 export interface HMC5883LOptions extends I2cCompassAbstractOptions {}
@@ -30,16 +25,7 @@ export default class HMC5883L extends i2cCompass {
     status: 0x09,
   };
 
-  private static scales = [
-    1 / 1370,
-    1 / 1090,
-    1 / 820,
-    1 / 660,
-    1 / 440,
-    1 / 390,
-    1 / 330,
-    1 / 230,
-  ];
+  private static scales = [1 / 1370, 1 / 1090, 1 / 820, 1 / 660, 1 / 440, 1 / 390, 1 / 330, 1 / 230];
   public i2cinfo: I2cInfo;
   protected so: number;
   protected sf: compassUnit;

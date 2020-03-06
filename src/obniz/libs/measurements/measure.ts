@@ -128,17 +128,9 @@ export default class ObnizMeasure {
    * @param params
    */
   public echo(params: ObnizMeasureOptions) {
-    const err: any = ObnizUtil._requiredKeys(params, [
-      "io_pulse",
-      "pulse",
-      "pulse_width",
-      "io_echo",
-      "measure_edges",
-    ]);
+    const err: any = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
     if (err) {
-      throw new Error(
-        "Measure start param '" + err + "' required, but not found ",
-      );
+      throw new Error("Measure start param '" + err + "' required, but not found ");
     }
     this.params = ObnizUtil._keyFilter(params, [
       "io_pulse",

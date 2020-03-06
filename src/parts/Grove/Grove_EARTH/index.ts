@@ -3,9 +3,7 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface Grove_EARTHOptionsA {
   vcc?: number;

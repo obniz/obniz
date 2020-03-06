@@ -67,9 +67,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         const dom = `
     <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"}">${obj.message}</div>`;
-        document
-            .getElementById(this.options.debug_dom_id)
-            .insertAdjacentHTML("beforeend", dom);
+        document.getElementById(this.options.debug_dom_id).insertAdjacentHTML("beforeend", dom);
     }
     getDebugDoms() {
         if (this.isNode) {
@@ -122,13 +120,10 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             doms.loaderDom.style.display = "none";
         }
         if (doms.statusDom) {
-            doms.statusDom.style.backgroundColor = isConnectedLocally
-                ? "#0cd362"
-                : "#31965d";
+            doms.statusDom.style.backgroundColor = isConnectedLocally ? "#0cd362" : "#31965d";
             doms.statusDom.style.color = "#FFF";
             doms.statusDom.innerHTML =
-                (this.id ? "online : " + this.id : "online") +
-                    (isConnectedLocally ? " via local_connect" : " via internet");
+                (this.id ? "online : " + this.id : "online") + (isConnectedLocally ? " via local_connect" : " via internet");
         }
     }
     showOffLine() {
@@ -165,5 +160,4 @@ function _ReadCookie(name) {
     }
     return null;
 }
-
 //# sourceMappingURL=ObnizUIs.js.map

@@ -4,9 +4,7 @@
  */
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 import { Inertia6, Xyz } from "../../i2cImu6";
 import AK8963, { AK8963Options } from "../AK8963";
 import MPU6500, { MPU6500Options } from "../MPU6500";

@@ -224,9 +224,7 @@ class ObnizBLE {
                 peripheral = this.findPeripheral(params.address);
             }
             if (peripheral) {
-                if (params.service_uuid &&
-                    params.characteristic_uuid &&
-                    params.descriptor_uuid) {
+                if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
                     target = peripheral.findDescriptor(params);
                 }
                 else if (params.service_uuid && params.characteristic_uuid) {
@@ -255,5 +253,4 @@ class ObnizBLE {
     }
 }
 exports.default = ObnizBLE;
-
 //# sourceMappingURL=ble.js.map

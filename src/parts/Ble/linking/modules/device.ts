@@ -264,12 +264,8 @@ export default class LinkingDevice {
     if (!service) {
       throw new Error("No service was found");
     }
-    const write_char = service.getCharacteristic(
-      this.WRITE_CHARACTERRISTIC_UUID,
-    );
-    const indicate_char = service.getCharacteristic(
-      this.INDICATE_CHARACTERRISTIC_UUID,
-    );
+    const write_char = service.getCharacteristic(this.WRITE_CHARACTERRISTIC_UUID);
+    const indicate_char = service.getCharacteristic(this.INDICATE_CHARACTERRISTIC_UUID);
     if (!(write_char && indicate_char)) {
       throw new Error("No characteristic was found");
     }
@@ -277,13 +273,9 @@ export default class LinkingDevice {
     this.char_indicate = indicate_char;
     this._service = service;
 
-    const ga_service = peripheral.getService(
-      this._generic_access_service.SERVICE_UUID,
-    );
+    const ga_service = peripheral.getService(this._generic_access_service.SERVICE_UUID);
     if (ga_service) {
-      const ga_char = ga_service.getCharacteristic(
-        this._generic_access_service.device_name.CHARACTERRISTIC_UUID,
-      );
+      const ga_char = ga_service.getCharacteristic(this._generic_access_service.device_name.CHARACTERRISTIC_UUID);
       if (ga_service && ga_char) {
         this._generic_access_service.service = ga_service;
         this._generic_access_service.device_name.char = ga_char;
@@ -558,10 +550,7 @@ export default class LinkingDevice {
       };
     }
     // Button
-    if (
-      "Button" in this.info.exsensors ||
-      device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)
-    ) {
+    if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
       this.services.button = {
         onnotify: null,
       };
@@ -569,12 +558,7 @@ export default class LinkingDevice {
     // LED
     if ("LED" in this.info.settings) {
       const o = this.info.settings.LED;
-      if (
-        o.colors &&
-        o.colors.length > 0 &&
-        o.patterns &&
-        o.patterns.length > 0
-      ) {
+      if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
         const colors: any = {};
         for (let i = 0; i < o.colors.length; i++) {
           colors[o.colors[i]] = i + 1;
@@ -677,11 +661,7 @@ export default class LinkingDevice {
         reject(new Error("Device name must be a string."));
         return;
       } else if (name.length > 32) {
-        reject(
-          new Error(
-            "Device name is too long. The length must be in the range 1 to 32.",
-          ),
-        );
+        reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
         return;
       }
       const buf = Buffer.from(name, "utf8");

@@ -10,10 +10,7 @@ import { BleCharacteristicDefine, BleServiceDefine, UUID } from "./bleTypes";
 /**
  * @category Use as Peripheral
  */
-export default class BleService extends BleLocalAttributeAbstract<
-  null,
-  BleCharacteristic
-> {
+export default class BleService extends BleLocalAttributeAbstract<null, BleCharacteristic> {
   /**
    * Peripheral instance.
    *
@@ -32,9 +29,7 @@ export default class BleService extends BleLocalAttributeAbstract<
    * Add new Characteristic
    * @param child
    */
-  public addCharacteristic(
-    child: BleCharacteristicDefine | BleCharacteristic,
-  ): BleCharacteristic {
+  public addCharacteristic(child: BleCharacteristicDefine | BleCharacteristic): BleCharacteristic {
     return this.addChild(child);
   }
 

@@ -13,16 +13,7 @@ function r() {
 /**
  * @ignore
  */
-function c1(
-  k: any,
-  _r: any,
-  pres: any,
-  preq: any,
-  iat: any,
-  ia: any,
-  rat: any,
-  ra: any,
-) {
+function c1(k: any, _r: any, pres: any, preq: any, iat: any, ia: any, rat: any, ra: any) {
   const p1: any = Buffer.concat([iat, rat, preq, pres]);
 
   const p2: any = Buffer.concat([ra, ia, Buffer.from("00000000", "hex")]);

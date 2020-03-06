@@ -328,9 +328,7 @@ export class M5StickC extends ObnizDevice {
   public gyroWait(): Promise<{ x: number; y: number; z: number }> {
     const supportedIMUNameArr = ["MPU6886", "SH200Q"];
     if (!supportedIMUNameArr.includes(this.imu!.constructor.name)) {
-      throw new Error(
-        `gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`,
-      );
+      throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
     }
     return this.imu!.getGyroWait();
   }
@@ -338,16 +336,12 @@ export class M5StickC extends ObnizDevice {
   public accelerationWait(): Promise<{ x: number; y: number; z: number }> {
     const supportedIMUNameArr = ["MPU6886", "SH200Q"];
     if (!supportedIMUNameArr.includes(this.imu!.constructor.name)) {
-      throw new Error(
-        `accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`,
-      );
+      throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
     }
     return this.imu!.getAccelWait();
   }
 
-  public setupIMUWait(
-    imuName: "MPU6886" | "SH200Q" = "MPU6886",
-  ): Promise<MPU6886 | SH200Q> {
+  public setupIMUWait(imuName: "MPU6886" | "SH200Q" = "MPU6886"): Promise<MPU6886 | SH200Q> {
     const i2c = this._m5i2c!;
     const onerror = i2c.onerror;
     this.imu = this.wired(imuName, { i2c });

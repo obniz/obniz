@@ -7,9 +7,7 @@ import Obniz from "../../../../obniz";
 import { PullType } from "../../../../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 import { I2cPartsAbstractOptions } from "../../../i2cParts";
 
 export interface SHT31Options extends I2cPartsAbstractOptions {
@@ -40,17 +38,7 @@ export default class SHT31 implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = [
-      "vcc",
-      "sda",
-      "scl",
-      "gnd",
-      "adr",
-      "addressmode",
-      "i2c",
-      "pull",
-      "address",
-    ];
+    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull", "address"];
 
     this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
     this.commands = {};

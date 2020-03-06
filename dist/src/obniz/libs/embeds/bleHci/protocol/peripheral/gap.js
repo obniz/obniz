@@ -30,10 +30,7 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
     startAdvertising(name, serviceUuids) {
-        debug("startAdvertising: name = " +
-            name +
-            ", serviceUuids = " +
-            JSON.stringify(serviceUuids, null, 2));
+        debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;
         let scanDataLength = 0;
         const serviceUuids16bit = [];
@@ -172,5 +169,4 @@ class Gap extends events_1.default.EventEmitter {
     }
 }
 exports.default = Gap;
-
 //# sourceMappingURL=gap.js.map

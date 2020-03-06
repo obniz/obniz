@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface MatrixLED_MAX7219Options {
   clk: number;
@@ -142,8 +140,7 @@ export default class MatrixLED_MAX7219 implements ObnizPartsInterface {
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      const brightness =
-        0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
       const index = Math.floor(i / 4);
       const line = Math.floor(index / this.width);
       const col = Math.floor((index - line * this.width) / 8);

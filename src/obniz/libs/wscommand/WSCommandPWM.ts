@@ -113,12 +113,7 @@ class WSCommandPWM extends WSCommand {
         { uri: "/request/pwm/modulate", onValid: this.amModulate },
         { uri: "/request/pwm/deinit", onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        "pwm" + i,
-        i,
-      );
+      const res: any = this.validateCommandSchema(schemaData, module, "pwm" + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {

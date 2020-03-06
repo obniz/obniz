@@ -5,18 +5,11 @@
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 import I2cImu6, { accelRange, gyroRange, Inertia6, Xyz } from "../../i2cImu6";
 
 export type SH200QAccelRange = "4g" | "8g" | "16g";
-export type SH200QGyroRange =
-  | "125dps"
-  | "250dps"
-  | "500dps"
-  | "1000dps"
-  | "2000dps";
+export type SH200QGyroRange = "125dps" | "250dps" | "500dps" | "1000dps" | "2000dps";
 
 export interface SH200QOptions extends I2cPartsAbstractOptions {}
 
@@ -143,9 +136,7 @@ export default class SH200Q extends I2cImu6 {
         this.setGyroRange("2000dps");
         break;
       default:
-        throw new Error(
-          "gyroscope_range variable 125,250,500,1000,2000 setting",
-        );
+        throw new Error("gyroscope_range variable 125,250,500,1000,2000 setting");
     }
   }
 
@@ -161,34 +152,20 @@ export default class SH200Q extends I2cImu6 {
 
   public setAccelRange(accel_range: SH200QAccelRange): void {
     if (accel_range in SH200Q.commands.accel_fs_sel) {
-      this.write(
-        SH200Q.commands.acc_range,
-        SH200Q.commands.accel_fs_sel[accel_range],
-      );
+      this.write(SH200Q.commands.acc_range, SH200Q.commands.accel_fs_sel[accel_range]);
       this.accel_so = accel_range;
     } else {
-      throw new Error(
-        `Invalid accel range. Valid values are: ${Object.keys(
-          SH200Q.commands.accel_fs_sel,
-        ).join()}`,
-      );
+      throw new Error(`Invalid accel range. Valid values are: ${Object.keys(SH200Q.commands.accel_fs_sel).join()}`);
     }
   }
 
   public setGyroRange(gyro_range: SH200QGyroRange): void {
     if (gyro_range in SH200Q.commands.gyro_fs_sel) {
-      this.write(
-        SH200Q.commands.gyro_range,
-        SH200Q.commands.gyro_fs_sel[gyro_range],
-      );
+      this.write(SH200Q.commands.gyro_range, SH200Q.commands.gyro_fs_sel[gyro_range]);
       // @ts-ignore
       this.gyro_so = gyro_range;
     } else {
-      throw new Error(
-        `Invalid gyro range. Valid values are: ${Object.keys(
-          SH200Q.commands.gyro_fs_sel,
-        ).join()}`,
-      );
+      throw new Error(`Invalid gyro range. Valid values are: ${Object.keys(SH200Q.commands.gyro_fs_sel).join()}`);
     }
   }
 
@@ -219,10 +196,7 @@ export default class SH200Q extends I2cImu6 {
     return {
       accelerometer: SH200Q.charArrayToXyz(raw.slice(0, 6), "l"),
       gyroscope: SH200Q.charArrayToXyz(raw.slice(6, 12), "l"),
-      temperature: SH200Q.charArrayToInt16(
-        raw.slice(12, 14) as [number, number],
-        "l",
-      ),
+      temperature: SH200Q.charArrayToInt16(raw.slice(12, 14) as [number, number], "l"),
     };
   }
 }

@@ -18,15 +18,8 @@ export default class BleAdvertisementBuilder {
       if (json.localName) {
         this.setCompleteLocalName(json.localName);
       }
-      if (
-        json.manufacturerData &&
-        json.manufacturerData.companyCode &&
-        json.manufacturerData.data
-      ) {
-        this.setManufacturerSpecificData(
-          json.manufacturerData.companyCode,
-          json.manufacturerData.data,
-        );
+      if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
+        this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
       }
       if (json.serviceUuids) {
         for (const uuid of json.serviceUuids) {
@@ -59,9 +52,7 @@ export default class BleAdvertisementBuilder {
       Array.prototype.push.apply(data, this.rows[key]);
     }
     if (data.length > 31) {
-      throw new Error(
-        "Too large data. Advertise/ScanResponse data are must be less than 32 byte.",
-      );
+      throw new Error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
     }
 
     return data;
@@ -95,22 +86,14 @@ export default class BleAdvertisementBuilder {
 
   public setUuid(uuid: UUID) {
     const uuidData: any = this.convertUuid(uuid);
-    const type: any = { 16: 0x06, 4: 0x04, 2: 0x02 }[
-      uuidData.length as 16 | 4 | 2
-    ];
+    const type: any = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length as 16 | 4 | 2];
     this.setRow(type, uuidData);
   }
 
   public convertUuid(uuid: UUID) {
     const uuidNumeric: any = BleHelper.uuidFilter(uuid);
-    if (
-      uuidNumeric.length !== 32 &&
-      uuidNumeric.length !== 8 &&
-      uuidNumeric.length !== 4
-    ) {
-      throw new Error(
-        "BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)",
-      );
+    if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
+      throw new Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
     }
 
     const data: any = [];
@@ -120,12 +103,7 @@ export default class BleAdvertisementBuilder {
     return data;
   }
 
-  public setIbeaconData(
-    uuid: UUID,
-    major: number,
-    minor: number,
-    txPower: number,
-  ) {
+  public setIbeaconData(uuid: UUID, major: number, minor: number, txPower: number) {
     const data: any = [];
     data.push(0x02, 0x15); // fixed data
 

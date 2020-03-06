@@ -100,25 +100,20 @@ class Gatt extends events_1.default.EventEmitter {
         if (cid !== ATT.CID) {
             return;
         }
-        if (this._currentCommand &&
-            data.toString("hex") === this._currentCommand.buffer.toString("hex")) {
+        if (this._currentCommand && data.toString("hex") === this._currentCommand.buffer.toString("hex")) {
             debug(this._address + ": echo ... echo ... echo ...");
         }
         else if (data[0] % 2 === 0) {
             if (process.env.NOBLE_MULTI_ROLE) {
-                debug(this._address +
-                    ": multi-role flag in use, ignoring command meant for peripheral role.");
+                debug(this._address + ": multi-role flag in use, ignoring command meant for peripheral role.");
             }
             else {
                 const requestType = data[0];
-                debug(this._address +
-                    ": replying with REQ_NOT_SUPP to 0x" +
-                    requestType.toString(16));
+                debug(this._address + ": replying with REQ_NOT_SUPP to 0x" + requestType.toString(16));
                 this.writeAtt(this.errorResponse(requestType, 0x0000, ATT.ECODE_REQ_NOT_SUPP));
             }
         }
-        else if (data[0] === ATT.OP_HANDLE_NOTIFY ||
-            data[0] === ATT.OP_HANDLE_IND) {
+        else if (data[0] === ATT.OP_HANDLE_NOTIFY || data[0] === ATT.OP_HANDLE_IND) {
             const valueHandle = data.readUInt16LE(1);
             const valueData = data.slice(3);
             this.emit("handleNotify", this._address, valueHandle, valueData);
@@ -129,8 +124,7 @@ class Gatt extends events_1.default.EventEmitter {
             }
             for (const serviceUuid in this._services) {
                 for (const characteristicUuid in this._characteristics[serviceUuid]) {
-                    if (this._characteristics[serviceUuid][characteristicUuid]
-                        .valueHandle === valueHandle) {
+                    if (this._characteristics[serviceUuid][characteristicUuid].valueHandle === valueHandle) {
                         this.emit("notification", this._address, serviceUuid, characteristicUuid, valueData);
                     }
                 }
@@ -316,8 +310,7 @@ class Gatt extends events_1.default.EventEmitter {
                     });
                 }
             }
-            if (opcode !== ATT.OP_READ_BY_GROUP_RESP ||
-                services[services.length - 1].endHandle === 0xffff) {
+            if (opcode !== ATT.OP_READ_BY_GROUP_RESP || services[services.length - 1].endHandle === 0xffff) {
                 const serviceUuids = [];
                 for (i = 0; i < services.length; i++) {
                     if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
@@ -359,12 +352,10 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             }
             if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-                includedServices[includedServices.length - 1].endHandle ===
-                    service.endHandle) {
+                includedServices[includedServices.length - 1].endHandle === service.endHandle) {
                 const includedServiceUuids = [];
                 for (i = 0; i < includedServices.length; i++) {
-                    if (uuids.length === 0 ||
-                        uuids.indexOf(includedServices[i].uuid) !== -1) {
+                    if (uuids.length === 0 || uuids.indexOf(includedServices[i].uuid) !== -1) {
                         includedServiceUuids.push(includedServices[i].uuid);
                     }
                 }
@@ -379,8 +370,7 @@ class Gatt extends events_1.default.EventEmitter {
     discoverCharacteristics(serviceUuid, characteristicUuids) {
         const service = this._services[serviceUuid];
         const characteristics = [];
-        this._characteristics[serviceUuid] =
-            this._characteristics[serviceUuid] || {};
+        this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
         this._descriptors[serviceUuid] = this._descriptors[serviceUuid] || {};
         const callback = (data) => {
             const opcode = data[0];
@@ -406,8 +396,7 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             }
             if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-                characteristics[characteristics.length - 1].valueHandle ===
-                    service.endHandle) {
+                characteristics[characteristics.length - 1].valueHandle === service.endHandle) {
                 const characteristicsDiscovered = [];
                 for (i = 0; i < characteristics.length; i++) {
                     const properties = characteristics[i].properties;
@@ -416,14 +405,12 @@ class Gatt extends events_1.default.EventEmitter {
                         uuid: characteristics[i].uuid,
                     };
                     if (i !== 0) {
-                        characteristics[i - 1].endHandle =
-                            characteristics[i].startHandle - 1;
+                        characteristics[i - 1].endHandle = characteristics[i].startHandle - 1;
                     }
                     if (i === characteristics.length - 1) {
                         characteristics[i].endHandle = service.endHandle;
                     }
-                    this._characteristics[serviceUuid][characteristics[i].uuid] =
-                        characteristics[i];
+                    this._characteristics[serviceUuid][characteristics[i].uuid] = characteristics[i];
                     if (properties & 0x01) {
                         characteristic.properties.push("broadcast");
                     }
@@ -448,8 +435,7 @@ class Gatt extends events_1.default.EventEmitter {
                     if (properties & 0x80) {
                         characteristic.properties.push("extendedProperties");
                     }
-                    if (characteristicUuids.length === 0 ||
-                        characteristicUuids.indexOf(characteristic.uuid) !== -1) {
+                    if (characteristicUuids.length === 0 || characteristicUuids.indexOf(characteristic.uuid) !== -1) {
                         characteristicsDiscovered.push(characteristic);
                     }
                 }
@@ -462,8 +448,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.CHARAC_UUID), callback);
     }
     read(serviceUuid, characteristicUuid) {
-        if (!this._characteristics[serviceUuid] ||
-            !this._characteristics[serviceUuid][characteristicUuid]) {
+        if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
             this.emit("read", this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
             return;
         }
@@ -490,8 +475,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._queueCommand(this.readRequest(characteristic.valueHandle), callback);
     }
     write(serviceUuid, characteristicUuid, data, withoutResponse) {
-        if (!this._characteristics[serviceUuid] ||
-            !this._characteristics[serviceUuid][characteristicUuid]) {
+        if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
             this.emit("write", this._address, serviceUuid, characteristicUuid, false);
             return;
         }
@@ -521,15 +505,13 @@ class Gatt extends events_1.default.EventEmitter {
             return (resp) => {
                 const opcode = resp[0];
                 if (opcode !== ATT.OP_PREPARE_WRITE_RESP) {
-                    debug(this._address +
-                        ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)", opcode);
+                    debug(this._address + ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)", opcode);
                 }
                 else {
                     const expected_length = data_chunk.length + 5;
                     if (resp.length !== expected_length) {
                         /* the response should contain the data packet echoed back to the caller */
-                        debug(this._address +
-                            ": unexpected prepareWriteResponse length %d (expecting %d)", resp.length, expected_length);
+                        debug(this._address + ": unexpected prepareWriteResponse length %d (expecting %d)", resp.length, expected_length);
                     }
                 }
             };
@@ -629,8 +611,7 @@ class Gatt extends events_1.default.EventEmitter {
                     });
                 }
             }
-            if (opcode !== ATT.OP_FIND_INFO_RESP ||
-                descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
+            if (opcode !== ATT.OP_FIND_INFO_RESP || descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
                 const descriptorUuids = [];
                 for (i = 0; i < descriptors.length; i++) {
                     descriptorUuids.push(descriptors[i].uuid);
@@ -699,5 +680,4 @@ class Gatt extends events_1.default.EventEmitter {
     }
 }
 exports.default = Gatt;
-
 //# sourceMappingURL=gatt.js.map

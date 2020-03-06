@@ -10,10 +10,7 @@ import { UUID } from "./bleTypes";
 /**
  * @category Use as Central
  */
-export default class BleRemoteService extends BleRemoteAttributeAbstract<
-  BleRemotePeripheral,
-  BleRemoteCharacteristic
-> {
+export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemotePeripheral, BleRemoteCharacteristic> {
   /**
    * Peripheral instance
    */
@@ -158,10 +155,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<
    * @ignore
    */
   public discoverChildren() {
-    this.parent!.obnizBle.centralBindings.discoverCharacteristics(
-      this.peripheral.address,
-      this.uuid,
-    );
+    this.parent!.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
   }
 
   /**

@@ -81,8 +81,7 @@ class WSCommandDisplay extends WSCommand {
       for (let row = 0; row < size; row++) {
         for (let col = 0; col < size; col++) {
           if (!modules[Math.floor(row / 2)][Math.floor(col / 2)]) {
-            vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |=
-              0x80 >> (col + 2) % 8;
+            vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |= 0x80 >> (col + 2) % 8;
           }
         }
       }
@@ -93,11 +92,7 @@ class WSCommandDisplay extends WSCommand {
   public pinName(params: any) {
     for (let i = 0; i < 40; i++) {
       if (typeof params.pin_assign[i] === "object") {
-        this.setPinName(
-          i,
-          params.pin_assign[i].module_name || "?",
-          params.pin_assign[i].pin_name || "?",
-        );
+        this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
       }
     }
   }

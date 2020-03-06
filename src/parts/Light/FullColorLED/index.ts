@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface FullColorLEDOptions {
   r: number;
@@ -65,9 +63,7 @@ export default class FullColorLED implements ObnizPartsInterface {
     } else if (this.cathode_keys.includes(commontype)) {
       this.commontype = this.COMMON_TYPE_CATHODE;
     } else {
-      this.obniz.error(
-        "FullColorLED param need common type [  anode_common or cathode_common ] ",
-      );
+      this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
     }
 
     this.common = this.obniz.getIO(common);

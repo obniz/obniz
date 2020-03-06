@@ -563,9 +563,7 @@ class Display {
                 const red = data[pixel_index * 4];
                 const green = data[pixel_index * 4 + 1];
                 const blue = data[pixel_index * 4 + 2];
-                const hexColor = (((red >> 3) & 0x1f) << 11) |
-                    (((green >> 2) & 0x3f) << 5) |
-                    (((blue >> 3) & 0x1f) << 0);
+                const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
                 raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
                 raw[pixel_index * 2 + 1] = hexColor & 0xff;
             }
@@ -628,5 +626,4 @@ class Display {
     }
 }
 exports.default = Display;
-
 //# sourceMappingURL=display.js.map

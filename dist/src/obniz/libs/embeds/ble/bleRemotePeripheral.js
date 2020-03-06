@@ -26,14 +26,7 @@ class BleRemotePeripheral {
         this.rssi = null;
         this.adv_data = null;
         this.scan_resp = null;
-        this.keys = [
-            "device_type",
-            "address_type",
-            "ble_event_type",
-            "rssi",
-            "adv_data",
-            "scan_resp",
-        ];
+        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this._services = [];
         this.emitter = new emitter();
     }
@@ -116,12 +109,7 @@ class BleRemotePeripheral {
     }
     setIBeacon() {
         const data = this.searchTypeVal(0xff);
-        if (!data ||
-            data[0] !== 0x4c ||
-            data[1] !== 0x00 ||
-            data[2] !== 0x02 ||
-            data[3] !== 0x15 ||
-            data.length !== 25) {
+        if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
             this.iBeacon = null;
             return;
         }
@@ -129,10 +117,7 @@ class BleRemotePeripheral {
         let uuid = "";
         for (let i = 0; i < uuidData.length; i++) {
             uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 ||
-                i === 4 + 2 - 1 ||
-                i === 4 + 2 * 2 - 1 ||
-                i === 4 + 2 * 3 - 1) {
+            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
                 uuid += "-";
             }
         }
@@ -334,5 +319,4 @@ class BleRemotePeripheral {
     onerror() { }
 }
 exports.default = BleRemotePeripheral;
-
 //# sourceMappingURL=bleRemotePeripheral.js.map

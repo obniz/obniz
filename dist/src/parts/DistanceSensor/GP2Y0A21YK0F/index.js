@@ -74,5 +74,4 @@ class GP2Y0A21YK0F {
     }
 }
 exports.default = GP2Y0A21YK0F;
-
 //# sourceMappingURL=index.js.map

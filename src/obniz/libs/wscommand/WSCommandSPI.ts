@@ -99,12 +99,7 @@ class WSCommandSPI extends WSCommand {
         { uri: "/request/spi/write", onValid: this.write },
         { uri: "/request/spi/deinit", onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        "spi" + i,
-        i,
-      );
+      const res: any = this.validateCommandSchema(schemaData, module, "spi" + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {

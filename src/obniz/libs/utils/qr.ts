@@ -35,15 +35,11 @@ const _qrcode: any = (() => {
    * @param typeNumber 1 to 40
    * @param errorCorrectionLevel 'L','M','Q','H'
    */
-  const qrcode: any = (
-    _typeNumber: number,
-    errorCorrectionLevelStr: "L" | "M" | "Q" | "H",
-  ) => {
+  const qrcode: any = (_typeNumber: number, errorCorrectionLevelStr: "L" | "M" | "Q" | "H") => {
     const PAD0: any = 0xec;
     const PAD1: any = 0x11;
 
-    const _errorCorrectionLevel: any =
-      QRErrorCorrectionLevel[errorCorrectionLevelStr];
+    const _errorCorrectionLevel: any = QRErrorCorrectionLevel[errorCorrectionLevelStr];
     let _modules: any = null;
     let _moduleCount: any = 0;
     let _dataCache: any = null;
@@ -154,13 +150,7 @@ const _qrcode: any = (() => {
 
           for (let r = -2; r <= 2; r += 1) {
             for (let c = -2; c <= 2; c += 1) {
-              if (
-                r === -2 ||
-                r === 2 ||
-                c === -2 ||
-                c === 2 ||
-                (r === 0 && c === 0)
-              ) {
+              if (r === -2 || r === 2 || c === -2 || c === 2 || (r === 0 && c === 0)) {
                 _modules[row + r][col + c] = true;
               } else {
                 _modules[row + r][col + c] = false;
@@ -291,10 +281,7 @@ const _qrcode: any = (() => {
         offset += dcCount;
 
         const rsPoly: any = QRUtil.getErrorCorrectPolynomial(ecCount);
-        const rawPoly: any = qrPolynomial(
-          dcdata[r],
-          rsPoly.getLength() - 1,
-        ) as any;
+        const rawPoly: any = qrPolynomial(dcdata[r], rsPoly.getLength() - 1) as any;
 
         const modPoly: any = rawPoly.mod(rsPoly);
         ecdata[r] = new Array(rsPoly.getLength() - 1);
@@ -333,25 +320,15 @@ const _qrcode: any = (() => {
       return data;
     };
 
-    const createData: any = (
-      typeNumber: any,
-      errorCorrectionLevel: any,
-      dataList: any,
-    ) => {
-      const rsBlocks: any = QRRSBlock.getRSBlocks(
-        typeNumber,
-        errorCorrectionLevel,
-      );
+    const createData: any = (typeNumber: any, errorCorrectionLevel: any, dataList: any) => {
+      const rsBlocks: any = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
 
       const buffer: any = qrBitBuffer();
 
       for (let i = 0; i < dataList.length; i += 1) {
         const data: any = dataList[i];
         buffer.put(data.getMode(), 4);
-        buffer.put(
-          data.getLength(),
-          QRUtil.getLengthInBits(data.getMode(), typeNumber),
-        );
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber));
         data.write(buffer);
       }
 
@@ -362,13 +339,7 @@ const _qrcode: any = (() => {
       }
 
       if (buffer.getLengthInBits() > totalDataCount * 8) {
-        throw new Error(
-          "code length overflow. (" +
-            buffer.getLengthInBits() +
-            ">" +
-            totalDataCount * 8 +
-            ")",
-        );
+        throw new Error("code length overflow. (" + buffer.getLengthInBits() + ">" + totalDataCount * 8 + ")");
       }
 
       // end code
@@ -443,19 +414,13 @@ const _qrcode: any = (() => {
         let typeNumber: any = 1;
 
         for (; typeNumber < 40; typeNumber++) {
-          const rsBlocks: any = QRRSBlock.getRSBlocks(
-            typeNumber,
-            _errorCorrectionLevel,
-          );
+          const rsBlocks: any = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
           const buffer: any = qrBitBuffer();
 
           for (let i = 0; i < _dataList.length; i++) {
             const data: any = _dataList[i];
             buffer.put(data.getMode(), 4);
-            buffer.put(
-              data.getLength(),
-              QRUtil.getLengthInBits(data.getMode(), typeNumber),
-            );
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber));
             data.write(buffer);
           }
 
@@ -700,25 +665,9 @@ const _qrcode: any = (() => {
       [6, 26, 54, 82, 110, 138, 166],
       [6, 30, 58, 86, 114, 142, 170],
     ];
-    const G15: any =
-      (1 << 10) |
-      (1 << 8) |
-      (1 << 5) |
-      (1 << 4) |
-      (1 << 2) |
-      (1 << 1) |
-      (1 << 0);
-    const G18: any =
-      (1 << 12) |
-      (1 << 11) |
-      (1 << 10) |
-      (1 << 9) |
-      (1 << 8) |
-      (1 << 5) |
-      (1 << 2) |
-      (1 << 0);
-    const G15_MASK: any =
-      (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+    const G15: any = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    const G18: any = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    const G15_MASK: any = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
     const _this: any = {};
 
@@ -957,8 +906,7 @@ const _qrcode: any = (() => {
         }
       }
 
-      const ratio: any =
-        Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) / 5;
+      const ratio: any = Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) / 5;
       lostPoint += ratio * 10;
 
       return lostPoint;
@@ -980,11 +928,7 @@ const _qrcode: any = (() => {
       EXP_TABLE[i] = 1 << i;
     }
     for (let i = 8; i < 256; i += 1) {
-      EXP_TABLE[i] =
-        EXP_TABLE[i - 4] ^
-        EXP_TABLE[i - 5] ^
-        EXP_TABLE[i - 6] ^
-        EXP_TABLE[i - 8];
+      EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
     }
     for (let i = 0; i < 255; i += 1) {
       LOG_TABLE[EXP_TABLE[i]] = i;
@@ -1051,9 +995,7 @@ const _qrcode: any = (() => {
 
       for (let i = 0; i < _this.getLength(); i += 1) {
         for (let j = 0; j < e.getLength(); j += 1) {
-          ___num[i + j] ^= QRMath.gexp(
-            QRMath.glog(_this.getAt(i)) + QRMath.glog(e.getAt(j)),
-          );
+          ___num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i)) + QRMath.glog(e.getAt(j)));
         }
       }
 
@@ -1344,10 +1286,7 @@ const _qrcode: any = (() => {
 
     const _this: any = {};
 
-    const getRsBlockTable: any = (
-      typeNumber: any,
-      errorCorrectionLevel: any,
-    ) => {
+    const getRsBlockTable: any = (typeNumber: any, errorCorrectionLevel: any) => {
       switch (errorCorrectionLevel) {
         case QRErrorCorrectionLevel.L:
           return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
@@ -1366,12 +1305,7 @@ const _qrcode: any = (() => {
       const rsBlock: any = getRsBlockTable(typeNumber, errorCorrectionLevel);
 
       if (typeof rsBlock === "undefined") {
-        throw new Error(
-          "bad rs block @ typeNumber:" +
-            typeNumber +
-            "/errorCorrectionLevel:" +
-            errorCorrectionLevel,
-        );
+        throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectionLevel:" + errorCorrectionLevel);
       }
 
       const length: any = rsBlock.length / 3;
@@ -1860,19 +1794,13 @@ const _qrcode: any = (() => {
         } else if (charcode < 0x800) {
           utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));
         } else if (charcode < 0xd800 || charcode >= 0xe000) {
-          utf8.push(
-            0xe0 | (charcode >> 12),
-            0x80 | ((charcode >> 6) & 0x3f),
-            0x80 | (charcode & 0x3f),
-          );
+          utf8.push(0xe0 | (charcode >> 12), 0x80 | ((charcode >> 6) & 0x3f), 0x80 | (charcode & 0x3f));
         } else {
           i++;
           // UTF-16 encodes 0x10000-0x10FFFF by
           // subtracting 0x10000 and splitting the
           // 20 bits of 0x0-0xFFFFF into two halves
-          charcode =
-            0x10000 +
-            (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+          charcode = 0x10000 + (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
           utf8.push(
             0xf0 | (charcode >> 18),
             0x80 | ((charcode >> 12) & 0x3f),

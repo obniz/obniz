@@ -54,8 +54,7 @@ class M5StickC_FINGER {
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(null, this.params.gnd, "3v");
-        if (!this.obniz.isValidIO(this.params.tx) &&
-            !this.obniz.isValidIO(this.params.rx)) {
+        if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
                 this.params.tx = hatI2c.tx;
@@ -252,5 +251,4 @@ class M5StickC_FINGER {
     }
 }
 exports.default = M5StickC_FINGER;
-
 //# sourceMappingURL=index.js.map

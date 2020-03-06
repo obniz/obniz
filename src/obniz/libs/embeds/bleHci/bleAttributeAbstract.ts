@@ -51,10 +51,7 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public onwritefromremote?: (
-    address: BleDeviceAddress,
-    data: number[],
-  ) => void;
+  public onwritefromremote?: (address: BleDeviceAddress, data: number[]) => void;
 
   /**
    * @ignore
@@ -310,8 +307,7 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   protected setFunctions() {
     let childrenName: any = this.childrenName;
     if (childrenName) {
-      childrenName =
-        childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+      childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
       const childName: any = childrenName.slice(0, -1);
 
       let funcName: string = "add" + childName;

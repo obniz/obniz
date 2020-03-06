@@ -100,12 +100,7 @@ class WSCommandUart extends WSCommand {
         { uri: "/request/uart/send", onValid: this.send },
         { uri: "/request/uart/deinit", onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        "uart" + i,
-        i,
-      );
+      const res: any = this.validateCommandSchema(schemaData, module, "uart" + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {

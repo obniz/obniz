@@ -327,9 +327,7 @@ class Hci extends events.EventEmitter {
         cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD, 1);
         // length
         cmd.writeUInt8(15, 3);
-        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL
-            ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL)
-            : 100) * 1.6);
+        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL) : 100) * 1.6);
         // data
         cmd.writeUInt16LE(advertisementInterval, 4); // min interval
         cmd.writeUInt16LE(advertisementInterval, 6); // max interval
@@ -449,12 +447,7 @@ class Hci extends events.EventEmitter {
         debug("writeOneAclDataPkt");
         const pkt = this._aclOutQueue.shift();
         this._handleAclsInProgress[pkt.handle]++;
-        debug("write acl data pkt frag " +
-            pkt.fragId +
-            " handle " +
-            pkt.handle +
-            " - writing: " +
-            pkt.pkt.toString("hex"));
+        debug("write acl data pkt frag " + pkt.fragId + " handle " + pkt.handle + " - writing: " + pkt.pkt.toString("hex"));
         this._socket.write(pkt.pkt);
     }
     onSocketData(array) {
@@ -570,12 +563,8 @@ class Hci extends events.EventEmitter {
                 if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
                     return;
                 }
-                this._handleBuffers[handle].data = Buffer.concat([
-                    this._handleBuffers[handle].data,
-                    data.slice(5),
-                ]);
-                if (this._handleBuffers[handle].data.length ===
-                    this._handleBuffers[handle].length) {
+                this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
+                if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
                     this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
                     delete this._handleBuffers[handle];
                 }
@@ -797,5 +786,4 @@ class Hci extends events.EventEmitter {
 }
 Hci.STATUS_MAPPER = STATUS_MAPPER;
 exports.default = Hci;
-
 //# sourceMappingURL=hci.js.map

@@ -1,8 +1,6 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 import { I2cPartsAbstractOptions } from "../../i2cParts";
 
 export interface MatrixLED_HT16K33Options extends I2cPartsAbstractOptions {}
@@ -72,9 +70,7 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
     if (val > 3) {
       val = 3;
     }
-    this.i2c.write(this.address, [
-      this.command.blink | this.blink_mode.display_on | (val << 1),
-    ]);
+    this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
   }
 
   public brightness(val: number) {
@@ -101,8 +97,7 @@ export default class MatrixLED_HT16K33 implements ObnizPartsInterface {
       this.vram[i] = 0;
       for (let j = 0; j < this.width; j++) {
         const pos = i * this.height * 4 + j * 4;
-        const brightness =
-          0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
+        const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
         if (brightness > 0x7f) {
           this.vram[i] |= 0x1 << j;
         }

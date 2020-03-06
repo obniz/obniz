@@ -10,10 +10,10 @@ import BleService from "./bleService";
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalValueAttributeAbstract<
+export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> extends BleLocalAttributeAbstract<
   ParentClass,
   ChildrenClass
-> extends BleLocalAttributeAbstract<ParentClass, ChildrenClass> {
+> {
   constructor(params: any) {
     super(params);
   }

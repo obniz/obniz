@@ -60,18 +60,11 @@ export default abstract class I2cCompassAbstract extends i2cParts {
     if (Object.keys(I2cCompassAbstract.unitScales).includes(new_unit)) {
       this.sf = new_unit;
     } else {
-      throw new Error(
-        `Invalid compass unit. Valid values are ${Object.keys(
-          I2cCompassAbstract.unitScales,
-        ).join()}`,
-      );
+      throw new Error(`Invalid compass unit. Valid values are ${Object.keys(I2cCompassAbstract.unitScales).join()}`);
     }
   }
 
   private calcMag(data: number): number {
-    return (
-      (data * this.so * I2cCompassAbstract.unitScales[this.sf]) /
-      I2cCompassAbstract.unitScales[this.defaultUnit]
-    );
+    return (data * this.so * I2cCompassAbstract.unitScales[this.sf]) / I2cCompassAbstract.unitScales[this.defaultUnit];
   }
 }

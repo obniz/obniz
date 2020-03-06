@@ -570,15 +570,7 @@ class SainSmartTFT18LCDTest {
       lcd.fillCircle(64, 80, 40, YELLOW);
       lcd.drawCircle(64, 80, 40, RED);
       await obniz.wait(1000);
-      lcd.drawTriangle(
-        64,
-        24,
-        24,
-        lcd.height - 24,
-        lcd.width - 24,
-        lcd.height - 24,
-        BLACK,
-      );
+      lcd.drawTriangle(64, 24, 24, lcd.height - 24, lcd.width - 24, lcd.height - 24, BLACK);
       lcd.fillTriangle(64, lcd.height - 48, 24, 48, lcd.width - 24, 48, GREEN);
       await obniz.wait(1000);
       lcd.drawVLine(64, 10, lcd.height - 20, RED);

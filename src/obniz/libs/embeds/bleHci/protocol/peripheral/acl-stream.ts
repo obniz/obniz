@@ -30,14 +30,7 @@ class AclStream extends events.EventEmitter {
     this._handle = handle;
     this.encypted = false;
 
-    this._smp = new Smp(
-      this,
-      localAddressType,
-      localAddress,
-      remoteAddressType,
-      remoteAddress,
-      this._hci,
-    );
+    this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress, this._hci);
   }
 
   public write(cid: any, data: any) {

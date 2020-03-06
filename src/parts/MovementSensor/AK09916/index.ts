@@ -2,9 +2,7 @@ import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
 
 import Obniz from "../../../obniz";
 import { DriveType, PullType } from "../../../obniz/libs/io_peripherals/common";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface AK09916Options extends I2cPartsAbstractOptions {}
 
@@ -76,10 +74,7 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
     // 1000 0000 0001 0000 -4912 uT
     // data[0]下位ビット data[1] 上位ビット
 
-    const raw3: [number, number, number] = await this.readThreeInt16Wait(
-      this._HXL,
-      "l",
-    );
+    const raw3: [number, number, number] = await this.readThreeInt16Wait(this._HXL, "l");
 
     this.readWait(this._ST2, 1);
 

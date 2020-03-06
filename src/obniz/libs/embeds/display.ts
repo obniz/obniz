@@ -251,13 +251,7 @@ export default class Display {
    * @param height
    * @param mustFill
    */
-  public rect(
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    mustFill?: boolean,
-  ) {
+  public rect(x: number, y: number, width: number, height: number, mustFill?: boolean) {
     const ctx: any = this._ctx();
     if (ctx) {
       if (mustFill) {
@@ -375,16 +369,12 @@ export default class Display {
    * If you call just
    */
   public setColorDepth(depth: number) {
-    const found = this._colorDepthCapabilities.find(
-      (element) => element === depth,
-    );
+    const found = this._colorDepthCapabilities.find((element) => element === depth);
     if (found) {
       this._colorDepth = depth;
     } else {
       throw new Error(
-        `This device can't accept depth ${depth}. availables are ${JSON.stringify(
-          this._colorDepthCapabilities,
-        )}`,
+        `This device can't accept depth ${depth}. availables are ${JSON.stringify(this._colorDepthCapabilities)}`,
       );
     }
   }
@@ -524,9 +514,7 @@ export default class Display {
 
   private warnCanvasAvailability() {
     if (this.Obniz.isNode) {
-      throw new Error(
-        "obniz.js require node-canvas to draw rich contents. see more detail on docs",
-      );
+      throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
     } else {
       throw new Error("obniz.js cant create canvas element to body");
     }
@@ -550,9 +538,7 @@ export default class Display {
     this._pos = { x: 0, y: 0 };
     this._color = this._paper_white ? "#000" : "#FFF";
     this.fontSize = this.height > 200 ? 32 : 16;
-    this._colorDepth = this._colorDepthCapabilities[
-      this._colorDepthCapabilities.length - 1
-    ];
+    this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
     this._reset_canvas();
   }
 
@@ -606,28 +592,17 @@ export default class Display {
     const data = imageData.data;
 
     if (this._colorDepth === 16) {
-      for (
-        let pixel_index = 0;
-        pixel_index < this.width * this.height;
-        pixel_index++
-      ) {
+      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];
-        const hexColor =
-          (((red >> 3) & 0x1f) << 11) |
-          (((green >> 2) & 0x3f) << 5) |
-          (((blue >> 3) & 0x1f) << 0);
+        const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
         raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
         raw[pixel_index * 2 + 1] = hexColor & 0xff;
       }
     } else if (this._colorDepth === 4) {
       const stride = this.width / 2;
-      for (
-        let pixel_index = 0;
-        pixel_index < this.width * this.height;
-        pixel_index++
-      ) {
+      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];
@@ -658,11 +633,7 @@ export default class Display {
       }
     } else {
       const stride = this.width / 8;
-      for (
-        let pixel_index = 0;
-        pixel_index < this.width * this.height;
-        pixel_index++
-      ) {
+      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];

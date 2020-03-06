@@ -98,13 +98,7 @@ class M5StickC_YunHat {
     rgbs(array) {
         if (array.length <= this.LED_LEN) {
             array.forEach((value, index) => {
-                this.i2c.write(0x38, [
-                    0x01,
-                    index,
-                    Math.floor(value[0]),
-                    Math.floor(value[1]),
-                    Math.floor(value[2]),
-                ]);
+                this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
             });
         }
     }
@@ -131,5 +125,4 @@ class M5StickC_YunHat {
     }
 }
 exports.default = M5StickC_YunHat;
-
 //# sourceMappingURL=index.js.map

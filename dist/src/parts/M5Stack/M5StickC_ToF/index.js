@@ -11,9 +11,7 @@ class M5StickC_ToF extends VL53L0X_1.default {
         };
     }
     wired(obniz) {
-        if (!this.obniz.isValidIO(this.params.sda) &&
-            !this.obniz.isValidIO(this.params.scl) &&
-            !this.params.i2c) {
+        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
                 this.params.sda = hatI2c.sda;
@@ -27,5 +25,4 @@ class M5StickC_ToF extends VL53L0X_1.default {
     }
 }
 exports.default = M5StickC_ToF;
-
 //# sourceMappingURL=index.js.map

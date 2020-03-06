@@ -6,17 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class I2cPartsAbstract {
     constructor() {
-        this.keys = [
-            "gnd",
-            "vcc",
-            "sda",
-            "scl",
-            "i2c",
-            "pull",
-            "clock",
-            "voltage",
-            "address",
-        ];
+        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "pull", "clock", "voltage", "address"];
         this.requiredKeys = [];
     }
     static charArrayToInt16(values, endian = "b") {
@@ -94,5 +84,4 @@ class I2cPartsAbstract {
     }
 }
 exports.default = I2cPartsAbstract;
-
 //# sourceMappingURL=i2cParts.js.map

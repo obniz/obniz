@@ -129,9 +129,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @ignore
    * @param params
    */
-  public addDescriptor(
-    params: { uuid: UUID } | BleRemoteDescriptor,
-  ): BleRemoteDescriptor {
+  public addDescriptor(params: { uuid: UUID } | BleRemoteDescriptor): BleRemoteDescriptor {
     return this.addChild(params);
   }
 

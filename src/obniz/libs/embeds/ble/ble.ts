@@ -75,15 +75,11 @@ export default class ObnizBLE {
   public _reset() {}
 
   public directConnect(uuid: any, addressType: any) {
-    throw new Error(
-      "directConnect cannot use obnizOS < 3.0.0. Please update obnizOS",
-    );
+    throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
   }
 
   public async directConnectWait(uuid: any, addressType: any) {
-    throw new Error(
-      "directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS",
-    );
+    throw new Error("directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS");
   }
 
   public findPeripheral(address: any) {
@@ -112,11 +108,7 @@ export default class ObnizBLE {
       this.scan.notifyFromServer("onfinish");
     }
 
-    const remotePeripheralCallbackFunc: any = (
-      val: any,
-      func: any,
-      type: any,
-    ) => {
+    const remotePeripheralCallbackFunc: any = (val: any, func: any, type: any) => {
       let target: any = null;
       if (val === undefined) {
         return;
@@ -266,11 +258,7 @@ export default class ObnizBLE {
       }
 
       if (peripheral) {
-        if (
-          params.service_uuid &&
-          params.characteristic_uuid &&
-          params.descriptor_uuid
-        ) {
+        if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
           target = peripheral.findDescriptor(params);
         } else if (params.service_uuid && params.characteristic_uuid) {
           target = peripheral.findCharacteristic(params);

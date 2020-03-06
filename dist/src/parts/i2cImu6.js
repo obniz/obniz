@@ -13,12 +13,10 @@ class I2cImu6Abstract extends i2cParts_1.default {
         this.gyro_sf = "dps";
     }
     static _accelS(value, accel_so, accel_sf) {
-        return ((value / I2cImu6Abstract.scales.accel.so[accel_so]) *
-            I2cImu6Abstract.scales.accel.sf[accel_sf]);
+        return (value / I2cImu6Abstract.scales.accel.so[accel_so]) * I2cImu6Abstract.scales.accel.sf[accel_sf];
     }
     static _gyroS(value, gyro_so, gyro_sf) {
-        return ((value / I2cImu6Abstract.scales.gyro.so[gyro_so]) *
-            I2cImu6Abstract.scales.gyro.sf[gyro_sf]);
+        return (value / I2cImu6Abstract.scales.gyro.so[gyro_so]) * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
     }
     async getAccelWait() {
         const adc = await this.getAccelAdcWait();
@@ -159,5 +157,4 @@ I2cImu6Abstract.scales = {
         },
     },
 };
-
 //# sourceMappingURL=i2cImu6.js.map

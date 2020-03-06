@@ -40,9 +40,7 @@ class M5StickC_ADC {
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda) &&
-            !this.obniz.isValidIO(this.params.scl) &&
-            !this.params.i2c) {
+        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
                 this.params.sda = hatI2c.sda;
@@ -132,5 +130,4 @@ class M5StickC_ADC {
     }
 }
 exports.default = M5StickC_ADC;
-
 //# sourceMappingURL=index.js.map

@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface SharpMemoryTFTOptions {
   vcc?: number;
@@ -172,9 +170,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
 
   public warnCanvasAvailability() {
     if (this.obniz.isNode) {
-      throw new Error(
-        "MemoryDisplay require node-canvas to draw rich contents. see more detail on docs",
-      );
+      throw new Error("MemoryDisplay require node-canvas to draw rich contents. see more detail on docs");
     } else {
       throw new Error("MemoryDisplay cant create canvas element to body");
     }
@@ -292,13 +288,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public rect(
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    mustFill: boolean,
-  ) {
+  public rect(x: number, y: number, width: number, height: number, mustFill: boolean) {
     const ctx = this._ctx();
     if (ctx) {
       if (mustFill) {
@@ -349,8 +339,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      const brightness =
-        0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
       const index = Math.floor(i / 4);
       const line = Math.floor(index / this.width);
       const col = Math.floor((index - line * this.width) / 8);

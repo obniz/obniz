@@ -42,8 +42,7 @@ class I2cCompassAbstract extends i2cParts_1.default {
         }
     }
     calcMag(data) {
-        return ((data * this.so * I2cCompassAbstract.unitScales[this.sf]) /
-            I2cCompassAbstract.unitScales[this.defaultUnit]);
+        return (data * this.so * I2cCompassAbstract.unitScales[this.sf]) / I2cCompassAbstract.unitScales[this.defaultUnit];
     }
 }
 exports.default = I2cCompassAbstract;
@@ -56,5 +55,4 @@ I2cCompassAbstract.unitScales = {
     kG: 0.001,
     uG: 1000 * 1000,
 };
-
 //# sourceMappingURL=i2cCompass.js.map

@@ -43,10 +43,7 @@ export default class WSCommandDirective extends WSCommand {
       frame.set(nameArray, offset);
       offset += nameArray.length;
       frame[offset++] = 0; // null string
-      if (
-        params.animation.status === "registrate" ||
-        typeof params.animation.repeat === "number"
-      ) {
+      if (params.animation.status === "registrate" || typeof params.animation.repeat === "number") {
         throw new Error("you need to update your firmware >= 2.0.0");
       }
     } else {
@@ -87,24 +84,15 @@ export default class WSCommandDirective extends WSCommand {
         parsedCommands = [parsedCommands];
       }
       let compressed: any = null;
-      for (
-        let commandIndex: any = 0;
-        commandIndex < parsedCommands.length;
-        commandIndex++
-      ) {
-        const _frame: any = WSCommand.compress(
-          this.availableCommands,
-          parsedCommands[commandIndex],
-        );
+      for (let commandIndex: any = 0; commandIndex < parsedCommands.length; commandIndex++) {
+        const _frame: any = WSCommand.compress(this.availableCommands, parsedCommands[commandIndex]);
         if (!_frame) {
           throw new Error(
             "[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.",
           );
         }
         if (compressed) {
-          const _combined: any = new Uint8Array(
-            compressed.length + _frame.length,
-          );
+          const _combined: any = new Uint8Array(compressed.length + _frame.length);
           _combined.set(compressed, 0);
           _combined.set(_frame, compressed.length);
           compressed = _combined;
@@ -129,9 +117,7 @@ export default class WSCommandDirective extends WSCommand {
       commandHeader[6] = duration >> (8 * 1);
       commandHeader[7] = duration;
 
-      const combined: any = new Uint8Array(
-        frame.byteLength + commandHeader.byteLength + compressed.byteLength,
-      );
+      const combined: any = new Uint8Array(frame.byteLength + commandHeader.byteLength + compressed.byteLength);
       combined.set(frame, 0);
       combined.set(commandHeader, frame.byteLength);
       combined.set(compressed, frame.byteLength + commandHeader.byteLength);
@@ -186,12 +172,7 @@ export default class WSCommandDirective extends WSCommand {
       { uri: "/request/ioAnimation/init", onValid: this.init },
       { uri: "/request/ioAnimation/changeState", onValid: this.changeState },
     ];
-    const res: any = this.validateCommandSchema(
-      schemaData,
-      module,
-      "io",
-      module,
-    );
+    const res: any = this.validateCommandSchema(schemaData, module, "io", module);
 
     if (res.valid === 0 && parentCommandNotFound) {
       if (res.invalidButLike.length > 0) {
@@ -205,9 +186,7 @@ export default class WSCommandDirective extends WSCommand {
 
   public notifyFromBinary(objToSend: any, func: any, payload: any) {
     if (func === this._CommandNotify) {
-      const name: any = ObnizUtil.dataArray2string(
-        payload.slice(2, payload.byteLength - 1),
-      ); // remove null string
+      const name: any = ObnizUtil.dataArray2string(payload.slice(2, payload.byteLength - 1)); // remove null string
 
       objToSend.io = {
         animation: {

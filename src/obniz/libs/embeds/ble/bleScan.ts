@@ -32,17 +32,11 @@ export default class BleScan {
       duration: settings && settings.duration ? settings.duration : 30,
     };
     if (settings && settings.duplicate) {
-      throw new Error(
-        `duplicate property can only be used with obnizOS3 or later`,
-      );
+      throw new Error(`duplicate property can only be used with obnizOS3 or later`);
     }
 
     this.scanTarget = target;
-    if (
-      this.scanTarget &&
-      this.scanTarget.uuids &&
-      Array.isArray(this.scanTarget.uuids)
-    ) {
+    if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
       this.scanTarget.uuids = this.scanTarget.uuids.map((elm: any) => {
         return BleHelper.uuidFilter(elm);
       });
@@ -92,19 +86,13 @@ export default class BleScan {
   }
 
   public isTarget(peripheral: any) {
-    if (
-      this.scanTarget &&
-      this.scanTarget.localName &&
-      peripheral.localName !== this.scanTarget.localName
-    ) {
+    if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {
-      const uuids: any = peripheral
-        .advertisementServiceUuids()
-        .map((e: any) => {
-          return BleHelper.uuidFilter(e);
-        });
+      const uuids: any = peripheral.advertisementServiceUuids().map((e: any) => {
+        return BleHelper.uuidFilter(e);
+      });
       for (const uuid of this.scanTarget.uuids) {
         if (!uuids.includes(uuid)) {
           return false;

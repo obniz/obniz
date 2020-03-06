@@ -125,10 +125,8 @@ class WSCommandSystem extends WSCommand {
 
     if (payload.length >= 16) {
       payload = Buffer.from(payload);
-      const obnizTime: any =
-        payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
-      const pingServerTime: any =
-        payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
+      const obnizTime: any = payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
+      const pingServerTime: any = payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
       const key: any = [];
       for (let i = 16; i < payload.length; i++) {
         key.push(payload[i]);

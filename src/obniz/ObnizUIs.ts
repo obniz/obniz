@@ -67,12 +67,8 @@ export default class ObnizUIs extends ObnizSystemMethods {
       return;
     }
     const dom: any = `
-    <div style="background-color:${
-      obj.alert === "warning" ? "#ffee35" : "#ff7b34"
-    }">${obj.message}</div>`;
-    document
-      .getElementById(this.options.debug_dom_id)!
-      .insertAdjacentHTML("beforeend", dom);
+    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"}">${obj.message}</div>`;
+    document.getElementById(this.options.debug_dom_id)!.insertAdjacentHTML("beforeend", dom);
   }
 
   protected getDebugDoms() {
@@ -80,12 +76,8 @@ export default class ObnizUIs extends ObnizSystemMethods {
       return;
     }
     const loaderDom: any = document.querySelector("#loader");
-    const debugDom: any = document.querySelector(
-      "#" + this.options.debug_dom_id,
-    );
-    let statusDom: any = document.querySelector(
-      "#" + this.options.debug_dom_id + " #online-status",
-    );
+    const debugDom: any = document.querySelector("#" + this.options.debug_dom_id);
+    let statusDom: any = document.querySelector("#" + this.options.debug_dom_id + " #online-status");
     if (debugDom && !statusDom) {
       statusDom = document.createElement("div");
       statusDom.id = "online-status";
@@ -115,8 +107,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     }
 
     const isConnected: any = this.socket && this.socket.readyState === 1;
-    const isConnectedLocally: any =
-      this.socket_local && this.socket_local.readyState === 1;
+    const isConnectedLocally: any = this.socket_local && this.socket_local.readyState === 1;
     if (isConnected && isConnectedLocally) {
       this.showOnLine(true);
     } else if (isConnected) {
@@ -135,13 +126,10 @@ export default class ObnizUIs extends ObnizSystemMethods {
       doms.loaderDom.style.display = "none";
     }
     if (doms.statusDom) {
-      doms.statusDom.style.backgroundColor = isConnectedLocally
-        ? "#0cd362"
-        : "#31965d";
+      doms.statusDom.style.backgroundColor = isConnectedLocally ? "#0cd362" : "#31965d";
       doms.statusDom.style.color = "#FFF";
       doms.statusDom.innerHTML =
-        (this.id ? "online : " + this.id : "online") +
-        (isConnectedLocally ? " via local_connect" : " via internet");
+        (this.id ? "online : " + this.id : "online") + (isConnectedLocally ? " via local_connect" : " via internet");
     }
   }
 

@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface StepperMotorOptions {
   a: number;
@@ -224,8 +222,7 @@ export default class StepperMotor implements ObnizPartsInterface {
   }
 
   public async moveToWait(destination: number) {
-    const needed =
-      (destination - this.currentDistance()) * this.milliMeterStepCount;
+    const needed = (destination - this.currentDistance()) * this.milliMeterStepCount;
     await this.stepWait(needed);
   }
 

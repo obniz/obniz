@@ -33,9 +33,7 @@ class BleScan {
             throw new Error(`duplicate property can only be used with obnizOS3 or later`);
         }
         this.scanTarget = target;
-        if (this.scanTarget &&
-            this.scanTarget.uuids &&
-            Array.isArray(this.scanTarget.uuids)) {
+        if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
             this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
@@ -77,15 +75,11 @@ class BleScan {
         this.Obniz.send(obj);
     }
     isTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.localName &&
-            peripheral.localName !== this.scanTarget.localName) {
+        if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {
             return false;
         }
         if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral
-                .advertisementServiceUuids()
-                .map((e) => {
+            const uuids = peripheral.advertisementServiceUuids().map((e) => {
                 return bleHelper_1.default.uuidFilter(e);
             });
             for (const uuid of this.scanTarget.uuids) {
@@ -123,5 +117,4 @@ class BleScan {
     }
 }
 exports.default = BleScan;
-
 //# sourceMappingURL=bleScan.js.map

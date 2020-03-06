@@ -91,12 +91,7 @@ class ObnizUtil {
    * @param variable_name
    * @param variable
    */
-  public static assertNumber(
-    min: number,
-    max: number,
-    variable_name: string,
-    variable: number,
-  ) {
+  public static assertNumber(min: number, max: number, variable_name: string, variable: number) {
     if (!(min <= variable && variable <= max)) {
       throw new Error(
         `${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`,
@@ -133,9 +128,7 @@ class ObnizUtil {
         const { createCanvas } = require("canvas");
         return createCanvas(this.width, this.height);
       } catch (e) {
-        throw new Error(
-          "obniz.js require node-canvas to draw rich contents. see more detail on docs",
-        );
+        throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
       }
     } else {
       const canvas: any = document.createElement("canvas");

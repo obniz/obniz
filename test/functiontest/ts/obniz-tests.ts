@@ -80,10 +80,7 @@ class DisplayTest {
       obniz.display.draw(ctx1);
 
       // 2. create new canvas dom and load it.
-      const ctx2 = obniz.util.createCanvasContext(
-        obniz.display.width,
-        obniz.display.height,
-      );
+      const ctx2 = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
       obniz.display.draw(ctx2);
 
       // 3. running with node.js
@@ -412,32 +409,7 @@ class PWMTest {
       pwm.freq(38000); // set pwm frequency to 38khz
 
       // signal for room heater's remote signal
-      const arr = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-      ];
+      const arr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
       pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70us.
     };

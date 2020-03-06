@@ -68,8 +68,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
             callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
             let address = null;
             if (this.parentName === "characteristic") {
-                address = this.characteristic.service.peripheral
-                    .currentConnectedDeviceAddress;
+                address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
             }
             else if (this.parentName === "service") {
                 address = this.service.peripheral.currentConnectedDeviceAddress;
@@ -94,8 +93,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         callback(BleResponseResult.SUCCESS);
         let address = null;
         if (this.parentName === "characteristic") {
-            address = this.characteristic.service.peripheral
-                .currentConnectedDeviceAddress;
+            address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
         }
         else if (this.parentName === "service") {
             address = this.service.peripheral.currentConnectedDeviceAddress;
@@ -119,5 +117,4 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     }
 }
 exports.default = BleLocalAttributeAbstract;
-
 //# sourceMappingURL=bleLocalAttributeAbstract.js.map

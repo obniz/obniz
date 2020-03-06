@@ -129,12 +129,7 @@ class WSCommandI2C extends WSCommand {
         { uri: "/request/i2c/read", onValid: this.read },
         { uri: "/request/i2c/deinit", onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(
-        schemaData,
-        module,
-        "i2c" + i,
-        i,
-      );
+      const res: any = this.validateCommandSchema(schemaData, module, "i2c" + i, i);
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -182,14 +177,8 @@ class WSCommandI2C extends WSCommand {
       const err: any = payload[1];
       const ref_func_id: any = payload[2];
 
-      if (
-        ref_func_id === this._CommandWrite ||
-        ref_func_id === this._CommandRead
-      ) {
-        let reason: any =
-          "" +
-          (ref_func_id === this._CommandWrite ? "writing" : "reading") +
-          " error. ";
+      if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
+        let reason: any = "" + (ref_func_id === this._CommandWrite ? "writing" : "reading") + " error. ";
         if (err === 7) {
           // in fact. it is 0x107. but truncated
           reason += "Communication Timeout. Maybe, target is not connected.";

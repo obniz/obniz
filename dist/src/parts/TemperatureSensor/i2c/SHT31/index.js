@@ -7,17 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SHT31 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = [
-            "vcc",
-            "sda",
-            "scl",
-            "gnd",
-            "adr",
-            "addressmode",
-            "i2c",
-            "pull",
-            "address",
-        ];
+        this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull", "address"];
         this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
         this.commands = {};
         this.commands.softReset = [0x30, 0xa2];
@@ -86,5 +76,4 @@ class SHT31 {
     }
 }
 exports.default = SHT31;
-
 //# sourceMappingURL=index.js.map

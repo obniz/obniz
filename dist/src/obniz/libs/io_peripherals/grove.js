@@ -18,32 +18,20 @@ class PeripheralGrove {
     }
     getDigital(drive = "5v") {
         this.useWithType("digital", drive);
-        const primary = this.Obniz.isValidIO(this._params.pin1)
-            ? this.Obniz.getIO(this._params.pin1)
-            : undefined;
-        const secondary = this.Obniz.isValidIO(this._params.pin2)
-            ? this.Obniz.getIO(this._params.pin2)
-            : undefined;
+        const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
+        const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
         return { primary, secondary };
     }
     getAnalog(drive = "5v") {
         this.useWithType("analog", drive);
-        const primary = this.Obniz.isValidAD(this._params.pin1)
-            ? this.Obniz.getAD(this._params.pin1)
-            : undefined;
-        const secondary = this.Obniz.isValidAD(this._params.pin2)
-            ? this.Obniz.getAD(this._params.pin2)
-            : undefined;
+        const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
+        const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
         return { primary, secondary };
     }
     getAnalogDigital(drive = "5v") {
         this.useWithType("analog-digital", drive);
-        const analog = this.Obniz.isValidAD(this._params.pin1)
-            ? this.Obniz.getAD(this._params.pin1)
-            : undefined;
-        const digital = this.Obniz.isValidIO(this._params.pin2)
-            ? this.Obniz.getIO(this._params.pin2)
-            : undefined;
+        const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
+        const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
         return { analog, digital };
     }
     getI2c(frequency, drive = "5v") {
@@ -125,5 +113,4 @@ class PeripheralGrove {
     }
 }
 exports.default = PeripheralGrove;
-
 //# sourceMappingURL=grove.js.map

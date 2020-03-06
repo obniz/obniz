@@ -7,10 +7,10 @@ import BleAttributeAbstract from "./bleAttributeAbstract";
 /**
  * @category Use as Central
  */
-export default class BleRemoteAttributeAbstract<
+export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<
   ParentClass,
   ChildrenClass
-> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
+> {
   constructor(params: any) {
     super(params);
 

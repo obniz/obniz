@@ -111,8 +111,7 @@ class NobleBindings extends events_1.default.EventEmitter {
                 serviceUuids.push(serviceData[i].uuid);
             }
             for (i in serviceUuids) {
-                hasScanServiceUuids =
-                    this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
+                hasScanServiceUuids = this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
                 if (hasScanServiceUuids) {
                     break;
                 }
@@ -447,5 +446,4 @@ class NobleBindings extends events_1.default.EventEmitter {
     }
 }
 exports.default = NobleBindings;
-
 //# sourceMappingURL=bindings.js.map

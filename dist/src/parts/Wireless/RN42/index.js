@@ -121,15 +121,7 @@ class RN42 {
             val = mode;
         }
         else if (typeof mode === "string") {
-            const modes = [
-                "SPP",
-                "DUN-DCE",
-                "DUN-DTE",
-                "MDM-SPP",
-                "SPP-DUN-DCE",
-                "APL",
-                "HID",
-            ];
+            const modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
             for (let i = 0; i < modes.length; i++) {
                 if (modes[i] === mode) {
                     val = i;
@@ -199,5 +191,4 @@ class RN42 {
     }
 }
 exports.default = RN42;
-
 //# sourceMappingURL=index.js.map

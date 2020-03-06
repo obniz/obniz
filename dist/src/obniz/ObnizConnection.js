@@ -42,8 +42,7 @@ class ObnizConnection {
         };
         if (this.options.binary) {
             this.wscommand = this.constructor.WSCommand;
-            const classes = this.constructor
-                .WSCommand.CommandClasses;
+            const classes = this.constructor.WSCommand.CommandClasses;
             this.wscommands = [];
             for (const class_name in classes) {
                 this.wscommands.push(new classes[class_name]({
@@ -201,8 +200,7 @@ class ObnizConnection {
                 this.print_debug("send: " + sendData);
             }
             /* compress */
-            if (this.wscommand &&
-                (typeof options !== "object" || options.local_connect !== false)) {
+            if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
                 let compressed;
                 try {
                     compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
@@ -446,13 +444,7 @@ class ObnizConnection {
         }
         /* unbind */
         if (this.isNode) {
-            const shouldRemoveObservers = [
-                "open",
-                "message",
-                "close",
-                "error",
-                "unexpected-response",
-            ];
+            const shouldRemoveObservers = ["open", "message", "close", "error", "unexpected-response"];
             for (let i = 0; i < shouldRemoveObservers.length; i++) {
                 socket.removeAllListeners(shouldRemoveObservers[i]);
             }
@@ -501,9 +493,7 @@ class ObnizConnection {
         }
     }
     _sendRouted(data) {
-        if (this.socket_local &&
-            this.socket_local.readyState === 1 &&
-            typeof data !== "string") {
+        if (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string") {
             this.print_debug("send via local");
             this.socket_local.send(data);
             if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
@@ -628,5 +618,4 @@ class ObnizConnection {
     }
 }
 exports.default = ObnizConnection;
-
 //# sourceMappingURL=ObnizConnection.js.map

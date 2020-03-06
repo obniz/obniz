@@ -57,5 +57,4 @@ class Button {
     }
 }
 exports.default = Button;
-
 //# sourceMappingURL=index.js.map

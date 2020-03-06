@@ -5,9 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface _7SegmentLEDOptions {
   a: number;
@@ -41,33 +39,10 @@ class _7SegmentLED implements ObnizPartsInterface {
   public common?: PeripheralIO;
 
   constructor() {
-    this.keys = [
-      "a",
-      "b",
-      "c",
-      "d",
-      "e",
-      "f",
-      "g",
-      "dp",
-      "common",
-      "commonType",
-    ];
+    this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
     this.requiredKeys = ["a", "b", "c", "d", "e", "f", "g"];
 
-    this.digits = [
-      0x3f,
-      0x06,
-      0x5b,
-      0x4f,
-      0x66,
-      0x6d,
-      0x7d,
-      0x07,
-      0x7f,
-      0x6f,
-      0x6f,
-    ];
+    this.digits = [0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x6f];
 
     this.displayIoNames = {
       a: "a",

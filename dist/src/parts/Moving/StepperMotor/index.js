@@ -191,5 +191,4 @@ class StepperMotor {
     }
 }
 exports.default = StepperMotor;
-
 //# sourceMappingURL=index.js.map

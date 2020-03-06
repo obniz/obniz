@@ -32,13 +32,7 @@ export default class AclStream extends events.EventEmitter {
     this._hci = hci;
     this._handle = handle;
 
-    this._smp = new Smp(
-      this,
-      localAddressType,
-      localAddress,
-      remoteAddressType,
-      remoteAddress,
-    );
+    this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
 
     this.onSmpStkBinded = this.onSmpStk.bind(this);
     this.onSmpFailBinded = this.onSmpFail.bind(this);

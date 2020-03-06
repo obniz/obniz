@@ -47,5 +47,4 @@ class MCP4725 {
     }
 }
 exports.default = MCP4725;
-
 //# sourceMappingURL=index.js.map

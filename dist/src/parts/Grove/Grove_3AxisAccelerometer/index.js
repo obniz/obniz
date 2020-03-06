@@ -140,5 +140,4 @@ class Grove_3AxisAccelerometer {
     }
 }
 exports.default = Grove_3AxisAccelerometer;
-
 //# sourceMappingURL=index.js.map

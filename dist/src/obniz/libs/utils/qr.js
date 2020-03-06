@@ -125,11 +125,7 @@ const _qrcode = (() => {
                     }
                     for (let r = -2; r <= 2; r += 1) {
                         for (let c = -2; c <= 2; c += 1) {
-                            if (r === -2 ||
-                                r === 2 ||
-                                c === -2 ||
-                                c === 2 ||
-                                (r === 0 && c === 0)) {
+                            if (r === -2 || r === 2 || c === -2 || c === 2 || (r === 0 && c === 0)) {
                                 _modules[row + r][col + c] = true;
                             }
                             else {
@@ -285,11 +281,7 @@ const _qrcode = (() => {
                 totalDataCount += rsBlocks[i].dataCount;
             }
             if (buffer.getLengthInBits() > totalDataCount * 8) {
-                throw new Error("code length overflow. (" +
-                    buffer.getLengthInBits() +
-                    ">" +
-                    totalDataCount * 8 +
-                    ")");
+                throw new Error("code length overflow. (" + buffer.getLengthInBits() + ">" + totalDataCount * 8 + ")");
             }
             // end code
             if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
@@ -571,21 +563,8 @@ const _qrcode = (() => {
             [6, 26, 54, 82, 110, 138, 166],
             [6, 30, 58, 86, 114, 142, 170],
         ];
-        const G15 = (1 << 10) |
-            (1 << 8) |
-            (1 << 5) |
-            (1 << 4) |
-            (1 << 2) |
-            (1 << 1) |
-            (1 << 0);
-        const G18 = (1 << 12) |
-            (1 << 11) |
-            (1 << 10) |
-            (1 << 9) |
-            (1 << 8) |
-            (1 << 5) |
-            (1 << 2) |
-            (1 << 0);
+        const G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+        const G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
         const G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
         const _this = {};
         const getBCHDigit = (data) => {
@@ -811,11 +790,7 @@ const _qrcode = (() => {
             EXP_TABLE[i] = 1 << i;
         }
         for (let i = 8; i < 256; i += 1) {
-            EXP_TABLE[i] =
-                EXP_TABLE[i - 4] ^
-                    EXP_TABLE[i - 5] ^
-                    EXP_TABLE[i - 6] ^
-                    EXP_TABLE[i - 8];
+            EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
         }
         for (let i = 0; i < 255; i += 1) {
             LOG_TABLE[EXP_TABLE[i]] = i;
@@ -1123,10 +1098,7 @@ const _qrcode = (() => {
         _this.getRSBlocks = (typeNumber, errorCorrectionLevel) => {
             const rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
             if (typeof rsBlock === "undefined") {
-                throw new Error("bad rs block @ typeNumber:" +
-                    typeNumber +
-                    "/errorCorrectionLevel:" +
-                    errorCorrectionLevel);
+                throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectionLevel:" + errorCorrectionLevel);
             }
             const length = rsBlock.length / 3;
             const list = [];
@@ -1541,9 +1513,7 @@ const _qrcode = (() => {
                     // UTF-16 encodes 0x10000-0x10FFFF by
                     // subtracting 0x10000 and splitting the
                     // 20 bits of 0x0-0xFFFFF into two halves
-                    charcode =
-                        0x10000 +
-                            (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+                    charcode = 0x10000 + (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
                     utf8.push(0xf0 | (charcode >> 18), 0x80 | ((charcode >> 12) & 0x3f), 0x80 | ((charcode >> 6) & 0x3f), 0x80 | (charcode & 0x3f));
                 }
             }
@@ -1553,5 +1523,4 @@ const _qrcode = (() => {
     };
 })();
 exports.default = _qrcode;
-
 //# sourceMappingURL=qr.js.map

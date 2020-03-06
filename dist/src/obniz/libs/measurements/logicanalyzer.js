@@ -71,21 +71,11 @@ class LogicAnalyzer {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, [
-            "io",
-            "interval",
-            "duration",
-        ]);
+        const err = util_1.default._requiredKeys(params, ["io", "interval", "duration"]);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
-            "io",
-            "interval",
-            "duration",
-            "triggerValue",
-            "triggerValueSamples",
-        ]);
+        this.params = util_1.default._keyFilter(params, ["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
         const obj = {};
         obj.logic_analyzer = {
             io: [this.params.io],
@@ -134,5 +124,4 @@ class LogicAnalyzer {
     }
 }
 exports.default = LogicAnalyzer;
-
 //# sourceMappingURL=logicanalyzer.js.map

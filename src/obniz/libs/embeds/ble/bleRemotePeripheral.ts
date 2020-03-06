@@ -39,14 +39,7 @@ export default class BleRemotePeripheral {
     this.adv_data = null;
     this.scan_resp = null;
 
-    this.keys = [
-      "device_type",
-      "address_type",
-      "ble_event_type",
-      "rssi",
-      "adv_data",
-      "scan_resp",
-    ];
+    this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
 
     this._services = [];
     this.emitter = new emitter();
@@ -136,14 +129,7 @@ export default class BleRemotePeripheral {
 
   public setIBeacon() {
     const data: any = this.searchTypeVal(0xff);
-    if (
-      !data ||
-      data[0] !== 0x4c ||
-      data[1] !== 0x00 ||
-      data[2] !== 0x02 ||
-      data[3] !== 0x15 ||
-      data.length !== 25
-    ) {
+    if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
       this.iBeacon = null;
       return;
     }
@@ -151,12 +137,7 @@ export default class BleRemotePeripheral {
     let uuid: any = "";
     for (let i = 0; i < uuidData.length; i++) {
       uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-      if (
-        i === 4 - 1 ||
-        i === 4 + 2 - 1 ||
-        i === 4 + 2 * 2 - 1 ||
-        i === 4 + 2 * 3 - 1
-      ) {
+      if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
         uuid += "-";
       }
     }
@@ -262,9 +243,7 @@ export default class BleRemotePeripheral {
 
   public findCharacteristic(param: any) {
     const serviceUuid: any = BleHelper.uuidFilter(param.service_uuid);
-    const characteristicUuid: any = BleHelper.uuidFilter(
-      param.characteristic_uuid,
-    );
+    const characteristicUuid: any = BleHelper.uuidFilter(param.characteristic_uuid);
     const s: any = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -321,13 +300,9 @@ export default class BleRemotePeripheral {
     };
 
     const services: any = await this.discoverAllServicesWait();
-    const charsNest: any = await Promise.all(
-      services.map((s: any) => s.discoverAllCharacteristicsWait()),
-    );
+    const charsNest: any = await Promise.all(services.map((s: any) => s.discoverAllCharacteristicsWait()));
     const chars: any = ArrayFlat(charsNest);
-    const descriptorsNest: any = await Promise.all(
-      chars.map((c: any) => c.discoverAllDescriptorsWait()),
-    );
+    const descriptorsNest: any = await Promise.all(chars.map((c: any) => c.discoverAllDescriptorsWait()));
     // eslint-disable-next-line no-unused-vars
     const descriptors: any = ArrayFlat(descriptorsNest);
   }

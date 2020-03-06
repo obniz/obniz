@@ -5,9 +5,7 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 class SNx4HC595_IO {
   public chip: any;
@@ -66,17 +64,7 @@ export default class SNx4HC595 implements ObnizPartsInterface {
 
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-    this.keys = [
-      "gnd",
-      "vcc",
-      "ser",
-      "srclk",
-      "rclk",
-      "oe",
-      "srclr",
-      "io_num",
-      "enabled",
-    ];
+    this.keys = ["gnd", "vcc", "ser", "srclk", "rclk", "oe", "srclr", "io_num", "enabled"];
     this.requiredKeys = ["ser", "srclk", "rclk"];
 
     this.autoFlash = true;
@@ -105,10 +93,7 @@ export default class SNx4HC595 implements ObnizPartsInterface {
       this.io_oe.output(true);
     }
 
-    if (
-      this.obniz.isValidIO(this.params.vcc) ||
-      this.obniz.isValidIO(this.params.gnd)
-    ) {
+    if (this.obniz.isValidIO(this.params.vcc) || this.obniz.isValidIO(this.params.gnd)) {
       this.obniz.wait(100);
     }
 

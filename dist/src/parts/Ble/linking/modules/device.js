@@ -548,8 +548,7 @@ class LinkingDevice {
             };
         }
         // Button
-        if ("Button" in this.info.exsensors ||
-            device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
+        if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
             this.services.button = {
                 onnotify: null,
             };
@@ -557,10 +556,7 @@ class LinkingDevice {
         // LED
         if ("LED" in this.info.settings) {
             const o = this.info.settings.LED;
-            if (o.colors &&
-                o.colors.length > 0 &&
-                o.patterns &&
-                o.patterns.length > 0) {
+            if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
                 const colors = {};
                 for (let i = 0; i < o.colors.length; i++) {
                     colors[o.colors[i]] = i + 1;
@@ -873,5 +869,4 @@ class LinkingDevice {
     }
 }
 exports.default = LinkingDevice;
-
 //# sourceMappingURL=device.js.map

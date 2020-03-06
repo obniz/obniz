@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizUtil from "../../../obniz/libs/utils/util";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 import { I2cPartsAbstractOptions } from "../../i2cParts";
 import BMP280 from "../../PressureSensor/BMP280";
 import SHT20 from "../../TemperatureSensor/i2c/SHT20";
@@ -130,24 +128,14 @@ export default class M5StickC_YunHat implements ObnizPartsInterface {
   public rgbs(array: Array<[number, number, number]>) {
     if (array.length <= this.LED_LEN) {
       array.forEach((value, index) => {
-        this.i2c.write(0x38, [
-          0x01,
-          index,
-          Math.floor(value[0]),
-          Math.floor(value[1]),
-          Math.floor(value[2]),
-        ]);
+        this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
       });
     }
   }
 
   public hsvs(array: Array<[number, number, number]>) {
     const leds: Array<[number, number, number]> = array.map((value, index) => {
-      const color = M5StickC_YunHat._generateHsvColor(
-        value[0],
-        value[1],
-        value[2],
-      );
+      const color = M5StickC_YunHat._generateHsvColor(value[0], value[1], value[2]);
       return [color.red, color.green, color.blue];
     });
     this.rgbs(leds);

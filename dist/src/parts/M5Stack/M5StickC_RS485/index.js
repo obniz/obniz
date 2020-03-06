@@ -39,5 +39,4 @@ class M5StickC_RS485 {
     }
 }
 exports.default = M5StickC_RS485;
-
 //# sourceMappingURL=index.js.map

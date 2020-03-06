@@ -62,12 +62,7 @@ class WSCommandBleHci {
   public advertisementFilter(params: any) {
     const sendData: number[] = [];
     params.hci.advertisement_filter.forEach((e: any) => {
-      const one: number[] = [
-        e.range.index,
-        e.range.length,
-        e.value.length,
-        ...e.value,
-      ];
+      const one: number[] = [e.range.index, e.range.length, e.value.length, ...e.value];
       sendData.push(...one);
     });
     const buf: any = new Uint8Array(sendData.length);

@@ -127,17 +127,7 @@ class MFRC522 {
         // this.Reserved3Eh = 0x3E;
         // this.Reserved3Fh = 0x3F;
         // required pin of obniz
-        this.keys = [
-            "cs",
-            "clk",
-            "mosi",
-            "miso",
-            "rst",
-            "vcc",
-            "gnd",
-            "spi",
-            "spi_frequency",
-        ];
+        this.keys = ["cs", "clk", "mosi", "miso", "rst", "vcc", "gnd", "spi", "spi_frequency"];
         this.requiredKeys = ["cs", "mosi", "miso", "rst"];
     }
     static info() {
@@ -269,11 +259,7 @@ class MFRC522 {
             TryingTimes--;
         } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
         // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
-        const response = await this.readRegister_nByte([
-            this.ErrorReg,
-            this.FIFOLevelReg,
-            this.ControlReg,
-        ]);
+        const response = await this.readRegister_nByte([this.ErrorReg, this.FIFOLevelReg, this.ControlReg]);
         if (TryingTimes !== 0) {
             if ((response[0] & 0x1b) === 0x00) {
                 // BufferOvfl CollErr ParityErr ProtocolErr
@@ -346,10 +332,7 @@ class MFRC522 {
             i--;
         } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
         // CRC calculation result
-        return await this.readRegister_nByte([
-            this.CRCResultRegLSB,
-            this.CRCResultRegMSB,
-        ]);
+        return await this.readRegister_nByte([this.CRCResultRegLSB, this.CRCResultRegMSB]);
     }
     async identifySoftwareWait() {
         let version = await this.readRegister(this.VersionReg);
@@ -491,9 +474,7 @@ class MFRC522 {
     async appendCRCtoBufferAndSendToCardWait(buffer) {
         buffer = buffer.concat(await this.calculateCRCWait(buffer));
         const response = await this.toCard(this.PCD_Transceive, buffer);
-        if (!response.status ||
-            response.bitSize !== 4 ||
-            (response.data[0] & 0x0f) !== 0x0a) {
+        if (!response.status || response.bitSize !== 4 || (response.data[0] & 0x0f) !== 0x0a) {
             response.status = ERROR;
         }
         return response;
@@ -513,5 +494,4 @@ class MFRC522 {
     }
 }
 exports.default = MFRC522;
-
 //# sourceMappingURL=index.js.map

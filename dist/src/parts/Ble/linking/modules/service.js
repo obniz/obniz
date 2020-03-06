@@ -89,9 +89,7 @@ class LinkingService {
             return false;
         }
         sid = parseInt(sid, 10);
-        const services = this._device_info && this._device_info.services
-            ? this._device_info.services
-            : null;
+        const services = this._device_info && this._device_info.services ? this._device_info.services : null;
         if (!services) {
             return false;
         }
@@ -106,5 +104,4 @@ class LinkingService {
     }
 }
 exports.default = LinkingService;
-
 //# sourceMappingURL=service.js.map

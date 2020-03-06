@@ -179,12 +179,7 @@ class AMG8833Test {
           const temp = temps[x * 8 + y];
           const h = -80 + (temp - 29) * 25;
           ctx.fillStyle = "hsl(" + h + ", 100%, 50%)";
-          ctx.fillRect(
-            (width / 8) * x,
-            (height / 8) * y,
-            width / 8,
-            height / 8,
-          );
+          ctx.fillRect((width / 8) * x, (height / 8) * y, width / 8, height / 8);
         }
       }
     };
@@ -313,12 +308,7 @@ class D6T44LTest {
           const temp = temps[x * 4 + y];
           const h = -80 + (temp - 29) * 25;
           ctx.fillStyle = "hsl(" + h + ", 100%, 50%)";
-          ctx.fillRect(
-            (width / 4) * x,
-            (height / 4) * y,
-            width / 4,
-            height / 4,
-          );
+          ctx.fillRect((width / 4) * x, (height / 4) * y, width / 4, height / 4);
         }
       }
     };

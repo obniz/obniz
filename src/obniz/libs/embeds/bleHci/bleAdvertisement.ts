@@ -141,15 +141,11 @@ export default class BleAdvertisement {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
 
-  protected advDataBulider(
-    jsonVal: BleAdvertisementData,
-  ): BleAdvertisementBuilder {
+  protected advDataBulider(jsonVal: BleAdvertisementData): BleAdvertisementBuilder {
     return new Builder(jsonVal);
   }
 
-  protected scanRespDataBuilder(
-    json: BleScanResponseData,
-  ): BleAdvertisementBuilder {
+  protected scanRespDataBuilder(json: BleScanResponseData): BleAdvertisementBuilder {
     return new Builder(json);
   }
 }

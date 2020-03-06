@@ -11,10 +11,7 @@ import { BleDescriptorDefine } from "./bleTypes";
 /**
  * @category Use as Peripheral
  */
-export default class BleDescriptor extends BleLocalValueAttributeAbstract<
-  BleCharacteristic,
-  null
-> {
+export default class BleDescriptor extends BleLocalValueAttributeAbstract<BleCharacteristic, null> {
   /**
    * Characteristic instance
    */

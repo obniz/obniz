@@ -13,11 +13,7 @@ export type UUID = string;
 export type BleDeviceAddress = string;
 
 export type BleDeviceType = "ble" | "dumo" | "breder";
-export type BleDeviceAddressType =
-  | "public"
-  | "random"
-  | "rpa_public"
-  | "rpa_random";
+export type BleDeviceAddressType = "public" | "random" | "rpa_public" | "rpa_random";
 export type BleEventType =
   | "connectable_advertisemnt"
   | "connectable_directed_advertisemnt"
@@ -25,13 +21,7 @@ export type BleEventType =
   | "non_connectable_advertising"
   | "scan_response";
 
-export type BleAttributePropery =
-  | "broadcast"
-  | "notify"
-  | "read"
-  | "write"
-  | "write_without_response"
-  | "indicate";
+export type BleAttributePropery = "broadcast" | "notify" | "read" | "write" | "write_without_response" | "indicate";
 
 export type BleAdvertisementFlag =
   | "limited_discoverable_mode"

@@ -61,19 +61,13 @@ class WSCommandLogicAnalyzer extends WSCommand {
       { uri: "/request/logicAnalyzer/init", onValid: this.init },
       { uri: "/request/logicAnalyzer/deinit", onValid: this.deinit },
     ];
-    const res: any = this.validateCommandSchema(
-      schemaData,
-      module,
-      "logic_analyzer",
-    );
+    const res: any = this.validateCommandSchema(schemaData, module, "logic_analyzer");
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new this.WSCommandNotFoundError(
-          `[logic_analyzer]unknown command`,
-        );
+        throw new this.WSCommandNotFoundError(`[logic_analyzer]unknown command`);
       }
     }
   }

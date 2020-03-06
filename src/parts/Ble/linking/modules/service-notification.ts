@@ -65,9 +65,7 @@ export default class LinkingServiceNotification {
         const pvalue_buf = buf.slice(offset, offset + plen);
         offset += plen;
         const p = this._parseParameter(pid, pvalue_buf);
-        parameters.push(
-          this._parseParameter(pid, pvalue_buf, notify_cateogry_id),
-        );
+        parameters.push(this._parseParameter(pid, pvalue_buf, notify_cateogry_id));
         if (pid === 0x04 && "id" in p) {
           notify_cateogry_id = p.id;
         }

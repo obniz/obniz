@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface RN42Options {
   tx: number;
@@ -24,14 +22,7 @@ export type RN42Config_Mode =
   | "auto-connect-dtr"
   | "auto-connect-any"
   | "pairing";
-export type RN42Config_Profile =
-  | "SPP"
-  | "DUN-DCE"
-  | "DUN-DTE"
-  | "MDM-SPP"
-  | "SPP-DUN-DCE"
-  | "APL"
-  | "HID";
+export type RN42Config_Profile = "SPP" | "DUN-DCE" | "DUN-DTE" | "MDM-SPP" | "SPP-DUN-DCE" | "APL" | "HID";
 export type RN42Config_Auth = "open" | "ssp-keyboard" | "just-work" | "pincode";
 export type RN43Config_Power = 16 | 12 | 8 | 4 | 0 | -4 | -8;
 
@@ -183,15 +174,7 @@ export default class RN42 implements ObnizPartsInterface {
     if (typeof mode === "number") {
       val = mode;
     } else if (typeof mode === "string") {
-      const modes: any = [
-        "SPP",
-        "DUN-DCE",
-        "DUN-DTE",
-        "MDM-SPP",
-        "SPP-DUN-DCE",
-        "APL",
-        "HID",
-      ];
+      const modes: any = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
       for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;

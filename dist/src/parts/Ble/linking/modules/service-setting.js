@@ -442,9 +442,7 @@ class LinkingServiceSetting {
             pnum++;
         }
         let file_size = null;
-        if ("FileSize" in params &&
-            typeof params.FileSize === "number" &&
-            file_size % 1 === 0) {
+        if ("FileSize" in params && typeof params.FileSize === "number" && file_size % 1 === 0) {
             file_size = params.FileSize;
             pnum++;
         }
@@ -522,8 +520,7 @@ class LinkingServiceSetting {
     _createPayloadSelectSettingInformation(params) {
         let pnum = 0;
         let code = null;
-        if ("SettingInformationRequest" in params &&
-            typeof params.SettingInformationRequest === "object") {
+        if ("SettingInformationRequest" in params && typeof params.SettingInformationRequest === "object") {
             const req = params.SettingInformationRequest;
             if ("requestCode" in req &&
                 typeof req.requestCode === "number" &&
@@ -635,10 +632,7 @@ class LinkingServiceSetting {
                     const pm = this._device.settings[sname].patternMax;
                     let dur = null;
                     if ("duration" in s) {
-                        if (typeof s.duration === "number" &&
-                            s.duration >= 0 &&
-                            s.duration <= 0xff &&
-                            s.duration % 1 === 0) {
+                        if (typeof s.duration === "number" && s.duration >= 0 && s.duration <= 0xff && s.duration % 1 === 0) {
                             dur = s.duration;
                             if (dur <= 0x05) {
                                 dur = 0x05;
@@ -712,5 +706,4 @@ class LinkingServiceSetting {
     }
 }
 exports.default = LinkingServiceSetting;
-
 //# sourceMappingURL=service-setting.js.map

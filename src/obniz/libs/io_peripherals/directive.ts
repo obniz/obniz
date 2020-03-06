@@ -103,16 +103,8 @@ export default class Directive {
    * @param animations instructions. This is optional when status is pause``resume.
    * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
    */
-  public animation(
-    name: string,
-    status: AnimationStatus,
-    animations?: DirectiveAnimationFrame[],
-    repeat?: number,
-  ) {
-    if (
-      (typeof repeat === "number" || status === "registrate") &&
-      semver.lt(this.Obniz.firmware_ver!, "2.0.0")
-    ) {
+  public animation(name: string, status: AnimationStatus, animations?: DirectiveAnimationFrame[], repeat?: number) {
+    if ((typeof repeat === "number" || status === "registrate") && semver.lt(this.Obniz.firmware_ver!, "2.0.0")) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
     const obj: any = {};

@@ -154,9 +154,7 @@ export default class BlePeripheral {
    */
   public findCharacteristic(param: any) {
     const serviceUuid: any = BleHelper.uuidFilter(param.service_uuid);
-    const characteristicUuid: any = BleHelper.uuidFilter(
-      param.characteristic_uuid,
-    );
+    const characteristicUuid: any = BleHelper.uuidFilter(param.characteristic_uuid);
     const s: any = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);

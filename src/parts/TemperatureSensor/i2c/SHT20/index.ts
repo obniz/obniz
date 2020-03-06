@@ -1,8 +1,6 @@
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 import { I2cPartsAbstractOptions } from "../../../i2cParts";
 
 export interface SHT20Options extends I2cPartsAbstractOptions {}
@@ -80,10 +78,7 @@ export default class SHT20 implements ObnizPartsInterface {
     return rawHumidity * (125.0 / 65536.0) - 6.0;
   }
 
-  private checkCRC(
-    message_from_sensor: number,
-    check_value_from_sensor: number,
-  ): number {
+  private checkCRC(message_from_sensor: number, check_value_from_sensor: number): number {
     let remainder = message_from_sensor << 8;
     remainder |= check_value_from_sensor;
     let divsor = 0x988000;

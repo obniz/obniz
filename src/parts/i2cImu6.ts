@@ -51,26 +51,12 @@ export default abstract class I2cImu6Abstract extends i2cParts {
     },
   };
 
-  private static _accelS(
-    value: number,
-    accel_so: accelRange,
-    accel_sf: accelUnit,
-  ): number {
-    return (
-      (value / I2cImu6Abstract.scales.accel.so[accel_so]) *
-      I2cImu6Abstract.scales.accel.sf[accel_sf]
-    );
+  private static _accelS(value: number, accel_so: accelRange, accel_sf: accelUnit): number {
+    return (value / I2cImu6Abstract.scales.accel.so[accel_so]) * I2cImu6Abstract.scales.accel.sf[accel_sf];
   }
 
-  private static _gyroS(
-    value: number,
-    gyro_so: gyroRange,
-    gyro_sf: gyroUnit,
-  ): number {
-    return (
-      (value / I2cImu6Abstract.scales.gyro.so[gyro_so]) *
-      I2cImu6Abstract.scales.gyro.sf[gyro_sf]
-    );
+  private static _gyroS(value: number, gyro_so: gyroRange, gyro_sf: gyroUnit): number {
+    return (value / I2cImu6Abstract.scales.gyro.so[gyro_so]) * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
   }
 
   protected accel_so: accelRange = "2g";
@@ -194,11 +180,7 @@ export default abstract class I2cImu6Abstract extends i2cParts {
     if (accel_unit in I2cImu6Abstract.scales.accel.sf) {
       this.accel_sf = accel_unit;
     } else {
-      throw new Error(
-        `Invalid accel unit. Valid values are: ${Object.keys(
-          I2cImu6Abstract.scales.accel.sf,
-        ).join()}`,
-      );
+      throw new Error(`Invalid accel unit. Valid values are: ${Object.keys(I2cImu6Abstract.scales.accel.sf).join()}`);
     }
   }
 
@@ -206,11 +188,7 @@ export default abstract class I2cImu6Abstract extends i2cParts {
     if (gyro_unit in I2cImu6Abstract.scales.gyro.sf) {
       this.gyro_sf = gyro_unit;
     } else {
-      throw new Error(
-        `Invalid gyro unit. Valid values are: ${Object.keys(
-          I2cImu6Abstract.scales.gyro.sf,
-        ).join()}`,
-      );
+      throw new Error(`Invalid gyro unit. Valid values are: ${Object.keys(I2cImu6Abstract.scales.gyro.sf).join()}`);
     }
   }
 

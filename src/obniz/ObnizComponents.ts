@@ -262,11 +262,7 @@ export default class ObnizComponents extends ObnizParts {
    * @param gnd
    * @param drive
    */
-  public setVccGnd(
-    vcc: number | null | undefined,
-    gnd: number | null | undefined,
-    drive: DriveType,
-  ) {
+  public setVccGnd(vcc: number | null | undefined, gnd: number | null | undefined, drive: DriveType) {
     if (this.isValidIO(vcc)) {
       if (drive) {
         this.getIO(vcc!).drive(drive);
@@ -376,10 +372,7 @@ export default class ObnizComponents extends ObnizParts {
   }
 
   public getExtraInterface(interfaceName: string): any {
-    if (
-      this._hwDefinition.extraInterface &&
-      this._hwDefinition.extraInterface[interfaceName]
-    ) {
+    if (this._hwDefinition.extraInterface && this._hwDefinition.extraInterface[interfaceName]) {
       return this._hwDefinition.extraInterface[interfaceName];
     }
     return null;
@@ -451,11 +444,7 @@ export default class ObnizComponents extends ObnizParts {
           const Class: any = peripheral_map[key];
           for (const unitId in units) {
             const unitIdNumber = parseInt(unitId);
-            (this as any)[key + unitIdNumber] = new Class(
-              this,
-              unitIdNumber,
-              units[unitId],
-            );
+            (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber, units[unitId]);
             this._allComponentKeys.push(key + unitIdNumber);
           }
         }

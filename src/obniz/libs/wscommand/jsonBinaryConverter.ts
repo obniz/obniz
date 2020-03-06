@@ -17,10 +17,7 @@ class JsonBinaryConverter {
     const json: any = {};
     let count: any = 0;
     for (let i = 0; i < schema.length; i++) {
-      const data: any = binary.slice(
-        count,
-        schema[i].length ? count + schema[i].length : undefined,
-      );
+      const data: any = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
       json[schema[i].name] = types[schema[i].type](data, schema[i]);
 
       if (schema[i].length) {

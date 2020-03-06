@@ -104,12 +104,7 @@ export default class PeripheralSPI {
     ]) as PeripheralSPIOptions;
     const obj: any = {};
 
-    const ioKeys: Array<keyof PeripheralSPIOptions> = [
-      "clk",
-      "mosi",
-      "miso",
-      "gnd",
-    ];
+    const ioKeys: Array<keyof PeripheralSPIOptions> = ["clk", "mosi", "miso", "gnd"];
     for (const key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("spi start param '" + key + "' are to be valid io no");

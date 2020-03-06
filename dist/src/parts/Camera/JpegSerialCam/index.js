@@ -121,18 +121,7 @@ class JpegSerialCam {
             default:
                 throw new Error("invalid baud rate");
         }
-        this.uart.send([
-            0x56,
-            0x00,
-            0x31,
-            0x06,
-            0x04,
-            0x02,
-            0x00,
-            0x08,
-            val[0],
-            val[1],
-        ]);
+        this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
         await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
         // await this.obniz.wait(1000);
         await this.startWait({
@@ -149,15 +138,7 @@ class JpegSerialCam {
         await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
         // console.log("read length")
         uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-        let recv = await this._drainUntil(uart, [
-            0x76,
-            0x00,
-            0x34,
-            0x00,
-            0x04,
-            0x00,
-            0x00,
-        ]); // ack
+        let recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
         let XX;
         let YY;
         while (true) {
@@ -176,24 +157,7 @@ class JpegSerialCam {
         // const high = (databytes >> 8) & 0xff;
         // const low = databytes & 0xff;
         // console.log("start reading image")
-        uart.send([
-            0x56,
-            0x00,
-            0x32,
-            0x0c,
-            0x00,
-            0x0a,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            XX,
-            YY,
-            0x00,
-            0xff,
-        ]);
+        uart.send([0x56, 0x00, 0x32, 0x0c, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xff]);
         recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
         // console.log("reading...");
         while (true) {
@@ -212,5 +176,4 @@ class JpegSerialCam {
     }
 }
 exports.default = JpegSerialCam;
-
 //# sourceMappingURL=index.js.map

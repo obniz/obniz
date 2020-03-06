@@ -55,12 +55,7 @@ class PeripheralSPI {
             "gnd",
         ]);
         const obj = {};
-        const ioKeys = [
-            "clk",
-            "mosi",
-            "miso",
-            "gnd",
-        ];
+        const ioKeys = ["clk", "mosi", "miso", "gnd"];
         for (const key of ioKeys) {
             if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
                 throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -246,5 +241,4 @@ class PeripheralSPI {
     }
 }
 exports.default = PeripheralSPI;
-
 //# sourceMappingURL=spi.js.map

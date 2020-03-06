@@ -184,8 +184,7 @@ export default class BleScan {
   public start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
     this.obnizBle.warningIfNotInitialize();
 
-    const timeout: number | null =
-      settings.duration === undefined ? 30 : settings.duration;
+    const timeout: number | null = settings.duration === undefined ? 30 : settings.duration;
     settings.duplicate = !!settings.duplicate;
     settings.filterOnDevice = !!settings.filterOnDevice;
     settings.activeScan = settings.activeScan !== false;
@@ -204,11 +203,7 @@ export default class BleScan {
     } else {
       this._setTargetFilterOnDevice({}); // clear
     }
-    this.obnizBle.centralBindings.startScanning(
-      null,
-      false,
-      settings.activeScan,
-    );
+    this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
 
     this.clearTimeoutTimer();
     if (timeout !== null) {
@@ -237,10 +232,7 @@ export default class BleScan {
    * @param target
    * @param settings
    */
-  public startOneWait(
-    target: BleScanTarget,
-    settings: BleScanSetting,
-  ): Promise<BlePeripheral> {
+  public startOneWait(target: BleScanTarget, settings: BleScanSetting): Promise<BlePeripheral> {
     let state: any = 0;
 
     return new Promise((resolve: any) => {
@@ -290,10 +282,7 @@ export default class BleScan {
    * @param target
    * @param settings
    */
-  public startAllWait(
-    target: BleScanTarget,
-    settings: BleScanSetting,
-  ): Promise<BlePeripheral[]> {
+  public startAllWait(target: BleScanTarget, settings: BleScanSetting): Promise<BlePeripheral[]> {
     return new Promise((resolve: any) => {
       this.emitter.once("onfinish", () => {
         resolve(this.scanedPeripherals);
@@ -334,12 +323,9 @@ export default class BleScan {
           peripheral.adv_data.length > 0 &&
           peripheral.scan_resp &&
           peripheral.scan_resp.length > 0;
-        const nonConnectable =
-          peripheral.ble_event_type === "non_connectable_advertising";
+        const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
         const maybeAdvOnly =
-          this._delayNotifyTimers.find(
-            (e) => e.peripheral.address === peripheral.address,
-          ) &&
+          this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address) &&
           (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
 
         // wait for adv_data + scan resp
@@ -358,9 +344,7 @@ export default class BleScan {
       }
       case "onfinish": {
         this.clearTimeoutTimer();
-        this._delayNotifyTimers.forEach((e) =>
-          this._notifyOnFind(e.peripheral),
-        );
+        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
         this._clearDelayNotifyTimer();
         this.emitter.emit(notifyName, this.scanedPeripherals);
         if (this.onfinish) {
@@ -384,9 +368,7 @@ export default class BleScan {
     });
   }
 
-  protected _setAdvertisementFilter(
-    filterVals: BleScanAdvertisementFilterParam[],
-  ) {
+  protected _setAdvertisementFilter(filterVals: BleScanAdvertisementFilterParam[]) {
     // < 3.2.0
     if (semver.lt(this.obnizBle.Obniz.firmware_ver!, "3.2.0")) {
       return;
@@ -530,11 +512,7 @@ export default class BleScan {
   private _notifyOnFind(peripheral: BleRemotePeripheral) {
     if (this.scanSettings.duplicate === false) {
       // duplicate filter
-      if (
-        this.scanedPeripherals.find(
-          (e: any) => e.address === peripheral.address,
-        )
-      ) {
+      if (this.scanedPeripherals.find((e: any) => e.address === peripheral.address)) {
         return;
       }
     }
@@ -581,11 +559,9 @@ export default class BleScan {
 
   private isUuidTarget(peripheral: BleRemotePeripheral) {
     if (this.scanTarget && this.scanTarget.uuids) {
-      const uuids: any = peripheral
-        .advertisementServiceUuids()
-        .map((e: any) => {
-          return BleHelper.uuidFilter(e);
-        });
+      const uuids: any = peripheral.advertisementServiceUuids().map((e: any) => {
+        return BleHelper.uuidFilter(e);
+      });
       for (const uuid of this.scanTarget.uuids) {
         if (uuids.includes(uuid)) {
           return true;

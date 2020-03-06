@@ -185,13 +185,11 @@ export default class ObnizConnection {
       auto_connect: options.auto_connect === false ? false : true,
       access_token: options.access_token || null,
       obniz_server: options.obniz_server || "wss://obniz.io",
-      reset_obniz_on_ws_disconnection:
-        options.reset_obniz_on_ws_disconnection === false ? false : true,
+      reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
     };
     if (this.options.binary) {
       this.wscommand = (this.constructor as typeof ObnizConnection).WSCommand;
-      const classes: any = (this.constructor as typeof ObnizConnection)
-        .WSCommand.CommandClasses;
+      const classes: any = (this.constructor as typeof ObnizConnection).WSCommand.CommandClasses;
       this.wscommands = [];
       for (const class_name in classes) {
         this.wscommands.push(
@@ -345,22 +343,14 @@ export default class ObnizConnection {
       }
 
       /* compress */
-      if (
-        this.wscommand &&
-        (typeof options !== "object" || options.local_connect !== false)
-      ) {
+      if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
         let compressed: any;
         try {
-          compressed = this.wscommand.compress(
-            this.wscommands,
-            JSON.parse(sendData)[0],
-          );
+          compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
           if (compressed) {
             sendData = compressed;
             if (this.debugprintBinary) {
-              console.log(
-                "Obniz: binalized: " + new Uint8Array(compressed).toString(),
-              );
+              console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
             }
           }
         } catch (e) {
@@ -499,9 +489,7 @@ export default class ObnizConnection {
 
     const query: any = [];
     if ((this.constructor as typeof ObnizConnection).version) {
-      query.push(
-        "obnizjs=" + (this.constructor as typeof ObnizConnection).version,
-      );
+      query.push("obnizjs=" + (this.constructor as typeof ObnizConnection).version);
     }
     if (this.options.access_token) {
       query.push("access_token=" + this.options.access_token);
@@ -613,13 +601,7 @@ export default class ObnizConnection {
     }
     /* unbind */
     if (this.isNode) {
-      const shouldRemoveObservers: any = [
-        "open",
-        "message",
-        "close",
-        "error",
-        "unexpected-response",
-      ];
+      const shouldRemoveObservers: any = ["open", "message", "close", "error", "unexpected-response"];
       for (let i = 0; i < shouldRemoveObservers.length; i++) {
         socket.removeAllListeners(shouldRemoveObservers[i]);
       }
@@ -670,17 +652,11 @@ export default class ObnizConnection {
   }
 
   protected _sendRouted(data: any) {
-    if (
-      this.socket_local &&
-      this.socket_local.readyState === 1 &&
-      typeof data !== "string"
-    ) {
+    if (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string") {
       this.print_debug("send via local");
       this.socket_local.send(data);
       if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.warning(
-          "over " + this.socket_local.bufferedAmount + " bytes queued",
-        );
+        this.warning("over " + this.socket_local.bufferedAmount + " bytes queued");
       }
       return;
     }

@@ -21,10 +21,10 @@ enum BleResponseResult {
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalAttributeAbstract<
+export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<
   ParentClass,
   ChildrenClass
-> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
+> {
   /**
    * @ignore
    */
@@ -84,8 +84,7 @@ export default class BleLocalAttributeAbstract<
       callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
       let address: any = null;
       if (this.parentName === "characteristic") {
-        address = this.characteristic!.service.peripheral
-          .currentConnectedDeviceAddress;
+        address = this.characteristic!.service.peripheral.currentConnectedDeviceAddress;
       } else if (this.parentName === "service") {
         address = this.service!.peripheral.currentConnectedDeviceAddress;
       }
@@ -103,19 +102,13 @@ export default class BleLocalAttributeAbstract<
    * @param callback
    * @private
    */
-  public _onWriteRequest(
-    data: any,
-    offset?: any,
-    withoutResponse?: any,
-    callback?: any,
-  ) {
+  public _onWriteRequest(data: any, offset?: any, withoutResponse?: any, callback?: any) {
     // console.log('onWriteRequest');
     this.data = Array.from(data);
     callback(BleResponseResult.SUCCESS);
     let address: any = null;
     if (this.parentName === "characteristic") {
-      address = this.characteristic.service.peripheral
-        .currentConnectedDeviceAddress;
+      address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
     } else if (this.parentName === "service") {
       address = this.service.peripheral.currentConnectedDeviceAddress;
     }

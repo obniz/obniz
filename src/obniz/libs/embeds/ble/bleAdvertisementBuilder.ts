@@ -22,15 +22,8 @@ export default class BleAdvertisementBuilder {
       if (json.localName) {
         this.setCompleteLocalName(json.localName);
       }
-      if (
-        json.manufacturerData &&
-        json.manufacturerData.companyCode &&
-        json.manufacturerData.data
-      ) {
-        this.setManufacturerSpecificData(
-          json.manufacturerData.companyCode,
-          json.manufacturerData.data,
-        );
+      if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
+        this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
       }
       if (json.serviceUuids) {
         for (const uuid of json.serviceUuids) {
@@ -63,9 +56,7 @@ export default class BleAdvertisementBuilder {
       Array.prototype.push.apply(data, this.rows[key]);
     }
     if (data.length > 31) {
-      this.Obniz.error(
-        "Too large data. Advertise/ScanResponse data are must be less than 32 byte.",
-      );
+      this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
     }
 
     return data;
@@ -112,14 +103,8 @@ export default class BleAdvertisementBuilder {
 
   public convertUuid(uuid: any): number[] {
     const uuidNumeric: any = BleHelper.uuidFilter(uuid);
-    if (
-      uuidNumeric.length !== 32 &&
-      uuidNumeric.length !== 8 &&
-      uuidNumeric.length !== 4
-    ) {
-      this.Obniz.error(
-        "BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)",
-      );
+    if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
+      this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
     }
 
     const data: any = [];

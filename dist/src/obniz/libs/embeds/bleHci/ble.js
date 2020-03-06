@@ -207,9 +207,7 @@ class ObnizBLE {
         const peripheralData = {
             device_type: "ble",
             address_type: addressType,
-            ble_event_type: connectable
-                ? "connectable_advertisemnt"
-                : "non_connectable_advertising",
+            ble_event_type: connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
             rssi,
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
@@ -415,5 +413,4 @@ class ObnizBLE {
     }
 }
 exports.default = ObnizBLE;
-
 //# sourceMappingURL=ble.js.map

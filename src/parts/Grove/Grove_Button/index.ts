@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 interface Grove_ButtonOptionsA {
   signal: number;

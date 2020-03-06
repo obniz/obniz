@@ -162,5 +162,4 @@ class BlenoBindings extends events_1.default.EventEmitter {
     }
 }
 exports.default = BlenoBindings;
-
 //# sourceMappingURL=bindings.js.map

@@ -76,5 +76,4 @@ class Puls08M5stickcS {
     }
 }
 exports.default = Puls08M5stickcS;
-
 //# sourceMappingURL=index.js.map

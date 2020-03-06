@@ -128,23 +128,11 @@ export default class LogicAnalyzer {
    * @param params
    */
   public start(params: LogicAnalyzerOptions | LogicAnalyzerOptionsExt) {
-    const err: any = ObnizUtil._requiredKeys(params, [
-      "io",
-      "interval",
-      "duration",
-    ]);
+    const err: any = ObnizUtil._requiredKeys(params, ["io", "interval", "duration"]);
     if (err) {
-      throw new Error(
-        "LogicAnalyzer start param '" + err + "' required, but not found ",
-      );
+      throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
     }
-    this.params = ObnizUtil._keyFilter(params, [
-      "io",
-      "interval",
-      "duration",
-      "triggerValue",
-      "triggerValueSamples",
-    ]);
+    this.params = ObnizUtil._keyFilter(params, ["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
 
     const obj: any = {};
     obj.logic_analyzer = {

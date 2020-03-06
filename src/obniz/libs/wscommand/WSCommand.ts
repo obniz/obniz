@@ -38,15 +38,13 @@ export default abstract class WSCommand {
     } else {
       throw new Error("too big payload");
     }
-    let length_extra_bytse: any =
-      length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+    let length_extra_bytse: any = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
     const header_length: any = 3 + length_extra_bytse;
     const result: any = new Uint8Array(header_length + payload_length);
     let index: any = 0;
     result[index++] = module & 0x7f;
     result[index++] = func;
-    result[index++] =
-      (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+    result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
     while (length_extra_bytse > 0) {
       length_extra_bytse--;
       result[index++] = payload_length >> (length_extra_bytse * 8);
@@ -72,8 +70,7 @@ export default abstract class WSCommand {
     const module: any = 0x7f & buf[0];
     const func: any = buf[1];
     const length_type: any = (buf[2] >> 6) & 0x3;
-    const length_extra_bytse: any =
-      length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+    const length_extra_bytse: any = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
     if (length_type === 4) {
       throw new Error("invalid length");
     }
@@ -89,10 +86,7 @@ export default abstract class WSCommand {
     return {
       module,
       func,
-      payload: buf.slice(
-        3 + length_extra_bytse,
-        3 + length_extra_bytse + length,
-      ),
+      payload: buf.slice(3 + length_extra_bytse, 3 + length_extra_bytse + length),
       next: buf.slice(3 + length_extra_bytse + length),
     };
   }
@@ -199,12 +193,7 @@ export default abstract class WSCommand {
     return WSSchema.getSchema(uri);
   }
 
-  public validateCommandSchema(
-    uriList: any,
-    json: any,
-    rootPath: any,
-    customArg: any,
-  ) {
+  public validateCommandSchema(uriList: any, json: any, rootPath: any, customArg: any) {
     const res: any = { valid: 0, invalid: 0, results: [], invalidButLike: [] };
     for (const oneRow of uriList) {
       const errors: any = this.validate(oneRow.uri, json);
@@ -255,10 +244,7 @@ export default abstract class WSCommand {
     const messages: any = [];
     for (const error of validateError.errors) {
       if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
-        if (
-          (error as any).params.type === "object" ||
-          (error as any).params.expected === "object"
-        ) {
+        if ((error as any).params.type === "object" || (error as any).params.expected === "object") {
           return false;
         }
       } else if (badErrorCodes.includes(error.code)) {
@@ -315,10 +301,7 @@ export default abstract class WSCommand {
         const reg: any = new RegExp(pattern);
         for (const key of Object.keys(json)) {
           if (reg.test(key)) {
-            results[key] = this._filterSchema(
-              schema.patternProperties[pattern],
-              json[key],
-            );
+            results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]);
           }
         }
       }

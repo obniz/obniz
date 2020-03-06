@@ -1,9 +1,7 @@
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface M5StickC_FINGEROptions {
   tx: number;
@@ -78,18 +76,13 @@ export default class M5StickC_FINGER implements ObnizPartsInterface {
   public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(null, this.params.gnd, "3v");
-    if (
-      !this.obniz.isValidIO(this.params.tx) &&
-      !this.obniz.isValidIO(this.params.rx)
-    ) {
+    if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
       if (this.obniz.hasExtraInterface("m5stickc_hat")) {
         const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
         this.params.tx = hatI2c.tx;
         this.params.rx = hatI2c.rx;
       } else {
-        throw new Error(
-          "Cannot find m5stickc hat interface. Please set param 'tx'/'rx'",
-        );
+        throw new Error("Cannot find m5stickc hat interface. Please set param 'tx'/'rx'");
       }
     }
 

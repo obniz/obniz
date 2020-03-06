@@ -54,12 +54,7 @@ class WSCommandBleHci {
     advertisementFilter(params) {
         const sendData = [];
         params.hci.advertisement_filter.forEach((e) => {
-            const one = [
-                e.range.index,
-                e.range.length,
-                e.value.length,
-                ...e.value,
-            ];
+            const one = [e.range.index, e.range.length, e.value.length, ...e.value];
             sendData.push(...one);
         });
         const buf = new Uint8Array(sendData.length);
@@ -68,5 +63,4 @@ class WSCommandBleHci {
     }
 }
 exports.default = WSCommandBleHci;
-
 //# sourceMappingURL=WSCommandBleHci.js.map

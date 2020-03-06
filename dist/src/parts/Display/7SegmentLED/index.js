@@ -6,32 +6,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLED {
     constructor() {
-        this.keys = [
-            "a",
-            "b",
-            "c",
-            "d",
-            "e",
-            "f",
-            "g",
-            "dp",
-            "common",
-            "commonType",
-        ];
+        this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
         this.requiredKeys = ["a", "b", "c", "d", "e", "f", "g"];
-        this.digits = [
-            0x3f,
-            0x06,
-            0x5b,
-            0x4f,
-            0x66,
-            0x6d,
-            0x7d,
-            0x07,
-            0x7f,
-            0x6f,
-            0x6f,
-        ];
+        this.digits = [0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x6f];
         this.displayIoNames = {
             a: "a",
             b: "b",
@@ -138,5 +115,4 @@ class _7SegmentLED {
     }
 }
 exports.default = _7SegmentLED;
-
 //# sourceMappingURL=index.js.map

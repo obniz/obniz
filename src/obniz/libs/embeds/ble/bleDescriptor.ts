@@ -53,9 +53,7 @@ export default class BleDescriptor extends BleAttributeAbstract {
       ble: {
         peripheral: {
           write_descriptor: {
-            service_uuid: BleHelper.uuidFilter(
-              this.characteristic.service.uuid,
-            ),
+            service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
             characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
             descriptor_uuid: this.uuid,
             data: dataArray,
@@ -70,9 +68,7 @@ export default class BleDescriptor extends BleAttributeAbstract {
       ble: {
         peripheral: {
           read_descriptor: {
-            service_uuid: BleHelper.uuidFilter(
-              this.characteristic.service.uuid,
-            ),
+            service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
             characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
             descriptor_uuid: this.uuid,
           },

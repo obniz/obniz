@@ -192,9 +192,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
     if (!(date instanceof Date)) {
       throw new Error("Date instance argument required");
     }
-    let sleepTime: any = Math.floor(
-      ((date as any) - (new Date() as any)) / 1000,
-    );
+    let sleepTime: any = Math.floor(((date as any) - (new Date() as any)) / 1000);
     this.print_debug(`sleep time : ${sleepTime}s`);
     if (sleepTime <= 0) {
       throw new Error(`past sleep time : ${sleepTime}s`);
@@ -248,11 +246,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    * @param rand Unique identifier of ping data
    * @param forceGlobalNetwork
    */
-  public pingWait(
-    unixtime?: number,
-    rand?: number,
-    forceGlobalNetwork?: boolean,
-  ): Promise<void> {
+  public pingWait(unixtime?: number, rand?: number, forceGlobalNetwork?: boolean): Promise<void> {
     unixtime = unixtime || new Date().getTime();
     const upper: any = Math.floor(unixtime / Math.pow(2, 32));
     const lower: any = unixtime - upper * Math.pow(2, 32);
@@ -303,14 +297,10 @@ export default class ObnizSystemMethods extends ObnizComponents {
         const obnizJsPingUnixtime: any = _upper * Math.pow(2, 32) + _lower;
         const obnizJsPongUnixtime: any = new Date().getTime();
         const allTime: any = obnizJsPongUnixtime - obnizJsPingUnixtime;
-        const timeJs2server: any =
-          systemObj.pong.pingServerTime - obnizJsPingUnixtime;
-        const timeServer2Obniz: any =
-          systemObj.pong.obnizTime - systemObj.pong.pingServerTime;
-        const timeObniz2Server: any =
-          systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
-        const timeServer2Js: any =
-          obnizJsPongUnixtime - systemObj.pong.pongServerTime;
+        const timeJs2server: any = systemObj.pong.pingServerTime - obnizJsPingUnixtime;
+        const timeServer2Obniz: any = systemObj.pong.obnizTime - systemObj.pong.pingServerTime;
+        const timeObniz2Server: any = systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
+        const timeServer2Js: any = obnizJsPongUnixtime - systemObj.pong.pongServerTime;
         const str: any = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
 
         this.print_debug(str);

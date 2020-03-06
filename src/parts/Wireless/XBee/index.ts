@@ -6,9 +6,7 @@
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface XBeeOptions {
   tx: number;
@@ -123,11 +121,7 @@ export default class XBee implements ObnizPartsInterface {
   }
 
   public sendCommand() {
-    if (
-      this.isAtMode === true &&
-      this.currentCommand === null &&
-      this.commands.length > 0
-    ) {
+    if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
       this.currentCommand = "AT" + this.commands.shift();
       this.uart.send(this.currentCommand + "\r");
     }

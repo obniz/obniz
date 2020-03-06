@@ -7,17 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class BMP280 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = [
-            "vcore",
-            "vio",
-            "gnd",
-            "csb",
-            "sdi",
-            "sck",
-            "sdo",
-            "i2c",
-            "address",
-        ];
+        this.keys = ["vcore", "vio", "gnd", "csb", "sdi", "sck", "sdo", "i2c", "address"];
         this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
         this.configration = {
             sampling: {
@@ -127,20 +117,16 @@ class BMP280 {
         if (typeof seaPressure !== "number") {
             seaPressure = 1013.25;
         }
-        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
+        return (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048;
     }
     async config() {
         this.write([
             this.commands.addresses.config,
-            (this.configration.interval << 5) |
-                (this.configration.iir_strength << 2) |
-                0,
+            (this.configration.interval << 5) | (this.configration.iir_strength << 2) | 0,
         ]);
         this.write([
             this.commands.addresses.ctrl_meas,
-            (this.configration.sampling.temp << 5) |
-                (this.configration.sampling.pres << 2) |
-                this.configration.mode,
+            (this.configration.sampling.temp << 5) | (this.configration.sampling.pres << 2) | this.configration.mode,
         ]);
     }
     _readSigned16(value) {
@@ -166,14 +152,9 @@ class BMP280 {
         let var1;
         let var2;
         let T;
-        var1 =
-            (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
-                this._calibrated.dig_T2) >>
-                11;
+        var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) * this._calibrated.dig_T2) >> 11;
         var2 =
-            (((((adc_T >> 4) - this._calibrated.dig_T1) *
-                ((adc_T >> 4) - this._calibrated.dig_T1)) >>
-                12) *
+            (((((adc_T >> 4) - this._calibrated.dig_T1) * ((adc_T >> 4) - this._calibrated.dig_T1)) >> 12) *
                 this._calibrated.dig_T3) >>
                 14;
         this._t_fine = var1 + var2;
@@ -185,10 +166,7 @@ class BMP280 {
         let pvar2 = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
         pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
         pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
-        pvar1 =
-            ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 +
-                this._calibrated.dig_P2 * pvar1) /
-                524288;
+        pvar1 = ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 + this._calibrated.dig_P2 * pvar1) / 524288;
         pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
         if (pvar1 !== 0) {
             let p = 1048576 - adc_P;
@@ -202,5 +180,4 @@ class BMP280 {
     }
 }
 exports.default = BMP280;
-
 //# sourceMappingURL=index.js.map

@@ -1,7 +1,5 @@
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {
-  ObnizPartsInfo,
-} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
 import AK09916, { AK09916Options } from "../AK09916/index";
 
@@ -147,9 +145,7 @@ export default class ICM20948 extends i2cParts implements ObnizPartsInterface {
     */
     const so = this._accel_so;
     const sf = this._accel_sf;
-    const xyz: [number, number, number] = await this.readThreeInt16Wait(
-      this._ACCEL_XOUT_H,
-    );
+    const xyz: [number, number, number] = await this.readThreeInt16Wait(this._ACCEL_XOUT_H);
     return xyz.map((e) => (e / so) * sf) as [number, number, number];
   }
 
@@ -159,9 +155,7 @@ export default class ICM20948 extends i2cParts implements ObnizPartsInterface {
     // """
     const so = this._gyro_so;
     const sf = this._gyro_sf;
-    const xyz: [number, number, number] = await this.readThreeInt16Wait(
-      this._GYRO_XOUT_H,
-    );
+    const xyz: [number, number, number] = await this.readThreeInt16Wait(this._GYRO_XOUT_H);
     return xyz.map((e) => (e / so) * sf) as [number, number, number];
   }
 

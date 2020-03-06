@@ -50,11 +50,7 @@ export default class BleSecurity {
       }
     }
 
-    if (
-      auth !== undefined &&
-      indicateSecurityLevel !== undefined &&
-      keys !== undefined
-    ) {
+    if (auth !== undefined && indicateSecurityLevel !== undefined && keys !== undefined) {
       this.setAuth(auth);
       this.setIndicateSecurityLevel(indicateSecurityLevel);
       this.setEnableKeyTypes(keys);

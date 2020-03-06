@@ -7,21 +7,12 @@ import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 import BleLocalValueAttributeAbstract from "./bleLocalValueAttributeAbstract";
 import BleRemoteService from "./bleRemoteService";
 import BleService from "./bleService";
-import {
-  BleAttributePropery,
-  BleCharacteristicDefine,
-  BleDescriptorDefine,
-  BleDeviceAddress,
-  UUID,
-} from "./bleTypes";
+import { BleAttributePropery, BleCharacteristicDefine, BleDescriptorDefine, BleDeviceAddress, UUID } from "./bleTypes";
 
 /**
  * @category Use as Peripheral
  */
-export default class BleCharacteristic extends BleLocalValueAttributeAbstract<
-  BleService,
-  BleDescriptor
-> {
+export default class BleCharacteristic extends BleLocalValueAttributeAbstract<BleService, BleDescriptor> {
   /**
    * This is a callback function used when characteristic is read by an external device.
    *
@@ -35,10 +26,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<
    * @param onwritefromremote.address central device address
    * @param onwritefromremote.data written data
    */
-  public onwritefromremote?: (
-    address: BleDeviceAddress,
-    data: number[],
-  ) => void;
+  public onwritefromremote?: (address: BleDeviceAddress, data: number[]) => void;
 
   /**
    * This is a callback function used when characteristic is read by an external device.
@@ -135,9 +123,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<
    * Add new descriptor
    * @param desc
    */
-  public addDescriptor(
-    desc: BleDescriptorDefine | BleDescriptor,
-  ): BleDescriptor {
+  public addDescriptor(desc: BleDescriptorDefine | BleDescriptor): BleDescriptor {
     return this.addChild(desc);
   }
 

@@ -74,8 +74,7 @@ class WSCommandDisplay extends WSCommand_1.default {
             for (let row = 0; row < size; row++) {
                 for (let col = 0; col < size; col++) {
                     if (!modules[Math.floor(row / 2)][Math.floor(col / 2)]) {
-                        vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |=
-                            0x80 >> (col + 2) % 8;
+                        vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |= 0x80 >> (col + 2) % 8;
                     }
                 }
             }
@@ -140,5 +139,4 @@ class WSCommandDisplay extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandDisplay;
-
 //# sourceMappingURL=WSCommandDisplay.js.map

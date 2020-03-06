@@ -45,10 +45,7 @@ class WSCommandSwitch extends WSCommand {
   }
 
   public notifyFromBinary(objToSend: any, func: any, payload: any) {
-    if (
-      (func === this._CommandOnece || func === this._CommandNotifyValue) &&
-      payload.byteLength === 1
-    ) {
+    if ((func === this._CommandOnece || func === this._CommandNotifyValue) && payload.byteLength === 1) {
       const state: any = parseInt(payload[0]);
       const states: any = ["none", "push", "left", "right"];
       objToSend.switch = {
