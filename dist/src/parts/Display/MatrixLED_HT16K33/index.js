@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.MatrixLED_HT16K33
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class MatrixLED_HT16K33 {
     constructor() {

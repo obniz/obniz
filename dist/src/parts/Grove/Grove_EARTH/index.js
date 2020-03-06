@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_EARTHOptionsA
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EARTH {
     constructor() {

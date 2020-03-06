@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_JoyStick
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";

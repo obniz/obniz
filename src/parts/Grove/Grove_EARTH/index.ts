@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_EARTHOptionsA
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";

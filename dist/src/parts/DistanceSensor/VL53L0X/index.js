@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.VL53L0X
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class VL53L0X {
     constructor() {

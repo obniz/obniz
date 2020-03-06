@@ -23300,13 +23300,10 @@ exports.default = OMRON_2JCIE;
 
 "use strict";
 
-/* ------------------------------------------------------------------
- * node-linking - linking.js
- *
- * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
- * Released under the MIT license
- * Date: 2019-10-24
- * ---------------------------------------------------------------- */
+/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -23490,6 +23487,10 @@ exports.default = Linking;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
 /* ------------------------------------------------------------------
  * node-linking - advertising.js
  *
@@ -23709,7 +23710,11 @@ exports.default = LinkingAdvertising;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+/* WEBPACK VAR INJECTION */(function(Buffer) {/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
+/* ------------------------------------------------------------------
  * node-linking - device.js
  *
  * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
@@ -24591,6 +24596,10 @@ exports.default = LinkingDevice;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
 /* ------------------------------------------------------------------
  * node-linking - ieee754.js
  *
@@ -24644,7 +24653,11 @@ exports.default = LinkingIEEE754;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+/* WEBPACK VAR INJECTION */(function(Buffer) {/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
+/* ------------------------------------------------------------------
  * node-linking - service-notification.js
  *
  * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
@@ -25670,7 +25683,11 @@ exports.default = LinkingServiceNotification;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+/* WEBPACK VAR INJECTION */(function(Buffer) {/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
+/* ------------------------------------------------------------------
  * node-linking - service-operation.js
  *
  * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
@@ -25849,7 +25866,11 @@ exports.default = LinkingServiceOperation;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+/* WEBPACK VAR INJECTION */(function(Buffer) {/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
+/* ------------------------------------------------------------------
  * node-linking - service-property.js
  *
  * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
@@ -26147,7 +26168,11 @@ exports.default = LinkingServiceProperty;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+/* WEBPACK VAR INJECTION */(function(Buffer) {/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
+/* ------------------------------------------------------------------
  * node-linking - service-sensor.js
  *
  * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
@@ -26629,7 +26654,11 @@ exports.default = LinkingServiceSensor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+/* WEBPACK VAR INJECTION */(function(Buffer) {/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
+/* ------------------------------------------------------------------
  * node-linking - service-setting.js
  *
  * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
@@ -27348,6 +27377,10 @@ exports.default = LinkingServiceSetting;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
 /* ------------------------------------------------------------------
  * node-linking - service.js
  *
@@ -28595,6 +28628,10 @@ exports.default = S11059;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MCP4725
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class MCP4725 {
     constructor() {
@@ -28979,6 +29016,10 @@ exports.default = _7SegmentLED_MAX7219;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MatrixLED_HT16K33
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class MatrixLED_HT16K33 {
     constructor() {
@@ -34121,6 +34162,10 @@ exports.default = HCSR04;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.VL53L0X
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class VL53L0X {
     constructor() {
@@ -35168,6 +35213,10 @@ exports.default = Grove_Buzzer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_EARTHOptionsA
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EARTH {
     constructor() {
@@ -35625,6 +35674,10 @@ exports.default = Grove_GPS;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_JoyStick
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_JoyStick {
     constructor() {
@@ -36204,6 +36257,10 @@ exports.default = Keyestudio_Buzzer;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_HT16K33
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -37209,6 +37266,10 @@ exports.default = SNx4HC595;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_ADC
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_ADC {
     constructor() {
@@ -37351,6 +37412,10 @@ exports.default = M5StickC_ADC;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_DAC
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -37651,6 +37716,10 @@ exports.default = M5StickC_FINGER;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_JoyStick
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_JoyStick {
     constructor() {
@@ -37771,6 +37840,10 @@ exports.default = M5StickC_RS485;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_ToF
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -38130,6 +38203,10 @@ exports.default = _24LC256;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.AK09916
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -38771,6 +38848,10 @@ exports.default = HCSR505;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.ICM20948
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -39518,6 +39599,10 @@ MPU6050.commands = {
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MPU6500
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -42360,6 +42445,10 @@ exports.default = S5851A;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.SHT20
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class SHT20 {
     constructor() {
@@ -43438,6 +43527,10 @@ exports.default = XBee;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -43505,6 +43598,10 @@ I2cCompassAbstract.unitScales = {
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

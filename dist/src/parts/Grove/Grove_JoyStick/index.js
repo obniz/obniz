@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_JoyStick
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_JoyStick {
     constructor() {

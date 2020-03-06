@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
+
 /* ------------------------------------------------------------------
  * node-linking - service-property.js
  *

@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.AK09916
+ */
+
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
 
 import Obniz from "../../../obniz";

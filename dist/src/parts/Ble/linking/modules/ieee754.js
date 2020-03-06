@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
 /* ------------------------------------------------------------------
  * node-linking - ieee754.js
  *

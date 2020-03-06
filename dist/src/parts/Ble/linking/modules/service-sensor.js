@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
 /* ------------------------------------------------------------------
  * node-linking - service-sensor.js
  *

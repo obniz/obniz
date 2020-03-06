@@ -1,11 +1,8 @@
 "use strict";
-/* ------------------------------------------------------------------
- * node-linking - linking.js
- *
- * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
- * Released under the MIT license
- * Date: 2019-10-24
- * ---------------------------------------------------------------- */
+/**
+ * @packageDocumentation
+ * @module Parts.Linking
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

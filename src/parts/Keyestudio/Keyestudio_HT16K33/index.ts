@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_HT16K33
+ */
+
 import Obniz from "../../../obniz";
 import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 import MatrixLED_HT16K33, { MatrixLED_HT16K33Options } from "../../Display/MatrixLED_HT16K33";

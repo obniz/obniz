@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.SHT20
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class SHT20 {
     constructor() {

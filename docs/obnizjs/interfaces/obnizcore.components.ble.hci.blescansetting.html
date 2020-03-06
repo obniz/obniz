@@ -110,15 +110,15 @@
 					<div class="tsd-signature tsd-kind-icon">active<wbr>Scan<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:79</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:82</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>(obnizOS 3 or later only)
-								Active scan or Passive Scan
-							Default is true : activeScan.</p>
+							<p>(obnizOS 3 or later only)</p>
 						</div>
+						<p>Active scan or Passive Scan</p>
+						<p>Default is true : activeScan.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
@@ -127,14 +127,14 @@
 					<div class="tsd-signature tsd-kind-icon">duplicate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:71</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:72</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>(obnizOS 3 or later only)
-							Specifying onfind will be called or not when an advertisement received from already known peripheral. Default is false : never called again.</p>
+							<p>(obnizOS 3 or later only)</p>
 						</div>
+						<p>Specifying onfind will be called or not when an advertisement received from already known peripheral. Default is false : never called again.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
@@ -159,17 +159,29 @@
 					<div class="tsd-signature tsd-kind-icon">filter<wbr>OnDevice<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:90</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:112</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>(obnizOS &gt;= 3.2.0 only)
-							filters are apply on obniz device</p>
+							<p>(obnizOS &gt;= 3.2.0 only)</p>
 						</div>
-						<p>True: filter on device and JavaScript.
+						<p>filters are apply on obniz device</p>
+						<p>True: filter on device and JavaScript.<br/>
 						False : filter on JavaScript only.</p>
 						<p>Default is false : filter on JavaScript only.</p>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">var</span> target = {
+    <span class="hljs-attr">localName</span>: <span class="hljs-string">"obniz-BLE"</span>,     <span class="hljs-comment">//scan only has localName "obniz-BLE"</span>
+};
+
+<span class="hljs-keyword">var</span> setting = {
+   <span class="hljs-attr">duration</span> : <span class="hljs-number">10</span>,  <span class="hljs-comment">//scan duration time in seconds. default is 30 sec.</span>
+   <span class="hljs-attr">filterOnDevice</span>: <span class="hljs-literal">true</span>
+}
+
+<span class="hljs-keyword">await</span> obniz.ble.initWait();
+obniz.ble.scan.start(target, setting);</code></pre>
 					</div>
 				</section>
 			</section>
@@ -179,30 +191,6 @@
 				<ul>
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
-						<ul>
-							<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
-								<a href="../modules/obnizcore.components.html">Components</a>
-								<ul>
-									<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
-										<a href="../modules/obnizcore.components.ble.html">Ble</a>
-										<ul>
-											<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
-												<a href="../modules/obnizcore.components.ble.hci.html">Hci</a>
-											</li>
-											<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
-												<a href="../modules/obnizcore.components.ble.old.html">old</a>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="../modules/obnizcore.hardware.html">Hardware</a>
-							</li>
-						</ul>
 					</li>
 				</ul>
 			</nav>

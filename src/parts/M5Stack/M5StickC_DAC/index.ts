@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_DAC
+ */
+
 import MCP4725, { MCP4725Options } from "../../DAConverter/MCP4725";
 
 import Obniz from "../../../obniz";

@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.MCP4725
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class MCP4725 {
     constructor() {

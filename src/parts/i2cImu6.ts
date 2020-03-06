@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
+
 import i2cParts, { I2cPartsAbstractOptions } from "./i2cParts";
 
 export type accelRange = "2g" | "4g" | "8g" | "16g";

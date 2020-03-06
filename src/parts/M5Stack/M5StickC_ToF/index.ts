@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_ToF
+ */
+
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 import VL53L0X, { VL53L0XOptions } from "../../DistanceSensor/VL53L0X";

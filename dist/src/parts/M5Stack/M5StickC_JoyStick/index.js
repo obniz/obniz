@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_JoyStick
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_JoyStick {
     constructor() {

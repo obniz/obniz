@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.VL53L0X
+ */
+
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 

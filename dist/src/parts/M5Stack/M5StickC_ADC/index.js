@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_ADC
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_ADC {
     constructor() {

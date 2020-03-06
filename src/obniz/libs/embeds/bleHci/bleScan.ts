@@ -66,13 +66,16 @@ export interface BleScanSetting {
 
   /**
    * (obnizOS 3 or later only)
+   *
    * Specifying onfind will be called or not when an advertisement received from already known peripheral. Default is false : never called again.
    */
   duplicate?: boolean;
 
   /**
    * (obnizOS 3 or later only)
+   *
    * Active scan or Passive Scan
+   *
    * Default is true : activeScan.
    *
    */
@@ -80,12 +83,31 @@ export interface BleScanSetting {
 
   /**
    * (obnizOS >= 3.2.0 only)
+   *
    * filters are apply on obniz device
    *
-   * True: filter on device and JavaScript.
+   * True: filter on device and JavaScript.<br/>
    * False : filter on JavaScript only.
    *
    * Default is false : filter on JavaScript only.
+   *
+   *
+   * ```javascript
+   * // Javascript Example
+   * var target = {
+   *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
+   * };
+   *
+   * var setting = {
+   *    duration : 10,  //scan duration time in seconds. default is 30 sec.
+   *    filterOnDevice: true
+   * }
+   *
+   * await obniz.ble.initWait();
+   * obniz.ble.scan.start(target, setting);
+   * ```
+   *
+   *
    */
   filterOnDevice?: boolean;
 }

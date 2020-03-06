@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts
+ */
+
 import i2cParts, { I2cPartsAbstractOptions, Xyz } from "./i2cParts";
 
 export type compassUnit = "uT" | "G" | "mT" | "T" | "mG" | "kG" | "uG";
