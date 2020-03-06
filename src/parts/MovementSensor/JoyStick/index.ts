@@ -9,7 +9,7 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  JoyStickOptions {
+export interface JoyStickOptions {
   sw: number;
   x: number;
   y: number;

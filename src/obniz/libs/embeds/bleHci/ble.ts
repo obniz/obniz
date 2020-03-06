@@ -280,7 +280,7 @@ export default class ObnizBLE {
 
   protected async onConnect(peripheralUuid: any, error?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
-    if (!error) {
+    if (!error && peripheral._connectSetting.autoDiscovery) {
       await peripheral.discoverAllHandlesWait();
     }
     peripheral.notifyFromServer("statusupdate", {

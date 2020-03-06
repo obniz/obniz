@@ -10,7 +10,7 @@ import {PWMInterface} from "../../../obniz/libs/io_peripherals/pwm";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-class PCA9685_PWM  implements PWMInterface {
+class PCA9685_PWM implements PWMInterface {
   public chip: PCA9685;
   public id: number;
   public value = 0;
@@ -34,7 +34,7 @@ class PCA9685_PWM  implements PWMInterface {
   }
 }
 
-export interface  PCA9685Options {
+export interface PCA9685Options {
   gnd?: number;
   vcc?: number;
   oe?: number;

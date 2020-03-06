@@ -12,7 +12,7 @@ import LinkingServiceProperty from "./service-property.js";
 import LinkingServiceSensor from "./service-sensor.js";
 import LinkingServiceSetting from "./service-setting.js";
 
-export default class LinkingService  {
+export default class LinkingService {
 
   public _services: any = {
     "00": new LinkingServiceProperty(),
@@ -24,19 +24,19 @@ export default class LinkingService  {
 
   public _write_message_name_map: any = {
     // PeripheralDevicePropertyInformation Service
-    GET_DEVICE_INFORMATION     : "00",
+    GET_DEVICE_INFORMATION: "00",
     // PeripheralDeviceNotification Service
-    CONFIRM_NOTIFY_CATEGORY    : "01",
-    NOTIFY_INFORMATION         : "01",
+    CONFIRM_NOTIFY_CATEGORY: "01",
+    NOTIFY_INFORMATION: "01",
     // PeripheralDeviceSensorInformation Service
-    GET_SENSOR_INFO            : "03",
-    SET_NOTIFY_SENSOR_INFO     : "03",
+    GET_SENSOR_INFO: "03",
+    SET_NOTIFY_SENSOR_INFO: "03",
     // PeripheralDeviceSettingOperation Service
-    GET_APP_VERSION            : "04",
-    CONFIRM_INSTALL_APP        : "04",
-    GET_SETTING_INFORMATION    : "04",
-    GET_SETTING_NAME           : "04",
-    SELECT_SETTING_INFORMATION : "04",
+    GET_APP_VERSION: "04",
+    CONFIRM_INSTALL_APP: "04",
+    GET_SETTING_INFORMATION: "04",
+    GET_SETTING_NAME: "04",
+    SELECT_SETTING_INFORMATION: "04",
   };
 
   public _device_info: any = null;
@@ -63,11 +63,11 @@ export default class LinkingService  {
     const parameters = service.parsePayload(pnum, payload_buf);
 
     const parsed = {
-      buffer      : buf,
-      serviceId   : service_id,
-      serviceName : service.SERVICE_NAME,
-      messageId   : msg_id,
-      messageName : service.MESSAGE_NAME_MAP[msg_id_hex],
+      buffer: buf,
+      serviceId: service_id,
+      serviceName: service.SERVICE_NAME,
+      messageId: msg_id,
+      messageName: service.MESSAGE_NAME_MAP[msg_id_hex],
       parameters,
     };
     return parsed;

@@ -6,7 +6,7 @@
 import Obniz from "../../../obniz";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  Grove_MP3Options {
+export interface Grove_MP3Options {
   vcc?: number;
   gnd?: number;
   mp3_rx: number;

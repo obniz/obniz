@@ -7,7 +7,7 @@ import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  JpegSerialCamOptions {
+export interface JpegSerialCamOptions {
   vcc?: number;
   cam_tx: number;
   cam_rx: number;

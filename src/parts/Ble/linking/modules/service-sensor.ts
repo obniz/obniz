@@ -50,7 +50,8 @@ export default class LinkingServiceSensor {
         }
         parameters.push(p);
       }
-    } catch (e) { }
+    } catch (e) {
+    }
     return parameters;
   }
 

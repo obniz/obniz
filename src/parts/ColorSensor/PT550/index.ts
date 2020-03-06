@@ -7,7 +7,7 @@ import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  PT550Options {
+export interface PT550Options {
   signal: number;
   vcc?: number;
   gnd?: number;

@@ -455,10 +455,33 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   }
 
   /**
-   * @ignore
+   * Discover services.
    *
+   * If connect setting param 'autoDiscovery' is true(default),
+   * services are automatically disvocer on connection established.
+   *
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.ble.initWait({});
+   * obniz.ble.scan.onfind = function(peripheral){
+   * if(peripheral.localName == "my peripheral"){
+   *      peripheral.onconnect = async function(){
+   *          console.log("success");
+   *          await peripheral.discoverAllServicesWait(); //manually discover
+   *          let service = peripheral.getService("1800");
+   *          await service.discoverAllCharacteristicsWait(); //manually discover
+   *          let characteristics = service.getCharacteristic("ff00");
+   *          await characteristics.discoverAllDescriptorsWait(); //manually discover
+   *          let descriptor = characteristics.getDescriptor("fff1");
+   *      }
+   *      peripheral.connect({autoDiscovery:false});
+   *     }
+   * }
+   * obniz.ble.scan.start();
+   * ```
    */
-  public discoverAllDescriptorsWait() {
+  public discoverAllDescriptorsWait(): Promise<BleRemoteDescriptor[]> {
     return this.discoverChildrenWait();
   }
 

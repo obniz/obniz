@@ -8,6 +8,7 @@ import HX711, {Hx711Options} from "../parts/ADConverter/hx711";
 // Camera
 import ArduCAMMini, {ArduCAMMiniOptions} from "../parts/Camera/ArduCAMMini";
 import JpegSerialCam, {JpegSerialCamOptions} from "../parts/Camera/JpegSerialCam";
+import MCP4725, {MCP4725Options} from "../parts/DAConverter/MCP4725";
 // Display
 import _7SegmentLED, {_7SegmentLEDOptions} from "../parts/Display/7SegmentLED";
 import _7SegmentLED_MAX7219, {_7SegmentLED_MAX7219Options} from "../parts/Display/7SegmentLED_MAX7219";
@@ -20,6 +21,7 @@ import ST7735S, {ST7735SOptions} from "../parts/Display/ST7735S";
 // DistanceSensor
 import GP2Y0A21YK0F, {GP2Y0A21YK0FOptions} from "../parts/DistanceSensor/GP2Y0A21YK0F";
 import HCSR04, {HCSR04Options} from "../parts/DistanceSensor/HC-SR04";
+import VL53L0X, {VL53L0XOptions} from "../parts/DistanceSensor/VL53L0X";
 // GasSensor
 import MQ135, {MQ135Options} from "../parts/GasSensor/MQ135";
 import MQ2, {MQ2Options} from "../parts/GasSensor/MQ2";
@@ -46,15 +48,18 @@ import SNx4HC595, {SNx4HC595Options} from "../parts/Logic/SNx4HC595";
 import CT10, {CT10Options} from "../parts/Magnet/CT10";
 import HMC5883L, {HMC5883LOptions} from "../parts/Magnet/HMC5883L";
 import _24LC256, {_24LC256Options} from "../parts/Memory/24LC256";
+import AK09916, {AK09916Options} from "../parts/MovementSensor/AK09916";
 import AK8963, {AK8963Options} from "../parts/MovementSensor/AK8963";
 import Button, {ButtonOptions} from "../parts/MovementSensor/Button";
 import FlickHat, {FlickHatOptions} from "../parts/MovementSensor/FlickHat";
 import HCSR505, {HCSR505Options} from "../parts/MovementSensor/HC-SR505";
+import ICM20948, {ICM20948Options} from "../parts/MovementSensor/ICM20948";
 import IPM_165, {IPM_165Options} from "../parts/MovementSensor/IPM-165";
 import JoyStick, {JoyStickOptions} from "../parts/MovementSensor/JoyStick";
 import KXR94_2050, {KXR94_2050Options} from "../parts/MovementSensor/KXR94-2050";
 import KXSC7_2050, {KXSC7_2050Options} from "../parts/MovementSensor/KXSC7-2050";
 import MPU6050, {MPU6050Options} from "../parts/MovementSensor/MPU6050";
+import MPU6500, { MPU6500Options } from "../parts/MovementSensor/MPU6500";
 import MPU6886, {MPU6886Options} from "../parts/MovementSensor/MPU6886";
 import MPU9250, {MPU9250Options} from "../parts/MovementSensor/MPU9250";
 import PaPIRsVZ, {PaPIRsVZOptions} from "../parts/MovementSensor/PaPIRsVZ";
@@ -106,11 +111,10 @@ import Grove_3AxisAccelerometer, {Grove_3AxisAccelerometerOptions} from "../part
 import Grove_Button, {Grove_ButtonOptions} from "../parts/Grove/Grove_Button";
 import Grove_Buzzer, {Grove_BuzzerOptions} from "../parts/Grove/Grove_Buzzer";
 import Grove_EarHeartRate, {Grove_EarHeartRateOptions} from "../parts/Grove/Grove_EarHeartRate";
+import Grove_EARTH, {Grove_EARTHOptions} from "../parts/Grove/Grove_EARTH";
 import Grove_GPS, {Grove_GPSOptions} from "../parts/Grove/Grove_GPS";
+import Grove_JoyStick, {Grove_JoyStickOptions} from "../parts/Grove/Grove_JoyStick";
 import Grove_MP3, {Grove_MP3Options} from "../parts/Grove/Grove_MP3";
-
-import M5StickC_YunHat, {M5StickC_YunHatOptions} from "../parts/M5Stack/M5StickCYunHat";
-import BMP280, {BMP280Options} from "../parts/PressureSensor/BMP280";
 
 // Keyestudio
 import Keyestudio_Button, {Keyestudio_ButtonOptions} from "../parts/Keyestudio/Keyestudio_Button";
@@ -120,6 +124,13 @@ import Keyestudio_MoistureSensor, {Keyestudio_MoistureSensorOptions} from "../pa
 import Keyestudio_PIR, {Keyestudio_PIROptions} from "../parts/Keyestudio/Keyestudio_PIR";
 import Keyestudio_TemperatureSensor, {Keyestudio_TemperatureSensorOptions} from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
 import Keyestudio_TrafficLight, {Keyestudio_TrafficLightOptions} from "../parts/Keyestudio/Keyestudio_TrafficLight";
+import M5StickC_ADC, {M5StickC_ADCOptions} from "../parts/M5Stack/M5StickC_ADC";
+import M5StickC_DAC, {M5StickC_DACOptions} from "../parts/M5Stack/M5StickC_DAC";
+import M5StickC_FINGER, {M5StickC_FINGEROptions} from "../parts/M5Stack/M5StickC_FINGER";
+import M5StickC_JoyStick, {M5StickC_JoyStickOptions} from "../parts/M5Stack/M5StickC_JoyStick";
+import M5StickC_ToF, {M5StickC_ToFOptions} from "../parts/M5Stack/M5StickC_ToF";
+import M5StickC_YunHat, {M5StickC_YunHatOptions} from "../parts/M5Stack/M5StickC_YunHat";
+import BMP280, {BMP280Options} from "../parts/PressureSensor/BMP280";
 
 export interface WiredNameMap {
   // Light
@@ -175,9 +186,12 @@ export interface WiredNameMap {
   "Button": Button;
   "AK8963": AK8963;
   "MPU6050": MPU6050;
+  "MPU6500": MPU6500;
   "MPU6886": MPU6886;
   "MPU9250": MPU9250;
   "SH200Q": SH200Q;
+  "AK09916": AK09916;
+  "ICM20948": ICM20948;
   // 'FlickHat': FlickHat;
   "HC-SR505": HCSR505;
   "JoyStick": JoyStick;
@@ -195,6 +209,7 @@ export interface WiredNameMap {
   // Distance Sensor
   "HC-SR04": HCSR04;
   "GP2Y0A21YK0F": GP2Y0A21YK0F;
+  "VL53L0X": VL53L0X;
   // GPS
   "GYSFDMAXB": GYSFDMAXB;
   // MagnetSensor
@@ -202,6 +217,8 @@ export interface WiredNameMap {
   "HMC5883L": HMC5883L;
   // ADConverter
   "hx711": HX711;
+  // DAConverter
+  "MCP4725": MCP4725;
   // SoilSensor
   "SEN0114": SEN0114;
   // Temperature Sensor
@@ -234,8 +251,16 @@ export interface WiredNameMap {
   "Grove_Buzzer": Grove_Buzzer;
   "Grove_EarHeartRate": Grove_EarHeartRate;
   "Grove_MP3": Grove_MP3;
+  "Grove_EARTH": Grove_EARTH;
+  "Grove_JoyStick": Grove_JoyStick;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  // StickCHat
+  "M5StickC_JoyStick": M5StickC_JoyStick;
+  "M5StickC_ADC": M5StickC_ADC;
+  "M5StickC_DAC": M5StickC_DAC;
+  "M5StickC_ToF": M5StickC_ToF;
+  "M5StickC_FINGER": M5StickC_FINGER;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -316,9 +341,12 @@ export interface WiredNameOptionsMap {
   "Button": ButtonOptions;
   "AK8963": AK8963Options;
   "MPU6050": MPU6050Options;
+  "MPU6500": MPU6500Options;
   "MPU6886": MPU6886Options;
   "MPU9250": MPU9250Options;
   "SH200Q": SH200QOptions;
+  "AK09916": AK09916Options;
+  "ICM20948": ICM20948Options;
   // 'FlickHat': FlickHatOptions;
   "HC-SR505": HCSR505Options;
   "JoyStick": JoyStickOptions;
@@ -336,6 +364,7 @@ export interface WiredNameOptionsMap {
   // Distance Sensor
   "HC-SR04": HCSR04Options;
   "GP2Y0A21YK0F": GP2Y0A21YK0FOptions;
+  "VL53L0X": VL53L0XOptions;
   // GPS
   "GYSFDMAXB": GYSFDMAXBOptions;
   // MagnetSensor
@@ -343,6 +372,8 @@ export interface WiredNameOptionsMap {
   "HMC5883L": HMC5883LOptions;
   // ADConverter
   "hx711": Hx711Options;
+  // DAConverter
+  "MCP4725": MCP4725Options;
   // SoilSensor
   "SEN0114": SEN0114Options;
   // Temperature Sensor
@@ -374,7 +405,15 @@ export interface WiredNameOptionsMap {
   "Grove_EarHeartRate": Grove_EarHeartRateOptions;
   "Grove_MP3": Grove_MP3Options;
   "Grove_GPS": Grove_GPSOptions;
+  "Grove_EARTH": Grove_EARTHOptions;
+  "Grove_JoyStick": Grove_JoyStickOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  // StickCHat
+  "M5StickC_JoyStick": M5StickC_JoyStickOptions;
+  "M5StickC_ADC": M5StickC_ADCOptions;
+  "M5StickC_DAC": M5StickC_DACOptions;
+  "M5StickC_ToF": M5StickC_ToFOptions;
+  "M5StickC_FINGER": M5StickC_FINGEROptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;

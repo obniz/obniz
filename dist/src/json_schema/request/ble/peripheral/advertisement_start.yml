@@ -1,0 +1,17 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral/advertisement_start"
+related: "/response/ble/peripheral/status"
+deprecated: 3.0.0
+
+type: object
+required: [advertisement]
+properties:
+  advertisement:
+    type: object
+    required: [adv_data]
+    additionalProperties: false
+    properties:
+      adv_data: {$ref: "/bleAdvertiseData"}
+      scan_resp: {$ref: "/bleAdvertiseData"}

@@ -118,11 +118,6 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     } else {
       this.properties = obj.properties || [];
     }
-    //
-    // this.permissions = obj.permissions || [];
-    // if (!Array.isArray(this.permissions)) {
-    //   this.permissions = [this.permissions];
-    // }
   }
 
   /**
@@ -189,18 +184,19 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     });
   }
 
-  //
-  // public addPermission(param: any) {
-  //   if (!this.permissions.includes(param)) {
-  //     this.permissions.push(param);
-  //   }
-  // }
-  //
-  // public removePermission(param: any) {
-  //   this.permissions = this.permissions.filter((elm: any) => {
-  //     return elm !== param;
-  //   });
-  // }
+  /**
+   * @ignore
+   * @param param
+   */
+  public addPermission(param: any) {
+  }
+
+  /**
+   * @ignore
+   * @param param
+   */
+  public removePermission(param: any) {
+  }
 
   /**
    * @ignore

@@ -8,13 +8,13 @@ import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  XBeeOptions {
+export interface XBeeOptions {
   tx: number;
   rx: number;
   gnd?: number;
- }
+}
 
-export interface  XBeeConfig {
+export interface XBeeConfig {
   [key: string]: string;
 }
 

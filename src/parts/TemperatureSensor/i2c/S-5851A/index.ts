@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @module Parts.S5851A
@@ -8,7 +7,7 @@ import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 
-export interface  S5851AOptions {
+export interface S5851AOptions {
   vcc: number;
   gnd: number;
   sda: number;

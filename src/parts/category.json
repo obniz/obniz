@@ -123,8 +123,7 @@
         },
         {
           "name": "MatrixLED_HT16K33",
-          "store": {
-          }
+          "store": {}
         },
         {
           "name": "SharpMemoryTFT",
@@ -426,8 +425,7 @@
         },
         {
           "name": "BMP280",
-          "store": {
-          }
+          "store": {}
         }
       ]
     },
@@ -446,6 +444,12 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gI-02551/",
             "adafruit": "https://www.adafruit.com/product/164"
+          }
+        },
+        {
+          "name": "VL53L0X",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-12590/"
           }
         }
       ]
@@ -486,6 +490,17 @@
           "name": "hx711",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gK-12370/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "DAConverter",
+      "parts": [
+        {
+          "name": "MCP4725",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-08677/"
           }
         }
       ]
@@ -565,8 +580,7 @@
         },
         {
           "name": "SHT20",
-          "store": {
-          }
+          "store": {}
         },
         {
           "name": "BME280",
@@ -658,6 +672,14 @@
           }
         },
         {
+          "name": "Grove_EARTH",
+          "store": {}
+        },
+        {
+          "name": "Grove_JoyStick",
+          "store": {}
+        },
+        {
           "name": "Grove_3AxisAccelerometer",
           "store": {
             "seedstudio": "https://www.seeedstudio.com/Grove-3-Axis-Digital-Accelerometer-16g-p-1156.html"
@@ -714,8 +736,40 @@
       "image_url": "",
       "parts": [
         {
-          "name": "YunHat",
-          "store": {}
+          "name": "M5StickC_YunHat",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6072/"
+          }
+        },
+        {
+          "name": "M5StickC_JoyStick",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6074/"
+          }
+        },
+        {
+          "name": "M5StickC_ADC",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6071/"
+          }
+        },
+        {
+          "name": "M5StickC_DAC",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6070/"
+          }
+        },
+        {
+          "name": "M5StickC_ToF",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6059/"
+          }
+        },
+        {
+          "name": "M5StickC_FINGER",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6075/"
+          }
         }
       ]
     }

@@ -23,7 +23,7 @@ class SNx4HC595_IO {
   }
 }
 
-export interface  SNx4HC595Options {
+export interface SNx4HC595Options {
   gnd?: number;
   vcc?: number;
   ser: number;

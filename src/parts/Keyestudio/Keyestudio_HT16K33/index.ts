@@ -12,6 +12,7 @@ export default class Keyestudio_HT16K33 extends MatrixLED_HT16K33 {
       name: "Keyestudio_HT16K33",
     };
   }
+
   private bitArray: number[] = [7, 0, 1, 2, 3, 4, 5, 6];
 
   public wired(obniz: Obniz) {

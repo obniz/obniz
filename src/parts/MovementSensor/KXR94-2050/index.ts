@@ -8,7 +8,7 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  KXR94_2050Options {
+export interface KXR94_2050Options {
   x: number;
   y: number;
   z: number;

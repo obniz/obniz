@@ -1,0 +1,9 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/logicAnalyzer/data"
+
+type: object
+required: [data]
+properties:
+  data: {$ref: "/bitArray" }
