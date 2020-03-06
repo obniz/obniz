@@ -84,6 +84,18 @@ class ObnizUtil {
         return array;
     }
     /**
+     * @ignore
+     * @param min
+     * @param max
+     * @param variable_name
+     * @param variable
+     */
+    static assertNumber(min, max, variable_name, variable) {
+        if (!(min <= variable && variable <= max)) {
+            throw new Error(`${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`);
+        }
+    }
+    /**
      * This creates a Canvas context.
      * It will add a canvas dom to body(in html).
      *
