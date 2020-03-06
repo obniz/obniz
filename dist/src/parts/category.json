@@ -748,6 +748,12 @@
           }
         },
         {
+          "name": "M5StickC_RS485",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6069/"
+          }
+        },
+        {
           "name": "M5StickC_ADC",
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/6071/"

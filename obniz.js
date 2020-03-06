@@ -23128,6 +23128,7 @@ var map = {
 	"./M5Stack/M5StickC_DAC/index.js": "./dist/src/parts/M5Stack/M5StickC_DAC/index.js",
 	"./M5Stack/M5StickC_FINGER/index.js": "./dist/src/parts/M5Stack/M5StickC_FINGER/index.js",
 	"./M5Stack/M5StickC_JoyStick/index.js": "./dist/src/parts/M5Stack/M5StickC_JoyStick/index.js",
+	"./M5Stack/M5StickC_RS485/index.js": "./dist/src/parts/M5Stack/M5StickC_RS485/index.js",
 	"./M5Stack/M5StickC_ToF/index.js": "./dist/src/parts/M5Stack/M5StickC_ToF/index.js",
 	"./M5Stack/M5StickC_YunHat/index.js": "./dist/src/parts/M5Stack/M5StickC_YunHat/index.js",
 	"./Magnet/CT10/index.js": "./dist/src/parts/Magnet/CT10/index.js",
@@ -37943,6 +37944,57 @@ class M5StickC_JoyStick {
     }
 }
 exports.default = M5StickC_JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/M5Stack/M5StickC_RS485/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.M5StackC_RS485
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class M5StickC_RS485 {
+    constructor() {
+        this.keys = ["tx", "rx", "gnd", "vcc", "baud"];
+        this.requiredKeys = ["tx", "rx"];
+    }
+    static info() {
+        return {
+            name: "M5StickC_RS485",
+        };
+    }
+    wired(obniz) {
+        if (obniz.isValidIO(this.params.gnd)) {
+            obniz.getIO(this.params.gnd).output(false);
+        }
+        if (obniz.isValidIO(this.params.vcc)) {
+            obniz.getIO(this.params.vcc).output(true);
+        }
+        this.params.baud = this.params.baud || 9600;
+        this.uart = obniz.getFreeUart();
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: this.params.baud,
+        });
+        this.uart.onreceive = (data, text) => {
+            if (typeof this.onreceive === "function") {
+                this.onreceive(data, text);
+            }
+        };
+    }
+    send(data) {
+        this.uart.send(data);
+    }
+}
+exports.default = M5StickC_RS485;
 
 //# sourceMappingURL=index.js.map
 

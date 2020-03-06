@@ -13,6 +13,8 @@ M5StickCと接続する場合は、G0をsdaに、G26をsclに指定してくだ�
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
+vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
+gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
 scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
 sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
 i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです

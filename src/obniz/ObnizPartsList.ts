@@ -132,6 +132,8 @@ import M5StickC_ToF, {M5StickC_ToFOptions} from "../parts/M5Stack/M5StickC_ToF";
 import M5StickC_YunHat, {M5StickC_YunHatOptions} from "../parts/M5Stack/M5StickC_YunHat";
 import BMP280, {BMP280Options} from "../parts/PressureSensor/BMP280";
 
+import M5StickC_RS485, {M5StickC_RS485Options} from "../parts/M5Stack/M5StickC_RS485";
+
 export interface WiredNameMap {
   // Light
   "LED": LED;
@@ -261,6 +263,8 @@ export interface WiredNameMap {
   "M5StickC_DAC": M5StickC_DAC;
   "M5StickC_ToF": M5StickC_ToF;
   "M5StickC_FINGER": M5StickC_FINGER;
+  "M5StickC_RS485": M5StickC_RS485;
+  "M5StickC_YunHat": M5StickC_YunHat;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -283,7 +287,6 @@ export interface WiredNameMap {
   "S5851A": S5851A;
   "DPS310": DPS310;
   "BMP280": BMP280;
-  "M5StickC_YunHat": M5StickC_YunHat;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -414,6 +417,8 @@ export interface WiredNameOptionsMap {
   "M5StickC_DAC": M5StickC_DACOptions;
   "M5StickC_ToF": M5StickC_ToFOptions;
   "M5StickC_FINGER": M5StickC_FINGEROptions;
+  "M5StickC_RS485": M5StickC_RS485Options;
+  "M5StickC_YunHat": M5StickC_YunHatOptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;
@@ -436,6 +441,6 @@ export interface WiredNameOptionsMap {
   "ADT7410": ADT7410Options;
   "S5851A": S5851AOptions;
   "DPS310": DPS310Options;
+
   "BMP280": BMP280Options;
-  "M5StickC_YunHat": M5StickC_YunHatOptions;
 }
