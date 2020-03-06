@@ -422,6 +422,10 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-04911/"
           }
+        },
+        {
+          "name": "BMP280",
+          "store": {}
         }
       ]
     },
@@ -575,6 +579,10 @@
           }
         },
         {
+          "name": "SHT20",
+          "store": {}
+        },
+        {
           "name": "BME280",
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/2236/",
@@ -694,32 +702,6 @@
       ]
     },
     {
-      "name": "M5StickC HAT",
-      "image_url": "https://obniz.io/sdk/parts/StickC_ADC/index.jpg",
-      "parts": [
-        {
-          "name": "StickC_JoyStick",
-          "store": {}
-        },
-        {
-          "name": "StickC_ADC",
-          "store": {}
-        },
-        {
-          "name": "StickC_DAC",
-          "store": {}
-        },
-        {
-          "name": "StickC_ToF",
-          "store": {}
-        },
-        {
-          "name": "StickC_FINGER",
-          "store": {}
-        }
-      ]
-    },
-    {
       "name": "Keyestudio",
       "image_url": "https://obniz.io/sdk/parts/Keyestudio_Button/index.jpg",
       "parts": [
@@ -746,6 +728,54 @@
         {
           "name": "Keyestudio_TrafficLight",
           "store": {}
+        }
+      ]
+    },
+    {
+      "name": "M5Stack",
+      "image_url": "",
+      "parts": [
+        {
+          "name": "M5StickC_YunHat",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6072/"
+          }
+        },
+        {
+          "name": "M5StickC_JoyStick",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6074/"
+          }
+        },
+        {
+          "name": "M5StickC_RS485",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6069/"
+          }
+        },
+        {
+          "name": "M5StickC_ADC",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6071/"
+          }
+        },
+        {
+          "name": "M5StickC_DAC",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6070/"
+          }
+        },
+        {
+          "name": "M5StickC_ToF",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6059/"
+          }
+        },
+        {
+          "name": "M5StickC_FINGER",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6075/"
+          }
         }
       ]
     }

@@ -105,7 +105,8 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizblehci.html#notified" class="tsd-kind-icon">notified</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizblehci.html#end" class="tsd-kind-icon">end</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizblehci.html#init" class="tsd-kind-icon">init</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizblehci.html#onread" class="tsd-kind-icon">onread</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizblehci.html#write" class="tsd-kind-icon">write</a></li>
 							</ul>
@@ -155,24 +156,45 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="notified" class="tsd-anchor"></a>
-					<h3>notified</h3>
+					<a name="end" class="tsd-anchor"></a>
+					<h3>end</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">notified<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">end<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:22</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:28</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>obj: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Deinitalize BLE HCI module</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="init" class="tsd-anchor"></a>
+					<h3>init</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:15</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Initialize BLE HCI module</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -187,13 +209,20 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:28</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:65</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Callback on HCI command received.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>data: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -204,19 +233,26 @@
 					<a name="write" class="tsd-anchor"></a>
 					<h3>write</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>hciCommand<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>hciCommand<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:12</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:41</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>write HCI command to HCI module</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>hciCommand: <span class="tsd-signature-type">any</span></h5>
+									<h5>hciCommand: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -364,7 +400,10 @@
 								<a href="obnizcore.components.ble.hci.obnizblehci.html#obniz" class="tsd-kind-icon">Obniz</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.components.ble.hci.obnizblehci.html#notified" class="tsd-kind-icon">notified</a>
+								<a href="obnizcore.components.ble.hci.obnizblehci.html#end" class="tsd-kind-icon">end</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="obnizcore.components.ble.hci.obnizblehci.html#init" class="tsd-kind-icon">init</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.obnizblehci.html#onread" class="tsd-kind-icon">onread</a>

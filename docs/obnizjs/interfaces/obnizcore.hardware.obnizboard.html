@@ -236,15 +236,15 @@
 								<p>If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
 									In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
 								It shows up only when the format is invalid. If you specify obniz id which doesn&#39;t exist, this would never be shown.</p>
-								<p><img src="../media/obniz_prompt.png" alt=""></p>
+								<p><img src="media://obniz_prompt.png" alt=""></p>
 								<p>When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.</p>
 								<p>When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called &quot;local connect&quot;. When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
 								But when cloud connection gets closed, the local connect also gets closed.</p>
-								<p><img src="../media/local_connect.png" alt=""></p>
+								<p><img src="media://local_connect.png" alt=""></p>
 								<p>The timing onconnect() gets called depends on the availability of local connect.
 									obniz.js will wait a little to establish connection via local connect as much as possible.
 								See the flow below.</p>
-								<p><img src="../media/onconnect_flow.png" alt=""></p>
+								<p><img src="media://onconnect_flow.png" alt=""></p>
 								<p>The second parameter when instantiating obniz Board is an option.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
