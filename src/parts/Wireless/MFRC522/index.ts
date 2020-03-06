@@ -8,7 +8,9 @@ import Obniz from "../../../obniz";
 const OK: any = true;
 const ERROR: any = false;
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface MFRC522Options {
   gnd?: number;
@@ -24,7 +26,6 @@ export interface MFRC522Options {
 }
 
 export default class MFRC522 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "MFRC522",
@@ -374,7 +375,10 @@ export default class MFRC522 implements ObnizPartsInterface {
   }
 
   // RC522 and ISO14443 card communication
-  public async toCard(command: any, bitsToSend: any): Promise<{
+  public async toCard(
+    command: any,
+    bitsToSend: any,
+  ): Promise<{
     status: boolean;
     data: any;
     bitSize: number;
@@ -446,7 +450,7 @@ export default class MFRC522 implements ObnizPartsInterface {
         status = ERROR;
       }
     }
-    return {status, data, bitSize};
+    return { status, data, bitSize };
   }
 
   public async findCardWait(): Promise<{
@@ -457,7 +461,7 @@ export default class MFRC522 implements ObnizPartsInterface {
     await this.searchTagWait();
     const uid: any = await this.getUidWait();
     const PICC_Type: any = await this.identifyCardTypeWait(uid);
-    return {uid, PICC_Type};
+    return { uid, PICC_Type };
   }
 
   public async searchTagWait() {
@@ -592,9 +596,9 @@ export default class MFRC522 implements ObnizPartsInterface {
 
   public async authenticateSectorWait(Sector: any, uid: any) {
     /* Password authentication mode (A or B)
-		 * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
-		 * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
-		 */
+     * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
+     * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
+     */
     const KEY_A: any = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
     // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
     const Block: any = Sector * 4;
@@ -610,9 +614,9 @@ export default class MFRC522 implements ObnizPartsInterface {
 
   public async authenticateBlockWait(Block: any, uid: any) {
     /* Password authentication mode (A or B)
-		 * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
-		 * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
-		 */
+     * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
+     * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
+     */
     const KEY_A: any = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
     // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
     let buffer: any = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
@@ -646,7 +650,9 @@ export default class MFRC522 implements ObnizPartsInterface {
     return blockData;
   }
 
-  public async getBlockDataWait(address: any): Promise<{
+  public async getBlockDataWait(
+    address: any,
+  ): Promise<{
     status: boolean;
     data: any;
     bitSize: number;
@@ -660,7 +666,9 @@ export default class MFRC522 implements ObnizPartsInterface {
     return response.data;
   }
 
-  public async appendCRCtoBufferAndSendToCardWait(buffer: any): Promise<{
+  public async appendCRCtoBufferAndSendToCardWait(
+    buffer: any,
+  ): Promise<{
     status: boolean;
     data: any;
     bitSize: number;
@@ -677,7 +685,10 @@ export default class MFRC522 implements ObnizPartsInterface {
     return response;
   }
 
-  public async writeBlockDataWait(Block: any, sixteenBytes: any): Promise<void> {
+  public async writeBlockDataWait(
+    Block: any,
+    sixteenBytes: any,
+  ): Promise<void> {
     if (Block === 0 || Block % 4 === 3) {
       throw new Error("deny_Write");
     }

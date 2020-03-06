@@ -55,11 +55,11 @@ class VL53L0X {
         this.acnt = this.makeuint16(gbuf[7], gbuf[6]);
         this.scnt = this.makeuint16(gbuf[9], gbuf[8]);
         const dist = this.makeuint16(gbuf[11], gbuf[10]);
-        this.status = ((gbuf[0] & 0x78) >> 3);
+        this.status = (gbuf[0] & 0x78) >> 3;
         return dist;
     }
     makeuint16(lsb, msb) {
-        return ((msb & 0xFF) << 8) | (lsb & 0xFF);
+        return ((msb & 0xff) << 8) | (lsb & 0xff);
     }
 }
 exports.default = VL53L0X;

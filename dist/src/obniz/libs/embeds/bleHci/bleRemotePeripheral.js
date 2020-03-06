@@ -124,7 +124,8 @@ class BleRemotePeripheral {
      */
     connect(setting) {
         this._connectSetting = setting || {};
-        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.autoDiscovery =
+            this._connectSetting.autoDiscovery !== false;
         this.obnizBle.scan.end();
         this.obnizBle.centralBindings.connect(this.address);
     }

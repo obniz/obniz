@@ -6,7 +6,9 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface InfraredLEDOptions {
   anode: number;
@@ -14,7 +16,6 @@ export interface InfraredLEDOptions {
 }
 
 export default class InfraredLED implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "InfraredLED",
@@ -50,7 +51,7 @@ export default class InfraredLED implements ObnizPartsInterface {
       this.io_cathode.output(false);
     }
     this.pwm = this.obniz.getFreePwm();
-    this.pwm.start({io: this.params.anode});
+    this.pwm.start({ io: this.params.anode });
     this.pwm.freq(38000);
     this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
   }

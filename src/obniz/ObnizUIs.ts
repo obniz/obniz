@@ -3,7 +3,7 @@
  * @module ObnizCore
  */
 
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 import ObnizSystemMethods from "./ObnizSystemMethods";
 
 export default class ObnizUIs extends ObnizSystemMethods {
@@ -52,13 +52,10 @@ export default class ObnizUIs extends ObnizSystemMethods {
         this.error("invalid obniz id");
       } else {
         const filled: any = _ReadCookie("obniz-last-used") || "";
-        this.prompt(
-          filled,
-          (obnizid: any) => {
-            this.id = obnizid;
-            this.wsconnect(desired_server);
-          },
-        );
+        this.prompt(filled, (obnizid: any) => {
+          this.id = obnizid;
+          this.wsconnect(desired_server);
+        });
       }
       return;
     }
@@ -83,7 +80,9 @@ export default class ObnizUIs extends ObnizSystemMethods {
       return;
     }
     const loaderDom: any = document.querySelector("#loader");
-    const debugDom: any = document.querySelector("#" + this.options.debug_dom_id);
+    const debugDom: any = document.querySelector(
+      "#" + this.options.debug_dom_id,
+    );
     let statusDom: any = document.querySelector(
       "#" + this.options.debug_dom_id + " #online-status",
     );
@@ -95,7 +94,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
       statusDom.style.textAlign = "center";
       debugDom.insertBefore(statusDom, debugDom.firstChild);
     }
-    return {loaderDom, debugDom, statusDom};
+    return { loaderDom, debugDom, statusDom };
   }
 
   /* online offline */

@@ -53,6 +53,7 @@ try {
             window.parent.userAppLoaded(window);
         }
         function showObnizDebugError(err) {
+            // eslint-disable-line
             if (window.parent && window.parent.logger) {
                 window.parent.logger.onObnizError(err);
             }
@@ -89,7 +90,8 @@ for (const path of context.keys()) {
     if (anParts.info) {
         Obniz.PartsRegistrate(anParts);
     }
-    else if (anParts.default.info) { // for ts "export default"
+    else if (anParts.default.info) {
+        // for ts "export default"
         Obniz.PartsRegistrate(anParts.default);
     }
 }

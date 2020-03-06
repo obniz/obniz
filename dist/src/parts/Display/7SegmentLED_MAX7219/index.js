@@ -87,7 +87,7 @@ class _7SegmentLED_MAX7219 {
         }
     }
     encodeBCD(decimal, dp) {
-        const dpreg = (dp === true) ? 0x80 : 0x00;
+        const dpreg = dp === true ? 0x80 : 0x00;
         if (decimal >= 0 && decimal <= 9) {
             return decimal | dpreg;
         }

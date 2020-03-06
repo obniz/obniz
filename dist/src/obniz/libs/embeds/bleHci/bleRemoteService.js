@@ -163,14 +163,12 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      * @param characteristic
      */
-    ondiscovercharacteristic(characteristic) {
-    }
+    ondiscovercharacteristic(characteristic) { }
     /**
      * @ignore
      * @param characteristics
      */
-    ondiscovercharacteristicfinished(characteristics) {
-    }
+    ondiscovercharacteristicfinished(characteristics) { }
 }
 exports.default = BleRemoteService;
 

@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import {UUID} from "./bleTypes";
+import { UUID } from "./bleTypes";
 
 const BleHelper: any = {
   uuidFilter(uuid: string | UUID): UUID {

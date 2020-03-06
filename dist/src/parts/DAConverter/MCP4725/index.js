@@ -29,15 +29,15 @@ class MCP4725 {
         this._vcc_voltage = voltage;
     }
     setVoltage(voltage, writeEEPROM = false) {
-        if (voltage > (this._vcc_voltage)) {
+        if (voltage > this._vcc_voltage) {
             voltage = this._vcc_voltage;
         }
         else if (voltage < 0) {
             voltage = 0;
         }
-        const mv = Math.round(voltage / this._vcc_voltage * (4096 - 1));
+        const mv = Math.round((voltage / this._vcc_voltage) * (4096 - 1));
         const hbits = mv >> 4;
-        const lbits = (mv & 0x0F) << 4;
+        const lbits = (mv & 0x0f) << 4;
         if (writeEEPROM) {
             this.i2c.write(this.address, [this.cmd.WRITEDACEEPROM, hbits, lbits]);
         }

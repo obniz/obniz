@@ -3,7 +3,7 @@
  * @module ObnizCore
  */
 
-import {M5StickC} from "./libs/hw/m5stickc";
+import { M5StickC } from "./libs/hw/m5stickc";
 import ObnizDevice from "./ObnizDevice";
 
 /**
@@ -30,7 +30,6 @@ import ObnizDevice from "./ObnizDevice";
  *
  */
 class Obniz extends ObnizDevice {
-
   /**
    * M5StickC device
    */
@@ -43,7 +42,6 @@ class Obniz extends ObnizDevice {
   public static get api() {
     return ObnizApi;
   }
-
 }
 
 export = Obniz;
@@ -57,7 +55,8 @@ try {
       window.parent.userAppLoaded(window);
     }
 
-    function showObnizDebugError(err: any) {// eslint-disable-line
+    function showObnizDebugError(err: any) {
+      // eslint-disable-line
       if (window.parent && window.parent.logger) {
         window.parent.logger.onObnizError(err);
       }
@@ -77,7 +76,7 @@ try {
 /**
  * @ignore
  */
-import requireContext = require( "./libs/webpackReplace/require-context");
+import requireContext = require("./libs/webpackReplace/require-context");
 import ObnizApi from "./ObnizApi";
 
 require.context = requireContext.default;
@@ -94,7 +93,8 @@ for (const path of context.keys()) {
   const anParts: any = context(path);
   if (anParts.info) {
     Obniz.PartsRegistrate(anParts);
-  } else if (anParts.default.info) { // for ts "export default"
+  } else if (anParts.default.info) {
+    // for ts "export default"
     Obniz.PartsRegistrate(anParts.default);
   }
 }

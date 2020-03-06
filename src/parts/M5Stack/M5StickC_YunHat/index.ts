@@ -6,16 +6,16 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import ObnizUtil from "../../../obniz/libs/utils/util";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstractOptions} from "../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
+import { I2cPartsAbstractOptions } from "../../i2cParts";
 import BMP280 from "../../PressureSensor/BMP280";
 import SHT20 from "../../TemperatureSensor/i2c/SHT20";
 
-export interface M5StickC_YunHatOptions extends I2cPartsAbstractOptions {
-}
+export interface M5StickC_YunHatOptions extends I2cPartsAbstractOptions {}
 
 export default class M5StickC_YunHat implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "M5StickC_YunHat",
@@ -56,7 +56,7 @@ export default class M5StickC_YunHat implements ObnizPartsInterface {
     G = Math.floor(G * 255);
     B = Math.floor(B * 255);
 
-    return {red: R, green: G, blue: B};
+    return { red: R, green: G, blue: B };
   }
 
   public requiredKeys: string[];
@@ -74,11 +74,7 @@ export default class M5StickC_YunHat implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = [
-      "sda",
-      "scl",
-      "i2c",
-    ];
+    this.keys = ["sda", "scl", "i2c"];
 
     this.ioKeys = ["sda", "scl"];
   }
@@ -90,8 +86,8 @@ export default class M5StickC_YunHat implements ObnizPartsInterface {
     this.params.mode = "master"; // for i2c
     this.params.pull = "3v"; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
-    this.sht20 = obniz.wired("SHT20", {i2c: this.i2c});
-    this.bmp280 = obniz.wired("BMP280", {i2c: this.i2c});
+    this.sht20 = obniz.wired("SHT20", { i2c: this.i2c });
+    this.bmp280 = obniz.wired("BMP280", { i2c: this.i2c });
     this.bmp280.applyCalibration();
   }
 
@@ -134,14 +130,24 @@ export default class M5StickC_YunHat implements ObnizPartsInterface {
   public rgbs(array: Array<[number, number, number]>) {
     if (array.length <= this.LED_LEN) {
       array.forEach((value, index) => {
-        this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
+        this.i2c.write(0x38, [
+          0x01,
+          index,
+          Math.floor(value[0]),
+          Math.floor(value[1]),
+          Math.floor(value[2]),
+        ]);
       });
     }
   }
 
   public hsvs(array: Array<[number, number, number]>) {
     const leds: Array<[number, number, number]> = array.map((value, index) => {
-      const color = M5StickC_YunHat._generateHsvColor(value[0], value[1], value[2]);
+      const color = M5StickC_YunHat._generateHsvColor(
+        value[0],
+        value[1],
+        value[2],
+      );
       return [color.red, color.green, color.blue];
     });
     this.rgbs(leds);
@@ -150,7 +156,7 @@ export default class M5StickC_YunHat implements ObnizPartsInterface {
   public async getLightWait(): Promise<number> {
     this.i2c.write(0x38, [0x00]);
     const d = await this.i2c.readWait(0x38, 2);
-    return d[1] << 8 | d[0];
+    return (d[1] << 8) | d[0];
   }
 
   public async getTempWait(): Promise<number> {

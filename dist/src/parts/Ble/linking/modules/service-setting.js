@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - service-setting.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-10-24
-* ---------------------------------------------------------------- */
+ * node-linking - service-setting.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceSetting {
@@ -57,8 +57,7 @@ class LinkingServiceSetting {
                 parameters.push(this._parseParameter(pid, pvalue_buf));
             }
         }
-        catch (e) {
-        }
+        catch (e) { }
         return parameters;
     }
     _parseParameter(pid, buf) {
@@ -339,8 +338,8 @@ class LinkingServiceSetting {
         };
     }
     /* ------------------------------------------------------------------
-      * Method: createRequest(message_name, params)
-      * ---------------------------------------------------------------- */
+     * Method: createRequest(message_name, params)
+     * ---------------------------------------------------------------- */
     createRequest(message_name, params) {
         if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
             return null;
@@ -367,7 +366,7 @@ class LinkingServiceSetting {
         return Buffer.concat(buf_list);
     }
     _createPayload(message_name, params) {
-        if (!params || typeof (params) !== "object") {
+        if (!params || typeof params !== "object") {
             params = {};
         }
         if (message_name === "GET_APP_VERSION") {
@@ -407,7 +406,7 @@ class LinkingServiceSetting {
     _createPayloadGetAppVersion(params) {
         let pnum = 0;
         let app_name = null;
-        if (("AppName" in params) && typeof (params.AppName) === "string") {
+        if ("AppName" in params && typeof params.AppName === "string") {
             app_name = params.AppName;
             pnum++;
         }
@@ -430,7 +429,7 @@ class LinkingServiceSetting {
     _createPayloadConfirmInstallApp(params) {
         let pnum = 0;
         let app_name = null;
-        if (("AppName" in params) && typeof (params.AppName) === "string") {
+        if ("AppName" in params && typeof params.AppName === "string") {
             app_name = params.AppName;
             pnum++;
         }
@@ -438,12 +437,14 @@ class LinkingServiceSetting {
             return null;
         }
         let file_ver = null;
-        if (("FileVer" in params) && typeof (params.FileVer) === "string") {
+        if ("FileVer" in params && typeof params.FileVer === "string") {
             file_ver = params.FileVer;
             pnum++;
         }
         let file_size = null;
-        if (("FileSize" in params) && typeof (params.FileSize) === "number" && file_size % 1 === 0) {
+        if ("FileSize" in params &&
+            typeof params.FileSize === "number" &&
+            file_size % 1 === 0) {
             file_size = params.FileSize;
             pnum++;
         }
@@ -480,7 +481,7 @@ class LinkingServiceSetting {
         let type = null;
         if ("SettingNameType" in params) {
             type = params.SettingNameType;
-            if (typeof (type) === "number") {
+            if (typeof type === "number") {
                 let setting_name = "";
                 for (const name in this._SETTING_NAME_TYPE_MAP) {
                     if (this._SETTING_NAME_TYPE_MAP[name] === type) {
@@ -492,7 +493,7 @@ class LinkingServiceSetting {
                     return null;
                 }
             }
-            else if (typeof (type) === "string") {
+            else if (typeof type === "string") {
                 if (type in this._SETTING_NAME_TYPE_MAP) {
                     type = this._SETTING_NAME_TYPE_MAP[type];
                 }
@@ -521,12 +522,17 @@ class LinkingServiceSetting {
     _createPayloadSelectSettingInformation(params) {
         let pnum = 0;
         let code = null;
-        if (("SettingInformationRequest" in params) && typeof (params.SettingInformationRequest) === "object") {
+        if ("SettingInformationRequest" in params &&
+            typeof params.SettingInformationRequest === "object") {
             const req = params.SettingInformationRequest;
-            if (("requestCode" in req) && typeof (req.requestCode) === "number" && req.requestCode >= 0 && req.requestCode <= 0x02 && req.requestCode % 1 === 0) {
+            if ("requestCode" in req &&
+                typeof req.requestCode === "number" &&
+                req.requestCode >= 0 &&
+                req.requestCode <= 0x02 &&
+                req.requestCode % 1 === 0) {
                 code = req.requestCode;
             }
-            else if (("requestName" in req) && typeof (req.requestName) === "string") {
+            else if ("requestName" in req && typeof req.requestName === "string") {
                 const name = req.requestName;
                 if (name === "SETTING") {
                     code = 0x00;
@@ -557,7 +563,11 @@ class LinkingServiceSetting {
                     const s = params.SettingInformationData[i];
                     let scode = null;
                     let sname = "";
-                    if (("settingCode" in s) && typeof (s.settingCode) === "number" && s.settingCode >= 0x00 && s.settingCode <= 0x02 && s.settingCode % 1 === 0) {
+                    if ("settingCode" in s &&
+                        typeof s.settingCode === "number" &&
+                        s.settingCode >= 0x00 &&
+                        s.settingCode <= 0x02 &&
+                        s.settingCode % 1 === 0) {
                         scode = s.settingCode;
                         if (scode === 0x00) {
                             sname = "LED";
@@ -569,7 +579,7 @@ class LinkingServiceSetting {
                             sname = "Beep";
                         }
                     }
-                    else if (("settingName" in s) && typeof (s.settingName) === "string") {
+                    else if ("settingName" in s && typeof s.settingName === "string") {
                         sname = s.settingName;
                         if (sname === "LED") {
                             scode = 0x00;
@@ -589,9 +599,13 @@ class LinkingServiceSetting {
                     }
                     let cn = null;
                     let cm = null;
-                    if (scode === 0x00) { // LED
+                    if (scode === 0x00) {
+                        // LED
                         if ("colorNumber" in s) {
-                            if (typeof (s.colorNumber) === "number" && s.colorNumber >= 0 && s.colorNumber <= this._device.settings.LED.colorMax && s.colorNumber % 1 === 0) {
+                            if (typeof s.colorNumber === "number" &&
+                                s.colorNumber >= 0 &&
+                                s.colorNumber <= this._device.settings.LED.colorMax &&
+                                s.colorNumber % 1 === 0) {
                                 cn = s.colorNumber;
                             }
                             else {
@@ -605,7 +619,10 @@ class LinkingServiceSetting {
                     }
                     let pn = null;
                     if ("patternNumber" in s) {
-                        if (typeof (s.patternNumber) === "number" && s.patternNumber >= 0 && s.patternNumber <= this._device.settings[sname].patternMax && s.patternNumber % 1 === 0) {
+                        if (typeof s.patternNumber === "number" &&
+                            s.patternNumber >= 0 &&
+                            s.patternNumber <= this._device.settings[sname].patternMax &&
+                            s.patternNumber % 1 === 0) {
                             pn = s.patternNumber;
                         }
                         else {
@@ -618,22 +635,25 @@ class LinkingServiceSetting {
                     const pm = this._device.settings[sname].patternMax;
                     let dur = null;
                     if ("duration" in s) {
-                        if (typeof (s.duration) === "number" && s.duration >= 0 && s.duration <= 0xFF && s.duration % 1 === 0) {
+                        if (typeof s.duration === "number" &&
+                            s.duration >= 0 &&
+                            s.duration <= 0xff &&
+                            s.duration % 1 === 0) {
                             dur = s.duration;
                             if (dur <= 0x05) {
                                 dur = 0x05;
                             }
-                            else if (dur <= 0x0A) {
-                                dur = 0x0A;
+                            else if (dur <= 0x0a) {
+                                dur = 0x0a;
                             }
-                            else if (dur <= 0x1E) {
-                                dur = 0x1E;
+                            else if (dur <= 0x1e) {
+                                dur = 0x1e;
                             }
-                            else if (dur <= 0x3C) {
-                                dur = 0x3C;
+                            else if (dur <= 0x3c) {
+                                dur = 0x3c;
                             }
-                            else if (dur <= 0xB4) {
-                                dur = 0xB4;
+                            else if (dur <= 0xb4) {
+                                dur = 0xb4;
                             }
                         }
                         else {

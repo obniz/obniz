@@ -5,7 +5,7 @@
 import ObnizBLE from "./ble";
 import Builder from "./bleAdvertisementBuilder";
 import BleAdvertisementBuilder from "./bleAdvertisementBuilder";
-import {BleAdvertisementData, BleScanResponseData, UUID} from "./bleTypes";
+import { BleAdvertisementData, BleScanResponseData, UUID } from "./bleTypes";
 
 /**
  * @category Use as Peripheral
@@ -141,11 +141,15 @@ export default class BleAdvertisement {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
 
-  protected advDataBulider(jsonVal: BleAdvertisementData): BleAdvertisementBuilder {
+  protected advDataBulider(
+    jsonVal: BleAdvertisementData,
+  ): BleAdvertisementBuilder {
     return new Builder(jsonVal);
   }
 
-  protected scanRespDataBuilder(json: BleScanResponseData): BleAdvertisementBuilder {
+  protected scanRespDataBuilder(
+    json: BleScanResponseData,
+  ): BleAdvertisementBuilder {
     return new Builder(json);
   }
 }

@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -7,7 +6,6 @@ import qrcode from "../utils/qr";
 import WSCommand from "./WSCommand";
 
 class WSCommandDisplay extends WSCommand {
-
   public module = 8;
 
   public _CommandClear = 0;
@@ -146,11 +144,11 @@ class WSCommandDisplay extends WSCommand {
     }
 
     const schemaData: any = [
-      {uri: "/request/display/clear", onValid: this.clear},
-      {uri: "/request/display/text", onValid: this.text},
-      {uri: "/request/display/raw", onValid: this.raw},
-      {uri: "/request/display/pin_assign", onValid: this.pinName},
-      {uri: "/request/display/qr", onValid: this.qr},
+      { uri: "/request/display/clear", onValid: this.clear },
+      { uri: "/request/display/text", onValid: this.text },
+      { uri: "/request/display/raw", onValid: this.raw },
+      { uri: "/request/display/pin_assign", onValid: this.pinName },
+      { uri: "/request/display/qr", onValid: this.qr },
     ];
     const res: any = this.validateCommandSchema(schemaData, module, "display");
 

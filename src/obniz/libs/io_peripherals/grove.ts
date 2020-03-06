@@ -5,7 +5,7 @@
 
 import Obniz from "../../index";
 import PeripheralAD from "./ad";
-import {DriveType} from "./common";
+import { DriveType } from "./common";
 import PeripheralI2C from "./i2c";
 import PeripheralIO from "./io";
 import PeripheralUART from "./uart";
@@ -17,7 +17,12 @@ export interface PeripheralGroveParams {
   gnd?: number;
 }
 
-export type PeripheralGroveType = "digital" | "analog" | "analog-digital" | "i2c" | "uart";
+export type PeripheralGroveType =
+  | "digital"
+  | "analog"
+  | "analog-digital"
+  | "i2c"
+  | "uart";
 
 /**
  * @category Peripherals
@@ -27,7 +32,12 @@ export default class PeripheralGrove {
   public no: number;
   public used: boolean = false;
   private _params: PeripheralGroveParams;
-  private _current: { type?: PeripheralGroveType, drive?: DriveType, i2c?: PeripheralI2C, uart?: PeripheralUART } = {};
+  private _current: {
+    type?: PeripheralGroveType;
+    drive?: DriveType;
+    i2c?: PeripheralI2C;
+    uart?: PeripheralUART;
+  } = {};
 
   constructor(obniz: Obniz, no: number, params: PeripheralGroveParams) {
     this.Obniz = obniz;
@@ -36,25 +46,43 @@ export default class PeripheralGrove {
     this._reset();
   }
 
-  public getDigital(drive: DriveType = "5v"): { primary?: PeripheralIO, secondary?: PeripheralIO } {
+  public getDigital(
+    drive: DriveType = "5v",
+  ): { primary?: PeripheralIO; secondary?: PeripheralIO } {
     this.useWithType("digital", drive);
-    const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
-    const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
-    return {primary, secondary};
+    const primary = this.Obniz.isValidIO(this._params.pin1)
+      ? this.Obniz.getIO(this._params.pin1)
+      : undefined;
+    const secondary = this.Obniz.isValidIO(this._params.pin2)
+      ? this.Obniz.getIO(this._params.pin2)
+      : undefined;
+    return { primary, secondary };
   }
 
-  public getAnalog(drive: DriveType = "5v"): { primary?: PeripheralAD, secondary?: PeripheralAD } {
+  public getAnalog(
+    drive: DriveType = "5v",
+  ): { primary?: PeripheralAD; secondary?: PeripheralAD } {
     this.useWithType("analog", drive);
-    const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
-    const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
-    return {primary, secondary};
+    const primary = this.Obniz.isValidAD(this._params.pin1)
+      ? this.Obniz.getAD(this._params.pin1)
+      : undefined;
+    const secondary = this.Obniz.isValidAD(this._params.pin2)
+      ? this.Obniz.getAD(this._params.pin2)
+      : undefined;
+    return { primary, secondary };
   }
 
-  public getAnalogDigital(drive: DriveType = "5v"): { analog?: PeripheralAD, digital?: PeripheralIO } {
+  public getAnalogDigital(
+    drive: DriveType = "5v",
+  ): { analog?: PeripheralAD; digital?: PeripheralIO } {
     this.useWithType("analog-digital", drive);
-    const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
-    const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
-    return {analog, digital};
+    const analog = this.Obniz.isValidAD(this._params.pin1)
+      ? this.Obniz.getAD(this._params.pin1)
+      : undefined;
+    const digital = this.Obniz.isValidIO(this._params.pin2)
+      ? this.Obniz.getIO(this._params.pin2)
+      : undefined;
+    return { analog, digital };
   }
 
   public getI2c(frequency: number, drive: DriveType = "5v"): PeripheralI2C {
@@ -73,16 +101,19 @@ export default class PeripheralGrove {
   public getUart(baud: number, drive: DriveType = "5v"): PeripheralUART {
     this.useWithType("uart", drive);
     this._current.uart = this.Obniz.getFreeUart();
-    this._current.uart.start({rx: this._params.pin1, tx: this._params.pin2, baud, drive});
+    this._current.uart.start({
+      rx: this._params.pin1,
+      tx: this._params.pin2,
+      baud,
+      drive,
+    });
     return this._current.uart;
-
   }
 
   /**
    * @ignore
    */
-  public _reset() {
-  }
+  public _reset() {}
 
   public end() {
     this.used = false;
@@ -95,7 +126,6 @@ export default class PeripheralGrove {
     if (this._current.type === "analog") {
       if (this.Obniz.isValidAD(this._params.pin1)) {
         this.Obniz.getAD(this._params.pin1).end();
-
       }
       if (this.Obniz.isValidAD(this._params.pin2)) {
         this.Obniz.getAD(this._params.pin2).end();
@@ -109,7 +139,6 @@ export default class PeripheralGrove {
       // }
     }
     this._current = {};
-
   }
 
   /**
@@ -137,7 +166,5 @@ export default class PeripheralGrove {
     if (this.Obniz.isValidIO(this._params.pin2)) {
       this.Obniz.getIO(this._params.pin2).drive(drive);
     }
-
   }
-
 }

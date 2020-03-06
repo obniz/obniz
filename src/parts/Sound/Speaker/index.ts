@@ -6,7 +6,9 @@
 import Obniz from "../../../obniz";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface SpeakerOptions {
   signal: number;
@@ -14,7 +16,6 @@ export interface SpeakerOptions {
 }
 
 export default class Speaker implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Speaker",
@@ -38,7 +39,7 @@ export default class Speaker implements ObnizPartsInterface {
     this.obniz = obniz;
     this.obniz.setVccGnd(null, this.params.gnd, "5v");
     this.pwm = obniz.getFreePwm();
-    this.pwm.start({io: this.params.signal});
+    this.pwm.start({ io: this.params.signal });
   }
 
   public play(frequency: number) {

@@ -102,13 +102,11 @@ class BleAttributeAbstract {
     /**
      * @ignore
      */
-    read() {
-    }
+    read() { }
     /**
      * @ignore
      */
-    write(data, needResponse) {
-    }
+    write(data, needResponse) { }
     /**
      * @ignore
      */

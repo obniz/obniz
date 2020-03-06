@@ -1,14 +1,14 @@
-import i2cParts, {I2cInfo, I2cPartsAbstractOptions} from "../../i2cParts";
+import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../i2cParts";
 
 import Obniz from "../../../obniz";
-import {DriveType, PullType} from "../../../obniz/libs/io_peripherals/common";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import { DriveType, PullType } from "../../../obniz/libs/io_peripherals/common";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
-export interface AK09916Options extends I2cPartsAbstractOptions {
-}
+export interface AK09916Options extends I2cPartsAbstractOptions {}
 
 export default class AK09916 extends i2cParts implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "AK09916",
@@ -26,18 +26,18 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
 
   private ADDR = 0x0c;
 
-  private _WIA = (0x01);
-  private _HXL = (0x11);
-  private _HXH = (0x12);
-  private _HYL = (0x13);
-  private _HYH = (0x14);
-  private _HZL = (0x15);
-  private _HZH = (0x16);
-  private _ST2 = (0x18);
-  private _CNTL2 = (0x31);
-  private _ASAX = (0x60);
-  private _ASAY = (0x61);
-  private _ASAZ = (0x62);
+  private _WIA = 0x01;
+  private _HXL = 0x11;
+  private _HXH = 0x12;
+  private _HYL = 0x13;
+  private _HYH = 0x14;
+  private _HZL = 0x15;
+  private _HZH = 0x16;
+  private _ST2 = 0x18;
+  private _CNTL2 = 0x31;
+  private _ASAX = 0x60;
+  private _ASAY = 0x61;
+  private _ASAZ = 0x62;
 
   private _MODE_POWER_DOWN = 0b00000000;
   private MODE_SINGLE_MEASURE = 0b00000001;
@@ -76,7 +76,10 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
     // 1000 0000 0001 0000 -4912 uT
     // data[0]下位ビット data[1] 上位ビット
 
-    const raw3: [number, number, number] = (await this.readThreeInt16Wait(this._HXL, "l"));
+    const raw3: [number, number, number] = await this.readThreeInt16Wait(
+      this._HXL,
+      "l",
+    );
 
     this.readWait(this._ST2, 1);
 
@@ -136,6 +139,6 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
 
     this.scale = [scale_x, scale_y, scale_z];
 
-    return {offset: this.offset, scale: this.scale};
+    return { offset: this.offset, scale: this.scale };
   }
 }

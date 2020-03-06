@@ -9,8 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // let debug = require('debug')('att');
-const debug = () => {
-};
+const debug = () => { };
 /* eslint-disable no-unused-vars */
 const events_1 = __importDefault(require("events"));
 /**
@@ -171,8 +170,7 @@ class Gatt extends events_1.default.EventEmitter {
             this.writeAtt(this._currentCommand.buffer);
         }
     }
-    onAclStreamEncryptFail() {
-    }
+    onAclStreamEncryptFail() { }
     onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
         this._aclStream.removeListener("encrypt", this.onAclStreamEncryptBinded);

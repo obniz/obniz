@@ -104,7 +104,6 @@ export default class BleAdvertisementBuilder {
       type = 0x06;
     } else if (uuidData.length === 4) {
       type = 0x04;
-
     } else if (uuidData.length === 2) {
       type = 0x02;
     }

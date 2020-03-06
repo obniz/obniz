@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -189,7 +188,7 @@ class WSCommandBle extends WSCommand {
 
   public centralScanStart(params: any) {
     const schema: any = [
-      {path: "scan.duration", length: 4, type: "int", default: 30},
+      { path: "scan.duration", length: 4, type: "int", default: 30 },
     ];
     const buf: any = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandStartScan, buf);
@@ -208,7 +207,7 @@ class WSCommandBle extends WSCommand {
         required: true,
         endianness: "little",
       },
-      {path: null, length: 1, type: "char", default: false}, // const val
+      { path: null, length: 1, type: "char", default: false }, // const val
     ];
     const buf: any = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandConnect, buf);
@@ -223,7 +222,7 @@ class WSCommandBle extends WSCommand {
         required: true,
         endianness: "little",
       },
-      {path: null, length: 1, type: "char", default: true}, // const val
+      { path: null, length: 1, type: "char", default: true }, // const val
     ];
     const buf: any = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandConnect, buf);
@@ -316,7 +315,7 @@ class WSCommandBle extends WSCommand {
         type: "char",
         default: 1,
       },
-      {path: "write_characteristic.data", length: null, type: "dataArray"},
+      { path: "write_characteristic.data", length: null, type: "dataArray" },
     ];
     const buf: any = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandWriteCharacteristics, buf);
@@ -465,7 +464,7 @@ class WSCommandBle extends WSCommand {
         type: "char",
         default: 1,
       },
-      {path: "write_descriptor.data", length: null, type: "dataArray"},
+      { path: "write_descriptor.data", length: null, type: "dataArray" },
     ];
     const buf: any = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandWriteDescriptor, buf);
@@ -519,13 +518,13 @@ class WSCommandBle extends WSCommand {
     const schema: any = {
       service: {
         command: this._CommandServerAddService,
-        schema: [{path: "uuid", length: 18, type: "uuid", required: true}],
+        schema: [{ path: "uuid", length: 18, type: "uuid", required: true }],
       },
       characteristic: {
         command: this._CommandServerAddCharacteristic,
         schema: [
-          {path: "service_uuid", length: 18, type: "uuid", required: true},
-          {path: "uuid", length: 18, type: "uuid", required: true},
+          { path: "service_uuid", length: 18, type: "uuid", required: true },
+          { path: "uuid", length: 18, type: "uuid", required: true },
           {
             path: "permissions",
             length: 2,
@@ -540,20 +539,20 @@ class WSCommandBle extends WSCommand {
             default: ["write", "read"],
             flags: propFlags,
           },
-          {path: "data", type: "dataArray"},
+          { path: "data", type: "dataArray" },
         ],
       },
       descriptor: {
         command: this._CommandServerAddDescriptor,
         schema: [
-          {path: "service_uuid", length: 18, type: "uuid", required: true},
+          { path: "service_uuid", length: 18, type: "uuid", required: true },
           {
             path: "characteristic_uuid",
             length: 18,
             type: "uuid",
             required: true,
           },
-          {path: "uuid", length: 18, type: "uuid", required: true},
+          { path: "uuid", length: 18, type: "uuid", required: true },
           {
             path: "permissions",
             length: 2,
@@ -561,14 +560,14 @@ class WSCommandBle extends WSCommand {
             default: ["write", "read"],
             flags: permissionFlags,
           },
-          {path: "data", type: "dataArray"},
+          { path: "data", type: "dataArray" },
         ],
       },
       startService: {
         command: this._CommandServerStartStopService,
         schema: [
-          {path: "uuid", length: 18, type: "uuid", required: true},
-          {path: null, length: 1, type: "char", default: 0}, // const val
+          { path: "uuid", length: 18, type: "uuid", required: true },
+          { path: null, length: 1, type: "char", default: 0 }, // const val
         ],
       },
     };
@@ -585,7 +584,7 @@ class WSCommandBle extends WSCommand {
       if (buf.length === 0) {
         return;
       }
-      sendBufs.push({command: schema.service.command, buffer: buf});
+      sendBufs.push({ command: schema.service.command, buffer: buf });
 
       buf = JsonBinaryConverter.createSendBuffer(
         schema.startService.schema,
@@ -622,7 +621,7 @@ class WSCommandBle extends WSCommand {
           if (buf.length === 0) {
             return;
           }
-          sendBufs.push({command: schema.descriptor.command, buffer: buf});
+          sendBufs.push({ command: schema.descriptor.command, buffer: buf });
         }
       }
     }
@@ -645,7 +644,7 @@ class WSCommandBle extends WSCommand {
         type: "uuid",
         required: true,
       },
-      {path: null, length: 1, type: "char", default: 1}, // const val
+      { path: null, length: 1, type: "char", default: 1 }, // const val
     ];
     const buf: any = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerStartStopService, buf);
@@ -688,7 +687,7 @@ class WSCommandBle extends WSCommand {
         type: "uuid",
         required: true,
       },
-      {path: "peripheral.write_characteristic.data", type: "dataArray"},
+      { path: "peripheral.write_characteristic.data", type: "dataArray" },
     ];
     const buf: any = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
@@ -758,7 +757,7 @@ class WSCommandBle extends WSCommand {
         type: "uuid",
         required: true,
       },
-      {path: "peripheral.write_descriptor.data", type: "dataArray"},
+      { path: "peripheral.write_descriptor.data", type: "dataArray" },
     ];
     const buf: any = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
@@ -833,8 +832,8 @@ class WSCommandBle extends WSCommand {
         uri: "/request/ble/central/scan_start",
         onValid: this.centralScanStart,
       },
-      {uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop},
-      {uri: "/request/ble/central/connect", onValid: this.centralConnect},
+      { uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop },
+      { uri: "/request/ble/central/connect", onValid: this.centralConnect },
       {
         uri: "/request/ble/central/disconnect",
         onValid: this.centralDisconnect,
@@ -957,59 +956,59 @@ class WSCommandBle extends WSCommand {
     funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
     funcList[
       this._CommandCharacteristics
-      ] = this.notifyFromBinaryChacateristics.bind(this);
+    ] = this.notifyFromBinaryChacateristics.bind(this);
     funcList[
       this._CommandWriteCharacteristics
-      ] = this.notifyFromBinaryWriteChacateristics.bind(this);
+    ] = this.notifyFromBinaryWriteChacateristics.bind(this);
     funcList[
       this._CommandReadCharacteristics
-      ] = this.notifyFromBinaryReadChacateristics.bind(this);
+    ] = this.notifyFromBinaryReadChacateristics.bind(this);
     funcList[
       this._CommandRegisterNotifyCharacteristic
-      ] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
+    ] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
     funcList[
       this._CommandUnregisterNotifyCharacteristic
-      ] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
+    ] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
     funcList[
       this._CommandNotifyCharacteristic
-      ] = this.notifyFromBinaryNotifyChacateristic.bind(this);
+    ] = this.notifyFromBinaryNotifyChacateristic.bind(this);
     funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(
       this,
     );
     funcList[
       this._CommandWriteDescriptor
-      ] = this.notifyFromBinaryWriteDescriptor.bind(this);
+    ] = this.notifyFromBinaryWriteDescriptor.bind(this);
     funcList[
       this._CommandReadDescriptor
-      ] = this.notifyFromBinaryReadDescriptor.bind(this);
+    ] = this.notifyFromBinaryReadDescriptor.bind(this);
 
     funcList[
       this._CommandServerNotifyConnect
-      ] = this.notifyFromBinaryServerConnectionState.bind(this);
+    ] = this.notifyFromBinaryServerConnectionState.bind(this);
     funcList[
       this._CommandServerReadCharavteristicValue
-      ] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
+    ] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
     funcList[
       this._CommandServerWriteCharavteristicValue
-      ] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
+    ] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
     funcList[
       this._CommandServerNotifyReadCharavteristicValue
-      ] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
+    ] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
     funcList[
       this._CommandServerNotifyWriteCharavteristicValue
-      ] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
+    ] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
     funcList[
       this._CommandServerReadDescriptorValue
-      ] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
+    ] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
     funcList[
       this._CommandServerWriteDescriptorValue
-      ] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
+    ] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
     funcList[
       this._CommandServerNotifyReadDescriptorValue
-      ] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
+    ] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
     funcList[
       this._CommandServerNotifyWriteDescriptorValue
-      ] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
+    ] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
 
     funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(
       this,
@@ -1031,7 +1030,7 @@ class WSCommandBle extends WSCommand {
           length: 1,
           enum: this._CommandScanResultsEvet,
         },
-        {name: "address", type: "hex", length: 6, endianness: "little"},
+        { name: "address", type: "hex", length: 6, endianness: "little" },
         {
           name: "device_type",
           type: "enum",
@@ -1050,12 +1049,12 @@ class WSCommandBle extends WSCommand {
           length: 1,
           enum: this._CommandScanResultsBleEvent,
         },
-        {name: "rssi", type: "signed number", length: 4},
-        {name: "adv_data", type: "dataArray", length: 31 * 2},
-        {name: "flag", type: "number", length: 4},
-        {name: "num_response", type: "number", length: 4},
-        {name: "advertise_length", type: "number", length: 1},
-        {name: "scan_response_length", type: "number", length: 1},
+        { name: "rssi", type: "signed number", length: 4 },
+        { name: "adv_data", type: "dataArray", length: 31 * 2 },
+        { name: "flag", type: "number", length: 4 },
+        { name: "num_response", type: "number", length: 4 },
+        { name: "advertise_length", type: "number", length: 1 },
+        { name: "scan_response_length", type: "number", length: 1 },
       ];
 
       const results: any = JsonBinaryConverter.convertFromBinaryToJson(
@@ -1086,12 +1085,12 @@ class WSCommandBle extends WSCommand {
   public notifyFromBinaryConnect(objToSend: any, payload?: any) {
     if (payload.length === 7) {
       const schema: any = [
-        {name: "address", type: "hex", length: 6, endianness: "little"},
+        { name: "address", type: "hex", length: 6, endianness: "little" },
         {
           name: "status",
           type: "enum",
           length: 1,
-          enum: {connected: 0, disconnected: 1},
+          enum: { connected: 0, disconnected: 1 },
         },
       ];
 
@@ -1105,11 +1104,14 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryServices(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
 
     if (results.service_uuid !== null) {
       this._addRowForPath(objToSend, "ble.get_service_result", results);
@@ -1121,9 +1123,9 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryChacateristics(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
       {
         name: "properties",
         type: "enum",
@@ -1133,7 +1135,10 @@ class WSCommandBle extends WSCommand {
       },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
 
     if (results.characteristic_uuid !== null) {
       this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
@@ -1150,14 +1155,17 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryReadChacateristics(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "result", type: "int", length: 1 },
+      { name: "data", type: "dataArray", length: null },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result =
       results.result === this._commandResults.success ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
@@ -1165,27 +1173,36 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryWriteChacateristics(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "result", type: "int", length: 1 },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result =
       results.result === this._commandResults.success ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
   }
 
-  public notifyFromBinaryRegisterNotifyChacateristic(objToSend: any, payload?: any) {
+  public notifyFromBinaryRegisterNotifyChacateristic(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "result", type: "int", length: 1 },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result =
       results.result === this._commandResults.success ? "success" : "failed";
     this._addRowForPath(
@@ -1195,15 +1212,21 @@ class WSCommandBle extends WSCommand {
     );
   }
 
-  public notifyFromBinaryUnregisterNotifyChacateristic(objToSend: any, payload?: any) {
+  public notifyFromBinaryUnregisterNotifyChacateristic(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "result", type: "int", length: 1 },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result =
       results.result === this._commandResults.success ? "success" : "failed";
     this._addRowForPath(
@@ -1215,27 +1238,33 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryNotifyChacateristic(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "is_notify", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "is_notify", type: "int", length: 1 },
+      { name: "data", type: "dataArray", length: null },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.is_notify = results.is_notify === 1;
     this._addRowForPath(objToSend, "ble.notify_characteristic", results);
   }
 
   public notifyFromBinaryDescriptors(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
 
     if (results.descriptor_uuid !== null) {
       this._addRowForPath(objToSend, "ble.get_descriptor_result", results);
@@ -1251,15 +1280,18 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryReadDescriptor(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
+      { name: "result", type: "int", length: 1 },
+      { name: "data", type: "dataArray", length: null },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result =
       results.result === this._commandResults.success ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
@@ -1267,14 +1299,17 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryWriteDescriptor(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
+      { name: "result", type: "int", length: 1 },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result =
       results.result === this._commandResults.success ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
@@ -1282,27 +1317,36 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryServerConnectionState(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
       {
         name: "status",
         type: "enum",
         length: 1,
-        enum: {connected: 1, disconnected: 0},
+        enum: { connected: 1, disconnected: 0 },
       },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     this._addRowForPath(objToSend, "ble.peripheral.connection_status", results);
   }
 
-  public notifyFromBinaryServerWriteCharavteristicValue(objToSend: any, payload?: any) {
+  public notifyFromBinaryServerWriteCharavteristicValue(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "result", type: "int", length: 1 },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result =
       results.result === this._commandResults.success ? "success" : "failed";
     this._addRowForPath(
@@ -1312,14 +1356,20 @@ class WSCommandBle extends WSCommand {
     );
   }
 
-  public notifyFromBinaryServerReadCharavteristicValue(objToSend: any, payload?: any) {
+  public notifyFromBinaryServerReadCharavteristicValue(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null},
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "data", type: "dataArray", length: null },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result = "success"; // always success
     this._addRowForPath(
       objToSend,
@@ -1328,14 +1378,20 @@ class WSCommandBle extends WSCommand {
     );
   }
 
-  public notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend: any, payload?: any) {
+  public notifyFromBinaryServerNotifyReadCharavteristicValue(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     this._addRowForPath(
       objToSend,
       "ble.peripheral.notify_read_characteristic",
@@ -1343,15 +1399,21 @@ class WSCommandBle extends WSCommand {
     );
   }
 
-  public notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend: any, payload?: any) {
+  public notifyFromBinaryServerNotifyWriteCharavteristicValue(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "data", type: "dataArray", length: null },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     this._addRowForPath(
       objToSend,
       "ble.peripheral.notify_write_characteristic",
@@ -1359,15 +1421,21 @@ class WSCommandBle extends WSCommand {
     );
   }
 
-  public notifyFromBinaryServerReadDescriptorValue(objToSend: any, payload?: any) {
+  public notifyFromBinaryServerReadDescriptorValue(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null},
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
+      { name: "data", type: "dataArray", length: null },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result = "success"; // always success
     this._addRowForPath(
       objToSend,
@@ -1376,15 +1444,21 @@ class WSCommandBle extends WSCommand {
     );
   }
 
-  public notifyFromBinaryServerWriteDescriptorValue(objToSend: any, payload?: any) {
+  public notifyFromBinaryServerWriteDescriptorValue(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
+      { name: "result", type: "int", length: 1 },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     results.result =
       results.result === this._commandResults.success ? "success" : "failed";
     this._addRowForPath(
@@ -1394,15 +1468,21 @@ class WSCommandBle extends WSCommand {
     );
   }
 
-  public notifyFromBinaryServerNotifyReadDescriptorValue(objToSend: any, payload?: any) {
+  public notifyFromBinaryServerNotifyReadDescriptorValue(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     this._addRowForPath(
       objToSend,
       "ble.peripheral.notify_read_descriptor",
@@ -1410,16 +1490,22 @@ class WSCommandBle extends WSCommand {
     );
   }
 
-  public notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend: any, payload?: any) {
+  public notifyFromBinaryServerNotifyWriteDescriptorValue(
+    objToSend: any,
+    payload?: any,
+  ) {
     const schema: any = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null},
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
+      { name: "data", type: "dataArray", length: null },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
     this._addRowForPath(
       objToSend,
       "ble.peripheral.notify_write_descriptor",
@@ -1429,16 +1515,19 @@ class WSCommandBle extends WSCommand {
 
   public notifyFromBinaryError(objToSend: any, payload?: any) {
     const schema: any = [
-      {name: "module_error_code", type: "char", length: 1},
-      {name: "error_code", type: "char", length: 1},
-      {name: "function_code", type: "char", length: 1},
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
+      { name: "module_error_code", type: "char", length: 1 },
+      { name: "error_code", type: "char", length: 1 },
+      { name: "function_code", type: "char", length: 1 },
+      { name: "address", type: "hex", length: 6, endianness: "little" },
+      { name: "service_uuid", type: "uuid", length: this.uuidLength },
+      { name: "characteristic_uuid", type: "uuid", length: this.uuidLength },
+      { name: "descriptor_uuid", type: "uuid", length: this.uuidLength },
     ];
 
-    const results: any = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    const results: any = JsonBinaryConverter.convertFromBinaryToJson(
+      schema,
+      payload,
+    );
 
     const errorMessage: any = {
       0x00: "no error",

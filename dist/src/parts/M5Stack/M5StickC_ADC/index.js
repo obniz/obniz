@@ -15,11 +15,11 @@ class M5StickC_ADC {
             MODE_MASK: 0x10,
             MODE_CONTIN: 0x00,
             MODE_SINGLE: 0x10,
-            DR_MASK: 0x0C,
+            DR_MASK: 0x0c,
             DR_128SPS: 0x00,
             DR_32SPS: 0x04,
             DR_16SPS: 0x08,
-            DR_8SPS: 0x0C,
+            DR_8SPS: 0x0c,
             PGA_MASK: 0x03,
             PGA_1: 0x00,
             PGA_2: 0x01,
@@ -40,9 +40,9 @@ class M5StickC_ADC {
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda)
-            && !this.obniz.isValidIO(this.params.scl)
-            && !this.params.i2c) {
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
                 this.params.sda = hatI2c.sda;
@@ -61,7 +61,7 @@ class M5StickC_ADC {
     }
     async getVoltageWait() {
         const raw = await this.getWait();
-        const voltage = raw * 3.3 / (this.minCode) * 4;
+        const voltage = ((raw * 3.3) / this.minCode) * 4;
         return voltage;
     }
     setRate(dataRate) {
@@ -121,7 +121,7 @@ class M5StickC_ADC {
         this.i2c.write(this.address, [this.config]);
         await this.obniz.wait(this.conversionDelay);
         const ret = await this.i2c.readWait(this.address, 2);
-        return ((ret[0] << 8) | ret[1]);
+        return (ret[0] << 8) | ret[1];
     }
     updateConfig() {
         this.config = 0x00;

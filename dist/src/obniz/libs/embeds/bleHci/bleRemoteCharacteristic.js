@@ -197,8 +197,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      */
     unregisterNotify() {
-        this.onnotify = () => {
-        };
+        this.onnotify = () => { };
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, false);
     }
     /**

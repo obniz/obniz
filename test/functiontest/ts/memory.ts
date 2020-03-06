@@ -1,4 +1,3 @@
-
 /* tslint:disable:class-name max-classes-per-file */
 
 import Obniz from "../../../dist/src/obniz/index";

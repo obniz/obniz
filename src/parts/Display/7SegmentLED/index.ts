@@ -5,7 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface _7SegmentLEDOptions {
   a: number;
@@ -21,7 +23,6 @@ export interface _7SegmentLEDOptions {
 }
 
 class _7SegmentLED implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "7SegmentLED",

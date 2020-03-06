@@ -50,7 +50,11 @@ class NobleBindings extends events.EventEmitter {
     this._gap = new Gap(this._hci);
   }
 
-  public startScanning(serviceUuids: any, allowDuplicates: any, activeScan: boolean) {
+  public startScanning(
+    serviceUuids: any,
+    allowDuplicates: any,
+    activeScan: boolean,
+  ) {
     this._scanServiceUuids = serviceUuids || [];
 
     this._gap.startScanning(allowDuplicates, activeScan);
@@ -138,7 +142,14 @@ class NobleBindings extends events.EventEmitter {
     this.emit("scanStop");
   }
 
-  public onDiscover(status: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any) {
+  public onDiscover(
+    status: any,
+    address?: any,
+    addressType?: any,
+    connectable?: any,
+    advertisement?: any,
+    rssi?: any,
+  ) {
     if (this._scanServiceUuids === undefined) {
       return;
     }
@@ -263,7 +274,8 @@ class NobleBindings extends events.EventEmitter {
       this._gatts[handle].exchangeMtu(256);
     } else {
       uuid = this._pendingConnectionUuid;
-      let statusMessage: any = Hci.STATUS_MAPPER[status] || "HCI Error: Unknown";
+      let statusMessage: any =
+        Hci.STATUS_MAPPER[status] || "HCI Error: Unknown";
       const errorCode: any = " (0x" + status.toString(16) + ")";
       statusMessage = statusMessage + errorCode;
       error = new Error(statusMessage);
@@ -285,7 +297,12 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onLeConnUpdateComplete(handle: any, interval?: any, latency?: any, supervisionTimeout?: any) {
+  public onLeConnUpdateComplete(
+    handle: any,
+    interval?: any,
+    latency?: any,
+    supervisionTimeout?: any,
+  ) {
     // no-op
   }
 
@@ -322,8 +339,7 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onMtu(address: any, mtu?: any) {
-  }
+  public onMtu(address: any, mtu?: any) {}
 
   public onRssiRead(handle: any, rssi?: any) {
     this.emit("rssiUpdate", this._handles[handle], rssi);
@@ -357,7 +373,11 @@ class NobleBindings extends events.EventEmitter {
     this.emit("servicesDiscover", uuid, serviceUuids);
   }
 
-  public discoverIncludedServices(peripheralUuid: any, serviceUuid: any, serviceUuids: any) {
+  public discoverIncludedServices(
+    peripheralUuid: any,
+    serviceUuid: any,
+    serviceUuids: any,
+  ) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -368,7 +388,11 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onIncludedServicesDiscovered(address: any, serviceUuid?: any, includedServiceUuids?: any) {
+  public onIncludedServicesDiscovered(
+    address: any,
+    serviceUuid?: any,
+    includedServiceUuids?: any,
+  ) {
     const uuid: any = address
       .split(":")
       .join("")
@@ -382,7 +406,11 @@ class NobleBindings extends events.EventEmitter {
     );
   }
 
-  public discoverCharacteristics(peripheralUuid: any, serviceUuid: any, characteristicUuids?: any) {
+  public discoverCharacteristics(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuids?: any,
+  ) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -393,7 +421,11 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onCharacteristicsDiscovered(address: any, serviceUuid?: any, characteristics?: any) {
+  public onCharacteristicsDiscovered(
+    address: any,
+    serviceUuid?: any,
+    characteristics?: any,
+  ) {
     const uuid: any = address
       .split(":")
       .join("")
@@ -413,7 +445,13 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onRead(address: any, serviceUuid?: any, characteristicUuid?: any, data?: any, isSuccess?: any) {
+  public onRead(
+    address: any,
+    serviceUuid?: any,
+    characteristicUuid?: any,
+    data?: any,
+    isSuccess?: any,
+  ) {
     const uuid: any = address
       .split(":")
       .join("")
@@ -447,7 +485,12 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onWrite(address: any, serviceUuid?: any, characteristicUuid?: any, isSuccess?: any) {
+  public onWrite(
+    address: any,
+    serviceUuid?: any,
+    characteristicUuid?: any,
+    isSuccess?: any,
+  ) {
     const uuid: any = address
       .split(":")
       .join("")
@@ -456,7 +499,12 @@ class NobleBindings extends events.EventEmitter {
     this.emit("write", uuid, serviceUuid, characteristicUuid, isSuccess);
   }
 
-  public broadcast(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, broadcast: any) {
+  public broadcast(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuid: any,
+    broadcast: any,
+  ) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -467,7 +515,12 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onBroadcast(address: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
+  public onBroadcast(
+    address: any,
+    serviceUuid?: any,
+    characteristicUuid?: any,
+    state?: any,
+  ) {
     const uuid: any = address
       .split(":")
       .join("")
@@ -476,7 +529,12 @@ class NobleBindings extends events.EventEmitter {
     this.emit("broadcast", uuid, serviceUuid, characteristicUuid, state);
   }
 
-  public notify(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, notify: any) {
+  public notify(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuid: any,
+    notify: any,
+  ) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -487,7 +545,12 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onNotify(address: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
+  public onNotify(
+    address: any,
+    serviceUuid?: any,
+    characteristicUuid?: any,
+    state?: any,
+  ) {
     const uuid: any = address
       .split(":")
       .join("")
@@ -496,7 +559,12 @@ class NobleBindings extends events.EventEmitter {
     this.emit("notify", uuid, serviceUuid, characteristicUuid, state);
   }
 
-  public onNotification(address: any, serviceUuid?: any, characteristicUuid?: any, data?: any) {
+  public onNotification(
+    address: any,
+    serviceUuid?: any,
+    characteristicUuid?: any,
+    data?: any,
+  ) {
     const uuid: any = address
       .split(":")
       .join("")
@@ -505,7 +573,11 @@ class NobleBindings extends events.EventEmitter {
     this.emit("read", uuid, serviceUuid, characteristicUuid, data, true, true);
   }
 
-  public discoverDescriptors(peripheralUuid: any, serviceUuid: any, characteristicUuid: any) {
+  public discoverDescriptors(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuid: any,
+  ) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -536,7 +608,12 @@ class NobleBindings extends events.EventEmitter {
     );
   }
 
-  public readValue(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
+  public readValue(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuid: any,
+    descriptorUuid: any,
+  ) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -630,7 +707,12 @@ class NobleBindings extends events.EventEmitter {
     this.emit("handleRead", uuid, handle, data);
   }
 
-  public writeHandle(peripheralUuid: any, attHandle: any, data: any, withoutResponse: any) {
+  public writeHandle(
+    peripheralUuid: any,
+    attHandle: any,
+    data: any,
+    withoutResponse: any,
+  ) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 

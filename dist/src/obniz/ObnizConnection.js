@@ -42,7 +42,8 @@ class ObnizConnection {
         };
         if (this.options.binary) {
             this.wscommand = this.constructor.WSCommand;
-            const classes = this.constructor.WSCommand.CommandClasses;
+            const classes = this.constructor
+                .WSCommand.CommandClasses;
             this.wscommands = [];
             for (const class_name in classes) {
                 this.wscommands.push(new classes[class_name]({
@@ -603,8 +604,7 @@ class ObnizConnection {
             this.wsconnect(server);
         }
     }
-    handleSystemCommand(wsObj) {
-    }
+    handleSystemCommand(wsObj) { }
     binary2Json(binary) {
         let data = new Uint8Array(binary);
         const json = [];

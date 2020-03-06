@@ -9,8 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // var debug = require('debug')('gatt');
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(require("events"));
 /* eslint-disable no-unused-vars */
 /**

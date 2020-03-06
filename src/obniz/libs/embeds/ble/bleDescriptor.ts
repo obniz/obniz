@@ -34,7 +34,7 @@ export default class BleDescriptor extends BleAttributeAbstract {
   }
 
   public removePermission(param: any) {
-    this.permissions = this.permissions.filter ((elm: any ) => {
+    this.permissions = this.permissions.filter((elm: any) => {
       return elm !== param;
     });
   }

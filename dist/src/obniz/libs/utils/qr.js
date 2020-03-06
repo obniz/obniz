@@ -144,11 +144,11 @@ const _qrcode = (() => {
             const bits = QRUtil.getBCHTypeNumber(_typeNumber);
             for (let i = 0; i < 18; i += 1) {
                 const mod = !test && ((bits >> i) & 1) === 1;
-                _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+                _modules[Math.floor(i / 3)][(i % 3) + _moduleCount - 8 - 3] = mod;
             }
             for (let i = 0; i < 18; i += 1) {
                 const mod = !test && ((bits >> i) & 1) === 1;
-                _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+                _modules[(i % 3) + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
             }
         };
         const setupTypeInfo = (test, maskPattern) => {
@@ -637,15 +637,15 @@ const _qrcode = (() => {
                     };
                 case QRMaskPattern.PATTERN101:
                     return (i, j) => {
-                        return (i * j) % 2 + (i * j) % 3 === 0;
+                        return ((i * j) % 2) + ((i * j) % 3) === 0;
                     };
                 case QRMaskPattern.PATTERN110:
                     return (i, j) => {
-                        return ((i * j) % 2 + (i * j) % 3) % 2 === 0;
+                        return (((i * j) % 2) + ((i * j) % 3)) % 2 === 0;
                     };
                 case QRMaskPattern.PATTERN111:
                     return (i, j) => {
-                        return ((i * j) % 3 + (i + j) % 2) % 2 === 0;
+                        return (((i * j) % 3) + ((i + j) % 2)) % 2 === 0;
                     };
                 default:
                     throw new Error("bad maskPattern:" + maskPattern);
@@ -794,7 +794,7 @@ const _qrcode = (() => {
                     }
                 }
             }
-            const ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+            const ratio = Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) / 5;
             lostPoint += ratio * 10;
             return lostPoint;
         };
@@ -1154,7 +1154,7 @@ const _qrcode = (() => {
         };
         _this.getAt = (index) => {
             const bufIndex = Math.floor(index / 8);
-            return ((_buffer[bufIndex] >>> (7 - index % 8)) & 1) === 1;
+            return ((_buffer[bufIndex] >>> (7 - (index % 8))) & 1) === 1;
         };
         _this.put = (num, length) => {
             for (let i = 0; i < length; i += 1) {
@@ -1170,7 +1170,7 @@ const _qrcode = (() => {
                 _buffer.push(0);
             }
             if (bit) {
-                _buffer[bufIndex] |= 0x80 >>> (_length % 8);
+                _buffer[bufIndex] |= 0x80 >>> _length % 8;
             }
             _length += 1;
         };
@@ -1445,7 +1445,7 @@ const _qrcode = (() => {
             }
             if (_length % 3 !== 0) {
                 // padding
-                const padlen = 3 - _length % 3;
+                const padlen = 3 - (_length % 3);
                 for (let i = 0; i < padlen; i += 1) {
                     _base64 += "=";
                 }

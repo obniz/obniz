@@ -6,7 +6,9 @@
 import Obniz from "../../../../obniz";
 import PeripheralSPI from "../../../../obniz/libs/io_peripherals/spi";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../../obniz/ObnizPartsInterface";
 
 export interface ADT7310Options {
   vcc: number;
@@ -17,7 +19,6 @@ export interface ADT7310Options {
 }
 
 export default class ADT7310 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "ADT7310",

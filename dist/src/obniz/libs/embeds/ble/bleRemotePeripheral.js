@@ -288,18 +288,12 @@ class BleRemotePeripheral {
         // eslint-disable-next-line no-unused-vars
         const descriptors = ArrayFlat(descriptorsNest);
     }
-    onconnect() {
-    }
-    ondisconnect() {
-    }
-    ondiscoverservice(child) {
-    }
-    ondiscoverservicefinished(children) {
-    }
-    ondiscover() {
-    }
-    ondiscoverfinished() {
-    }
+    onconnect() { }
+    ondisconnect() { }
+    ondiscoverservice(child) { }
+    ondiscoverservicefinished(children) { }
+    ondiscover() { }
+    ondiscoverfinished() { }
     async notifyFromServer(notifyName, params) {
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
@@ -337,8 +331,7 @@ class BleRemotePeripheral {
             }
         }
     }
-    onerror() {
-    }
+    onerror() { }
 }
 exports.default = BleRemotePeripheral;
 

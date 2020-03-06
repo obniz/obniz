@@ -4,7 +4,9 @@
  */
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface IRSensorOptions {
   output: number;
@@ -13,7 +15,6 @@ export interface IRSensorOptions {
 }
 
 export default class IRSensor implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "IRSensor",

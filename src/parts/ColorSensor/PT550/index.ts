@@ -5,7 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface PT550Options {
   signal: number;
@@ -14,7 +16,6 @@ export interface PT550Options {
 }
 
 export default class PT550 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "PT550",
@@ -32,9 +33,7 @@ export default class PT550 implements ObnizPartsInterface {
     this.requiredKeys = ["signal"];
   }
 
-  public onchange(value: number) {
-
-  }
+  public onchange(value: number) {}
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;

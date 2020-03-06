@@ -214,8 +214,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             aclStream.pushEncrypt(encrypt);
         }
     }
-    onMtu(address, mtu) {
-    }
+    onMtu(address, mtu) { }
     onRssiRead(handle, rssi) {
         this.emit("rssiUpdate", this._handles[handle], rssi);
     }

@@ -87,7 +87,7 @@ export default class BleCharacteristic extends BleAttributeAbstract {
   }
 
   public removePermission(param: any) {
-    this.permissions = this.permissions.filter ((elm: any ) => {
+    this.permissions = this.permissions.filter((elm: any) => {
       return elm !== param;
     });
   }

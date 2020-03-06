@@ -5,7 +5,9 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface Keyestudio_TemperatureSensorOptions {
   vcc?: number;
@@ -13,7 +15,8 @@ export interface Keyestudio_TemperatureSensorOptions {
   gnd?: number;
 }
 
-export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface {
+export default class Keyestudio_TemperatureSensor
+  implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: "Keyestudio_TemperatureSensor",
@@ -41,12 +44,10 @@ export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
     this.ad = obniz.getAD(this.params.signal);
 
-    this.ad.start(
-      (voltage: any) => {
-        this.temp = this.calc(voltage);
-        this.onchange(this.temp);
-      },
-    );
+    this.ad.start((voltage: any) => {
+      this.temp = this.calc(voltage);
+      this.onchange(this.temp);
+    });
   }
 
   public async getWait() {
@@ -55,8 +56,7 @@ export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface
     return this.temp;
   }
 
-  public onchange(temp: number) {
-  }
+  public onchange(temp: number) {}
 
   protected calc(voltage: any) {
     return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;

@@ -83,7 +83,9 @@ class BleScan {
             return false;
         }
         if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
+            const uuids = peripheral
+                .advertisementServiceUuids()
+                .map((e) => {
                 return bleHelper_1.default.uuidFilter(e);
             });
             for (const uuid of this.scanTarget.uuids) {
@@ -94,10 +96,8 @@ class BleScan {
         }
         return true;
     }
-    onfinish(scanedPeripherals) {
-    } // dummy
-    onfind(params) {
-    } // dummy
+    onfinish(scanedPeripherals) { } // dummy
+    onfind(params) { } // dummy
     setAdvertisementFilter() {
         throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
     }

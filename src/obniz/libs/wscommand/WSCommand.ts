@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -8,7 +7,6 @@ import WSSchema from "./WSSchema";
 
 const commandClasses: any = {};
 export default abstract class WSCommand {
-
   static get schema() {
     return WSSchema;
   }
@@ -40,7 +38,8 @@ export default abstract class WSCommand {
     } else {
       throw new Error("too big payload");
     }
-    let length_extra_bytse: any = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+    let length_extra_bytse: any =
+      length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
     const header_length: any = 3 + length_extra_bytse;
     const result: any = new Uint8Array(header_length + payload_length);
     let index: any = 0;
@@ -73,7 +72,8 @@ export default abstract class WSCommand {
     const module: any = 0x7f & buf[0];
     const func: any = buf[1];
     const length_type: any = (buf[2] >> 6) & 0x3;
-    const length_extra_bytse: any = length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
+    const length_extra_bytse: any =
+      length_type === 0 ? 0 : length_type === 1 ? 1 : 3;
     if (length_type === 4) {
       throw new Error("invalid length");
     }
@@ -165,9 +165,7 @@ export default abstract class WSCommand {
         err.err0 = payload[0];
         err.err1 = payload[1];
         err.function = payload[2];
-        err.message = `Error module=${this.module} func=${err.function} err0=${
-          err.err0
-        } returned=${err.err1}`;
+        err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
       } else {
         err.message = `Error module=${this.module} with + ${err._args}`;
       }
@@ -201,8 +199,13 @@ export default abstract class WSCommand {
     return WSSchema.getSchema(uri);
   }
 
-  public validateCommandSchema(uriList: any, json: any, rootPath: any, customArg: any) {
-    const res: any = {valid: 0, invalid: 0, results: [], invalidButLike: []};
+  public validateCommandSchema(
+    uriList: any,
+    json: any,
+    rootPath: any,
+    customArg: any,
+  ) {
+    const res: any = { valid: 0, invalid: 0, results: [], invalidButLike: [] };
     for (const oneRow of uriList) {
       const errors: any = this.validate(oneRow.uri, json);
       res.results.push(errors);
@@ -215,7 +218,7 @@ export default abstract class WSCommand {
         res.invalid++;
         const message: any = this.onlyTypeErrorMessage(errors, rootPath);
         if (message) {
-          res.invalidButLike.push({uri: oneRow.uri, message});
+          res.invalidButLike.push({ uri: oneRow.uri, message });
         }
       }
     }
@@ -328,5 +331,4 @@ export default abstract class WSCommand {
 
 // tslint:disable:max-classes-per-file
 
-class WSCommandNotFoundError extends Error {
-}
+class WSCommandNotFoundError extends Error {}

@@ -8,8 +8,7 @@ class Grove_Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.onChangeForStateWait = (pressed) => {
-        };
+        this.onChangeForStateWait = (pressed) => { };
         this.keys = ["signal", "gnd", "vcc", "grove"];
         this.requiredKeys = [];
     }
@@ -43,8 +42,7 @@ class Grove_Button {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };

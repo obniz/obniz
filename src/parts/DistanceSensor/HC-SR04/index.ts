@@ -5,7 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface HCSR04Options {
   gnd?: number;
@@ -17,7 +19,6 @@ export interface HCSR04Options {
 export type HCSR04UnitType = "mm" | "inch";
 
 export default class HCSR04 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "HC-SR04",
@@ -61,7 +62,6 @@ export default class HCSR04 implements ObnizPartsInterface {
   }
 
   public measure(callback: (distance: number) => void) {
-
     this.obniz.measure!.echo({
       io_pulse: this.trigger,
       io_echo: this.echo,

@@ -8,8 +8,14 @@ import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
 import BleRemoteService from "./bleRemoteService";
-import {BleBinary} from "./bleScan";
-import {BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID} from "./bleTypes";
+import { BleBinary } from "./bleScan";
+import {
+  BleDeviceAddress,
+  BleDeviceAddressType,
+  BleDeviceType,
+  BleEventType,
+  UUID,
+} from "./bleTypes";
 
 /**
  * The return values are shown below.
@@ -67,14 +73,12 @@ export interface BleConnectSetting {
    *
    */
   autoDiscovery?: boolean;
-
 }
 
 /**
  * @category Use as Central
  */
 export default class BleRemotePeripheral {
-
   /**
    * It contains all discovered services in a peripheral as an array.
    * It is discovered when connection automatically.
@@ -248,7 +252,7 @@ export default class BleRemotePeripheral {
    *
    * ```
    */
-  public onconnect?: (() => void);
+  public onconnect?: () => void;
 
   /**
    * This function is called when a connected peripheral is disconnected or first connection establish was failed.
@@ -270,22 +274,22 @@ export default class BleRemotePeripheral {
    * obniz.ble.scan.start();
    * ```
    */
-  public ondisconnect?: (() => void);
+  public ondisconnect?: () => void;
 
   /**
    * @ignore
    */
-  public ondiscoverservice?: ((child: any) => void);
+  public ondiscoverservice?: (child: any) => void;
 
   /**
    * @ignore
    */
-  public ondiscoverservicefinished?: ((children: any) => void);
+  public ondiscoverservicefinished?: (children: any) => void;
 
   /**
    * This gets called with an error message when some kind of error occurs.
    */
-  public onerror?: ((err: any) => void);
+  public onerror?: (err: any) => void;
   /**
    * @ignore
    */
@@ -381,7 +385,8 @@ export default class BleRemotePeripheral {
    */
   public connect(setting?: BleConnectSetting) {
     this._connectSetting = setting || {};
-    this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+    this._connectSetting.autoDiscovery =
+      this._connectSetting.autoDiscovery !== false;
     this.obnizBle.scan.end();
     this.obnizBle.centralBindings.connect(this.address);
   }
@@ -428,9 +433,7 @@ export default class BleRemotePeripheral {
         } else {
           reject(
             new Error(
-              `connection to peripheral name=${this.localName} address=${
-                this.address
-              } can't be established`,
+              `connection to peripheral name=${this.localName} address=${this.address} can't be established`,
             ),
           );
         }
@@ -507,9 +510,7 @@ export default class BleRemotePeripheral {
         } else {
           reject(
             new Error(
-              `cutting connection to peripheral name=${
-                this.localName
-              } address=${this.address} was failed`,
+              `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`,
             ),
           );
         }
@@ -574,7 +575,9 @@ export default class BleRemotePeripheral {
    */
   public findCharacteristic(param: any) {
     const serviceUuid: any = BleHelper.uuidFilter(param.service_uuid);
-    const characteristicUuid: any = BleHelper.uuidFilter(param.characteristic_uuid);
+    const characteristicUuid: any = BleHelper.uuidFilter(
+      param.characteristic_uuid,
+    );
     const s: any = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -696,7 +699,7 @@ export default class BleRemotePeripheral {
         const uuid: any = params.service_uuid;
         let child: any = this.getService(uuid);
         if (!child) {
-          const newService: any = new BleRemoteService({uuid});
+          const newService: any = new BleRemoteService({ uuid });
           newService.parent = this;
           this._services.push(newService);
           child = newService;

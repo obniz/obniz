@@ -6,13 +6,15 @@ import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
 import BleRemoteService from "./bleRemoteService";
 import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";
-import {BleAttributePropery, UUID} from "./bleTypes";
+import { BleAttributePropery, UUID } from "./bleTypes";
 
 /**
  * @category Use as Central
  */
-export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbstract<BleRemoteService, BleRemoteDescriptor> {
-
+export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbstract<
+  BleRemoteService,
+  BleRemoteDescriptor
+> {
   /**
    * @ignore
    */
@@ -92,7 +94,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    *
    *
    */
-  public onregisternotify?: (() => void);
+  public onregisternotify?: () => void;
 
   /**
    * @ignore
@@ -127,7 +129,9 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @ignore
    * @param params
    */
-  public addDescriptor(params: { uuid: UUID } | BleRemoteDescriptor): BleRemoteDescriptor {
+  public addDescriptor(
+    params: { uuid: UUID } | BleRemoteDescriptor,
+  ): BleRemoteDescriptor {
     return this.addChild(params);
   }
 
@@ -262,8 +266,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * ```
    */
   public unregisterNotify() {
-    this.onnotify = () => {
-    };
+    this.onnotify = () => {};
 
     this.service.peripheral.obnizBle.centralBindings.notify(
       this.service.peripheral.address,

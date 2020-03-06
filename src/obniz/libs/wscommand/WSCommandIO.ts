@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -127,15 +126,20 @@ class WSCommandIO extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/io/input", onValid: this.input},
-        {uri: "/request/io/input_detail", onValid: this.inputDetail},
-        {uri: "/request/io/output", onValid: this.output},
-        {uri: "/request/io/output_detail", onValid: this.outputDetail},
-        {uri: "/request/io/output_type", onValid: this.outputType},
-        {uri: "/request/io/pull_type", onValid: this.pullType},
-        {uri: "/request/io/deinit", onValid: this.deinit},
+        { uri: "/request/io/input", onValid: this.input },
+        { uri: "/request/io/input_detail", onValid: this.inputDetail },
+        { uri: "/request/io/output", onValid: this.output },
+        { uri: "/request/io/output_detail", onValid: this.outputDetail },
+        { uri: "/request/io/output_type", onValid: this.outputType },
+        { uri: "/request/io/pull_type", onValid: this.pullType },
+        { uri: "/request/io/deinit", onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "io" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        "io" + i,
+        i,
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -179,11 +183,7 @@ class WSCommandIO extends WSCommand {
         const oldMutexOwner: any = payload[4];
         const newMutexOwner: any = payload[5];
         this.envelopWarning(objToSend, "debug", {
-          message: `io${module_index} binded "${
-            COMMAND_IO_MUTEX_NAMES[oldMutexOwner]
-          }" was stopped. "${
-            COMMAND_IO_MUTEX_NAMES[newMutexOwner]
-          }" have started using this io.`,
+          message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.`,
         });
       }
     } else {

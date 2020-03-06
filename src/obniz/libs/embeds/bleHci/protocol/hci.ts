@@ -63,27 +63,37 @@ namespace COMMANDS {
 
   export const DISCONNECT_CMD: any = OCF_DISCONNECT | (OGF_LINK_CTL << 10);
 
-  export const SET_EVENT_MASK_CMD: any = OCF_SET_EVENT_MASK | (OGF_HOST_CTL << 10);
+  export const SET_EVENT_MASK_CMD: any =
+    OCF_SET_EVENT_MASK | (OGF_HOST_CTL << 10);
   export const RESET_CMD: any = OCF_RESET | (OGF_HOST_CTL << 10);
   export const READ_LE_HOST_SUPPORTED_CMD: any =
     OCF_READ_LE_HOST_SUPPORTED | (OGF_HOST_CTL << 10);
   export const WRITE_LE_HOST_SUPPORTED_CMD: any =
     OCF_WRITE_LE_HOST_SUPPORTED | (OGF_HOST_CTL << 10);
 
-  export const READ_LOCAL_VERSION_CMD: any = OCF_READ_LOCAL_VERSION | (OGF_INFO_PARAM << 10);
-  export const READ_BUFFER_SIZE_CMD: any = OCF_READ_BUFFER_SIZE | (OGF_INFO_PARAM << 10);
-  export const READ_BD_ADDR_CMD: any = OCF_READ_BD_ADDR | (OGF_INFO_PARAM << 10);
+  export const READ_LOCAL_VERSION_CMD: any =
+    OCF_READ_LOCAL_VERSION | (OGF_INFO_PARAM << 10);
+  export const READ_BUFFER_SIZE_CMD: any =
+    OCF_READ_BUFFER_SIZE | (OGF_INFO_PARAM << 10);
+  export const READ_BD_ADDR_CMD: any =
+    OCF_READ_BD_ADDR | (OGF_INFO_PARAM << 10);
 
   export const READ_RSSI_CMD: any = OCF_READ_RSSI | (OGF_STATUS_PARAM << 10);
 
-  export const LE_SET_EVENT_MASK_CMD: any = OCF_LE_SET_EVENT_MASK | (OGF_LE_CTL << 10);
-  export const LE_READ_BUFFER_SIZE_CMD: any = OCF_LE_READ_BUFFER_SIZE | (OGF_LE_CTL << 10);
+  export const LE_SET_EVENT_MASK_CMD: any =
+    OCF_LE_SET_EVENT_MASK | (OGF_LE_CTL << 10);
+  export const LE_READ_BUFFER_SIZE_CMD: any =
+    OCF_LE_READ_BUFFER_SIZE | (OGF_LE_CTL << 10);
   export const LE_SET_SCAN_PARAMETERS_CMD: any =
     OCF_LE_SET_SCAN_PARAMETERS | (OGF_LE_CTL << 10);
-  export const LE_SET_SCAN_ENABLE_CMD: any = OCF_LE_SET_SCAN_ENABLE | (OGF_LE_CTL << 10);
-  export const LE_CREATE_CONN_CMD: any = OCF_LE_CREATE_CONN | (OGF_LE_CTL << 10);
-  export const LE_CONN_UPDATE_CMD: any = OCF_LE_CONN_UPDATE | (OGF_LE_CTL << 10);
-  export const LE_START_ENCRYPTION_CMD: any = OCF_LE_START_ENCRYPTION | (OGF_LE_CTL << 10);
+  export const LE_SET_SCAN_ENABLE_CMD: any =
+    OCF_LE_SET_SCAN_ENABLE | (OGF_LE_CTL << 10);
+  export const LE_CREATE_CONN_CMD: any =
+    OCF_LE_CREATE_CONN | (OGF_LE_CTL << 10);
+  export const LE_CONN_UPDATE_CMD: any =
+    OCF_LE_CONN_UPDATE | (OGF_LE_CTL << 10);
+  export const LE_START_ENCRYPTION_CMD: any =
+    OCF_LE_START_ENCRYPTION | (OGF_LE_CTL << 10);
   export const LE_SET_ADVERTISING_PARAMETERS_CMD: any =
     OCF_LE_SET_ADVERTISING_PARAMETERS | (OGF_LE_CTL << 10);
 
@@ -93,7 +103,8 @@ namespace COMMANDS {
     OCF_LE_SET_SCAN_RESPONSE_DATA | (OGF_LE_CTL << 10);
   export const LE_SET_ADVERTISE_ENABLE_CMD: any =
     OCF_LE_SET_ADVERTISE_ENABLE | (OGF_LE_CTL << 10);
-  export const LE_LTK_NEG_REPLY_CMD: any = OCF_LE_LTK_NEG_REPLY | (OGF_LE_CTL << 10);
+  export const LE_LTK_NEG_REPLY_CMD: any =
+    OCF_LE_LTK_NEG_REPLY | (OGF_LE_CTL << 10);
 
   export const HCI_OE_USER_ENDED_CONNECTION: any = 0x13;
 }
@@ -346,7 +357,13 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public connUpdateLe(handle: any, minInterval: any, maxInterval: any, latency: any, supervisionTimeout: any) {
+  public connUpdateLe(
+    handle: any,
+    minInterval: any,
+    maxInterval: any,
+    latency: any,
+    supervisionTimeout: any,
+  ) {
     const cmd: any = Buffer.alloc(18);
 
     // header
@@ -369,7 +386,12 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public startLeEncryption(handle: any, random: any, diversifier: any, key: any) {
+  public startLeEncryption(
+    handle: any,
+    random: any,
+    diversifier: any,
+    key: any,
+  ) {
     const cmd: any = Buffer.alloc(32);
 
     // header
@@ -614,11 +636,11 @@ class Hci extends events.EventEmitter {
     this._handleAclsInProgress[pkt.handle]++;
     debug(
       "write acl data pkt frag " +
-      pkt.fragId +
-      " handle " +
-      pkt.handle +
-      " - writing: " +
-      pkt.pkt.toString("hex"),
+        pkt.fragId +
+        " handle " +
+        pkt.handle +
+        " - writing: " +
+        pkt.pkt.toString("hex"),
     );
     this._socket.write(pkt.pkt);
   }

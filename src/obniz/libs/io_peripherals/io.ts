@@ -4,7 +4,7 @@
  */
 
 import Obniz from "../../index";
-import {DriveType, PullType} from "./common";
+import { DriveType, PullType } from "./common";
 
 /**
  * General purpose IO

@@ -4,12 +4,17 @@
  */
 
 import Obniz from "../../../obniz";
-import {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import I2cImu6, {accelRange, gyroRange, I2cImu6AbstractOptions, Inertia6, Xyz} from "../../i2cImu6";
-import {I2cInfo} from "../../i2cParts";
+import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import I2cImu6, {
+  accelRange,
+  gyroRange,
+  I2cImu6AbstractOptions,
+  Inertia6,
+  Xyz,
+} from "../../i2cImu6";
+import { I2cInfo } from "../../i2cParts";
 
-export interface MPU6050Options extends I2cImu6AbstractOptions {
-}
+export interface MPU6050Options extends I2cImu6AbstractOptions {}
 
 export default class MPU6050 extends I2cImu6 {
   public static info(): ObnizPartsInfo {
@@ -119,9 +124,7 @@ export default class MPU6050 extends I2cImu6 {
     await this.writeFlagWait(MPU6050.commands.pwr_mgmt_1, 7);
   }
 
-  public async configDlpfWait() {
-
-  }
+  public async configDlpfWait() {}
 
   public async bypassMagnetometerWait(flag: boolean = true): Promise<void> {
     // Enable I2C bypass to access for MPU9250 magnetometer access.
@@ -161,29 +164,50 @@ export default class MPU6050 extends I2cImu6 {
     return {
       accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b"),
       gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b"),
-      temperature: MPU6050.charArrayToInt16(raw.slice(6, 8) as [number, number], "b"),
+      temperature: MPU6050.charArrayToInt16(
+        raw.slice(6, 8) as [number, number],
+        "b",
+      ),
     };
   }
 
   public setAccelRange(accel_range: accelRange): void {
     if (accel_range in MPU6050.commands.accel_fs_sel) {
-      this.write(MPU6050.commands.accel_config, MPU6050.commands.accel_fs_sel[accel_range]);
+      this.write(
+        MPU6050.commands.accel_config,
+        MPU6050.commands.accel_fs_sel[accel_range],
+      );
       this.accel_so = accel_range;
     } else {
-      throw new Error(`Invalid accel range. Valid values are: ${Object.keys(MPU6050.commands.accel_fs_sel).join()}`);
+      throw new Error(
+        `Invalid accel range. Valid values are: ${Object.keys(
+          MPU6050.commands.accel_fs_sel,
+        ).join()}`,
+      );
     }
   }
 
   public setGyroRange(gyro_range: gyroRange): void {
     if (gyro_range in MPU6050.commands.gyro_fs_sel) {
-      this.write(MPU6050.commands.gyro_config, MPU6050.commands.gyro_fs_sel[gyro_range]);
+      this.write(
+        MPU6050.commands.gyro_config,
+        MPU6050.commands.gyro_fs_sel[gyro_range],
+      );
       this.gyro_so = gyro_range;
     } else {
-      throw new Error(`Invalid gyro range. Valid values are: ${Object.keys(MPU6050.commands.gyro_fs_sel).join()}`);
+      throw new Error(
+        `Invalid gyro range. Valid values are: ${Object.keys(
+          MPU6050.commands.gyro_fs_sel,
+        ).join()}`,
+      );
     }
   }
 
-  public setConfig(accelerometer_range: number, gyroscope_range: number, ADC_cycle?: any) {
+  public setConfig(
+    accelerometer_range: number,
+    gyroscope_range: number,
+    ADC_cycle?: any,
+  ) {
     // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
     switch (accelerometer_range) {
       case 2:

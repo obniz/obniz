@@ -7,7 +7,9 @@ import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../../obniz/ObnizPartsInterface";
 
 export interface BME280Options {
   vio?: number;
@@ -22,7 +24,6 @@ export interface BME280Options {
 }
 
 export default class BME280 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "BME280",
@@ -137,8 +138,8 @@ export default class BME280 implements ObnizPartsInterface {
     this.write([
       this.commands.addresses.config,
       (this.configration.interval << 5) |
-      (this.configration.iir_strength << 2) |
-      0,
+        (this.configration.iir_strength << 2) |
+        0,
     ]);
     this.write([
       this.commands.addresses.ctrl_hum,
@@ -147,8 +148,8 @@ export default class BME280 implements ObnizPartsInterface {
     this.write([
       this.commands.addresses.ctrl_meas,
       (this.configration.sampling.temp << 5) |
-      (this.configration.sampling.pres << 2) |
-      this.configration.mode,
+        (this.configration.sampling.pres << 2) |
+        this.configration.mode,
     ]);
   }
 
@@ -212,7 +213,11 @@ export default class BME280 implements ObnizPartsInterface {
     return await this.i2c.readWait(this.address, 8);
   }
 
-  public async getAllWait(): Promise<{ temperature: number; humidity: number; pressure: number }> {
+  public async getAllWait(): Promise<{
+    temperature: number;
+    humidity: number;
+    pressure: number;
+  }> {
     const data = await this.getData();
 
     const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
@@ -223,7 +228,7 @@ export default class BME280 implements ObnizPartsInterface {
     const pressure = this.calibration_P(press_raw) / 100.0;
     const humidity = this.calibration_H(hum_raw);
 
-    return {temperature, humidity, pressure};
+    return { temperature, humidity, pressure };
   }
 
   public calibration_T(adc_T: any) {
@@ -277,8 +282,8 @@ export default class BME280 implements ObnizPartsInterface {
       ((this._calibrated.dig_H2 / 65536) *
         (1 +
           (this._calibrated.dig_H6 / 67108864) *
-          h *
-          (1 + (this._calibrated.dig_H3 / 67108864) * h)));
+            h *
+            (1 + (this._calibrated.dig_H3 / 67108864) * h)));
     h = h * (1 - (this._calibrated.dig_H1 * h) / 524288);
     return h;
   }

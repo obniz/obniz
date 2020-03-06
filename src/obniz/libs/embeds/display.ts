@@ -11,7 +11,6 @@ import Obniz from "../../index";
  * @category Embeds
  */
 export default class Display {
-
   /**
    * display width size
    * @readonly
@@ -28,7 +27,7 @@ export default class Display {
   private fontSize: number = 16;
   private Obniz: Obniz;
   private _canvas?: HTMLCanvasElement;
-  private _pos = {x: 0, y: 0};
+  private _pos = { x: 0, y: 0 };
   private _colorDepthCapabilities: [number] = [1];
   private _colorDepth: number = 1;
   private _color = "#000";
@@ -252,7 +251,13 @@ export default class Display {
    * @param height
    * @param mustFill
    */
-  public rect(x: number, y: number, width: number, height: number, mustFill?: boolean) {
+  public rect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    mustFill?: boolean,
+  ) {
     const ctx: any = this._ctx();
     if (ctx) {
       if (mustFill) {
@@ -370,11 +375,17 @@ export default class Display {
    * If you call just
    */
   public setColorDepth(depth: number) {
-    const found = this._colorDepthCapabilities.find((element) => element === depth);
+    const found = this._colorDepthCapabilities.find(
+      (element) => element === depth,
+    );
     if (found) {
       this._colorDepth = depth;
     } else {
-      throw new Error(`This device can't accept depth ${depth}. availables are ${JSON.stringify(this._colorDepthCapabilities)}`);
+      throw new Error(
+        `This device can't accept depth ${depth}. availables are ${JSON.stringify(
+          this._colorDepthCapabilities,
+        )}`,
+      );
     }
   }
 
@@ -536,10 +547,12 @@ export default class Display {
   private _reset() {
     this.autoFlush = true;
     // reset to default
-    this._pos = {x: 0, y: 0};
+    this._pos = { x: 0, y: 0 };
     this._color = this._paper_white ? "#000" : "#FFF";
     this.fontSize = this.height > 200 ? 32 : 16;
-    this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+    this._colorDepth = this._colorDepthCapabilities[
+      this._colorDepthCapabilities.length - 1
+    ];
     this._reset_canvas();
   }
 
@@ -549,7 +562,7 @@ export default class Display {
     }
     if (this.Obniz.isNode) {
       try {
-        const {createCanvas} = require("canvas");
+        const { createCanvas } = require("canvas");
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();
@@ -588,26 +601,33 @@ export default class Display {
   }
 
   private _draw(ctx: CanvasRenderingContext2D) {
-
-    const raw = new Array(this.width * this.height * this._colorDepth / 8);
+    const raw = new Array((this.width * this.height * this._colorDepth) / 8);
     const imageData = ctx.getImageData(0, 0, this.width, this.height);
     const data = imageData.data;
 
     if (this._colorDepth === 16) {
-
-      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+      for (
+        let pixel_index = 0;
+        pixel_index < this.width * this.height;
+        pixel_index++
+      ) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];
-        const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
-        raw[pixel_index * 2] = (hexColor >> 8) & 0xFF;
-        raw[pixel_index * 2 + 1] = hexColor & 0xFF;
+        const hexColor =
+          (((red >> 3) & 0x1f) << 11) |
+          (((green >> 2) & 0x3f) << 5) |
+          (((blue >> 3) & 0x1f) << 0);
+        raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
+        raw[pixel_index * 2 + 1] = hexColor & 0xff;
       }
-
     } else if (this._colorDepth === 4) {
-
       const stride = this.width / 2;
-      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+      for (
+        let pixel_index = 0;
+        pixel_index < this.width * this.height;
+        pixel_index++
+      ) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];
@@ -617,16 +637,16 @@ export default class Display {
         const bits = Math.floor(pixel_index - line * this.width) % 2;
 
         let pixel = 0b0000;
-        if (red > 0x7F) {
+        if (red > 0x7f) {
           pixel |= 0b1000;
         }
-        if (green > 0x7F) {
+        if (green > 0x7f) {
           pixel |= 0b0100;
         }
-        if (blue > 0x7F) {
+        if (blue > 0x7f) {
           pixel |= 0b0010;
         }
-        if (brightness > 0x7F) {
+        if (brightness > 0x7f) {
           pixel |= 0b0001;
         }
 
@@ -636,11 +656,13 @@ export default class Display {
           raw[line * stride + col] |= pixel;
         }
       }
-
     } else {
-
       const stride = this.width / 8;
-      for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+      for (
+        let pixel_index = 0;
+        pixel_index < this.width * this.height;
+        pixel_index++
+      ) {
         const red = data[pixel_index * 4];
         const green = data[pixel_index * 4 + 1];
         const blue = data[pixel_index * 4 + 2];
@@ -652,14 +674,14 @@ export default class Display {
           raw[row * stride + col] = 0x00;
         }
 
-        if (brightness > 0x7F) {
+        if (brightness > 0x7f) {
           raw[row * stride + col] |= 0x80 >> bits;
         }
       }
     }
     if (this._raw_alternate) {
       for (let i = 0; i < raw.length; i++) {
-        raw[i] = (~raw[i]) & 0xFF;
+        raw[i] = ~raw[i] & 0xff;
       }
     }
 

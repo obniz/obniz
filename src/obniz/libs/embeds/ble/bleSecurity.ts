@@ -68,9 +68,7 @@ export default class BleSecurity {
   public checkIntroducedFirmware(introducedVersion: any, functionName: any) {
     const results: any = semver.lt(this.Obniz.firmware_ver, introducedVersion);
     if (results) {
-      const msg: any = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
-        this.Obniz.firmware_ver
-      })`;
+      const msg: any = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${this.Obniz.firmware_ver})`;
       this.Obniz.error(msg);
       throw new Error(msg);
     }
@@ -82,10 +80,10 @@ export default class BleSecurity {
       authTypes = [authTypes];
     }
     const sendTypes: any = authTypes
-      .map ((elm: any) => {
+      .map((elm: any) => {
         return elm.toLowerCase();
       })
-      .filter((elm: any ) => {
+      .filter((elm: any) => {
         return ["mitm", "secure_connection", "bonding"].includes(elm);
       });
 
@@ -123,10 +121,10 @@ export default class BleSecurity {
       keyTypes = [keyTypes];
     }
     const sendTypes: any = keyTypes
-      .map ((elm: any) => {
+      .map((elm: any) => {
         return elm.toLowerCase();
       })
-      .filter((elm: any ) => {
+      .filter((elm: any) => {
         return ["ltk", "csrk", "irk"].includes(elm);
       });
 
@@ -137,7 +135,7 @@ export default class BleSecurity {
     this.Obniz.send({
       ble: {
         security: {
-          key: {type: sendTypes},
+          key: { type: sendTypes },
         },
       },
     });
@@ -151,7 +149,7 @@ export default class BleSecurity {
     this.Obniz.send({
       ble: {
         security: {
-          key: {max_size: size},
+          key: { max_size: size },
         },
       },
     });
@@ -161,14 +159,13 @@ export default class BleSecurity {
     this.Obniz.send({
       ble: {
         security: {
-          devices: {clear: true},
+          devices: { clear: true },
         },
       },
     });
   }
 
-  public onerror(params: any) {
-  } // dummy
+  public onerror(params: any) {} // dummy
 
   public notifyFromServer(notifyName: any, params: any) {
     switch (notifyName) {

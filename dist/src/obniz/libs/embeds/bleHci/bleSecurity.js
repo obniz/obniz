@@ -70,8 +70,7 @@ class BleSecurity {
      * @ignore
      * @param params
      */
-    onerror(params) {
-    } // dummy
+    onerror(params) { } // dummy
     /**
      * @ignore
      * @param notifyName

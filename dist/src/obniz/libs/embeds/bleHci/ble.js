@@ -113,8 +113,7 @@ class ObnizBLE {
      * @ignore
      * @private
      */
-    _reset() {
-    }
+    _reset() { }
     /**
      * Connect to peripheral without scanning.
      * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
@@ -184,8 +183,7 @@ class ObnizBLE {
             });
         }
     }
-    onStateChange() {
-    }
+    onStateChange() { }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
             if (this.remotePeripherals[key].address === address) {
@@ -194,10 +192,8 @@ class ObnizBLE {
         }
         return null;
     }
-    onAddressChange() {
-    }
-    onScanStart() {
-    }
+    onAddressChange() { }
+    onScanStart() { }
     onScanStop() {
         this.scan.notifyFromServer("onfinish", null);
     }
@@ -235,8 +231,7 @@ class ObnizBLE {
         const peripheral = this.findPeripheral(peripheralUuid);
         peripheral.notifyFromServer("statusupdate", { status: "disconnected" });
     }
-    onRssiUpdate() {
-    }
+    onRssiUpdate() { }
     onServicesDiscover(peripheralUuid, serviceUuids) {
         const peripheral = this.findPeripheral(peripheralUuid);
         for (const serviceUuid of serviceUuids) {
@@ -244,8 +239,7 @@ class ObnizBLE {
         }
         peripheral.notifyFromServer("discoverfinished", {});
     }
-    onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids) {
-    }
+    onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids) { }
     onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics) {
         const peripheral = this.findPeripheral(peripheralUuid);
         const service = peripheral.findService({ service_uuid: serviceUuid });
@@ -288,8 +282,7 @@ class ObnizBLE {
             result: isSuccess ? "success" : "failed",
         });
     }
-    onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) {
-    }
+    onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) { }
     onNotify(peripheralUuid, serviceUuid, characteristicUuid, state) {
         const peripheral = this.findPeripheral(peripheralUuid);
         const char = peripheral.findCharacteristic({
@@ -342,12 +335,9 @@ class ObnizBLE {
         };
         descriptor.notifyFromServer("onwrite", obj);
     }
-    onHandleRead(peripheralUuid, handle, data) {
-    }
-    onHandleWrite(peripheralUuid, handle) {
-    }
-    onHandleNotify(peripheralUuid, handle, data) {
-    }
+    onHandleRead(peripheralUuid, handle, data) { }
+    onHandleWrite(peripheralUuid, handle) { }
+    onHandleNotify(peripheralUuid, handle, data) { }
     onPeripheralStateChange(state) {
         // console.error("onPeripheralStateChange")
     }

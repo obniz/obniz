@@ -5,13 +5,13 @@
 
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
-export interface DPS310Options {
-}
+export interface DPS310Options {}
 
 export default class DPS310 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "DPS310",
@@ -262,7 +262,11 @@ export default class DPS310 implements ObnizPartsInterface {
     return results;
   }
 
-  private async writeByteWait(regAddress: any, data: any, check?: any): Promise<void> {
+  private async writeByteWait(
+    regAddress: any,
+    data: any,
+    check?: any,
+  ): Promise<void> {
     this.i2c.write(this.address, [regAddress, data]);
     if (check) {
       if ((await this.readByteWait(regAddress)) !== data) {
@@ -271,14 +275,23 @@ export default class DPS310 implements ObnizPartsInterface {
     }
   }
 
-  private async writeByteBitfield(field: any, data: any, check?: any): Promise<void> {
+  private async writeByteBitfield(
+    field: any,
+    data: any,
+    check?: any,
+  ): Promise<void> {
     const old: any = await this.readByteWait(field.address);
-    const sendData: any = (old & ~field.mask) | ((data << field.shift) & field.mask);
+    const sendData: any =
+      (old & ~field.mask) | ((data << field.shift) & field.mask);
 
     await this.writeByteWait(field.address, sendData, check);
   }
 
-  private async setOpModeDetailWait(background: any, temperature: any, pressure: any): Promise<void> {
+  private async setOpModeDetailWait(
+    background: any,
+    temperature: any,
+    pressure: any,
+  ): Promise<void> {
     const opMode: any =
       ((background & this.DPS310__LSB) << 2) |
       ((temperature & this.DPS310__LSB) << 1) |
@@ -341,7 +354,9 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   private async readCoeffsWait(): Promise<void> {
-    const buffer: any = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_COEF);
+    const buffer: any = await this.readBlockWait(
+      this.dataBlock.DPS310__REG_ADR_COEF,
+    );
 
     this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
     if (this.coeffs.m_c0Half & (1 << 11)) {
@@ -436,7 +451,9 @@ export default class DPS310 implements ObnizPartsInterface {
     await this.setOpModeDetailWait(0, 1, 0);
   }
 
-  private async startMeasurePressureOnceWait(oversamplingRate: any): Promise<void> {
+  private async startMeasurePressureOnceWait(
+    oversamplingRate: any,
+  ): Promise<void> {
     await this.configPressureWait(0, oversamplingRate);
     await this.setOpModeDetailWait(0, 0, 1);
   }
@@ -447,11 +464,11 @@ export default class DPS310 implements ObnizPartsInterface {
     prs =
       this.coeffs.m_c00 +
       prs *
-      (this.coeffs.m_c10 +
-        prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
+        (this.coeffs.m_c10 +
+          prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
       this.m_lastTempScal *
-      (this.coeffs.m_c01 +
-        prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
+        (this.coeffs.m_c01 +
+          prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
     return prs;
   }
 
@@ -483,7 +500,9 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   private async getTempWait(): Promise<number> {
-    const data: any = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_TEMP);
+    const data: any = await this.readBlockWait(
+      this.dataBlock.DPS310__REG_ADR_TEMP,
+    );
 
     let temp: any = (data[0] << 16) | (data[1] << 8) | data[2];
     if (temp & (1 << 23)) {
@@ -493,7 +512,9 @@ export default class DPS310 implements ObnizPartsInterface {
   }
 
   private async getPressureWait(): Promise<number> {
-    const data: any = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_PRS);
+    const data: any = await this.readBlockWait(
+      this.dataBlock.DPS310__REG_ADR_PRS,
+    );
     let prs: any = (data[0] << 16) | (data[1] << 8) | data[2];
     if (prs & (1 << 23)) {
       prs -= 1 << 24;

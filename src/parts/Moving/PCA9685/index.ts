@@ -6,9 +6,11 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import {PWMInterface} from "../../../obniz/libs/io_peripherals/pwm";
+import { PWMInterface } from "../../../obniz/libs/io_peripherals/pwm";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 class PCA9685_PWM implements PWMInterface {
   public chip: PCA9685;
@@ -49,7 +51,6 @@ export interface PCA9685Options {
 // tslint:disable:max-classes-per-file
 
 export default class PCA9685 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "PCA9685",
@@ -172,7 +173,6 @@ export default class PCA9685 implements ObnizPartsInterface {
   }
 
   public _preparePWM(num: any) {
-
     for (let i = 0; i < num; i++) {
       this.pwms.push(new PCA9685_PWM(this, i));
     }

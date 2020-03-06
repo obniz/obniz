@@ -1,10 +1,16 @@
 {
   "defaultSeverity": "error",
   "extends": [
-    "tslint:recommended"
+    "tslint:recommended",
+    "tslint-plugin-prettier"
   ],
   "jsRules": {},
   "rules": {
+    "prettier": [true, {
+      "trailingComma": "all",
+      "arrowParens": "always",
+      "quoteProps": "consistent"
+    }],
     "no-console": [
       false
     ],

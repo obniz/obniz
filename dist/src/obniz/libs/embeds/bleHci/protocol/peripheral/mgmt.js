@@ -9,8 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 /**
  * @ignore
  */

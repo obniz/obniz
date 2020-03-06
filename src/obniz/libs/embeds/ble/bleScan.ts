@@ -43,7 +43,7 @@ export default class BleScan {
       this.scanTarget.uuids &&
       Array.isArray(this.scanTarget.uuids)
     ) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map ((elm: any ) => {
+      this.scanTarget.uuids = this.scanTarget.uuids.map((elm: any) => {
         return BleHelper.uuidFilter(elm);
       });
     }
@@ -54,8 +54,8 @@ export default class BleScan {
   public startOneWait(target: any, settings: any) {
     let state: any = 0;
 
-    return new Promise ((resolve: any ) => {
-      this.emitter.once("onfind", (param: any ) => {
+    return new Promise((resolve: any) => {
+      this.emitter.once("onfind", (param: any) => {
         if (state === 0) {
           state = 1;
           this.end();
@@ -75,7 +75,7 @@ export default class BleScan {
   }
 
   public startAllWait(target: any, settings: any) {
-    return new Promise ((resolve: any ) => {
+    return new Promise((resolve: any) => {
       this.emitter.once("onfinish", () => {
         resolve(this.scanedPeripherals);
       });
@@ -100,9 +100,11 @@ export default class BleScan {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {
-      const uuids: any = peripheral.advertisementServiceUuids().map ((e: any ) => {
-        return BleHelper.uuidFilter(e);
-      });
+      const uuids: any = peripheral
+        .advertisementServiceUuids()
+        .map((e: any) => {
+          return BleHelper.uuidFilter(e);
+        });
       for (const uuid of this.scanTarget.uuids) {
         if (!uuids.includes(uuid)) {
           return false;
@@ -112,10 +114,8 @@ export default class BleScan {
     return true;
   }
 
-  public onfinish(scanedPeripherals: any) {
-  } // dummy
-  public onfind(params: any) {
-  } // dummy
+  public onfinish(scanedPeripherals: any) {} // dummy
+  public onfind(params: any) {} // dummy
 
   public setAdvertisementFilter() {
     throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");

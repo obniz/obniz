@@ -5,7 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface FlickHatOptions {
   vcc?: number;
@@ -19,7 +21,12 @@ export interface FlickHatOptions {
 }
 
 export type FlickHat_Direction = "west" | "east" | "north" | "south";
-export type FlickHat_Direction2 = "west" | "east" | "north" | "south" | "center";
+export type FlickHat_Direction2 =
+  | "west"
+  | "east"
+  | "north"
+  | "south"
+  | "center";
 
 export interface FlickHat_XYZ {
   x: number;
@@ -65,7 +72,6 @@ export interface FlickHat_AirWheel {
 }
 
 export default class FlickHat implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "FlickHat",
@@ -96,7 +102,7 @@ export default class FlickHat implements ObnizPartsInterface {
   public ongesture?: (gesture: FlickHat_Gesture) => void;
   public lastTouch: any;
   public ontouch?: (touch: FlickHat_Touch) => void;
-  public ontap?: ((tap: FlickHat_Tap) => void);
+  public ontap?: (tap: FlickHat_Tap) => void;
   public ondoubletap: any;
   public onairwheel?: (airwheel: FlickHat_AirWheel) => void;
   public statusInfo: any;
@@ -143,10 +149,10 @@ export default class FlickHat implements ObnizPartsInterface {
     this.i2c = this.obniz.getI2CWithConfig(this.params);
 
     if (this.obniz.isValidIO(this.params.led1)) {
-      this.led1 = this.obniz.wired("LED", {anode: this.params.led1});
+      this.led1 = this.obniz.wired("LED", { anode: this.params.led1 });
     }
     if (this.obniz.isValidIO(this.params.led2)) {
-      this.led2 = this.obniz.wired("LED", {anode: this.params.led2});
+      this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
     }
   }
 
@@ -251,7 +257,8 @@ export default class FlickHat implements ObnizPartsInterface {
       if (size !== 0xff && size > 0) {
         if (this.debugprint || this.obniz.debugprint) {
           console.log(
-            "flickHat: " + data.slice(0, size).map((v: any) => "0x" + v.toString(16)),
+            "flickHat: " +
+              data.slice(0, size).map((v: any) => "0x" + v.toString(16)),
           );
         }
         let configmask: any;
@@ -452,11 +459,7 @@ export default class FlickHat implements ObnizPartsInterface {
             this.statusInfo = statusInfo;
             if (this.debugprint || this.obniz.debugprint) {
               console.log(
-                `flickHat: system status: {msgId: ${
-                  statusInfo.msgId
-                }, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${
-                  statusInfo.error
-                }}`,
+                `flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`,
               );
             }
             break;

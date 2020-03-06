@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -10,7 +9,7 @@ import CommandIO from "./WSCommandIO";
 import CommandPWM from "./WSCommandPWM";
 
 export default class WSCommandDirective extends WSCommand {
-  public  availableCommands: any;
+  public availableCommands: any;
 
   protected module: number;
   protected _CommandRegistrate: number;
@@ -103,7 +102,9 @@ export default class WSCommandDirective extends WSCommand {
           );
         }
         if (compressed) {
-          const _combined: any = new Uint8Array(compressed.length + _frame.length);
+          const _combined: any = new Uint8Array(
+            compressed.length + _frame.length,
+          );
           _combined.set(compressed, 0);
           _combined.set(_frame, compressed.length);
           compressed = _combined;
@@ -182,10 +183,15 @@ export default class WSCommandDirective extends WSCommand {
     }
 
     const schemaData: any = [
-      {uri: "/request/ioAnimation/init", onValid: this.init},
-      {uri: "/request/ioAnimation/changeState", onValid: this.changeState},
+      { uri: "/request/ioAnimation/init", onValid: this.init },
+      { uri: "/request/ioAnimation/changeState", onValid: this.changeState },
     ];
-    const res: any = this.validateCommandSchema(schemaData, module, "io", module);
+    const res: any = this.validateCommandSchema(
+      schemaData,
+      module,
+      "io",
+      module,
+    );
 
     if (res.valid === 0 && parentCommandNotFound) {
       if (res.invalidButLike.length > 0) {

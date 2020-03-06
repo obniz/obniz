@@ -7,12 +7,11 @@ import EventEmitter from "eventemitter3";
 import wsClient from "ws";
 
 // @ts-ignore
-import packageJson from "../../package";  // pakcage.js will be created from package.json on build.
+import packageJson from "../../package"; // pakcage.js will be created from package.json on build.
 import WSCommand from "./libs/wscommand";
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 
 export default class ObnizConnection {
-
   /**
    * obniz.js version
    */
@@ -191,7 +190,8 @@ export default class ObnizConnection {
     };
     if (this.options.binary) {
       this.wscommand = (this.constructor as typeof ObnizConnection).WSCommand;
-      const classes: any = (this.constructor as typeof ObnizConnection).WSCommand.CommandClasses;
+      const classes: any = (this.constructor as typeof ObnizConnection)
+        .WSCommand.CommandClasses;
       this.wscommands = [];
       for (const class_name in classes) {
         this.wscommands.push(
@@ -499,7 +499,9 @@ export default class ObnizConnection {
 
     const query: any = [];
     if ((this.constructor as typeof ObnizConnection).version) {
-      query.push("obnizjs=" + (this.constructor as typeof ObnizConnection).version);
+      query.push(
+        "obnizjs=" + (this.constructor as typeof ObnizConnection).version,
+      );
     }
     if (this.options.access_token) {
       query.push("access_token=" + this.options.access_token);
@@ -514,7 +516,6 @@ export default class ObnizConnection {
 
     let socket: any;
     if (this.isNode) {
-
       socket = new wsClient(url);
       socket.on("open", this.wsOnOpen.bind(this));
       socket.on("message", this.wsOnMessage.bind(this));
@@ -785,8 +786,7 @@ export default class ObnizConnection {
     }
   }
 
-  protected handleSystemCommand(wsObj: any) {
-  }
+  protected handleSystemCommand(wsObj: any) {}
 
   protected binary2Json(binary: any) {
     let data: any = new Uint8Array(binary);

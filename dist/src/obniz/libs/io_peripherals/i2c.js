@@ -140,7 +140,11 @@ class PeripheralI2C {
                 this.Obniz.display.setPinNames("i2c" + this.id, ioNames);
             }
         }
-        const startObj = util_1.default._keyFilter(this.state, ["mode", "sda", "scl"]);
+        const startObj = util_1.default._keyFilter(this.state, [
+            "mode",
+            "sda",
+            "scl",
+        ]);
         if (mode === "master") {
             startObj.clock = clock;
         }

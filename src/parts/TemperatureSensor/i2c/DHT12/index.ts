@@ -3,14 +3,14 @@
  * @module Parts.DHT12
  */
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
-import i2cParts, {I2cInfo, I2cPartsAbstractOptions} from "../../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../../obniz/ObnizPartsInterface";
+import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from "../../../i2cParts";
 
-export interface DHT12Options extends I2cPartsAbstractOptions {
-}
+export interface DHT12Options extends I2cPartsAbstractOptions {}
 
 export default class DHT12 extends i2cParts implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "DHT12",
@@ -33,7 +33,10 @@ export default class DHT12 extends i2cParts implements ObnizPartsInterface {
     return this.i2cinfo;
   }
 
-  public async getAllDataWait(): Promise<{ humidity: number, temperature: number }> {
+  public async getAllDataWait(): Promise<{
+    humidity: number;
+    temperature: number;
+  }> {
     const data: any = await this.readWait(0x00, 5);
     const humidity: any = data[0] + data[1] * 0.1;
     let temperature: any = data[2] + (data[3] & 0x7f) * 0.1;
@@ -53,10 +56,10 @@ export default class DHT12 extends i2cParts implements ObnizPartsInterface {
   }
 
   public async getTempWait(): Promise<number> {
-    return (await this.getAllDataWait() as any).temperature;
+    return ((await this.getAllDataWait()) as any).temperature;
   }
 
   public async getHumdWait(): Promise<number> {
-    return (await this.getAllDataWait() as any).humidity;
+    return ((await this.getAllDataWait()) as any).humidity;
   }
 }

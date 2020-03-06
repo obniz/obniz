@@ -5,7 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface GYSFDMAXBOptions {
   vcc?: number;
@@ -50,7 +52,7 @@ export default class GYSFDMAXB implements ObnizPartsInterface {
   public requiredKeys: string[];
   public ioKeys: string[];
   public displayName = "gps";
-  public displayIoNames = {txd: "txd", rxd: "rxd", Opps: "1pps"};
+  public displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
   public params: any;
 
   public editedData: any;

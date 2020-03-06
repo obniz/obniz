@@ -77,8 +77,7 @@ export default class BleSecurity {
    * @ignore
    * @param params
    */
-  public onerror(params: any) {
-  } // dummy
+  public onerror(params: any) {} // dummy
 
   /**
    * @ignore

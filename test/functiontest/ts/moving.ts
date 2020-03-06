@@ -1,4 +1,3 @@
-
 /* tslint:disable:class-name max-classes-per-file */
 import Obniz from "../../../dist/src/obniz/index";
 
@@ -63,7 +62,13 @@ class PCA9685Test {
   public getPWM() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", { gnd: 0, oe: 1, scl: 2, sda: 3, vcc: 4 });
+      const driver = obniz.wired("PCA9685", {
+        gnd: 0,
+        oe: 1,
+        scl: 2,
+        sda: 3,
+        vcc: 4,
+      });
       const pwm0 = driver.getPWM(0);
       pwm0.freq(1000);
       pwm0.duty(50);
@@ -80,7 +85,13 @@ class PCA9685Test {
   public freq() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", { gnd: 0, oe: 1, scl: 2, sda: 3, vcc: 4 });
+      const driver = obniz.wired("PCA9685", {
+        gnd: 0,
+        oe: 1,
+        scl: 2,
+        sda: 3,
+        vcc: 4,
+      });
       driver.freq(1000);
     };
   }
@@ -88,7 +99,13 @@ class PCA9685Test {
   public duty() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", { gnd: 0, oe: 1, scl: 2, sda: 3, vcc: 4 });
+      const driver = obniz.wired("PCA9685", {
+        gnd: 0,
+        oe: 1,
+        scl: 2,
+        sda: 3,
+        vcc: 4,
+      });
       driver.freq(1000);
       driver.duty(0, 50);
       driver.duty(1, 60);
@@ -98,7 +115,13 @@ class PCA9685Test {
   public pulse() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", { gnd: 0, oe: 1, scl: 2, sda: 3, vcc: 4 });
+      const driver = obniz.wired("PCA9685", {
+        gnd: 0,
+        oe: 1,
+        scl: 2,
+        sda: 3,
+        vcc: 4,
+      });
       driver.freq(100); // 100hz = 10msec interval
       driver.pulse(0, 5);
       driver.pulse(1, 6);
@@ -108,7 +131,14 @@ class PCA9685Test {
   public setEnable() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const driver = obniz.wired("PCA9685", { gnd: 0, oe: 1, scl: 2, sda: 3, vcc: 4, enabled: false });
+      const driver = obniz.wired("PCA9685", {
+        gnd: 0,
+        oe: 1,
+        scl: 2,
+        sda: 3,
+        vcc: 4,
+        enabled: false,
+      });
       driver.setEnable(true);
     };
   }

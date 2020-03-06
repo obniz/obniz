@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -33,7 +32,7 @@ class WSCommandSwitch extends WSCommand {
     if (module === undefined) {
       return;
     }
-    const schemaData: any = [{uri: "/request/switch/get", onValid: this.get}];
+    const schemaData: any = [{ uri: "/request/switch/get", onValid: this.get }];
     const res: any = this.validateCommandSchema(schemaData, module, "switch");
 
     if (res.valid === 0) {

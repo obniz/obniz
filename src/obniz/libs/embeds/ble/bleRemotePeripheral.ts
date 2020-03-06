@@ -74,7 +74,7 @@ export default class BleRemotePeripheral {
     this.advertise_data_rows = null;
     for (const key in dic) {
       if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
-        (this as any) [key] = dic[key];
+        (this as any)[key] = dic[key];
       }
     }
     this.analyseAdvertisement();
@@ -262,7 +262,9 @@ export default class BleRemotePeripheral {
 
   public findCharacteristic(param: any) {
     const serviceUuid: any = BleHelper.uuidFilter(param.service_uuid);
-    const characteristicUuid: any = BleHelper.uuidFilter(param.characteristic_uuid);
+    const characteristicUuid: any = BleHelper.uuidFilter(
+      param.characteristic_uuid,
+    );
     const s: any = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -330,23 +332,17 @@ export default class BleRemotePeripheral {
     const descriptors: any = ArrayFlat(descriptorsNest);
   }
 
-  public onconnect() {
-  }
+  public onconnect() {}
 
-  public ondisconnect() {
-  }
+  public ondisconnect() {}
 
-  public ondiscoverservice(child: any) {
-  }
+  public ondiscoverservice(child: any) {}
 
-  public ondiscoverservicefinished(children: any) {
-  }
+  public ondiscoverservicefinished(children: any) {}
 
-  public ondiscover() {
-  }
+  public ondiscover() {}
 
-  public ondiscoverfinished() {
-  }
+  public ondiscoverfinished() {}
 
   public async notifyFromServer(notifyName: any, params: any) {
     this.emitter.emit(notifyName, params);
@@ -368,7 +364,7 @@ export default class BleRemotePeripheral {
         const uuid: any = params.service_uuid;
         let child: any = this.getService(uuid);
         if (!child) {
-          const newService: any = new BleRemoteService({uuid});
+          const newService: any = new BleRemoteService({ uuid });
           newService.parent = this;
           this._services.push(newService);
           child = newService;
@@ -387,6 +383,5 @@ export default class BleRemotePeripheral {
     }
   }
 
-  public onerror() {
-  }
+  public onerror() {}
 }

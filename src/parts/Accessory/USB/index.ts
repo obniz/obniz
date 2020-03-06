@@ -4,7 +4,9 @@
  */
 import Obniz from "../../../obniz";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface USBOptions {
   vcc: number;
@@ -12,7 +14,6 @@ export interface USBOptions {
 }
 
 export default class USB implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "USB",

@@ -5,7 +5,7 @@
 
 import semver from "semver";
 import Obniz from "../../index";
-import {AnimationStatus} from "./common";
+import { AnimationStatus } from "./common";
 
 export interface DirectiveAnimationFrame {
   /**
@@ -103,7 +103,12 @@ export default class Directive {
    * @param animations instructions. This is optional when status is pause``resume.
    * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
    */
-  public animation(name: string, status: AnimationStatus, animations?: DirectiveAnimationFrame[], repeat?: number) {
+  public animation(
+    name: string,
+    status: AnimationStatus,
+    animations?: DirectiveAnimationFrame[],
+    repeat?: number,
+  ) {
     if (
       (typeof repeat === "number" || status === "registrate") &&
       semver.lt(this.Obniz.firmware_ver!, "2.0.0")

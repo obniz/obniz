@@ -5,9 +5,9 @@
 
 import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 import ObnizPartsInterface from "./ObnizPartsInterface";
-import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
+import { WiredNameMap, WiredNameOptionsMap } from "./ObnizPartsList";
 
 /**
  * @ignore
@@ -15,7 +15,6 @@ import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
 const _parts: any = {};
 
 export default class ObnizParts extends ObnizConnection {
-
   /**
    * @ignore
    * @private
@@ -78,7 +77,10 @@ export default class ObnizParts extends ObnizConnection {
    * @param partsname
    * @param options
    */
-  public wired<K extends keyof WiredNameMap>(partsname: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K] {
+  public wired<K extends keyof WiredNameMap>(
+    partsname: K,
+    options?: WiredNameOptionsMap[K],
+  ): WiredNameMap[K] {
     const parts: any = ObnizParts.Parts(partsname);
     if (!parts) {
       throw new Error("No such a parts [" + partsname + "] found");

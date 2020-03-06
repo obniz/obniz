@@ -4,8 +4,7 @@
  * @ignore
  */
 // let debug = require('debug')('signaling');
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 import events from "events";
 

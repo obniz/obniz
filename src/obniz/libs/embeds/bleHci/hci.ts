@@ -31,7 +31,6 @@ export default class ObnizBLEHci {
         hci: null,
       },
     });
-
   }
 
   /**
@@ -62,6 +61,5 @@ export default class ObnizBLEHci {
    * Callback on HCI command received.
    * @param data
    */
-  public onread(data: any) {
-  }
+  public onread(data: any) {}
 }

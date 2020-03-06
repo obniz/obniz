@@ -151,8 +151,7 @@ class BleSecurity {
             },
         });
     }
-    onerror(params) {
-    } // dummy
+    onerror(params) { } // dummy
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {

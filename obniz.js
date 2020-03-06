@@ -194,6 +194,7 @@ module.exports = {
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
+    "tslint-plugin-prettier": "^2.1.0",
     "typescript": "^3.7.5",
     "typedoc": "^0.16.9",
     "typedoc-plugin-external-module-name": "^3.0.0",
@@ -233,7 +234,8 @@ module.exports = {
     "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser"
   }
-};
+}
+;
 
 /***/ }),
 
@@ -1858,8 +1860,8 @@ class ObnizComponents extends ObnizParts_1.default {
         return !!this.getExtraInterface(interfaceName);
     }
     getExtraInterface(interfaceName) {
-        if (this._hwDefinition.extraInterface
-            && this._hwDefinition.extraInterface[interfaceName]) {
+        if (this._hwDefinition.extraInterface &&
+            this._hwDefinition.extraInterface[interfaceName]) {
             return this._hwDefinition.extraInterface[interfaceName];
         }
         return null;
@@ -2058,7 +2060,8 @@ class ObnizConnection {
         };
         if (this.options.binary) {
             this.wscommand = this.constructor.WSCommand;
-            const classes = this.constructor.WSCommand.CommandClasses;
+            const classes = this.constructor
+                .WSCommand.CommandClasses;
             this.wscommands = [];
             for (const class_name in classes) {
                 this.wscommands.push(new classes[class_name]({
@@ -2619,8 +2622,7 @@ class ObnizConnection {
             this.wsconnect(server);
         }
     }
-    handleSystemCommand(wsObj) {
-    }
+    handleSystemCommand(wsObj) { }
     binary2Json(binary) {
         let data = new Uint8Array(binary);
         const json = [];
@@ -3543,6 +3545,7 @@ try {
             window.parent.userAppLoaded(window);
         }
         function showObnizDebugError(err) {
+            // eslint-disable-line
             if (window.parent && window.parent.logger) {
                 window.parent.logger.onObnizError(err);
             }
@@ -3579,7 +3582,8 @@ for (const path of context.keys()) {
     if (anParts.info) {
         Obniz.PartsRegistrate(anParts);
     }
-    else if (anParts.default.info) { // for ts "export default"
+    else if (anParts.default.info) {
+        // for ts "export default"
         Obniz.PartsRegistrate(anParts.default);
     }
 }
@@ -3684,10 +3688,8 @@ class ObnizBLE {
         return str;
     }
     // dummy
-    async initWait() {
-    }
-    _reset() {
-    }
+    async initWait() { }
+    _reset() { }
     directConnect(uuid, addressType) {
         throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
     }
@@ -4238,10 +4240,8 @@ class BleAttributeAbstract {
     /**
      * WS COMMANDS
      */
-    read() {
-    }
-    write(val, needResponse) {
-    }
+    read() { }
+    write(val, needResponse) { }
     writeNumber(val, needResponse) {
         this.write([val], needResponse);
     }
@@ -4317,14 +4317,10 @@ class BleAttributeAbstract {
     /**
      * CALLBACKS
      */
-    onwrite(result) {
-    }
-    onread(data) {
-    }
-    onwritefromremote(address, data) {
-    }
-    onreadfromremote(address) {
-    }
+    onwrite(result) { }
+    onread(data) { }
+    onwritefromremote(address, data) { }
+    onreadfromremote(address) { }
     onerror(err) {
         console.error(err.message);
     }
@@ -4677,10 +4673,8 @@ class BlePeripheral {
     end() {
         this.Obniz.send({ ble: { peripheral: null } });
     }
-    onconnectionupdates() {
-    }
-    onerror() {
-    }
+    onconnectionupdates() { }
+    onerror() { }
 }
 exports.default = BlePeripheral;
 
@@ -4722,8 +4716,7 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
-    discoverChildren() {
-    }
+    discoverChildren() { }
     discoverChildrenWait() {
         return new Promise((resolve) => {
             this.emitter.once("discoverfinished", () => {
@@ -4738,10 +4731,8 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     /**
      * CALLBACKS
      */
-    ondiscover(child) {
-    }
-    ondiscoverfinished(children) {
-    }
+    ondiscover(child) { }
+    ondiscoverfinished(children) { }
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
@@ -4848,8 +4839,7 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
         });
     }
     unregisterNotify() {
-        this.onnotify = () => {
-        };
+        this.onnotify = () => { };
         const obj = {
             ble: {
                 unregister_notify_characteristic: {
@@ -4947,16 +4937,11 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     ondiscoverfinished(descriptors) {
         this.ondiscoverdescriptorfinished(descriptors);
     }
-    ondiscoverdescriptor(descriptors) {
-    }
-    ondiscoverdescriptorfinished(descriptors) {
-    }
-    onregisternotify() {
-    }
-    onunregisternotify() {
-    }
-    onnotify(data) {
-    }
+    ondiscoverdescriptor(descriptors) { }
+    ondiscoverdescriptorfinished(descriptors) { }
+    onregisternotify() { }
+    onunregisternotify() { }
+    onnotify(data) { }
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
@@ -5342,18 +5327,12 @@ class BleRemotePeripheral {
         // eslint-disable-next-line no-unused-vars
         const descriptors = ArrayFlat(descriptorsNest);
     }
-    onconnect() {
-    }
-    ondisconnect() {
-    }
-    ondiscoverservice(child) {
-    }
-    ondiscoverservicefinished(children) {
-    }
-    ondiscover() {
-    }
-    ondiscoverfinished() {
-    }
+    onconnect() { }
+    ondisconnect() { }
+    ondiscoverservice(child) { }
+    ondiscoverservicefinished(children) { }
+    ondiscover() { }
+    ondiscoverfinished() { }
     async notifyFromServer(notifyName, params) {
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
@@ -5391,8 +5370,7 @@ class BleRemotePeripheral {
             }
         }
     }
-    onerror() {
-    }
+    onerror() { }
 }
 exports.default = BleRemotePeripheral;
 
@@ -5467,10 +5445,8 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     ondiscoverfinished(characteristics) {
         this.ondiscovercharacteristicfinished(characteristics);
     }
-    ondiscovercharacteristic(characteristic) {
-    }
-    ondiscovercharacteristicfinished(characteristics) {
-    }
+    ondiscovercharacteristic(characteristic) { }
+    ondiscovercharacteristicfinished(characteristics) { }
 }
 exports.default = BleRemoteService;
 
@@ -5568,7 +5544,9 @@ class BleScan {
             return false;
         }
         if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
+            const uuids = peripheral
+                .advertisementServiceUuids()
+                .map((e) => {
                 return bleHelper_1.default.uuidFilter(e);
             });
             for (const uuid of this.scanTarget.uuids) {
@@ -5579,10 +5557,8 @@ class BleScan {
         }
         return true;
     }
-    onfinish(scanedPeripherals) {
-    } // dummy
-    onfind(params) {
-    } // dummy
+    onfinish(scanedPeripherals) { } // dummy
+    onfind(params) { } // dummy
     setAdvertisementFilter() {
         throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
     }
@@ -5771,8 +5747,7 @@ class BleSecurity {
             },
         });
     }
-    onerror(params) {
-    } // dummy
+    onerror(params) { } // dummy
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {
@@ -5973,8 +5948,7 @@ class ObnizBLE {
      * @ignore
      * @private
      */
-    _reset() {
-    }
+    _reset() { }
     /**
      * Connect to peripheral without scanning.
      * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
@@ -6044,8 +6018,7 @@ class ObnizBLE {
             });
         }
     }
-    onStateChange() {
-    }
+    onStateChange() { }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
             if (this.remotePeripherals[key].address === address) {
@@ -6054,10 +6027,8 @@ class ObnizBLE {
         }
         return null;
     }
-    onAddressChange() {
-    }
-    onScanStart() {
-    }
+    onAddressChange() { }
+    onScanStart() { }
     onScanStop() {
         this.scan.notifyFromServer("onfinish", null);
     }
@@ -6095,8 +6066,7 @@ class ObnizBLE {
         const peripheral = this.findPeripheral(peripheralUuid);
         peripheral.notifyFromServer("statusupdate", { status: "disconnected" });
     }
-    onRssiUpdate() {
-    }
+    onRssiUpdate() { }
     onServicesDiscover(peripheralUuid, serviceUuids) {
         const peripheral = this.findPeripheral(peripheralUuid);
         for (const serviceUuid of serviceUuids) {
@@ -6104,8 +6074,7 @@ class ObnizBLE {
         }
         peripheral.notifyFromServer("discoverfinished", {});
     }
-    onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids) {
-    }
+    onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids) { }
     onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics) {
         const peripheral = this.findPeripheral(peripheralUuid);
         const service = peripheral.findService({ service_uuid: serviceUuid });
@@ -6148,8 +6117,7 @@ class ObnizBLE {
             result: isSuccess ? "success" : "failed",
         });
     }
-    onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) {
-    }
+    onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) { }
     onNotify(peripheralUuid, serviceUuid, characteristicUuid, state) {
         const peripheral = this.findPeripheral(peripheralUuid);
         const char = peripheral.findCharacteristic({
@@ -6202,12 +6170,9 @@ class ObnizBLE {
         };
         descriptor.notifyFromServer("onwrite", obj);
     }
-    onHandleRead(peripheralUuid, handle, data) {
-    }
-    onHandleWrite(peripheralUuid, handle) {
-    }
-    onHandleNotify(peripheralUuid, handle, data) {
-    }
+    onHandleRead(peripheralUuid, handle, data) { }
+    onHandleWrite(peripheralUuid, handle) { }
+    onHandleNotify(peripheralUuid, handle, data) { }
     onPeripheralStateChange(state) {
         // console.error("onPeripheralStateChange")
     }
@@ -6704,13 +6669,11 @@ class BleAttributeAbstract {
     /**
      * @ignore
      */
-    read() {
-    }
+    read() { }
     /**
      * @ignore
      */
-    write(data, needResponse) {
-    }
+    write(data, needResponse) { }
     /**
      * @ignore
      */
@@ -7019,14 +6982,12 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      * @param param
      */
-    addPermission(param) {
-    }
+    addPermission(param) { }
     /**
      * @ignore
      * @param param
      */
-    removePermission(param) {
-    }
+    removePermission(param) { }
     /**
      * @ignore
      * @param name
@@ -7077,14 +7038,12 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      * @private
      */
-    _onNotify() {
-    }
+    _onNotify() { }
     /**
      * @ignore
      * @private
      */
-    _onIndicate() {
-    }
+    _onIndicate() { }
     /**
      * This sends notify to the connected central.
      *
@@ -7588,8 +7547,7 @@ class BlePeripheral {
      * @ignore
      * @param error
      */
-    onerror(error) {
-    }
+    onerror(error) { }
 }
 exports.default = BlePeripheral;
 
@@ -7635,8 +7593,7 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     /**
      * @ignore
      */
-    discoverChildren() {
-    }
+    discoverChildren() { }
     /**
      * @ignore
      */
@@ -7655,14 +7612,12 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
      * @ignore
      * @param child
      */
-    ondiscover(child) {
-    }
+    ondiscover(child) { }
     /**
      * @ignore
      * @param children
      */
-    ondiscoverfinished(children) {
-    }
+    ondiscoverfinished(children) { }
     /**
      * @ignore
      * @param notifyName
@@ -7902,8 +7857,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      */
     unregisterNotify() {
-        this.onnotify = () => {
-        };
+        this.onnotify = () => { };
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, false);
     }
     /**
@@ -8472,7 +8426,8 @@ class BleRemotePeripheral {
      */
     connect(setting) {
         this._connectSetting = setting || {};
-        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+        this._connectSetting.autoDiscovery =
+            this._connectSetting.autoDiscovery !== false;
         this.obnizBle.scan.end();
         this.obnizBle.centralBindings.connect(this.address);
     }
@@ -9068,14 +9023,12 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      * @param characteristic
      */
-    ondiscovercharacteristic(characteristic) {
-    }
+    ondiscovercharacteristic(characteristic) { }
     /**
      * @ignore
      * @param characteristics
      */
-    ondiscovercharacteristicfinished(characteristics) {
-    }
+    ondiscovercharacteristicfinished(characteristics) { }
 }
 exports.default = BleRemoteService;
 
@@ -9341,11 +9294,13 @@ class BleScan {
         switch (notifyName) {
             case "onfind": {
                 const peripheral = params;
-                const alreadyGotCompleteAdveData = peripheral.adv_data && peripheral.adv_data.length > 0
-                    && peripheral.scan_resp && peripheral.scan_resp.length > 0;
+                const alreadyGotCompleteAdveData = peripheral.adv_data &&
+                    peripheral.adv_data.length > 0 &&
+                    peripheral.scan_resp &&
+                    peripheral.scan_resp.length > 0;
                 const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
-                const maybeAdvOnly = this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address)
-                    && (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
+                const maybeAdvOnly = this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address) &&
+                    (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
                 // wait for adv_data + scan resp
                 // 10 seconds timeout
                 if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
@@ -9494,12 +9449,12 @@ class BleScan {
     }
     isTarget(peripheral) {
         if (!this.scanTarget ||
-            Object.keys(this.scanTarget).length === 0
-            || this.isLocalNamePrefixTarget(peripheral)
-            || this.isLocalNameTarget(peripheral)
-            || this.isUuidTarget(peripheral)
-            || this.isDeviceAddressTarget(peripheral)
-            || this.isBinaryTarget(peripheral)) {
+            Object.keys(this.scanTarget).length === 0 ||
+            this.isLocalNamePrefixTarget(peripheral) ||
+            this.isLocalNameTarget(peripheral) ||
+            this.isUuidTarget(peripheral) ||
+            this.isDeviceAddressTarget(peripheral) ||
+            this.isBinaryTarget(peripheral)) {
             return true;
         }
         return false;
@@ -9526,8 +9481,7 @@ class BleScan {
         }
     }
     isLocalNameTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.localName) {
+        if (this.scanTarget && this.scanTarget.localName) {
             for (const name of this._arrayWrapper(this.scanTarget.localName)) {
                 if (name === peripheral.localName) {
                     return true;
@@ -9537,8 +9491,7 @@ class BleScan {
         return false;
     }
     isLocalNamePrefixTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.localNamePrefix) {
+        if (this.scanTarget && this.scanTarget.localNamePrefix) {
             for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
                 if (peripheral.localName && peripheral.localName.startsWith(name)) {
                     return true;
@@ -9548,15 +9501,16 @@ class BleScan {
         return false;
     }
     isBinaryTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.binary) {
+        if (this.scanTarget && this.scanTarget.binary) {
             return true; // cannot detect on obnizjs
         }
         return false;
     }
     isUuidTarget(peripheral) {
         if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
+            const uuids = peripheral
+                .advertisementServiceUuids()
+                .map((e) => {
                 return bleHelper_1.default.uuidFilter(e);
             });
             for (const uuid of this.scanTarget.uuids) {
@@ -9674,8 +9628,7 @@ class BleSecurity {
      * @ignore
      * @param params
      */
-    onerror(params) {
-    } // dummy
+    onerror(params) { } // dummy
     /**
      * @ignore
      * @param notifyName
@@ -9875,8 +9828,7 @@ class ObnizBLEHci {
      * Callback on HCI command received.
      * @param data
      */
-    onread(data) {
-    }
+    onread(data) { }
 }
 exports.default = ObnizBLEHci;
 
@@ -10177,8 +10129,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             aclStream.pushEncrypt(encrypt);
         }
     }
-    onMtu(address, mtu) {
-    }
+    onMtu(address, mtu) { }
     onRssiRead(handle, rssi) {
         this.emit("rssiUpdate", this._handles[handle], rssi);
     }
@@ -10505,8 +10456,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 /**
@@ -10551,8 +10501,7 @@ class Gap extends events_1.default.EventEmitter {
         this._scanState = "stopping";
         this._hci.setScanEnabled(false, true);
     }
-    onHciLeScanParametersSet() {
-    }
+    onHciLeScanParametersSet() { }
     // Called when receive an event "Command Complete" for "LE Set Scan Enable"
     onHciLeScanEnableSet(status) {
         // Check the status we got from the command complete function.
@@ -10898,14 +10847,10 @@ class Gap extends events_1.default.EventEmitter {
         this._advertiseState = "stopping";
         this._hci.setAdvertiseEnable(false);
     }
-    onHciError(error) {
-    }
-    onHciLeAdvertisingParametersSet(status) {
-    }
-    onHciLeAdvertisingDataSet(status) {
-    }
-    onHciLeScanResponseDataSet(status) {
-    }
+    onHciError(error) { }
+    onHciLeAdvertisingParametersSet(status) { }
+    onHciLeAdvertisingDataSet(status) { }
+    onHciLeScanResponseDataSet(status) { }
     onHciLeAdvertiseEnableSet(status) {
         if (this._advertiseState === "starting") {
             this._advertiseState = "started";
@@ -10944,8 +10889,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // let debug = require('debug')('att');
-const debug = () => {
-};
+const debug = () => { };
 /* eslint-disable no-unused-vars */
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 /**
@@ -11106,8 +11050,7 @@ class Gatt extends events_1.default.EventEmitter {
             this.writeAtt(this._currentCommand.buffer);
         }
     }
-    onAclStreamEncryptFail() {
-    }
+    onAclStreamEncryptFail() { }
     onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
         this._aclStream.removeListener("encrypt", this.onAclStreamEncryptBinded);
@@ -11658,8 +11601,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // let debug = require('debug')('signaling');
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 /**
  * @ignore
@@ -12765,8 +12707,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const os_1 = __importDefault(__webpack_require__("./node_modules/os-browserify/browser.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js"));
@@ -12854,8 +12795,7 @@ class BlenoBindings extends events_1.default.EventEmitter {
     onAddressChange(address) {
         this.emit("addressChange", address);
     }
-    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) {
-    }
+    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) { }
     onAdvertisingStart(error) {
         this.emit("advertisingStart", error);
     }
@@ -13011,8 +12951,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 /**
@@ -13152,14 +13091,10 @@ class Gap extends events_1.default.EventEmitter {
         this._advertiseState = "stopping";
         this._hci.setAdvertiseEnable(false);
     }
-    onHciError(error) {
-    }
-    onHciLeAdvertisingParametersSet(status) {
-    }
-    onHciLeAdvertisingDataSet(status) {
-    }
-    onHciLeScanResponseDataSet(status) {
-    }
+    onHciError(error) { }
+    onHciLeAdvertisingParametersSet(status) { }
+    onHciLeAdvertisingDataSet(status) { }
+    onHciLeScanResponseDataSet(status) { }
     onHciLeAdvertiseEnableSet(status) {
         if (this._advertiseState === "starting") {
             this._advertiseState = "started";
@@ -13198,8 +13133,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // var debug = require('debug')('gatt');
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 /* eslint-disable no-unused-vars */
 /**
@@ -14173,8 +14107,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 /**
  * @ignore
  */
@@ -14962,7 +14895,7 @@ class Display {
         }
     }
     _draw(ctx) {
-        const raw = new Array(this.width * this.height * this._colorDepth / 8);
+        const raw = new Array((this.width * this.height * this._colorDepth) / 8);
         const imageData = ctx.getImageData(0, 0, this.width, this.height);
         const data = imageData.data;
         if (this._colorDepth === 16) {
@@ -14970,9 +14903,11 @@ class Display {
                 const red = data[pixel_index * 4];
                 const green = data[pixel_index * 4 + 1];
                 const blue = data[pixel_index * 4 + 2];
-                const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
-                raw[pixel_index * 2] = (hexColor >> 8) & 0xFF;
-                raw[pixel_index * 2 + 1] = hexColor & 0xFF;
+                const hexColor = (((red >> 3) & 0x1f) << 11) |
+                    (((green >> 2) & 0x3f) << 5) |
+                    (((blue >> 3) & 0x1f) << 0);
+                raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
+                raw[pixel_index * 2 + 1] = hexColor & 0xff;
             }
         }
         else if (this._colorDepth === 4) {
@@ -14986,16 +14921,16 @@ class Display {
                 const col = Math.floor((pixel_index - line * this.width) / 2);
                 const bits = Math.floor(pixel_index - line * this.width) % 2;
                 let pixel = 0b0000;
-                if (red > 0x7F) {
+                if (red > 0x7f) {
                     pixel |= 0b1000;
                 }
-                if (green > 0x7F) {
+                if (green > 0x7f) {
                     pixel |= 0b0100;
                 }
-                if (blue > 0x7F) {
+                if (blue > 0x7f) {
                     pixel |= 0b0010;
                 }
-                if (brightness > 0x7F) {
+                if (brightness > 0x7f) {
                     pixel |= 0b0001;
                 }
                 if (bits === 0) {
@@ -15019,14 +14954,14 @@ class Display {
                 if (bits === 0) {
                     raw[row * stride + col] = 0x00;
                 }
-                if (brightness > 0x7F) {
+                if (brightness > 0x7f) {
                     raw[row * stride + col] |= 0x80 >> bits;
                 }
             }
         }
         if (this._raw_alternate) {
             for (let i = 0; i < raw.length; i++) {
-                raw[i] = (~raw[i]) & 0xFF;
+                raw[i] = ~raw[i] & 0xff;
             }
         }
         this.raw(raw);
@@ -15105,8 +15040,7 @@ class ObnizSwitch {
         return new Promise((resolve, reject) => {
             self.onChangeForStateWait = (pressed) => {
                 if (state === pressed) {
-                    self.onChangeForStateWait = () => {
-                    };
+                    self.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -15130,8 +15064,7 @@ class ObnizSwitch {
     _reset() {
         this.state = "none";
         this.observers = [];
-        this.onChangeForStateWait = () => {
-        };
+        this.onChangeForStateWait = () => { };
     }
     addObserver(callback) {
         if (callback) {
@@ -15227,14 +15160,14 @@ class M5StickC extends ObnizDevice_1.default {
     }
     gyroWait() {
         const supportedIMUNameArr = ["MPU6886", "SH200Q"];
-        if (!(supportedIMUNameArr.includes(this.imu.constructor.name))) {
+        if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
             throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
         }
         return this.imu.getGyroWait();
     }
     accelerationWait() {
         const supportedIMUNameArr = ["MPU6886", "SH200Q"];
-        if (!(supportedIMUNameArr.includes(this.imu.constructor.name))) {
+        if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
             throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
         }
         return this.imu.getAccelWait();
@@ -15244,8 +15177,7 @@ class M5StickC extends ObnizDevice_1.default {
         const onerror = i2c.onerror;
         this.imu = this.wired(imuName, { i2c });
         // @ts-ignore
-        this.imu._reset = () => {
-        };
+        this.imu._reset = () => { };
         const p1 = this.imu.whoamiWait();
         const p2 = new Promise((resolve, reject) => {
             i2c.onerror = reject;
@@ -15276,7 +15208,13 @@ class M5StickC extends ObnizDevice_1.default {
         this.led = this.wired("LED", { cathode: 10 });
         this.buttonA = this.wired("Button", { signal: 37 });
         this.buttonB = this.wired("Button", { signal: 39 });
-        const i2cParams = { sda: 21, scl: 22, clock: 100000, pull: "3v", mode: "master" };
+        const i2cParams = {
+            sda: 21,
+            scl: 22,
+            clock: 100000,
+            pull: "3v",
+            mode: "master",
+        };
         this._m5i2c = this.i2c1;
         this._m5i2c.start(i2cParams);
         this.axp = this.wired("AXP192", { i2c: this._m5i2c });
@@ -15648,20 +15586,32 @@ class PeripheralGrove {
     }
     getDigital(drive = "5v") {
         this.useWithType("digital", drive);
-        const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
-        const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        const primary = this.Obniz.isValidIO(this._params.pin1)
+            ? this.Obniz.getIO(this._params.pin1)
+            : undefined;
+        const secondary = this.Obniz.isValidIO(this._params.pin2)
+            ? this.Obniz.getIO(this._params.pin2)
+            : undefined;
         return { primary, secondary };
     }
     getAnalog(drive = "5v") {
         this.useWithType("analog", drive);
-        const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
-        const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
+        const primary = this.Obniz.isValidAD(this._params.pin1)
+            ? this.Obniz.getAD(this._params.pin1)
+            : undefined;
+        const secondary = this.Obniz.isValidAD(this._params.pin2)
+            ? this.Obniz.getAD(this._params.pin2)
+            : undefined;
         return { primary, secondary };
     }
     getAnalogDigital(drive = "5v") {
         this.useWithType("analog-digital", drive);
-        const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
-        const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        const analog = this.Obniz.isValidAD(this._params.pin1)
+            ? this.Obniz.getAD(this._params.pin1)
+            : undefined;
+        const digital = this.Obniz.isValidIO(this._params.pin2)
+            ? this.Obniz.getIO(this._params.pin2)
+            : undefined;
         return { analog, digital };
     }
     getI2c(frequency, drive = "5v") {
@@ -15679,14 +15629,18 @@ class PeripheralGrove {
     getUart(baud, drive = "5v") {
         this.useWithType("uart", drive);
         this._current.uart = this.Obniz.getFreeUart();
-        this._current.uart.start({ rx: this._params.pin1, tx: this._params.pin2, baud, drive });
+        this._current.uart.start({
+            rx: this._params.pin1,
+            tx: this._params.pin2,
+            baud,
+            drive,
+        });
         return this._current.uart;
     }
     /**
      * @ignore
      */
-    _reset() {
-    }
+    _reset() { }
     end() {
         this.used = false;
         if (this._current.uart) {
@@ -15891,7 +15845,11 @@ class PeripheralI2C {
                 this.Obniz.display.setPinNames("i2c" + this.id, ioNames);
             }
         }
-        const startObj = util_1.default._keyFilter(this.state, ["mode", "sda", "scl"]);
+        const startObj = util_1.default._keyFilter(this.state, [
+            "mode",
+            "sda",
+            "scl",
+        ]);
         if (mode === "master") {
             startObj.clock = clock;
         }
@@ -16578,7 +16536,12 @@ class PeripheralSPI {
             "gnd",
         ]);
         const obj = {};
-        const ioKeys = ["clk", "mosi", "miso", "gnd"];
+        const ioKeys = [
+            "clk",
+            "mosi",
+            "miso",
+            "gnd",
+        ];
         for (const key of ioKeys) {
             if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
                 throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -17161,7 +17124,11 @@ class LogicAnalyzer {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["io", "interval", "duration"]);
+        const err = util_1.default._requiredKeys(params, [
+            "io",
+            "interval",
+            "duration",
+        ]);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
@@ -17708,11 +17675,11 @@ const _qrcode = (() => {
             const bits = QRUtil.getBCHTypeNumber(_typeNumber);
             for (let i = 0; i < 18; i += 1) {
                 const mod = !test && ((bits >> i) & 1) === 1;
-                _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+                _modules[Math.floor(i / 3)][(i % 3) + _moduleCount - 8 - 3] = mod;
             }
             for (let i = 0; i < 18; i += 1) {
                 const mod = !test && ((bits >> i) & 1) === 1;
-                _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+                _modules[(i % 3) + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
             }
         };
         const setupTypeInfo = (test, maskPattern) => {
@@ -18201,15 +18168,15 @@ const _qrcode = (() => {
                     };
                 case QRMaskPattern.PATTERN101:
                     return (i, j) => {
-                        return (i * j) % 2 + (i * j) % 3 === 0;
+                        return ((i * j) % 2) + ((i * j) % 3) === 0;
                     };
                 case QRMaskPattern.PATTERN110:
                     return (i, j) => {
-                        return ((i * j) % 2 + (i * j) % 3) % 2 === 0;
+                        return (((i * j) % 2) + ((i * j) % 3)) % 2 === 0;
                     };
                 case QRMaskPattern.PATTERN111:
                     return (i, j) => {
-                        return ((i * j) % 3 + (i + j) % 2) % 2 === 0;
+                        return (((i * j) % 3) + ((i + j) % 2)) % 2 === 0;
                     };
                 default:
                     throw new Error("bad maskPattern:" + maskPattern);
@@ -18358,7 +18325,7 @@ const _qrcode = (() => {
                     }
                 }
             }
-            const ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+            const ratio = Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) / 5;
             lostPoint += ratio * 10;
             return lostPoint;
         };
@@ -18718,7 +18685,7 @@ const _qrcode = (() => {
         };
         _this.getAt = (index) => {
             const bufIndex = Math.floor(index / 8);
-            return ((_buffer[bufIndex] >>> (7 - index % 8)) & 1) === 1;
+            return ((_buffer[bufIndex] >>> (7 - (index % 8))) & 1) === 1;
         };
         _this.put = (num, length) => {
             for (let i = 0; i < length; i += 1) {
@@ -18734,7 +18701,7 @@ const _qrcode = (() => {
                 _buffer.push(0);
             }
             if (bit) {
-                _buffer[bufIndex] |= 0x80 >>> (_length % 8);
+                _buffer[bufIndex] |= 0x80 >>> _length % 8;
             }
             _length += 1;
         };
@@ -19009,7 +18976,7 @@ const _qrcode = (() => {
             }
             if (_length % 3 !== 0) {
                 // padding
-                const padlen = 3 - _length % 3;
+                const padlen = 3 - (_length % 3);
                 for (let i = 0; i < padlen; i += 1) {
                     _base64 += "=";
                 }
@@ -21000,7 +20967,10 @@ class WSCommandBleHci {
             { uri: "/request/ble/hci/init", onValid: this.init.bind(this) },
             { uri: "/request/ble/hci/deinit", onValid: this.deinit.bind(this) },
             { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
-            { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
+            {
+                uri: "/request/ble/hci/advertisement_filter",
+                onValid: this.advertisementFilter.bind(this),
+            },
         ];
     }
     notifyFunctionList() {
@@ -21033,7 +21003,12 @@ class WSCommandBleHci {
     advertisementFilter(params) {
         const sendData = [];
         params.hci.advertisement_filter.forEach((e) => {
-            const one = [e.range.index, e.range.length, e.value.length, ...e.value];
+            const one = [
+                e.range.index,
+                e.range.length,
+                e.value.length,
+                ...e.value,
+            ];
             sendData.push(...one);
         });
         const buf = new Uint8Array(sendData.length);
@@ -21897,7 +21872,9 @@ class WSCommandMeasurement extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: "/request/measure/echo", onValid: this.echo }];
+        const schemaData = [
+            { uri: "/request/measure/echo", onValid: this.echo },
+        ];
         const res = this.validateCommandSchema(schemaData, module, "measure");
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -23552,9 +23529,7 @@ class OMRON_2JCIE {
     }
     async getLatestData() {
         await this.connectWait();
-        const c = this.periperal
-            .getService(this.omron_uuid("3000"))
-            .getCharacteristic(this.omron_uuid("3001"));
+        const c = this.periperal.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
         const data = await c.readWait();
         const json = {
             row_number: data[0],
@@ -23598,7 +23573,10 @@ const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/
 const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
 class Linking {
     constructor(params) {
-        this.PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+        this.PRIMARY_SERVICE_UUID_LIST = [
+            "b3b3690150d34044808d50835b13a6cd",
+            "fe4e",
+        ];
         this.initialized = false;
         this.keys = [];
         this.requiredKeys = [];
@@ -23774,12 +23752,12 @@ exports.default = Linking;
 
 "use strict";
 /* ------------------------------------------------------------------
-* node-linking - advertising.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-02
-* ---------------------------------------------------------------- */
+ * node-linking - advertising.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -23796,15 +23774,15 @@ class LinkingAdvertising {
         // Company identifier
         const company_id = manu.readUInt16LE(0);
         let company_name = "Unknown";
-        if (company_id === 0x02E2) {
+        if (company_id === 0x02e2) {
             company_name = "NTT docomo";
         }
         // Version
-        const version = (manu.readUInt8(2) >>> 4);
+        const version = manu.readUInt8(2) >>> 4;
         // Vendor identifier
-        const vendor_id = ((manu.readUInt16BE(2) >>> 4) & 0b11111111);
+        const vendor_id = (manu.readUInt16BE(2) >>> 4) & 0b11111111;
         // Individual number
-        const indi_num = ((manu.readUInt32BE(3) >>> 8) & (Math.pow(2, 20) - 1));
+        const indi_num = (manu.readUInt32BE(3) >>> 8) & (Math.pow(2, 20) - 1);
         // Beacon Data
         const beacon_data_list = [];
         for (let offset = 6; offset < manu.length; offset += 2) {
@@ -23834,7 +23812,7 @@ class LinkingAdvertising {
     }
     static _parseBeaconServiceData(buf) {
         const bufn = buf.readUInt16BE(0);
-        const service_id = (bufn >>> 12);
+        const service_id = bufn >>> 12;
         const n = bufn & 0b0000111111111111;
         let res = {};
         if (service_id === 0) {
@@ -23863,7 +23841,7 @@ class LinkingAdvertising {
         else if (service_id === 4) {
             res = {
                 name: "Remaining battery power (Threshold value or less)",
-                chargeRequired: (n & 0b0000100000000000) ? true : false,
+                chargeRequired: n & 0b0000100000000000 ? true : false,
                 chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
             };
         }
@@ -23900,22 +23878,22 @@ class LinkingAdvertising {
             else if (code === 0x09) {
                 text = "LongPressRelease";
             }
-            else if (code === 0x0A) {
+            else if (code === 0x0a) {
                 text = "FastForward";
             }
-            else if (code === 0x0B) {
+            else if (code === 0x0b) {
                 text = "ReWind";
             }
-            else if (code === 0x0C) {
+            else if (code === 0x0c) {
                 text = "Shutter";
             }
-            else if (code === 0x0D) {
+            else if (code === 0x0d) {
                 text = "Up";
             }
-            else if (code === 0x0E) {
+            else if (code === 0x0e) {
                 text = "Down";
             }
-            else if (code === 0x0F) {
+            else if (code === 0x0f) {
                 text = "Left";
             }
             else if (code === 0x10) {
@@ -23942,28 +23920,28 @@ class LinkingAdvertising {
         else if (service_id === 6) {
             res = {
                 name: "Opening/closing",
-                openingStatus: (n & 0b0000100000000000) ? true : false,
-                openingCount: (n & 0b0000011111111111),
+                openingStatus: n & 0b0000100000000000 ? true : false,
+                openingCount: n & 0b0000011111111111,
             };
         }
         else if (service_id === 7) {
             res = {
                 name: "Human detection",
-                humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
-                humanDetectionCount: (n & 0b0000011111111111),
+                humanDetectionResponse: n & 0b0000100000000000 ? true : false,
+                humanDetectionCount: n & 0b0000011111111111,
             };
         }
         else if (service_id === 8) {
             res = {
                 name: "Vibration",
-                moveResponse: (n & 0b0000100000000000) ? true : false,
-                moveCount: (n & 0b0000011111111111),
+                moveResponse: n & 0b0000100000000000 ? true : false,
+                moveCount: n & 0b0000011111111111,
             };
         }
         else if (service_id === 9) {
             let illuminance = n;
             if (n >> 11) {
-                illuminance = ((n - 2047) * 50) + 2000;
+                illuminance = (n - 2047) * 50 + 2000;
             }
             res = {
                 name: "Illuminance (lx)",
@@ -23979,8 +23957,7 @@ class LinkingAdvertising {
         res.serviceId = service_id;
         return res;
     }
-    constructor() {
-    }
+    constructor() { }
 }
 exports.default = LinkingAdvertising;
 
@@ -23994,12 +23971,12 @@ exports.default = LinkingAdvertising;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
-* node-linking - device.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-03
-* ---------------------------------------------------------------- */
+ * node-linking - device.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-03
+ * ---------------------------------------------------------------- */
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -24057,8 +24034,7 @@ class LinkingDevice {
         }
         let onprogress = this.onconnectprogress;
         if (!this._isFunction(this.onconnectprogress)) {
-            onprogress = () => {
-            };
+            onprogress = () => { };
         }
         const peripheral = this._peripheral;
         onprogress({ step: 1, desc: "CONNECTING" });
@@ -24171,9 +24147,11 @@ class LinkingDevice {
                 resolve(null);
                 return;
             }
-            this.write("CONFIRM_NOTIFY_CATEGORY").then((res) => {
+            this.write("CONFIRM_NOTIFY_CATEGORY")
+                .then((res) => {
                 resolve(res);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -24185,9 +24163,11 @@ class LinkingDevice {
                 resolve(null);
                 return;
             }
-            this.write("GET_SETTING_INFORMATION").then((res) => {
+            this.write("GET_SETTING_INFORMATION")
+                .then((res) => {
                 resolve(res);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -24201,39 +24181,41 @@ class LinkingDevice {
             }
             const s = this.info.settings;
             if (name === "LEDColorName") {
-                if (!(("LED" in s) && s.LED.colorMax)) {
+                if (!("LED" in s && s.LED.colorMax)) {
                     resolve(null);
                     return;
                 }
             }
             else if (name === "LEDPatternName") {
-                if (!(("LED" in s) && s.LED.patternMax)) {
+                if (!("LED" in s && s.LED.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
             else if (name === "VibrationPatternName") {
-                if (!(("Vibration" in s) && s.Vibration.patternMax)) {
+                if (!("Vibration" in s && s.Vibration.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
             else if (name === "BeepPatternName") {
-                if (!(("Beep" in s) && s.Beep.patternMax)) {
+                if (!("Beep" in s && s.Beep.patternMax)) {
                     resolve(null);
                     return;
                 }
             }
-            this.write("GET_SETTING_NAME", { SettingNameType: name }).then((res) => {
+            this.write("GET_SETTING_NAME", { SettingNameType: name })
+                .then((res) => {
                 resolve(res);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
         return promise;
     }
     _isFunction(o) {
-        return (o && typeof (o) === "function") ? true : false;
+        return o && typeof o === "function" ? true : false;
     }
     _getServicesAndChars() {
         const peripheral = this._peripheral;
@@ -24277,7 +24259,7 @@ class LinkingDevice {
     }
     _isExecutedPacket(buf) {
         const ph = buf.readUInt8(0);
-        return (ph & 0x00000001) ? true : false;
+        return ph & 0x00000001 ? true : false;
     }
     _receivedIndicate(buf) {
         const parsed = this._LinkingService.parseResponse(buf);
@@ -24295,8 +24277,10 @@ class LinkingDevice {
                 this.onnotify(parsed);
             }
             // Button
-            if (parsed.serviceId === 2) { // PeripheralDeviceOperation Service
-                if (parsed.messageId === 0) { // NOTIFY_PD_OPERATION
+            if (parsed.serviceId === 2) {
+                // PeripheralDeviceOperation Service
+                if (parsed.messageId === 0) {
+                    // NOTIFY_PD_OPERATION
                     // let f = this.services['button']['onnotify'];
                     let f = null;
                     if (this.services.button) {
@@ -24307,7 +24291,8 @@ class LinkingDevice {
                     if (f) {
                         let button = null;
                         parsed.parameters.forEach((p) => {
-                            if (p.parameterId === 2) { // ButtonId
+                            if (p.parameterId === 2) {
+                                // ButtonId
                                 button = {
                                     buttonId: p.buttonId,
                                     buttonName: p.buttonName,
@@ -24319,52 +24304,67 @@ class LinkingDevice {
                 }
                 // Sensors
             }
-            else if (parsed.serviceId === 3) { // PeripheralDeviceSensorInformation Service
-                if (parsed.messageId === 4) { // NOTIFY_PD_SENSOR_INFO
+            else if (parsed.serviceId === 3) {
+                // PeripheralDeviceSensorInformation Service
+                if (parsed.messageId === 4) {
+                    // NOTIFY_PD_SENSOR_INFO
                     let sensor_type = -1;
                     let res = {};
                     parsed.parameters.forEach((p) => {
                         const pid = p.parameterId;
-                        if (pid === 2) { // SensorType
+                        if (pid === 2) {
+                            // SensorType
                             sensor_type = p.sensorTypeCode;
                         }
                         else {
-                            if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
-                                if (pid === 4) { // X_value
+                            if (sensor_type.toString().match(/^(0|1|2)$/)) {
+                                // Gyroscope, Accelerometer, Orientation
+                                if (pid === 4) {
+                                    // X_value
                                     res.x = p.xValue;
                                 }
-                                else if (pid === 5) { // Y_value
+                                else if (pid === 5) {
+                                    // Y_value
                                     res.y = p.yValue;
                                 }
-                                else if (pid === 6) { // Z_value
+                                else if (pid === 6) {
+                                    // Z_value
                                     res.z = p.zValue;
                                 }
                             }
-                            else if (sensor_type === 3) { // Battery
+                            else if (sensor_type === 3) {
+                                // Battery
                                 res = {
                                     charge: p.charge,
                                     level: p.level,
                                 };
                             }
-                            else if (sensor_type === 4) { // Temperature
+                            else if (sensor_type === 4) {
+                                // Temperature
                                 res.temperature = p.temperature;
                             }
-                            else if (sensor_type === 5) { // Humidity
+                            else if (sensor_type === 5) {
+                                // Humidity
                                 res.humidity = p.humidity;
                             }
-                            else if (sensor_type === 6) { // Aire pressure
+                            else if (sensor_type === 6) {
+                                // Aire pressure
                                 res.pressure = p.pressure;
                             }
-                            else if (sensor_type === 7) { // Opening and closing
+                            else if (sensor_type === 7) {
+                                // Opening and closing
                                 res.openclose = p.openclose;
                             }
-                            else if (sensor_type === 8) { // Human detection
+                            else if (sensor_type === 8) {
+                                // Human detection
                                 res.human = p.human;
                             }
-                            else if (sensor_type === 9) { // Move
+                            else if (sensor_type === 9) {
+                                // Move
                                 res.move = p.move;
                             }
-                            else if (sensor_type === 0x0a) { // Illuminance
+                            else if (sensor_type === 0x0a) {
+                                // Illuminance
                                 res.illuminance = p.illuminance;
                             }
                         }
@@ -24520,7 +24520,8 @@ class LinkingDevice {
             };
         }
         // Button
-        if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
+        if ("Button" in this.info.exsensors ||
+            device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
             this.services.button = {
                 onnotify: null,
             };
@@ -24528,7 +24529,10 @@ class LinkingDevice {
         // LED
         if ("LED" in this.info.settings) {
             const o = this.info.settings.LED;
-            if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
+            if (o.colors &&
+                o.colors.length > 0 &&
+                o.patterns &&
+                o.patterns.length > 0) {
                 const colors = {};
                 for (let i = 0; i < o.colors.length; i++) {
                     colors[o.colors[i]] = i + 1;
@@ -24627,7 +24631,7 @@ class LinkingDevice {
                 reject(new Error("Device name is required."));
                 return;
             }
-            else if (typeof (name) !== "string") {
+            else if (typeof name !== "string") {
                 reject(new Error("Device name must be a string."));
                 return;
             }
@@ -24652,7 +24656,7 @@ class LinkingDevice {
         let color_number = 1;
         if (color) {
             const colors = this.services.led.colors;
-            if (typeof (color) === "number") {
+            if (typeof color === "number") {
                 for (const name in colors) {
                     if (colors[name] === color) {
                         color_number = color;
@@ -24660,7 +24664,7 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof (color) === "string") {
+            else if (typeof color === "string") {
                 if (color in colors) {
                     color_number = colors[color];
                 }
@@ -24669,7 +24673,7 @@ class LinkingDevice {
         let pattern_number = 2;
         if (pattern) {
             const patterns = this.services.led.patterns;
-            if (typeof (pattern) === "number") {
+            if (typeof pattern === "number") {
                 for (const name in patterns) {
                     if (patterns[name] === pattern) {
                         pattern_number = pattern;
@@ -24677,13 +24681,13 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof (pattern) === "string") {
+            else if (typeof pattern === "string") {
                 if (pattern in patterns) {
                     pattern_number = patterns[pattern];
                 }
             }
         }
-        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+        if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
             duration = 5;
         }
         const promise = new Promise((resolve, reject) => {
@@ -24699,9 +24703,11 @@ class LinkingDevice {
                         duration,
                     },
                 ],
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -24713,9 +24719,11 @@ class LinkingDevice {
                 SettingInformationRequest: {
                     requestName: "STOP_DEMONSTRATION",
                 },
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -24725,7 +24733,7 @@ class LinkingDevice {
         let pattern_number = 2;
         if (pattern) {
             const patterns = this.services.vibration.patterns;
-            if (typeof (pattern) === "number") {
+            if (typeof pattern === "number") {
                 for (const name in patterns) {
                     if (patterns[name] === pattern) {
                         pattern_number = pattern;
@@ -24733,13 +24741,13 @@ class LinkingDevice {
                     }
                 }
             }
-            else if (typeof (pattern) === "string") {
+            else if (typeof pattern === "string") {
                 if (pattern in patterns) {
                     pattern_number = patterns[pattern];
                 }
             }
         }
-        if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+        if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
             duration = 5;
         }
         const promise = new Promise((resolve, reject) => {
@@ -24754,9 +24762,11 @@ class LinkingDevice {
                         duration,
                     },
                 ],
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -24768,9 +24778,11 @@ class LinkingDevice {
                 SettingInformationRequest: {
                     requestName: "STOP_DEMONSTRATION",
                 },
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -24795,9 +24807,11 @@ class LinkingDevice {
             this.write("SET_NOTIFY_SENSOR_INFO", {
                 SensorType: sensor_type,
                 Status: status,
-            }).then((res) => {
+            })
+                .then((res) => {
                 resolve(res.data);
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -24807,8 +24821,10 @@ class LinkingDevice {
         const promise = new Promise((resolve, reject) => {
             this.write("GET_SENSOR_INFO", {
                 SensorType: sensor_type,
-            }).then((res) => {
-                if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
+            })
+                .then((res) => {
+                if (sensor_type.toString().match(/^(0|1|2)$/)) {
+                    // Gyroscope, Accelerometer, Orientation
                     const d = res.data;
                     const data = {
                         x: d.xValue,
@@ -24820,7 +24836,8 @@ class LinkingDevice {
                 else {
                     resolve(res.data);
                 }
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 reject(error);
             });
         });
@@ -24840,17 +24857,17 @@ exports.default = LinkingDevice;
 
 "use strict";
 /* ------------------------------------------------------------------
-* node-linking - ieee754.js
-*
-* Copyright (c) 2017, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2017-04-13
-* ---------------------------------------------------------------- */
+ * node-linking - ieee754.js
+ *
+ * Copyright (c) 2017, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2017-04-13
+ * ---------------------------------------------------------------- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingIEEE754 {
     static read(n, slen, elen, flen) {
-        const sgn = slen ? ((n >>> 11) & 0b1) : 0; // sign
+        const sgn = slen ? (n >>> 11) & 0b1 : 0; // sign
         const max = Math.pow(2, elen) - 1; // maximum of exponent
         const exp = (n >>> flen) & max; // exponent
         let fra = 0; // fraction
@@ -24864,12 +24881,12 @@ class LinkingIEEE754 {
         }
         else if (exp === 0 && fra !== 0) {
             const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
-            const v = Math.pow(-1, sgn) * fra * Math.pow(2, (1 - m));
+            const v = Math.pow(-1, sgn) * fra * Math.pow(2, 1 - m);
             return v;
         }
         else if (exp >= 1 && exp <= max - 1) {
             const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
-            const v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, (exp - m));
+            const v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, exp - m);
             return v;
         }
         else if (exp === max && fra === 0) {
@@ -24879,8 +24896,7 @@ class LinkingIEEE754 {
             return NaN;
         }
     }
-    constructor() {
-    }
+    constructor() { }
 }
 exports.default = LinkingIEEE754;
 
@@ -24894,17 +24910,17 @@ exports.default = LinkingIEEE754;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
-* node-linking - service-notification.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-10-24
-* ---------------------------------------------------------------- */
+ * node-linking - service-notification.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /* ------------------------------------------------------------------
-* Constructor: LinkingServiceNotification()
-* ---------------------------------------------------------------- */
+ * Constructor: LinkingServiceNotification()
+ * ---------------------------------------------------------------- */
 class LinkingServiceNotification {
     constructor() {
         this.SERVICE_ID = 0x01;
@@ -24957,13 +24973,12 @@ class LinkingServiceNotification {
                 offset += plen;
                 const p = this._parseParameter(pid, pvalue_buf);
                 parameters.push(this._parseParameter(pid, pvalue_buf, notify_cateogry_id));
-                if (pid === 0x04 && ("id" in p)) {
+                if (pid === 0x04 && "id" in p) {
                     notify_cateogry_id = p.id;
                 }
             }
         }
-        catch (e) {
-        }
+        catch (e) { }
         return parameters;
     }
     _parseParameter(pid, buf, notify_cateogory_id) {
@@ -24998,22 +25013,22 @@ class LinkingServiceNotification {
         else if (pid === 0x09) {
             parsed = this._parseNotifyId(buf);
         }
-        else if (pid === 0x0A) {
+        else if (pid === 0x0a) {
             parsed = this._parseNotificationOperation(buf);
         }
-        else if (pid === 0x0B) {
+        else if (pid === 0x0b) {
             parsed = this._parseTittle(buf);
         }
-        else if (pid === 0x0C) {
+        else if (pid === 0x0c) {
             parsed = this._parseText(buf);
         }
-        else if (pid === 0x0D) {
+        else if (pid === 0x0d) {
             parsed = this._parseAppName(buf);
         }
-        else if (pid === 0x0E) {
+        else if (pid === 0x0e) {
             parsed = this._parseAppNameLocal(buf);
         }
-        else if (pid === 0x0F) {
+        else if (pid === 0x0f) {
             parsed = this._parseNotifyApp(buf);
         }
         else if (pid === 0x10) {
@@ -25046,16 +25061,16 @@ class LinkingServiceNotification {
         else if (pid === 0x19) {
             parsed = this._parsePerson(buf);
         }
-        else if (pid === 0x1A) {
+        else if (pid === 0x1a) {
             parsed = this._parseMimeTypeForImage(buf);
         }
-        else if (pid === 0x1B) {
+        else if (pid === 0x1b) {
             parsed = this._parseMimeTypeForMedia(buf);
         }
-        else if (pid === 0x1C) {
+        else if (pid === 0x1c) {
             parsed = this._parseImage(buf);
         }
-        else if (pid >= 0x1D && pid <= 0x26) {
+        else if (pid >= 0x1d && pid <= 0x26) {
             parsed = this._parseContents(buf, pid);
         }
         else if (pid === 0x27) {
@@ -25067,10 +25082,10 @@ class LinkingServiceNotification {
         else if (pid === 0x29) {
             parsed = this._parseClass(buf);
         }
-        else if (pid === 0x2A) {
+        else if (pid === 0x2a) {
             parsed = this._parseSharingInformation(buf);
         }
-        else if (pid === 0x2B) {
+        else if (pid === 0x2b) {
             parsed = this._parseBeepPattern(buf);
         }
         if (parsed) {
@@ -25262,7 +25277,8 @@ class LinkingServiceNotification {
     _parseParameterIdList(buf, notify_cateogry_id) {
         const v = buf.readUInt16LE(0);
         const list = [];
-        if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) { // PhoneIncomingCall/PhoneInCall/PhoneIdle
+        if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) {
+            // PhoneIncomingCall/PhoneInCall/PhoneIdle
             if (v & 0b0000000000000001) {
                 list.push({ id: 0x09, name: "NotifyId" });
             }
@@ -25270,21 +25286,22 @@ class LinkingServiceNotification {
                 list.push({ id: 0x04, name: "NotifyCategoryID" });
             }
         }
-        else if (notify_cateogry_id === 5) { // Mail
+        else if (notify_cateogry_id === 5) {
+            // Mail
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x0D, name: "AppName" });
+                list.push({ id: 0x0d, name: "AppName" });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x0E, name: "AppNameLocal" });
+                list.push({ id: 0x0e, name: "AppNameLocal" });
             }
             if (v & 0b0000000000000100) {
                 list.push({ id: 0x28, name: "Package" });
             }
             if (v & 0b0000000000001000) {
-                list.push({ id: 0x0B, name: "Tittle" });
+                list.push({ id: 0x0b, name: "Tittle" });
             }
             if (v & 0b0000000000010000) {
-                list.push({ id: 0x0C, name: "Text" });
+                list.push({ id: 0x0c, name: "Text" });
             }
             if (v & 0b0000000000100000) {
                 list.push({ id: 0x13, name: "Sender" });
@@ -25302,18 +25319,19 @@ class LinkingServiceNotification {
                 list.push({ id: 0x04, name: "NotifyCategoryID" });
             }
         }
-        else if (notify_cateogry_id === 6) { // Schedule
+        else if (notify_cateogry_id === 6) {
+            // Schedule
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x0D, name: "AppName" });
+                list.push({ id: 0x0d, name: "AppName" });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x0E, name: "AppNameLocal" });
+                list.push({ id: 0x0e, name: "AppNameLocal" });
             }
             if (v & 0b0000000000000100) {
                 list.push({ id: 0x28, name: "Package" });
             }
             if (v & 0b0000000000001000) {
-                list.push({ id: 0x0B, name: "Tittle" });
+                list.push({ id: 0x0b, name: "Tittle" });
             }
             if (v & 0b0000000000010000) {
                 list.push({ id: 0x16, name: "StartDate" });
@@ -25328,16 +25346,16 @@ class LinkingServiceNotification {
                 list.push({ id: 0x19, name: "Person" });
             }
             if (v & 0b0000000100000000) {
-                list.push({ id: 0x0C, name: "Text" });
+                list.push({ id: 0x0c, name: "Text" });
             }
             if (v & 0b0000001000000000) {
-                list.push({ id: 0x1D, name: "Contents1" });
+                list.push({ id: 0x1d, name: "Contents1" });
             }
             if (v & 0b0000010000000000) {
-                list.push({ id: 0x1E, name: "Contents2" });
+                list.push({ id: 0x1e, name: "Contents2" });
             }
             if (v & 0b0000100000000000) {
-                list.push({ id: 0x1F, name: "Contents3" });
+                list.push({ id: 0x1f, name: "Contents3" });
             }
             if (v & 0b0001000000000000) {
                 list.push({ id: 0x09, name: "NotifyId" });
@@ -25346,21 +25364,22 @@ class LinkingServiceNotification {
                 list.push({ id: 0x04, name: "NotifyCategoryID" });
             }
         }
-        else if (notify_cateogry_id === 7) { // General
+        else if (notify_cateogry_id === 7) {
+            // General
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x0D, name: "AppName" });
+                list.push({ id: 0x0d, name: "AppName" });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x0E, name: "AppNameLocal" });
+                list.push({ id: 0x0e, name: "AppNameLocal" });
             }
             if (v & 0b0000000000000100) {
                 list.push({ id: 0x28, name: "Package" });
             }
             if (v & 0b0000000000001000) {
-                list.push({ id: 0x0B, name: "Tittle" });
+                list.push({ id: 0x0b, name: "Tittle" });
             }
             if (v & 0b0000000000010000) {
-                list.push({ id: 0x0C, name: "Text" });
+                list.push({ id: 0x0c, name: "Text" });
             }
             if (v & 0b0000000000100000) {
                 list.push({ id: 0x09, name: "NotifyId" });
@@ -25369,24 +25388,25 @@ class LinkingServiceNotification {
                 list.push({ id: 0x04, name: "NotifyCategoryID" });
             }
         }
-        else if (notify_cateogry_id === 8) { // Etc
+        else if (notify_cateogry_id === 8) {
+            // Etc
             if (v & 0b0000000000000001) {
-                list.push({ id: 0x0D, name: "AppName" });
+                list.push({ id: 0x0d, name: "AppName" });
             }
             if (v & 0b0000000000000010) {
-                list.push({ id: 0x0E, name: "AppNameLocal" });
+                list.push({ id: 0x0e, name: "AppNameLocal" });
             }
             if (v & 0b0000000000000100) {
                 list.push({ id: 0x28, name: "Package" });
             }
             if (v & 0b0000000000001000) {
-                list.push({ id: 0x1D, name: "Contents1" });
+                list.push({ id: 0x1d, name: "Contents1" });
             }
             if (v & 0b0000000000010000) {
-                list.push({ id: 0x1E, name: "Contents2" });
+                list.push({ id: 0x1e, name: "Contents2" });
             }
             if (v & 0b0000000000100000) {
-                list.push({ id: 0x1F, name: "Contents3" });
+                list.push({ id: 0x1f, name: "Contents3" });
             }
             if (v & 0b0000000001000000) {
                 list.push({ id: 0x20, name: "Contents4" });
@@ -25401,16 +25421,16 @@ class LinkingServiceNotification {
                 list.push({ id: 0x23, name: "Contents7" });
             }
             if (v & 0b0000010000000000) {
-                list.push({ id: 0x1B, name: "MimeTypeForMedia" });
+                list.push({ id: 0x1b, name: "MimeTypeForMedia" });
             }
             if (v & 0b0000100000000000) {
                 list.push({ id: 0x27, name: "Media" });
             }
             if (v & 0b0001000000000000) {
-                list.push({ id: 0x1A, name: "MimeTypeForImage" });
+                list.push({ id: 0x1a, name: "MimeTypeForImage" });
             }
             if (v & 0b0010000000000000) {
-                list.push({ id: 0x1C, name: "Image" });
+                list.push({ id: 0x1c, name: "Image" });
             }
             if (v & 0b0100000000000000) {
                 list.push({ id: 0x09, name: "NotifyId" });
@@ -25831,7 +25851,11 @@ class LinkingServiceNotification {
     _createPayloadGetPdNotifyDetailDataResp(params) {
         let pnum = 0;
         let rcode = null;
-        if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+        if ("ResultCode" in params &&
+            typeof params.ResultCode === "number" &&
+            params.ResultCode >= 0 &&
+            params.ResultCode <= 0xff &&
+            params.ResultCode % 1 === 0) {
             rcode = params.ResultCode;
             pnum++;
         }
@@ -25839,7 +25863,11 @@ class LinkingServiceNotification {
             return null;
         }
         let uid = null;
-        if (("UniqueId" in params) && typeof (params.UniqueId) === "number" && params.UniqueId >= 0 && params.UniqueId <= 0xFF && params.UniqueId % 1 === 0) {
+        if ("UniqueId" in params &&
+            typeof params.UniqueId === "number" &&
+            params.UniqueId >= 0 &&
+            params.UniqueId <= 0xff &&
+            params.UniqueId % 1 === 0) {
             uid = params.UniqueId;
             pnum++;
         }
@@ -25869,7 +25897,11 @@ class LinkingServiceNotification {
     _createPayloadStartPdApplicationResp(params) {
         let pnum = 0;
         let rcode;
-        if (("ResultCode" in params) && typeof (params.ResultCode) === "number" && params.ResultCode >= 0 && params.ResultCode <= 0xFF && params.ResultCode % 1 === 0) {
+        if ("ResultCode" in params &&
+            typeof params.ResultCode === "number" &&
+            params.ResultCode >= 0 &&
+            params.ResultCode <= 0xff &&
+            params.ResultCode % 1 === 0) {
             rcode = params.ResultCode;
             pnum++;
         }
@@ -25904,12 +25936,12 @@ exports.default = LinkingServiceNotification;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
-* node-linking - service-operation.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-02
-* ---------------------------------------------------------------- */
+ * node-linking - service-operation.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceOperation {
@@ -25939,8 +25971,7 @@ class LinkingServiceOperation {
                 parameters.push(this._parseParameter(pid, pvalue_buf));
             }
         }
-        catch (e) {
-        }
+        catch (e) { }
         return parameters;
     }
     _parseParameter(pid, buf) {
@@ -26031,22 +26062,22 @@ class LinkingServiceOperation {
         else if (code === 0x09) {
             text = "LongPressRelease";
         }
-        else if (code === 0x0A) {
+        else if (code === 0x0a) {
             text = "FastForward";
         }
-        else if (code === 0x0B) {
+        else if (code === 0x0b) {
             text = "ReWind";
         }
-        else if (code === 0x0C) {
+        else if (code === 0x0c) {
             text = "Shutter";
         }
-        else if (code === 0x0D) {
+        else if (code === 0x0d) {
             text = "Up";
         }
-        else if (code === 0x0E) {
+        else if (code === 0x0e) {
             text = "Down";
         }
-        else if (code === 0x0F) {
+        else if (code === 0x0f) {
             text = "Left";
         }
         else if (code === 0x10) {
@@ -26084,12 +26115,12 @@ exports.default = LinkingServiceOperation;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
-* node-linking - service-property.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-10-24
-* ---------------------------------------------------------------- */
+ * node-linking - service-property.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceProperty {
@@ -26124,8 +26155,7 @@ class LinkingServiceProperty {
                 parameters.push(this._parseParameter(pid, pvalue_buf));
             }
         }
-        catch (e) {
-        }
+        catch (e) { }
         return parameters;
     }
     _parseParameter(pid, buf) {
@@ -26383,12 +26413,12 @@ exports.default = LinkingServiceProperty;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
-* node-linking - service-sensor.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-02
-* ---------------------------------------------------------------- */
+ * node-linking - service-sensor.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -26430,14 +26460,13 @@ class LinkingServiceSensor {
                 const pvalue_buf = buf.slice(offset, offset + plen);
                 offset += plen;
                 const p = this._parseParameter(pid, pvalue_buf, sensor_type);
-                if (pid === 0x02 && ("sensorTypeCode" in p)) {
+                if (pid === 0x02 && "sensorTypeCode" in p) {
                     sensor_type = p.sensorTypeCode;
                 }
                 parameters.push(p);
             }
         }
-        catch (e) {
-        }
+        catch (e) { }
         return parameters;
     }
     _parseParameter(pid, buf, sensor_type) {
@@ -26472,7 +26501,7 @@ class LinkingServiceSensor {
         else if (pid === 0x09) {
             parsed = this._parseZ_threshold(buf);
         }
-        else if (pid === 0x0A) {
+        else if (pid === 0x0a) {
             parsed = this._parseOriginalData(buf, sensor_type);
         }
         parsed.parameterId = pid;
@@ -26612,47 +26641,55 @@ class LinkingServiceSensor {
     }
     _parseOriginalData(buf, sensor_type) {
         const n = buf.readUInt16LE(0) & 0b0000111111111111;
-        if (sensor_type === 0x03) { // Battery
+        if (sensor_type === 0x03) {
+            // Battery
             return {
-                chargeRequired: (n & 0b0000100000000000) ? true : false,
+                chargeRequired: n & 0b0000100000000000 ? true : false,
                 chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
             };
         }
-        else if (sensor_type === 0x04) { // Temperature
+        else if (sensor_type === 0x04) {
+            // Temperature
             return {
                 temperature: ieee754_1.default.read(n, 1, 4, 7),
             };
         }
-        else if (sensor_type === 0x05) { // Humidity
+        else if (sensor_type === 0x05) {
+            // Humidity
             const v = ieee754_1.default.read(n, 0, 4, 8);
             return {
                 humidity: v,
             };
         }
-        else if (sensor_type === 0x06) { // Atmospheric pressure
+        else if (sensor_type === 0x06) {
+            // Atmospheric pressure
             return {
                 pressure: buf.readFloatLE(0),
             };
         }
-        else if (sensor_type === 0x07) { // Opening and closing
+        else if (sensor_type === 0x07) {
+            // Opening and closing
             return {
-                openingStatus: (n & 0b0000100000000000) ? true : false,
+                openingStatus: n & 0b0000100000000000 ? true : false,
                 openingCount: Math.min((n & 0b0000011111111111) / 10, 100),
             };
         }
-        else if (sensor_type === 0x08) { // Human detection
+        else if (sensor_type === 0x08) {
+            // Human detection
             return {
-                humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
-                humanDetectionCount: (n & 0b0000011111111111),
+                humanDetectionResponse: n & 0b0000100000000000 ? true : false,
+                humanDetectionCount: n & 0b0000011111111111,
             };
         }
-        else if (sensor_type === 0x09) { // Move (Vibration Sensor)
+        else if (sensor_type === 0x09) {
+            // Move (Vibration Sensor)
             return {
-                moveResponse: (n & 0b0000100000000000) ? true : false,
-                moveCount: (n & 0b0000011111111111),
+                moveResponse: n & 0b0000100000000000 ? true : false,
+                moveCount: n & 0b0000011111111111,
             };
         }
-        else if (sensor_type === 0x0a) { // Illuminance
+        else if (sensor_type === 0x0a) {
+            // Illuminance
             return {
                 illuminance: buf.readFloatLE(0),
             };
@@ -26715,7 +26752,11 @@ class LinkingServiceSensor {
     _createPayloadGetSensorInfo(params) {
         let pnum = 0;
         let sensor_type = null;
-        if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+        if ("SensorType" in params &&
+            typeof params.SensorType === "number" &&
+            params.SensorType >= 0x00 &&
+            params.SensorType <= 0xff &&
+            params.SensorType % 1 === 0) {
             sensor_type = params.SensorType;
             pnum++;
         }
@@ -26738,7 +26779,11 @@ class LinkingServiceSensor {
     _createPayloadSetNotifySensorInfo(params) {
         let pnum = 0;
         let sensor_type = null;
-        if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+        if ("SensorType" in params &&
+            typeof params.SensorType === "number" &&
+            params.SensorType >= 0x00 &&
+            params.SensorType <= 0xff &&
+            params.SensorType % 1 === 0) {
             sensor_type = params.SensorType;
             pnum++;
         }
@@ -26746,7 +26791,7 @@ class LinkingServiceSensor {
             return null;
         }
         let status = null;
-        if (("Status" in params)) {
+        if ("Status" in params) {
             status = params.Status ? 1 : 0;
             pnum++;
         }
@@ -26758,7 +26803,7 @@ class LinkingServiceSensor {
         let z = null;
         if (sensor_type <= 0x02) {
             if ("X_threshold" in params) {
-                if (typeof (params.X_threshold) === "number") {
+                if (typeof params.X_threshold === "number") {
                     x = params.X_threshold;
                     pnum++;
                 }
@@ -26767,7 +26812,7 @@ class LinkingServiceSensor {
                 }
             }
             if ("Y_threshold" in params) {
-                if (typeof (params.Y_threshold) === "number") {
+                if (typeof params.Y_threshold === "number") {
                     y = params.Y_threshold;
                     pnum++;
                 }
@@ -26776,7 +26821,7 @@ class LinkingServiceSensor {
                 }
             }
             if ("Z_threshold" in params) {
-                if (typeof (params.Z_threshold) === "number") {
+                if (typeof params.Z_threshold === "number") {
                     z = params.Z_threshold;
                     pnum++;
                 }
@@ -26787,7 +26832,7 @@ class LinkingServiceSensor {
         }
         let odata = null;
         if ("OriginalData" in params) {
-            if (params.OriginalData && (params.OriginalData instanceof Buffer)) {
+            if (params.OriginalData && params.OriginalData instanceof Buffer) {
                 odata = params.OriginalData;
                 pnum++;
             }
@@ -26831,7 +26876,7 @@ class LinkingServiceSensor {
         // OriginalData
         if (odata !== null) {
             const val_buf = odata;
-            buf_list.push(this._createPropertyBlockBuffer(0x0A, val_buf));
+            buf_list.push(this._createPropertyBlockBuffer(0x0a, val_buf));
         }
         // Create a packet
         return Buffer.concat(buf_list);
@@ -26850,12 +26895,12 @@ exports.default = LinkingServiceSensor;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
-* node-linking - service-setting.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-10-24
-* ---------------------------------------------------------------- */
+ * node-linking - service-setting.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class LinkingServiceSetting {
@@ -26908,8 +26953,7 @@ class LinkingServiceSetting {
                 parameters.push(this._parseParameter(pid, pvalue_buf));
             }
         }
-        catch (e) {
-        }
+        catch (e) { }
         return parameters;
     }
     _parseParameter(pid, buf) {
@@ -27190,8 +27234,8 @@ class LinkingServiceSetting {
         };
     }
     /* ------------------------------------------------------------------
-      * Method: createRequest(message_name, params)
-      * ---------------------------------------------------------------- */
+     * Method: createRequest(message_name, params)
+     * ---------------------------------------------------------------- */
     createRequest(message_name, params) {
         if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
             return null;
@@ -27218,7 +27262,7 @@ class LinkingServiceSetting {
         return Buffer.concat(buf_list);
     }
     _createPayload(message_name, params) {
-        if (!params || typeof (params) !== "object") {
+        if (!params || typeof params !== "object") {
             params = {};
         }
         if (message_name === "GET_APP_VERSION") {
@@ -27258,7 +27302,7 @@ class LinkingServiceSetting {
     _createPayloadGetAppVersion(params) {
         let pnum = 0;
         let app_name = null;
-        if (("AppName" in params) && typeof (params.AppName) === "string") {
+        if ("AppName" in params && typeof params.AppName === "string") {
             app_name = params.AppName;
             pnum++;
         }
@@ -27281,7 +27325,7 @@ class LinkingServiceSetting {
     _createPayloadConfirmInstallApp(params) {
         let pnum = 0;
         let app_name = null;
-        if (("AppName" in params) && typeof (params.AppName) === "string") {
+        if ("AppName" in params && typeof params.AppName === "string") {
             app_name = params.AppName;
             pnum++;
         }
@@ -27289,12 +27333,14 @@ class LinkingServiceSetting {
             return null;
         }
         let file_ver = null;
-        if (("FileVer" in params) && typeof (params.FileVer) === "string") {
+        if ("FileVer" in params && typeof params.FileVer === "string") {
             file_ver = params.FileVer;
             pnum++;
         }
         let file_size = null;
-        if (("FileSize" in params) && typeof (params.FileSize) === "number" && file_size % 1 === 0) {
+        if ("FileSize" in params &&
+            typeof params.FileSize === "number" &&
+            file_size % 1 === 0) {
             file_size = params.FileSize;
             pnum++;
         }
@@ -27331,7 +27377,7 @@ class LinkingServiceSetting {
         let type = null;
         if ("SettingNameType" in params) {
             type = params.SettingNameType;
-            if (typeof (type) === "number") {
+            if (typeof type === "number") {
                 let setting_name = "";
                 for (const name in this._SETTING_NAME_TYPE_MAP) {
                     if (this._SETTING_NAME_TYPE_MAP[name] === type) {
@@ -27343,7 +27389,7 @@ class LinkingServiceSetting {
                     return null;
                 }
             }
-            else if (typeof (type) === "string") {
+            else if (typeof type === "string") {
                 if (type in this._SETTING_NAME_TYPE_MAP) {
                     type = this._SETTING_NAME_TYPE_MAP[type];
                 }
@@ -27372,12 +27418,17 @@ class LinkingServiceSetting {
     _createPayloadSelectSettingInformation(params) {
         let pnum = 0;
         let code = null;
-        if (("SettingInformationRequest" in params) && typeof (params.SettingInformationRequest) === "object") {
+        if ("SettingInformationRequest" in params &&
+            typeof params.SettingInformationRequest === "object") {
             const req = params.SettingInformationRequest;
-            if (("requestCode" in req) && typeof (req.requestCode) === "number" && req.requestCode >= 0 && req.requestCode <= 0x02 && req.requestCode % 1 === 0) {
+            if ("requestCode" in req &&
+                typeof req.requestCode === "number" &&
+                req.requestCode >= 0 &&
+                req.requestCode <= 0x02 &&
+                req.requestCode % 1 === 0) {
                 code = req.requestCode;
             }
-            else if (("requestName" in req) && typeof (req.requestName) === "string") {
+            else if ("requestName" in req && typeof req.requestName === "string") {
                 const name = req.requestName;
                 if (name === "SETTING") {
                     code = 0x00;
@@ -27408,7 +27459,11 @@ class LinkingServiceSetting {
                     const s = params.SettingInformationData[i];
                     let scode = null;
                     let sname = "";
-                    if (("settingCode" in s) && typeof (s.settingCode) === "number" && s.settingCode >= 0x00 && s.settingCode <= 0x02 && s.settingCode % 1 === 0) {
+                    if ("settingCode" in s &&
+                        typeof s.settingCode === "number" &&
+                        s.settingCode >= 0x00 &&
+                        s.settingCode <= 0x02 &&
+                        s.settingCode % 1 === 0) {
                         scode = s.settingCode;
                         if (scode === 0x00) {
                             sname = "LED";
@@ -27420,7 +27475,7 @@ class LinkingServiceSetting {
                             sname = "Beep";
                         }
                     }
-                    else if (("settingName" in s) && typeof (s.settingName) === "string") {
+                    else if ("settingName" in s && typeof s.settingName === "string") {
                         sname = s.settingName;
                         if (sname === "LED") {
                             scode = 0x00;
@@ -27440,9 +27495,13 @@ class LinkingServiceSetting {
                     }
                     let cn = null;
                     let cm = null;
-                    if (scode === 0x00) { // LED
+                    if (scode === 0x00) {
+                        // LED
                         if ("colorNumber" in s) {
-                            if (typeof (s.colorNumber) === "number" && s.colorNumber >= 0 && s.colorNumber <= this._device.settings.LED.colorMax && s.colorNumber % 1 === 0) {
+                            if (typeof s.colorNumber === "number" &&
+                                s.colorNumber >= 0 &&
+                                s.colorNumber <= this._device.settings.LED.colorMax &&
+                                s.colorNumber % 1 === 0) {
                                 cn = s.colorNumber;
                             }
                             else {
@@ -27456,7 +27515,10 @@ class LinkingServiceSetting {
                     }
                     let pn = null;
                     if ("patternNumber" in s) {
-                        if (typeof (s.patternNumber) === "number" && s.patternNumber >= 0 && s.patternNumber <= this._device.settings[sname].patternMax && s.patternNumber % 1 === 0) {
+                        if (typeof s.patternNumber === "number" &&
+                            s.patternNumber >= 0 &&
+                            s.patternNumber <= this._device.settings[sname].patternMax &&
+                            s.patternNumber % 1 === 0) {
                             pn = s.patternNumber;
                         }
                         else {
@@ -27469,22 +27531,25 @@ class LinkingServiceSetting {
                     const pm = this._device.settings[sname].patternMax;
                     let dur = null;
                     if ("duration" in s) {
-                        if (typeof (s.duration) === "number" && s.duration >= 0 && s.duration <= 0xFF && s.duration % 1 === 0) {
+                        if (typeof s.duration === "number" &&
+                            s.duration >= 0 &&
+                            s.duration <= 0xff &&
+                            s.duration % 1 === 0) {
                             dur = s.duration;
                             if (dur <= 0x05) {
                                 dur = 0x05;
                             }
-                            else if (dur <= 0x0A) {
-                                dur = 0x0A;
+                            else if (dur <= 0x0a) {
+                                dur = 0x0a;
                             }
-                            else if (dur <= 0x1E) {
-                                dur = 0x1E;
+                            else if (dur <= 0x1e) {
+                                dur = 0x1e;
                             }
-                            else if (dur <= 0x3C) {
-                                dur = 0x3C;
+                            else if (dur <= 0x3c) {
+                                dur = 0x3c;
                             }
-                            else if (dur <= 0xB4) {
-                                dur = 0xB4;
+                            else if (dur <= 0xb4) {
+                                dur = 0xb4;
                             }
                         }
                         else {
@@ -27555,12 +27620,12 @@ exports.default = LinkingServiceSetting;
 
 "use strict";
 /* ------------------------------------------------------------------
-* node-linking - service.js
-*
-* Copyright (c) 2017, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2017-04-15
-* ---------------------------------------------------------------- */
+ * node-linking - service.js
+ *
+ * Copyright (c) 2017, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2017-04-15
+ * ---------------------------------------------------------------- */
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -27645,7 +27710,9 @@ class LinkingService {
             return false;
         }
         sid = parseInt(sid, 10);
-        const services = (this._device_info && this._device_info.services) ? this._device_info.services : null;
+        const services = this._device_info && this._device_info.services
+            ? this._device_info.services
+            : null;
         if (!services) {
             return false;
         }
@@ -28751,8 +28818,7 @@ class PT550 {
             name: "PT550",
         };
     }
-    onchange(value) {
-    }
+    onchange(value) { }
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -28868,15 +28934,15 @@ class MCP4725 {
         this._vcc_voltage = voltage;
     }
     setVoltage(voltage, writeEEPROM = false) {
-        if (voltage > (this._vcc_voltage)) {
+        if (voltage > this._vcc_voltage) {
             voltage = this._vcc_voltage;
         }
         else if (voltage < 0) {
             voltage = 0;
         }
-        const mv = Math.round(voltage / this._vcc_voltage * (4096 - 1));
+        const mv = Math.round((voltage / this._vcc_voltage) * (4096 - 1));
         const hbits = mv >> 4;
-        const lbits = (mv & 0x0F) << 4;
+        const lbits = (mv & 0x0f) << 4;
         if (writeEEPROM) {
             this.i2c.write(this.address, [this.cmd.WRITEDACEEPROM, hbits, lbits]);
         }
@@ -29202,7 +29268,7 @@ class _7SegmentLED_MAX7219 {
         }
     }
     encodeBCD(decimal, dp) {
-        const dpreg = (dp === true) ? 0x80 : 0x00;
+        const dpreg = dp === true ? 0x80 : 0x00;
         if (decimal >= 0 && decimal <= 9) {
             return decimal | dpreg;
         }
@@ -29254,7 +29320,7 @@ class MatrixLED_HT16K33 {
         this.requiredKeys = [];
         this.command = {};
         this.command.blink = 0x80;
-        this.command.brightness = 0xE0;
+        this.command.brightness = 0xe0;
         this.blink_mode = {};
         this.blink_mode.display_on = 0x01;
         this.blink_mode.blink_off = 0x00;
@@ -29279,6 +29345,7 @@ class MatrixLED_HT16K33 {
         this.obniz.wait(1000);
     }
     init(width) {
+        // 8 or 16
         this.width = width;
         this.height = 8; // IC static setting
         this.prepareVram(width, this.height);
@@ -29294,7 +29361,9 @@ class MatrixLED_HT16K33 {
         if (val > 3) {
             val = 3;
         }
-        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
+        this.i2c.write(this.address, [
+            this.command.blink | this.blink_mode.display_on | (val << 1),
+        ]);
     }
     brightness(val) {
         if (val < 0) {
@@ -29335,8 +29404,8 @@ class MatrixLED_HT16K33 {
     writeVram() {
         const data = [0x00];
         for (let i = 0; i < this.height; i++) {
-            data.push(this.vram[i] & 0xFF);
-            data.push((this.vram[i] >> 8) & 0xFF);
+            data.push(this.vram[i] & 0xff);
+            data.push((this.vram[i] >> 8) & 0xff);
         }
         this.i2c.write(this.address, data);
     }
@@ -29544,8 +29613,7 @@ class ST7735S {
     }
     _deadSleep(waitMsec) {
         const startMsec = new Date();
-        while (new Date() - startMsec < waitMsec) {
-        }
+        while (new Date() - startMsec < waitMsec) { }
     }
     _reset() {
         this.io_res.output(false);
@@ -31757,8 +31825,7 @@ class SainSmartTFT18LCD {
     }
     _deadSleep(waitMsec) {
         const startMsec = new Date();
-        while (new Date() - startMsec < waitMsec) {
-        }
+        while (new Date() - startMsec < waitMsec) { }
     }
     _reset() {
         this.io_res.output(false);
@@ -34445,11 +34512,11 @@ class VL53L0X {
         this.acnt = this.makeuint16(gbuf[7], gbuf[6]);
         this.scnt = this.makeuint16(gbuf[9], gbuf[8]);
         const dist = this.makeuint16(gbuf[11], gbuf[10]);
-        this.status = ((gbuf[0] & 0x78) >> 3);
+        this.status = (gbuf[0] & 0x78) >> 3;
         return dist;
     }
     makeuint16(lsb, msb) {
-        return ((msb & 0xFF) << 8) | (lsb & 0xFF);
+        return ((msb & 0xff) << 8) | (lsb & 0xff);
     }
 }
 exports.default = VL53L0X;
@@ -35336,8 +35403,7 @@ class Grove_Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.onChangeForStateWait = (pressed) => {
-        };
+        this.onChangeForStateWait = (pressed) => { };
         this.keys = ["signal", "gnd", "vcc", "grove"];
         this.requiredKeys = [];
     }
@@ -35371,8 +35437,7 @@ class Grove_Button {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -36376,8 +36441,7 @@ class Keyestudio_Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
-        this.onChangeForStateWait = (pressed) => {
-        };
+        this.onChangeForStateWait = (pressed) => { };
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
     }
@@ -36412,8 +36476,7 @@ class Keyestudio_Button {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -36648,8 +36711,7 @@ class Keyestudio_TemperatureSensor {
         this.temp = this.calc(voltage);
         return this.temp;
     }
-    onchange(temp) {
-    }
+    onchange(temp) { }
     calc(voltage) {
         return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
     }
@@ -37515,11 +37577,11 @@ class M5StickC_ADC {
             MODE_MASK: 0x10,
             MODE_CONTIN: 0x00,
             MODE_SINGLE: 0x10,
-            DR_MASK: 0x0C,
+            DR_MASK: 0x0c,
             DR_128SPS: 0x00,
             DR_32SPS: 0x04,
             DR_16SPS: 0x08,
-            DR_8SPS: 0x0C,
+            DR_8SPS: 0x0c,
             PGA_MASK: 0x03,
             PGA_1: 0x00,
             PGA_2: 0x01,
@@ -37540,9 +37602,9 @@ class M5StickC_ADC {
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda)
-            && !this.obniz.isValidIO(this.params.scl)
-            && !this.params.i2c) {
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
                 this.params.sda = hatI2c.sda;
@@ -37561,7 +37623,7 @@ class M5StickC_ADC {
     }
     async getVoltageWait() {
         const raw = await this.getWait();
-        const voltage = raw * 3.3 / (this.minCode) * 4;
+        const voltage = ((raw * 3.3) / this.minCode) * 4;
         return voltage;
     }
     setRate(dataRate) {
@@ -37621,7 +37683,7 @@ class M5StickC_ADC {
         this.i2c.write(this.address, [this.config]);
         await this.obniz.wait(this.conversionDelay);
         const ret = await this.i2c.readWait(this.address, 2);
-        return ((ret[0] << 8) | ret[1]);
+        return (ret[0] << 8) | ret[1];
     }
     updateConfig() {
         this.config = 0x00;
@@ -37655,9 +37717,9 @@ class M5StickC_DAC extends MCP4725_1.default {
         };
     }
     wired(obniz) {
-        if (!this.obniz.isValidIO(this.params.sda)
-            && !this.obniz.isValidIO(this.params.scl)
-            && !this.params.i2c) {
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
                 this.params.sda = hatI2c.sda;
@@ -37706,26 +37768,26 @@ class M5StickC_FINGER {
             NOUSER: 0x05,
             USER_EXIST: 0x07,
             TIMEOUT: 0x08,
-            GO_OUT: 0x0F,
+            GO_OUT: 0x0f,
             ALL_USER: 0x00,
             GUEST_USER: 0x01,
             NORMAL_USER: 0x02,
             MASTER_USER: 0x03,
         };
         this.cmd = {
-            HEAD: 0xF5,
-            TAIL: 0xF5,
+            HEAD: 0xf5,
+            TAIL: 0xf5,
             ADD_1: 0x01,
             ADD_2: 0x02,
             ADD_3: 0x03,
-            GET_PERMISSION: 0x0A,
-            MATCH: 0x0C,
+            GET_PERMISSION: 0x0a,
+            MATCH: 0x0c,
             DEL: 0x04,
             DEL_ALL: 0x05,
             USER_CNT: 0x09,
             SECURITY_LEVEL: 0x28,
-            SLEEP_MODE: 0x2C,
-            ADD_MODE: 0x2D,
+            SLEEP_MODE: 0x2c,
+            ADD_MODE: 0x2d,
             FINGER_DETECTED: 0x14,
         };
     }
@@ -37737,8 +37799,8 @@ class M5StickC_FINGER {
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(null, this.params.gnd, "3v");
-        if (!this.obniz.isValidIO(this.params.tx)
-            && !this.obniz.isValidIO(this.params.rx)) {
+        if (!this.obniz.isValidIO(this.params.tx) &&
+            !this.obniz.isValidIO(this.params.rx)) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
                 this.params.tx = hatI2c.tx;
@@ -37765,7 +37827,7 @@ class M5StickC_FINGER {
             return this.RxBuf[this.Q2];
         }
         else {
-            return 0xFF;
+            return 0xff;
         }
     }
     async addUserWait(userNum, userPermission) {
@@ -37959,9 +38021,9 @@ class M5StickC_JoyStick {
     }
     wired(obniz) {
         this.obniz = obniz;
-        if (!this.obniz.isValidIO(this.params.sda)
-            && !this.obniz.isValidIO(this.params.scl)
-            && !this.params.i2c) {
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
                 this.params.sda = hatI2c.sda;
@@ -37981,7 +38043,7 @@ class M5StickC_JoyStick {
     async getXWait() {
         const ret = await this.getXYWait();
         let val = ret[0];
-        if (val > 0x7F) {
+        if (val > 0x7f) {
             val = val - 0x100;
         }
         return val;
@@ -37989,7 +38051,7 @@ class M5StickC_JoyStick {
     async getYWait() {
         const ret = await this.getXYWait();
         let val = ret[1];
-        if (val > 0x7F) {
+        if (val > 0x7f) {
             val = val - 0x100;
         }
         return val;
@@ -38080,9 +38142,9 @@ class M5StickC_ToF extends VL53L0X_1.default {
         };
     }
     wired(obniz) {
-        if (!this.obniz.isValidIO(this.params.sda)
-            && !this.obniz.isValidIO(this.params.scl)
-            && !this.params.i2c) {
+        if (!this.obniz.isValidIO(this.params.sda) &&
+            !this.obniz.isValidIO(this.params.scl) &&
+            !this.params.i2c) {
             if (this.obniz.hasExtraInterface("m5stickc_hat")) {
                 const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
                 this.params.sda = hatI2c.sda;
@@ -38120,11 +38182,7 @@ class M5StickC_YunHat {
     constructor() {
         this.LED_LEN = 14;
         this.requiredKeys = [];
-        this.keys = [
-            "sda",
-            "scl",
-            "i2c",
-        ];
+        this.keys = ["sda", "scl", "i2c"];
         this.ioKeys = ["sda", "scl"];
     }
     static info() {
@@ -38210,7 +38268,13 @@ class M5StickC_YunHat {
     rgbs(array) {
         if (array.length <= this.LED_LEN) {
             array.forEach((value, index) => {
-                this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
+                this.i2c.write(0x38, [
+                    0x01,
+                    index,
+                    Math.floor(value[0]),
+                    Math.floor(value[1]),
+                    Math.floor(value[2]),
+                ]);
             });
         }
     }
@@ -38224,7 +38288,7 @@ class M5StickC_YunHat {
     async getLightWait() {
         this.i2c.write(0x38, [0x00]);
         const d = await this.i2c.readWait(0x38, 2);
-        return d[1] << 8 | d[0];
+        return (d[1] << 8) | d[0];
     }
     async getTempWait() {
         return await this.sht20.getTempWait();
@@ -38259,8 +38323,7 @@ class CT10 {
         this.onchange = null;
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
-        this.onChangeForStateWait = () => {
-        };
+        this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
@@ -38293,8 +38356,7 @@ class CT10 {
         return new Promise((resolve) => {
             this.onChangeForStateWait = (near) => {
                 if (isNear === near) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -38459,18 +38521,18 @@ class AK09916 extends i2cParts_1.default {
             pull: "3v",
         };
         this.ADDR = 0x0c;
-        this._WIA = (0x01);
-        this._HXL = (0x11);
-        this._HXH = (0x12);
-        this._HYL = (0x13);
-        this._HYH = (0x14);
-        this._HZL = (0x15);
-        this._HZH = (0x16);
-        this._ST2 = (0x18);
-        this._CNTL2 = (0x31);
-        this._ASAX = (0x60);
-        this._ASAY = (0x61);
-        this._ASAZ = (0x62);
+        this._WIA = 0x01;
+        this._HXL = 0x11;
+        this._HXH = 0x12;
+        this._HYL = 0x13;
+        this._HYH = 0x14;
+        this._HZL = 0x15;
+        this._HZH = 0x16;
+        this._ST2 = 0x18;
+        this._CNTL2 = 0x31;
+        this._ASAX = 0x60;
+        this._ASAY = 0x61;
+        this._ASAZ = 0x62;
         this._MODE_POWER_DOWN = 0b00000000;
         this.MODE_SINGLE_MEASURE = 0b00000001;
         this.MODE_CONTINOUS_MEASURE_1 = 0b00000010; // 10Hz
@@ -38500,7 +38562,7 @@ class AK09916 extends i2cParts_1.default {
         // 1111 1111 1111 1111 -1 uT
         // 1000 0000 0001 0000 -4912 uT
         // data[0]下位ビット data[1] 上位ビット
-        const raw3 = (await this.readThreeInt16Wait(this._HXL, "l"));
+        const raw3 = await this.readThreeInt16Wait(this._HXL, "l");
         this.readWait(this._ST2, 1);
         const xyz = raw3.map((d, i) => {
             return (d * this.so - this.offset[i]) * this.scale[i];
@@ -38637,8 +38699,7 @@ class Button {
         this.onchange = null;
         this.keys = ["signal", "gnd", "pull"];
         this.requiredKeys = ["signal"];
-        this.onChangeForStateWait = () => {
-        };
+        this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
@@ -38677,8 +38738,7 @@ class Button {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -38833,7 +38893,8 @@ class FlickHat {
             const msgID = data[3];
             if (size !== 0xff && size > 0) {
                 if (this.debugprint || this.obniz.debugprint) {
-                    console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
+                    console.log("flickHat: " +
+                        data.slice(0, size).map((v) => "0x" + v.toString(16)));
                 }
                 let configmask;
                 let sysinfo;
@@ -39112,45 +39173,45 @@ class ICM20948 extends i2cParts_1.default {
             pull: "3v",
         };
         this._ADDR = 0x69;
-        this._WHO_AM_I = (0x00);
-        this._GYRO_CONFIG = (0x01);
-        this._ACCEL_CONFIG = (0x14);
-        this._ACCEL_CONFIG2 = (0x15);
-        this._INT_PIN_CFG = (0x0f);
-        this._ACCEL_XOUT_H = (0x2d);
-        this._ACCEL_XOUT_L = (0x2e);
-        this._ACCEL_YOUT_H = (0x2f);
-        this._ACCEL_YOUT_L = (0x30);
-        this._ACCEL_ZOUT_H = (0x31);
-        this._ACCEL_ZOUT_L = (0x32);
-        this._GYRO_XOUT_H = (0x33);
-        this._GYRO_XOUT_L = (0x34);
-        this._GYRO_YOUT_H = (0x35);
-        this._GYRO_YOUT_L = (0x36);
-        this._GYRO_ZOUT_H = (0x37);
-        this._GYRO_ZOUT_L = (0x38);
+        this._WHO_AM_I = 0x00;
+        this._GYRO_CONFIG = 0x01;
+        this._ACCEL_CONFIG = 0x14;
+        this._ACCEL_CONFIG2 = 0x15;
+        this._INT_PIN_CFG = 0x0f;
+        this._ACCEL_XOUT_H = 0x2d;
+        this._ACCEL_XOUT_L = 0x2e;
+        this._ACCEL_YOUT_H = 0x2f;
+        this._ACCEL_YOUT_L = 0x30;
+        this._ACCEL_ZOUT_H = 0x31;
+        this._ACCEL_ZOUT_L = 0x32;
+        this._GYRO_XOUT_H = 0x33;
+        this._GYRO_XOUT_L = 0x34;
+        this._GYRO_YOUT_H = 0x35;
+        this._GYRO_YOUT_L = 0x36;
+        this._GYRO_ZOUT_H = 0x37;
+        this._GYRO_ZOUT_L = 0x38;
         // #_ACCEL_FS_MASK = const(0b00011000)
-        this._ACCEL_FS_SEL_2G = (0b00000000);
-        this._ACCEL_FS_SEL_4G = (0b00000010);
-        this._ACCEL_FS_SEL_8G = (0b00000100);
-        this._ACCEL_FS_SEL_16G = (0b00000110);
+        this._ACCEL_FS_SEL_2G = 0b00000000;
+        this._ACCEL_FS_SEL_4G = 0b00000010;
+        this._ACCEL_FS_SEL_8G = 0b00000100;
+        this._ACCEL_FS_SEL_16G = 0b00000110;
         this._ACCEL_SO_2G = 16384; // 1 / 16384 ie. 0.061 mg / digit
         this._ACCEL_SO_4G = 8192; // 1 / 8192 ie. 0.122 mg / digit
         this._ACCEL_SO_8G = 4096; // 1 / 4096 ie. 0.244 mg / digit
         this._ACCEL_SO_16G = 2048; // 1 / 2048 ie. 0.488 mg / digit
-        this._GYRO_FS_MASK = (0b00000110);
-        this._GYRO_FS_SEL_250DPS = (0b00110001);
-        this._GYRO_FS_SEL_500DPS = (0b00110011);
-        this._GYRO_FS_SEL_1000DPS = (0b00110101);
-        this._GYRO_FS_SEL_2000DPS = (0b00110111);
+        this._GYRO_FS_MASK = 0b00000110;
+        this._GYRO_FS_SEL_250DPS = 0b00110001;
+        this._GYRO_FS_SEL_500DPS = 0b00110011;
+        this._GYRO_FS_SEL_1000DPS = 0b00110101;
+        this._GYRO_FS_SEL_2000DPS = 0b00110111;
         this._GYRO_SO_250DPS = 131;
         this._GYRO_SO_500DPS = 62.5;
         this._GYRO_SO_1000DPS = 32.8;
         this._GYRO_SO_2000DPS = 16.4;
         // # Used for enablind and disabling the i2c bypass access
-        this._I2C_BYPASS_MASK = (0b00000010);
-        this._I2C_BYPASS_EN = (0b00000010);
-        this._I2C_BYPASS_DIS = (0b00000000);
+        this._I2C_BYPASS_MASK = 0b00000010;
+        this._I2C_BYPASS_EN = 0b00000010;
+        this._I2C_BYPASS_DIS = 0b00000000;
         this._SF_G = 1; //    g
         this._SF_MG = 1000; //    mg
         this._SF_M_S2 = 9.80665; // 1 g = 9.80665 m/s2 ie. standard gravity
@@ -39222,7 +39283,7 @@ class ICM20948 extends i2cParts_1.default {
         const so = this._accel_so;
         const sf = this._accel_sf;
         const xyz = await this.readThreeInt16Wait(this._ACCEL_XOUT_H);
-        return xyz.map((e) => e / so * sf);
+        return xyz.map((e) => (e / so) * sf);
     }
     async gyroWait() {
         // """
@@ -39231,13 +39292,13 @@ class ICM20948 extends i2cParts_1.default {
         const so = this._gyro_so;
         const sf = this._gyro_sf;
         const xyz = await this.readThreeInt16Wait(this._GYRO_XOUT_H);
-        return xyz.map((e) => e / so * sf);
+        return xyz.map((e) => (e / so) * sf);
     }
     async magneticWait() {
         return this._ak09916.magnetic();
     }
     async calibrateWait() {
-        return (await this._ak09916.calibrateWait());
+        return await this._ak09916.calibrateWait();
     }
     async whoamiWait() {
         // Value of the whoamiWait register. """
@@ -39698,8 +39759,7 @@ class MPU6050 extends i2cImu6_1.default {
     async resetWait() {
         await this.writeFlagWait(MPU6050.commands.pwr_mgmt_1, 7);
     }
-    async configDlpfWait() {
-    }
+    async configDlpfWait() { }
     async bypassMagnetometerWait(flag = true) {
         // Enable I2C bypass to access for MPU9250 magnetometer access.
         if (flag === true) {
@@ -40727,8 +40787,18 @@ class StepperMotor {
         this.milliMeterStepCount = 1;
         this.ios = [];
         this._stepInstructions = {
-            "1": [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
-            "2": [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
+            "1": [
+                [0, 1, 1, 1],
+                [1, 0, 1, 1],
+                [1, 1, 0, 1],
+                [1, 1, 1, 0],
+            ],
+            "2": [
+                [0, 0, 1, 1],
+                [1, 0, 0, 1],
+                [1, 1, 0, 0],
+                [0, 1, 1, 0],
+            ],
             "1-2": [
                 [0, 1, 1, 1],
                 [0, 0, 1, 1],
@@ -41830,8 +41900,7 @@ class AnalogTemperatureSensor {
         this.temp = this.calc(voltage);
         return this.temp;
     }
-    onchange(temp) {
-    }
+    onchange(temp) { }
     calc(voltage) {
         return 0;
     }
@@ -42153,8 +42222,7 @@ class AM2320 {
     }
     async getAllWait() {
         const i2cOnerror = this.i2c.onerror;
-        this.i2c.onerror = () => {
-        };
+        this.i2c.onerror = () => { };
         this.i2c.write(this.address, [0]); // wake
         this.obniz.wait(2);
         this.i2c.write(this.address, [0x03, 0x00, 0x04]);
@@ -42778,14 +42846,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SHT20 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = [
-            "vcc",
-            "sda",
-            "scl",
-            "gnd",
-            "i2c",
-            "pull",
-        ];
+        this.keys = ["vcc", "sda", "scl", "gnd", "i2c", "pull"];
         this.ioKeys = ["vcc", "sda", "scl", "gnd"];
         this.commands = {};
         this.commands.softReset = [0xfe];
@@ -42816,13 +42877,13 @@ class SHT20 {
         if (this.checkCRC(rawValue, data[2]) !== 0) {
             return -2;
         }
-        return rawValue & 0xFFFC;
+        return rawValue & 0xfffc;
     }
     async getTempWait() {
         const rawTemperature = await this.getData(this.commands.tempNoHold);
         if (rawTemperature < 0) {
             console.log("error sht20", rawTemperature);
-            return (rawTemperature);
+            return rawTemperature;
         }
         return rawTemperature * (175.72 / 65536.0) - 46.85;
     }
@@ -42830,7 +42891,7 @@ class SHT20 {
         const rawHumidity = await this.getData(this.commands.humidityNoHold);
         if (rawHumidity < 0) {
             console.log("error sht20", rawHumidity);
-            return (rawHumidity);
+            return rawHumidity;
         }
         return rawHumidity * (125.0 / 65536.0) - 6.0;
     }
@@ -42839,7 +42900,7 @@ class SHT20 {
         remainder |= check_value_from_sensor;
         let divsor = 0x988000;
         for (let i = 0; i < 16; i++) {
-            if (remainder & 1 << (23 - i)) {
+            if (remainder & (1 << (23 - i))) {
                 remainder ^= divsor;
             }
             divsor >>= 1;
@@ -43437,9 +43498,9 @@ class MFRC522 {
     }
     async authenticateSectorWait(Sector, uid) {
         /* Password authentication mode (A or B)
-             * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
-             * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
-             */
+         * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
+         * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
+         */
         const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
         // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
         const Block = Sector * 4;
@@ -43454,9 +43515,9 @@ class MFRC522 {
     }
     async authenticateBlockWait(Block, uid) {
         /* Password authentication mode (A or B)
-             * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
-             * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
-             */
+         * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
+         * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
+         */
         const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
         // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
         let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
@@ -43941,7 +44002,8 @@ class I2cCompassAbstract extends i2cParts_1.default {
         }
     }
     calcMag(data) {
-        return data * this.so * I2cCompassAbstract.unitScales[this.sf] / I2cCompassAbstract.unitScales[this.defaultUnit];
+        return ((data * this.so * I2cCompassAbstract.unitScales[this.sf]) /
+            I2cCompassAbstract.unitScales[this.defaultUnit]);
     }
 }
 exports.default = I2cCompassAbstract;
@@ -43979,10 +44041,12 @@ class I2cImu6Abstract extends i2cParts_1.default {
         this.gyro_sf = "dps";
     }
     static _accelS(value, accel_so, accel_sf) {
-        return value / I2cImu6Abstract.scales.accel.so[accel_so] * I2cImu6Abstract.scales.accel.sf[accel_sf];
+        return ((value / I2cImu6Abstract.scales.accel.so[accel_so]) *
+            I2cImu6Abstract.scales.accel.sf[accel_sf]);
     }
     static _gyroS(value, gyro_so, gyro_sf) {
-        return value / I2cImu6Abstract.scales.gyro.so[gyro_so] * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
+        return ((value / I2cImu6Abstract.scales.gyro.so[gyro_so]) *
+            I2cImu6Abstract.scales.gyro.sf[gyro_sf]);
     }
     async getAccelWait() {
         const adc = await this.getAccelAdcWait();
@@ -44141,7 +44205,17 @@ I2cImu6Abstract.scales = {
 Object.defineProperty(exports, "__esModule", { value: true });
 class I2cPartsAbstract {
     constructor() {
-        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "pull", "clock", "voltage", "address"];
+        this.keys = [
+            "gnd",
+            "vcc",
+            "sda",
+            "scl",
+            "i2c",
+            "pull",
+            "clock",
+            "voltage",
+            "address",
+        ];
         this.requiredKeys = [];
     }
     static charArrayToInt16(values, endian = "b") {
@@ -44206,15 +44280,15 @@ class I2cPartsAbstract {
         this.write(address, tempdata);
     }
     async readInt16Wait(register, endian = "b") {
-        const data = await this.readWait(register, 2);
+        const data = (await this.readWait(register, 2));
         return I2cPartsAbstract.charArrayToInt16(data, endian);
     }
     async readThreeInt16Wait(register, endian = "b") {
         const data = await this.readWait(register, 6);
         const results = [0, 0, 0];
-        results[0] = (I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian));
-        results[1] = (I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian));
-        results[2] = (I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian));
+        results[0] = I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian);
+        results[1] = I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian);
+        results[2] = I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian);
         return results;
     }
 }

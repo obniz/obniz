@@ -6,7 +6,9 @@
 import Obniz from "../../../obniz";
 
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface FullColorLEDOptions {
   r: number;
@@ -17,7 +19,6 @@ export interface FullColorLEDOptions {
 }
 
 export default class FullColorLED implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "FullColorLED",
@@ -43,7 +44,6 @@ export default class FullColorLED implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-
     this.anode_keys = ["anode", "anode_common", "anodeCommon", "vcc"];
     this.cathode_keys = ["cathode", "cathode_common", "cathodeCommon", "gnd"];
     this.animationName = "FullColorLED-" + Math.round(Math.random() * 1000);
@@ -77,13 +77,13 @@ export default class FullColorLED implements ObnizPartsInterface {
     this.obniz.getIO(g).output(this.commontype);
     this.obniz.getIO(b).output(this.commontype);
     this.pwmR = this.obniz.getFreePwm();
-    this.pwmR.start({io: r});
+    this.pwmR.start({ io: r });
     this.pwmR.freq(1000);
     this.pwmG = this.obniz.getFreePwm();
-    this.pwmG.start({io: g});
+    this.pwmG.start({ io: g });
     this.pwmG.freq(1000);
     this.pwmB = this.obniz.getFreePwm();
-    this.pwmB.start({io: b});
+    this.pwmB.start({ io: b });
     this.pwmB.freq(1000);
     this.rgb(0, 0, 0);
   }

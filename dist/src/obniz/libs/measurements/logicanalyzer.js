@@ -71,7 +71,11 @@ class LogicAnalyzer {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ["io", "interval", "duration"]);
+        const err = util_1.default._requiredKeys(params, [
+            "io",
+            "interval",
+            "duration",
+        ]);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }

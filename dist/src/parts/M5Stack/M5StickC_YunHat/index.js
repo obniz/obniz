@@ -12,11 +12,7 @@ class M5StickC_YunHat {
     constructor() {
         this.LED_LEN = 14;
         this.requiredKeys = [];
-        this.keys = [
-            "sda",
-            "scl",
-            "i2c",
-        ];
+        this.keys = ["sda", "scl", "i2c"];
         this.ioKeys = ["sda", "scl"];
     }
     static info() {
@@ -102,7 +98,13 @@ class M5StickC_YunHat {
     rgbs(array) {
         if (array.length <= this.LED_LEN) {
             array.forEach((value, index) => {
-                this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
+                this.i2c.write(0x38, [
+                    0x01,
+                    index,
+                    Math.floor(value[0]),
+                    Math.floor(value[1]),
+                    Math.floor(value[2]),
+                ]);
             });
         }
     }
@@ -116,7 +118,7 @@ class M5StickC_YunHat {
     async getLightWait() {
         this.i2c.write(0x38, [0x00]);
         const d = await this.i2c.readWait(0x38, 2);
-        return d[1] << 8 | d[0];
+        return (d[1] << 8) | d[0];
     }
     async getTempWait() {
         return await this.sht20.getTempWait();

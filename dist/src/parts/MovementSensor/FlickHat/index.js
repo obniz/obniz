@@ -135,7 +135,8 @@ class FlickHat {
             const msgID = data[3];
             if (size !== 0xff && size > 0) {
                 if (this.debugprint || this.obniz.debugprint) {
-                    console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
+                    console.log("flickHat: " +
+                        data.slice(0, size).map((v) => "0x" + v.toString(16)));
                 }
                 let configmask;
                 let sysinfo;

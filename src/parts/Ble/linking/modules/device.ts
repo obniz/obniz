@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - device.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-03
-* ---------------------------------------------------------------- */
+ * node-linking - device.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-03
+ * ---------------------------------------------------------------- */
 "use strict";
 import BleRemoteCharacteristic from "../../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
 import BleRemotePeripheral from "../../../../obniz/libs/embeds/ble/bleRemotePeripheral";
@@ -13,7 +13,6 @@ import LinkingAdvertising from "./advertising";
 import LinkingService from "./service";
 
 export default class LinkingDevice {
-
   public PRIMARY_SERVICE_UUID = "b3b3690150d34044808d50835b13a6cd";
   public WRITE_CHARACTERRISTIC_UUID = "b3b3910150d34044808d50835b13a6cd";
   public INDICATE_CHARACTERRISTIC_UUID = "b3b3910250d34044808d50835b13a6cd";
@@ -60,7 +59,6 @@ export default class LinkingDevice {
   };
 
   constructor(peripheral: BleRemotePeripheral) {
-
     this.advertisement = LinkingAdvertising.parse(peripheral);
 
     this._peripheral = peripheral;
@@ -72,25 +70,24 @@ export default class LinkingDevice {
     }
     let onprogress = this.onconnectprogress;
     if (!this._isFunction(this.onconnectprogress)) {
-      onprogress = () => {
-      };
+      onprogress = () => {};
     }
     const peripheral = this._peripheral;
-    onprogress({step: 1, desc: "CONNECTING"});
+    onprogress({ step: 1, desc: "CONNECTING" });
     try {
       peripheral.ondisconnect = async () => {
         await this._clean();
         if (this._isFunction(this.ondisconnect)) {
-          this.ondisconnect({wasClean: false});
+          this.ondisconnect({ wasClean: false });
         }
       };
       await peripheral.connectWait();
-      onprogress({step: 2, desc: "CONNECTION_ESTABLISHED"});
-      onprogress({step: 3, desc: "GETTING_CHARACTERISTICS"});
+      onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
+      onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
       await this._getServicesAndChars();
-      onprogress({step: 4, desc: "SUBSCRIBING"});
+      onprogress({ step: 4, desc: "SUBSCRIBING" });
       await this._subscribeForIndicate();
-      onprogress({step: 5, desc: "GETTING_DEVICE_INFOMATION"});
+      onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
       let res: any;
       res = await this.write("GET_DEVICE_INFORMATION");
       this.info.id = "";
@@ -119,7 +116,7 @@ export default class LinkingDevice {
           this.info.exsensors[o.name] = o.id;
         });
       }
-      onprogress({step: 6, desc: "GETTING_NOTIFY_CATEGORIES"});
+      onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
       res = await this._writeConfirmNotifyCategory();
       this.info.notifyCategories = {};
       if (res) {
@@ -129,7 +126,7 @@ export default class LinkingDevice {
           });
         }
       }
-      onprogress({step: 7, desc: "GETTING_SETTING_INFORMATION"});
+      onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
       res = await this._writeGetSettingInformation();
       this.info.settings = {};
       if (res) {
@@ -139,22 +136,22 @@ export default class LinkingDevice {
           });
         }
       }
-      onprogress({step: 8, desc: "GETTING_LED_COLOR_NAMES"});
+      onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
       res = await this._writeGetSettingName("LEDColorName");
       if (res) {
         this.info.settings.LED.colors = res.data.settingNameData;
       }
-      onprogress({step: 9, desc: "GETTING_LED_PATTERN_NAMES"});
+      onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
       res = await this._writeGetSettingName("LEDPatternName");
       if (res) {
         this.info.settings.LED.patterns = res.data.settingNameData;
       }
-      onprogress({step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES"});
+      onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
       res = await this._writeGetSettingName("VibrationPatternName");
       if (res) {
         this.info.settings.Vibration.patterns = res.data.settingNameData;
       }
-      onprogress({step: 11, desc: "GETTING_BEEP_PATTERN_NAMES"});
+      onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
       res = await this._writeGetSettingName("BeepPatternName");
       if (res) {
         this.info.settings.Beep.patterns = res.data.settingNameData;
@@ -167,9 +164,9 @@ export default class LinkingDevice {
         this.onconnect();
       }
 
-      onprogress({step: 12, desc: "COMPLETED"});
+      onprogress({ step: 12, desc: "COMPLETED" });
     } catch (e) {
-      onprogress({step: 0, desc: "FAILED"});
+      onprogress({ step: 0, desc: "FAILED" });
       throw e;
     }
   }
@@ -189,11 +186,13 @@ export default class LinkingDevice {
         resolve(null);
         return;
       }
-      this.write("CONFIRM_NOTIFY_CATEGORY").then((res: any) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
+      this.write("CONFIRM_NOTIFY_CATEGORY")
+        .then((res: any) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
@@ -204,11 +203,13 @@ export default class LinkingDevice {
         resolve(null);
         return;
       }
-      this.write("GET_SETTING_INFORMATION").then((res: any) => {
-        resolve(res);
-      }).catch((error: any) => {
-        reject(error);
-      });
+      this.write("GET_SETTING_INFORMATION")
+        .then((res: any) => {
+          resolve(res);
+        })
+        .catch((error: any) => {
+          reject(error);
+        });
     });
     return promise;
   }
@@ -222,48 +223,53 @@ export default class LinkingDevice {
 
       const s = this.info.settings;
       if (name === "LEDColorName") {
-        if (!(("LED" in s) && s.LED.colorMax)) {
+        if (!("LED" in s && s.LED.colorMax)) {
           resolve(null);
           return;
         }
       } else if (name === "LEDPatternName") {
-        if (!(("LED" in s) && s.LED.patternMax)) {
+        if (!("LED" in s && s.LED.patternMax)) {
           resolve(null);
           return;
         }
       } else if (name === "VibrationPatternName") {
-        if (!(("Vibration" in s) && s.Vibration.patternMax)) {
+        if (!("Vibration" in s && s.Vibration.patternMax)) {
           resolve(null);
           return;
         }
       } else if (name === "BeepPatternName") {
-        if (!(("Beep" in s) && s.Beep.patternMax)) {
+        if (!("Beep" in s && s.Beep.patternMax)) {
           resolve(null);
           return;
         }
       }
-      this.write("GET_SETTING_NAME", {SettingNameType: name}).then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
+      this.write("GET_SETTING_NAME", { SettingNameType: name })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
 
   public _isFunction(o: any) {
-    return (o && typeof (o) === "function") ? true : false;
+    return o && typeof o === "function" ? true : false;
   }
 
   public _getServicesAndChars() {
-
     const peripheral = this._peripheral;
     const service = peripheral.getService(this.PRIMARY_SERVICE_UUID);
     if (!service) {
       throw new Error("No service was found");
     }
-    const write_char = service.getCharacteristic(this.WRITE_CHARACTERRISTIC_UUID);
-    const indicate_char = service.getCharacteristic(this.INDICATE_CHARACTERRISTIC_UUID);
+    const write_char = service.getCharacteristic(
+      this.WRITE_CHARACTERRISTIC_UUID,
+    );
+    const indicate_char = service.getCharacteristic(
+      this.INDICATE_CHARACTERRISTIC_UUID,
+    );
     if (!(write_char && indicate_char)) {
       throw new Error("No characteristic was found");
     }
@@ -271,9 +277,13 @@ export default class LinkingDevice {
     this.char_indicate = indicate_char;
     this._service = service;
 
-    const ga_service = peripheral.getService(this._generic_access_service.SERVICE_UUID);
+    const ga_service = peripheral.getService(
+      this._generic_access_service.SERVICE_UUID,
+    );
     if (ga_service) {
-      const ga_char = ga_service.getCharacteristic(this._generic_access_service.device_name.CHARACTERRISTIC_UUID);
+      const ga_char = ga_service.getCharacteristic(
+        this._generic_access_service.device_name.CHARACTERRISTIC_UUID,
+      );
       if (ga_service && ga_char) {
         this._generic_access_service.service = ga_service;
         this._generic_access_service.device_name.char = ga_char;
@@ -302,7 +312,7 @@ export default class LinkingDevice {
 
   public _isExecutedPacket(buf: any) {
     const ph = buf.readUInt8(0);
-    return (ph & 0x00000001) ? true : false;
+    return ph & 0x00000001 ? true : false;
   }
 
   public _receivedIndicate(buf: any) {
@@ -320,8 +330,10 @@ export default class LinkingDevice {
         this.onnotify(parsed);
       }
       // Button
-      if (parsed.serviceId === 2) { // PeripheralDeviceOperation Service
-        if (parsed.messageId === 0) { // NOTIFY_PD_OPERATION
+      if (parsed.serviceId === 2) {
+        // PeripheralDeviceOperation Service
+        if (parsed.messageId === 0) {
+          // NOTIFY_PD_OPERATION
           // let f = this.services['button']['onnotify'];
           let f = null;
           if (this.services.button) {
@@ -332,7 +344,8 @@ export default class LinkingDevice {
           if (f) {
             let button = null;
             parsed.parameters.forEach((p: any) => {
-              if (p.parameterId === 2) { // ButtonId
+              if (p.parameterId === 2) {
+                // ButtonId
                 button = {
                   buttonId: p.buttonId,
                   buttonName: p.buttonName,
@@ -343,41 +356,56 @@ export default class LinkingDevice {
           }
         }
         // Sensors
-      } else if (parsed.serviceId === 3) { // PeripheralDeviceSensorInformation Service
-        if (parsed.messageId === 4) { // NOTIFY_PD_SENSOR_INFO
+      } else if (parsed.serviceId === 3) {
+        // PeripheralDeviceSensorInformation Service
+        if (parsed.messageId === 4) {
+          // NOTIFY_PD_SENSOR_INFO
           let sensor_type = -1;
           let res: any = {};
           parsed.parameters.forEach((p: any) => {
             const pid = p.parameterId;
-            if (pid === 2) { // SensorType
+            if (pid === 2) {
+              // SensorType
               sensor_type = p.sensorTypeCode;
             } else {
-              if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
-                if (pid === 4) { // X_value
+              if (sensor_type.toString().match(/^(0|1|2)$/)) {
+                // Gyroscope, Accelerometer, Orientation
+                if (pid === 4) {
+                  // X_value
                   res.x = p.xValue;
-                } else if (pid === 5) { // Y_value
+                } else if (pid === 5) {
+                  // Y_value
                   res.y = p.yValue;
-                } else if (pid === 6) { // Z_value
+                } else if (pid === 6) {
+                  // Z_value
                   res.z = p.zValue;
                 }
-              } else if (sensor_type === 3) { // Battery
+              } else if (sensor_type === 3) {
+                // Battery
                 res = {
                   charge: p.charge,
                   level: p.level,
                 };
-              } else if (sensor_type === 4) { // Temperature
+              } else if (sensor_type === 4) {
+                // Temperature
                 res.temperature = p.temperature;
-              } else if (sensor_type === 5) { // Humidity
+              } else if (sensor_type === 5) {
+                // Humidity
                 res.humidity = p.humidity;
-              } else if (sensor_type === 6) { // Aire pressure
+              } else if (sensor_type === 6) {
+                // Aire pressure
                 res.pressure = p.pressure;
-              } else if (sensor_type === 7) { // Opening and closing
+              } else if (sensor_type === 7) {
+                // Opening and closing
                 res.openclose = p.openclose;
-              } else if (sensor_type === 8) { // Human detection
+              } else if (sensor_type === 8) {
+                // Human detection
                 res.human = p.human;
-              } else if (sensor_type === 9) { // Move
+              } else if (sensor_type === 9) {
+                // Move
                 res.move = p.move;
-              } else if (sensor_type === 0x0a) { // Illuminance
+              } else if (sensor_type === 0x0a) {
+                // Illuminance
                 res.illuminance = p.illuminance;
               }
             }
@@ -435,7 +463,6 @@ export default class LinkingDevice {
           }
         }
       }
-
     }
   }
 
@@ -446,7 +473,7 @@ export default class LinkingDevice {
     }
     await this._peripheral.disconnectWait();
     if (this._isFunction(this.ondisconnect)) {
-      this.ondisconnect({wasClean: true});
+      this.ondisconnect({ wasClean: true });
     }
   }
 
@@ -531,7 +558,10 @@ export default class LinkingDevice {
       };
     }
     // Button
-    if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
+    if (
+      "Button" in this.info.exsensors ||
+      device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)
+    ) {
       this.services.button = {
         onnotify: null,
       };
@@ -539,7 +569,12 @@ export default class LinkingDevice {
     // LED
     if ("LED" in this.info.settings) {
       const o = this.info.settings.LED;
-      if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
+      if (
+        o.colors &&
+        o.colors.length > 0 &&
+        o.patterns &&
+        o.patterns.length > 0
+      ) {
         const colors: any = {};
         for (let i = 0; i < o.colors.length; i++) {
           colors[o.colors[i]] = i + 1;
@@ -638,11 +673,15 @@ export default class LinkingDevice {
       if (!name) {
         reject(new Error("Device name is required."));
         return;
-      } else if (typeof (name) !== "string") {
+      } else if (typeof name !== "string") {
         reject(new Error("Device name must be a string."));
         return;
       } else if (name.length > 32) {
-        reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
+        reject(
+          new Error(
+            "Device name is too long. The length must be in the range 1 to 32.",
+          ),
+        );
         return;
       }
       const buf = Buffer.from(name, "utf8");
@@ -662,14 +701,14 @@ export default class LinkingDevice {
     let color_number = 1;
     if (color) {
       const colors = this.services.led.colors;
-      if (typeof (color) === "number") {
+      if (typeof color === "number") {
         for (const name in colors) {
           if (colors[name] === color) {
             color_number = color;
             break;
           }
         }
-      } else if (typeof (color) === "string") {
+      } else if (typeof color === "string") {
         if (color in colors) {
           color_number = colors[color];
         }
@@ -678,20 +717,20 @@ export default class LinkingDevice {
     let pattern_number = 2;
     if (pattern) {
       const patterns = this.services.led.patterns;
-      if (typeof (pattern) === "number") {
+      if (typeof pattern === "number") {
         for (const name in patterns) {
           if (patterns[name] === pattern) {
             pattern_number = pattern;
             break;
           }
         }
-      } else if (typeof (pattern) === "string") {
+      } else if (typeof pattern === "string") {
         if (pattern in patterns) {
           pattern_number = patterns[pattern];
         }
       }
     }
-    if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+    if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
       duration = 5;
     }
     const promise = new Promise((resolve, reject) => {
@@ -707,11 +746,13 @@ export default class LinkingDevice {
             duration,
           },
         ],
-      }).then((res: any) => {
-        resolve(res.data);
-      }).catch((error) => {
-        reject(error);
-      });
+      })
+        .then((res: any) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
@@ -722,11 +763,13 @@ export default class LinkingDevice {
         SettingInformationRequest: {
           requestName: "STOP_DEMONSTRATION",
         },
-      }).then((res: any) => {
-        resolve(res.data);
-      }).catch((error) => {
-        reject(error);
-      });
+      })
+        .then((res: any) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
@@ -735,20 +778,20 @@ export default class LinkingDevice {
     let pattern_number = 2;
     if (pattern) {
       const patterns = this.services.vibration.patterns;
-      if (typeof (pattern) === "number") {
+      if (typeof pattern === "number") {
         for (const name in patterns) {
           if (patterns[name] === pattern) {
             pattern_number = pattern;
             break;
           }
         }
-      } else if (typeof (pattern) === "string") {
+      } else if (typeof pattern === "string") {
         if (pattern in patterns) {
           pattern_number = patterns[pattern];
         }
       }
     }
-    if (!duration || typeof (duration) !== "number" || duration % 1 !== 0) {
+    if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
       duration = 5;
     }
     const promise = new Promise((resolve, reject) => {
@@ -763,11 +806,13 @@ export default class LinkingDevice {
             duration,
           },
         ],
-      }).then((res: any) => {
-        resolve(res.data);
-      }).catch((error) => {
-        reject(error);
-      });
+      })
+        .then((res: any) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
@@ -778,11 +823,13 @@ export default class LinkingDevice {
         SettingInformationRequest: {
           requestName: "STOP_DEMONSTRATION",
         },
-      }).then((res: any) => {
-        resolve(res.data);
-      }).catch((error) => {
-        reject(error);
-      });
+      })
+        .then((res: any) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
@@ -807,11 +854,13 @@ export default class LinkingDevice {
       this.write("SET_NOTIFY_SENSOR_INFO", {
         SensorType: sensor_type,
         Status: status,
-      }).then((res: any) => {
-        resolve(res.data);
-      }).catch((error) => {
-        reject(error);
-      });
+      })
+        .then((res: any) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
@@ -820,21 +869,24 @@ export default class LinkingDevice {
     const promise = new Promise((resolve, reject) => {
       this.write("GET_SENSOR_INFO", {
         SensorType: sensor_type,
-      }).then((res: any) => {
-        if (sensor_type.toString().match(/^(0|1|2)$/)) { // Gyroscope, Accelerometer, Orientation
-          const d = res.data;
-          const data = {
-            x: d.xValue,
-            y: d.yValue,
-            z: d.zValue,
-          };
-          resolve(data);
-        } else {
-          resolve(res.data);
-        }
-      }).catch((error) => {
-        reject(error);
-      });
+      })
+        .then((res: any) => {
+          if (sensor_type.toString().match(/^(0|1|2)$/)) {
+            // Gyroscope, Accelerometer, Orientation
+            const d = res.data;
+            const data = {
+              x: d.xValue,
+              y: d.yValue,
+              z: d.zValue,
+            };
+            resolve(data);
+          } else {
+            resolve(res.data);
+          }
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }

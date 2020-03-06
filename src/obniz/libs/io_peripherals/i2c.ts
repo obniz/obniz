@@ -5,22 +5,22 @@
 
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
-import {PullType} from "./common";
+import { PullType } from "./common";
 
 type I2CMode = "master" | "slave";
 
 interface PeripheralI2CState {
-  "mode": I2CMode;
-  "sda": number;
-  "scl": number;
-  "pull"?: PullType;
-  "gnd"?: number;
+  mode: I2CMode;
+  sda: number;
+  scl: number;
+  pull?: PullType;
+  gnd?: number;
 }
 
 interface PeripheralI2COptions extends PeripheralI2CState {
-  "mode": I2CMode;
-  "sda": number;
-  "scl": number;
+  mode: I2CMode;
+  sda: number;
+  scl: number;
   clock?: number;
   slave_address?: any;
   slave_address_length?: number;
@@ -33,7 +33,6 @@ interface PeripheralI2COptions extends PeripheralI2CState {
  * @category Peripherals
  */
 class PeripheralI2C {
-
   /**
    * from obniz.js 1.14.0
    *
@@ -151,7 +150,8 @@ class PeripheralI2C {
     }
 
     const mode: I2CMode = this.state.mode!;
-    const clock: number | null = typeof arg.clock === "number" ? Math.floor(arg.clock) : null;
+    const clock: number | null =
+      typeof arg.clock === "number" ? Math.floor(arg.clock) : null;
     const slave_address: number | null =
       typeof arg.slave_address === "number"
         ? Math.floor(arg.slave_address)
@@ -216,7 +216,11 @@ class PeripheralI2C {
       }
     }
 
-    const startObj: any = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl"]);
+    const startObj: any = ObnizUtil._keyFilter(this.state, [
+      "mode",
+      "sda",
+      "scl",
+    ]);
     if (mode === "master") {
       startObj.clock = clock;
     } else {

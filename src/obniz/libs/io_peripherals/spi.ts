@@ -6,10 +6,9 @@
 import semver from "semver";
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
-import {DriveType, PullType} from "./common";
+import { DriveType, PullType } from "./common";
 
 interface PeripheralSPIOptions {
-
   /**
    * SPI mode
    *
@@ -52,7 +51,6 @@ interface PeripheralSPIOptions {
  * @category Peripherals
  */
 export default class PeripheralSPI {
-
   /**
    * @ignore
    */
@@ -106,7 +104,12 @@ export default class PeripheralSPI {
     ]) as PeripheralSPIOptions;
     const obj: any = {};
 
-    const ioKeys: Array<keyof PeripheralSPIOptions> = ["clk", "mosi", "miso", "gnd"];
+    const ioKeys: Array<keyof PeripheralSPIOptions> = [
+      "clk",
+      "mosi",
+      "miso",
+      "gnd",
+    ];
     for (const key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -204,11 +207,7 @@ export default class PeripheralSPI {
     }
     if (semver.lte(this.Obniz.firmware_ver!, "1.0.2") && data.length > 32) {
       throw new Error(
-        `with your obniz ${
-          this.Obniz.firmware_ver
-        }. spi max length=32byte but yours ${
-          data.length
-        }. Please update obniz firmware`,
+        `with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`,
       );
     }
 
@@ -241,11 +240,7 @@ export default class PeripheralSPI {
     }
     if (semver.lte(this.Obniz.firmware_ver!, "1.0.2") && data.length > 32) {
       throw new Error(
-        `with your obniz ${
-          this.Obniz.firmware_ver
-        }. spi max length=32byte but yours ${
-          data.length
-        }. Please update obniz firmware`,
+        `with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`,
       );
     }
 

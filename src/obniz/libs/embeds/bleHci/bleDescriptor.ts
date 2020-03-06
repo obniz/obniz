@@ -6,13 +6,15 @@ import BleCharacteristic from "./bleCharacteristic";
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 import BleLocalValueAttributeAbstract from "./bleLocalValueAttributeAbstract";
 import BleService from "./bleService";
-import {BleDescriptorDefine} from "./bleTypes";
+import { BleDescriptorDefine } from "./bleTypes";
 
 /**
  * @category Use as Peripheral
  */
-export default class BleDescriptor extends BleLocalValueAttributeAbstract<BleCharacteristic, null> {
-
+export default class BleDescriptor extends BleLocalValueAttributeAbstract<
+  BleCharacteristic,
+  null
+> {
   /**
    * Characteristic instance
    */
@@ -85,5 +87,4 @@ export default class BleDescriptor extends BleLocalValueAttributeAbstract<BleCha
     // }
     return obj;
   }
-
 }

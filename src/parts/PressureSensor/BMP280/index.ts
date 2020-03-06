@@ -7,7 +7,9 @@ import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface BMP280Options {
   vio?: number;
@@ -19,14 +21,14 @@ export interface BMP280Options {
   sdo?: number;
   address?: number;
   i2c?: PeripheralI2C;
- }
+}
 
 export default class BMP280 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "BMP280",
-      datasheet: "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf",
+      datasheet:
+        "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf",
     };
   }
 
@@ -155,7 +157,10 @@ export default class BMP280 implements ObnizPartsInterface {
     this._t_fine = 0;
   }
 
-  public async getAllWait(): Promise<{ temperature: number; pressure: number }> {
+  public async getAllWait(): Promise<{
+    temperature: number;
+    pressure: number;
+  }> {
     const data = await this.getData();
 
     const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
@@ -164,7 +169,7 @@ export default class BMP280 implements ObnizPartsInterface {
     const temperature = this.calibration_T(temp_raw) / 100.0;
     const pressure = this.calibration_P(press_raw) / 100.0;
 
-    return {temperature, pressure};
+    return { temperature, pressure };
   }
 
   public async getTempWait(): Promise<number> {
@@ -193,14 +198,14 @@ export default class BMP280 implements ObnizPartsInterface {
     this.write([
       this.commands.addresses.config,
       (this.configration.interval << 5) |
-      (this.configration.iir_strength << 2) |
-      0,
+        (this.configration.iir_strength << 2) |
+        0,
     ]);
     this.write([
       this.commands.addresses.ctrl_meas,
       (this.configration.sampling.temp << 5) |
-      (this.configration.sampling.pres << 2) |
-      this.configration.mode,
+        (this.configration.sampling.pres << 2) |
+        this.configration.mode,
     ]);
   }
 

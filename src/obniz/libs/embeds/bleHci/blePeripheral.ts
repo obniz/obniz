@@ -5,7 +5,7 @@
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BleService from "./bleService";
-import {BleDeviceAddress, BleServiceDefine, UUID} from "./bleTypes";
+import { BleDeviceAddress, BleServiceDefine, UUID } from "./bleTypes";
 
 export type BleConnectionState = "connected" | "disconnected";
 
@@ -18,7 +18,6 @@ export interface BleConnectionUpdateParam {
  * @category Use as Peripheral
  */
 export default class BlePeripheral {
-
   /**
    * Current connected device address
    */
@@ -155,7 +154,9 @@ export default class BlePeripheral {
    */
   public findCharacteristic(param: any) {
     const serviceUuid: any = BleHelper.uuidFilter(param.service_uuid);
-    const characteristicUuid: any = BleHelper.uuidFilter(param.characteristic_uuid);
+    const characteristicUuid: any = BleHelper.uuidFilter(
+      param.characteristic_uuid,
+    );
     const s: any = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -192,6 +193,5 @@ export default class BlePeripheral {
    * @ignore
    * @param error
    */
-  public onerror(error: any) {
-  }
+  public onerror(error: any) {}
 }

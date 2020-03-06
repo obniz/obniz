@@ -9,16 +9,16 @@
 import Obniz from "../../../obniz";
 import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 import LinkingAdvertising from "./modules/advertising";
 import LinkingDevice from "./modules/device";
 
-export interface LinkingOptions {
-}
+export interface LinkingOptions {}
 
 export default class Linking {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Linking",
@@ -27,7 +27,10 @@ export default class Linking {
 
   public onadvertisement: any;
   public ondiscover: any;
-  public PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+  public PRIMARY_SERVICE_UUID_LIST = [
+    "b3b3690150d34044808d50835b13a6cd",
+    "fe4e",
+  ];
   public _discover_status: any;
   public _discover_wait: any;
   public _discover_timer: any;
@@ -40,7 +43,6 @@ export default class Linking {
   public obniz!: Obniz;
 
   constructor(params: any) {
-
     this.keys = [];
     this.requiredKeys = [];
     this.periperal = null;

@@ -5,10 +5,9 @@
 import EventEmitter from "eventemitter3";
 import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
-import {BleDeviceAddress, UUID} from "./bleTypes";
+import { BleDeviceAddress, UUID } from "./bleTypes";
 
 export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
-
   /**
    * @ignore
    */
@@ -52,7 +51,10 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public onwritefromremote?: (address: BleDeviceAddress, data: number[]) => void;
+  public onwritefromremote?: (
+    address: BleDeviceAddress,
+    data: number[],
+  ) => void;
 
   /**
    * @ignore
@@ -151,14 +153,12 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public read() {
-  }
+  public read() {}
 
   /**
    * @ignore
    */
-  public write(data: number[], needResponse?: boolean) {
-  }
+  public write(data: number[], needResponse?: boolean) {}
 
   /**
    * @ignore
@@ -326,14 +326,11 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
       Object.defineProperty(this, parentName, {
         get() {
           return this.parent;
-        }
-        ,
+        },
         set(newValue: any) {
           this.parent = newValue;
-        }
-        ,
-      })
-      ;
+        },
+      });
     }
   }
 }

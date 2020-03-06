@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - service.js
-*
-* Copyright (c) 2017, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2017-04-15
-* ---------------------------------------------------------------- */
+ * node-linking - service.js
+ *
+ * Copyright (c) 2017, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2017-04-15
+ * ---------------------------------------------------------------- */
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -89,7 +89,9 @@ class LinkingService {
             return false;
         }
         sid = parseInt(sid, 10);
-        const services = (this._device_info && this._device_info.services) ? this._device_info.services : null;
+        const services = this._device_info && this._device_info.services
+            ? this._device_info.services
+            : null;
         if (!services) {
             return false;
         }

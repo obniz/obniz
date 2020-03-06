@@ -8,8 +8,7 @@
 /**
  * @ignore
  */
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 import events from "events";
 import Hci from "../hci";
@@ -50,9 +49,9 @@ class Gap extends events.EventEmitter {
   public startAdvertising(name: any, serviceUuids: any) {
     debug(
       "startAdvertising: name = " +
-      name +
-      ", serviceUuids = " +
-      JSON.stringify(serviceUuids, null, 2),
+        name +
+        ", serviceUuids = " +
+        JSON.stringify(serviceUuids, null, 2),
     );
 
     let advertisementDataLength: any = 3;
@@ -179,9 +178,9 @@ class Gap extends events.EventEmitter {
 
     debug(
       "startAdvertisingWithEIRData: advertisement data = " +
-      advertisementData.toString("hex") +
-      ", scan data = " +
-      scanData.toString("hex"),
+        advertisementData.toString("hex") +
+        ", scan data = " +
+        scanData.toString("hex"),
     );
 
     let error: any = null;
@@ -217,17 +216,13 @@ class Gap extends events.EventEmitter {
     this._hci.setAdvertiseEnable(false);
   }
 
-  public onHciError(error: any) {
-  }
+  public onHciError(error: any) {}
 
-  public onHciLeAdvertisingParametersSet(status: any) {
-  }
+  public onHciLeAdvertisingParametersSet(status: any) {}
 
-  public onHciLeAdvertisingDataSet(status: any) {
-  }
+  public onHciLeAdvertisingDataSet(status: any) {}
 
-  public onHciLeScanResponseDataSet(status: any) {
-  }
+  public onHciLeScanResponseDataSet(status: any) {}
 
   public onHciLeAdvertiseEnableSet(status: any) {
     if (this._advertiseState === "starting") {

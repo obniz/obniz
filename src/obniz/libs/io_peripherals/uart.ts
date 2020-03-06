@@ -5,7 +5,14 @@
 
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
-import {BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType} from "./common";
+import {
+  BitType,
+  DriveType,
+  FlowControlType,
+  ParityType,
+  PullType,
+  StopBitType,
+} from "./common";
 
 export interface PeripheralUARTOptions {
   /**

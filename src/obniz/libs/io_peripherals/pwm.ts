@@ -5,7 +5,7 @@
 
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
-import {DriveType, PullType} from "./common";
+import { DriveType, PullType } from "./common";
 
 interface PeripheralPWMOptions {
   /**
@@ -36,7 +36,6 @@ export type PWMModulateType = "am";
  * @category Peripherals
  */
 export default class PeripheralPWM implements PWMInterface {
-
   /**
    * @ignore
    */
@@ -233,7 +232,11 @@ export default class PeripheralPWM implements PWMInterface {
    * @param symbol_length
    * @param data data array. All data[index] is 0 or 1.
    */
-  public modulate(type: PWMModulateType, symbol_length: number, data: number[]) {
+  public modulate(
+    type: PWMModulateType,
+    symbol_length: number,
+    data: number[],
+  ) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
     }

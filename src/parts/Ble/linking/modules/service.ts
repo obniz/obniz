@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - service.js
-*
-* Copyright (c) 2017, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2017-04-15
-* ---------------------------------------------------------------- */
+ * node-linking - service.js
+ *
+ * Copyright (c) 2017, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2017-04-15
+ * ---------------------------------------------------------------- */
 "use strict";
 import LinkingServiceNotification from "./service-notification";
 import LinkingServiceOperation from "./service-operation.js";
@@ -13,7 +13,6 @@ import LinkingServiceSensor from "./service-sensor.js";
 import LinkingServiceSetting from "./service-setting.js";
 
 export default class LinkingService {
-
   public _services: any = {
     "00": new LinkingServiceProperty(),
     "01": new LinkingServiceNotification(),
@@ -92,7 +91,10 @@ export default class LinkingService {
       return false;
     }
     sid = parseInt(sid, 10);
-    const services = (this._device_info && this._device_info.services) ? this._device_info.services : null;
+    const services =
+      this._device_info && this._device_info.services
+        ? this._device_info.services
+        : null;
     if (!services) {
       return false;
     }

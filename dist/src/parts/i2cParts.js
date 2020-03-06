@@ -6,7 +6,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class I2cPartsAbstract {
     constructor() {
-        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "pull", "clock", "voltage", "address"];
+        this.keys = [
+            "gnd",
+            "vcc",
+            "sda",
+            "scl",
+            "i2c",
+            "pull",
+            "clock",
+            "voltage",
+            "address",
+        ];
         this.requiredKeys = [];
     }
     static charArrayToInt16(values, endian = "b") {
@@ -71,15 +81,15 @@ class I2cPartsAbstract {
         this.write(address, tempdata);
     }
     async readInt16Wait(register, endian = "b") {
-        const data = await this.readWait(register, 2);
+        const data = (await this.readWait(register, 2));
         return I2cPartsAbstract.charArrayToInt16(data, endian);
     }
     async readThreeInt16Wait(register, endian = "b") {
         const data = await this.readWait(register, 6);
         const results = [0, 0, 0];
-        results[0] = (I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian));
-        results[1] = (I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian));
-        results[2] = (I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian));
+        results[0] = I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian);
+        results[1] = I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian);
+        results[2] = I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian);
         return results;
     }
 }

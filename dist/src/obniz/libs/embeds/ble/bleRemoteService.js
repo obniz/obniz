@@ -60,10 +60,8 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     ondiscoverfinished(characteristics) {
         this.ondiscovercharacteristicfinished(characteristics);
     }
-    ondiscovercharacteristic(characteristic) {
-    }
-    ondiscovercharacteristicfinished(characteristics) {
-    }
+    ondiscovercharacteristic(characteristic) { }
+    ondiscovercharacteristicfinished(characteristics) { }
 }
 exports.default = BleRemoteService;
 

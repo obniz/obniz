@@ -430,9 +430,9 @@ class MFRC522 {
     }
     async authenticateSectorWait(Sector, uid) {
         /* Password authentication mode (A or B)
-             * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
-             * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
-             */
+         * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
+         * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
+         */
         const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
         // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
         const Block = Sector * 4;
@@ -447,9 +447,9 @@ class MFRC522 {
     }
     async authenticateBlockWait(Block, uid) {
         /* Password authentication mode (A or B)
-             * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
-             * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
-             */
+         * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
+         * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
+         */
         const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
         // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
         let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF

@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -48,10 +47,15 @@ class WSCommandAD extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/ad/deinit", onValid: this.deinit},
-        {uri: "/request/ad/get", onValid: this.get},
+        { uri: "/request/ad/deinit", onValid: this.deinit },
+        { uri: "/request/ad/get", onValid: this.get },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "ad" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        "ad" + i,
+        i,
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {

@@ -14,7 +14,6 @@ export interface ObnizMeasureResult {
 type ObnizMeasureResultArray = [ObnizMeasureResult, ObnizMeasureResult];
 
 export interface ObnizMeasureOptions {
-
   /**
    * io number to generate pulse. Please use with 'pulse' and 'pulse_width' params.
    *
@@ -23,38 +22,38 @@ export interface ObnizMeasureOptions {
    * @category Pulse generation
    *
    */
-  "io_pulse": number;
+  io_pulse: number;
 
   /**
    * "positive" or "negative"
    * @category Pulse generation
    */
-  "pulse": "positive" | "negative";
+  pulse: "positive" | "negative";
 
   /**
    * pulse duration in values between ms. 0.001 to 1000.
    *
    * @category Pulse generation
    */
-  "pulse_width": number;
+  pulse_width: number;
 
   /**
    * io for measuring response. Please use with 'measure_edges' params.
    * @category Response measurement
    */
-  "io_echo": number;
+  io_echo: number;
 
   /**
    * maximum number of edges to detect. 1 to 4.
    * @category Response measurement
    */
-  "measure_edges": number;
+  measure_edges: number;
 
   /**
    * timeout in ms, and default is 1000. 0.001 to 1000.
    * @category Response measurement
    */
-  "timeout"?: number;
+  timeout?: number;
 
   /**
    * callback function after measurement or timeout.
@@ -78,7 +77,7 @@ export interface ObnizMeasureOptions {
    *
    * @category Response measurement
    */
-  "callback"?: (edges: ObnizMeasureResultArray) => void;
+  callback?: (edges: ObnizMeasureResultArray) => void;
 }
 
 /**

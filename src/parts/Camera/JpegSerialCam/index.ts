@@ -5,7 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface JpegSerialCamOptions {
   vcc?: number;
@@ -19,7 +21,6 @@ export type JpegSerialCamSize = "640x480" | "320x240" | "160x120";
 export type JpegSerialCamBaud = 9600 | 19200 | 38400 | 57600 | 115200;
 
 export default class JpegSerialCam implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "JpegSerialCam",
@@ -43,7 +44,7 @@ export default class JpegSerialCam implements ObnizPartsInterface {
 
     this.ioKeys = this.keys;
     this.displayName = "Jcam";
-    this.displayIoNames = {cam_tx: "camTx", cam_rx: "camRx"};
+    this.displayIoNames = { cam_tx: "camTx", cam_rx: "camRx" };
   }
 
   public wired(obniz: Obniz) {
@@ -57,7 +58,11 @@ export default class JpegSerialCam implements ObnizPartsInterface {
     this.uart = this.obniz.getFreeUart();
   }
 
-  public async _drainUntil(uart: PeripheralUART, search: number[], recv?: number[]) {
+  public async _drainUntil(
+    uart: PeripheralUART,
+    search: number[],
+    recv?: number[],
+  ) {
     if (!recv) {
       recv = [];
     }

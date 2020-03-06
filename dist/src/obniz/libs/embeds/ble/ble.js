@@ -57,10 +57,8 @@ class ObnizBLE {
         return str;
     }
     // dummy
-    async initWait() {
-    }
-    _reset() {
-    }
+    async initWait() { }
+    _reset() { }
     directConnect(uuid, addressType) {
         throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
     }

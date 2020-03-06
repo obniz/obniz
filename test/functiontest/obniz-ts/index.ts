@@ -14,5 +14,4 @@ describe("ts", () => {
     const a = 1 + 1;
     expect(a).to.be.equal(2);
   });
-
 });

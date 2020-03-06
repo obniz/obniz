@@ -69,8 +69,7 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
         });
     }
     unregisterNotify() {
-        this.onnotify = () => {
-        };
+        this.onnotify = () => { };
         const obj = {
             ble: {
                 unregister_notify_characteristic: {
@@ -168,16 +167,11 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     ondiscoverfinished(descriptors) {
         this.ondiscoverdescriptorfinished(descriptors);
     }
-    ondiscoverdescriptor(descriptors) {
-    }
-    ondiscoverdescriptorfinished(descriptors) {
-    }
-    onregisternotify() {
-    }
-    onunregisternotify() {
-    }
-    onnotify(data) {
-    }
+    ondiscoverdescriptor(descriptors) { }
+    ondiscoverdescriptorfinished(descriptors) { }
+    onregisternotify() { }
+    onunregisternotify() { }
+    onnotify(data) { }
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {

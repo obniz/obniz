@@ -5,7 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface WS2811Options {
   gnd?: number;
@@ -14,7 +16,6 @@ export interface WS2811Options {
 }
 
 export default class WS2811 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "WS2811",
@@ -149,5 +150,4 @@ export default class WS2811 implements ObnizPartsInterface {
     }
     this.spi.write(bytes);
   }
-
 }

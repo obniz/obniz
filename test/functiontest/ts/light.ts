@@ -1,4 +1,3 @@
-
 /* tslint:disable:class-name max-classes-per-file */
 import Obniz from "../../../dist/src/obniz/index";
 
@@ -52,7 +51,13 @@ class FullColorLED {
   public rgb() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const led = obniz.wired("FullColorLED", { r: 3, g: 0, b: 1, common: 2, commonType: "anode_common" });
+      const led = obniz.wired("FullColorLED", {
+        r: 3,
+        g: 0,
+        b: 1,
+        common: 2,
+        commonType: "anode_common",
+      });
       led.rgb(0xff, 255, 0);
     };
   }
@@ -60,7 +65,13 @@ class FullColorLED {
   public hsv() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const led = obniz.wired("FullColorLED", { r: 3, g: 0, b: 1, common: 2, commonType: "anode_common" });
+      const led = obniz.wired("FullColorLED", {
+        r: 3,
+        g: 0,
+        b: 1,
+        common: 2,
+        commonType: "anode_common",
+      });
       led.hsv(180, 0.5, 1);
     };
   }
@@ -68,7 +79,13 @@ class FullColorLED {
   public gradation() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const led = obniz.wired("FullColorLED", { r: 3, g: 0, b: 1, common: 2, commonType: "anode_common" });
+      const led = obniz.wired("FullColorLED", {
+        r: 3,
+        g: 0,
+        b: 1,
+        common: 2,
+        commonType: "anode_common",
+      });
       led.gradation(1000); // 1000 msec loop
     };
   }
@@ -76,7 +93,13 @@ class FullColorLED {
   public async stopgradation() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      const led = obniz.wired("FullColorLED", { r: 3, g: 0, b: 1, common: 2, commonType: "anode_common" });
+      const led = obniz.wired("FullColorLED", {
+        r: 3,
+        g: 0,
+        b: 1,
+        common: 2,
+        commonType: "anode_common",
+      });
       led.gradation(1000); // 1000 msec loop
 
       await obniz.wait(5000);
@@ -120,7 +143,10 @@ class WS2811Test {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const led = obniz.wired("WS2811", { gnd: 0, vcc: 1, din: 2 });
-      led.hsvs([[180, 0.5, 1], [0, 1, 1]]);
+      led.hsvs([
+        [180, 0.5, 1],
+        [0, 1, 1],
+      ]);
     };
   }
 }
@@ -160,7 +186,10 @@ class WS2812Test {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const led = obniz.wired("WS2812", { gnd: 0, vcc: 1, din: 2 });
-      led.hsvs([[180, 0.5, 1], [0, 1, 1]]);
+      led.hsvs([
+        [180, 0.5, 1],
+        [0, 1, 1],
+      ]);
     };
   }
 }
@@ -200,7 +229,10 @@ class WS2812BTest {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
       const led = obniz.wired("WS2812B", { gnd: 0, vcc: 1, din: 2 });
-      led.hsvs([[180, 0.5, 1], [0, 1, 1]]);
+      led.hsvs([
+        [180, 0.5, 1],
+        [0, 1, 1],
+      ]);
     };
   }
 }

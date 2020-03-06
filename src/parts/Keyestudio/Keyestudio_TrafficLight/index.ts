@@ -5,7 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 import LED from "../../Light/LED";
 
 export type TrafficLightType = "green" | "yellow" | "red";
@@ -18,7 +20,6 @@ export interface Keyestudio_TrafficLightOptions {
 }
 
 export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Keyestudio_TrafficLight",
@@ -56,9 +57,9 @@ export default class Keyestudio_TrafficLight implements ObnizPartsInterface {
     this.obniz = obniz;
     obniz.setVccGnd(null, this.params.gnd, "5v");
 
-    this.green = obniz.wired("LED", {anode: this.params.green});
-    this.yellow = obniz.wired("LED", {anode: this.params.yellow});
-    this.red = obniz.wired("LED", {anode: this.params.red});
+    this.green = obniz.wired("LED", { anode: this.params.green });
+    this.yellow = obniz.wired("LED", { anode: this.params.yellow });
+    this.red = obniz.wired("LED", { anode: this.params.red });
   }
 
   public single(led: TrafficLightType) {

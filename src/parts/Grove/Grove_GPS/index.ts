@@ -6,7 +6,9 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface Grove_GPSOptions {
   vcc?: number;
@@ -72,7 +74,7 @@ export default class Grove_GPS implements ObnizPartsInterface {
 
     this.ioKeys = this.keys;
     this.displayName = "gps";
-    this.displayIoNames = {tx: "tx", rx: "rx"};
+    this.displayIoNames = { tx: "tx", rx: "rx" };
   }
 
   public wired(obniz: Obniz) {

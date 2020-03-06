@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-* node-linking - service-sensor.js
-*
-* Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
-* Released under the MIT license
-* Date: 2019-11-02
-* ---------------------------------------------------------------- */
+ * node-linking - service-sensor.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
 "use strict";
 
 import LinkingIEEE754 from "./ieee754";
@@ -45,13 +45,12 @@ export default class LinkingServiceSensor {
         const pvalue_buf = buf.slice(offset, offset + plen);
         offset += plen;
         const p = this._parseParameter(pid, pvalue_buf, sensor_type);
-        if (pid === 0x02 && ("sensorTypeCode" in p)) {
+        if (pid === 0x02 && "sensorTypeCode" in p) {
           sensor_type = p.sensorTypeCode;
         }
         parameters.push(p);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     return parameters;
   }
 
@@ -77,7 +76,7 @@ export default class LinkingServiceSensor {
       parsed = this._parseY_threshold(buf);
     } else if (pid === 0x09) {
       parsed = this._parseZ_threshold(buf);
-    } else if (pid === 0x0A) {
+    } else if (pid === 0x0a) {
       parsed = this._parseOriginalData(buf, sensor_type);
     }
     parsed.parameterId = pid;
@@ -212,40 +211,48 @@ export default class LinkingServiceSensor {
 
   public _parseOriginalData(buf: any, sensor_type: any) {
     const n = buf.readUInt16LE(0) & 0b0000111111111111;
-    if (sensor_type === 0x03) { // Battery
+    if (sensor_type === 0x03) {
+      // Battery
       return {
-        chargeRequired: (n & 0b0000100000000000) ? true : false,
+        chargeRequired: n & 0b0000100000000000 ? true : false,
         chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
       };
-    } else if (sensor_type === 0x04) { // Temperature
+    } else if (sensor_type === 0x04) {
+      // Temperature
       return {
         temperature: LinkingIEEE754.read(n, 1, 4, 7),
       };
-    } else if (sensor_type === 0x05) { // Humidity
+    } else if (sensor_type === 0x05) {
+      // Humidity
       const v = LinkingIEEE754.read(n, 0, 4, 8);
       return {
         humidity: v,
       };
-    } else if (sensor_type === 0x06) { // Atmospheric pressure
+    } else if (sensor_type === 0x06) {
+      // Atmospheric pressure
       return {
         pressure: buf.readFloatLE(0),
       };
-    } else if (sensor_type === 0x07) { // Opening and closing
+    } else if (sensor_type === 0x07) {
+      // Opening and closing
       return {
-        openingStatus: (n & 0b0000100000000000) ? true : false,
+        openingStatus: n & 0b0000100000000000 ? true : false,
         openingCount: Math.min((n & 0b0000011111111111) / 10, 100),
       };
-    } else if (sensor_type === 0x08) { // Human detection
+    } else if (sensor_type === 0x08) {
+      // Human detection
       return {
-        humanDetectionResponse: (n & 0b0000100000000000) ? true : false,
-        humanDetectionCount: (n & 0b0000011111111111),
+        humanDetectionResponse: n & 0b0000100000000000 ? true : false,
+        humanDetectionCount: n & 0b0000011111111111,
       };
-    } else if (sensor_type === 0x09) { // Move (Vibration Sensor)
+    } else if (sensor_type === 0x09) {
+      // Move (Vibration Sensor)
       return {
-        moveResponse: (n & 0b0000100000000000) ? true : false,
-        moveCount: (n & 0b0000011111111111),
+        moveResponse: n & 0b0000100000000000 ? true : false,
+        moveCount: n & 0b0000011111111111,
       };
-    } else if (sensor_type === 0x0a) { // Illuminance
+    } else if (sensor_type === 0x0a) {
+      // Illuminance
       return {
         illuminance: buf.readFloatLE(0),
       };
@@ -310,7 +317,13 @@ export default class LinkingServiceSensor {
   public _createPayloadGetSensorInfo(params: any) {
     let pnum = 0;
     let sensor_type = null;
-    if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+    if (
+      "SensorType" in params &&
+      typeof params.SensorType === "number" &&
+      params.SensorType >= 0x00 &&
+      params.SensorType <= 0xff &&
+      params.SensorType % 1 === 0
+    ) {
       sensor_type = params.SensorType;
       pnum++;
     } else {
@@ -333,14 +346,20 @@ export default class LinkingServiceSensor {
   public _createPayloadSetNotifySensorInfo(params: any) {
     let pnum = 0;
     let sensor_type = null;
-    if (("SensorType" in params) && typeof (params.SensorType) === "number" && params.SensorType >= 0x00 && params.SensorType <= 0xFF && params.SensorType % 1 === 0) {
+    if (
+      "SensorType" in params &&
+      typeof params.SensorType === "number" &&
+      params.SensorType >= 0x00 &&
+      params.SensorType <= 0xff &&
+      params.SensorType % 1 === 0
+    ) {
       sensor_type = params.SensorType;
       pnum++;
     } else {
       return null;
     }
     let status = null;
-    if (("Status" in params)) {
+    if ("Status" in params) {
       status = params.Status ? 1 : 0;
       pnum++;
     } else {
@@ -351,7 +370,7 @@ export default class LinkingServiceSensor {
     let z = null;
     if (sensor_type <= 0x02) {
       if ("X_threshold" in params) {
-        if (typeof (params.X_threshold) === "number") {
+        if (typeof params.X_threshold === "number") {
           x = params.X_threshold;
           pnum++;
         } else {
@@ -359,7 +378,7 @@ export default class LinkingServiceSensor {
         }
       }
       if ("Y_threshold" in params) {
-        if (typeof (params.Y_threshold) === "number") {
+        if (typeof params.Y_threshold === "number") {
           y = params.Y_threshold;
           pnum++;
         } else {
@@ -367,7 +386,7 @@ export default class LinkingServiceSensor {
         }
       }
       if ("Z_threshold" in params) {
-        if (typeof (params.Z_threshold) === "number") {
+        if (typeof params.Z_threshold === "number") {
           z = params.Z_threshold;
           pnum++;
         } else {
@@ -378,7 +397,7 @@ export default class LinkingServiceSensor {
 
     let odata = null;
     if ("OriginalData" in params) {
-      if (params.OriginalData && (params.OriginalData instanceof Buffer)) {
+      if (params.OriginalData && params.OriginalData instanceof Buffer) {
         odata = params.OriginalData;
         pnum++;
       } else {
@@ -422,7 +441,7 @@ export default class LinkingServiceSensor {
     // OriginalData
     if (odata !== null) {
       const val_buf = odata;
-      buf_list.push(this._createPropertyBlockBuffer(0x0A, val_buf));
+      buf_list.push(this._createPropertyBlockBuffer(0x0a, val_buf));
     }
     // Create a packet
     return Buffer.concat(buf_list);

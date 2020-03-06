@@ -8,8 +8,7 @@
 /**
  * @ignore
  */
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 import events from "events";
 import os from "os";
@@ -144,8 +143,13 @@ class BlenoBindings extends events.EventEmitter {
     this.emit("addressChange", address);
   }
 
-  public onReadLocalVersion(hciVer: any, hciRev?: any, lmpVer?: any, manufacturer?: any, lmpSubVer?: any) {
-  }
+  public onReadLocalVersion(
+    hciVer: any,
+    hciRev?: any,
+    lmpVer?: any,
+    manufacturer?: any,
+    lmpSubVer?: any,
+  ) {}
 
   public onAdvertisingStart(error: any) {
     this.emit("advertisingStart", error);
@@ -186,7 +190,12 @@ class BlenoBindings extends events.EventEmitter {
     this.emit("accept", address);
   }
 
-  public onLeConnUpdateComplete(handle: any, interval?: any, latency?: any, supervisionTimeout?: any) {
+  public onLeConnUpdateComplete(
+    handle: any,
+    interval?: any,
+    latency?: any,
+    supervisionTimeout?: any,
+  ) {
     // no-op
   }
 

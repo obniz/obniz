@@ -4,8 +4,7 @@
  * @ignore
  */
 // var debug = require('debug')('gatt');
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 import events from "events";
 
@@ -64,7 +63,6 @@ namespace ATT {
   export const ECODE_INSUFF_RESOURCES: any = 0x11;
 
   export const CID: any = 0x0004;
-
 }
 
 /**
@@ -232,7 +230,9 @@ export default class Gatt extends events.EventEmitter {
           value: characteristic.value,
         };
 
-        const hasCCCD: any = characteristic.descriptors.find((e: any) => e.uuid === "2902");
+        const hasCCCD: any = characteristic.descriptors.find(
+          (e: any) => e.uuid === "2902",
+        );
         if (hasCCCD || properties & 0x30) {
           // notify or indicate
           // add client characteristic configuration descriptor
@@ -602,11 +602,11 @@ export default class Gatt extends events.EventEmitter {
 
     debug(
       "read by group: startHandle = 0x" +
-      startHandle.toString(16) +
-      ", endHandle = 0x" +
-      endHandle.toString(16) +
-      ", uuid = 0x" +
-      uuid.toString(16),
+        startHandle.toString(16) +
+        ", endHandle = 0x" +
+        endHandle.toString(16) +
+        ", uuid = 0x" +
+        uuid.toString(16),
     );
 
     if ("2800" === uuid || "2802" === uuid) {
@@ -701,11 +701,11 @@ export default class Gatt extends events.EventEmitter {
 
     debug(
       "read by type: startHandle = 0x" +
-      startHandle.toString(16) +
-      ", endHandle = 0x" +
-      endHandle.toString(16) +
-      ", uuid = 0x" +
-      uuid.toString(16),
+        startHandle.toString(16) +
+        ", endHandle = 0x" +
+        endHandle.toString(16) +
+        ", uuid = 0x" +
+        uuid.toString(16),
     );
 
     if ("2803" === uuid) {
@@ -1015,7 +1015,11 @@ export default class Gatt extends events.EventEmitter {
         handleProperties &&
         (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)
       ) {
-        const callback: any = ((_requestType: any, _valueHandle: any, _withoutResponse: any) => {
+        const callback: any = ((
+          _requestType: any,
+          _valueHandle: any,
+          _withoutResponse: any,
+        ) => {
           return (result: any) => {
             if (!_withoutResponse) {
               let callbackResponse: any = null;
@@ -1058,10 +1062,14 @@ export default class Gatt extends events.EventEmitter {
             handle.value = data;
 
             if (value & 0x0003) {
-              const updateValueCallback: any = ((_valueHandle: any, _attribute: any) => {
+              const updateValueCallback: any = ((
+                _valueHandle: any,
+                _attribute: any,
+              ) => {
                 return (_data: any) => {
                   const dataLength: any = Math.min(_data.length, this._mtu - 3);
-                  const useNotify: any = _attribute.properties.indexOf("notify") !== -1;
+                  const useNotify: any =
+                    _attribute.properties.indexOf("notify") !== -1;
                   const useIndicate: any =
                     _attribute.properties.indexOf("indicate") !== -1;
                   let i: any;
@@ -1176,7 +1184,7 @@ export default class Gatt extends events.EventEmitter {
             } else if (
               offset ===
               this._preparedWriteRequest.offset +
-              this._preparedWriteRequest.data.length
+                this._preparedWriteRequest.data.length
             ) {
               this._preparedWriteRequest.data = Buffer.concat([
                 this._preparedWriteRequest.data,

@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -80,7 +79,7 @@ class JsonBinaryConverter {
   }
 
   public static keyForVal(enumvals: any, val: any) {
-    return Object.keys(enumvals).filter ((k: any ) => {
+    return Object.keys(enumvals).filter((k: any) => {
       return enumvals[k] === val;
     })[0];
   }
@@ -184,7 +183,8 @@ class JsonBinaryConverter {
       path = [path];
     }
 
-    let index: any = 0; const length: any = path.length;
+    let index: any = 0;
+    const length: any = path.length;
 
     while (index < length) {
       object = object[path[index++]];

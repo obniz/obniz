@@ -55,8 +55,7 @@ class SainSmartTFT18LCD {
     }
     _deadSleep(waitMsec) {
         const startMsec = new Date();
-        while (new Date() - startMsec < waitMsec) {
-        }
+        while (new Date() - startMsec < waitMsec) { }
     }
     _reset() {
         this.io_res.output(false);

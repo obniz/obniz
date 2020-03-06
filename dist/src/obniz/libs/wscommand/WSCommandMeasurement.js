@@ -44,7 +44,9 @@ class WSCommandMeasurement extends WSCommand_1.default {
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: "/request/measure/echo", onValid: this.echo }];
+        const schemaData = [
+            { uri: "/request/measure/echo", onValid: this.echo },
+        ];
         const res = this.validateCommandSchema(schemaData, module, "measure");
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {

@@ -6,7 +6,9 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
 
 export interface SharpMemoryTFTOptions {
   vcc?: number;
@@ -24,7 +26,6 @@ export interface SharpMemoryTFTOptions {
 }
 
 export default class SharpMemoryTFT implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "SharpMemoryTFT",
@@ -50,7 +51,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
   public spi!: PeripheralSPI;
   public width = 0;
   public height = 0;
-  public _pos = {x: 0, y: 0};
+  public _pos = { x: 0, y: 0 };
   public autoFlush = false;
   public fontSize = 0;
   public createCanvas: any;
@@ -165,7 +166,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
   // copy from display.js
 
   public _reset() {
-    this._pos = {x: 0, y: 0};
+    this._pos = { x: 0, y: 0 };
     this.autoFlush = true;
   }
 
@@ -185,7 +186,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     }
     if (this.obniz.isNode) {
       try {
-        const {createCanvas} = require("canvas");
+        const { createCanvas } = require("canvas");
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();
@@ -291,7 +292,13 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     }
   }
 
-  public rect(x: number, y: number, width: number, height: number, mustFill: boolean) {
+  public rect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    mustFill: boolean,
+  ) {
     const ctx = this._ctx();
     if (ctx) {
       if (mustFill) {
@@ -342,7 +349,8 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      const brightness =
+        0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
       const index = Math.floor(i / 4);
       const line = Math.floor(index / this.width);
       const col = Math.floor((index - line * this.width) / 8);

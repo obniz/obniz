@@ -3,7 +3,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import BleHelper from "./bleHelper";
-import {BleAdvertisementData, BleScanResponseData, UUID} from "./bleTypes";
+import { BleAdvertisementData, BleScanResponseData, UUID } from "./bleTypes";
 
 /**
  * @category Use as Peripheral
@@ -95,7 +95,9 @@ export default class BleAdvertisementBuilder {
 
   public setUuid(uuid: UUID) {
     const uuidData: any = this.convertUuid(uuid);
-    const type: any = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length as (16 | 4 | 2)];
+    const type: any = { 16: 0x06, 4: 0x04, 2: 0x02 }[
+      uuidData.length as 16 | 4 | 2
+    ];
     this.setRow(type, uuidData);
   }
 
@@ -118,7 +120,12 @@ export default class BleAdvertisementBuilder {
     return data;
   }
 
-  public setIbeaconData(uuid: UUID, major: number, minor: number, txPower: number) {
+  public setIbeaconData(
+    uuid: UUID,
+    major: number,
+    minor: number,
+    txPower: number,
+  ) {
     const data: any = [];
     data.push(0x02, 0x15); // fixed data
 

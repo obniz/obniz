@@ -12,7 +12,7 @@ import Smp from "./smp";
 /**
  * @ignore
  */
-export  default  class AclStream extends events.EventEmitter {
+export default class AclStream extends events.EventEmitter {
   public _hci: any;
   public _handle: any;
   public _smp: any;

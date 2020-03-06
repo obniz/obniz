@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -124,13 +123,18 @@ class WSCommandI2C extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/i2c/init_master", onValid: this.initMaster},
-        {uri: "/request/i2c/init_slave", onValid: this.initSlave},
-        {uri: "/request/i2c/write", onValid: this.write},
-        {uri: "/request/i2c/read", onValid: this.read},
-        {uri: "/request/i2c/deinit", onValid: this.deinit},
+        { uri: "/request/i2c/init_master", onValid: this.initMaster },
+        { uri: "/request/i2c/init_slave", onValid: this.initSlave },
+        { uri: "/request/i2c/write", onValid: this.write },
+        { uri: "/request/i2c/read", onValid: this.read },
+        { uri: "/request/i2c/deinit", onValid: this.deinit },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "i2c" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        "i2c" + i,
+        i,
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
@@ -192,7 +196,7 @@ class WSCommandI2C extends WSCommand {
         } else if (err === 255) {
           reason += "Communication Failed. Maybe, target is not connected.";
         }
-        this.envelopError(objToSend, `i2c0`, {message: reason});
+        this.envelopError(objToSend, `i2c0`, { message: reason });
       } else {
         super.notifyFromBinary(objToSend, func, payload);
       }

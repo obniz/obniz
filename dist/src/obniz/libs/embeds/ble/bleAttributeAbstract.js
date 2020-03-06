@@ -101,10 +101,8 @@ class BleAttributeAbstract {
     /**
      * WS COMMANDS
      */
-    read() {
-    }
-    write(val, needResponse) {
-    }
+    read() { }
+    write(val, needResponse) { }
     writeNumber(val, needResponse) {
         this.write([val], needResponse);
     }
@@ -180,14 +178,10 @@ class BleAttributeAbstract {
     /**
      * CALLBACKS
      */
-    onwrite(result) {
-    }
-    onread(data) {
-    }
-    onwritefromremote(address, data) {
-    }
-    onreadfromremote(address) {
-    }
+    onwrite(result) { }
+    onread(data) { }
+    onwritefromremote(address, data) { }
+    onreadfromremote(address) { }
     onerror(err) {
         console.error(err.message);
     }

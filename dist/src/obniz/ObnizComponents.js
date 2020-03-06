@@ -140,8 +140,8 @@ class ObnizComponents extends ObnizParts_1.default {
         return !!this.getExtraInterface(interfaceName);
     }
     getExtraInterface(interfaceName) {
-        if (this._hwDefinition.extraInterface
-            && this._hwDefinition.extraInterface[interfaceName]) {
+        if (this._hwDefinition.extraInterface &&
+            this._hwDefinition.extraInterface[interfaceName]) {
             return this._hwDefinition.extraInterface[interfaceName];
         }
         return null;

@@ -18,7 +18,10 @@ class WSCommandBleHci {
             { uri: "/request/ble/hci/init", onValid: this.init.bind(this) },
             { uri: "/request/ble/hci/deinit", onValid: this.deinit.bind(this) },
             { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
-            { uri: "/request/ble/hci/advertisement_filter", onValid: this.advertisementFilter.bind(this) },
+            {
+                uri: "/request/ble/hci/advertisement_filter",
+                onValid: this.advertisementFilter.bind(this),
+            },
         ];
     }
     notifyFunctionList() {
@@ -51,7 +54,12 @@ class WSCommandBleHci {
     advertisementFilter(params) {
         const sendData = [];
         params.hci.advertisement_filter.forEach((e) => {
-            const one = [e.range.index, e.range.length, e.value.length, ...e.value];
+            const one = [
+                e.range.index,
+                e.range.length,
+                e.value.length,
+                ...e.value,
+            ];
             sendData.push(...one);
         });
         const buf = new Uint8Array(sendData.length);

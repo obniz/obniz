@@ -14,18 +14,18 @@ class AK09916 extends i2cParts_1.default {
             pull: "3v",
         };
         this.ADDR = 0x0c;
-        this._WIA = (0x01);
-        this._HXL = (0x11);
-        this._HXH = (0x12);
-        this._HYL = (0x13);
-        this._HYH = (0x14);
-        this._HZL = (0x15);
-        this._HZH = (0x16);
-        this._ST2 = (0x18);
-        this._CNTL2 = (0x31);
-        this._ASAX = (0x60);
-        this._ASAY = (0x61);
-        this._ASAZ = (0x62);
+        this._WIA = 0x01;
+        this._HXL = 0x11;
+        this._HXH = 0x12;
+        this._HYL = 0x13;
+        this._HYH = 0x14;
+        this._HZL = 0x15;
+        this._HZH = 0x16;
+        this._ST2 = 0x18;
+        this._CNTL2 = 0x31;
+        this._ASAX = 0x60;
+        this._ASAY = 0x61;
+        this._ASAZ = 0x62;
         this._MODE_POWER_DOWN = 0b00000000;
         this.MODE_SINGLE_MEASURE = 0b00000001;
         this.MODE_CONTINOUS_MEASURE_1 = 0b00000010; // 10Hz
@@ -55,7 +55,7 @@ class AK09916 extends i2cParts_1.default {
         // 1111 1111 1111 1111 -1 uT
         // 1000 0000 0001 0000 -4912 uT
         // data[0]下位ビット data[1] 上位ビット
-        const raw3 = (await this.readThreeInt16Wait(this._HXL, "l"));
+        const raw3 = await this.readThreeInt16Wait(this._HXL, "l");
         this.readWait(this._ST2, 1);
         const xyz = raw3.map((d, i) => {
             return (d * this.so - this.offset[i]) * this.scale[i];

@@ -4,15 +4,18 @@
  */
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import i2cCompass, {compassUnit, I2cCompassAbstractOptions} from "../../i2cCompass";
-import {I2cInfo, Xyz} from "../../i2cParts";
+import ObnizPartsInterface, {
+  ObnizPartsInfo,
+} from "../../../obniz/ObnizPartsInterface";
+import i2cCompass, {
+  compassUnit,
+  I2cCompassAbstractOptions,
+} from "../../i2cCompass";
+import { I2cInfo, Xyz } from "../../i2cParts";
 
-export interface HMC5883LOptions extends I2cCompassAbstractOptions {
-}
+export interface HMC5883LOptions extends I2cCompassAbstractOptions {}
 
 export default class HMC5883L extends i2cCompass {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "HMC5883L",
@@ -55,7 +58,6 @@ export default class HMC5883L extends i2cCompass {
     this.sf = this.defaultUnit;
     this.so = HMC5883L.scales[1];
     this.range = "8G";
-
   }
 
   public wired(obniz: Obniz) {

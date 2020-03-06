@@ -14,7 +14,10 @@ const advertising_1 = __importDefault(require("./modules/advertising"));
 const device_1 = __importDefault(require("./modules/device"));
 class Linking {
     constructor(params) {
-        this.PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+        this.PRIMARY_SERVICE_UUID_LIST = [
+            "b3b3690150d34044808d50835b13a6cd",
+            "fe4e",
+        ];
         this.initialized = false;
         this.keys = [];
         this.requiredKeys = [];

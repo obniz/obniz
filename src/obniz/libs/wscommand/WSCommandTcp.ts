@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -31,7 +30,9 @@ class WSCommandTcp extends WSCommand {
   }
 
   public connect(params: any, index: any) {
-    const domain: any = new Uint8Array(Buffer.from(params.connect.domain, "utf8"));
+    const domain: any = new Uint8Array(
+      Buffer.from(params.connect.domain, "utf8"),
+    );
     const buf: any = new Uint8Array(domain.length + 3);
     buf[0] = index;
     buf[1] = 0xff && params.connect.port >> 8;
@@ -64,11 +65,16 @@ class WSCommandTcp extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/tcp/connect", onValid: this.connect},
-        {uri: "/request/tcp/disconnect", onValid: this.disconnect},
-        {uri: "/request/tcp/write", onValid: this.write},
+        { uri: "/request/tcp/connect", onValid: this.connect },
+        { uri: "/request/tcp/disconnect", onValid: this.disconnect },
+        { uri: "/request/tcp/write", onValid: this.write },
       ];
-      const res: any = this.validateCommandSchema(schemaData, module, "tcp" + i, i);
+      const res: any = this.validateCommandSchema(
+        schemaData,
+        module,
+        "tcp" + i,
+        i,
+      );
 
       if (res.valid === 0) {
         if (res.invalidButLike.length > 0) {
