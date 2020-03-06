@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @module Parts.SainSmartTFT18LCD
@@ -9,7 +8,7 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  SainSmartTFT18LCDOptions {
+export interface SainSmartTFT18LCDOptions {
   scl: number;
   sda: number;
   dc: number;
@@ -22,7 +21,7 @@ export interface  SainSmartTFT18LCDOptions {
 export type RGB16 = number;
 export type RGB24 = number;
 
-export interface  PresetColor {
+export interface PresetColor {
   AliceBlue: RGB16;
   AntiqueWhite: RGB16;
   Aqua: RGB16;
@@ -187,7 +186,7 @@ export default class SainSmartTFT18LCD implements ObnizPartsInterface {
   public height: number = 0;
   public writeBuffer: number[] = [];
   public color!: PresetColor;
-  protected displayIoNames: {[key: string]: string};
+  protected displayIoNames: { [key: string]: string };
 
   constructor() {
     this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];

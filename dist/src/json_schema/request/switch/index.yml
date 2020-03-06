@@ -1,0 +1,9 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/switch"
+basePath: "switch"
+description: "the switch embed on obniz Board itself. If it's state is changed, notification will be fired."
+
+"anyOf":
+  - {$ref: "/request/switch/get"}

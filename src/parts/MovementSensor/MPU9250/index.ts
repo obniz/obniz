@@ -4,120 +4,114 @@
  */
 
 import Obniz from "../../../obniz";
-import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstructOptions} from "../../i2cParts";
-import AK8963 from "../AK8963";
-import MPU6050 from "../MPU6050";
+import {Inertia6, Xyz} from "../../i2cImu6";
+import AK8963, {AK8963Options} from "../AK8963";
+import MPU6500, {MPU6500Options} from "../MPU6500";
 
-export interface  MPU9250Options extends I2cPartsAbstructOptions {
-  gnd?: number;
-  vcc?: number;
-  address?: number;
+export interface MPU9250Options extends MPU6500Options {
 }
 
-class MPU9250 implements ObnizPartsInterface {
-
+export default class MPU9250 extends MPU6500 {
   public static info(): ObnizPartsInfo {
     return {
       name: "MPU9250",
     };
   }
 
-  public keys: string[];
-  public requiredKeys: string[];
-  public params: any;
-  public _address: any;
-  public mpu6050!: MPU6050;
   public ak8963!: AK8963;
 
-  protected obniz!: Obniz;
-  protected i2c!: PeripheralI2C;
-
   constructor() {
-    this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
-    this.requiredKeys = [];
+    super();
   }
 
   public wired(obniz: Obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    this._address = this.params.address || 0x68;
-    this.params.clock = 100000;
-    this.params.pull = "3v";
-    this.params.mode = "master";
-    this.i2c = obniz.getI2CWithConfig(this.params);
-
-    this.i2c.write(this._address, [0x6b, 0x00]); // activate MPU9250
-    this.i2c.write(this._address, [0x37, 0x02]); // activate AK8963 (bypass)
-    this.i2c.write(this._address, [0x1a, 0x06]); // activate LPF (search datasheet_p.13)
-    this.i2c.write(this._address, [0x1d, 0x02]); // accel LPF set.
-
-    this.mpu6050 = obniz.wired("MPU6050", {i2c: this.i2c});
+    super.wired(obniz);
     this.ak8963 = obniz.wired("AK8963", {i2c: this.i2c});
+    this.write(MPU6500.commands.pwr_mgmt_1, [0x00]); // activate MPU9250
+    this.write(MPU6500.commands.int_pin_cfg, [0x02]); // activate AK8963 (bypass)
+    this.write(MPU6500.commands.config, [0x06]); // activate LPF (search datasheet_p.13)
+    this.write(MPU6500.commands.accel_config2, [0x02]); // accel LPF set.
+    // this.mpu6050 = obniz.wired("MPU6050", { i2c: this.i2c });
+  }
+
+  public init() {
+    super.init();
+    // this.bypassMagnetometerWait(true);
   }
 
   public setConfig(accel_range: any, gyro_range: any, ADC_cycle: any) {
-    this.mpu6050.setConfig(accel_range, gyro_range);
-    this.ak8963.setConfig(ADC_cycle);
+    super.setConfig(accel_range, gyro_range);
+    if (ADC_cycle) {
+      this.ak8963.setConfig(ADC_cycle);
+    }
   }
 
-  public async _getAK8963Wait() {
-    await this.i2c.write(this._address, [0x02]); // request AK8983 data
-    const ST1: any = await this.i2c.readWait(this._address, 1); // confirm magnet value readable
-    if (ST1 & 0x01) {
+  public async getAllAdcWait(): Promise<Inertia6> {
+    const data = await super.getAllAdcWait();
+    data.compass = await this.getCompassAdcWait();
+    return data;
+  }
+
+  public async getAllWait(): Promise<Inertia6> {
+    const data = await super.getAllWait();
+    data.compass = await this.getCompassWait();
+    return data;
+  }
+
+  public async getCompassWait(): Promise<Xyz> {
+    return await this.ak8963.getWait();
+  }
+
+  public async getCompassAdcWait(): Promise<Xyz> {
+    return await this.ak8963.getAdcWait();
+  }
+
+  public async getCompassArrayWait(): Promise<number[]> {
+    return await this.ak8963.getArrayWait();
+  }
+
+  public async getCompassAdcArrayWait(): Promise<number[]> {
+    return await this.ak8963.getAdcArrayWait();
+  }
+
+  public getCompassUnit() {
+    return this.ak8963.getUnit();
+  }
+
+  public getCompassRange() {
+    return this.ak8963.getRange();
+  }
+
+  public async getMagneticWait(): Promise<Xyz> {
+    return await this.getCompassWait();
+  }
+
+  public async getMagneticAdcWait(): Promise<Xyz> {
+    return await this.getCompassAdcWait();
+  }
+
+  public async getMagneticArrayWait(): Promise<number[]> {
+    return await this.getCompassArrayWait();
+  }
+
+  public async getMagneticAdcArrayWait(): Promise<number[]> {
+    return await this.getCompassAdcArrayWait();
+  }
+
+  public getMagneticUnit() {
+    return this.getCompassUnit();
+  }
+
+  public getMagneticRange() {
+    return this.getCompassRange();
+  }
+
+  private async _getAK8963Wait() {
+    const ST1 = await this.readWait(0x02, 1); // confirm magnet value readable
+    if (ST1[0] & 0x01) {
       return await this.ak8963.getWait();
     }
     return {};
   }
-
-  public async getAllWait(): Promise<{
-    accelerometer: {
-      x: number,
-      y: number,
-      z: number,
-    },
-    temp: number,
-    gyroscope: {
-      x: number,
-      y: number,
-      z: number,
-    },
-    compass: {
-      x: number,
-      y: number,
-      z: number,
-    },
-  }> {
-    const data: any = await this.mpu6050.getWait();
-    data.compass = await this.ak8963.getWait();
-    return data;
-  }
-
-  public async getCompassWait(): Promise<{
-    x: number,
-    y: number,
-    z: number,
-  }> {
-    return await this.ak8963.getWait();
-  }
-
-  public async getAccelerometerWait(): Promise<{
-    x: number,
-    y: number,
-    z: number,
-  }> {
-    return (await this.mpu6050.getWait()).accelerometer;
-  }
-
-  public async getGyroscopeWait(): Promise<{
-    x: number,
-    y: number,
-    z: number,
-  }> {
-    return (await this.mpu6050.getWait()).gyroscope;
-  }
 }
-
-export default MPU9250;

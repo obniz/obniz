@@ -76,14 +76,14 @@ function connectTwoObniz(done, params) {
   checkBoard = new Obniz(checkBoard_ID, { local_connect: true }); //obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
   checkBoard.onconnect = () => {
     // if (process.env.DEBUG) {
-    checkBoard.debugprint = true;
+    // checkBoard.debugprint = true;
     // }
     console.log('checkBoard local_connect : ' + local_connect);
     if (json.board.some(board => board === 'obnizA')) {
       obnizA = new Obniz(obnizA_ID, { local_connect: local_connect });
       console.log('A local_connect : ' + local_connect);
       // if (process.env.DEBUG) {
-      obnizA.debugprint = true;
+      // obnizA.debugprint = true;
       // }
       obnizA.onconnect = () => {
         if (json.board.some(board => board === 'obnizB')) {

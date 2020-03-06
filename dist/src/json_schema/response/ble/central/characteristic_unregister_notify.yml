@@ -1,0 +1,22 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/characteristic_unregister_notify"
+related:  "/request/ble/central/characteristic_unregister_notify"
+deprecated: 3.0.0
+
+
+type: object
+required: [unregister_notify_characteristic_result]
+properties:
+  unregister_notify_characteristic_result:
+    type: object
+    required: [address,service_uuid,characteristic_uuid,result]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress"}
+      service_uuid: {$ref: "/uuid"}
+      characteristic_uuid: {$ref: "/uuid"}
+      result:
+        type: boolean
+

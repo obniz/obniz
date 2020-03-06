@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/display/text"
+
+
+type: object
+required: [text]
+properties:
+  text:
+    type: string
+    example: "Hello, obniz!"

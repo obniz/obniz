@@ -1,0 +1,27 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/security/key_type"
+description: "ble encription key type settings"
+deprecated: 3.0.0
+
+type: object
+required: [security]
+properties:
+  security:
+    type: object
+    required: [key]
+    properties:
+      key:
+        type: object
+        required: [type]
+        properties:
+          type:
+            type: array
+            default: [encryption]
+            items:
+              type: string
+              enum:
+                - ltk
+                - irk
+                - csrk

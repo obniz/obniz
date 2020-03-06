@@ -73,7 +73,8 @@ export default class LinkingServiceNotification {
           notify_cateogry_id = p.id;
         }
       }
-    } catch (e) { }
+    } catch (e) {
+    }
     return parameters;
   }
 
@@ -288,23 +289,23 @@ export default class LinkingServiceNotification {
     const v1 = buf.readUInt8(0);
     const v2 = buf.readUInt8(1);
     if (v1 & 0b00000001) {
-      res = { id: 0, text: "NotNotify" };
+      res = {id: 0, text: "NotNotify"};
     } else if (v1 & 0b00000010) {
-      res = { id: 1, text: "All" };
+      res = {id: 1, text: "All"};
     } else if (v1 & 0b00000100) {
-      res = { id: 2, text: "PhoneIncomingCall" };
+      res = {id: 2, text: "PhoneIncomingCall"};
     } else if (v1 & 0b00001000) {
-      res = { id: 3, text: "PhoneInCall" };
+      res = {id: 3, text: "PhoneInCall"};
     } else if (v1 & 0b00010000) {
-      res = { id: 4, text: "PhoneIdle" };
+      res = {id: 4, text: "PhoneIdle"};
     } else if (v1 & 0b00100000) {
-      res = { id: 5, text: "Mail" };
+      res = {id: 5, text: "Mail"};
     } else if (v1 & 0b01000000) {
-      res = { id: 6, text: "Schedule" };
+      res = {id: 6, text: "Schedule"};
     } else if (v1 & 0b10000000) {
-      res = { id: 7, text: "General" };
+      res = {id: 7, text: "General"};
     } else if (v2 & 0b00000001) {
-      res = { id: 8, text: "Etc" };
+      res = {id: 8, text: "Etc"};
     }
 
     return {
@@ -333,155 +334,155 @@ export default class LinkingServiceNotification {
     const list = [];
     if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) { // PhoneIncomingCall/PhoneInCall/PhoneIdle
       if (v & 0b0000000000000001) {
-        list.push({ id: 0x09, name: "NotifyId" });
+        list.push({id: 0x09, name: "NotifyId"});
       }
       if (v & 0b0000000000000010) {
-        list.push({ id: 0x04, name: "NotifyCategoryID" });
+        list.push({id: 0x04, name: "NotifyCategoryID"});
       }
     } else if (notify_cateogry_id === 5) { // Mail
       if (v & 0b0000000000000001) {
-        list.push({ id: 0x0D, name: "AppName" });
+        list.push({id: 0x0D, name: "AppName"});
       }
       if (v & 0b0000000000000010) {
-        list.push({ id: 0x0E, name: "AppNameLocal" });
+        list.push({id: 0x0E, name: "AppNameLocal"});
       }
       if (v & 0b0000000000000100) {
-        list.push({ id: 0x28, name: "Package" });
+        list.push({id: 0x28, name: "Package"});
       }
       if (v & 0b0000000000001000) {
-        list.push({ id: 0x0B, name: "Tittle" });
+        list.push({id: 0x0B, name: "Tittle"});
       }
       if (v & 0b0000000000010000) {
-        list.push({ id: 0x0C, name: "Text" });
+        list.push({id: 0x0C, name: "Text"});
       }
       if (v & 0b0000000000100000) {
-        list.push({ id: 0x13, name: "Sender" });
+        list.push({id: 0x13, name: "Sender"});
       }
       if (v & 0b0000000001000000) {
-        list.push({ id: 0x14, name: "SenderAddress" });
+        list.push({id: 0x14, name: "SenderAddress"});
       }
       if (v & 0b0000000010000000) {
-        list.push({ id: 0x15, name: "ReceiveDate" });
+        list.push({id: 0x15, name: "ReceiveDate"});
       }
       if (v & 0b0000000100000000) {
-        list.push({ id: 0x09, name: "NotifyId" });
+        list.push({id: 0x09, name: "NotifyId"});
       }
       if (v & 0b0000001000000000) {
-        list.push({ id: 0x04, name: "NotifyCategoryID" });
+        list.push({id: 0x04, name: "NotifyCategoryID"});
       }
     } else if (notify_cateogry_id === 6) { // Schedule
       if (v & 0b0000000000000001) {
-        list.push({ id: 0x0D, name: "AppName" });
+        list.push({id: 0x0D, name: "AppName"});
       }
       if (v & 0b0000000000000010) {
-        list.push({ id: 0x0E, name: "AppNameLocal" });
+        list.push({id: 0x0E, name: "AppNameLocal"});
       }
       if (v & 0b0000000000000100) {
-        list.push({ id: 0x28, name: "Package" });
+        list.push({id: 0x28, name: "Package"});
       }
       if (v & 0b0000000000001000) {
-        list.push({ id: 0x0B, name: "Tittle" });
+        list.push({id: 0x0B, name: "Tittle"});
       }
       if (v & 0b0000000000010000) {
-        list.push({ id: 0x16, name: "StartDate" });
+        list.push({id: 0x16, name: "StartDate"});
       }
       if (v & 0b0000000000100000) {
-        list.push({ id: 0x17, name: "EndDate" });
+        list.push({id: 0x17, name: "EndDate"});
       }
       if (v & 0b0000000001000000) {
-        list.push({ id: 0x18, name: "Area" });
+        list.push({id: 0x18, name: "Area"});
       }
       if (v & 0b0000000010000000) {
-        list.push({ id: 0x19, name: "Person" });
+        list.push({id: 0x19, name: "Person"});
       }
       if (v & 0b0000000100000000) {
-        list.push({ id: 0x0C, name: "Text" });
+        list.push({id: 0x0C, name: "Text"});
       }
       if (v & 0b0000001000000000) {
-        list.push({ id: 0x1D, name: "Contents1" });
+        list.push({id: 0x1D, name: "Contents1"});
       }
       if (v & 0b0000010000000000) {
-        list.push({ id: 0x1E, name: "Contents2" });
+        list.push({id: 0x1E, name: "Contents2"});
       }
       if (v & 0b0000100000000000) {
-        list.push({ id: 0x1F, name: "Contents3" });
+        list.push({id: 0x1F, name: "Contents3"});
       }
       if (v & 0b0001000000000000) {
-        list.push({ id: 0x09, name: "NotifyId" });
+        list.push({id: 0x09, name: "NotifyId"});
       }
       if (v & 0b0010000000000000) {
-        list.push({ id: 0x04, name: "NotifyCategoryID" });
+        list.push({id: 0x04, name: "NotifyCategoryID"});
       }
     } else if (notify_cateogry_id === 7) { // General
       if (v & 0b0000000000000001) {
-        list.push({ id: 0x0D, name: "AppName" });
+        list.push({id: 0x0D, name: "AppName"});
       }
       if (v & 0b0000000000000010) {
-        list.push({ id: 0x0E, name: "AppNameLocal" });
+        list.push({id: 0x0E, name: "AppNameLocal"});
       }
       if (v & 0b0000000000000100) {
-        list.push({ id: 0x28, name: "Package" });
+        list.push({id: 0x28, name: "Package"});
       }
       if (v & 0b0000000000001000) {
-        list.push({ id: 0x0B, name: "Tittle" });
+        list.push({id: 0x0B, name: "Tittle"});
       }
       if (v & 0b0000000000010000) {
-        list.push({ id: 0x0C, name: "Text" });
+        list.push({id: 0x0C, name: "Text"});
       }
       if (v & 0b0000000000100000) {
-        list.push({ id: 0x09, name: "NotifyId" });
+        list.push({id: 0x09, name: "NotifyId"});
       }
       if (v & 0b0000000001000000) {
-        list.push({ id: 0x04, name: "NotifyCategoryID" });
+        list.push({id: 0x04, name: "NotifyCategoryID"});
       }
     } else if (notify_cateogry_id === 8) { // Etc
       if (v & 0b0000000000000001) {
-        list.push({ id: 0x0D, name: "AppName" });
+        list.push({id: 0x0D, name: "AppName"});
       }
       if (v & 0b0000000000000010) {
-        list.push({ id: 0x0E, name: "AppNameLocal" });
+        list.push({id: 0x0E, name: "AppNameLocal"});
       }
       if (v & 0b0000000000000100) {
-        list.push({ id: 0x28, name: "Package" });
+        list.push({id: 0x28, name: "Package"});
       }
       if (v & 0b0000000000001000) {
-        list.push({ id: 0x1D, name: "Contents1" });
+        list.push({id: 0x1D, name: "Contents1"});
       }
       if (v & 0b0000000000010000) {
-        list.push({ id: 0x1E, name: "Contents2" });
+        list.push({id: 0x1E, name: "Contents2"});
       }
       if (v & 0b0000000000100000) {
-        list.push({ id: 0x1F, name: "Contents3" });
+        list.push({id: 0x1F, name: "Contents3"});
       }
       if (v & 0b0000000001000000) {
-        list.push({ id: 0x20, name: "Contents4" });
+        list.push({id: 0x20, name: "Contents4"});
       }
       if (v & 0b0000000010000000) {
-        list.push({ id: 0x21, name: "Contents5" });
+        list.push({id: 0x21, name: "Contents5"});
       }
       if (v & 0b0000000100000000) {
-        list.push({ id: 0x22, name: "Contents6" });
+        list.push({id: 0x22, name: "Contents6"});
       }
       if (v & 0b0000001000000000) {
-        list.push({ id: 0x23, name: "Contents7" });
+        list.push({id: 0x23, name: "Contents7"});
       }
       if (v & 0b0000010000000000) {
-        list.push({ id: 0x1B, name: "MimeTypeForMedia" });
+        list.push({id: 0x1B, name: "MimeTypeForMedia"});
       }
       if (v & 0b0000100000000000) {
-        list.push({ id: 0x27, name: "Media" });
+        list.push({id: 0x27, name: "Media"});
       }
       if (v & 0b0001000000000000) {
-        list.push({ id: 0x1A, name: "MimeTypeForImage" });
+        list.push({id: 0x1A, name: "MimeTypeForImage"});
       }
       if (v & 0b0010000000000000) {
-        list.push({ id: 0x1C, name: "Image" });
+        list.push({id: 0x1C, name: "Image"});
       }
       if (v & 0b0100000000000000) {
-        list.push({ id: 0x09, name: "NotifyId" });
+        list.push({id: 0x09, name: "NotifyId"});
       }
       if (v & 0b1000000000000000) {
-        list.push({ id: 0x04, name: "NotifyCategoryID" });
+        list.push({id: 0x04, name: "NotifyCategoryID"});
       }
     }
 
@@ -559,13 +560,13 @@ export default class LinkingServiceNotification {
     const list = [];
     const v = buf.readUInt8(0);
     if (v & 0b00000001) {
-      list.push({ id: 0, name: "LED" });
+      list.push({id: 0, name: "LED"});
     }
     if (v & 0b00000010) {
-      list.push({ id: 1, name: "Vibration" });
+      list.push({id: 1, name: "Vibration"});
     }
     if (v & 0b00000100) {
-      list.push({ id: 2, name: "Beep" });
+      list.push({id: 2, name: "Beep"});
     }
     return {
       name: "RumblingSetting",

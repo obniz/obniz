@@ -72,26 +72,27 @@ export default class LinkingDevice {
     }
     let onprogress = this.onconnectprogress;
     if (!this._isFunction(this.onconnectprogress)) {
-      onprogress = () => { };
+      onprogress = () => {
+      };
     }
     const peripheral = this._peripheral;
-    onprogress({ step: 1, desc: "CONNECTING" });
+    onprogress({step: 1, desc: "CONNECTING"});
     try {
       peripheral.ondisconnect = async () => {
         await this._clean();
         if (this._isFunction(this.ondisconnect)) {
-          this.ondisconnect({ wasClean: false });
+          this.ondisconnect({wasClean: false});
         }
       };
       await peripheral.connectWait();
-      onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
-      onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
+      onprogress({step: 2, desc: "CONNECTION_ESTABLISHED"});
+      onprogress({step: 3, desc: "GETTING_CHARACTERISTICS"});
       await this._getServicesAndChars();
-      onprogress({ step: 4, desc: "SUBSCRIBING" });
+      onprogress({step: 4, desc: "SUBSCRIBING"});
       await this._subscribeForIndicate();
-      onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
+      onprogress({step: 5, desc: "GETTING_DEVICE_INFOMATION"});
       let res: any;
-      res = await  this.write("GET_DEVICE_INFORMATION");
+      res = await this.write("GET_DEVICE_INFORMATION");
       this.info.id = "";
       if ("deviceId" in res.data) {
         this.info.id = res.data.deviceId;
@@ -118,7 +119,7 @@ export default class LinkingDevice {
           this.info.exsensors[o.name] = o.id;
         });
       }
-      onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
+      onprogress({step: 6, desc: "GETTING_NOTIFY_CATEGORIES"});
       res = await this._writeConfirmNotifyCategory();
       this.info.notifyCategories = {};
       if (res) {
@@ -128,7 +129,7 @@ export default class LinkingDevice {
           });
         }
       }
-      onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
+      onprogress({step: 7, desc: "GETTING_SETTING_INFORMATION"});
       res = await this._writeGetSettingInformation();
       this.info.settings = {};
       if (res) {
@@ -138,22 +139,22 @@ export default class LinkingDevice {
           });
         }
       }
-      onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
+      onprogress({step: 8, desc: "GETTING_LED_COLOR_NAMES"});
       res = await this._writeGetSettingName("LEDColorName");
       if (res) {
         this.info.settings.LED.colors = res.data.settingNameData;
       }
-      onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
+      onprogress({step: 9, desc: "GETTING_LED_PATTERN_NAMES"});
       res = await this._writeGetSettingName("LEDPatternName");
       if (res) {
         this.info.settings.LED.patterns = res.data.settingNameData;
       }
-      onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
+      onprogress({step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES"});
       res = await this._writeGetSettingName("VibrationPatternName");
       if (res) {
         this.info.settings.Vibration.patterns = res.data.settingNameData;
       }
-      onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
+      onprogress({step: 11, desc: "GETTING_BEEP_PATTERN_NAMES"});
       res = await this._writeGetSettingName("BeepPatternName");
       if (res) {
         this.info.settings.Beep.patterns = res.data.settingNameData;
@@ -166,9 +167,9 @@ export default class LinkingDevice {
         this.onconnect();
       }
 
-      onprogress({ step: 12, desc: "COMPLETED" });
+      onprogress({step: 12, desc: "COMPLETED"});
     } catch (e) {
-      onprogress({ step: 0, desc: "FAILED" });
+      onprogress({step: 0, desc: "FAILED"});
       throw e;
     }
   }
@@ -203,7 +204,7 @@ export default class LinkingDevice {
         resolve(null);
         return;
       }
-      this.write("GET_SETTING_INFORMATION").then((res: any ) => {
+      this.write("GET_SETTING_INFORMATION").then((res: any) => {
         resolve(res);
       }).catch((error: any) => {
         reject(error);
@@ -241,7 +242,7 @@ export default class LinkingDevice {
           return;
         }
       }
-      this.write("GET_SETTING_NAME", { SettingNameType: name }).then((res) => {
+      this.write("GET_SETTING_NAME", {SettingNameType: name}).then((res) => {
         resolve(res);
       }).catch((error) => {
         reject(error);
@@ -259,7 +260,7 @@ export default class LinkingDevice {
     const peripheral = this._peripheral;
     const service = peripheral.getService(this.PRIMARY_SERVICE_UUID);
     if (!service) {
-        throw new Error("No service was found");
+      throw new Error("No service was found");
     }
     const write_char = service.getCharacteristic(this.WRITE_CHARACTERRISTIC_UUID);
     const indicate_char = service.getCharacteristic(this.INDICATE_CHARACTERRISTIC_UUID);
@@ -445,7 +446,7 @@ export default class LinkingDevice {
     }
     await this._peripheral.disconnectWait();
     if (this._isFunction(this.ondisconnect)) {
-      this.ondisconnect({ wasClean: true });
+      this.ondisconnect({wasClean: true});
     }
   }
 
@@ -467,7 +468,7 @@ export default class LinkingDevice {
   }
 
   public write(message_name: any, params?: any) {
-    return new Promise( async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const buf = this._LinkingService.createRequest(message_name, params);
       if (!buf) {
         reject(new Error("The specified parameters are invalid."));

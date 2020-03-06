@@ -7,7 +7,7 @@ import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  GYSFDMAXBOptions {
+export interface GYSFDMAXBOptions {
   vcc?: number;
   gnd?: number;
   txd: number;
@@ -15,7 +15,7 @@ export interface  GYSFDMAXBOptions {
   Opps?: number;
 }
 
-export interface  GYSFDMAXBEditedData {
+export interface GYSFDMAXBEditedData {
   enable: boolean;
   GPGGA: any[];
   GPGLL: any[];
@@ -24,7 +24,9 @@ export interface  GYSFDMAXBEditedData {
   GPRMC: any[];
   GPVTG: any[];
   GPZDA: any[];
+
   [key: string]: any;
+
   timestamp: Date;
 }
 

@@ -8,7 +8,7 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  IPM_165Options {
+export interface IPM_165Options {
   signal: number;
   vcc?: number;
   gnd?: number;

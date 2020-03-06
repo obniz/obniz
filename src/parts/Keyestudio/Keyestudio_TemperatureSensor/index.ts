@@ -7,7 +7,7 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  Keyestudio_TemperatureSensorOptions {
+export interface Keyestudio_TemperatureSensorOptions {
   vcc?: number;
   signal: number;
   gnd?: number;
@@ -29,6 +29,7 @@ export default class Keyestudio_TemperatureSensor implements ObnizPartsInterface
   protected ad!: PeripheralAD;
 
   private temp = 0;
+
   constructor() {
     this.keys = ["vcc", "gnd", "signal"];
     this.requiredKeys = ["signal"];

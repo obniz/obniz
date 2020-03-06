@@ -10,7 +10,7 @@ const ERROR: any = false;
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  MFRC522Options {
+export interface MFRC522Options {
   gnd?: number;
   vcc?: number;
   cs: number;

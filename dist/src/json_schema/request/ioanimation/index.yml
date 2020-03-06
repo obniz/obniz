@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ioAnimation"
+basePath: "io"
+description: "io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is available. it loop io changes regarding json array."
+
+
+
+"anyOf":
+  - {$ref: "/request/ioAnimation/init"}
+  - {$ref: "/request/ioAnimation/changeState"}

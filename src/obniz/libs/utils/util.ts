@@ -85,6 +85,19 @@ class ObnizUtil {
     return array;
   }
 
+  /**
+   * @ignore
+   * @param min
+   * @param max
+   * @param variable_name
+   * @param variable
+   */
+  public static assertNumber(min: number, max: number, variable_name: string, variable: number) {
+    if (!(min <= variable && variable <= max)) {
+      throw new Error(`${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`);
+    }
+  }
+
   public obniz: any;
   public width: any;
   public height: any;

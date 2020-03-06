@@ -1,0 +1,30 @@
+--- ##---
+## YAML Template.
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/display/raw"
+description: "Hardware Dependepend raw level rendering.<br>
+  Default color_depth = 1. Which means 1 bit represents 1 dot. 1 byte is part of one line. Order is same like. Below is obniz baord series example<br/>
+  {1byte} {2byte} {3byte}...{16byte}<br/>
+  {17byte} {18byte} {19byte}...<br/>
+  .....<br/>
+  .....................{1024byte}<br>
+  <br>
+  Number of line and column depends on device.<br>
+  If a device has a color display. You can choose other color_depth mode<br>
+  <br>
+  color_depth = 4 (4 bit color mode).<br>
+  [{4bit for first(left) pixel}, {4bit for next pixel}]<br>
+  4 bit represents R_G_B_Brightness<br>
+  <br>
+  color_depth = 16 means 16bit color mode. So 2 byte for 1 pixel. It is known as RGB565.<br>
+  [{8-15bit for one pixel}][{0-7bit for one pixel}]
+  "
+
+type: object
+required: [raw]
+properties:
+  raw: { $ref: "/imageDataArray" }
+  color_depth:
+    type: integer
+    enum: [1, 4, 16]
+    default: 1

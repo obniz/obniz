@@ -5,7 +5,7 @@
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
 import AnalogTemperatureSensor, {AnalogTemperatureSensorOptions} from "../AnalogTemperatureSensor";
 
-export interface  LM35DZOptions extends AnalogTemperatureSensorOptions {
+export interface LM35DZOptions extends AnalogTemperatureSensorOptions {
 }
 
 export default class LM35DZ extends AnalogTemperatureSensor implements ObnizPartsInterface {

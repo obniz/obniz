@@ -1,0 +1,10 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ws"
+basePath: "ws"
+
+"anyOf":
+  - {$ref: "/response/ws/ready"}
+  - {$ref: "/response/ws/obniz"}
+  - {$ref: "/response/ws/redirect"}

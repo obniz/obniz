@@ -8,7 +8,7 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  SolenoidOptions {
+export interface SolenoidOptions {
   signal: number;
   gnd?: number;
 }

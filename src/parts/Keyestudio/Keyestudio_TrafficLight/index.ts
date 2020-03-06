@@ -10,7 +10,7 @@ import LED from "../../Light/LED";
 
 export type TrafficLightType = "green" | "yellow" | "red";
 
-export interface  Keyestudio_TrafficLightOptions {
+export interface Keyestudio_TrafficLightOptions {
   gnd?: number;
   green: number;
   yellow: number;

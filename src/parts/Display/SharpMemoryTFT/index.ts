@@ -8,7 +8,7 @@ import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
 import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
 
-export interface  SharpMemoryTFTOptions {
+export interface SharpMemoryTFTOptions {
   vcc?: number;
   gnd?: number;
   vcc_a?: number;
@@ -50,7 +50,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
   public spi!: PeripheralSPI;
   public width = 0;
   public height = 0;
-  public _pos = {x: 0 , y: 0};
+  public _pos = {x: 0, y: 0};
   public autoFlush = false;
   public fontSize = 0;
   public createCanvas: any;

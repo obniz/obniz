@@ -58,7 +58,8 @@ export default class LinkingServiceSetting {
         offset += plen;
         parameters.push(this._parseParameter(pid, pvalue_buf));
       }
-    } catch (e) { }
+    } catch (e) {
+    }
     return parameters;
   }
 
