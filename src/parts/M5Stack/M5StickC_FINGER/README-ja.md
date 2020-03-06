@@ -7,18 +7,31 @@
 
 
 ## wired(obniz, {tx, rx, gnd})
-StickCと接続する場合は、G0を`tx`に、G26を`rx`に指定してください。
+obnizデバイスと接続します。  
+
+
+もしM5StickCを使用している場合、ピン指定を省略することができます。
+
+```javascript
+// JavaScript Examples
+var sensor = obniz.wired("StickC_FINGER");
+```
+
+その他のデバイスの場合は、ux,rxを指定してください
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
-sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
-i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
+tx | `number(obniz Board io)` | yes |  &nbsp; | uartのtxとなる端子です
+rx | `number(obniz Board io)` | yes | &nbsp;  | uartのrxとなる端子です
+gnd | `number(obniz Board io)` | no | &nbsp;  | gndとなる端子です
 
 ```javascript
 // JavaScript Examples
 var sensor = obniz.wired("M5StickC_FINGER", {tx:0, rx:26});
 ```
+
+
+
 
 以下の一部の関数は返り値として`ACK`を返します。
 `ACK`には以下の種類があります。  

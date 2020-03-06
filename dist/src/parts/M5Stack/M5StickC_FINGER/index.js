@@ -14,7 +14,7 @@ class M5StickC_FINGER {
         this.Q3 = 4;
         this.TxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.RxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        this.requiredKeys = ["tx", "rx"];
+        this.requiredKeys = [];
         this.keys = ["tx", "rx", "gnd"];
         this.ack = {
             SUCCESS: 0x00,
@@ -54,6 +54,17 @@ class M5StickC_FINGER {
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(null, this.params.gnd, "3v");
+        if (!this.obniz.isValidIO(this.params.tx)
+            && !this.obniz.isValidIO(this.params.rx)) {
+            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
+                this.params.tx = hatI2c.tx;
+                this.params.rx = hatI2c.rx;
+            }
+            else {
+                throw new Error("Cannot find m5stickc hat interface. Please set param 'tx'/'rx'");
+            }
+        }
         this.uart = this.obniz.getFreeUart();
         this.uart.start({
             tx: this.params.tx,

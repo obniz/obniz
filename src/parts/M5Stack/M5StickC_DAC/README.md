@@ -8,7 +8,16 @@ The DA Converter for M5StickC. It makes the potential difference between + and -
 
 ## wired(obniz, {[scl, sda, vcc, gnd, i2c]})
 connect to the obniz Board.
-When using M5StickC, assign G0 pin as sda and G26 pin as scl.  
+When using M5StickC, You do not need to assign pins. 
+
+```javascript
+// JavaScript Examples
+var dac = obniz.wired("StickC_DAC", {sda:0, scl:26});
+dac.setVoltage(1.5);
+```
+
+
+
 When using other devices, assign vcc and gnd as appropriate pins.
 
 name | type | required | default | description

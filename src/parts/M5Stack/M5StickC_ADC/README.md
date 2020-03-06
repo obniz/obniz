@@ -8,7 +8,20 @@ The AD Converter for M5StickC. It reads the potential difference between + and -
 
 ## wired(obniz, {[scl, sda, vcc, gnd, i2c]})
 connect to the obniz Board.
-When using M5StickC, assign G0 pin as sda and G26 pin as scl.  
+When using M5StickC, You do not need to assign pins. 
+
+
+```javascript
+// JavaScript Examples
+var adc = obniz.wired("StickC_ADC");
+while(true) {
+  var vol = await adc.getVoltageWait();
+  console.log(vol + " V");
+  await obniz.wait(1);
+}
+```
+
+ 
 When using other devices, assign vcc and gnd as appropriate pins.
 
 name | type | required | default | description

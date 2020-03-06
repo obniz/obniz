@@ -8,8 +8,17 @@ M5StickC用DAコンバータです。+と-の間に電位差を作り出しま�
 
 ## wired(obniz, {[scl, sda, vcc, gnd, i2c]})
 obnizデバイスと接続します。  
-M5StickCと接続する場合は、G0をsdaに、G26をsclに指定してください。
-その他の場合には，更にvccとgndを適切なピンに指定してください．  
+もしM5StickCを使用している場合、ピン指定を省略することができます。
+
+
+```javascript
+// JavaScript Examples
+var dac = obniz.wired("StickC_DAC");
+dac.setVoltage(1.5);
+```
+
+
+その他のデバイス場合には，下記のようにピンを指定してください． 
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -24,7 +33,6 @@ i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
 var dac = obniz.wired("M5StickC_DAC", {sda:0, scl:26});
 dac.setVoltage(1.5);
 ```
-
 
 ## setVoltage(voltage)
 指定した電位差を作り出します。  

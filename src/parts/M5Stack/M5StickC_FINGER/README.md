@@ -6,13 +6,22 @@ It is possible to register, delete and match fingerprints with the module alone,
 ![](./image.jpg)
 
 ## wired(obniz, {tx, rx, gnd})
-When using StickC, specify G0 pin as `tx` and G26 pin as `rx`.
+
+When using M5StickC, You do not need to assign pins. 
+
+```javascript
+// JavaScript Examples
+var sensor = obniz.wired("StickC_FINGER");
+```
+
+
+
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
-sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
-i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
+tx | `number(obniz Board io)` | no |  &nbsp; | tx of uart
+rx | `number(obniz Board io)` | no | &nbsp;  | rx of uart
+gnd | `number(obniz Board io)` | no | &nbsp;  | Power Supply
 
 ```javascript
 // JavaScript Examples

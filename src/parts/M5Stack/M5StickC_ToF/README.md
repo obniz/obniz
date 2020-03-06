@@ -6,8 +6,17 @@ It measures 30mm~2000mm.
 ![](./image.jpg)
 
 ## wired(obniz, {[scl, sda, vcc, gnd, i2c]})
-connect to the obniz device.
-When using M5StickC, assign G0 pin as sda and G26 pin as scl.  
+connect to the obniz Board.
+When using M5StickC, You do not need to assign pins. 
+
+```javascript
+// JavaScript Examples
+var sensor = obniz.wired("M5StickC_ToF");
+var distance = await sensor.getWait();
+console.log(distance);
+```
+
+
 When using other devices, assign vcc and gnd as appropriate pins.
 
 name | type | required | default | description

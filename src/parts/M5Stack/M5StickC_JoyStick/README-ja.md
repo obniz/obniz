@@ -4,9 +4,27 @@ X軸Y軸とプッシュスイッチをもつジョイスティックです。I2C
 
 ![](./image.jpg)
 
-## wired(obniz, {[scl, sda, vcc, gnd, grove]})
+## wired(obniz, {[scl, sda, vcc, gnd]})
 obnizデバイスと接続します。  
-白線、黄線、赤線、黒線がそれぞれscl、sda、vcc、gndに対応します。  
+
+
+もしM5StickCを使用している場合、ピン指定を省略することができます。
+
+```javascript
+var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
+obniz.onconnect = async function() {
+  var joystick = obniz.wired("StickC_JoyStick");  // auto assign option params  on m5stickc
+  while(true) {
+    var x = await joystick.getXWait();
+    var y = await joystick.getYWait();
+    console.log(`${x}x${y}`);
+    await obniz.wait(1);
+  }
+}
+```
+
+
+その他のデバイスの場合は、下記のように指定してください。  
 
 name | type | required | default | description
 --- | --- | --- | --- | ---

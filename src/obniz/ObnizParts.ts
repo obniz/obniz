@@ -86,6 +86,9 @@ export default class ObnizParts extends ObnizConnection {
     const args: any = Array.from(arguments);
     args.shift();
     args.unshift(this);
+    if (!args[1]) {
+      args[1] = {};
+    }
     if (parts.keys) {
       if (parts.requiredKeys) {
         const err: any = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);

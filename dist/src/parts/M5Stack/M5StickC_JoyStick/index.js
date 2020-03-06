@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class M5StickC_JoyStick {
     constructor() {
-        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
         this.requiredKeys = [];
     }
     static info() {
@@ -12,7 +12,18 @@ class M5StickC_JoyStick {
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz = obniz;
+        if (!this.obniz.isValidIO(this.params.sda)
+            && !this.obniz.isValidIO(this.params.scl)
+            && !this.params.i2c) {
+            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+                this.params.sda = hatI2c.sda;
+                this.params.scl = hatI2c.scl;
+            }
+            else {
+                throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
+            }
+        }
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
         this.obniz.wait(100); // wait for booting of STM32F030F4
         this.params.mode = "master";
