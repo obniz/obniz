@@ -142,4 +142,5 @@ class XBee {
     }
 }
 exports.default = XBee;
+
 //# sourceMappingURL=index.js.map

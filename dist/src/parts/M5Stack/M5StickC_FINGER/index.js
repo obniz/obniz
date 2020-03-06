@@ -251,4 +251,5 @@ class M5StickC_FINGER {
     }
 }
 exports.default = M5StickC_FINGER;
+
 //# sourceMappingURL=index.js.map

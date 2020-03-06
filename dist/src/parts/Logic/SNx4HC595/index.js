@@ -115,4 +115,5 @@ class SNx4HC595 {
     }
 }
 exports.default = SNx4HC595;
+
 //# sourceMappingURL=index.js.map

@@ -28,4 +28,5 @@ class USB {
     }
 }
 exports.default = USB;
+
 //# sourceMappingURL=index.js.map

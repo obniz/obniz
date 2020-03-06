@@ -171,4 +171,5 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     ondiscovercharacteristicfinished(characteristics) { }
 }
 exports.default = BleRemoteService;
+
 //# sourceMappingURL=bleRemoteService.js.map

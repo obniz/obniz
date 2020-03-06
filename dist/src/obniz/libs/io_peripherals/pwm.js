@@ -213,4 +213,5 @@ class PeripheralPWM {
     }
 }
 exports.default = PeripheralPWM;
+
 //# sourceMappingURL=pwm.js.map

@@ -113,4 +113,5 @@ class WS2812B {
     }
 }
 exports.default = WS2812B;
+
 //# sourceMappingURL=index.js.map

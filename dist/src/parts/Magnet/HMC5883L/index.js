@@ -61,4 +61,5 @@ HMC5883L.commands = {
     status: 0x09,
 };
 HMC5883L.scales = [1 / 1370, 1 / 1090, 1 / 820, 1 / 660, 1 / 440, 1 / 390, 1 / 330, 1 / 230];
+
 //# sourceMappingURL=index.js.map

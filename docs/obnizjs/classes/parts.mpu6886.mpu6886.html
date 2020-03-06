@@ -76,7 +76,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="parts.i2cpartsabstruct.html" class="tsd-signature-type">I2cPartsAbstruct</a>
+						<a href="parts.mpu6050.mpu6050.html" class="tsd-signature-type">MPU6050</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">MPU6886</span>
@@ -88,7 +88,6 @@
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="obnizcore.obnizpartsinterface.html" class="tsd-signature-type">ObnizPartsInterface</a></li>
 					<li><a href="obnizcore.obnizpartsinterface.html" class="tsd-signature-type">ObnizPartsInterface</a></li>
 				</ul>
 			</section>
@@ -106,29 +105,61 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#address" class="tsd-kind-icon">address</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="parts.mpu6886.mpu6886.html#char2short" class="tsd-kind-icon">char2short</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#commands" class="tsd-kind-icon">commands</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#i2cinfo" class="tsd-kind-icon">i2cinfo</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="parts.mpu6886.mpu6886.html#i2cinfo" class="tsd-kind-icon">i2cinfo</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#keys" class="tsd-kind-icon">keys</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="parts.mpu6886.mpu6886.html#params" class="tsd-kind-icon">params</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#params" class="tsd-kind-icon">params</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#requiredkeys" class="tsd-kind-icon">required<wbr>Keys</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="parts.mpu6886.mpu6886.html#write" class="tsd-kind-icon">write</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#getaccelwait" class="tsd-kind-icon">get<wbr>Accel<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#getalldatawait" class="tsd-kind-icon">get<wbr>All<wbr>Data<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#getgyrowait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#gettempwait" class="tsd-kind-icon">get<wbr>Temp<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="parts.mpu6886.mpu6886.html#i2cinfo-1" class="tsd-kind-icon">i2c<wbr>Info</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#init" class="tsd-kind-icon">init</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#bypassmagnetometerwait" class="tsd-kind-icon">bypass<wbr>Magnetometer<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#calctemp" class="tsd-kind-icon">calc<wbr>Temp</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#char2short" class="tsd-kind-icon">char2short</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#clearflagwait" class="tsd-kind-icon">clear<wbr>Flag<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#configdlpfwait" class="tsd-kind-icon">config<wbr>Dlpf<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getacceladcarraywait" class="tsd-kind-icon">get<wbr>Accel<wbr>Adc<wbr>Array<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getacceladcwait" class="tsd-kind-icon">get<wbr>Accel<wbr>Adc<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getaccelarraywait" class="tsd-kind-icon">get<wbr>Accel<wbr>Array<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getaccelrange" class="tsd-kind-icon">get<wbr>Accel<wbr>Range</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getaccelunit" class="tsd-kind-icon">get<wbr>Accel<wbr>Unit</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getaccelwait" class="tsd-kind-icon">get<wbr>Accel<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getaccelerometerwait" class="tsd-kind-icon">get<wbr>Accelerometer<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getalladcarraywait" class="tsd-kind-icon">get<wbr>All<wbr>Adc<wbr>Array<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getalladcwait" class="tsd-kind-icon">get<wbr>All<wbr>Adc<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getallarraywait" class="tsd-kind-icon">get<wbr>All<wbr>Array<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getalldatawait" class="tsd-kind-icon">get<wbr>All<wbr>Data<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getallwait" class="tsd-kind-icon">get<wbr>All<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getgyroadcarraywait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Adc<wbr>Array<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getgyroadcwait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Adc<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getgyroarraywait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Array<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getgyrorange" class="tsd-kind-icon">get<wbr>Gyro<wbr>Range</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getgyrounit" class="tsd-kind-icon">get<wbr>Gyro<wbr>Unit</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getgyrowait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getgyroscopewait" class="tsd-kind-icon">get<wbr>Gyroscope<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#gettempadcwait" class="tsd-kind-icon">get<wbr>Temp<wbr>Adc<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#gettempwait" class="tsd-kind-icon">get<wbr>Temp<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#getwait" class="tsd-kind-icon">get<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#i2cinfo-1" class="tsd-kind-icon">i2c<wbr>Info</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#info" class="tsd-kind-icon">info</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="parts.mpu6886.mpu6886.html#init" class="tsd-kind-icon">init</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#setconfig" class="tsd-kind-icon">set<wbr>Config</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.mpu6886.mpu6886.html#whoamiwait" class="tsd-kind-icon">whoami<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="parts.mpu6886.mpu6886.html#wired" class="tsd-kind-icon">wired</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.mpu6886.mpu6886.html#info" class="tsd-kind-icon">info</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#resetwait" class="tsd-kind-icon">reset<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#setaccelrange" class="tsd-kind-icon">set<wbr>Accel<wbr>Range</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#setaccelunit" class="tsd-kind-icon">set<wbr>Accel<wbr>Unit</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#setconfig" class="tsd-kind-icon">set<wbr>Config</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#setgyrorange" class="tsd-kind-icon">set<wbr>Gyro<wbr>Range</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#setgyrounit" class="tsd-kind-icon">set<wbr>Gyro<wbr>Unit</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#sleepwait" class="tsd-kind-icon">sleep<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#wakewait" class="tsd-kind-icon">wake<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#whoamiwait" class="tsd-kind-icon">whoami<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#wired" class="tsd-kind-icon">wired</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#write" class="tsd-kind-icon">write</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="parts.mpu6886.mpu6886.html#writeflagwait" class="tsd-kind-icon">write<wbr>Flag<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.mpu6886.mpu6886.html#chararraytoint16" class="tsd-kind-icon">char<wbr>Array<wbr>ToInt16</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.mpu6886.mpu6886.html#chararraytoxyz" class="tsd-kind-icon">char<wbr>Array<wbr>ToXyz</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.mpu6886.mpu6886.html#info-1" class="tsd-kind-icon">info</a></li>
 							</ul>
 						</section>
 					</div>
@@ -145,9 +176,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#constructor">constructor</a></p>
+								<p>Overrides <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:31</li>
+									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:14</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="parts.mpu6886.mpu6886.html" class="tsd-signature-type">MPU6886</a></h4>
@@ -162,41 +193,20 @@
 					<h3>address</h3>
 					<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#address">address</a></p>
+						<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#address">address</a></p>
 						<ul>
-							<li>Defined in src/parts/i2cParts.ts:25</li>
+							<li>Defined in src/parts/i2cParts.ts:56</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
-					<a name="char2short" class="tsd-anchor"></a>
-					<h3>char2short</h3>
-					<div class="tsd-signature tsd-kind-icon">char2short<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<p>Overrides <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#char2short">char2short</a></p>
-						<ul>
-							<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:26</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="commands" class="tsd-anchor"></a>
-					<h3>commands</h3>
-					<div class="tsd-signature tsd-kind-icon">commands<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:23</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="i2cinfo" class="tsd-anchor"></a>
 					<h3>i2cinfo</h3>
-					<div class="tsd-signature tsd-kind-icon">i2cinfo<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">i2cinfo<span class="tsd-signature-symbol">:</span> <a href="../interfaces/parts.i2cinfo.html" class="tsd-signature-type">I2cInfo</a></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#i2cinfo">i2cinfo</a></p>
+						<p>Overrides <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#i2cinfo">i2cinfo</a></p>
 						<ul>
-							<li>Defined in src/parts/i2cParts.ts:24</li>
+							<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:14</li>
 						</ul>
 					</aside>
 				</section>
@@ -205,20 +215,20 @@
 					<h3>keys</h3>
 					<div class="tsd-signature tsd-kind-icon">keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#keys">keys</a></p>
+						<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#keys">keys</a></p>
 						<ul>
-							<li>Defined in src/parts/i2cParts.ts:22</li>
+							<li>Defined in src/parts/i2cParts.ts:53</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="params" class="tsd-anchor"></a>
 					<h3>params</h3>
 					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
-						<p>Overrides <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#params">params</a></p>
+						<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#params">params</a></p>
 						<ul>
-							<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:25</li>
+							<li>Defined in src/parts/i2cParts.ts:57</li>
 						</ul>
 					</aside>
 				</section>
@@ -227,134 +237,583 @@
 					<h3>required<wbr>Keys</h3>
 					<div class="tsd-signature tsd-kind-icon">required<wbr>Keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#requiredkeys">requiredKeys</a></p>
+						<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#requiredkeys">requiredKeys</a></p>
 						<ul>
-							<li>Defined in src/parts/i2cParts.ts:23</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
-					<a name="write" class="tsd-anchor"></a>
-					<h3>write</h3>
-					<div class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<p>Overrides <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#write">write</a></p>
-						<ul>
-							<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:24</li>
+							<li>Defined in src/parts/i2cParts.ts:54</li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="bypassmagnetometerwait" class="tsd-anchor"></a>
+					<h3>bypass<wbr>Magnetometer<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">bypass<wbr>Magnetometer<wbr>Wait<span class="tsd-signature-symbol">(</span>flag<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#bypassmagnetometerwait">bypassMagnetometerWait</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:123</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> flag: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="calctemp" class="tsd-anchor"></a>
+					<h3>calc<wbr>Temp</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">calc<wbr>Temp<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#calctemp">calcTemp</a></p>
+								<p>Overrides <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#calctemp">calcTemp</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:73</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="char2short" class="tsd-anchor"></a>
+					<h3>char2short</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">char2short<span class="tsd-signature-symbol">(</span>val1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, val2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#char2short">char2short</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cParts.ts:88</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>val1: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>val2: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="clearflagwait" class="tsd-anchor"></a>
+					<h3>clear<wbr>Flag<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">clear<wbr>Flag<wbr>Wait<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#clearflagwait">clearFlagWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cParts.ts:114</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>address: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>index: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="configdlpfwait" class="tsd-anchor"></a>
+					<h3>config<wbr>Dlpf<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">config<wbr>Dlpf<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#configdlpfwait">configDlpfWait</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:121</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getacceladcarraywait" class="tsd-anchor"></a>
+					<h3>get<wbr>Accel<wbr>Adc<wbr>Array<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Accel<wbr>Adc<wbr>Array<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getacceladcarraywait">getAccelAdcArrayWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:125</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="getacceladcwait" class="tsd-anchor"></a>
+					<h3>get<wbr>Accel<wbr>Adc<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Accel<wbr>Adc<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#getacceladcwait">getAccelAdcWait</a></p>
+								<p>Overrides <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getacceladcwait">getAccelAdcWait</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:141</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getaccelarraywait" class="tsd-anchor"></a>
+					<h3>get<wbr>Accel<wbr>Array<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Accel<wbr>Array<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getaccelarraywait">getAccelArrayWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:107</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getaccelrange" class="tsd-anchor"></a>
+					<h3>get<wbr>Accel<wbr>Range</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Accel<wbr>Range<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_parts_i2cimu6_.html#accelrange" class="tsd-signature-type">accelRange</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getaccelrange">getAccelRange</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:163</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_parts_i2cimu6_.html#accelrange" class="tsd-signature-type">accelRange</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getaccelunit" class="tsd-anchor"></a>
+					<h3>get<wbr>Accel<wbr>Unit</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Accel<wbr>Unit<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_parts_i2cimu6_.html#accelunit" class="tsd-signature-type">accelUnit</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getaccelunit">getAccelUnit</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:171</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_parts_i2cimu6_.html#accelunit" class="tsd-signature-type">accelUnit</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="getaccelwait" class="tsd-anchor"></a>
 					<h3>get<wbr>Accel<wbr>Wait</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Accel<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>z<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Accel<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getaccelwait">getAccelWait</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:197</li>
+									<li>Defined in src/parts/i2cImu6.ts:79</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>z<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getaccelerometerwait" class="tsd-anchor"></a>
+					<h3>get<wbr>Accelerometer<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Accelerometer<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getaccelerometerwait">getAccelerometerWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:147</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getalladcarraywait" class="tsd-anchor"></a>
+					<h3>get<wbr>All<wbr>Adc<wbr>Array<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>Adc<wbr>Array<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getalladcarraywait">getAllAdcArrayWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:135</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="getalladcwait" class="tsd-anchor"></a>
+					<h3>get<wbr>All<wbr>Adc<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>Adc<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.inertia6.html" class="tsd-signature-type">Inertia6</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#getalladcwait">getAllAdcWait</a></p>
+								<p>Overrides <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getalladcwait">getAllAdcWait</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:156</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.inertia6.html" class="tsd-signature-type">Inertia6</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getallarraywait" class="tsd-anchor"></a>
+					<h3>get<wbr>All<wbr>Array<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>Array<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getallarraywait">getAllArrayWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:117</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="getalldatawait" class="tsd-anchor"></a>
 					<h3>get<wbr>All<wbr>Data<wbr>Wait</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>Data<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>accelerometer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>z<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">; </span>gyroscope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>z<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">; </span>temperature<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>Data<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.inertia6.html" class="tsd-signature-type">Inertia6</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getalldatawait">getAllDataWait</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:156</li>
+									<li>Defined in src/parts/i2cImu6.ts:159</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>accelerometer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>z<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">; </span>gyroscope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>z<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">; </span>temperature<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.inertia6.html" class="tsd-signature-type">Inertia6</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getallwait" class="tsd-anchor"></a>
+					<h3>get<wbr>All<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.inertia6.html" class="tsd-signature-type">Inertia6</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getallwait">getAllWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:94</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.inertia6.html" class="tsd-signature-type">Inertia6</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getgyroadcarraywait" class="tsd-anchor"></a>
+					<h3>get<wbr>Gyro<wbr>Adc<wbr>Array<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Gyro<wbr>Adc<wbr>Array<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getgyroadcarraywait">getGyroAdcArrayWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:130</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="getgyroadcwait" class="tsd-anchor"></a>
+					<h3>get<wbr>Gyro<wbr>Adc<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Gyro<wbr>Adc<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#getgyroadcwait">getGyroAdcWait</a></p>
+								<p>Overrides <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getgyroadcwait">getGyroAdcWait</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:146</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getgyroarraywait" class="tsd-anchor"></a>
+					<h3>get<wbr>Gyro<wbr>Array<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Gyro<wbr>Array<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getgyroarraywait">getGyroArrayWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:112</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getgyrorange" class="tsd-anchor"></a>
+					<h3>get<wbr>Gyro<wbr>Range</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Gyro<wbr>Range<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_parts_i2cimu6_.html#gyrorange" class="tsd-signature-type">gyroRange</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getgyrorange">getGyroRange</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:167</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_parts_i2cimu6_.html#gyrorange" class="tsd-signature-type">gyroRange</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getgyrounit" class="tsd-anchor"></a>
+					<h3>get<wbr>Gyro<wbr>Unit</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Gyro<wbr>Unit<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_parts_i2cimu6_.html#gyrounit" class="tsd-signature-type">gyroUnit</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getgyrounit">getGyroUnit</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:175</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_parts_i2cimu6_.html#gyrounit" class="tsd-signature-type">gyroUnit</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="getgyrowait" class="tsd-anchor"></a>
 					<h3>get<wbr>Gyro<wbr>Wait</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Gyro<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>z<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Gyro<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getgyrowait">getGyroWait</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:205</li>
+									<li>Defined in src/parts/i2cImu6.ts:84</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>z<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="gettempwait" class="tsd-anchor"></a>
-					<h3>get<wbr>Temp<wbr>Wait</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Temp<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getgyroscopewait" class="tsd-anchor"></a>
+					<h3>get<wbr>Gyroscope<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Gyroscope<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getgyroscopewait">getGyroscopeWait</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:193</li>
+									<li>Defined in src/parts/i2cImu6.ts:151</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.xyz.html" class="tsd-signature-type">Xyz</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="gettempadcwait" class="tsd-anchor"></a>
+					<h3>get<wbr>Temp<wbr>Adc<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Temp<wbr>Adc<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#gettempadcwait">getTempAdcWait</a></p>
+								<p>Overrides <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#gettempadcwait">getTempAdcWait</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:151</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="i2cinfo-1" class="tsd-anchor"></a>
-					<h3>i2c<wbr>Info</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">i2c<wbr>Info<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>clock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>voltage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="gettempwait" class="tsd-anchor"></a>
+					<h3>get<wbr>Temp<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Temp<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#i2cinfo-1">i2cInfo</a></p>
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#gettempwait">getTempWait</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:74</li>
+									<li>Defined in src/parts/i2cImu6.ts:89</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>clock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>voltage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h4>
-							<ul class="tsd-parameters">
-								<li class="tsd-parameter">
-									<h5>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>clock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>voltage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getwait" class="tsd-anchor"></a>
+					<h3>get<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.inertia6.html" class="tsd-signature-type">Inertia6</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#getwait">getWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:155</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_parts_i2cimu6_.inertia6.html" class="tsd-signature-type">Inertia6</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="i2cinfo-1" class="tsd-anchor"></a>
+					<h3>i2c<wbr>Info</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">i2c<wbr>Info<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.i2cinfo.html" class="tsd-signature-type">I2cInfo</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#i2cinfo-1">i2cInfo</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cParts.ts:68</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.i2cinfo.html" class="tsd-signature-type">I2cInfo</a></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="info" class="tsd-anchor"></a>
+					<h3>info</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">info<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:29</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="init" class="tsd-anchor"></a>
 					<h3>init</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#init">init</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:87</li>
+									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:35</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -370,9 +829,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#readwait">readWait</a></p>
+								<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#readwait">readWait</a></p>
 								<ul>
-									<li>Defined in src/parts/i2cParts.ts:69</li>
+									<li>Defined in src/parts/i2cParts.ts:96</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -388,17 +847,85 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="setconfig" class="tsd-anchor"></a>
-					<h3>set<wbr>Config</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Config<span class="tsd-signature-symbol">(</span>accelerometer_range<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, gyroscope_range<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="resetwait" class="tsd-anchor"></a>
+					<h3>reset<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">reset<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#resetwait">resetWait</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:117</li>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:117</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="setaccelrange" class="tsd-anchor"></a>
+					<h3>set<wbr>Accel<wbr>Range</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Accel<wbr>Range<span class="tsd-signature-symbol">(</span>accel_range<span class="tsd-signature-symbol">: </span><a href="../modules/_parts_i2cimu6_.html#accelrange" class="tsd-signature-type">accelRange</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#setaccelrange">setAccelRange</a></p>
+								<p>Overrides <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#setaccelrange">setAccelRange</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:165</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>accel_range: <a href="../modules/_parts_i2cimu6_.html#accelrange" class="tsd-signature-type">accelRange</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="setaccelunit" class="tsd-anchor"></a>
+					<h3>set<wbr>Accel<wbr>Unit</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Accel<wbr>Unit<span class="tsd-signature-symbol">(</span>accel_unit<span class="tsd-signature-symbol">: </span><a href="../modules/_parts_i2cimu6_.html#accelunit" class="tsd-signature-type">accelUnit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#setaccelunit">setAccelUnit</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:179</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>accel_unit: <a href="../modules/_parts_i2cimu6_.html#accelunit" class="tsd-signature-type">accelUnit</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="setconfig" class="tsd-anchor"></a>
+					<h3>set<wbr>Config</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Config<span class="tsd-signature-symbol">(</span>accelerometer_range<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, gyroscope_range<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, ADC_cycle<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#setconfig">setConfig</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:183</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -409,40 +936,131 @@
 								<li>
 									<h5>gyroscope_range: <span class="tsd-signature-type">number</span></h5>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ADC_cycle: <span class="tsd-signature-type">any</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="setgyrorange" class="tsd-anchor"></a>
+					<h3>set<wbr>Gyro<wbr>Range</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Gyro<wbr>Range<span class="tsd-signature-symbol">(</span>gyro_range<span class="tsd-signature-symbol">: </span><a href="../modules/_parts_i2cimu6_.html#gyrorange" class="tsd-signature-type">gyroRange</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#setgyrorange">setGyroRange</a></p>
+								<p>Overrides <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#setgyrorange">setGyroRange</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:174</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>gyro_range: <a href="../modules/_parts_i2cimu6_.html#gyrorange" class="tsd-signature-type">gyroRange</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="setgyrounit" class="tsd-anchor"></a>
+					<h3>set<wbr>Gyro<wbr>Unit</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Gyro<wbr>Unit<span class="tsd-signature-symbol">(</span>gyro_unit<span class="tsd-signature-symbol">: </span><a href="../modules/_parts_i2cimu6_.html#gyrounit" class="tsd-signature-type">gyroUnit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#setgyrounit">setGyroUnit</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cImu6.ts:187</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>gyro_unit: <a href="../modules/_parts_i2cimu6_.html#gyrounit" class="tsd-signature-type">gyroUnit</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="sleepwait" class="tsd-anchor"></a>
+					<h3>sleep<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">sleep<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#sleepwait">sleepWait</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:109</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="wakewait" class="tsd-anchor"></a>
+					<h3>wake<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">wake<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#wakewait">wakeWait</a></p>
+								<ul>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:113</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="whoamiwait" class="tsd-anchor"></a>
 					<h3>whoami<wbr>Wait</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">whoami<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#whoamiwait">whoamiWait</a></p>
+								<p>Overrides <a href="_parts_i2cimu6_.i2cimu6abstract.html">I2cImu6Abstract</a>.<a href="_parts_i2cimu6_.i2cimu6abstract.html#whoamiwait">whoamiWait</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:82</li>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:136</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="wired" class="tsd-anchor"></a>
 					<h3>wired</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">wired<span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="parts.i2cpartsabstruct.html">I2cPartsAbstruct</a>.<a href="parts.i2cpartsabstruct.html#wired">wired</a></p>
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#wired">wired</a></p>
+								<p>Overrides <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#wired">wired</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:68</li>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:80</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -455,17 +1073,129 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="info" class="tsd-anchor"></a>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="write" class="tsd-anchor"></a>
+					<h3>write</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>command<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, buf<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#write">write</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cParts.ts:101</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>command: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>buf: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="writeflagwait" class="tsd-anchor"></a>
+					<h3>write<wbr>Flag<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Flag<wbr>Wait<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#writeflagwait">writeFlagWait</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cParts.ts:108</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>address: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>index: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="chararraytoint16" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> char<wbr>Array<wbr>ToInt16</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">char<wbr>Array<wbr>ToInt16<span class="tsd-signature-symbol">(</span>values<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span>, endian<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#chararraytoint16">charArrayToInt16</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cParts.ts:37</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>values: <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> endian: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;b&quot;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="chararraytoxyz" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> char<wbr>Array<wbr>ToXyz</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">char<wbr>Array<wbr>ToXyz<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, endian<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, scaleFunc<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.xyz.html" class="tsd-signature-type">Xyz</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.i2cpartsabstract.html">I2cPartsAbstract</a>.<a href="parts.i2cpartsabstract.html#chararraytoxyz">charArrayToXyz</a></p>
+								<ul>
+									<li>Defined in src/parts/i2cParts.ts:45</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> endian: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;b&quot;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> scaleFunc: <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = (d: number): number &#x3D;&gt; d</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.xyz.html" class="tsd-signature-type">Xyz</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="info-1" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> info</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 						<li class="tsd-signature tsd-kind-icon">info<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="parts.mpu6050.mpu6050.html">MPU6050</a>.<a href="parts.mpu6050.mpu6050.html#info">info</a></p>
 								<ul>
-									<li>Defined in src/parts/MovementSensor/MPU6886/index.ts:17</li>
+									<li>Defined in src/parts/MovementSensor/MPU6050/index.ts:14</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
@@ -504,58 +1234,154 @@
 								<a href="parts.mpu6886.mpu6886.html#address" class="tsd-kind-icon">address</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
-								<a href="parts.mpu6886.mpu6886.html#char2short" class="tsd-kind-icon">char2short</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="parts.mpu6886.mpu6886.html#commands" class="tsd-kind-icon">commands</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#i2cinfo" class="tsd-kind-icon">i2cinfo</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#keys" class="tsd-kind-icon">keys</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#params" class="tsd-kind-icon">params</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#requiredkeys" class="tsd-kind-icon">required<wbr>Keys</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
-								<a href="parts.mpu6886.mpu6886.html#write" class="tsd-kind-icon">write</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#bypassmagnetometerwait" class="tsd-kind-icon">bypass<wbr>Magnetometer<wbr>Wait</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#calctemp" class="tsd-kind-icon">calc<wbr>Temp</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#char2short" class="tsd-kind-icon">char2short</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#clearflagwait" class="tsd-kind-icon">clear<wbr>Flag<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#configdlpfwait" class="tsd-kind-icon">config<wbr>Dlpf<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getacceladcarraywait" class="tsd-kind-icon">get<wbr>Accel<wbr>Adc<wbr>Array<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getacceladcwait" class="tsd-kind-icon">get<wbr>Accel<wbr>Adc<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getaccelarraywait" class="tsd-kind-icon">get<wbr>Accel<wbr>Array<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getaccelrange" class="tsd-kind-icon">get<wbr>Accel<wbr>Range</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getaccelunit" class="tsd-kind-icon">get<wbr>Accel<wbr>Unit</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#getaccelwait" class="tsd-kind-icon">get<wbr>Accel<wbr>Wait</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getaccelerometerwait" class="tsd-kind-icon">get<wbr>Accelerometer<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getalladcarraywait" class="tsd-kind-icon">get<wbr>All<wbr>Adc<wbr>Array<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getalladcwait" class="tsd-kind-icon">get<wbr>All<wbr>Adc<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getallarraywait" class="tsd-kind-icon">get<wbr>All<wbr>Array<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#getalldatawait" class="tsd-kind-icon">get<wbr>All<wbr>Data<wbr>Wait</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getallwait" class="tsd-kind-icon">get<wbr>All<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getgyroadcarraywait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Adc<wbr>Array<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getgyroadcwait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Adc<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getgyroarraywait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Array<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getgyrorange" class="tsd-kind-icon">get<wbr>Gyro<wbr>Range</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getgyrounit" class="tsd-kind-icon">get<wbr>Gyro<wbr>Unit</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#getgyrowait" class="tsd-kind-icon">get<wbr>Gyro<wbr>Wait</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getgyroscopewait" class="tsd-kind-icon">get<wbr>Gyroscope<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#gettempadcwait" class="tsd-kind-icon">get<wbr>Temp<wbr>Adc<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#gettempwait" class="tsd-kind-icon">get<wbr>Temp<wbr>Wait</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#getwait" class="tsd-kind-icon">get<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#i2cinfo-1" class="tsd-kind-icon">i2c<wbr>Info</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="parts.mpu6886.mpu6886.html#info" class="tsd-kind-icon">info</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="parts.mpu6886.mpu6886.html#init" class="tsd-kind-icon">init</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#resetwait" class="tsd-kind-icon">reset<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#setaccelrange" class="tsd-kind-icon">set<wbr>Accel<wbr>Range</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#setaccelunit" class="tsd-kind-icon">set<wbr>Accel<wbr>Unit</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#setconfig" class="tsd-kind-icon">set<wbr>Config</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#setgyrorange" class="tsd-kind-icon">set<wbr>Gyro<wbr>Range</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#setgyrounit" class="tsd-kind-icon">set<wbr>Gyro<wbr>Unit</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#sleepwait" class="tsd-kind-icon">sleep<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#wakewait" class="tsd-kind-icon">wake<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#whoamiwait" class="tsd-kind-icon">whoami<wbr>Wait</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="parts.mpu6886.mpu6886.html#wired" class="tsd-kind-icon">wired</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="parts.mpu6886.mpu6886.html#info" class="tsd-kind-icon">info</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#write" class="tsd-kind-icon">write</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.mpu6886.mpu6886.html#writeflagwait" class="tsd-kind-icon">write<wbr>Flag<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.mpu6886.mpu6886.html#chararraytoint16" class="tsd-kind-icon">char<wbr>Array<wbr>ToInt16</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.mpu6886.mpu6886.html#chararraytoxyz" class="tsd-kind-icon">char<wbr>Array<wbr>ToXyz</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.mpu6886.mpu6886.html#info-1" class="tsd-kind-icon">info</a>
 							</li>
 						</ul>
 					</li>

@@ -299,4 +299,5 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
     }
 }
 exports.default = ObnizSystemMethods;
+
 //# sourceMappingURL=ObnizSystemMethods.js.map

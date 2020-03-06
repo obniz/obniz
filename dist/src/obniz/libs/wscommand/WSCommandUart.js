@@ -117,4 +117,5 @@ class WSCommandUart extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandUart;
+
 //# sourceMappingURL=WSCommandUart.js.map
