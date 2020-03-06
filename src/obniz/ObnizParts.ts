@@ -5,9 +5,9 @@
 
 import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 import ObnizPartsInterface from "./ObnizPartsInterface";
-import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
+import { WiredNameMap, WiredNameOptionsMap } from "./ObnizPartsList";
 
 /**
  * @ignore
@@ -15,7 +15,6 @@ import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
 const _parts: any = {};
 
 export default class ObnizParts extends ObnizConnection {
-
   /**
    * @ignore
    * @private
@@ -29,11 +28,7 @@ export default class ObnizParts extends ObnizConnection {
    * @param arg0 Parts class
    */
   public static PartsRegistrate(arg0: typeof ObnizPartsInterface, arg1?: any) {
-    if (
-      arg0 &&
-      typeof arg0.info === "function" &&
-      typeof arg0.info().name === "string"
-    ) {
+    if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
       _parts[arg0.info().name] = arg0;
     } else if (typeof arg0 === "string" && typeof arg1 === "object") {
       _parts[arg0] = arg1;
@@ -65,6 +60,14 @@ export default class ObnizParts extends ObnizConnection {
   }
 
   /**
+   * Check the param is valid ad pin no.
+   * @param io
+   */
+  public isValidAD(ad: any): boolean {
+    return typeof ad === "number" && (this as any)["ad" + ad] !== null;
+  }
+
+  /**
    * Setup Parts of parts library
    *
    * @param partsname
@@ -78,13 +81,14 @@ export default class ObnizParts extends ObnizConnection {
     const args: any = Array.from(arguments);
     args.shift();
     args.unshift(this);
+    if (!args[1]) {
+      args[1] = {};
+    }
     if (parts.keys) {
       if (parts.requiredKeys) {
         const err: any = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
         if (err) {
-          throw new Error(
-            partsname + " wired param '" + err + "' required, but not found ",
-          );
+          throw new Error(partsname + " wired param '" + err + "' required, but not found ");
         }
       }
       parts.params = ObnizUtil._keyFilter(args[1], parts.keys);

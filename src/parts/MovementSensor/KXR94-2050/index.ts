@@ -6,9 +6,9 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  KXR94_2050Options {
+export interface KXR94_2050Options {
   x: number;
   y: number;
   z: number;
@@ -19,7 +19,6 @@ export interface  KXR94_2050Options {
 }
 
 export default class KXR94_2050 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "KXR94-2050",
@@ -63,7 +62,6 @@ export default class KXR94_2050 implements ObnizPartsInterface {
     if (obniz.isValidIO(this.params.enable)) {
       obniz.getIO(this.params.enable).drive("5v");
       obniz.getIO(this.params.enable).output(true);
-
     }
     if (obniz.isValidIO(this.params.self_test)) {
       obniz.getIO(this.params.self_test).drive("5v");

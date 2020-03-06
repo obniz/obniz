@@ -12,12 +12,13 @@ var sensor = obniz.wired("SH200Q", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
 
 
 
-## [await] getAllDataWait
+## [await] getAllWait()
 
 SH200Qの加速度センサー、ジャイロセンサーのデータを取得して、JSONで返します。
 
 ```javascript
 var sensor = obniz.wired("SH200Q", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
+await sensor.initWait();
 const data = await sensor.getAllDataWait();
 console.log('accelerometer: %o', data.accelerometer);
 console.log('gyroscope: %o', data.gyroscope);
@@ -29,6 +30,7 @@ console.log('gyroscope: %o', data.gyroscope);
 
 ```javascript
 var sensor = obniz.wired("SH200Q", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
+await sensor.initWait();
 const data = await sensor.getAccelWait();
 console.log('accelerometer: %o', data);
 ```
@@ -38,6 +40,7 @@ console.log('accelerometer: %o', data);
 
 ```javascript
 var sensor = obniz.wired("SH200Q", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
+await sensor.initWait();
 const data = await sensor.getGyroWait();
 console.log('gyroscope: %o', data);
 ```

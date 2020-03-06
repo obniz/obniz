@@ -5,15 +5,14 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  LEDOptions {
+export interface LEDOptions {
   anode?: number;
   cathode?: number;
 }
 
 export default class LED implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "LED",

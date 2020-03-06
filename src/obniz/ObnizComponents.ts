@@ -4,12 +4,12 @@
  */
 
 import semver from "semver";
-import {ObnizHciBLE, ObnizOldBLE} from "./libs/embeds/ble";
+import { ObnizHciBLE, ObnizOldBLE } from "./libs/embeds/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";
 
 import PeripheralAD from "./libs/io_peripherals/ad";
-import {DriveType} from "./libs/io_peripherals/common";
+import { DriveType } from "./libs/io_peripherals/common";
 import PeripheralDirective from "./libs/io_peripherals/directive";
 import PeripheralI2C from "./libs/io_peripherals/i2c";
 import PeripheralIO from "./libs/io_peripherals/io";
@@ -24,10 +24,10 @@ import TCP from "./libs/protocol/tcp";
 import ObnizParts from "./ObnizParts";
 
 import HW from "./libs/hw";
-import {ObnizOptions} from "./ObnizOptions";
+import PeripheralGrove from "./libs/io_peripherals/grove";
+import { ObnizOptions } from "./ObnizOptions";
 
 export default class ObnizComponents extends ObnizParts {
-
   /* board peripherals */
 
   /**
@@ -237,8 +237,11 @@ export default class ObnizComponents extends ObnizParts {
    */
   public ble?: ObnizOldBLE.default | ObnizHciBLE.default;
 
+  protected _hwDefinition: any;
+
   protected pongObservers: any;
   protected _allComponentKeys: any;
+  protected _hw_peripherals: any;
 
   constructor(id: string, options?: ObnizOptions) {
     super(id, options);
@@ -259,7 +262,7 @@ export default class ObnizComponents extends ObnizParts {
    * @param gnd
    * @param drive
    */
-  public setVccGnd(vcc: number | null, gnd: number | null, drive: DriveType) {
+  public setVccGnd(vcc: number | null | undefined, gnd: number | null | undefined, drive: DriveType) {
     if (this.isValidIO(vcc)) {
       if (drive) {
         this.getIO(vcc!).drive(drive);
@@ -322,7 +325,7 @@ export default class ObnizComponents extends ObnizParts {
     if (config.i2c) {
       return config.i2c;
     }
-    const i2c: any = this.getFreeI2C();
+    const i2c: PeripheralI2C = this.getFreeI2C();
     i2c.start(config);
     return i2c;
   }
@@ -364,6 +367,17 @@ export default class ObnizComponents extends ObnizParts {
     return this._getFreePeripheralUnit("tcp");
   }
 
+  public hasExtraInterface(interfaceName: string): boolean {
+    return !!this.getExtraInterface(interfaceName);
+  }
+
+  public getExtraInterface(interfaceName: string): any {
+    if (this._hwDefinition.extraInterface && this._hwDefinition.extraInterface[interfaceName]) {
+      return this._hwDefinition.extraInterface[interfaceName];
+    }
+    return null;
+  }
+
   protected _callOnConnect() {
     this._prepareComponents();
     super._callOnConnect();
@@ -374,14 +388,15 @@ export default class ObnizComponents extends ObnizParts {
       return;
     }
 
-    const hwDefinition: any = HW.getDefinitionFor(this.hw);
-    if (!hwDefinition) {
+    this._hwDefinition = HW.getDefinitionFor(this.hw);
+    if (!this._hwDefinition) {
       throw new Error(`unkown hw ${this.hw}`);
     }
 
-    const hw_peripherals: any = hwDefinition.peripherals;
-    const hw_embeds: any = hwDefinition.embeds;
-    const hw_protocol: any = hwDefinition.protocol;
+    const hw_peripherals: any = this._hwDefinition.peripherals;
+    this._hw_peripherals = hw_peripherals;
+    const hw_embeds: any = this._hwDefinition.embeds;
+    const hw_protocol: any = this._hwDefinition.protocol;
 
     const shared_map: any = {
       io: PeripheralDirective,
@@ -396,6 +411,7 @@ export default class ObnizComponents extends ObnizParts {
       spi: PeripheralSPI,
       i2c: PeripheralI2C,
       pwm: PeripheralPWM,
+      grove: PeripheralGrove,
     };
 
     let ble: any = ObnizHciBLE.default;
@@ -428,7 +444,7 @@ export default class ObnizComponents extends ObnizParts {
           const Class: any = peripheral_map[key];
           for (const unitId in units) {
             const unitIdNumber = parseInt(unitId);
-            (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber);
+            (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber, units[unitId]);
             this._allComponentKeys.push(key + unitIdNumber);
           }
         }
@@ -439,7 +455,7 @@ export default class ObnizComponents extends ObnizParts {
       for (const key in embeds_map) {
         if (hw_embeds[key]) {
           const Class: any = embeds_map[key];
-          (this as any)[key] = new Class(this);
+          (this as any)[key] = new Class(this, hw_embeds[key]);
           this._allComponentKeys.push(key);
         }
       }

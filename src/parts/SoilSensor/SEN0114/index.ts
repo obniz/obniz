@@ -6,16 +6,15 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  SEN0114Options {
+export interface SEN0114Options {
   vcc?: number;
   output: number;
   gnd?: number;
 }
 
 export default class SEN0114 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "SEN0114",

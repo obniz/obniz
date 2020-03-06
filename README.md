@@ -3,10 +3,20 @@
 [![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
 ![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
-SDK for controlling [obniz Board](https://obniz.io/) using [obniz api](https://obniz.io/doc/obniz_api/about_obniz_api) from JavaScript.
+SDK for controlling [obniz enabled Devices](https://obniz.io/) using obniz websocket API from JavaScript.
 
 It works on both browser and nodejs.
 
+Docs
+
+- [Guides](https://docs.obniz.io/guides/)
+- [Class References](https://obniz.github.io/obniz/obnizjs/index.html)
+
+Related Sites
+
+- [obniz WebSite](https://obniz.io/)
+- [obniz Devices](https://obniz.io/products)
+- [Examples](https://blog.obniz.io/example/)
 
 ## Usage
 ```html
@@ -222,9 +232,9 @@ obnizA.onconnect = async function () {
 ```
 
 
-## Documentation
-You can find the documentation on [the website](https://obniz.io/doc/).
-
-
 ## Lisence
 See [LICENSE.txt](./LICENSE.txt)
+
+## Contribute
+
+[https://www.notion.so/cambrianrobotics/584462928c0943acadbe2531d221fd62](https://www.notion.so/cambrianrobotics/584462928c0943acadbe2531d221fd62)

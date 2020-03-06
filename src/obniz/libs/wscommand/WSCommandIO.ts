@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -76,10 +75,7 @@ class WSCommandIO extends WSCommand {
 
   public inputDetail(params: any, id: any) {
     const buf: any = new Uint8Array([id]);
-    this.sendCommand(
-      params.stream ? this._CommandInputStream : this._CommandInputOnece,
-      buf,
-    );
+    this.sendCommand(params.stream ? this._CommandInputStream : this._CommandInputOnece, buf);
   }
 
   public outputType(params: any, id: any) {
@@ -127,13 +123,13 @@ class WSCommandIO extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/io/input", onValid: this.input},
-        {uri: "/request/io/input_detail", onValid: this.inputDetail},
-        {uri: "/request/io/output", onValid: this.output},
-        {uri: "/request/io/output_detail", onValid: this.outputDetail},
-        {uri: "/request/io/output_type", onValid: this.outputType},
-        {uri: "/request/io/pull_type", onValid: this.pullType},
-        {uri: "/request/io/deinit", onValid: this.deinit},
+        { uri: "/request/io/input", onValid: this.input },
+        { uri: "/request/io/input_detail", onValid: this.inputDetail },
+        { uri: "/request/io/output", onValid: this.output },
+        { uri: "/request/io/output_detail", onValid: this.outputDetail },
+        { uri: "/request/io/output_type", onValid: this.outputType },
+        { uri: "/request/io/pull_type", onValid: this.pullType },
+        { uri: "/request/io/deinit", onValid: this.deinit },
       ];
       const res: any = this.validateCommandSchema(schemaData, module, "io" + i, i);
 
@@ -158,32 +154,19 @@ class WSCommandIO extends WSCommand {
       // const ref_func_id = payload[2];
       const module_index: any = payload[3];
 
-      if (
-        err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH ||
-        err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW
-      ) {
+      if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH || err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
         this.envelopWarning(objToSend, `io${module_index}`, {
           message: COMMAND_IO_ERROR_MESSAGES[err],
         });
-      } else if (
-        err === COMMAND_IO_ERRORS_IO_TOO_LOW ||
-        err === COMMAND_IO_ERRORS_IO_TOO_HIGH
-      ) {
+      } else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
         this.envelopError(objToSend, `io${module_index}`, {
           message: COMMAND_IO_ERROR_MESSAGES[err],
         });
-      } else if (
-        err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED &&
-        payload.byteLength >= 6
-      ) {
+      } else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6) {
         const oldMutexOwner: any = payload[4];
         const newMutexOwner: any = payload[5];
         this.envelopWarning(objToSend, "debug", {
-          message: `io${module_index} binded "${
-            COMMAND_IO_MUTEX_NAMES[oldMutexOwner]
-          }" was stopped. "${
-            COMMAND_IO_MUTEX_NAMES[newMutexOwner]
-          }" have started using this io.`,
+          message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.`,
         });
       }
     } else {

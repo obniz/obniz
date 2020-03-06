@@ -100,8 +100,7 @@ module.exports = {
     "dist",
     "!dist/**/*.map",
     "index.js",
-    "obniz.js",
-    "obniz.min.js"
+    "obniz.js"
   ],
   "engines": {
     "node": ">=8.17.0"
@@ -116,15 +115,15 @@ module.exports = {
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
-    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build && npm run doc",
+    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
     "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "version": "npm run build && git add obniz.js && git add obniz.min.js",
+    "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
-    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "precommit": "lint-staged && npm run build && git add obniz.js",
+    "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -195,6 +194,7 @@ module.exports = {
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
+    "tslint-plugin-prettier": "^2.1.0",
     "typescript": "^3.7.5",
     "typedoc": "^0.16.9",
     "typedoc-plugin-external-module-name": "^3.0.0",
@@ -261,7 +261,10 @@ var map = {
 	"./request/ble/central/scan_start.yml": "./dist/src/json_schema/request/ble/central/scan_start.yml",
 	"./request/ble/central/scan_stop.yml": "./dist/src/json_schema/request/ble/central/scan_stop.yml",
 	"./request/ble/central/service_get.yml": "./dist/src/json_schema/request/ble/central/service_get.yml",
+	"./request/ble/hci/advertisement_filter.yml": "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml",
+	"./request/ble/hci/deinit.yml": "./dist/src/json_schema/request/ble/hci/deinit.yml",
 	"./request/ble/hci/index.yml": "./dist/src/json_schema/request/ble/hci/index.yml",
+	"./request/ble/hci/init.yml": "./dist/src/json_schema/request/ble/hci/init.yml",
 	"./request/ble/hci/write.yml": "./dist/src/json_schema/request/ble/hci/write.yml",
 	"./request/ble/index.yml": "./dist/src/json_schema/request/ble/index.yml",
 	"./request/ble/peripheral/advertisement_start.yml": "./dist/src/json_schema/request/ble/peripheral/advertisement_start.yml",
@@ -435,7 +438,7 @@ webpackContext.id = "./dist/src/json_schema sync recursive \\.yml$";
 /***/ "./dist/src/json_schema/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageDataArray":{"id":"imageDataArray","type":"array","minItems":0,"items":{"type":"integer","minimum":0}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
 
 /***/ }),
 
@@ -558,10 +561,31 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/ble/hci/advertisement_filter.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/advertisement_filter","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["advertisement_filter"],"properties":{"advertisement_filter":{"type":"array","items":{"type":"object","required":["range"],"properties":{"range":{"type":"object","required":["index","length"],"properties":{"index":{"type":"integer","minimum":0,"maximum":255},"length":{"type":"integer","minimum":0,"maximum":255}}},"value":{"$ref":"/dataArray"}}}}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/ble/hci/deinit.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/deinit","type":"object","required":["hci"],"properties":{"hci":{"type":"null"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/ble/hci/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","basePath":"ble","anyOf":[{"$ref":"/request/ble/hci/init"},{"$ref":"/request/ble/hci/deinit"},{"$ref":"/request/ble/hci/write"},{"$ref":"/request/ble/hci/advertisement_filter"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/ble/hci/init.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/init","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["initialize"],"properties":{"initialize":{"type":"boolean"}}}}}
 
 /***/ }),
 
@@ -729,7 +753,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/display/raw.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageData128x64"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageDataArray"},"color_depth":{"type":"integer","enum":[1,4,16],"default":1}}}
 
 /***/ }),
 
@@ -785,7 +809,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"}}}}
 
 /***/ }),
 
@@ -1415,7 +1439,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
 
 /***/ }),
 
@@ -1719,6 +1743,7 @@ const measure_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/mea
 const tcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/protocol/tcp.js"));
 const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
 const hw_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/hw/index.js"));
+const grove_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js"));
 class ObnizComponents extends ObnizParts_1.default {
     constructor(id, options) {
         super(id, options);
@@ -1831,6 +1856,15 @@ class ObnizComponents extends ObnizParts_1.default {
     getFreeTcp() {
         return this._getFreePeripheralUnit("tcp");
     }
+    hasExtraInterface(interfaceName) {
+        return !!this.getExtraInterface(interfaceName);
+    }
+    getExtraInterface(interfaceName) {
+        if (this._hwDefinition.extraInterface && this._hwDefinition.extraInterface[interfaceName]) {
+            return this._hwDefinition.extraInterface[interfaceName];
+        }
+        return null;
+    }
     _callOnConnect() {
         this._prepareComponents();
         super._callOnConnect();
@@ -1839,13 +1873,14 @@ class ObnizComponents extends ObnizParts_1.default {
         if (this._allComponentKeys.length !== 0) {
             return;
         }
-        const hwDefinition = hw_1.default.getDefinitionFor(this.hw);
-        if (!hwDefinition) {
+        this._hwDefinition = hw_1.default.getDefinitionFor(this.hw);
+        if (!this._hwDefinition) {
             throw new Error(`unkown hw ${this.hw}`);
         }
-        const hw_peripherals = hwDefinition.peripherals;
-        const hw_embeds = hwDefinition.embeds;
-        const hw_protocol = hwDefinition.protocol;
+        const hw_peripherals = this._hwDefinition.peripherals;
+        this._hw_peripherals = hw_peripherals;
+        const hw_embeds = this._hwDefinition.embeds;
+        const hw_protocol = this._hwDefinition.protocol;
         const shared_map = {
             io: directive_1.default,
             logicAnalyzer: logicanalyzer_1.default,
@@ -1858,6 +1893,7 @@ class ObnizComponents extends ObnizParts_1.default {
             spi: spi_1.default,
             i2c: i2c_1.default,
             pwm: pwm_1.default,
+            grove: grove_1.default,
         };
         let ble = ble_1.ObnizHciBLE.default;
         // < 3.0.0-beta
@@ -1884,7 +1920,7 @@ class ObnizComponents extends ObnizParts_1.default {
                     const Class = peripheral_map[key];
                     for (const unitId in units) {
                         const unitIdNumber = parseInt(unitId);
-                        this[key + unitIdNumber] = new Class(this, unitIdNumber);
+                        this[key + unitIdNumber] = new Class(this, unitIdNumber, units[unitId]);
                         this._allComponentKeys.push(key + unitIdNumber);
                     }
                 }
@@ -1894,7 +1930,7 @@ class ObnizComponents extends ObnizParts_1.default {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
-                    this[key] = new Class(this);
+                    this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                 }
             }
@@ -2181,8 +2217,7 @@ class ObnizConnection {
                 this.print_debug("send: " + sendData);
             }
             /* compress */
-            if (this.wscommand &&
-                (typeof options !== "object" || options.local_connect !== false)) {
+            if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
                 let compressed;
                 try {
                     compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
@@ -2426,13 +2461,7 @@ class ObnizConnection {
         }
         /* unbind */
         if (this.isNode) {
-            const shouldRemoveObservers = [
-                "open",
-                "message",
-                "close",
-                "error",
-                "unexpected-response",
-            ];
+            const shouldRemoveObservers = ["open", "message", "close", "error", "unexpected-response"];
             for (let i = 0; i < shouldRemoveObservers.length; i++) {
                 socket.removeAllListeners(shouldRemoveObservers[i]);
             }
@@ -2481,9 +2510,7 @@ class ObnizConnection {
         }
     }
     _sendRouted(data) {
-        if (this.socket_local &&
-            this.socket_local.readyState === 1 &&
-            typeof data !== "string") {
+        if (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string") {
             this.print_debug("send via local");
             this.socket_local.send(data);
             if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
@@ -2584,8 +2611,7 @@ class ObnizConnection {
             this.wsconnect(server);
         }
     }
-    handleSystemCommand(wsObj) {
-    }
+    handleSystemCommand(wsObj) { }
     binary2Json(binary) {
         let data = new Uint8Array(binary);
         const json = [];
@@ -2611,6 +2637,226 @@ class ObnizConnection {
 exports.default = ObnizConnection;
 
 //# sourceMappingURL=ObnizConnection.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/ObnizDevice.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
+class ObnizDevice extends ObnizUIs_1.default {
+    /**
+     * We will now instantiate obniz.
+     *
+     * obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
+     *
+     * ```javascript
+     * new Obniz('1234-5678') // OK
+     * new Obniz('12345678') // OK
+     * new Obniz(12345678) // Can't accept
+     * ```
+     *
+     * If you connect to obniz which has an access token, provide an option like this
+     *
+     * ```javascript
+     * new Obniz('1234-5678', {access_token: 'your token here'})
+     * ```
+     *
+     * If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
+     * In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
+     * It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
+     *
+     * ![](media://obniz_prompt.png)
+     *
+     * When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
+     *
+     * When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
+     * But when cloud connection gets closed, the local connect also gets closed.
+     *
+     * ![](media://local_connect.png)
+     *
+     * The timing onconnect() gets called depends on the availability of local connect.
+     * obniz.js will wait a little to establish connection via local connect as much as possible.
+     * See the flow below.
+     *
+     * ![](media://onconnect_flow.png)
+     *
+     * The second parameter when instantiating obniz Board is an option.
+     *
+     * @param id
+     * @param options
+     */
+    constructor(id, options) {
+        super(id, options);
+        this.util = new util_1.default(this);
+    }
+    /**
+     * Repeat will call the callback function periodically while it is connected to obniz Board.
+     * It will stop calling once it is disconnected from obniz Board.
+     *
+     * ```javascript
+     * // Javascript Example
+     *  obniz.ad0.start();
+     *  obniz.repeat(function(){
+     *    if (obniz.ad0.value > 2.5) {
+     *      obniz.io0.output(true);
+     *    } else {
+     *      obniz.io0.output(false);
+     *    }
+     *  }, 100)
+     * ```
+     *
+     * @param callback
+     * @param interval  default 100. It mean 100ms interval loop.
+     */
+    repeat(callback, interval) {
+        if (this.looper) {
+            this.looper = callback;
+            this.repeatInterval = interval || this.repeatInterval || 100;
+            return;
+        }
+        this.looper = callback;
+        this.repeatInterval = interval || 100;
+        if (this.onConnectCalled) {
+            this.loop();
+        }
+    }
+    /**
+     * @ignore
+     * @param msg
+     */
+    warning(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                console.log(msg.message);
+                return;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+            }
+            console.log(`Warning: ${msg}`);
+        }
+    }
+    /**
+     * @ignore
+     * @param msg
+     */
+    error(msg) {
+        if (this.isNode) {
+            console.error(msg);
+        }
+        else {
+            if (msg && typeof msg === "object" && msg.alert) {
+                this.showAlertUI(msg);
+                msg = msg.message;
+            }
+            if (typeof showObnizDebugError === "function") {
+                showObnizDebugError(new Error(msg));
+                console.error(new Error(msg));
+            }
+            else {
+                throw new Error(msg);
+            }
+        }
+    }
+    /**
+     * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
+     *
+     * ```javascript
+     * // Example
+     * obniz.onconnect = function(){
+     *  var button = obniz.wired("Button",  {signal:0, gnd:1});
+     *
+     *  button.onchange = function(){
+     *    var targets = [
+     *      "1234-1231",
+     *      "1234-1232",
+     *      "1234-1233",
+     *      "1234-1234",
+     *      "1234-1235",
+     *      "1234-1236",
+     *      "1234-1237",
+     *      "1234-1238",
+     *      "1234-1239",
+     *      "1234-1230"];
+     *
+     *    obniz.message(targets, "pressed");
+     *   };
+     * }
+     * ```
+     *
+     * @param target destination obniz id
+     * @param message message data
+     */
+    message(target, message) {
+        let targets = [];
+        if (typeof target === "string") {
+            targets.push(target);
+        }
+        else {
+            targets = target;
+        }
+        this.send({
+            message: {
+                to: targets,
+                data: message,
+            },
+        });
+    }
+    async loop() {
+        if (typeof this.looper === "function" && this.onConnectCalled) {
+            const prom = this.looper();
+            if (prom instanceof Promise) {
+                await prom;
+            }
+            setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+        }
+    }
+    _callOnConnect() {
+        super._callOnConnect();
+        this.loop();
+    }
+    notifyToModule(obj) {
+        super.notifyToModule(obj);
+        // notify messaging
+        if (typeof obj.message === "object" && this.onmessage) {
+            this.onmessage(obj.message.data, obj.message.from);
+        }
+        // debug
+        if (typeof obj.debug === "object") {
+            if (obj.debug.warning) {
+                const msg = "Warning: " + obj.debug.warning.message;
+                this.warning({ alert: "warning", message: msg });
+            }
+            if (obj.debug.error) {
+                const msg = "Error: " + obj.debug.error.message;
+                this.error({ alert: "error", message: msg });
+            }
+            if (this.ondebug) {
+                this.ondebug(obj.debug);
+            }
+        }
+    }
+}
+exports.default = ObnizDevice;
+
+//# sourceMappingURL=ObnizDevice.js.map
 
 
 /***/ }),
@@ -2647,9 +2893,7 @@ class ObnizParts extends ObnizConnection_1.default {
      * @param arg0 Parts class
      */
     static PartsRegistrate(arg0, arg1) {
-        if (arg0 &&
-            typeof arg0.info === "function" &&
-            typeof arg0.info().name === "string") {
+        if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
             _parts[arg0.info().name] = arg0;
         }
         else if (typeof arg0 === "string" && typeof arg1 === "object") {
@@ -2678,6 +2922,13 @@ class ObnizParts extends ObnizConnection_1.default {
         return typeof io === "number" && this["io" + io] !== null;
     }
     /**
+     * Check the param is valid ad pin no.
+     * @param io
+     */
+    isValidAD(ad) {
+        return typeof ad === "number" && this["ad" + ad] !== null;
+    }
+    /**
      * Setup Parts of parts library
      *
      * @param partsname
@@ -2691,6 +2942,9 @@ class ObnizParts extends ObnizConnection_1.default {
         const args = Array.from(arguments);
         args.shift();
         args.unshift(this);
+        if (!args[1]) {
+            args[1] = {};
+        }
         if (parts.keys) {
             if (parts.requiredKeys) {
                 const err = util_1.default._requiredKeys(args[1], parts.requiredKeys);
@@ -3115,9 +3369,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         const dom = `
     <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"}">${obj.message}</div>`;
-        document
-            .getElementById(this.options.debug_dom_id)
-            .insertAdjacentHTML("beforeend", dom);
+        document.getElementById(this.options.debug_dom_id).insertAdjacentHTML("beforeend", dom);
     }
     getDebugDoms() {
         if (this.isNode) {
@@ -3170,13 +3422,10 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             doms.loaderDom.style.display = "none";
         }
         if (doms.statusDom) {
-            doms.statusDom.style.backgroundColor = isConnectedLocally
-                ? "#0cd362"
-                : "#31965d";
+            doms.statusDom.style.backgroundColor = isConnectedLocally ? "#0cd362" : "#31965d";
             doms.statusDom.style.color = "#FFF";
             doms.statusDom.innerHTML =
-                (this.id ? "online : " + this.id : "online") +
-                    (isConnectedLocally ? " via local_connect" : " via internet");
+                (this.id ? "online : " + this.id : "online") + (isConnectedLocally ? " via local_connect" : " via internet");
         }
     }
     showOffLine() {
@@ -3228,21 +3477,11 @@ function _ReadCookie(name) {
  * @packageDocumentation
  * @module ObnizCore
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
-const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
-const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
+const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
+const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
  *
@@ -3266,52 +3505,7 @@ const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUI
  * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
  *
  */
-class Obniz extends ObnizUIs_1.default {
-    /**
-     * We will now instantiate obniz.
-     *
-     * obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
-     *
-     * ```javascript
-     * new Obniz('1234-5678') // OK
-     * new Obniz('12345678') // OK
-     * new Obniz(12345678) // Can't accept
-     * ```
-     *
-     * If you connect to obniz which has an access token, provide an option like this
-     *
-     * ```javascript
-     * new Obniz('1234-5678', {access_token: 'your token here'})
-     * ```
-     *
-     * If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
-     * In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
-     * It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
-     *
-     * ![](media://obniz_prompt.png)
-     *
-     * When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
-     *
-     * When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
-     * But when cloud connection gets closed, the local connect also gets closed.
-     *
-     * ![](media://local_connect.png)
-     *
-     * The timing onconnect() gets called depends on the availability of local connect.
-     * obniz.js will wait a little to establish connection via local connect as much as possible.
-     * See the flow below.
-     *
-     * ![](media://onconnect_flow.png)
-     *
-     * The second parameter when instantiating obniz Board is an option.
-     *
-     * @param id
-     * @param options
-     */
-    constructor(id, options) {
-        super(id, options);
-        this.util = new util_1.default(this);
-    }
+class Obniz extends ObnizDevice_1.default {
     /**
      * obniz REST api class
      * @returns {ObnizApi}
@@ -3319,160 +3513,11 @@ class Obniz extends ObnizUIs_1.default {
     static get api() {
         return ObnizApi_1.default;
     }
-    /**
-     * Repeat will call the callback function periodically while it is connected to obniz Board.
-     * It will stop calling once it is disconnected from obniz Board.
-     *
-     * ```javascript
-     * // Javascript Example
-     *  obniz.ad0.start();
-     *  obniz.repeat(function(){
-     *    if (obniz.ad0.value > 2.5) {
-     *      obniz.io0.output(true);
-     *    } else {
-     *      obniz.io0.output(false);
-     *    }
-     *  }, 100)
-     * ```
-     *
-     * @param callback
-     * @param interval  default 100. It mean 100ms interval loop.
-     */
-    repeat(callback, interval) {
-        if (this.looper) {
-            this.looper = callback;
-            this.repeatInterval = interval || this.repeatInterval || 100;
-            return;
-        }
-        this.looper = callback;
-        this.repeatInterval = interval || 100;
-        if (this.onConnectCalled) {
-            this.loop();
-        }
-    }
-    /**
-     * @ignore
-     * @param msg
-     */
-    warning(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                console.log(msg.message);
-                return;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-            }
-            console.log(`Warning: ${msg}`);
-        }
-    }
-    /**
-     * @ignore
-     * @param msg
-     */
-    error(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
-            if (msg && typeof msg === "object" && msg.alert) {
-                this.showAlertUI(msg);
-                msg = msg.message;
-            }
-            if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
-                console.error(new Error(msg));
-            }
-            else {
-                throw new Error(msg);
-            }
-        }
-    }
-    /**
-     * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
-     *
-     * ```javascript
-     * // Example
-     * obniz.onconnect = function(){
-     *  var button = obniz.wired("Button",  {signal:0, gnd:1});
-     *
-     *  button.onchange = function(){
-     *    var targets = [
-     *      "1234-1231",
-     *      "1234-1232",
-     *      "1234-1233",
-     *      "1234-1234",
-     *      "1234-1235",
-     *      "1234-1236",
-     *      "1234-1237",
-     *      "1234-1238",
-     *      "1234-1239",
-     *      "1234-1230"];
-     *
-     *    obniz.message(targets, "pressed");
-     *   };
-     * }
-     * ```
-     *
-     * @param target destination obniz id
-     * @param message message data
-     */
-    message(target, message) {
-        let targets = [];
-        if (typeof target === "string") {
-            targets.push(target);
-        }
-        else {
-            targets = target;
-        }
-        this.send({
-            message: {
-                to: targets,
-                data: message,
-            },
-        });
-    }
-    loop() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof this.looper === "function" && this.onConnectCalled) {
-                const prom = this.looper();
-                if (prom instanceof Promise) {
-                    yield prom;
-                }
-                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-            }
-        });
-    }
-    _callOnConnect() {
-        super._callOnConnect();
-        this.loop();
-    }
-    notifyToModule(obj) {
-        super.notifyToModule(obj);
-        // notify messaging
-        if (typeof obj.message === "object" && this.onmessage) {
-            this.onmessage(obj.message.data, obj.message.from);
-        }
-        // debug
-        if (typeof obj.debug === "object") {
-            if (obj.debug.warning) {
-                const msg = "Warning: " + obj.debug.warning.message;
-                this.warning({ alert: "warning", message: msg });
-            }
-            if (obj.debug.error) {
-                const msg = "Error: " + obj.debug.error.message;
-                this.error({ alert: "error", message: msg });
-            }
-            if (this.ondebug) {
-                this.ondebug(obj.debug);
-            }
-        }
-    }
 }
+/**
+ * M5StickC device
+ */
+Obniz.M5StickC = m5stickc_1.M5StickC;
 /*===================*/
 /* Utils */
 /*===================*/
@@ -3482,6 +3527,7 @@ try {
             window.parent.userAppLoaded(window);
         }
         function showObnizDebugError(err) {
+            // eslint-disable-line
             if (window.parent && window.parent.logger) {
                 window.parent.logger.onObnizError(err);
             }
@@ -3503,6 +3549,7 @@ catch (e) {
  * @ignore
  */
 const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
+const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
 if (requireContext.setBaseDir) {
     requireContext.setBaseDir(__dirname);
@@ -3517,7 +3564,8 @@ for (const path of context.keys()) {
     if (anParts.info) {
         Obniz.PartsRegistrate(anParts);
     }
-    else if (anParts.default.info) { // for ts "export default"
+    else if (anParts.default.info) {
+        // for ts "export default"
         Obniz.PartsRegistrate(anParts.default);
     }
 }
@@ -3568,15 +3616,6 @@ exports.ObnizHciBLE = ObnizHciBLE;
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.old
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -3631,19 +3670,13 @@ class ObnizBLE {
         return str;
     }
     // dummy
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    _reset() {
-    }
+    async initWait() { }
+    _reset() { }
     directConnect(uuid, addressType) {
         throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
     }
-    directConnectWait(uuid, addressType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            throw new Error("directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS");
-        });
+    async directConnectWait(uuid, addressType) {
+        throw new Error("directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS");
     }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
@@ -3804,9 +3837,7 @@ class ObnizBLE {
                 peripheral = this.findPeripheral(params.address);
             }
             if (peripheral) {
-                if (params.service_uuid &&
-                    params.characteristic_uuid &&
-                    params.descriptor_uuid) {
+                if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
                     target = peripheral.findDescriptor(params);
                 }
                 else if (params.service_uuid && params.characteristic_uuid) {
@@ -3937,9 +3968,7 @@ class BleAdvertisementBuilder {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
             }
-            if (json.manufacturerData &&
-                json.manufacturerData.companyCode &&
-                json.manufacturerData.data) {
+            if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
                 this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
             }
             if (json.serviceUuids) {
@@ -4009,9 +4038,7 @@ class BleAdvertisementBuilder {
     }
     convertUuid(uuid) {
         const uuidNumeric = bleHelper_1.default.uuidFilter(uuid);
-        if (uuidNumeric.length !== 32 &&
-            uuidNumeric.length !== 8 &&
-            uuidNumeric.length !== 4) {
+        if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
             this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
         }
         const data = [];
@@ -4127,8 +4154,7 @@ class BleAttributeAbstract {
     setFunctions() {
         let childrenName = this.childrenName;
         if (childrenName) {
-            childrenName =
-                childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+            childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
             const childName = childrenName.slice(0, -1);
             let funcName = "add" + childName;
             this[funcName] = this.addChild;
@@ -4189,10 +4215,8 @@ class BleAttributeAbstract {
     /**
      * WS COMMANDS
      */
-    read() {
-    }
-    write(val, needResponse) {
-    }
+    read() { }
+    write(val, needResponse) { }
     writeNumber(val, needResponse) {
         this.write([val], needResponse);
     }
@@ -4268,14 +4292,10 @@ class BleAttributeAbstract {
     /**
      * CALLBACKS
      */
-    onwrite(result) {
-    }
-    onread(data) {
-    }
-    onwritefromremote(address, data) {
-    }
-    onreadfromremote(address) {
-    }
+    onwrite(result) { }
+    onread(data) { }
+    onwritefromremote(address, data) { }
+    onreadfromremote(address) { }
     onerror(err) {
         console.error(err.message);
     }
@@ -4628,10 +4648,8 @@ class BlePeripheral {
     end() {
         this.Obniz.send({ ble: { peripheral: null } });
     }
-    onconnectionupdates() {
-    }
-    onerror() {
-    }
+    onconnectionupdates() { }
+    onerror() { }
 }
 exports.default = BlePeripheral;
 
@@ -4673,8 +4691,7 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
-    discoverChildren() {
-    }
+    discoverChildren() { }
     discoverChildrenWait() {
         return new Promise((resolve) => {
             this.emitter.once("discoverfinished", () => {
@@ -4689,10 +4706,8 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     /**
      * CALLBACKS
      */
-    ondiscover(child) {
-    }
-    ondiscoverfinished(children) {
-    }
+    ondiscover(child) { }
+    ondiscoverfinished(children) { }
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
@@ -4729,15 +4744,6 @@ exports.default = BleRemoteAttributeAbstract;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -4784,22 +4790,20 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     getDescriptor(uuid) {
         return this.getChild(uuid);
     }
-    registerNotify(callback) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.onnotify = callback;
-            const cccd = this.getDescriptor("2902");
-            yield cccd.writeWait([0x01, 0x00]);
-            const obj = {
-                ble: {
-                    register_notify_characteristic: {
-                        address: this.service.peripheral.address,
-                        service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    },
+    async registerNotify(callback) {
+        this.onnotify = callback;
+        const cccd = this.getDescriptor("2902");
+        await cccd.writeWait([0x01, 0x00]);
+        const obj = {
+            ble: {
+                register_notify_characteristic: {
+                    address: this.service.peripheral.address,
+                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
+                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
                 },
-            };
-            this.service.peripheral.Obniz.send(obj);
-        });
+            },
+        };
+        this.service.peripheral.Obniz.send(obj);
     }
     registerNotifyWait(callback) {
         return new Promise((resolve) => {
@@ -4810,8 +4814,7 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
         });
     }
     unregisterNotify() {
-        this.onnotify = () => {
-        };
+        this.onnotify = () => { };
         const obj = {
             ble: {
                 unregister_notify_characteristic: {
@@ -4909,16 +4912,11 @@ class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
     ondiscoverfinished(descriptors) {
         this.ondiscoverdescriptorfinished(descriptors);
     }
-    ondiscoverdescriptor(descriptors) {
-    }
-    ondiscoverdescriptorfinished(descriptors) {
-    }
-    onregisternotify() {
-    }
-    onunregisternotify() {
-    }
-    onnotify(data) {
-    }
+    ondiscoverdescriptor(descriptors) { }
+    ondiscoverdescriptorfinished(descriptors) { }
+    onregisternotify() { }
+    onunregisternotify() { }
+    onnotify(data) { }
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
@@ -5015,15 +5013,6 @@ exports.default = BleRemoteDescriptor;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -5051,14 +5040,7 @@ class BleRemotePeripheral {
         this.rssi = null;
         this.adv_data = null;
         this.scan_resp = null;
-        this.keys = [
-            "device_type",
-            "address_type",
-            "ble_event_type",
-            "rssi",
-            "adv_data",
-            "scan_resp",
-        ];
+        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this._services = [];
         this.emitter = new emitter();
     }
@@ -5141,12 +5123,7 @@ class BleRemotePeripheral {
     }
     setIBeacon() {
         const data = this.searchTypeVal(0xff);
-        if (!data ||
-            data[0] !== 0x4c ||
-            data[1] !== 0x00 ||
-            data[2] !== 0x02 ||
-            data[3] !== 0x15 ||
-            data.length !== 25) {
+        if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
             this.iBeacon = null;
             return;
         }
@@ -5154,10 +5131,7 @@ class BleRemotePeripheral {
         let uuid = "";
         for (let i = 0; i < uuidData.length; i++) {
             uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 ||
-                i === 4 + 2 - 1 ||
-                i === 4 + 2 * 2 - 1 ||
-                i === 4 + 2 * 3 - 1) {
+            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
                 uuid += "-";
             }
         }
@@ -5290,84 +5264,73 @@ class BleRemotePeripheral {
             this.discoverAllServices();
         });
     }
-    discoverAllHandlesWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ArrayFlat = (array, depth) => {
-                const flattend = [];
-                const flat = (_array, _depth) => {
-                    for (const el of _array) {
-                        if (Array.isArray(el) && _depth > 0) {
-                            flat(el, _depth - 1);
-                        }
-                        else {
-                            flattend.push(el);
-                        }
+    async discoverAllHandlesWait() {
+        const ArrayFlat = (array, depth) => {
+            const flattend = [];
+            const flat = (_array, _depth) => {
+                for (const el of _array) {
+                    if (Array.isArray(el) && _depth > 0) {
+                        flat(el, _depth - 1);
                     }
-                };
-                flat(array, Math.floor(depth) || 1);
-                return flattend;
+                    else {
+                        flattend.push(el);
+                    }
+                }
             };
-            const services = yield this.discoverAllServicesWait();
-            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-            const chars = ArrayFlat(charsNest);
-            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-            // eslint-disable-next-line no-unused-vars
-            const descriptors = ArrayFlat(descriptorsNest);
-        });
+            flat(array, Math.floor(depth) || 1);
+            return flattend;
+        };
+        const services = await this.discoverAllServicesWait();
+        const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
+        const chars = ArrayFlat(charsNest);
+        const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
+        // eslint-disable-next-line no-unused-vars
+        const descriptors = ArrayFlat(descriptorsNest);
     }
-    onconnect() {
-    }
-    ondisconnect() {
-    }
-    ondiscoverservice(child) {
-    }
-    ondiscoverservicefinished(children) {
-    }
-    ondiscover() {
-    }
-    ondiscoverfinished() {
-    }
-    notifyFromServer(notifyName, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.emitter.emit(notifyName, params);
-            switch (notifyName) {
-                case "statusupdate": {
-                    if (params.status === "connected") {
-                        this.connected = true;
-                        yield this.discoverAllHandlesWait();
-                        this.onconnect();
-                    }
-                    if (params.status === "disconnected") {
-                        this.connected = false;
-                        this.ondisconnect();
-                    }
-                    break;
+    onconnect() { }
+    ondisconnect() { }
+    ondiscoverservice(child) { }
+    ondiscoverservicefinished(children) { }
+    ondiscover() { }
+    ondiscoverfinished() { }
+    async notifyFromServer(notifyName, params) {
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "statusupdate": {
+                if (params.status === "connected") {
+                    this.connected = true;
+                    await this.discoverAllHandlesWait();
+                    this.onconnect();
                 }
-                case "discover": {
-                    const uuid = params.service_uuid;
-                    let child = this.getService(uuid);
-                    if (!child) {
-                        const newService = new bleRemoteService_1.default({ uuid });
-                        newService.parent = this;
-                        this._services.push(newService);
-                        child = newService;
-                    }
-                    child.discoverdOnRemote = true;
-                    this.ondiscoverservice(child);
-                    break;
+                if (params.status === "disconnected") {
+                    this.connected = false;
+                    this.ondisconnect();
                 }
-                case "discoverfinished": {
-                    const children = this._services.filter((elm) => {
-                        return elm.discoverdOnRemote;
-                    });
-                    this.ondiscoverservicefinished(children);
-                    break;
-                }
+                break;
             }
-        });
+            case "discover": {
+                const uuid = params.service_uuid;
+                let child = this.getService(uuid);
+                if (!child) {
+                    const newService = new bleRemoteService_1.default({ uuid });
+                    newService.parent = this;
+                    this._services.push(newService);
+                    child = newService;
+                }
+                child.discoverdOnRemote = true;
+                this.ondiscoverservice(child);
+                break;
+            }
+            case "discoverfinished": {
+                const children = this._services.filter((elm) => {
+                    return elm.discoverdOnRemote;
+                });
+                this.ondiscoverservicefinished(children);
+                break;
+            }
+        }
     }
-    onerror() {
-    }
+    onerror() { }
 }
 exports.default = BleRemotePeripheral;
 
@@ -5442,10 +5405,8 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     ondiscoverfinished(characteristics) {
         this.ondiscovercharacteristicfinished(characteristics);
     }
-    ondiscovercharacteristic(characteristic) {
-    }
-    ondiscovercharacteristicfinished(characteristics) {
-    }
+    ondiscovercharacteristic(characteristic) { }
+    ondiscovercharacteristicfinished(characteristics) { }
 }
 exports.default = BleRemoteService;
 
@@ -5493,9 +5454,7 @@ class BleScan {
             throw new Error(`duplicate property can only be used with obnizOS3 or later`);
         }
         this.scanTarget = target;
-        if (this.scanTarget &&
-            this.scanTarget.uuids &&
-            Array.isArray(this.scanTarget.uuids)) {
+        if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
             this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
@@ -5537,9 +5496,7 @@ class BleScan {
         this.Obniz.send(obj);
     }
     isTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.localName &&
-            peripheral.localName !== this.scanTarget.localName) {
+        if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {
             return false;
         }
         if (this.scanTarget && this.scanTarget.uuids) {
@@ -5554,10 +5511,14 @@ class BleScan {
         }
         return true;
     }
-    onfinish(scanedPeripherals) {
-    } // dummy
-    onfind(params) {
-    } // dummy
+    onfinish(scanedPeripherals) { } // dummy
+    onfind(params) { } // dummy
+    setAdvertisementFilter() {
+        throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
+    }
+    setScanMode(mode) {
+        throw new Error("setScanMode is not support obnizOS < 3.2.0");
+    }
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onfind": {
@@ -5638,9 +5599,7 @@ class BleSecurity {
                 // keys = ['LTK', 'IRK','CSRK'];
             }
         }
-        if (auth !== undefined &&
-            indicateSecurityLevel !== undefined &&
-            keys !== undefined) {
+        if (auth !== undefined && indicateSecurityLevel !== undefined && keys !== undefined) {
             this.setAuth(auth);
             this.setIndicateSecurityLevel(indicateSecurityLevel);
             this.setEnableKeyTypes(keys);
@@ -5740,8 +5699,7 @@ class BleSecurity {
             },
         });
     }
-    onerror(params) {
-    } // dummy
+    onerror(params) { } // dummy
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {
@@ -5832,15 +5790,6 @@ exports.default = BleService;
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -5850,6 +5799,7 @@ const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/
 const bindings_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/bindings.js"));
 const hci_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const bindings_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
@@ -5925,13 +5875,17 @@ class ObnizBLE {
      * await obniz.ble.initWait();
      * ```
      */
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this._initialized) {
-                this._initialized = true;
-                yield this.hciProtocol.initWait();
+    async initWait() {
+        if (!this._initialized) {
+            this._initialized = true;
+            // force initialize on obnizOS < 3.2.0
+            if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
+                this.hci.init();
+                this.hci.end(); // disable once
+                this.hci.init();
             }
-        });
+            await this.hciProtocol.initWait();
+        }
     }
     /**
      * @ignore
@@ -5946,8 +5900,7 @@ class ObnizBLE {
      * @ignore
      * @private
      */
-    _reset() {
-    }
+    _reset() { }
     /**
      * Connect to peripheral without scanning.
      * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
@@ -6000,12 +5953,10 @@ class ObnizBLE {
      * @param address peripheral device address
      * @param addressType "random" or "public"
      */
-    directConnectWait(address, addressType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const peripheral = this.directConnect(address, addressType);
-            yield peripheral.connectWait();
-            return peripheral;
-        });
+    async directConnectWait(address, addressType) {
+        const peripheral = this.directConnect(address, addressType);
+        await peripheral.connectWait();
+        return peripheral;
     }
     /**
      * @ignore
@@ -6019,8 +5970,7 @@ class ObnizBLE {
             });
         }
     }
-    onStateChange() {
-    }
+    onStateChange() { }
     findPeripheral(address) {
         for (const key in this.remotePeripherals) {
             if (this.remotePeripherals[key].address === address) {
@@ -6029,10 +5979,8 @@ class ObnizBLE {
         }
         return null;
     }
-    onAddressChange() {
-    }
-    onScanStart() {
-    }
+    onAddressChange() { }
+    onScanStart() { }
     onScanStop() {
         this.scan.notifyFromServer("onfinish", null);
     }
@@ -6046,9 +5994,7 @@ class ObnizBLE {
         const peripheralData = {
             device_type: "ble",
             address_type: addressType,
-            ble_event_type: connectable
-                ? "connectable_advertisemnt"
-                : "non_connectable_advertising",
+            ble_event_type: connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
             rssi,
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
@@ -6057,23 +6003,20 @@ class ObnizBLE {
         val._adv_data_filtered = advertisement;
         this.scan.notifyFromServer("onfind", val);
     }
-    onConnect(peripheralUuid, error) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const peripheral = this.findPeripheral(peripheralUuid);
-            if (!error) {
-                yield peripheral.discoverAllHandlesWait();
-            }
-            peripheral.notifyFromServer("statusupdate", {
-                status: error ? "disconnected" : "connected",
-            });
+    async onConnect(peripheralUuid, error) {
+        const peripheral = this.findPeripheral(peripheralUuid);
+        if (!error && peripheral._connectSetting.autoDiscovery) {
+            await peripheral.discoverAllHandlesWait();
+        }
+        peripheral.notifyFromServer("statusupdate", {
+            status: error ? "disconnected" : "connected",
         });
     }
     onDisconnect(peripheralUuid) {
         const peripheral = this.findPeripheral(peripheralUuid);
         peripheral.notifyFromServer("statusupdate", { status: "disconnected" });
     }
-    onRssiUpdate() {
-    }
+    onRssiUpdate() { }
     onServicesDiscover(peripheralUuid, serviceUuids) {
         const peripheral = this.findPeripheral(peripheralUuid);
         for (const serviceUuid of serviceUuids) {
@@ -6081,8 +6024,7 @@ class ObnizBLE {
         }
         peripheral.notifyFromServer("discoverfinished", {});
     }
-    onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids) {
-    }
+    onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids) { }
     onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics) {
         const peripheral = this.findPeripheral(peripheralUuid);
         const service = peripheral.findService({ service_uuid: serviceUuid });
@@ -6125,8 +6067,7 @@ class ObnizBLE {
             result: isSuccess ? "success" : "failed",
         });
     }
-    onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) {
-    }
+    onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) { }
     onNotify(peripheralUuid, serviceUuid, characteristicUuid, state) {
         const peripheral = this.findPeripheral(peripheralUuid);
         const char = peripheral.findCharacteristic({
@@ -6179,12 +6120,9 @@ class ObnizBLE {
         };
         descriptor.notifyFromServer("onwrite", obj);
     }
-    onHandleRead(peripheralUuid, handle, data) {
-    }
-    onHandleWrite(peripheralUuid, handle) {
-    }
-    onHandleNotify(peripheralUuid, handle, data) {
-    }
+    onHandleRead(peripheralUuid, handle, data) { }
+    onHandleWrite(peripheralUuid, handle) { }
+    onHandleNotify(peripheralUuid, handle, data) { }
     onPeripheralStateChange(state) {
         // console.error("onPeripheralStateChange")
     }
@@ -6437,9 +6375,7 @@ class BleAdvertisementBuilder {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
             }
-            if (json.manufacturerData &&
-                json.manufacturerData.companyCode &&
-                json.manufacturerData.data) {
+            if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
                 this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
             }
             if (json.serviceUuids) {
@@ -6500,9 +6436,7 @@ class BleAdvertisementBuilder {
     }
     convertUuid(uuid) {
         const uuidNumeric = bleHelper_1.default.uuidFilter(uuid);
-        if (uuidNumeric.length !== 32 &&
-            uuidNumeric.length !== 8 &&
-            uuidNumeric.length !== 4) {
+        if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
             throw new Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
         }
         const data = [];
@@ -6681,13 +6615,11 @@ class BleAttributeAbstract {
     /**
      * @ignore
      */
-    read() {
-    }
+    read() { }
     /**
      * @ignore
      */
-    write(data, needResponse) {
-    }
+    write(data, needResponse) { }
     /**
      * @ignore
      */
@@ -6832,8 +6764,7 @@ class BleAttributeAbstract {
     setFunctions() {
         let childrenName = this.childrenName;
         if (childrenName) {
-            childrenName =
-                childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+            childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
             const childName = childrenName.slice(0, -1);
             let funcName = "add" + childName;
             this[funcName] = this.addChild;
@@ -6913,11 +6844,6 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
         else {
             this.properties = obj.properties || [];
         }
-        //
-        // this.permissions = obj.permissions || [];
-        // if (!Array.isArray(this.permissions)) {
-        //   this.permissions = [this.permissions];
-        // }
     }
     /**
      * @ignore
@@ -6997,18 +6923,16 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
             return elm !== param;
         });
     }
-    //
-    // public addPermission(param: any) {
-    //   if (!this.permissions.includes(param)) {
-    //     this.permissions.push(param);
-    //   }
-    // }
-    //
-    // public removePermission(param: any) {
-    //   this.permissions = this.permissions.filter((elm: any) => {
-    //     return elm !== param;
-    //   });
-    // }
+    /**
+     * @ignore
+     * @param param
+     */
+    addPermission(param) { }
+    /**
+     * @ignore
+     * @param param
+     */
+    removePermission(param) { }
     /**
      * @ignore
      * @param name
@@ -7059,14 +6983,12 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
      * @ignore
      * @private
      */
-    _onNotify() {
-    }
+    _onNotify() { }
     /**
      * @ignore
      * @private
      */
-    _onIndicate() {
-    }
+    _onIndicate() { }
     /**
      * This sends notify to the connected central.
      *
@@ -7288,8 +7210,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
             callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
             let address = null;
             if (this.parentName === "characteristic") {
-                address = this.characteristic.service.peripheral
-                    .currentConnectedDeviceAddress;
+                address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
             }
             else if (this.parentName === "service") {
                 address = this.service.peripheral.currentConnectedDeviceAddress;
@@ -7314,8 +7235,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         callback(BleResponseResult.SUCCESS);
         let address = null;
         if (this.parentName === "characteristic") {
-            address = this.characteristic.service.peripheral
-                .currentConnectedDeviceAddress;
+            address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
         }
         else if (this.parentName === "service") {
             address = this.service.peripheral.currentConnectedDeviceAddress;
@@ -7570,8 +7490,7 @@ class BlePeripheral {
      * @ignore
      * @param error
      */
-    onerror(error) {
-    }
+    onerror(error) { }
 }
 exports.default = BlePeripheral;
 
@@ -7617,8 +7536,7 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     /**
      * @ignore
      */
-    discoverChildren() {
-    }
+    discoverChildren() { }
     /**
      * @ignore
      */
@@ -7637,14 +7555,12 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
      * @ignore
      * @param child
      */
-    ondiscover(child) {
-    }
+    ondiscover(child) { }
     /**
      * @ignore
      * @param children
      */
-    ondiscoverfinished(children) {
-    }
+    ondiscoverfinished(children) { }
     /**
      * @ignore
      * @param notifyName
@@ -7884,8 +7800,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      */
     unregisterNotify() {
-        this.onnotify = () => {
-        };
+        this.onnotify = () => { };
         this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, false);
     }
     /**
@@ -8049,8 +7964,31 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         return this.discoverChildren();
     }
     /**
-     * @ignore
+     * Discover services.
      *
+     * If connect setting param 'autoDiscovery' is true(default),
+     * services are automatically disvocer on connection established.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.discoverAllServicesWait(); //manually discover
+     *          let service = peripheral.getService("1800");
+     *          await service.discoverAllCharacteristicsWait(); //manually discover
+     *          let characteristics = service.getCharacteristic("ff00");
+     *          await characteristics.discoverAllDescriptorsWait(); //manually discover
+     *          let descriptor = characteristics.getDescriptor("fff1");
+     *      }
+     *      peripheral.connect({autoDiscovery:false});
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
      */
     discoverAllDescriptorsWait() {
         return this.discoverChildrenWait();
@@ -8310,15 +8248,6 @@ exports.default = BleRemoteDescriptor;
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8332,6 +8261,10 @@ const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz
  */
 class BleRemotePeripheral {
     constructor(obnizBle, address) {
+        /**
+         * @ignore
+         */
+        this._connectSetting = {};
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -8343,19 +8276,13 @@ class BleRemotePeripheral {
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
-        this.keys = [
-            "device_type",
-            "address_type",
-            "ble_event_type",
-            "rssi",
-            "adv_data",
-            "scan_resp",
-        ];
+        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this._services = [];
         this.emitter = new eventemitter3_1.default();
     }
     /**
-     * It contains all discovered services in a peripheral as an array. It is discovered when connection automatically.
+     * It contains all discovered services in a peripheral as an array.
+     * It is discovered when connection automatically.
      *
      * ```javascript
      * // Javascript Example
@@ -8433,7 +8360,9 @@ class BleRemotePeripheral {
      * obniz.ble.scan.start();
      * ```
      */
-    connect() {
+    connect(setting) {
+        this._connectSetting = setting || {};
+        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         this.obnizBle.scan.end();
         this.obnizBle.centralBindings.connect(this.address);
     }
@@ -8467,7 +8396,7 @@ class BleRemotePeripheral {
      * ```
      *
      */
-    connectWait() {
+    connectWait(setting) {
         return new Promise((resolve, reject) => {
             // if (this.connected) {
             //   resolve();
@@ -8481,7 +8410,7 @@ class BleRemotePeripheral {
                     reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
                 }
             });
-            this.connect();
+            this.connect(setting);
         });
     }
     /**
@@ -8637,7 +8566,27 @@ class BleRemotePeripheral {
         this.obnizBle.centralBindings.discoverServices(this.address);
     }
     /**
-     * @ignore
+     * Discover services.
+     *
+     * If connect setting param 'autoDiscovery' is true(default),
+     * services are automatically disvocer on connection established.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.discoverAllServicesWait(); //manually discover
+     *          let service = peripheral.getService("1800");
+     *      }
+     *      peripheral.connect({autoDiscovery:false});
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
      */
     discoverAllServicesWait() {
         return new Promise((resolve) => {
@@ -8653,29 +8602,27 @@ class BleRemotePeripheral {
     /**
      * @ignore
      */
-    discoverAllHandlesWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ArrayFlat = (array, depth) => {
-                const flattend = [];
-                (function flat(_array, _depth) {
-                    for (const el of _array) {
-                        if (Array.isArray(el) && _depth > 0) {
-                            flat(el, _depth - 1);
-                        }
-                        else {
-                            flattend.push(el);
-                        }
+    async discoverAllHandlesWait() {
+        const ArrayFlat = (array, depth) => {
+            const flattend = [];
+            (function flat(_array, _depth) {
+                for (const el of _array) {
+                    if (Array.isArray(el) && _depth > 0) {
+                        flat(el, _depth - 1);
                     }
-                })(array, Math.floor(depth) || 1);
-                return flattend;
-            };
-            const services = yield this.discoverAllServicesWait();
-            const charsNest = yield Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-            const chars = ArrayFlat(charsNest);
-            const descriptorsNest = yield Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-            // eslint-disable-next-line no-unused-vars
-            const descriptors = ArrayFlat(descriptorsNest);
-        });
+                    else {
+                        flattend.push(el);
+                    }
+                }
+            })(array, Math.floor(depth) || 1);
+            return flattend;
+        };
+        const services = await this.discoverAllServicesWait();
+        const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
+        const chars = ArrayFlat(charsNest);
+        const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
+        // eslint-disable-next-line no-unused-vars
+        const descriptors = ArrayFlat(descriptorsNest);
     }
     /**
      * @ignore
@@ -8793,12 +8740,7 @@ class BleRemotePeripheral {
     }
     setIBeacon() {
         const data = this.searchTypeVal(0xff);
-        if (!data ||
-            data[0] !== 0x4c ||
-            data[1] !== 0x00 ||
-            data[2] !== 0x02 ||
-            data[3] !== 0x15 ||
-            data.length !== 25) {
+        if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
             this.iBeacon = null;
             return;
         }
@@ -8806,10 +8748,7 @@ class BleRemotePeripheral {
         let uuid = "";
         for (let i = 0; i < uuidData.length; i++) {
             uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 ||
-                i === 4 + 2 - 1 ||
-                i === 4 + 2 * 2 - 1 ||
-                i === 4 + 2 * 3 - 1) {
+            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
                 uuid += "-";
             }
         }
@@ -8828,7 +8767,7 @@ class BleRemotePeripheral {
         if (!data) {
             return;
         }
-        const uuidLength = bit / 4;
+        const uuidLength = bit / 8;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
             results.push(ble_1.default._dataArray2uuidHex(one, true));
@@ -8960,7 +8899,29 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
         return this.discoverChildren();
     }
     /**
-     * @ignore
+     * Discover services.
+     *
+     * If connect setting param 'autoDiscovery' is true(default),
+     * services are automatically disvocer on connection established.
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.discoverAllServicesWait(); //manually discover
+     *          let service = peripheral.getService("1800");
+     *          await service.discoverAllCharacteristicsWait(); //manually discover
+     *          let characteristics = service.getCharacteristic("ff00")
+     *      }
+     *      peripheral.connect({autoDiscovery:false});
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
      */
     discoverAllCharacteristicsWait() {
         return this.discoverChildrenWait();
@@ -8989,14 +8950,12 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      * @param characteristic
      */
-    ondiscovercharacteristic(characteristic) {
-    }
+    ondiscovercharacteristic(characteristic) { }
     /**
      * @ignore
      * @param characteristics
      */
-    ondiscovercharacteristicfinished(characteristics) {
-    }
+    ondiscovercharacteristicfinished(characteristics) { }
 }
 exports.default = BleRemoteService;
 
@@ -9090,12 +9049,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @category Use as Central
  */
 class BleScan {
     constructor(obnizBle) {
+        this._delayNotifyTimers = [];
         this.scanTarget = {};
         this.scanSettings = {};
         this.obnizBle = obnizBle;
@@ -9133,30 +9095,35 @@ class BleScan {
      * @param target
      * @param settings
      */
-    start(target, settings) {
+    start(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
-        if (!settings) {
-            settings = {};
-        }
-        const timeout = settings.duration || 30;
+        const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
+        settings.filterOnDevice = !!settings.filterOnDevice;
+        settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
-        target = target || {};
         this.scanTarget = target;
-        if (this.scanTarget &&
-            this.scanTarget.uuids &&
-            Array.isArray(this.scanTarget.uuids)) {
+        if (this.scanTarget && this.scanTarget.uuids) {
             this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
         }
         this.scanedPeripherals = [];
-        this.obnizBle.centralBindings.startScanning(null, false);
+        this._clearDelayNotifyTimer();
+        if (settings.filterOnDevice) {
+            this._setTargetFilterOnDevice(this.scanTarget);
+        }
+        else {
+            this._setTargetFilterOnDevice({}); // clear
+        }
+        this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
         this.clearTimeoutTimer();
-        this._timeoutTimer = setTimeout(() => {
-            this._timeoutTimer = undefined;
-            this.end();
-        }, timeout * 1000);
+        if (timeout !== null) {
+            this._timeoutTimer = setTimeout(() => {
+                this._timeoutTimer = undefined;
+                this.end();
+            }, timeout * 1000);
+        }
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -9253,23 +9220,32 @@ class BleScan {
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onfind": {
-                if (this.scanSettings.duplicate === false) {
-                    // duplicate filter
-                    if (this.scanedPeripherals.find((e) => e.address === params.address)) {
-                        break;
-                    }
+                const peripheral = params;
+                const alreadyGotCompleteAdveData = peripheral.adv_data &&
+                    peripheral.adv_data.length > 0 &&
+                    peripheral.scan_resp &&
+                    peripheral.scan_resp.length > 0;
+                const nonConnectable = peripheral.ble_event_type === "non_connectable_advertising";
+                const maybeAdvOnly = this._delayNotifyTimers.find((e) => e.peripheral.address === peripheral.address) &&
+                    (!peripheral.scan_resp || peripheral.scan_resp.length === 0);
+                // wait for adv_data + scan resp
+                // 10 seconds timeout
+                if (alreadyGotCompleteAdveData || nonConnectable || maybeAdvOnly) {
+                    this._removeDelayNotifyTimer(peripheral.address);
+                    this._notifyOnFind(peripheral);
                 }
-                if (this.isTarget(params)) {
-                    this.scanedPeripherals.push(params);
-                    this.emitter.emit(notifyName, params);
-                    if (this.onfind) {
-                        this.onfind(params);
-                    }
+                else {
+                    const timer = setInterval(() => {
+                        this._notifyOnFind(peripheral);
+                    }, 10000);
+                    this._delayNotifyTimers.push({ timer, peripheral });
                 }
                 break;
             }
             case "onfinish": {
                 this.clearTimeoutTimer();
+                this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+                this._clearDelayNotifyTimer();
                 this.emitter.emit(notifyName, this.scanedPeripherals);
                 if (this.onfinish) {
                     this.onfinish(this.scanedPeripherals);
@@ -9278,29 +9254,220 @@ class BleScan {
             }
         }
     }
-    isTarget(peripheral) {
-        if (this.scanTarget &&
-            this.scanTarget.localName &&
-            peripheral.localName !== this.scanTarget.localName) {
-            return false;
+    /**
+     * Clear advertisement filter.
+     */
+    clearAdvertisementFilter() {
+        this.obnizBle.Obniz.send({
+            ble: {
+                hci: {
+                    advertisement_filter: [],
+                },
+            },
+        });
+    }
+    _setAdvertisementFilter(filterVals) {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
         }
-        if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
-                return bleHelper_1.default.uuidFilter(e);
+        // #define BLE_AD_REPORT_DEVICE_ADDRESS_INDEX 2
+        // #define BLE_AD_REPORT_ADVERTISMENT_INDEX 9
+        const filters = [];
+        filterVals.forEach((filterVal) => {
+            if (filterVal.localNamePrefix) {
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: [0x08, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                });
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: [0x09, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                });
+            }
+            if (filterVal.deviceAddress) {
+                filters.push({
+                    range: {
+                        index: 2,
+                        length: 6,
+                    },
+                    value: util_1.default.hexToBinary(filterVal.deviceAddress, true),
+                });
+            }
+            if (filterVal.uuid) {
+                const binary = util_1.default.hexToBinary(filterVal.uuid, true);
+                filters.push({
+                    range: {
+                        index: 9,
+                        length: 255,
+                    },
+                    value: binary,
+                });
+            }
+            if (filterVal.binary) {
+                filters.push({
+                    range: {
+                        index: 0,
+                        length: 255,
+                    },
+                    value: filterVal.binary,
+                });
+            }
+        });
+        this.obnizBle.Obniz.send({
+            ble: {
+                hci: {
+                    advertisement_filter: filters,
+                },
+            },
+        });
+    }
+    _arrayWrapper(val) {
+        if (Array.isArray(val)) {
+            return val;
+        }
+        else {
+            return [val];
+        }
+    }
+    _setTargetFilterOnDevice(scanTarget) {
+        // < 3.2.0
+        if (semver_1.default.lt(this.obnizBle.Obniz.firmware_ver, "3.2.0")) {
+            return;
+        }
+        const adFilters = [];
+        if (scanTarget.uuids) {
+            scanTarget.uuids.map((elm) => {
+                adFilters.push({ uuid: bleHelper_1.default.uuidFilter(elm) });
             });
-            for (const uuid of this.scanTarget.uuids) {
-                if (!uuids.includes(uuid)) {
-                    return false;
-                }
+        }
+        if (scanTarget.localName) {
+            this._arrayWrapper(scanTarget.localName).forEach((name) => {
+                adFilters.push({ localNamePrefix: name });
+            });
+        }
+        if (scanTarget.deviceAddress) {
+            this._arrayWrapper(scanTarget.deviceAddress).forEach((address) => {
+                adFilters.push({ deviceAddress: address });
+            });
+        }
+        if (scanTarget.localNamePrefix) {
+            this._arrayWrapper(scanTarget.localNamePrefix).forEach((name) => {
+                adFilters.push({ localNamePrefix: name });
+            });
+        }
+        if (scanTarget.binary) {
+            if (Array.isArray(scanTarget.binary[0])) {
+                scanTarget.binary.forEach((e) => {
+                    adFilters.push({ binary: e });
+                });
+            }
+            else {
+                adFilters.push({ binary: scanTarget.binary });
             }
         }
-        return true;
+        this._setAdvertisementFilter(adFilters);
+    }
+    isTarget(peripheral) {
+        if (!this.scanTarget ||
+            Object.keys(this.scanTarget).length === 0 ||
+            this.isLocalNamePrefixTarget(peripheral) ||
+            this.isLocalNameTarget(peripheral) ||
+            this.isUuidTarget(peripheral) ||
+            this.isDeviceAddressTarget(peripheral) ||
+            this.isBinaryTarget(peripheral)) {
+            return true;
+        }
+        return false;
     }
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
             this._timeoutTimer = undefined;
         }
+    }
+    _notifyOnFind(peripheral) {
+        if (this.scanSettings.duplicate === false) {
+            // duplicate filter
+            if (this.scanedPeripherals.find((e) => e.address === peripheral.address)) {
+                return;
+            }
+        }
+        if (this.isTarget(peripheral)) {
+            this.scanedPeripherals.push(peripheral);
+            this.emitter.emit("onfind", peripheral);
+            if (this.onfind) {
+                this.onfind(peripheral);
+            }
+        }
+    }
+    isLocalNameTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.localName) {
+            for (const name of this._arrayWrapper(this.scanTarget.localName)) {
+                if (name === peripheral.localName) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isLocalNamePrefixTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.localNamePrefix) {
+            for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
+                if (peripheral.localName && peripheral.localName.startsWith(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isBinaryTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.binary) {
+            return true; // cannot detect on obnizjs
+        }
+        return false;
+    }
+    isUuidTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.uuids) {
+            const uuids = peripheral.advertisementServiceUuids().map((e) => {
+                return bleHelper_1.default.uuidFilter(e);
+            });
+            for (const uuid of this.scanTarget.uuids) {
+                if (uuids.includes(uuid)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    isDeviceAddressTarget(peripheral) {
+        if (this.scanTarget && this.scanTarget.deviceAddress) {
+            if (this.scanTarget.deviceAddress === peripheral.address) {
+                return true;
+            }
+        }
+        return false;
+    }
+    _clearDelayNotifyTimer() {
+        this._delayNotifyTimers.forEach((e) => {
+            clearTimeout(e.timer);
+        });
+        this._delayNotifyTimers = [];
+    }
+    _removeDelayNotifyTimer(targetAddress) {
+        this._delayNotifyTimers = this._delayNotifyTimers.filter((e) => {
+            if (e.peripheral.address === targetAddress) {
+                clearTimeout(e.timer);
+                return false;
+            }
+            return true;
+        });
     }
 }
 exports.default = BleScan;
@@ -9386,8 +9553,7 @@ class BleSecurity {
      * @ignore
      * @param params
      */
-    onerror(params) {
-    } // dummy
+    onerror(params) { } // dummy
     /**
      * @ignore
      * @param notifyName
@@ -9539,6 +9705,32 @@ class ObnizBLEHci {
     constructor(Obniz) {
         this.Obniz = Obniz;
     }
+    /**
+     * Initialize BLE HCI module
+     */
+    init() {
+        this.Obniz.send({
+            ble: {
+                hci: {
+                    initialize: true,
+                },
+            },
+        });
+    }
+    /**
+     * Deinitalize BLE HCI module
+     */
+    end() {
+        this.Obniz.send({
+            ble: {
+                hci: null,
+            },
+        });
+    }
+    /**
+     * write HCI command to HCI module
+     * @param hciCommand
+     */
     write(hciCommand) {
         this.Obniz.send({
             ble: {
@@ -9548,13 +9740,20 @@ class ObnizBLEHci {
             },
         });
     }
+    /**
+     * @ignore
+     * @param obj
+     */
     notified(obj) {
         if (obj.read && obj.read.data) {
             this.onread(obj.read.data);
         }
     }
-    onread(data) {
-    }
+    /**
+     * Callback on HCI command received.
+     * @param data
+     */
+    onread(data) { }
 }
 exports.default = ObnizBLEHci;
 
@@ -9675,9 +9874,9 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
     }
-    startScanning(serviceUuids, allowDuplicates) {
+    startScanning(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = serviceUuids || [];
-        this._gap.startScanning(allowDuplicates);
+        this._gap.startScanning(allowDuplicates, activeScan);
     }
     stopScanning() {
         this._gap.stopScanning();
@@ -9752,8 +9951,7 @@ class NobleBindings extends events_1.default.EventEmitter {
                 serviceUuids.push(serviceData[i].uuid);
             }
             for (i in serviceUuids) {
-                hasScanServiceUuids =
-                    this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
+                hasScanServiceUuids = this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
                 if (hasScanServiceUuids) {
                     break;
                 }
@@ -9855,8 +10053,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             aclStream.pushEncrypt(encrypt);
         }
     }
-    onMtu(address, mtu) {
-    }
+    onMtu(address, mtu) { }
     onRssiRead(handle, rssi) {
         this.emit("rssiUpdate", this._handles[handle], rssi);
     }
@@ -10169,7 +10366,7 @@ exports.default = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10206,7 +10403,7 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
         this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
-    startScanning(allowDuplicates) {
+    startScanning(allowDuplicates, activeScan) {
         this._scanState = "starting";
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
@@ -10214,12 +10411,13 @@ class Gap extends events_1.default.EventEmitter {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         this._hci.setScanEnabled(false, true);
+        // console.log("scan enable false");
         this._hci.once("leScanEnableSet", (scanStopStatus) => {
-            this._hci.setScanParameters();
+            this._hci.setScanParameters(activeScan);
             this._hci.once("leScanParametersSet", (setParamStatus) => {
                 setTimeout(() => {
                     this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-                }, 10);
+                }, 1000);
             });
         });
     }
@@ -10227,8 +10425,7 @@ class Gap extends events_1.default.EventEmitter {
         this._scanState = "stopping";
         this._hci.setScanEnabled(false, true);
     }
-    onHciLeScanParametersSet() {
-    }
+    onHciLeScanParametersSet() { }
     // Called when receive an event "Command Complete" for "LE Set Scan Enable"
     onHciLeScanEnableSet(status) {
         // Check the status we got from the command complete function.
@@ -10261,8 +10458,7 @@ class Gap extends events_1.default.EventEmitter {
                 this.emit("scanStart", this._scanFilterDuplicates);
             }
         }
-        else if ((this._scanState === "stopping" || this._scanState === "stopped") &&
-            enable) {
+        else if ((this._scanState === "stopping" || this._scanState === "stopped") && enable) {
             // Someone started scanning on us.
             this.emit("scanStart", this._scanFilterDuplicates);
         }
@@ -10282,12 +10478,8 @@ class Gap extends events_1.default.EventEmitter {
                 scanResponseRaw: [],
                 raw: [],
             };
-        let discoveryCount = previouslyDiscovered
-            ? this._discoveries[address].count
-            : 0;
-        let hasScanResponse = previouslyDiscovered
-            ? this._discoveries[address].hasScanResponse
-            : false;
+        let discoveryCount = previouslyDiscovered ? this._discoveries[address].count : 0;
+        let hasScanResponse = previouslyDiscovered ? this._discoveries[address].hasScanResponse : false;
         if (type === 0x04) {
             hasScanResponse = true;
             if (eir.length > 0) {
@@ -10438,9 +10630,7 @@ class Gap extends events_1.default.EventEmitter {
             i += length + 1;
         }
         debug("advertisement = " + JSON.stringify(advertisement, null, 0));
-        const connectable = type === 0x04 && previouslyDiscovered
-            ? this._discoveries[address].connectable
-            : type !== 0x03;
+        const connectable = type === 0x04 && previouslyDiscovered ? this._discoveries[address].connectable : type !== 0x03;
         this._discoveries[address] = {
             address,
             addressType,
@@ -10450,19 +10640,10 @@ class Gap extends events_1.default.EventEmitter {
             count: discoveryCount,
             hasScanResponse,
         };
-        // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-        if (type === 0x04 ||
-            !connectable ||
-            (discoveryCount > 1 && !hasScanResponse) ||
-            process.env.NOBLE_REPORT_ALL_HCI_EVENTS) {
-            this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
-        }
+        this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     startAdvertising(name, serviceUuids) {
-        debug("startAdvertising: name = " +
-            name +
-            ", serviceUuids = " +
-            JSON.stringify(serviceUuids, null, 2));
+        debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;
         let scanDataLength = 0;
         const serviceUuids16bit = [];
@@ -10580,14 +10761,10 @@ class Gap extends events_1.default.EventEmitter {
         this._advertiseState = "stopping";
         this._hci.setAdvertiseEnable(false);
     }
-    onHciError(error) {
-    }
-    onHciLeAdvertisingParametersSet(status) {
-    }
-    onHciLeAdvertisingDataSet(status) {
-    }
-    onHciLeScanResponseDataSet(status) {
-    }
+    onHciError(error) { }
+    onHciLeAdvertisingParametersSet(status) { }
+    onHciLeAdvertisingDataSet(status) { }
+    onHciLeScanResponseDataSet(status) { }
     onHciLeAdvertiseEnableSet(status) {
         if (this._advertiseState === "starting") {
             this._advertiseState = "started";
@@ -10607,7 +10784,7 @@ exports.default = Gap;
 
 //# sourceMappingURL=gap.js.map
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js"), __webpack_require__("./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -10626,8 +10803,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // let debug = require('debug')('att');
-const debug = () => {
-};
+const debug = () => { };
 /* eslint-disable no-unused-vars */
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 /**
@@ -10718,25 +10894,20 @@ class Gatt extends events_1.default.EventEmitter {
         if (cid !== ATT.CID) {
             return;
         }
-        if (this._currentCommand &&
-            data.toString("hex") === this._currentCommand.buffer.toString("hex")) {
+        if (this._currentCommand && data.toString("hex") === this._currentCommand.buffer.toString("hex")) {
             debug(this._address + ": echo ... echo ... echo ...");
         }
         else if (data[0] % 2 === 0) {
             if (process.env.NOBLE_MULTI_ROLE) {
-                debug(this._address +
-                    ": multi-role flag in use, ignoring command meant for peripheral role.");
+                debug(this._address + ": multi-role flag in use, ignoring command meant for peripheral role.");
             }
             else {
                 const requestType = data[0];
-                debug(this._address +
-                    ": replying with REQ_NOT_SUPP to 0x" +
-                    requestType.toString(16));
+                debug(this._address + ": replying with REQ_NOT_SUPP to 0x" + requestType.toString(16));
                 this.writeAtt(this.errorResponse(requestType, 0x0000, ATT.ECODE_REQ_NOT_SUPP));
             }
         }
-        else if (data[0] === ATT.OP_HANDLE_NOTIFY ||
-            data[0] === ATT.OP_HANDLE_IND) {
+        else if (data[0] === ATT.OP_HANDLE_NOTIFY || data[0] === ATT.OP_HANDLE_IND) {
             const valueHandle = data.readUInt16LE(1);
             const valueData = data.slice(3);
             this.emit("handleNotify", this._address, valueHandle, valueData);
@@ -10747,8 +10918,7 @@ class Gatt extends events_1.default.EventEmitter {
             }
             for (const serviceUuid in this._services) {
                 for (const characteristicUuid in this._characteristics[serviceUuid]) {
-                    if (this._characteristics[serviceUuid][characteristicUuid]
-                        .valueHandle === valueHandle) {
+                    if (this._characteristics[serviceUuid][characteristicUuid].valueHandle === valueHandle) {
                         this.emit("notification", this._address, serviceUuid, characteristicUuid, valueData);
                     }
                 }
@@ -10788,8 +10958,7 @@ class Gatt extends events_1.default.EventEmitter {
             this.writeAtt(this._currentCommand.buffer);
         }
     }
-    onAclStreamEncryptFail() {
-    }
+    onAclStreamEncryptFail() { }
     onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
         this._aclStream.removeListener("encrypt", this.onAclStreamEncryptBinded);
@@ -10935,8 +11104,7 @@ class Gatt extends events_1.default.EventEmitter {
                     });
                 }
             }
-            if (opcode !== ATT.OP_READ_BY_GROUP_RESP ||
-                services[services.length - 1].endHandle === 0xffff) {
+            if (opcode !== ATT.OP_READ_BY_GROUP_RESP || services[services.length - 1].endHandle === 0xffff) {
                 const serviceUuids = [];
                 for (i = 0; i < services.length; i++) {
                     if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
@@ -10978,12 +11146,10 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             }
             if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-                includedServices[includedServices.length - 1].endHandle ===
-                    service.endHandle) {
+                includedServices[includedServices.length - 1].endHandle === service.endHandle) {
                 const includedServiceUuids = [];
                 for (i = 0; i < includedServices.length; i++) {
-                    if (uuids.length === 0 ||
-                        uuids.indexOf(includedServices[i].uuid) !== -1) {
+                    if (uuids.length === 0 || uuids.indexOf(includedServices[i].uuid) !== -1) {
                         includedServiceUuids.push(includedServices[i].uuid);
                     }
                 }
@@ -10998,8 +11164,7 @@ class Gatt extends events_1.default.EventEmitter {
     discoverCharacteristics(serviceUuid, characteristicUuids) {
         const service = this._services[serviceUuid];
         const characteristics = [];
-        this._characteristics[serviceUuid] =
-            this._characteristics[serviceUuid] || {};
+        this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
         this._descriptors[serviceUuid] = this._descriptors[serviceUuid] || {};
         const callback = (data) => {
             const opcode = data[0];
@@ -11025,8 +11190,7 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             }
             if (opcode !== ATT.OP_READ_BY_TYPE_RESP ||
-                characteristics[characteristics.length - 1].valueHandle ===
-                    service.endHandle) {
+                characteristics[characteristics.length - 1].valueHandle === service.endHandle) {
                 const characteristicsDiscovered = [];
                 for (i = 0; i < characteristics.length; i++) {
                     const properties = characteristics[i].properties;
@@ -11035,14 +11199,12 @@ class Gatt extends events_1.default.EventEmitter {
                         uuid: characteristics[i].uuid,
                     };
                     if (i !== 0) {
-                        characteristics[i - 1].endHandle =
-                            characteristics[i].startHandle - 1;
+                        characteristics[i - 1].endHandle = characteristics[i].startHandle - 1;
                     }
                     if (i === characteristics.length - 1) {
                         characteristics[i].endHandle = service.endHandle;
                     }
-                    this._characteristics[serviceUuid][characteristics[i].uuid] =
-                        characteristics[i];
+                    this._characteristics[serviceUuid][characteristics[i].uuid] = characteristics[i];
                     if (properties & 0x01) {
                         characteristic.properties.push("broadcast");
                     }
@@ -11067,8 +11229,7 @@ class Gatt extends events_1.default.EventEmitter {
                     if (properties & 0x80) {
                         characteristic.properties.push("extendedProperties");
                     }
-                    if (characteristicUuids.length === 0 ||
-                        characteristicUuids.indexOf(characteristic.uuid) !== -1) {
+                    if (characteristicUuids.length === 0 || characteristicUuids.indexOf(characteristic.uuid) !== -1) {
                         characteristicsDiscovered.push(characteristic);
                     }
                 }
@@ -11081,8 +11242,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.CHARAC_UUID), callback);
     }
     read(serviceUuid, characteristicUuid) {
-        if (!this._characteristics[serviceUuid] ||
-            !this._characteristics[serviceUuid][characteristicUuid]) {
+        if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
             this.emit("read", this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
             return;
         }
@@ -11109,8 +11269,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._queueCommand(this.readRequest(characteristic.valueHandle), callback);
     }
     write(serviceUuid, characteristicUuid, data, withoutResponse) {
-        if (!this._characteristics[serviceUuid] ||
-            !this._characteristics[serviceUuid][characteristicUuid]) {
+        if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
             this.emit("write", this._address, serviceUuid, characteristicUuid, false);
             return;
         }
@@ -11140,15 +11299,13 @@ class Gatt extends events_1.default.EventEmitter {
             return (resp) => {
                 const opcode = resp[0];
                 if (opcode !== ATT.OP_PREPARE_WRITE_RESP) {
-                    debug(this._address +
-                        ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)", opcode);
+                    debug(this._address + ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)", opcode);
                 }
                 else {
                     const expected_length = data_chunk.length + 5;
                     if (resp.length !== expected_length) {
                         /* the response should contain the data packet echoed back to the caller */
-                        debug(this._address +
-                            ": unexpected prepareWriteResponse length %d (expecting %d)", resp.length, expected_length);
+                        debug(this._address + ": unexpected prepareWriteResponse length %d (expecting %d)", resp.length, expected_length);
                     }
                 }
             };
@@ -11248,8 +11405,7 @@ class Gatt extends events_1.default.EventEmitter {
                     });
                 }
             }
-            if (opcode !== ATT.OP_FIND_INFO_RESP ||
-                descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
+            if (opcode !== ATT.OP_FIND_INFO_RESP || descriptors[descriptors.length - 1].handle === characteristic.endHandle) {
                 const descriptorUuids = [];
                 for (i = 0; i < descriptors.length; i++) {
                     descriptorUuids.push(descriptors[i].uuid);
@@ -11340,8 +11496,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // let debug = require('debug')('signaling');
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 /**
  * @ignore
@@ -11575,18 +11730,10 @@ module.exports = JSON.parse("[\"Success\",\"Unknown HCI Command\",\"Unknown Conn
  * @packageDocumentation
  * @ignore
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('hci');
-const debug = () => {
+const debug = (...params) => {
+    // console.log(...params);
 };
 const events = __webpack_require__("./node_modules/events/events.js");
 var COMMANDS;
@@ -11677,20 +11824,18 @@ class Hci extends events.EventEmitter {
         };
         this._obnizHci.onread = this.onSocketData.bind(this);
     }
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.reset();
-            // this.setEventMask();
-            // this.setLeEventMask();
-            // this.readLocalVersion();
-            // this.writeLeHostSupported();
-            // this.readLeHostSupported();
-            // this.readBdAddr();
-            return new Promise((resolve) => {
-                this.once("stateChange", () => {
-                    // console.log('te');
-                    resolve();
-                });
+    async initWait() {
+        this.reset();
+        // this.setEventMask();
+        // this.setLeEventMask();
+        // this.readLocalVersion();
+        // this.writeLeHostSupported();
+        // this.readLeHostSupported();
+        // this.readBdAddr();
+        return new Promise((resolve) => {
+            this.once("stateChange", () => {
+                // console.log('te');
+                resolve();
             });
         });
     }
@@ -11776,7 +11921,7 @@ class Hci extends events.EventEmitter {
         debug("write LE host supported - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
-    setScanParameters() {
+    setScanParameters(isActiveScan) {
         const cmd = Buffer.alloc(11);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -11784,7 +11929,7 @@ class Hci extends events.EventEmitter {
         // length
         cmd.writeUInt8(0x07, 3);
         // data
-        cmd.writeUInt8(0x01, 4); // type: 0 -> passive, 1 -> active
+        cmd.writeUInt8(isActiveScan ? 0x01 : 0x00, 4); // type: 0 -> passive, 1 -> active
         cmd.writeUInt16LE(0x0010, 5); // internal, ms * 1.6
         cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
         cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
@@ -11909,9 +12054,7 @@ class Hci extends events.EventEmitter {
         cmd.writeUInt16LE(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD, 1);
         // length
         cmd.writeUInt8(15, 3);
-        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL
-            ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL)
-            : 100) * 1.6);
+        const advertisementInterval = Math.floor((process.env.BLENO_ADVERTISING_INTERVAL ? parseFloat(process.env.BLENO_ADVERTISING_INTERVAL) : 100) * 1.6);
         // data
         cmd.writeUInt16LE(advertisementInterval, 4); // min interval
         cmd.writeUInt16LE(advertisementInterval, 6); // max interval
@@ -12031,22 +12174,17 @@ class Hci extends events.EventEmitter {
         debug("writeOneAclDataPkt");
         const pkt = this._aclOutQueue.shift();
         this._handleAclsInProgress[pkt.handle]++;
-        debug("write acl data pkt frag " +
-            pkt.fragId +
-            " handle " +
-            pkt.handle +
-            " - writing: " +
-            pkt.pkt.toString("hex"));
+        debug("write acl data pkt frag " + pkt.fragId + " handle " + pkt.handle + " - writing: " + pkt.pkt.toString("hex"));
         this._socket.write(pkt.pkt);
     }
     onSocketData(array) {
         const data = Buffer.from(array);
         debug("onSocketData: " + data.toString("hex"));
         const eventType = data.readUInt8(0);
-        debug("\tevent type = " + eventType);
+        debug("\tevent type = 0x" + eventType.toString(16));
         if (COMMANDS.HCI_EVENT_PKT === eventType) {
             const subEventType = data.readUInt8(1);
-            debug("\tsub event type = " + subEventType);
+            debug("\tsub event type = 0x" + subEventType.toString(16));
             if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
                 const handle = data.readUInt16LE(4);
                 const reason = data.readUInt8(6);
@@ -12082,10 +12220,10 @@ class Hci extends events.EventEmitter {
                 const cmd = data.readUInt16LE(4);
                 const status = data.readUInt8(6);
                 const result = data.slice(7);
-                debug("\t\tncmd = " + ncmd);
-                debug("\t\tcmd = " + cmd);
-                debug("\t\tstatus = " + status);
-                debug("\t\tresult = " + result.toString("hex"));
+                debug("\t\tncmd = 0x" + ncmd.toString(16));
+                debug("\t\tcmd = 0x" + cmd.toString(16));
+                debug("\t\tstatus = 0x" + status.toString(16));
+                debug("\t\tresult = 0x" + result.toString("hex"));
                 this.processCmdCompleteEvent(cmd, status, result);
             }
             else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
@@ -12152,12 +12290,8 @@ class Hci extends events.EventEmitter {
                 if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
                     return;
                 }
-                this._handleBuffers[handle].data = Buffer.concat([
-                    this._handleBuffers[handle].data,
-                    data.slice(5),
-                ]);
-                if (this._handleBuffers[handle].data.length ===
-                    this._handleBuffers[handle].length) {
+                this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
+                if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
                     this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
                     delete this._handleBuffers[handle];
                 }
@@ -12217,7 +12351,7 @@ class Hci extends events.EventEmitter {
             }
             else if (this._state !== "poweredOn") {
                 this.setScanEnabled(false, true);
-                this.setScanParameters();
+                this.setScanParameters(false);
             }
             this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
         }
@@ -12457,8 +12591,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const os_1 = __importDefault(__webpack_require__("./node_modules/os-browserify/browser.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js"));
@@ -12546,8 +12679,7 @@ class BlenoBindings extends events_1.default.EventEmitter {
     onAddressChange(address) {
         this.emit("addressChange", address);
     }
-    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) {
-    }
+    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) { }
     onAdvertisingStart(error) {
         this.emit("advertisingStart", error);
     }
@@ -12703,8 +12835,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 /**
@@ -12722,10 +12853,7 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
     startAdvertising(name, serviceUuids) {
-        debug("startAdvertising: name = " +
-            name +
-            ", serviceUuids = " +
-            JSON.stringify(serviceUuids, null, 2));
+        debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;
         let scanDataLength = 0;
         const serviceUuids16bit = [];
@@ -12844,14 +12972,10 @@ class Gap extends events_1.default.EventEmitter {
         this._advertiseState = "stopping";
         this._hci.setAdvertiseEnable(false);
     }
-    onHciError(error) {
-    }
-    onHciLeAdvertisingParametersSet(status) {
-    }
-    onHciLeAdvertisingDataSet(status) {
-    }
-    onHciLeScanResponseDataSet(status) {
-    }
+    onHciError(error) { }
+    onHciLeAdvertisingParametersSet(status) { }
+    onHciLeAdvertisingDataSet(status) { }
+    onHciLeScanResponseDataSet(status) { }
     onHciLeAdvertiseEnableSet(status) {
         if (this._advertiseState === "starting") {
             this._advertiseState = "started";
@@ -12890,8 +13014,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // var debug = require('debug')('gatt');
-const debug = () => {
-};
+const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
 /* eslint-disable no-unused-vars */
 /**
@@ -13116,9 +13239,7 @@ class Gatt extends events_1.default.EventEmitter {
             debugHandles[i] = {};
             for (j in handle) {
                 if (Buffer.isBuffer(handle[j])) {
-                    debugHandles[i][j] = handle[j]
-                        ? "Buffer('" + handle[j].toString("hex") + "', 'hex')"
-                        : null;
+                    debugHandles[i][j] = handle[j] ? "Buffer('" + handle[j].toString("hex") + "', 'hex')" : null;
                 }
                 else if (j !== "attribute") {
                     debugHandles[i][j] = handle[j];
@@ -13320,9 +13441,7 @@ class Gatt extends events_1.default.EventEmitter {
             if (!handle) {
                 break;
             }
-            if ("2800" === uuid &&
-                handle.type === "service" &&
-                handle.uuid === value) {
+            if ("2800" === uuid && handle.type === "service" && handle.uuid === value) {
                 handles.push({
                     start: handle.startHandle,
                     end: handle.endHandle,
@@ -13468,8 +13587,7 @@ class Gatt extends events_1.default.EventEmitter {
                         .reverse()
                         .join(""), "hex");
                     for (let j = 0; j < characteristicUuid.length; j++) {
-                        response[2 + i * lengthPerCharacteristic + 5 + j] =
-                            characteristicUuid[j];
+                        response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
                     }
                 }
             }
@@ -13556,10 +13674,7 @@ class Gatt extends events_1.default.EventEmitter {
                     if (ATT.ECODE_SUCCESS === _result) {
                         const dataLength = Math.min(_data.length, this._mtu - 1);
                         callbackResponse = Buffer.alloc(1 + dataLength);
-                        callbackResponse[0] =
-                            _requestType === ATT.OP_READ_BLOB_REQ
-                                ? ATT.OP_READ_BLOB_RESP
-                                : ATT.OP_READ_RESP;
+                        callbackResponse[0] = _requestType === ATT.OP_READ_BLOB_REQ ? ATT.OP_READ_BLOB_RESP : ATT.OP_READ_RESP;
                         for (i = 0; i < dataLength; i++) {
                             callbackResponse[1 + i] = _data[i];
                         }
@@ -13591,8 +13706,7 @@ class Gatt extends events_1.default.EventEmitter {
                     data[i + 3] = uuid[i];
                 }
             }
-            else if (handleType === "characteristicValue" ||
-                handleType === "descriptor") {
+            else if (handleType === "characteristicValue" || handleType === "descriptor") {
                 let handleProperties = handle.properties;
                 let handleSecure = handle.secure;
                 let handleAttribute = handle.attribute;
@@ -13654,8 +13768,7 @@ class Gatt extends events_1.default.EventEmitter {
             }
             const handleProperties = handle.properties;
             const handleSecure = handle.secure;
-            if (handleProperties &&
-                (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)) {
+            if (handleProperties && (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)) {
                 const callback = ((_requestType, _valueHandle, _withoutResponse) => {
                     return (result) => {
                         if (!_withoutResponse) {
@@ -13671,8 +13784,7 @@ class Gatt extends events_1.default.EventEmitter {
                         }
                     };
                 })(requestType, valueHandle, withoutResponse);
-                if (handleSecure & (withoutResponse ? 0x04 : 0x08) &&
-                    !this._aclStream.encrypted) {
+                if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !this._aclStream.encrypted) {
                     response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                 }
                 else if (handle.type === "descriptor" || handle.uuid === "2902") {
@@ -13759,13 +13871,8 @@ class Gatt extends events_1.default.EventEmitter {
                         if (this._preparedWriteRequest.handle !== handle) {
                             response = this.errorResponse(requestType, valueHandle, ATT.ECODE_UNLIKELY);
                         }
-                        else if (offset ===
-                            this._preparedWriteRequest.offset +
-                                this._preparedWriteRequest.data.length) {
-                            this._preparedWriteRequest.data = Buffer.concat([
-                                this._preparedWriteRequest.data,
-                                data,
-                            ]);
+                        else if (offset === this._preparedWriteRequest.offset + this._preparedWriteRequest.data.length) {
+                            this._preparedWriteRequest.data = Buffer.concat([this._preparedWriteRequest.data, data]);
                             response = Buffer.alloc(request.length);
                             request.copy(response);
                             response[0] = ATT.OP_PREP_WRITE_RESP;
@@ -13865,8 +13972,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @ignore
  */
-const debug = () => {
-};
+const debug = () => { };
 /**
  * @ignore
  */
@@ -14020,11 +14126,7 @@ class Smp extends events.EventEmitter {
         if (encrypted) {
             if (this._stk && this._diversifier && this._random) {
                 this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
-                this.write(Buffer.concat([
-                    Buffer.from([SMP.MASTER_IDENT]),
-                    this._diversifier,
-                    this._random,
-                ]));
+                this.write(Buffer.concat([Buffer.from([SMP.MASTER_IDENT]), this._diversifier, this._random]));
             }
         }
     }
@@ -14109,12 +14211,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @category Embeds
  */
 class Display {
-    constructor(obniz) {
+    constructor(obniz, info) {
         this.autoFlush = true;
         this.fontSize = 16;
+        this._pos = { x: 0, y: 0 };
+        this._colorDepthCapabilities = [1];
+        this._colorDepth = 1;
+        this._color = "#000";
+        this._paper_white = true;
+        this._raw_alternate = false;
         this.Obniz = obniz;
-        this.width = 128;
-        this.height = 64;
+        this.width = info.width;
+        this.height = info.height;
+        this._colorDepthCapabilities = info.color_depth;
+        this._paper_white = info.paper_white;
+        this._raw_alternate = info.raw_alternate;
         this._canvas = undefined;
         this._reset();
     }
@@ -14154,6 +14265,35 @@ class Display {
         ctx.font = "" + +" " + size + "px " + font;
     }
     /**
+     * Setting color for fill/stroke style for further rendering.
+     *
+     * ```javascript
+     * obniz.display.color('#FF0000');
+     * obniz.display.rect(0, 0, 10, 10, false)
+     * obniz.display.color('blue');
+     * obniz.display.rect(0, 10, 10, 10, false)
+     * ```
+     *
+     * @param depth css acceptable color definition
+     */
+    setColor(color) {
+        this._color = color;
+        const ctx = this._ctx();
+        ctx.fillStyle = this._color;
+        ctx.strokeStyle = this._color;
+    }
+    /**
+     * Getting color for fill/stroke style for further rendering.
+     *
+     * ```javascript
+     * const current = obniz.display.getColor();
+     * ```
+     *
+     */
+    getColor() {
+        return this._color;
+    }
+    /**
      * Clear the display.
      * ```javascript
      * // Javascript Example
@@ -14165,10 +14305,10 @@ class Display {
         this._pos.x = 0;
         this._pos.y = 0;
         if (ctx) {
-            ctx.fillStyle = "#000";
+            const currentFillStyle = ctx.fillStyle;
+            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
             ctx.fillRect(0, 0, this.width, this.height);
-            ctx.fillStyle = "#FFF";
-            ctx.strokeStyle = "#FFF";
+            ctx.fillStyle = currentFillStyle;
             this.draw(ctx);
         }
         else {
@@ -14372,23 +14512,59 @@ class Display {
      * Draw BMP image
      *
      * ```javascript
-     * obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
+     * obniz.display.raw([255, 255,,,,,])
      * ```
      *
-     * @param data data array. 1 bit represents 1 dot. 1=white, 0=black.
-     * 1 byte is part of one line.
+     * You should care about colorDepth before sending raw datas.
+     *
+     * @param data data array.
      * The order is as below.
      * {1byte} {2byte} {3byte}...{16byte}
      * {17byte} {18byte} {19byte}...
      * .....
-     * .....................{1024byte}
+     * .....................
      */
     raw(data) {
         const obj = {};
         obj.display = {
             raw: data,
         };
+        if (this._colorDepth > 1) {
+            obj.display.color_depth = this._colorDepth;
+        }
         this.Obniz.send(obj);
+    }
+    /**
+     * Setting color depth for all communication for the display
+     * higher number will get more beautiful colors and lowest number 1 is just monochrome.
+     * But 16 bit color mode is 16 times data bytes needed for same size rendering.
+     *
+     * ```javascript
+     * obniz.display.setColorDepth(4); // => 4bit color mode.
+     * ```
+     *
+     * @param depth monochrome display always 1. For color display 1(monochrome) and 4 and 16 can be selected.
+     * default value is highest color depth for your display.
+     * If you call just
+     */
+    setColorDepth(depth) {
+        const found = this._colorDepthCapabilities.find((element) => element === depth);
+        if (found) {
+            this._colorDepth = depth;
+        }
+        else {
+            throw new Error(`This device can't accept depth ${depth}. availables are ${JSON.stringify(this._colorDepthCapabilities)}`);
+        }
+    }
+    /**
+     * Getting color depth for all communication for the display
+     *
+     * ```javascript
+     * const current = obniz.display.getColorDepth(); // => return current depth. 1 or higher
+     * ```
+     */
+    getColorDepth() {
+        return this._colorDepth;
     }
     /**
      * @ignore
@@ -14481,7 +14657,7 @@ class Display {
     }
     /**
      * You can specify to transfer the displayed data or not.
-     * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
+     * This affects only the functions that use canvas like clear/print/line/rect/circle/draw.
      *
      * Use false to stop updating display and true to restart updating.
      *
@@ -14515,9 +14691,25 @@ class Display {
             throw new Error("obniz.js cant create canvas element to body");
         }
     }
+    _reset_canvas() {
+        // reset canvas
+        if (this._canvas) {
+            const ctx = this._canvas.getContext("2d");
+            ctx.fillStyle = this._paper_white ? "#FFF" : "#000";
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.fillStyle = this._color;
+            ctx.strokeStyle = this._color;
+            ctx.font = `${this.fontSize}px Arial`;
+        }
+    }
     _reset() {
-        this._pos = { x: 0, y: 0 };
         this.autoFlush = true;
+        // reset to default
+        this._pos = { x: 0, y: 0 };
+        this._color = this._paper_white ? "#000" : "#FFF";
+        this.fontSize = this.height > 200 ? 32 : 16;
+        this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+        this._reset_canvas();
     }
     _preparedCanvas() {
         if (this._canvas) {
@@ -14536,27 +14728,25 @@ class Display {
         else {
             const identifier = "obnizcanvas-" + this.Obniz.id;
             let canvas = document.getElementById(identifier);
-            if (!canvas) {
+            if (canvas) {
+                this._canvas = canvas;
+            }
+            else {
                 canvas = document.createElement("canvas");
                 canvas.setAttribute("id", identifier);
                 canvas.style.visibility = "hidden";
                 canvas.width = this.width;
                 canvas.height = this.height;
-                canvas.style["-webkit-font-smoothing"] = "none";
+                if (this._colorDepthCapabilities.length === 1) {
+                    // for monochro display
+                    canvas.style["-webkit-font-smoothing"] = "none";
+                }
                 const body = document.getElementsByTagName("body")[0];
                 body.appendChild(canvas);
+                this._canvas = canvas;
+                this._reset_canvas();
             }
-            this._canvas = canvas;
         }
-        const ctx = this._canvas.getContext("2d");
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, this.width, this.height);
-        ctx.fillStyle = "#FFF";
-        ctx.strokeStyle = "#FFF";
-        this._pos.x = 0;
-        this._pos.y = 0;
-        this.fontSize = 16;
-        ctx.font = `${this.fontSize}px Arial`;
         return this._canvas;
     }
     _ctx() {
@@ -14566,24 +14756,74 @@ class Display {
         }
     }
     _draw(ctx) {
-        const stride = this.width / 8;
-        const vram = new Array(stride * 64);
+        const raw = new Array((this.width * this.height * this._colorDepth) / 8);
         const imageData = ctx.getImageData(0, 0, this.width, this.height);
         const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-            const index = Math.floor(i / 4);
-            const line = Math.floor(index / this.width);
-            const col = Math.floor((index - line * this.width) / 8);
-            const bits = Math.floor(index - line * this.width) % 8;
-            if (bits === 0) {
-                vram[line * stride + col] = 0x00;
-            }
-            if (brightness > 0x7f) {
-                vram[line * stride + col] |= 0x80 >> bits;
+        if (this._colorDepth === 16) {
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const hexColor = (((red >> 3) & 0x1f) << 11) | (((green >> 2) & 0x3f) << 5) | (((blue >> 3) & 0x1f) << 0);
+                raw[pixel_index * 2] = (hexColor >> 8) & 0xff;
+                raw[pixel_index * 2 + 1] = hexColor & 0xff;
             }
         }
-        this.raw(vram);
+        else if (this._colorDepth === 4) {
+            const stride = this.width / 2;
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+                const line = Math.floor(pixel_index / this.width);
+                const col = Math.floor((pixel_index - line * this.width) / 2);
+                const bits = Math.floor(pixel_index - line * this.width) % 2;
+                let pixel = 0b0000;
+                if (red > 0x7f) {
+                    pixel |= 0b1000;
+                }
+                if (green > 0x7f) {
+                    pixel |= 0b0100;
+                }
+                if (blue > 0x7f) {
+                    pixel |= 0b0010;
+                }
+                if (brightness > 0x7f) {
+                    pixel |= 0b0001;
+                }
+                if (bits === 0) {
+                    raw[line * stride + col] = pixel << 4;
+                }
+                else {
+                    raw[line * stride + col] |= pixel;
+                }
+            }
+        }
+        else {
+            const stride = this.width / 8;
+            for (let pixel_index = 0; pixel_index < this.width * this.height; pixel_index++) {
+                const red = data[pixel_index * 4];
+                const green = data[pixel_index * 4 + 1];
+                const blue = data[pixel_index * 4 + 2];
+                const brightness = 0.34 * red + 0.5 * green + 0.16 * blue;
+                const row = Math.floor(pixel_index / this.width);
+                const col = Math.floor((pixel_index - row * this.width) / 8);
+                const bits = Math.floor(pixel_index - row * this.width) % 8;
+                if (bits === 0) {
+                    raw[row * stride + col] = 0x00;
+                }
+                if (brightness > 0x7f) {
+                    raw[row * stride + col] |= 0x80 >> bits;
+                }
+            }
+        }
+        if (this._raw_alternate) {
+            for (let i = 0; i < raw.length; i++) {
+                raw[i] = ~raw[i] & 0xff;
+            }
+        }
+        this.raw(raw);
     }
 }
 exports.default = Display;
@@ -14608,7 +14848,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @category Embeds
  */
 class ObnizSwitch {
-    constructor(Obniz) {
+    constructor(Obniz, info) {
         this.Obniz = Obniz;
         this._reset();
     }
@@ -14659,8 +14899,7 @@ class ObnizSwitch {
         return new Promise((resolve, reject) => {
             self.onChangeForStateWait = (pressed) => {
                 if (state === pressed) {
-                    self.onChangeForStateWait = () => {
-                    };
+                    self.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -14684,8 +14923,7 @@ class ObnizSwitch {
     _reset() {
         this.state = "none";
         this.observers = [];
-        this.onChangeForStateWait = () => {
-        };
+        this.onChangeForStateWait = () => { };
     }
     addObserver(callback) {
         if (callback) {
@@ -14703,21 +14941,21 @@ exports.default = ObnizSwitch;
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -14745,6 +14983,9 @@ class HW {
         else if (hw === "esp32p") {
             return __webpack_require__("./dist/src/obniz/libs/hw/esp32p.json");
         }
+        else if (hw === "m5stickc") {
+            return __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.json");
+        }
         else if (hw === "encored") {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored.json");
         }
@@ -14758,17 +14999,112 @@ exports.default = HW;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/m5stickc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Hardware
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
+class M5StickC extends ObnizDevice_1.default {
+    constructor(id, options) {
+        super(id, options);
+    }
+    gyroWait() {
+        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
+            throw new Error(`gyroWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
+        }
+        return this.imu.getGyroWait();
+    }
+    accelerationWait() {
+        const supportedIMUNameArr = ["MPU6886", "SH200Q"];
+        if (!supportedIMUNameArr.includes(this.imu.constructor.name)) {
+            throw new Error(`accelerationWait is supported only on M5stickC with ${supportedIMUNameArr.join()}`);
+        }
+        return this.imu.getAccelWait();
+    }
+    setupIMUWait(imuName = "MPU6886") {
+        const i2c = this._m5i2c;
+        const onerror = i2c.onerror;
+        this.imu = this.wired(imuName, { i2c });
+        // @ts-ignore
+        this.imu._reset = () => { };
+        const p1 = this.imu.whoamiWait();
+        const p2 = new Promise((resolve, reject) => {
+            i2c.onerror = reject;
+        });
+        return Promise.race([p1, p2]).then(async (val) => {
+            // restore
+            i2c.onerror = onerror;
+            if (!val) {
+                throw new Error(`Cannot find IMU (${imuName}) on this M5StickC`);
+            }
+            switch (imuName) {
+                case "SH200Q":
+                    await this.imu.initWait();
+                    break;
+                case "MPU6886":
+                    this.imu.init();
+                    break;
+                default:
+                    break;
+            }
+            return this.imu;
+        });
+    }
+    _prepareComponents() {
+        // @ts-ignore
+        super._prepareComponents();
+        this.ir = this.wired("InfraredLED", { anode: 9 });
+        this.led = this.wired("LED", { cathode: 10 });
+        this.buttonA = this.wired("Button", { signal: 37 });
+        this.buttonB = this.wired("Button", { signal: 39 });
+        const i2cParams = {
+            sda: 21,
+            scl: 22,
+            clock: 100000,
+            pull: "3v",
+            mode: "master",
+        };
+        this._m5i2c = this.i2c1;
+        this._m5i2c.start(i2cParams);
+        this.axp = this.wired("AXP192", { i2c: this._m5i2c });
+        this.led.off();
+    }
+}
+exports.M5StickC = M5StickC;
+
+//# sourceMappingURL=m5stickc.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/hw/m5stickc.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/obnizb1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -14975,8 +15311,7 @@ class Directive {
      * @param repeat The number of repeat count of animation. If not specified, it repeat endless.
      */
     animation(name, status, animations, repeat) {
-        if ((typeof repeat === "number" || status === "registrate") &&
-            semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
+        if ((typeof repeat === "number" || status === "registrate") && semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
             throw new Error(`Please update obniz firmware >= 2.0.0`);
         }
         const obj = {};
@@ -15085,6 +15420,131 @@ exports.default = Directive;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/io_peripherals/grove.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @category Peripherals
+ */
+class PeripheralGrove {
+    constructor(obniz, no, params) {
+        this.used = false;
+        this._current = {};
+        this.Obniz = obniz;
+        this.no = no;
+        this._params = params;
+        this._reset();
+    }
+    getDigital(drive = "5v") {
+        this.useWithType("digital", drive);
+        const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
+        const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        return { primary, secondary };
+    }
+    getAnalog(drive = "5v") {
+        this.useWithType("analog", drive);
+        const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
+        const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
+        return { primary, secondary };
+    }
+    getAnalogDigital(drive = "5v") {
+        this.useWithType("analog-digital", drive);
+        const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
+        const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        return { analog, digital };
+    }
+    getI2c(frequency, drive = "5v") {
+        this.useWithType("i2c", drive);
+        if (!this._current.i2c) {
+            this._current.i2c = this.Obniz.getI2CWithConfig({
+                mode: "master",
+                sda: this._params.pin2,
+                scl: this._params.pin1,
+                clock: frequency,
+            });
+        }
+        return this._current.i2c;
+    }
+    getUart(baud, drive = "5v") {
+        this.useWithType("uart", drive);
+        this._current.uart = this.Obniz.getFreeUart();
+        this._current.uart.start({
+            rx: this._params.pin1,
+            tx: this._params.pin2,
+            baud,
+            drive,
+        });
+        return this._current.uart;
+    }
+    /**
+     * @ignore
+     */
+    _reset() { }
+    end() {
+        this.used = false;
+        if (this._current.uart) {
+            this._current.uart.end();
+        }
+        if (this._current.i2c) {
+            this._current.i2c.end();
+        }
+        if (this._current.type === "analog") {
+            if (this.Obniz.isValidAD(this._params.pin1)) {
+                this.Obniz.getAD(this._params.pin1).end();
+            }
+            if (this.Obniz.isValidAD(this._params.pin2)) {
+                this.Obniz.getAD(this._params.pin2).end();
+            }
+        }
+        else if (this._current.type === "analog-digital") {
+            if (this.Obniz.isValidAD(this._params.pin1)) {
+                this.Obniz.getAD(this._params.pin1).end();
+            }
+            // if (this.Obniz.isValidIO(this._params.pin2)) {
+            //   this.Obniz.getIO(this._params.pin2).end();
+            // }
+        }
+        this._current = {};
+    }
+    /**
+     * @ignore
+     * @param obj
+     */
+    notified(obj) {
+        // nothing
+    }
+    useWithType(type, drive) {
+        if (this.used) {
+            if (this._current.type !== "i2c" || this._current.drive !== drive) {
+                throw new Error("Grove pins are already used.");
+            }
+        }
+        this.used = true;
+        this._current.type = type;
+        this._current.drive = drive;
+        this.Obniz.setVccGnd(this._params.vcc, this._params.gnd, drive);
+        if (this.Obniz.isValidIO(this._params.pin1)) {
+            this.Obniz.getIO(this._params.pin1).drive(drive);
+        }
+        if (this.Obniz.isValidIO(this._params.pin2)) {
+            this.Obniz.getIO(this._params.pin2).drive(drive);
+        }
+    }
+}
+exports.default = PeripheralGrove;
+
+//# sourceMappingURL=grove.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/io_peripherals/i2c.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15161,13 +15621,7 @@ class PeripheralI2C {
         if (err) {
             throw new Error("I2C start param '" + err + "' required, but not found ");
         }
-        this.state = util_1.default._keyFilter(arg, [
-            "mode",
-            "sda",
-            "scl",
-            "pull",
-            "gnd",
-        ]);
+        this.state = util_1.default._keyFilter(arg, ["mode", "sda", "scl", "pull", "gnd"]);
         const ioKeys = ["sda", "scl", "gnd"];
         for (const key of ioKeys) {
             if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
@@ -15176,12 +15630,8 @@ class PeripheralI2C {
         }
         const mode = this.state.mode;
         const clock = typeof arg.clock === "number" ? Math.floor(arg.clock) : null;
-        const slave_address = typeof arg.slave_address === "number"
-            ? Math.floor(arg.slave_address)
-            : null;
-        const slave_address_length = typeof arg.slave_address_length === "number"
-            ? Math.floor(arg.slave_address_length)
-            : null;
+        const slave_address = typeof arg.slave_address === "number" ? Math.floor(arg.slave_address) : null;
+        const slave_address_length = typeof arg.slave_address_length === "number" ? Math.floor(arg.slave_address_length) : null;
         if (mode !== "master" && mode !== "slave") {
             throw new Error("i2c: invalid mode " + mode);
         }
@@ -16505,13 +16955,7 @@ class LogicAnalyzer {
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
-            "io",
-            "interval",
-            "duration",
-            "triggerValue",
-            "triggerValueSamples",
-        ]);
+        this.params = util_1.default._keyFilter(params, ["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
         const obj = {};
         obj.logic_analyzer = {
             io: [this.params.io],
@@ -16622,13 +17066,7 @@ class ObnizMeasure {
      * @param params
      */
     echo(params) {
-        const err = util_1.default._requiredKeys(params, [
-            "io_pulse",
-            "pulse",
-            "pulse_width",
-            "io_echo",
-            "measure_edges",
-        ]);
+        const err = util_1.default._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
         if (err) {
             throw new Error("Measure start param '" + err + "' required, but not found ");
         }
@@ -17029,11 +17467,7 @@ const _qrcode = (() => {
                     }
                     for (let r = -2; r <= 2; r += 1) {
                         for (let c = -2; c <= 2; c += 1) {
-                            if (r === -2 ||
-                                r === 2 ||
-                                c === -2 ||
-                                c === 2 ||
-                                (r === 0 && c === 0)) {
+                            if (r === -2 || r === 2 || c === -2 || c === 2 || (r === 0 && c === 0)) {
                                 _modules[row + r][col + c] = true;
                             }
                             else {
@@ -17048,11 +17482,11 @@ const _qrcode = (() => {
             const bits = QRUtil.getBCHTypeNumber(_typeNumber);
             for (let i = 0; i < 18; i += 1) {
                 const mod = !test && ((bits >> i) & 1) === 1;
-                _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+                _modules[Math.floor(i / 3)][(i % 3) + _moduleCount - 8 - 3] = mod;
             }
             for (let i = 0; i < 18; i += 1) {
                 const mod = !test && ((bits >> i) & 1) === 1;
-                _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+                _modules[(i % 3) + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
             }
         };
         const setupTypeInfo = (test, maskPattern) => {
@@ -17189,11 +17623,7 @@ const _qrcode = (() => {
                 totalDataCount += rsBlocks[i].dataCount;
             }
             if (buffer.getLengthInBits() > totalDataCount * 8) {
-                throw new Error("code length overflow. (" +
-                    buffer.getLengthInBits() +
-                    ">" +
-                    totalDataCount * 8 +
-                    ")");
+                throw new Error("code length overflow. (" + buffer.getLengthInBits() + ">" + totalDataCount * 8 + ")");
             }
             // end code
             if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
@@ -17475,21 +17905,8 @@ const _qrcode = (() => {
             [6, 26, 54, 82, 110, 138, 166],
             [6, 30, 58, 86, 114, 142, 170],
         ];
-        const G15 = (1 << 10) |
-            (1 << 8) |
-            (1 << 5) |
-            (1 << 4) |
-            (1 << 2) |
-            (1 << 1) |
-            (1 << 0);
-        const G18 = (1 << 12) |
-            (1 << 11) |
-            (1 << 10) |
-            (1 << 9) |
-            (1 << 8) |
-            (1 << 5) |
-            (1 << 2) |
-            (1 << 0);
+        const G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+        const G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
         const G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
         const _this = {};
         const getBCHDigit = (data) => {
@@ -17541,15 +17958,15 @@ const _qrcode = (() => {
                     };
                 case QRMaskPattern.PATTERN101:
                     return (i, j) => {
-                        return (i * j) % 2 + (i * j) % 3 === 0;
+                        return ((i * j) % 2) + ((i * j) % 3) === 0;
                     };
                 case QRMaskPattern.PATTERN110:
                     return (i, j) => {
-                        return ((i * j) % 2 + (i * j) % 3) % 2 === 0;
+                        return (((i * j) % 2) + ((i * j) % 3)) % 2 === 0;
                     };
                 case QRMaskPattern.PATTERN111:
                     return (i, j) => {
-                        return ((i * j) % 3 + (i + j) % 2) % 2 === 0;
+                        return (((i * j) % 3) + ((i + j) % 2)) % 2 === 0;
                     };
                 default:
                     throw new Error("bad maskPattern:" + maskPattern);
@@ -17698,7 +18115,7 @@ const _qrcode = (() => {
                     }
                 }
             }
-            const ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+            const ratio = Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) / 5;
             lostPoint += ratio * 10;
             return lostPoint;
         };
@@ -17715,11 +18132,7 @@ const _qrcode = (() => {
             EXP_TABLE[i] = 1 << i;
         }
         for (let i = 8; i < 256; i += 1) {
-            EXP_TABLE[i] =
-                EXP_TABLE[i - 4] ^
-                    EXP_TABLE[i - 5] ^
-                    EXP_TABLE[i - 6] ^
-                    EXP_TABLE[i - 8];
+            EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
         }
         for (let i = 0; i < 255; i += 1) {
             LOG_TABLE[EXP_TABLE[i]] = i;
@@ -18027,10 +18440,7 @@ const _qrcode = (() => {
         _this.getRSBlocks = (typeNumber, errorCorrectionLevel) => {
             const rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
             if (typeof rsBlock === "undefined") {
-                throw new Error("bad rs block @ typeNumber:" +
-                    typeNumber +
-                    "/errorCorrectionLevel:" +
-                    errorCorrectionLevel);
+                throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectionLevel:" + errorCorrectionLevel);
             }
             const length = rsBlock.length / 3;
             const list = [];
@@ -18058,7 +18468,7 @@ const _qrcode = (() => {
         };
         _this.getAt = (index) => {
             const bufIndex = Math.floor(index / 8);
-            return ((_buffer[bufIndex] >>> (7 - index % 8)) & 1) === 1;
+            return ((_buffer[bufIndex] >>> (7 - (index % 8))) & 1) === 1;
         };
         _this.put = (num, length) => {
             for (let i = 0; i < length; i += 1) {
@@ -18074,7 +18484,7 @@ const _qrcode = (() => {
                 _buffer.push(0);
             }
             if (bit) {
-                _buffer[bufIndex] |= 0x80 >>> (_length % 8);
+                _buffer[bufIndex] |= 0x80 >>> _length % 8;
             }
             _length += 1;
         };
@@ -18349,7 +18759,7 @@ const _qrcode = (() => {
             }
             if (_length % 3 !== 0) {
                 // padding
-                const padlen = 3 - _length % 3;
+                const padlen = 3 - (_length % 3);
                 for (let i = 0; i < padlen; i += 1) {
                     _base64 += "=";
                 }
@@ -18445,9 +18855,7 @@ const _qrcode = (() => {
                     // UTF-16 encodes 0x10000-0x10FFFF by
                     // subtracting 0x10000 and splitting the
                     // 20 bits of 0x0-0xFFFFF into two halves
-                    charcode =
-                        0x10000 +
-                            (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+                    charcode = 0x10000 + (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
                     utf8.push(0xf0 | (charcode >> 18), 0x80 | ((charcode >> 12) & 0x3f), 0x80 | ((charcode >> 6) & 0x3f), 0x80 | (charcode & 0x3f));
                 }
             }
@@ -18535,6 +18943,34 @@ class ObnizUtil {
     static string2dataArray(str) {
         const buf = Buffer.from(str);
         return [...buf];
+    }
+    /**
+     * @ignore
+     * @param data
+     * @param schema
+     */
+    static hexToBinary(data, reverse = false) {
+        const array = [];
+        const hex = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+        for (let i = 0; i < hex.length / 2; i++) {
+            array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
+        }
+        if (reverse) {
+            array.reverse();
+        }
+        return array;
+    }
+    /**
+     * @ignore
+     * @param min
+     * @param max
+     * @param variable_name
+     * @param variable
+     */
+    static assertNumber(min, max, variable_name, variable) {
+        if (!(min <= variable && variable <= max)) {
+            throw new Error(`${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`);
+        }
     }
     /**
      * This creates a Canvas context.
@@ -18720,8 +19156,7 @@ class WSCommand {
         let index = 0;
         result[index++] = module & 0x7f;
         result[index++] = func;
-        result[index++] =
-            (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+        result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
         while (length_extra_bytse > 0) {
             length_extra_bytse--;
             result[index++] = payload_length >> (length_extra_bytse * 8);
@@ -18888,8 +19323,7 @@ class WSCommand {
         const messages = [];
         for (const error of validateError.errors) {
             if (error.code === WSSchema_1.default.errorCodes.INVALID_TYPE) {
-                if (error.params.type === "object" ||
-                    error.params.expected === "object") {
+                if (error.params.type === "object" || error.params.expected === "object") {
                     return false;
                 }
             }
@@ -19168,9 +19602,7 @@ class WSCommandBle extends WSCommand_1.default {
     }
     /* CENTRAL   */
     centralScanStart(params) {
-        const schema = [
-            { path: "scan.duration", length: 4, type: "int", default: 30 },
-        ];
+        const schema = [{ path: "scan.duration", length: 4, type: "int", default: 30 }];
         const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
         this.sendCommand(this._CommandStartScan, buf);
     }
@@ -20011,8 +20443,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "data", type: "dataArray", length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
     }
     notifyFromBinaryWriteChacateristics(objToSend, payload) {
@@ -20023,8 +20454,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
     }
     notifyFromBinaryRegisterNotifyChacateristic(objToSend, payload) {
@@ -20035,8 +20465,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.register_notify_characteristic_result", results);
     }
     notifyFromBinaryUnregisterNotifyChacateristic(objToSend, payload) {
@@ -20047,8 +20476,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.unregister_notify_characteristic_result", results);
     }
     notifyFromBinaryNotifyChacateristic(objToSend, payload) {
@@ -20089,8 +20517,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "data", type: "dataArray", length: null },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
     }
     notifyFromBinaryWriteDescriptor(objToSend, payload) {
@@ -20102,8 +20529,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
     }
     notifyFromBinaryServerConnectionState(objToSend, payload) {
@@ -20126,8 +20552,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
     }
     notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
@@ -20178,8 +20603,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: "result", type: "int", length: 1 },
         ];
         const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
-        results.result =
-            results.result === this._commandResults.success ? "success" : "failed";
+        results.result = results.result === this._commandResults.success ? "success" : "failed";
         this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
     }
     notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
@@ -20265,10 +20689,7 @@ class WSCommandBle extends WSCommand_1.default {
             39: "on set security io capability",
             40: "on clear bonding devices list",
         };
-        results.message =
-            errorMessage[results.error_code] +
-                " " +
-                functionMessage[results.function_code];
+        results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
         this.envelopError(objToSend, "ble", results);
     }
     _addRowForPath(sendObj, path, row) {
@@ -20300,19 +20721,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 class WSCommandBleHci {
     constructor(delegate) {
-        this._delegate = delegate;
         this._CommandHCIInit = 41;
         this._CommandHCIDeinit = 42;
         this._CommandHCISend = 43;
         this._CommandHCIRecv = 44;
+        this._CommandHCIAdvertisementFilter = 45;
+        this._delegate = delegate;
     }
     schemaData() {
-        return [{ uri: "/request/ble/hci/write", onValid: this.send.bind(this) }];
+        return [
+            { uri: "/request/ble/hci/init", onValid: this.init.bind(this) },
+            { uri: "/request/ble/hci/deinit", onValid: this.deinit.bind(this) },
+            { uri: "/request/ble/hci/write", onValid: this.send.bind(this) },
+            {
+                uri: "/request/ble/hci/advertisement_filter",
+                onValid: this.advertisementFilter.bind(this),
+            },
+        ];
     }
     notifyFunctionList() {
         const funcList = {};
         funcList[this._CommandHCIRecv] = this.recv.bind(this);
         return funcList;
+    }
+    init(params, module) {
+        const buf = new Uint8Array(0);
+        this._delegate.sendCommand(this._CommandHCIInit, buf);
+    }
+    deinit(params, module) {
+        const buf = new Uint8Array(0);
+        this._delegate.sendCommand(this._CommandHCIDeinit, buf);
     }
     send(params, module) {
         const buf = new Uint8Array(params.hci.write.length);
@@ -20327,6 +20765,16 @@ class WSCommandBleHci {
         objToSend.ble = objToSend.ble || {};
         objToSend.ble.hci = objToSend.ble.hci || {};
         objToSend.ble.hci.read = { data: arr };
+    }
+    advertisementFilter(params) {
+        const sendData = [];
+        params.hci.advertisement_filter.forEach((e) => {
+            const one = [e.range.index, e.range.length, e.value.length, ...e.value];
+            sendData.push(...one);
+        });
+        const buf = new Uint8Array(sendData.length);
+        buf.set(sendData);
+        this._delegate.sendCommand(this._CommandHCIAdvertisementFilter, buf);
     }
 }
 exports.default = WSCommandBleHci;
@@ -20377,8 +20825,7 @@ class WSCommandDirective extends WSCommand_1.default {
             frame.set(nameArray, offset);
             offset += nameArray.length;
             frame[offset++] = 0; // null string
-            if (params.animation.status === "registrate" ||
-                typeof params.animation.repeat === "number") {
+            if (params.animation.status === "registrate" || typeof params.animation.repeat === "number") {
                 throw new Error("you need to update your firmware >= 2.0.0");
             }
         }
@@ -20545,7 +20992,7 @@ const qr_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/qr
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandDisplay extends WSCommand_1.default {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 8;
         this._CommandClear = 0;
         this._CommandPrint = 1;
@@ -20553,6 +21000,7 @@ class WSCommandDisplay extends WSCommand_1.default {
         this._CommandDrawCampusHorizonalBytes = 3;
         this._CommandDrawIOState = 4;
         this._CommandSetPinName = 5;
+        this._CommandDrawCampusRawColors = 6;
     }
     // Commands
     clear(params) {
@@ -20562,16 +21010,20 @@ class WSCommandDisplay extends WSCommand_1.default {
         this.sendCommand(this._CommandPrint, buf);
     }
     printText(text) {
-        let result;
         const buf = Buffer.from(text, "utf8");
-        result = new Uint8Array(buf);
+        const result = new Uint8Array(buf);
         this.print(result);
     }
     text(params) {
         this.printText(params.text);
     }
     raw(params) {
-        this.drawHorizonally(new Uint8Array(params.raw));
+        if (typeof params.color_depth === "number" && params.color_depth > 1) {
+            this.drawRawColors(params.raw, params.color_depth);
+        }
+        else {
+            this.drawHorizonally(new Uint8Array(params.raw));
+        }
     }
     qr(params) {
         const text = params.qr.text;
@@ -20603,8 +21055,7 @@ class WSCommandDisplay extends WSCommand_1.default {
             for (let row = 0; row < size; row++) {
                 for (let col = 0; col < size; col++) {
                     if (!modules[Math.floor(row / 2)][Math.floor(col / 2)]) {
-                        vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |=
-                            0x80 >> (col + 2) % 8;
+                        vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |= 0x80 >> (col + 2) % 8;
                     }
                 }
             }
@@ -20638,6 +21089,12 @@ class WSCommandDisplay extends WSCommand_1.default {
         combined.set(buf, 0);
         combined.set(stringarray, 1);
         this.sendCommand(this._CommandSetPinName, combined);
+    }
+    drawRawColors(raw, colorDepth) {
+        const buf = new Uint8Array(1 + raw.length);
+        buf[0] = colorDepth;
+        buf.set(raw, 1);
+        this.sendCommand(this._CommandDrawCampusRawColors, buf);
     }
     parseFromJson(json) {
         const module = json.display;
@@ -20769,7 +21226,7 @@ class WSCommandI2C extends WSCommand_1.default {
     }
     parseFromJson(json) {
         // 0
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 2; i++) {
             const module = json["i2c" + i];
             if (module === undefined) {
                 continue;
@@ -20825,11 +21282,8 @@ class WSCommandI2C extends WSCommand_1.default {
             // const _esperr = payload[0];
             const err = payload[1];
             const ref_func_id = payload[2];
-            if (ref_func_id === this._CommandWrite ||
-                ref_func_id === this._CommandRead) {
-                let reason = "" +
-                    (ref_func_id === this._CommandWrite ? "writing" : "reading") +
-                    " error. ";
+            if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
+                let reason = "" + (ref_func_id === this._CommandWrite ? "writing" : "reading") + " error. ";
                 if (err === 7) {
                     // in fact. it is 0x107. but truncated
                     reason += "Communication Timeout. Maybe, target is not connected.";
@@ -20997,20 +21451,17 @@ class WSCommandIO extends WSCommand_1.default {
             const err = payload[1];
             // const ref_func_id = payload[2];
             const module_index = payload[3];
-            if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH ||
-                err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
+            if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH || err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
                 this.envelopWarning(objToSend, `io${module_index}`, {
                     message: COMMAND_IO_ERROR_MESSAGES[err],
                 });
             }
-            else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW ||
-                err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
+            else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
                 this.envelopError(objToSend, `io${module_index}`, {
                     message: COMMAND_IO_ERROR_MESSAGES[err],
                 });
             }
-            else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED &&
-                payload.byteLength >= 6) {
+            else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6) {
                 const oldMutexOwner = payload[4];
                 const newMutexOwner = payload[5];
                 this.envelopWarning(objToSend, "debug", {
@@ -21504,8 +21955,7 @@ class WSCommandSwitch extends WSCommand_1.default {
         }
     }
     notifyFromBinary(objToSend, func, payload) {
-        if ((func === this._CommandOnece || func === this._CommandNotifyValue) &&
-            payload.byteLength === 1) {
+        if ((func === this._CommandOnece || func === this._CommandNotifyValue) && payload.byteLength === 1) {
             const state = parseInt(payload[0]);
             const states = ["none", "push", "left", "right"];
             objToSend.switch = {
@@ -22351,19 +22801,32 @@ var map = {
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
+	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
+	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
+	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
+	"./Ble/linking/modules/ieee754.js": "./dist/src/parts/Ble/linking/modules/ieee754.js",
+	"./Ble/linking/modules/service-notification.js": "./dist/src/parts/Ble/linking/modules/service-notification.js",
+	"./Ble/linking/modules/service-operation.js": "./dist/src/parts/Ble/linking/modules/service-operation.js",
+	"./Ble/linking/modules/service-property.js": "./dist/src/parts/Ble/linking/modules/service-property.js",
+	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
+	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
+	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
 	"./ColorSensor/S11059/index.js": "./dist/src/parts/ColorSensor/S11059/index.js",
+	"./DAConverter/MCP4725/index.js": "./dist/src/parts/DAConverter/MCP4725/index.js",
 	"./Display/7SegmentLED/index.js": "./dist/src/parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./dist/src/parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./dist/src/parts/Display/7SegmentLED_MAX7219/index.js",
+	"./Display/MatrixLED_HT16K33/index.js": "./dist/src/parts/Display/MatrixLED_HT16K33/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./dist/src/parts/Display/MatrixLED_MAX7219/index.js",
 	"./Display/ST7735S/index.js": "./dist/src/parts/Display/ST7735S/index.js",
 	"./Display/SainSmartTFT18LCD/index.js": "./dist/src/parts/Display/SainSmartTFT18LCD/index.js",
 	"./Display/SharpMemoryTFT/index.js": "./dist/src/parts/Display/SharpMemoryTFT/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./dist/src/parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./dist/src/parts/DistanceSensor/HC-SR04/index.js",
+	"./DistanceSensor/VL53L0X/index.js": "./dist/src/parts/DistanceSensor/VL53L0X/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./dist/src/parts/GPS/GYSFDMAXB/index.js",
 	"./GasSensor/MQ135/index.js": "./dist/src/parts/GasSensor/MQ135/index.js",
 	"./GasSensor/MQ2/index.js": "./dist/src/parts/GasSensor/MQ2/index.js",
@@ -22378,32 +22841,51 @@ var map = {
 	"./Grove/Grove_3AxisAccelerometer/index.js": "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js",
 	"./Grove/Grove_Button/index.js": "./dist/src/parts/Grove/Grove_Button/index.js",
 	"./Grove/Grove_Buzzer/index.js": "./dist/src/parts/Grove/Grove_Buzzer/index.js",
+	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
+	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
 	"./Infrared/InfraredLED/index.js": "./dist/src/parts/Infrared/InfraredLED/index.js",
 	"./Infrared/YG1006/index.js": "./dist/src/parts/Infrared/YG1006/index.js",
+	"./Keyestudio/Keyestudio_Button/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js",
+	"./Keyestudio/Keyestudio_Buzzer/index.js": "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js",
+	"./Keyestudio/Keyestudio_HT16K33/index.js": "./dist/src/parts/Keyestudio/Keyestudio_HT16K33/index.js",
+	"./Keyestudio/Keyestudio_MoistureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js",
+	"./Keyestudio/Keyestudio_PIR/index.js": "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js",
+	"./Keyestudio/Keyestudio_TemperatureSensor/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js",
+	"./Keyestudio/Keyestudio_TrafficLight/index.js": "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js",
 	"./Light/FullColorLED/index.js": "./dist/src/parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./dist/src/parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./dist/src/parts/Light/WS2811/index.js",
 	"./Light/WS2812/index.js": "./dist/src/parts/Light/WS2812/index.js",
 	"./Light/WS2812B/index.js": "./dist/src/parts/Light/WS2812B/index.js",
 	"./Logic/SNx4HC595/index.js": "./dist/src/parts/Logic/SNx4HC595/index.js",
+	"./M5Stack/M5StickC_ADC/index.js": "./dist/src/parts/M5Stack/M5StickC_ADC/index.js",
+	"./M5Stack/M5StickC_DAC/index.js": "./dist/src/parts/M5Stack/M5StickC_DAC/index.js",
+	"./M5Stack/M5StickC_FINGER/index.js": "./dist/src/parts/M5Stack/M5StickC_FINGER/index.js",
+	"./M5Stack/M5StickC_JoyStick/index.js": "./dist/src/parts/M5Stack/M5StickC_JoyStick/index.js",
+	"./M5Stack/M5StickC_RS485/index.js": "./dist/src/parts/M5Stack/M5StickC_RS485/index.js",
+	"./M5Stack/M5StickC_ToF/index.js": "./dist/src/parts/M5Stack/M5StickC_ToF/index.js",
+	"./M5Stack/M5StickC_YunHat/index.js": "./dist/src/parts/M5Stack/M5StickC_YunHat/index.js",
 	"./Magnet/CT10/index.js": "./dist/src/parts/Magnet/CT10/index.js",
 	"./Magnet/HMC5883L/index.js": "./dist/src/parts/Magnet/HMC5883L/index.js",
 	"./Memory/24LC256/index.js": "./dist/src/parts/Memory/24LC256/index.js",
+	"./MovementSensor/AK09916/index.js": "./dist/src/parts/MovementSensor/AK09916/index.js",
 	"./MovementSensor/AK8963/index.js": "./dist/src/parts/MovementSensor/AK8963/index.js",
 	"./MovementSensor/Button/index.js": "./dist/src/parts/MovementSensor/Button/index.js",
 	"./MovementSensor/FlickHat/index.js": "./dist/src/parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./dist/src/parts/MovementSensor/HC-SR505/index.js",
+	"./MovementSensor/ICM20948/index.js": "./dist/src/parts/MovementSensor/ICM20948/index.js",
 	"./MovementSensor/IPM-165/index.js": "./dist/src/parts/MovementSensor/IPM-165/index.js",
 	"./MovementSensor/JoyStick/index.js": "./dist/src/parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./dist/src/parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./dist/src/parts/MovementSensor/KXSC7-2050/index.js",
 	"./MovementSensor/MPU6050/index.js": "./dist/src/parts/MovementSensor/MPU6050/index.js",
+	"./MovementSensor/MPU6500/index.js": "./dist/src/parts/MovementSensor/MPU6500/index.js",
 	"./MovementSensor/MPU6886/index.js": "./dist/src/parts/MovementSensor/MPU6886/index.js",
 	"./MovementSensor/MPU9250/index.js": "./dist/src/parts/MovementSensor/MPU9250/index.js",
 	"./MovementSensor/PaPIRsVZ/index.js": "./dist/src/parts/MovementSensor/PaPIRsVZ/index.js",
@@ -22415,6 +22897,7 @@ var map = {
 	"./Moving/Solenoid/index.js": "./dist/src/parts/Moving/Solenoid/index.js",
 	"./Moving/StepperMotor/index.js": "./dist/src/parts/Moving/StepperMotor/index.js",
 	"./Power/AXP192/index.js": "./dist/src/parts/Power/AXP192/index.js",
+	"./PressureSensor/BMP280/index.js": "./dist/src/parts/PressureSensor/BMP280/index.js",
 	"./PressureSensor/DPS310/index.js": "./dist/src/parts/PressureSensor/DPS310/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./dist/src/parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./dist/src/parts/SoilSensor/SEN0114/index.js",
@@ -22435,11 +22918,14 @@ var map = {
 	"./TemperatureSensor/i2c/D6T44L/index.js": "./dist/src/parts/TemperatureSensor/i2c/D6T44L/index.js",
 	"./TemperatureSensor/i2c/DHT12/index.js": "./dist/src/parts/TemperatureSensor/i2c/DHT12/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./dist/src/parts/TemperatureSensor/i2c/S-5851A/index.js",
+	"./TemperatureSensor/i2c/SHT20/index.js": "./dist/src/parts/TemperatureSensor/i2c/SHT20/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./dist/src/parts/TemperatureSensor/i2c/SHT31/index.js",
 	"./TemperatureSensor/spi/ADT7310/index.js": "./dist/src/parts/TemperatureSensor/spi/ADT7310/index.js",
 	"./Wireless/MFRC522/index.js": "./dist/src/parts/Wireless/MFRC522/index.js",
 	"./Wireless/RN42/index.js": "./dist/src/parts/Wireless/RN42/index.js",
 	"./Wireless/XBee/index.js": "./dist/src/parts/Wireless/XBee/index.js",
+	"./i2cCompass.js": "./dist/src/parts/i2cCompass.js",
+	"./i2cImu6.js": "./dist/src/parts/i2cImu6.js",
 	"./i2cParts.js": "./dist/src/parts/i2cParts.js"
 };
 
@@ -22474,15 +22960,6 @@ webpackContext.id = "./dist/src/parts sync recursive \\.js$";
  * @packageDocumentation
  * @module Parts.hx711
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Hx711 {
     constructor() {
@@ -22511,40 +22988,30 @@ class Hx711 {
         this.sck.output(true);
         obniz.wait(500);
     }
-    readWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.sck.output(false);
-            while (true) {
-                const val = yield this.dout.inputWait();
-                if (val === false) {
-                    break;
-                }
+    async readWait() {
+        this.sck.output(false);
+        while (true) {
+            const val = await this.dout.inputWait();
+            if (val === false) {
+                break;
             }
-            this.spi.start({
-                mode: "master",
-                mosi: this.params.sck,
-                miso: this.params.dout,
-                frequency: 500 * 1000,
-            });
-            const ret_double = yield this.spi.writeWait([
-                0xaa,
-                0xaa,
-                0xaa,
-                0xaa,
-                0xaa,
-                0xaa,
-                0x80,
-            ]);
-            this.spi.end(true);
-            this.sck.output(false);
-            const ret = [
-                this.doubleBit2singleBit(ret_double[0], ret_double[1]),
-                this.doubleBit2singleBit(ret_double[2], ret_double[3]),
-                this.doubleBit2singleBit(ret_double[4], ret_double[5]),
-            ];
-            const flag = (ret[0] & 0x80) === 0 ? 1 : -1;
-            return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
+        }
+        this.spi.start({
+            mode: "master",
+            mosi: this.params.sck,
+            miso: this.params.dout,
+            frequency: 500 * 1000,
         });
+        const ret_double = await this.spi.writeWait([0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x80]);
+        this.spi.end(true);
+        this.sck.output(false);
+        const ret = [
+            this.doubleBit2singleBit(ret_double[0], ret_double[1]),
+            this.doubleBit2singleBit(ret_double[2], ret_double[3]),
+            this.doubleBit2singleBit(ret_double[4], ret_double[5]),
+        ];
+        const flag = (ret[0] & 0x80) === 0 ? 1 : -1;
+        return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
     }
     doubleBit2singleBit(a, b) {
         return ((this.bit(a, 7) << 7) |
@@ -22559,16 +23026,14 @@ class Hx711 {
     bit(a, n) {
         return a & (1 << n) ? 1 : 0;
     }
-    readAverageWait(times) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const results = [];
-            for (let i = 0; i < times; i++) {
-                results.push(yield this.readWait());
-            }
-            return (results.reduce((prev, current, i) => {
-                return prev + current;
-            }, 0) / results.length);
-        });
+    async readAverageWait(times) {
+        const results = [];
+        for (let i = 0; i < times; i++) {
+            results.push(await this.readWait());
+        }
+        return (results.reduce((prev, current, i) => {
+            return prev + current;
+        }, 0) / results.length);
     }
     powerDown() {
         this.sck.output(true);
@@ -22576,18 +23041,14 @@ class Hx711 {
     powerUp() {
         this.sck.output(false);
     }
-    zeroAdjustWait(times) {
-        return __awaiter(this, void 0, void 0, function* () {
-            times = parseInt(times) || 1;
-            this._offset = yield this.readAverageWait(times);
-        });
+    async zeroAdjustWait(times) {
+        times = parseInt(times) || 1;
+        this._offset = await this.readAverageWait(times);
     }
-    getValueWait(times) {
-        return __awaiter(this, void 0, void 0, function* () {
-            times = parseInt(times) || 1;
-            const val = yield this.readAverageWait(times);
-            return (val - this._offset) / this._scale;
-        });
+    async getValueWait(times) {
+        times = parseInt(times) || 1;
+        const val = await this.readAverageWait(times);
+        return (val - this._offset) / this._scale;
     }
     setOffset(offset) {
         if (typeof offset !== "number") {
@@ -22747,15 +23208,6 @@ exports.default = Puls08M5stickcS;
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class OMRON_2JCIE {
     constructor() {
@@ -22771,37 +23223,32 @@ class OMRON_2JCIE {
     wired(obniz) {
         this.obniz = obniz;
     }
-    findWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const target = {
-                localName: "Env",
-            };
-            this.periperal = yield this.obniz.ble.scan.startOneWait(target);
-            return this.periperal;
-        });
+    async findWait() {
+        const target = {
+            localName: "Env",
+        };
+        await this.obniz.ble.initWait();
+        this.periperal = await this.obniz.ble.scan.startOneWait(target);
+        return this.periperal;
     }
     omron_uuid(uuid) {
         return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
     }
-    connectWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.periperal) {
-                yield this.findWait();
-            }
-            if (!this.periperal) {
-                throw new Error("2JCIE not found");
-            }
-            if (!this.periperal.connected) {
-                yield this.periperal.connectWait();
-            }
-        });
+    async connectWait() {
+        if (!this.periperal) {
+            await this.findWait();
+        }
+        if (!this.periperal) {
+            throw new Error("2JCIE not found");
+        }
+        if (!this.periperal.connected) {
+            await this.periperal.connectWait();
+        }
     }
-    disconnectWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.periperal && this.periperal.connected) {
-                this.periperal.disconnectWait();
-            }
-        });
+    async disconnectWait() {
+        if (this.periperal && this.periperal.connected) {
+            this.periperal.disconnectWait();
+        }
     }
     signedNumberFromBinary(data) {
         // little adian
@@ -22822,32 +23269,4193 @@ class OMRON_2JCIE {
         }
         return val;
     }
-    getLatestData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.connectWait();
-            const c = this.periperal
-                .getService(this.omron_uuid("3000"))
-                .getCharacteristic(this.omron_uuid("3001"));
-            const data = yield c.readWait();
-            const json = {
-                row_number: data[0],
-                temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
-                relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
-                light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
-                uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
-                barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
-                soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
-                discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
-                heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
-                battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
-            };
-            return json;
-        });
+    async getLatestData() {
+        await this.connectWait();
+        const c = this.periperal.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
+        const data = await c.readWait();
+        const json = {
+            row_number: data[0],
+            temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+            relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+            light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
+            uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
+            barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
+            soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+            discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
+            heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
+            battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+        };
+        return json;
     }
 }
 exports.default = OMRON_2JCIE;
 
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* ------------------------------------------------------------------
+ * node-linking - linking.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
+const device_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/device.js"));
+class Linking {
+    constructor(params) {
+        this.PRIMARY_SERVICE_UUID_LIST = ["b3b3690150d34044808d50835b13a6cd", "fe4e"];
+        this.initialized = false;
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+        this.onadvertisement = null;
+        this.ondiscover = null;
+        // Private properties
+        this._discover_status = false;
+        this._discover_wait = 3000; // ms
+        this._discover_timer = null;
+        this._peripherals = {};
+    }
+    static info() {
+        return {
+            name: "Linking",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+    async init() {
+        await this.obniz.ble.initWait();
+        this.initialized = true;
+    }
+    discover(p) {
+        this._checkInitialized();
+        let duration = 5000;
+        let name_filter = "";
+        let id_filter = "";
+        let quick = false;
+        if (p && typeof p === "object") {
+            if ("duration" in p && typeof p.duration === "number") {
+                duration = p.duration;
+                if (duration < 1000) {
+                    duration = 1000;
+                }
+            }
+            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+                name_filter = p.nameFilter;
+            }
+            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+                id_filter = p.idFilter;
+            }
+            if ("quick" in p && typeof (p.quick === "boolean")) {
+                quick = p.quick;
+            }
+        }
+        return new Promise((resolve, reject) => {
+            let timer = null;
+            const finishDiscovery = () => {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+                this.stopScan();
+                const device_list = [];
+                for (const addr in this._peripherals) {
+                    device_list.push(this._peripherals[addr]);
+                }
+                resolve(device_list);
+            };
+            this._peripherals = {};
+            this.obniz.ble.scan.onfind = (peripheral) => {
+                const dev = this._discoveredDevice(peripheral, name_filter, id_filter);
+                if (quick && dev) {
+                    finishDiscovery();
+                    return;
+                }
+            };
+            this._scanDevices();
+            this._discover_status = true;
+            timer = setTimeout(() => {
+                finishDiscovery();
+            }, duration);
+        });
+    }
+    _checkInitialized() {
+        if (this.initialized === false) {
+            throw new Error("The `init()` method has not been called yet.");
+            return;
+        }
+        if (this._discover_status === true) {
+            throw new Error("The `discover()` or the `startScan()` method is in progress.");
+            return;
+        }
+    }
+    _discoveredDevice(peripheral, name_filter, id_filter) {
+        if (!peripheral.localName) {
+            return null;
+        }
+        // if (!peripheral.id) {
+        //   return null;
+        // }
+        if (name_filter && peripheral.localName.indexOf(name_filter) !== 0) {
+            return null;
+        }
+        // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
+        //   return null;
+        // }
+        const addr = peripheral.address;
+        if (this._peripherals[addr]) {
+            return null;
+        }
+        const device = new device_1.default(peripheral);
+        if (this.ondiscover && typeof this.ondiscover === "function") {
+            this.ondiscover(device);
+        }
+        this._peripherals[addr] = device;
+        return device;
+    }
+    _scanDevices() {
+        this.obniz.ble.scan.onfinish = () => {
+            // console.log("scan timeout!")
+            this._discover_status = false;
+        };
+        // var target = {
+        //   uuids: this.PRIMARY_SERVICE_UUID_LIST
+        // };
+        this.obniz.ble.scan.start();
+        this._discover_status = true;
+    }
+    stopScan() {
+        if (this._discover_status === true) {
+            this._discover_status = false;
+            if (this._discover_timer !== null) {
+                clearTimeout(this._discover_timer);
+                this._discover_timer = null;
+            }
+            this.obniz.ble.scan.end();
+        }
+    }
+    startScan(p) {
+        this._checkInitialized();
+        let name_filter = "";
+        let id_filter = "";
+        if (p && typeof p === "object") {
+            if ("nameFilter" in p && typeof (p.nameFilter === "string")) {
+                name_filter = p.nameFilter;
+            }
+            if ("idFilter" in p && typeof (p.idFilter === "string")) {
+                id_filter = p.idFilter;
+            }
+        }
+        this.obniz.ble.scan.onfind = function (peripheral) {
+            if (!peripheral.localName) {
+                return;
+            }
+            if (name_filter && peripheral.localName.indexOf(name_filter) !== 0) {
+                return;
+            }
+            // TODO
+            // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
+            //   return;
+            // }
+            if (this.onadvertisement && typeof this.onadvertisement === "function") {
+                const parsed = advertising_1.default.parse(peripheral);
+                if (parsed) {
+                    this.onadvertisement(parsed);
+                }
+            }
+        };
+        this._scanDevices();
+    }
+}
+exports.default = Linking;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/advertising.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+ * node-linking - advertising.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/ieee754.js"));
+class LinkingAdvertising {
+    static parse(peripheral) {
+        const ad = peripheral;
+        const manu = ad.manufacturerData;
+        if (!manu || manu.length < 8) {
+            return null;
+        }
+        // Company identifier
+        const company_id = manu.readUInt16LE(0);
+        let company_name = "Unknown";
+        if (company_id === 0x02e2) {
+            company_name = "NTT docomo";
+        }
+        // Version
+        const version = manu.readUInt8(2) >>> 4;
+        // Vendor identifier
+        const vendor_id = (manu.readUInt16BE(2) >>> 4) & 0b11111111;
+        // Individual number
+        const indi_num = (manu.readUInt32BE(3) >>> 8) & (Math.pow(2, 20) - 1);
+        // Beacon Data
+        const beacon_data_list = [];
+        for (let offset = 6; offset < manu.length; offset += 2) {
+            const beacon_buf = manu.slice(offset, offset + 2);
+            // Beacon service data
+            if (beacon_buf.length === 2) {
+                const beacon_data = this._parseBeaconServiceData(beacon_buf);
+                beacon_data_list.push(beacon_data);
+            }
+        }
+        return {
+            id: peripheral.id,
+            uuid: peripheral.uuid,
+            address: peripheral.address,
+            localName: ad.localName,
+            serviceUuids: ad.serviceUuids,
+            txPowerLevel: 0,
+            rssi: peripheral.rssi,
+            distance: Math.pow(10, (ad.txPowerLevel - peripheral.rssi) / 20),
+            companyId: company_id,
+            companyName: company_name,
+            version,
+            vendorId: vendor_id,
+            individualNumber: indi_num,
+            beaconDataList: beacon_data_list,
+        };
+    }
+    static _parseBeaconServiceData(buf) {
+        const bufn = buf.readUInt16BE(0);
+        const service_id = bufn >>> 12;
+        const n = bufn & 0b0000111111111111;
+        let res = {};
+        if (service_id === 0) {
+            res = {
+                name: "General",
+            };
+        }
+        else if (service_id === 1) {
+            res = {
+                name: "Temperature (°C)",
+                temperature: ieee754_1.default.read(n, 1, 4, 7),
+            };
+        }
+        else if (service_id === 2) {
+            res = {
+                name: "Humidity (%)",
+                humidity: ieee754_1.default.read(n, 0, 4, 8),
+            };
+        }
+        else if (service_id === 3) {
+            res = {
+                name: "Air pressure (hPa)",
+                pressure: ieee754_1.default.read(n, 0, 5, 7),
+            };
+        }
+        else if (service_id === 4) {
+            res = {
+                name: "Remaining battery power (Threshold value or less)",
+                chargeRequired: n & 0b0000100000000000 ? true : false,
+                chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (service_id === 5) {
+            const code = n & 0b0000111111111111;
+            let text = "";
+            if (code === 0x00) {
+                text = "Power";
+            }
+            else if (code === 0x01) {
+                text = "Return";
+            }
+            else if (code === 0x02) {
+                text = "SingleClick";
+            }
+            else if (code === 0x03) {
+                text = "Home";
+            }
+            else if (code === 0x04) {
+                text = "DoubleClick";
+            }
+            else if (code === 0x05) {
+                text = "VolumeUp";
+            }
+            else if (code === 0x06) {
+                text = "VolumeDown";
+            }
+            else if (code === 0x07) {
+                text = "LongPress";
+            }
+            else if (code === 0x08) {
+                text = "Pause";
+            }
+            else if (code === 0x09) {
+                text = "LongPressRelease";
+            }
+            else if (code === 0x0a) {
+                text = "FastForward";
+            }
+            else if (code === 0x0b) {
+                text = "ReWind";
+            }
+            else if (code === 0x0c) {
+                text = "Shutter";
+            }
+            else if (code === 0x0d) {
+                text = "Up";
+            }
+            else if (code === 0x0e) {
+                text = "Down";
+            }
+            else if (code === 0x0f) {
+                text = "Left";
+            }
+            else if (code === 0x10) {
+                text = "Right";
+            }
+            else if (code === 0x11) {
+                text = "Enter";
+            }
+            else if (code === 0x12) {
+                text = "Menu";
+            }
+            else if (code === 0x13) {
+                text = "Play";
+            }
+            else if (code === 0x14) {
+                text = "Stop";
+            }
+            res = {
+                name: "Pressed button information",
+                buttonId: code,
+                buttonName: text,
+            };
+        }
+        else if (service_id === 6) {
+            res = {
+                name: "Opening/closing",
+                openingStatus: n & 0b0000100000000000 ? true : false,
+                openingCount: n & 0b0000011111111111,
+            };
+        }
+        else if (service_id === 7) {
+            res = {
+                name: "Human detection",
+                humanDetectionResponse: n & 0b0000100000000000 ? true : false,
+                humanDetectionCount: n & 0b0000011111111111,
+            };
+        }
+        else if (service_id === 8) {
+            res = {
+                name: "Vibration",
+                moveResponse: n & 0b0000100000000000 ? true : false,
+                moveCount: n & 0b0000011111111111,
+            };
+        }
+        else if (service_id === 9) {
+            let illuminance = n;
+            if (n >> 11) {
+                illuminance = (n - 2047) * 50 + 2000;
+            }
+            res = {
+                name: "Illuminance (lx)",
+                illuminance,
+            };
+        }
+        else if (service_id === 15) {
+            res = {
+                name: "Vendor",
+                bin: ("000000000000" + n.toString(2)).slice(-12),
+            };
+        }
+        res.serviceId = service_id;
+        return res;
+    }
+    constructor() { }
+}
+exports.default = LinkingAdvertising;
+
+//# sourceMappingURL=advertising.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/device.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+ * node-linking - device.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-03
+ * ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertising_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/advertising.js"));
+const service_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service.js"));
+class LinkingDevice {
+    constructor(peripheral) {
+        this.PRIMARY_SERVICE_UUID = "b3b3690150d34044808d50835b13a6cd";
+        this.WRITE_CHARACTERRISTIC_UUID = "b3b3910150d34044808d50835b13a6cd";
+        this.INDICATE_CHARACTERRISTIC_UUID = "b3b3910250d34044808d50835b13a6cd";
+        this.info = {};
+        this.connected = false;
+        this.onconnect = null;
+        this.onconnectprogress = null;
+        this.ondisconnect = null;
+        this.onnotify = null;
+        this.services = {
+            deviceName: null,
+            led: null,
+            vibration: null,
+            button: null,
+            gyroscope: null,
+            accelerometer: null,
+            orientation: null,
+            battery: null,
+            temperature: null,
+            humidity: null,
+            pressure: null,
+            openclose: null,
+            human: null,
+            move: null,
+            illuminance: null,
+        };
+        this._service = null;
+        this._div_packet_queue = [];
+        this._LinkingService = new service_1.default();
+        this._onresponse = null;
+        this._write_response_timeout = 30000; // msec
+        this._generic_access_service = {
+            SERVICE_UUID: "1800",
+            service: null,
+            device_name: {
+                CHARACTERRISTIC_UUID: "2a00",
+                char: null,
+            },
+        };
+        this.advertisement = advertising_1.default.parse(peripheral);
+        this._peripheral = peripheral;
+    }
+    async connect() {
+        if (this.connected === true) {
+            throw new Error("The device has been already connected.");
+        }
+        let onprogress = this.onconnectprogress;
+        if (!this._isFunction(this.onconnectprogress)) {
+            onprogress = () => { };
+        }
+        const peripheral = this._peripheral;
+        onprogress({ step: 1, desc: "CONNECTING" });
+        try {
+            peripheral.ondisconnect = async () => {
+                await this._clean();
+                if (this._isFunction(this.ondisconnect)) {
+                    this.ondisconnect({ wasClean: false });
+                }
+            };
+            await peripheral.connectWait();
+            onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
+            onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
+            await this._getServicesAndChars();
+            onprogress({ step: 4, desc: "SUBSCRIBING" });
+            await this._subscribeForIndicate();
+            onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
+            let res;
+            res = await this.write("GET_DEVICE_INFORMATION");
+            this.info.id = "";
+            if ("deviceId" in res.data) {
+                this.info.id = res.data.deviceId;
+            }
+            this.info.uid = "";
+            if ("deviceUid" in res.data) {
+                this.info.uid = res.data.deviceUid;
+            }
+            this.info.services = {};
+            if ("serviceList" in res.data) {
+                res.data.serviceList.forEach((o) => {
+                    this.info.services[o.name] = o.id;
+                });
+            }
+            this.info.capabilities = {};
+            if ("deviceCapability" in res.data) {
+                res.data.deviceCapability.forEach((o) => {
+                    this.info.capabilities[o.name] = o.id;
+                });
+            }
+            this.info.exsensors = {};
+            if ("exSensorType" in res.data) {
+                res.data.exSensorType.forEach((o) => {
+                    this.info.exsensors[o.name] = o.id;
+                });
+            }
+            onprogress({ step: 6, desc: "GETTING_NOTIFY_CATEGORIES" });
+            res = await this._writeConfirmNotifyCategory();
+            this.info.notifyCategories = {};
+            if (res) {
+                if ("notifyCategory" in res.data) {
+                    res.data.notifyCategory.forEach((o) => {
+                        this.info.notifyCategories[o.name] = o.id;
+                    });
+                }
+            }
+            onprogress({ step: 7, desc: "GETTING_SETTING_INFORMATION" });
+            res = await this._writeGetSettingInformation();
+            this.info.settings = {};
+            if (res) {
+                if ("settingInformationData" in res.data) {
+                    res.data.settingInformationData.forEach((o) => {
+                        this.info.settings[o.name] = o;
+                    });
+                }
+            }
+            onprogress({ step: 8, desc: "GETTING_LED_COLOR_NAMES" });
+            res = await this._writeGetSettingName("LEDColorName");
+            if (res) {
+                this.info.settings.LED.colors = res.data.settingNameData;
+            }
+            onprogress({ step: 9, desc: "GETTING_LED_PATTERN_NAMES" });
+            res = await this._writeGetSettingName("LEDPatternName");
+            if (res) {
+                this.info.settings.LED.patterns = res.data.settingNameData;
+            }
+            onprogress({ step: 10, desc: "GETTING_VIBRATION_PATTERN_NAMES" });
+            res = await this._writeGetSettingName("VibrationPatternName");
+            if (res) {
+                this.info.settings.Vibration.patterns = res.data.settingNameData;
+            }
+            onprogress({ step: 11, desc: "GETTING_BEEP_PATTERN_NAMES" });
+            res = await this._writeGetSettingName("BeepPatternName");
+            if (res) {
+                this.info.settings.Beep.patterns = res.data.settingNameData;
+            }
+            this._LinkingService.setDeviceInfo(this.info);
+            this._initServices();
+            this.connected = true;
+            if (this._isFunction(this.onconnect)) {
+                this.onconnect();
+            }
+            onprogress({ step: 12, desc: "COMPLETED" });
+        }
+        catch (e) {
+            onprogress({ step: 0, desc: "FAILED" });
+            throw e;
+        }
+    }
+    _wait(msec) {
+        const promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, msec);
+        });
+        return promise;
+    }
+    _writeConfirmNotifyCategory() {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceNotification" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            this.write("CONFIRM_NOTIFY_CATEGORY")
+                .then((res) => {
+                resolve(res);
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _writeGetSettingInformation() {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            this.write("GET_SETTING_INFORMATION")
+                .then((res) => {
+                resolve(res);
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _writeGetSettingName(name) {
+        const promise = new Promise((resolve, reject) => {
+            if (!("PeripheralDeviceSettingOperation" in this.info.services)) {
+                resolve(null);
+                return;
+            }
+            const s = this.info.settings;
+            if (name === "LEDColorName") {
+                if (!("LED" in s && s.LED.colorMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "LEDPatternName") {
+                if (!("LED" in s && s.LED.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "VibrationPatternName") {
+                if (!("Vibration" in s && s.Vibration.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            else if (name === "BeepPatternName") {
+                if (!("Beep" in s && s.Beep.patternMax)) {
+                    resolve(null);
+                    return;
+                }
+            }
+            this.write("GET_SETTING_NAME", { SettingNameType: name })
+                .then((res) => {
+                resolve(res);
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _isFunction(o) {
+        return o && typeof o === "function" ? true : false;
+    }
+    _getServicesAndChars() {
+        const peripheral = this._peripheral;
+        const service = peripheral.getService(this.PRIMARY_SERVICE_UUID);
+        if (!service) {
+            throw new Error("No service was found");
+        }
+        const write_char = service.getCharacteristic(this.WRITE_CHARACTERRISTIC_UUID);
+        const indicate_char = service.getCharacteristic(this.INDICATE_CHARACTERRISTIC_UUID);
+        if (!(write_char && indicate_char)) {
+            throw new Error("No characteristic was found");
+        }
+        this.char_write = write_char;
+        this.char_indicate = indicate_char;
+        this._service = service;
+        const ga_service = peripheral.getService(this._generic_access_service.SERVICE_UUID);
+        if (ga_service) {
+            const ga_char = ga_service.getCharacteristic(this._generic_access_service.device_name.CHARACTERRISTIC_UUID);
+            if (ga_service && ga_char) {
+                this._generic_access_service.service = ga_service;
+                this._generic_access_service.device_name.char = ga_char;
+            }
+        }
+    }
+    async _subscribeForIndicate() {
+        await this.char_indicate.registerNotifyWait((data) => {
+            this._receivedPacket(Buffer.from(data));
+        });
+    }
+    _receivedPacket(buf) {
+        const new_buf = Buffer.alloc(buf.length - 1);
+        buf.copy(new_buf, 0, 1, buf.length);
+        this._div_packet_queue.push(new_buf);
+        if (this._isExecutedPacket(buf)) {
+            const header_byte = Buffer.from([buf.readUInt8(0)]);
+            this._div_packet_queue.unshift(header_byte);
+            const total_buf = Buffer.concat(this._div_packet_queue);
+            this._receivedIndicate(total_buf);
+            this._div_packet_queue = [];
+        }
+    }
+    _isExecutedPacket(buf) {
+        const ph = buf.readUInt8(0);
+        return ph & 0x00000001 ? true : false;
+    }
+    _receivedIndicate(buf) {
+        const parsed = this._LinkingService.parseResponse(buf);
+        if (!parsed) {
+            return;
+        }
+        if (parsed.messageName.match(/_RESP$/)) {
+            if (this._onresponse) {
+                this._onresponse(parsed);
+            }
+        }
+        else {
+            // All notifications
+            if (this._isFunction(this.onnotify)) {
+                this.onnotify(parsed);
+            }
+            // Button
+            if (parsed.serviceId === 2) {
+                // PeripheralDeviceOperation Service
+                if (parsed.messageId === 0) {
+                    // NOTIFY_PD_OPERATION
+                    // let f = this.services['button']['onnotify'];
+                    let f = null;
+                    if (this.services.button) {
+                        if (this._isFunction(this.services.button.onnotify)) {
+                            f = this.services.button.onnotify;
+                        }
+                    }
+                    if (f) {
+                        let button = null;
+                        parsed.parameters.forEach((p) => {
+                            if (p.parameterId === 2) {
+                                // ButtonId
+                                button = {
+                                    buttonId: p.buttonId,
+                                    buttonName: p.buttonName,
+                                };
+                            }
+                        });
+                        f(button);
+                    }
+                }
+                // Sensors
+            }
+            else if (parsed.serviceId === 3) {
+                // PeripheralDeviceSensorInformation Service
+                if (parsed.messageId === 4) {
+                    // NOTIFY_PD_SENSOR_INFO
+                    let sensor_type = -1;
+                    let res = {};
+                    parsed.parameters.forEach((p) => {
+                        const pid = p.parameterId;
+                        if (pid === 2) {
+                            // SensorType
+                            sensor_type = p.sensorTypeCode;
+                        }
+                        else {
+                            if (sensor_type.toString().match(/^(0|1|2)$/)) {
+                                // Gyroscope, Accelerometer, Orientation
+                                if (pid === 4) {
+                                    // X_value
+                                    res.x = p.xValue;
+                                }
+                                else if (pid === 5) {
+                                    // Y_value
+                                    res.y = p.yValue;
+                                }
+                                else if (pid === 6) {
+                                    // Z_value
+                                    res.z = p.zValue;
+                                }
+                            }
+                            else if (sensor_type === 3) {
+                                // Battery
+                                res = {
+                                    charge: p.charge,
+                                    level: p.level,
+                                };
+                            }
+                            else if (sensor_type === 4) {
+                                // Temperature
+                                res.temperature = p.temperature;
+                            }
+                            else if (sensor_type === 5) {
+                                // Humidity
+                                res.humidity = p.humidity;
+                            }
+                            else if (sensor_type === 6) {
+                                // Aire pressure
+                                res.pressure = p.pressure;
+                            }
+                            else if (sensor_type === 7) {
+                                // Opening and closing
+                                res.openclose = p.openclose;
+                            }
+                            else if (sensor_type === 8) {
+                                // Human detection
+                                res.human = p.human;
+                            }
+                            else if (sensor_type === 9) {
+                                // Move
+                                res.move = p.move;
+                            }
+                            else if (sensor_type === 0x0a) {
+                                // Illuminance
+                                res.illuminance = p.illuminance;
+                            }
+                        }
+                    });
+                    let f = null;
+                    if (sensor_type === 0) {
+                        if (this.services.gyroscope) {
+                            f = this.services.gyroscope.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 1) {
+                        if (this.services.accelerometer) {
+                            f = this.services.accelerometer.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 2) {
+                        if (this.services.orientation) {
+                            f = this.services.orientation.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 3) {
+                        if (this.services.battery) {
+                            f = this.services.battery.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 4) {
+                        if (this.services.temperature) {
+                            f = this.services.temperature.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 5) {
+                        if (this.services.humidity) {
+                            f = this.services.humidity.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 6) {
+                        if (this.services.pressure) {
+                            f = this.services.pressure.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 7) {
+                        if (this.services.openclose) {
+                            f = this.services.openclose.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 8) {
+                        if (this.services.human) {
+                            f = this.services.human.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 9) {
+                        if (this.services.move) {
+                            f = this.services.move.onnotify;
+                        }
+                    }
+                    else if (sensor_type === 0x0a) {
+                        if (this.services.illuminance) {
+                            f = this.services.illuminance.onnotify;
+                        }
+                    }
+                    if (this._isFunction(f)) {
+                        f(res);
+                    }
+                }
+            }
+        }
+    }
+    async disconnect() {
+        if (this.connected === false) {
+            await this._clean();
+            return;
+        }
+        await this._peripheral.disconnectWait();
+        if (this._isFunction(this.ondisconnect)) {
+            this.ondisconnect({ wasClean: true });
+        }
+    }
+    async _clean() {
+        const p = this._peripheral;
+        if (!p) {
+            return;
+        }
+        if (this.char_indicate) {
+            await this.char_indicate.unregisterNotifyWait();
+        }
+        // p.removeAllListeners();
+        this.connected = false;
+        this._service = null;
+        this.char_write = null;
+        this.char_indicate = null;
+        this._div_packet_queue = [];
+        this._onresponse = null;
+    }
+    write(message_name, params) {
+        return new Promise(async (resolve, reject) => {
+            const buf = this._LinkingService.createRequest(message_name, params);
+            if (!buf) {
+                reject(new Error("The specified parameters are invalid."));
+            }
+            const timer = setTimeout(() => {
+                this._onresponse = null;
+                reject(new Error("Timeout"));
+            }, this._write_response_timeout);
+            this._onresponse = (res) => {
+                if (res.messageName === message_name + "_RESP") {
+                    this._onresponse = null;
+                    clearTimeout(timer);
+                    const data = this._margeResponsePrameters(res);
+                    if (data) {
+                        res.data = data;
+                        resolve(res);
+                    }
+                    else {
+                        reject(new Error("Unknown response"));
+                    }
+                }
+            };
+            try {
+                await this.char_write.writeWait(buf, true);
+            }
+            catch (e) {
+                reject(e);
+            }
+        });
+    }
+    _margeResponsePrameters(res) {
+        if (!res) {
+            return null;
+        }
+        const parameters = res.parameters;
+        if (parameters && Array.isArray(parameters) && parameters.length > 0) {
+            const data = {};
+            parameters.forEach((p) => {
+                for (const k in p) {
+                    if (!k.match(/^(name|parameterId)$/)) {
+                        data[k] = p[k];
+                    }
+                }
+            });
+            return data;
+        }
+        else {
+            return null;
+        }
+    }
+    _initServices() {
+        const device_name = this._peripheral.localName;
+        // Device Name
+        if (this._generic_access_service.device_name.char) {
+            this.services.deviceName = {
+                get: this._deviceNameGet.bind(this),
+                set: this._deviceNameSet.bind(this),
+            };
+        }
+        // Button
+        if ("Button" in this.info.exsensors || device_name.match(/^(Linking Board01|BLEAD\-LK\-TSH)/)) {
+            this.services.button = {
+                onnotify: null,
+            };
+        }
+        // LED
+        if ("LED" in this.info.settings) {
+            const o = this.info.settings.LED;
+            if (o.colors && o.colors.length > 0 && o.patterns && o.patterns.length > 0) {
+                const colors = {};
+                for (let i = 0; i < o.colors.length; i++) {
+                    colors[o.colors[i]] = i + 1;
+                }
+                const patterns = {};
+                for (let i = 0; i < o.patterns.length; i++) {
+                    patterns[o.patterns[i]] = i + 1;
+                }
+                this.services.led = {
+                    colors,
+                    patterns,
+                    turnOn: this._ledTurnOn.bind(this),
+                    turnOff: this._ledTurnOff.bind(this),
+                };
+            }
+        }
+        // Vibration
+        if ("Vibration" in this.info.settings) {
+            const o = this.info.settings.Vibration;
+            if (o.patterns && o.patterns.length > 0) {
+                const patterns = {};
+                for (let i = 0; i < o.patterns.length; i++) {
+                    patterns[o.patterns[i]] = i + 1;
+                }
+                this.services.vibration = {
+                    patterns,
+                    turnOn: this._vibrationTurnOn.bind(this),
+                    turnOff: this._vibrationTurnOff.bind(this),
+                };
+            }
+        }
+        // Gyroscope
+        if ("Gyroscope" in this.info.capabilities) {
+            this.services.gyroscope = this._createSensorServiceObject(0x00);
+        }
+        // Accelerometer
+        if ("Accelerometer" in this.info.capabilities) {
+            this.services.accelerometer = this._createSensorServiceObject(0x01);
+        }
+        // Orientation
+        if ("Orientation" in this.info.capabilities) {
+            this.services.orientation = this._createSensorServiceObject(0x02);
+        }
+        // Battery
+        if ("Battery" in this.info.capabilities) {
+            this.services.battery = this._createSensorServiceObject(0x03);
+        }
+        // Temperature
+        if ("Temperature" in this.info.capabilities) {
+            this.services.temperature = this._createSensorServiceObject(0x04);
+        }
+        // Humidity
+        if ("Humidity" in this.info.capabilities) {
+            this.services.humidity = this._createSensorServiceObject(0x05);
+        }
+        // Atmospheric pressure
+        if ("Atmospheric pressure" in this.info.capabilities) {
+            this.services.pressure = this._createSensorServiceObject(0x06);
+        }
+        // Opening and closing
+        if ("Opening and closing" in this.info.exsensors) {
+            this.services.openclose = this._createSensorServiceObject(0x07);
+        }
+        // Human detection
+        if ("Human detection" in this.info.exsensors) {
+            this.services.human = this._createSensorServiceObject(0x08);
+        }
+        // Move
+        if ("Move" in this.info.exsensors) {
+            this.services.move = this._createSensorServiceObject(0x09);
+        }
+        // Illuminance
+        if ("Illuminance" in this.info.exsensors) {
+            this.services.illuminance = this._createSensorServiceObject(0x0a);
+        }
+    }
+    _deviceNameGet() {
+        const promise = new Promise((resolve, reject) => {
+            const char = this._generic_access_service.device_name.char;
+            char.read((error, data) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve({
+                        deviceName: data.toString("utf8"),
+                    });
+                }
+            });
+        });
+        return promise;
+    }
+    _deviceNameSet(name) {
+        const promise = new Promise((resolve, reject) => {
+            if (!name) {
+                reject(new Error("Device name is required."));
+                return;
+            }
+            else if (typeof name !== "string") {
+                reject(new Error("Device name must be a string."));
+                return;
+            }
+            else if (name.length > 32) {
+                reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
+                return;
+            }
+            const buf = Buffer.from(name, "utf8");
+            const char = this._generic_access_service.device_name.char;
+            char.write(buf, false, (error) => {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve();
+                }
+            });
+        });
+        return promise;
+    }
+    _ledTurnOn(color, pattern, duration) {
+        let color_number = 1;
+        if (color) {
+            const colors = this.services.led.colors;
+            if (typeof color === "number") {
+                for (const name in colors) {
+                    if (colors[name] === color) {
+                        color_number = color;
+                        break;
+                    }
+                }
+            }
+            else if (typeof color === "string") {
+                if (color in colors) {
+                    color_number = colors[color];
+                }
+            }
+        }
+        let pattern_number = 2;
+        if (pattern) {
+            const patterns = this.services.led.patterns;
+            if (typeof pattern === "number") {
+                for (const name in patterns) {
+                    if (patterns[name] === pattern) {
+                        pattern_number = pattern;
+                        break;
+                    }
+                }
+            }
+            else if (typeof pattern === "string") {
+                if (pattern in patterns) {
+                    pattern_number = patterns[pattern];
+                }
+            }
+        }
+        if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
+            duration = 5;
+        }
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "START_DEMONSTRATION",
+                },
+                SettingInformationData: [
+                    {
+                        settingName: "LED",
+                        colorNumber: color_number,
+                        patternNumber: pattern_number,
+                        duration,
+                    },
+                ],
+            })
+                .then((res) => {
+                resolve(res.data);
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _ledTurnOff() {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "STOP_DEMONSTRATION",
+                },
+            })
+                .then((res) => {
+                resolve(res.data);
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _vibrationTurnOn(pattern, duration) {
+        let pattern_number = 2;
+        if (pattern) {
+            const patterns = this.services.vibration.patterns;
+            if (typeof pattern === "number") {
+                for (const name in patterns) {
+                    if (patterns[name] === pattern) {
+                        pattern_number = pattern;
+                        break;
+                    }
+                }
+            }
+            else if (typeof pattern === "string") {
+                if (pattern in patterns) {
+                    pattern_number = patterns[pattern];
+                }
+            }
+        }
+        if (!duration || typeof duration !== "number" || duration % 1 !== 0) {
+            duration = 5;
+        }
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "START_DEMONSTRATION",
+                },
+                SettingInformationData: [
+                    {
+                        settingName: "Vibration",
+                        patternNumber: pattern_number,
+                        duration,
+                    },
+                ],
+            })
+                .then((res) => {
+                resolve(res.data);
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _vibrationTurnOff() {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SELECT_SETTING_INFORMATION", {
+                SettingInformationRequest: {
+                    requestName: "STOP_DEMONSTRATION",
+                },
+            })
+                .then((res) => {
+                resolve(res.data);
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _createSensorServiceObject(sensor_type) {
+        return {
+            onnotify: null,
+            start: () => {
+                return this._setNotifySensorInfo(sensor_type, 1);
+            },
+            stop: () => {
+                return this._setNotifySensorInfo(sensor_type, 0);
+            },
+            get: () => {
+                return this._getSensorInfo(sensor_type);
+            },
+        };
+    }
+    _setNotifySensorInfo(sensor_type, status) {
+        const promise = new Promise((resolve, reject) => {
+            this.write("SET_NOTIFY_SENSOR_INFO", {
+                SensorType: sensor_type,
+                Status: status,
+            })
+                .then((res) => {
+                resolve(res.data);
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+    _getSensorInfo(sensor_type) {
+        const promise = new Promise((resolve, reject) => {
+            this.write("GET_SENSOR_INFO", {
+                SensorType: sensor_type,
+            })
+                .then((res) => {
+                if (sensor_type.toString().match(/^(0|1|2)$/)) {
+                    // Gyroscope, Accelerometer, Orientation
+                    const d = res.data;
+                    const data = {
+                        x: d.xValue,
+                        y: d.yValue,
+                        z: d.zValue,
+                    };
+                    resolve(data);
+                }
+                else {
+                    resolve(res.data);
+                }
+            })
+                .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
+}
+exports.default = LinkingDevice;
+
+//# sourceMappingURL=device.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/ieee754.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+ * node-linking - ieee754.js
+ *
+ * Copyright (c) 2017, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2017-04-13
+ * ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingIEEE754 {
+    static read(n, slen, elen, flen) {
+        const sgn = slen ? (n >>> 11) & 0b1 : 0; // sign
+        const max = Math.pow(2, elen) - 1; // maximum of exponent
+        const exp = (n >>> flen) & max; // exponent
+        let fra = 0; // fraction
+        for (let i = 0; i < flen; i++) {
+            if ((n >>> (flen - i - 1)) & 0b1) {
+                fra += Math.pow(2, -(i + 1));
+            }
+        }
+        if (exp === 0 && fra === 0) {
+            return 0;
+        }
+        else if (exp === 0 && fra !== 0) {
+            const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
+            const v = Math.pow(-1, sgn) * fra * Math.pow(2, 1 - m);
+            return v;
+        }
+        else if (exp >= 1 && exp <= max - 1) {
+            const m = Math.pow(2, elen - 1) - 1; // median (7 or 15)
+            const v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, exp - m);
+            return v;
+        }
+        else if (exp === max && fra === 0) {
+            return Infinity;
+        }
+        else {
+            return NaN;
+        }
+    }
+    constructor() { }
+}
+exports.default = LinkingIEEE754;
+
+//# sourceMappingURL=ieee754.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-notification.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+ * node-linking - service-notification.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* ------------------------------------------------------------------
+ * Constructor: LinkingServiceNotification()
+ * ---------------------------------------------------------------- */
+class LinkingServiceNotification {
+    constructor() {
+        this.SERVICE_ID = 0x01;
+        this.SERVICE_NAME = "PeripheralDeviceNotification";
+        this.MESSAGE_NAME_MAP = {
+            "00": "CONFIRM_NOTIFY_CATEGORY",
+            "01": "CONFIRM_NOTIFY_CATEGORY_RESP",
+            "02": "NOTIFY_INFORMATION",
+            "03": "GET_PD_NOTIFY_DETAIL_DATA",
+            "04": "GET_PD_NOTIFY_DETAIL_DATA_RESP",
+            "05": "NOTIFY_PD_GENERAL_INFORMATION",
+            "06": "START_PD_APPLICATION",
+            "07": "START_PD_APPLICATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            CONFIRM_NOTIFY_CATEGORY: 0x00,
+            NOTIFY_INFORMATION: 0x02,
+            GET_PD_NOTIFY_DETAIL_DATA_RESP: 0x04,
+            START_PD_APPLICATION_RESP: 0x07,
+        };
+        this._NOTIFY_CATEGORY_NAME_ID_MAP = {
+            NotNotify: 0,
+            All: 1,
+            PhoneIncomingCall: 2,
+            PhoneInCall: 3,
+            PhoneIdle: 4,
+            Mail: 5,
+            Schedule: 6,
+            General: 7,
+            Etc: 8,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        let notify_cateogry_id = 0;
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                const p = this._parseParameter(pid, pvalue_buf);
+                parameters.push(this._parseParameter(pid, pvalue_buf, notify_cateogry_id));
+                if (pid === 0x04 && "id" in p) {
+                    notify_cateogry_id = p.id;
+                }
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf, notify_cateogory_id) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseGetStatus(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseNotifyCategory(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseNotifyCategoryID(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseGetParameterID(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseGetParameterLength(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseParameterIdList(buf, notify_cateogory_id);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseUniqueId(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseNotifyId(buf);
+        }
+        else if (pid === 0x0a) {
+            parsed = this._parseNotificationOperation(buf);
+        }
+        else if (pid === 0x0b) {
+            parsed = this._parseTittle(buf);
+        }
+        else if (pid === 0x0c) {
+            parsed = this._parseText(buf);
+        }
+        else if (pid === 0x0d) {
+            parsed = this._parseAppName(buf);
+        }
+        else if (pid === 0x0e) {
+            parsed = this._parseAppNameLocal(buf);
+        }
+        else if (pid === 0x0f) {
+            parsed = this._parseNotifyApp(buf);
+        }
+        else if (pid === 0x10) {
+            parsed = this._parseRumblingSetting(buf);
+        }
+        else if (pid === 0x11) {
+            parsed = this._parseVibrationPattern(buf);
+        }
+        else if (pid === 0x12) {
+            parsed = this._parseLedPattern(buf);
+        }
+        else if (pid === 0x13) {
+            parsed = this._parseSender(buf);
+        }
+        else if (pid === 0x14) {
+            parsed = this._parseSenderAddress(buf);
+        }
+        else if (pid === 0x15) {
+            parsed = this._parseReceiveDate(buf);
+        }
+        else if (pid === 0x16) {
+            parsed = this._parseStartDate(buf);
+        }
+        else if (pid === 0x17) {
+            parsed = this._parseEndDate(buf);
+        }
+        else if (pid === 0x18) {
+            parsed = this._parseArea(buf);
+        }
+        else if (pid === 0x19) {
+            parsed = this._parsePerson(buf);
+        }
+        else if (pid === 0x1a) {
+            parsed = this._parseMimeTypeForImage(buf);
+        }
+        else if (pid === 0x1b) {
+            parsed = this._parseMimeTypeForMedia(buf);
+        }
+        else if (pid === 0x1c) {
+            parsed = this._parseImage(buf);
+        }
+        else if (pid >= 0x1d && pid <= 0x26) {
+            parsed = this._parseContents(buf, pid);
+        }
+        else if (pid === 0x27) {
+            parsed = this._parseMedia(buf);
+        }
+        else if (pid === 0x28) {
+            parsed = this._parsePackage(buf);
+        }
+        else if (pid === 0x29) {
+            parsed = this._parseClass(buf);
+        }
+        else if (pid === 0x2a) {
+            parsed = this._parseSharingInformation(buf);
+        }
+        else if (pid === 0x2b) {
+            parsed = this._parseBeepPattern(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseGetStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "OK, request processed ,but some parameter not";
+        }
+        else if (code === 0x02) {
+            text = "Cancel";
+        }
+        else if (code === 0x03) {
+            text = "Error, failed";
+        }
+        else if (code === 0x04) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x05) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x06) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "GetStatus",
+            statusCode: code,
+            statusText: text,
+        };
+    }
+    _parseNotifyCategory(buf) {
+        const list = [];
+        const v1 = buf.readUInt8(0);
+        if (v1 & 0b00000001) {
+            list.push({
+                id: 0,
+                name: "NotNotify",
+            });
+        }
+        if (v1 & 0b00000010) {
+            list.push({
+                id: 1,
+                name: "All",
+            });
+        }
+        if (v1 & 0b00000100) {
+            list.push({
+                id: 2,
+                name: "PhoneIncomingCall",
+            });
+        }
+        if (v1 & 0b00001000) {
+            list.push({
+                id: 3,
+                name: "PhoneInCall",
+            });
+        }
+        if (v1 & 0b00010000) {
+            list.push({
+                id: 4,
+                name: "PhoneIdle",
+            });
+        }
+        if (v1 & 0b00100000) {
+            list.push({
+                id: 5,
+                name: "Mail",
+            });
+        }
+        if (v1 & 0b01000000) {
+            list.push({
+                id: 6,
+                name: "Schedule",
+            });
+        }
+        if (v1 & 0b10000000) {
+            list.push({
+                id: 7,
+                name: "General",
+            });
+        }
+        const v2 = buf.readUInt8(1);
+        if (v2 & 0b00000001) {
+            list.push({
+                id: 8,
+                name: "Etc",
+            });
+        }
+        return {
+            name: "NotifyCategory",
+            notifyCategory: list,
+        };
+    }
+    _parseNotifyCategoryID(buf) {
+        let res = null;
+        const v1 = buf.readUInt8(0);
+        const v2 = buf.readUInt8(1);
+        if (v1 & 0b00000001) {
+            res = { id: 0, text: "NotNotify" };
+        }
+        else if (v1 & 0b00000010) {
+            res = { id: 1, text: "All" };
+        }
+        else if (v1 & 0b00000100) {
+            res = { id: 2, text: "PhoneIncomingCall" };
+        }
+        else if (v1 & 0b00001000) {
+            res = { id: 3, text: "PhoneInCall" };
+        }
+        else if (v1 & 0b00010000) {
+            res = { id: 4, text: "PhoneIdle" };
+        }
+        else if (v1 & 0b00100000) {
+            res = { id: 5, text: "Mail" };
+        }
+        else if (v1 & 0b01000000) {
+            res = { id: 6, text: "Schedule" };
+        }
+        else if (v1 & 0b10000000) {
+            res = { id: 7, text: "General" };
+        }
+        else if (v2 & 0b00000001) {
+            res = { id: 8, text: "Etc" };
+        }
+        return {
+            name: "NotifyCategoryID",
+            notifyCategoryId: res.id,
+            NotifyCategoryText: res.text,
+        };
+    }
+    _parseGetParameterID(buf) {
+        return {
+            name: "GetParameterID",
+            getParameterId: buf.readUInt8(0),
+        };
+    }
+    _parseGetParameterLength(buf) {
+        return {
+            name: "GetParameterLength",
+            getParameterLength: buf.readUInt32LE(0),
+        };
+    }
+    _parseParameterIdList(buf, notify_cateogry_id) {
+        const v = buf.readUInt16LE(0);
+        const list = [];
+        if (notify_cateogry_id >= 2 && notify_cateogry_id <= 4) {
+            // PhoneIncomingCall/PhoneInCall/PhoneIdle
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 5) {
+            // Mail
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0d, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0e, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0b, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x0c, name: "Text" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x13, name: "Sender" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x14, name: "SenderAddress" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x15, name: "ReceiveDate" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 6) {
+            // Schedule
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0d, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0e, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0b, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x16, name: "StartDate" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x17, name: "EndDate" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x18, name: "Area" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x19, name: "Person" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x0c, name: "Text" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x1d, name: "Contents1" });
+            }
+            if (v & 0b0000010000000000) {
+                list.push({ id: 0x1e, name: "Contents2" });
+            }
+            if (v & 0b0000100000000000) {
+                list.push({ id: 0x1f, name: "Contents3" });
+            }
+            if (v & 0b0001000000000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0010000000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 7) {
+            // General
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0d, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0e, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x0b, name: "Tittle" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x0c, name: "Text" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        else if (notify_cateogry_id === 8) {
+            // Etc
+            if (v & 0b0000000000000001) {
+                list.push({ id: 0x0d, name: "AppName" });
+            }
+            if (v & 0b0000000000000010) {
+                list.push({ id: 0x0e, name: "AppNameLocal" });
+            }
+            if (v & 0b0000000000000100) {
+                list.push({ id: 0x28, name: "Package" });
+            }
+            if (v & 0b0000000000001000) {
+                list.push({ id: 0x1d, name: "Contents1" });
+            }
+            if (v & 0b0000000000010000) {
+                list.push({ id: 0x1e, name: "Contents2" });
+            }
+            if (v & 0b0000000000100000) {
+                list.push({ id: 0x1f, name: "Contents3" });
+            }
+            if (v & 0b0000000001000000) {
+                list.push({ id: 0x20, name: "Contents4" });
+            }
+            if (v & 0b0000000010000000) {
+                list.push({ id: 0x21, name: "Contents5" });
+            }
+            if (v & 0b0000000100000000) {
+                list.push({ id: 0x22, name: "Contents6" });
+            }
+            if (v & 0b0000001000000000) {
+                list.push({ id: 0x23, name: "Contents7" });
+            }
+            if (v & 0b0000010000000000) {
+                list.push({ id: 0x1b, name: "MimeTypeForMedia" });
+            }
+            if (v & 0b0000100000000000) {
+                list.push({ id: 0x27, name: "Media" });
+            }
+            if (v & 0b0001000000000000) {
+                list.push({ id: 0x1a, name: "MimeTypeForImage" });
+            }
+            if (v & 0b0010000000000000) {
+                list.push({ id: 0x1c, name: "Image" });
+            }
+            if (v & 0b0100000000000000) {
+                list.push({ id: 0x09, name: "NotifyId" });
+            }
+            if (v & 0b1000000000000000) {
+                list.push({ id: 0x04, name: "NotifyCategoryID" });
+            }
+        }
+        return {
+            name: "ParameterIdList",
+            parameterIdList: list,
+        };
+    }
+    _parseUniqueId(buf) {
+        return {
+            name: "UniqueId",
+            uniqueId: buf.readUInt16LE(0),
+        };
+    }
+    _parseNotifyId(buf) {
+        return {
+            name: "NotifyId",
+            notifyId: buf.readUInt16LE(0),
+        };
+    }
+    _parseNotificationOperation(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "AlreadyRead";
+        }
+        else if (code === 0x01) {
+            text = "Delete";
+        }
+        return {
+            name: "NotificationOperation",
+            notificationOperationCode: code,
+            notificationOperationText: text,
+        };
+    }
+    _parseTittle(buf) {
+        return {
+            name: "Tittle",
+            title: buf.toString("UTF-8"),
+        };
+    }
+    _parseText(buf) {
+        return {
+            name: "Text",
+            text: buf.toString("UTF-8"),
+        };
+    }
+    _parseAppName(buf) {
+        return {
+            name: "AppName",
+            appName: buf.toString("UTF-8"),
+        };
+    }
+    _parseAppNameLocal(buf) {
+        return {
+            name: "AppNameLocal",
+            appNameLocal: buf.toString("UTF-8"),
+        };
+    }
+    _parseNotifyApp(buf) {
+        return {
+            name: "NotifyApp",
+            notifyApp: buf.toString("UTF-8"),
+        };
+    }
+    _parseRumblingSetting(buf) {
+        const list = [];
+        const v = buf.readUInt8(0);
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "LED" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Vibration" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Beep" });
+        }
+        return {
+            name: "RumblingSetting",
+            rumblingSetting: list,
+        };
+    }
+    _parseVibrationPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "VibrationPattern",
+            vibrationPattern: list,
+        };
+    }
+    _parseLedPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "LedPattern",
+            LedPattern: list,
+        };
+    }
+    _parseSender(buf) {
+        return {
+            name: "Sender",
+            sender: buf.toString("UTF-8"),
+        };
+    }
+    _parseSenderAddress(buf) {
+        return {
+            name: "SenderAddress",
+            senderAddress: buf.toString("UTF-8"),
+        };
+    }
+    _parseReceiveDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "ReceiveDate",
+            receiveDate: dt,
+        };
+    }
+    _parseStartDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "StartDate",
+            startDate: dt,
+        };
+    }
+    _parseEndDate(buf) {
+        const Y = buf.readUInt16LE(0);
+        const M = buf.readUInt8(2);
+        const D = buf.readUInt8(3);
+        const h = buf.readUInt8(4);
+        const m = buf.readUInt8(5);
+        const s = buf.readUInt8(6);
+        const dt = new Date(Y, M, D, h, m, s);
+        return {
+            name: "EndDate",
+            endDate: dt,
+        };
+    }
+    _parseArea(buf) {
+        return {
+            name: "Area",
+            area: buf.toString("UTF-8"),
+        };
+    }
+    _parsePerson(buf) {
+        const buf_list = [];
+        let offset = 0;
+        let start = 0;
+        while (true) {
+            if (buf.readUInt8(offset) === 0x00) {
+                if (start !== offset) {
+                    buf_list.push(buf.slice(start, offset));
+                    start = offset;
+                }
+            }
+            offset++;
+            if (offset >= buf.length) {
+                if (start !== offset) {
+                    buf_list.push(buf.slice(start, offset));
+                }
+                break;
+            }
+        }
+        const list = [];
+        buf_list.forEach((b) => {
+            list.push(b.toString("UTF-8"));
+        });
+        return {
+            name: "Person",
+            person: list,
+        };
+    }
+    _parseMimeTypeForImage(buf) {
+        return {
+            name: "MimeTypeForImage",
+            mimeTypeForImage: buf.toString("UTF-8"),
+        };
+    }
+    _parseMimeTypeForMedia(buf) {
+        return {
+            name: "MimeTypeForMedia",
+            mimeTypeForMedia: buf.toString("UTF-8"),
+        };
+    }
+    _parseImage(buf) {
+        return {
+            name: "Image",
+            image: buf,
+        };
+    }
+    _parseContents(buf, pid) {
+        return {
+            name: "Contents" + pid,
+            contents: buf.toString("UTF-8"),
+        };
+    }
+    _parseMedia(buf) {
+        return {
+            name: "Media",
+            media: buf,
+        };
+    }
+    _parsePackage(buf) {
+        return {
+            name: "Package",
+            package: buf.toString("UTF-8"),
+        };
+    }
+    _parseClass(buf) {
+        return {
+            name: "Class",
+            class: buf.toString("UTF-8"),
+        };
+    }
+    _parseSharingInformation(buf) {
+        return {
+            name: "SharingInformation",
+            sharingInformation: buf.toString("UTF-8"),
+        };
+    }
+    _parseBeepPattern(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            let name = "";
+            for (let i = 0; i < len; i++) {
+                name += String.fromCharCode(buf.readUInt8(offset++));
+            }
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "BeepPattern",
+            beepPattern: list,
+        };
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "CONFIRM_NOTIFY_CATEGORY") {
+            return this._createPayloadConfirmNotifyCategory(params);
+        }
+        else if (message_name === "NOTIFY_INFORMATION") {
+            return this._createPayloadNotifyInformation(params);
+        }
+        else if (message_name === "GET_PD_NOTIFY_DETAIL_DATA_RESP") {
+            return this._createPayloadGetPdNotifyDetailDataResp(params);
+        }
+        else if (message_name === "START_PD_APPLICATION_RESP") {
+            return this._createPayloadStartPdApplicationResp(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadConfirmNotifyCategory(params) {
+        const pnum_buf = Buffer.alloc(1);
+        pnum_buf.writeUInt8(0);
+        return pnum_buf;
+    }
+    _createPayloadNotifyInformation(params) {
+        /*
+            NotifyCategory   M 2 0x03
+            UniqueId         M 2 0x08
+            ParameterIdList  M 2 0x07
+            RumblingSetting  O 1 0x10
+            VibrationPattern O   0x11
+            LedPattern       O   0x12
+            BeepPattern      O   0x2B
+            */
+        /*
+            let pnum = 0;
+            let notify_category = null;
+            let notify_category_name = '';
+            if('NotifyCategory' in params) {
+                notify_category =  params['NotifyCategory'];
+                if(typeof(notify_category) === 'number') {
+                    if(notify_category >= 0 && notify_category <= 0xFF && notify_category % 1 === 0) {
+                        let hit = false;
+                        for(let name in this._NOTIFY_CATEGORY_NAME_ID_MAP) {
+                            if(this._NOTIFY_CATEGORY_NAME_ID_MAP[name] === notify_category) {
+                                hit = true;
+                                notify_category_name = name;
+                                break;
+                            }
+                        }
+                        if(hit === true) {
+                            pnum ++;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
+                } else if(typeof(notify_category) === 'string') {
+                    if(notify_category in this._NOTIFY_CATEGORY_NAME_ID_MAP) {
+                        notify_category = this._NOTIFY_CATEGORY_NAME_ID_MAP[notify_category];
+                        notify_category_name = notify_category;
+                        pnum ++;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+            let uid = null;
+            if(('UniqueId' in params) && typeof(params['UniqueId']) === 'number' && params['UniqueId'] >= 0 && params['UniqueId'] <= 0xFFFF && params['UniqueId'] % 1 === 0) {
+                uid = params['UniqueId'];
+                pnum ++;
+            } else {
+                return null;
+            }
+            // buffer list
+            let buf_list = [];
+            // Number of parameters
+            let pnum_buf = Buffer.from([pnum]);
+            buf_list.push(pnum_buf);
+            // NotifyCategory
+            if(notify_category !== null) {
+                let n = 1 << notify_category;
+                let val_buf = Buffer.alloc(2);
+                val_buf.writeUInt16LE(n);
+                buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+            }
+            // UniqueId
+            if(uid !== null) {
+                let val_buf = Buffer.alloc(2);
+                val_buf.writeUInt16LE(uid);
+                buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+            }
+            // Create a packet
+            return Buffer.concat(buf_list);
+            */
+        return null;
+    }
+    _createPayloadGetPdNotifyDetailDataResp(params) {
+        let pnum = 0;
+        let rcode = null;
+        if ("ResultCode" in params &&
+            typeof params.ResultCode === "number" &&
+            params.ResultCode >= 0 &&
+            params.ResultCode <= 0xff &&
+            params.ResultCode % 1 === 0) {
+            rcode = params.ResultCode;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let uid = null;
+        if ("UniqueId" in params &&
+            typeof params.UniqueId === "number" &&
+            params.UniqueId >= 0 &&
+            params.UniqueId <= 0xff &&
+            params.UniqueId % 1 === 0) {
+            uid = params.UniqueId;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // ResultCode
+        if (rcode !== null) {
+            const val_buf = Buffer.alloc(1);
+            val_buf.writeUInt8(rcode);
+            buf_list.push(this._createPropertyBlockBuffer(0x00, val_buf));
+        }
+        // UniqueId
+        if (uid !== null) {
+            const val_buf = Buffer.alloc(2);
+            val_buf.writeUInt16LE(uid);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadStartPdApplicationResp(params) {
+        let pnum = 0;
+        let rcode;
+        if ("ResultCode" in params &&
+            typeof params.ResultCode === "number" &&
+            params.ResultCode >= 0 &&
+            params.ResultCode <= 0xff &&
+            params.ResultCode % 1 === 0) {
+            rcode = params.ResultCode;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // ResultCode
+        if (rcode !== null) {
+            const val_buf = Buffer.alloc(1);
+            val_buf.writeUInt8(rcode);
+            buf_list.push(this._createPropertyBlockBuffer(0x00, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceNotification;
+
+//# sourceMappingURL=service-notification.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-operation.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+ * node-linking - service-operation.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceOperation {
+    constructor() {
+        this.SERVICE_ID = 0x02;
+        this.SERVICE_NAME = "PeripheralDeviceOperation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "NOTIFY_PD_OPERATION",
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseButtonId(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseButtonId(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "Power";
+        }
+        else if (code === 0x01) {
+            text = "Return";
+        }
+        else if (code === 0x02) {
+            text = "SingleClick";
+        }
+        else if (code === 0x03) {
+            text = "Home";
+        }
+        else if (code === 0x04) {
+            text = "DoubleClick";
+        }
+        else if (code === 0x05) {
+            text = "VolumeUp";
+        }
+        else if (code === 0x06) {
+            text = "VolumeDown";
+        }
+        else if (code === 0x07) {
+            text = "LongPress";
+        }
+        else if (code === 0x08) {
+            text = "Pause";
+        }
+        else if (code === 0x09) {
+            text = "LongPressRelease";
+        }
+        else if (code === 0x0a) {
+            text = "FastForward";
+        }
+        else if (code === 0x0b) {
+            text = "ReWind";
+        }
+        else if (code === 0x0c) {
+            text = "Shutter";
+        }
+        else if (code === 0x0d) {
+            text = "Up";
+        }
+        else if (code === 0x0e) {
+            text = "Down";
+        }
+        else if (code === 0x0f) {
+            text = "Left";
+        }
+        else if (code === 0x10) {
+            text = "Right";
+        }
+        else if (code === 0x11) {
+            text = "Enter";
+        }
+        else if (code === 0x12) {
+            text = "Menu";
+        }
+        else if (code === 0x13) {
+            text = "Play";
+        }
+        else if (code === 0x14) {
+            text = "Stop";
+        }
+        return {
+            name: "ButtonId",
+            buttonId: code,
+            buttonName: text,
+        };
+    }
+}
+exports.default = LinkingServiceOperation;
+
+//# sourceMappingURL=service-operation.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-property.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+ * node-linking - service-property.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceProperty {
+    constructor() {
+        this.SERVICE_ID = 0x00;
+        this.SERVICE_NAME = "PeripheralDevicePropertyInformation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_DEVICE_INFORMATION",
+            "01": "GET_DEVICE_INFORMATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_DEVICE_INFORMATION: 0x00,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseServiceList(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseDeviceId(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseDeviceUid(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseDeviceCapability(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseOriginalInformation(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseExSensorType(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseServiceList(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "PeripheralDevicePropertyInformation" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "PeripheralDeviceNotification" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "PeripheralDeviceOperation" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "PeripheralDeviceSensorInformation" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "PeripheralDeviceSettingOperation" });
+        }
+        return {
+            name: "ServiceList",
+            serviceList: list,
+        };
+    }
+    _parseDeviceId(buf) {
+        return {
+            name: "DeviceId",
+            deviceId: buf.toString("hex"),
+        };
+    }
+    _parseDeviceUid(buf) {
+        return {
+            name: "DeviceUid",
+            deviceUid: buf.toString("hex"),
+        };
+    }
+    _parseDeviceCapability(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Gyroscope" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Accelerometer" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "Orientation" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "Battery" });
+        }
+        if (v & 0b00100000) {
+            list.push({ id: 5, name: "Temperature" });
+        }
+        if (v & 0b01000000) {
+            list.push({ id: 6, name: "Humidity" });
+        }
+        if (v & 0b10000000) {
+            list.push({ id: 7, name: "Atmospheric pressure" });
+        }
+        return {
+            name: "DeviceCapability",
+            deviceCapability: list,
+        };
+    }
+    _parseOriginalInformation(buf) {
+        const type = buf.readUInt8(0);
+        let type_name = "";
+        if (type === 0x00) {
+            type_name = "AppName";
+        }
+        else if (type === 0x01) {
+            type_name = "AppNameLocal";
+        }
+        else if (type === 0x02) {
+            type_name = "AppDLURL1";
+        }
+        else if (type === 0x03) {
+            type_name = "AppDLURL2";
+        }
+        else if (type === 0x04) {
+            type_name = "AppDLURL3";
+        }
+        else if (type === 0x05) {
+            type_name = "AppExecInfo1";
+        }
+        else if (type === 0x06) {
+            type_name = "AppExecInfo2";
+        }
+        else if (type === 0x07) {
+            type_name = "AppExecInfo3";
+        }
+        else if (type === 0x08) {
+            type_name = "AppPackage";
+        }
+        return {
+            name: "OriginalInformation",
+            originalInformationCode: type,
+            originalInformationName: type_name,
+            originalInformationText: buf.slice(1).toString("UTF-8"),
+        };
+    }
+    _parseExSensorType(buf) {
+        const v = buf.readUInt8(0);
+        const list = [];
+        if (v & 0b00000001) {
+            list.push({ id: 0, name: "Version" });
+        }
+        if (v & 0b00000010) {
+            list.push({ id: 1, name: "Version" });
+        }
+        if (v & 0b00000100) {
+            list.push({ id: 2, name: "Flag" });
+        }
+        if (v & 0b00001000) {
+            list.push({ id: 3, name: "Button" });
+        }
+        if (v & 0b00010000) {
+            list.push({ id: 4, name: "Opening and closing" });
+        }
+        if (v & 0b00100000) {
+            list.push({ id: 5, name: "Human detection" });
+        }
+        if (v & 0b01000000) {
+            list.push({ id: 6, name: "Move" });
+        }
+        if (v & 0b10000000) {
+            list.push({ id: 7, name: "Illuminance" });
+        }
+        return {
+            name: "ExSensorType",
+            exSensorType: list,
+        };
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "GET_DEVICE_INFORMATION") {
+            return this._createPayloadGetDeviceInformation(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPayloadGetDeviceInformation(params) {
+        const pnum_buf = Buffer.alloc(1);
+        pnum_buf.writeUInt8(0);
+        return pnum_buf;
+    }
+}
+exports.default = LinkingServiceProperty;
+
+//# sourceMappingURL=service-property.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-sensor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+ * node-linking - service-sensor.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-11-02
+ * ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/ieee754.js"));
+class LinkingServiceSensor {
+    constructor() {
+        this.SERVICE_ID = 0x03;
+        this.SERVICE_NAME = "PeripheralDeviceSensorInformation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_SENSOR_INFO",
+            "01": "GET_SENSOR_INFO_RESP",
+            "02": "SET_NOTIFY_SENSOR_INFO",
+            "03": "SET_NOTIFY_SENSOR_INFO_RESP",
+            "04": "NOTIFY_PD_SENSOR_INFO",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_SENSOR_INFO: 0x00,
+            SET_NOTIFY_SENSOR_INFO: 0x02,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        let sensor_type = 0;
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                const p = this._parseParameter(pid, pvalue_buf, sensor_type);
+                if (pid === 0x02 && "sensorTypeCode" in p) {
+                    sensor_type = p.sensorTypeCode;
+                }
+                parameters.push(p);
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf, sensor_type) {
+        let parsed = {};
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseSensorType(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseStatus(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseX_value(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseY_value(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseZ_value(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseX_threshold(buf);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseY_threshold(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseZ_threshold(buf);
+        }
+        else if (pid === 0x0a) {
+            parsed = this._parseOriginalData(buf, sensor_type);
+        }
+        parsed.parameterId = pid;
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseSensorType(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "Gyroscope";
+        }
+        else if (code === 0x01) {
+            text = "Accelerometer";
+        }
+        else if (code === 0x02) {
+            text = "Orientation";
+        }
+        else if (code === 0x03) {
+            text = "Battery";
+        }
+        else if (code === 0x04) {
+            text = "Temperature";
+        }
+        else if (code === 0x05) {
+            text = "Humidity";
+        }
+        else if (code === 0x06) {
+            text = "Atmospheric pressure";
+        }
+        else if (code === 0x07) {
+            text = "Opening and closing";
+        }
+        else if (code === 0x08) {
+            text = "Human detection";
+        }
+        else if (code === 0x09) {
+            text = "Move";
+        }
+        else if (code === 0x0a) {
+            text = "Illuminance";
+        }
+        return {
+            name: "SensorType",
+            sensorTypeCode: code,
+            sensorTypeText: text,
+        };
+    }
+    _parseStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OFF";
+        }
+        else if (code === 0x01) {
+            text = "ON";
+        }
+        return {
+            name: "Status",
+            statusCode: code,
+            statusText: text,
+        };
+    }
+    _parseX_value(buf) {
+        return {
+            name: "X_value",
+            xValue: buf.readFloatLE(0),
+        };
+    }
+    _parseY_value(buf) {
+        return {
+            name: "Y_value",
+            yValue: buf.readFloatLE(0),
+        };
+    }
+    _parseZ_value(buf) {
+        return {
+            name: "Z_value",
+            zValue: buf.readFloatLE(0),
+        };
+    }
+    _parseX_threshold(buf) {
+        return {
+            name: "X_threshold",
+            xThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseY_threshold(buf) {
+        return {
+            name: "Y_threshold",
+            yThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseZ_threshold(buf) {
+        return {
+            name: "Z_threshold",
+            zThreshold: buf.readFloatLE(0),
+        };
+    }
+    _parseOriginalData(buf, sensor_type) {
+        const n = buf.readUInt16LE(0) & 0b0000111111111111;
+        if (sensor_type === 0x03) {
+            // Battery
+            return {
+                chargeRequired: n & 0b0000100000000000 ? true : false,
+                chargeLevel: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (sensor_type === 0x04) {
+            // Temperature
+            return {
+                temperature: ieee754_1.default.read(n, 1, 4, 7),
+            };
+        }
+        else if (sensor_type === 0x05) {
+            // Humidity
+            const v = ieee754_1.default.read(n, 0, 4, 8);
+            return {
+                humidity: v,
+            };
+        }
+        else if (sensor_type === 0x06) {
+            // Atmospheric pressure
+            return {
+                pressure: buf.readFloatLE(0),
+            };
+        }
+        else if (sensor_type === 0x07) {
+            // Opening and closing
+            return {
+                openingStatus: n & 0b0000100000000000 ? true : false,
+                openingCount: Math.min((n & 0b0000011111111111) / 10, 100),
+            };
+        }
+        else if (sensor_type === 0x08) {
+            // Human detection
+            return {
+                humanDetectionResponse: n & 0b0000100000000000 ? true : false,
+                humanDetectionCount: n & 0b0000011111111111,
+            };
+        }
+        else if (sensor_type === 0x09) {
+            // Move (Vibration Sensor)
+            return {
+                moveResponse: n & 0b0000100000000000 ? true : false,
+                moveCount: n & 0b0000011111111111,
+            };
+        }
+        else if (sensor_type === 0x0a) {
+            // Illuminance
+            return {
+                illuminance: buf.readFloatLE(0),
+            };
+        }
+        else {
+            return {};
+        }
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (message_name === "GET_SENSOR_INFO") {
+            return this._createPayloadGetSensorInfo(params);
+        }
+        else if (message_name === "SET_NOTIFY_SENSOR_INFO") {
+            return this._createPayloadSetNotifySensorInfo(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetSensorInfo(params) {
+        let pnum = 0;
+        let sensor_type = null;
+        if ("SensorType" in params &&
+            typeof params.SensorType === "number" &&
+            params.SensorType >= 0x00 &&
+            params.SensorType <= 0xff &&
+            params.SensorType % 1 === 0) {
+            sensor_type = params.SensorType;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SensorType
+        if (sensor_type !== null) {
+            const val_buf = Buffer.from([sensor_type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadSetNotifySensorInfo(params) {
+        let pnum = 0;
+        let sensor_type = null;
+        if ("SensorType" in params &&
+            typeof params.SensorType === "number" &&
+            params.SensorType >= 0x00 &&
+            params.SensorType <= 0xff &&
+            params.SensorType % 1 === 0) {
+            sensor_type = params.SensorType;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let status = null;
+        if ("Status" in params) {
+            status = params.Status ? 1 : 0;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let x = null;
+        let y = null;
+        let z = null;
+        if (sensor_type <= 0x02) {
+            if ("X_threshold" in params) {
+                if (typeof params.X_threshold === "number") {
+                    x = params.X_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+            if ("Y_threshold" in params) {
+                if (typeof params.Y_threshold === "number") {
+                    y = params.Y_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+            if ("Z_threshold" in params) {
+                if (typeof params.Z_threshold === "number") {
+                    z = params.Z_threshold;
+                    pnum++;
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        let odata = null;
+        if ("OriginalData" in params) {
+            if (params.OriginalData && params.OriginalData instanceof Buffer) {
+                odata = params.OriginalData;
+                pnum++;
+            }
+            else {
+                return null;
+            }
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SensorType
+        if (sensor_type !== null) {
+            const val_buf = Buffer.from([sensor_type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Status
+        if (status !== null) {
+            const val_buf = Buffer.from([status]);
+            buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+        }
+        // X_threshold
+        if (x !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(x, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x07, val_buf));
+        }
+        // Y_threshold
+        if (y !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(y, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Z_threshold
+        if (z !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeFloatLE(z, 0);
+            buf_list.push(this._createPropertyBlockBuffer(0x09, val_buf));
+        }
+        // OriginalData
+        if (odata !== null) {
+            const val_buf = odata;
+            buf_list.push(this._createPropertyBlockBuffer(0x0a, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceSensor;
+
+//# sourceMappingURL=service-sensor.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service-setting.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* ------------------------------------------------------------------
+ * node-linking - service-setting.js
+ *
+ * Copyright (c) 2017-2019, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2019-10-24
+ * ---------------------------------------------------------------- */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class LinkingServiceSetting {
+    constructor() {
+        this.SERVICE_ID = 0x04;
+        this.SERVICE_NAME = "PeripheralDeviceSettingOperation";
+        this.MESSAGE_NAME_MAP = {
+            "00": "GET_APP_VERSION",
+            "01": "GET_APP_VERSION_RESP",
+            "02": "CONFIRM_INSTALL_APP",
+            "03": "CONFIRM_INSTALL_APP_RESP",
+            "04": "GET_SETTING_INFORMATION",
+            "05": "GET_SETTING_INFORMATION_RESP",
+            "06": "GET_SETTING_NAME",
+            "07": "GET_SETTING_NAME_RESP",
+            "08": "SELECT_SETTING_INFORMATION",
+            "09": "SELECT_SETTING_INFORMATION_RESP",
+        };
+        // Private
+        this._WRITE_MESSAGE_ID_MAP = {
+            GET_APP_VERSION: 0x00,
+            CONFIRM_INSTALL_APP: 0x02,
+            GET_SETTING_INFORMATION: 0x04,
+            GET_SETTING_NAME: 0x06,
+            SELECT_SETTING_INFORMATION: 0x08,
+        };
+        this._SETTING_NAME_TYPE_MAP = {
+            LEDColorName: 0x00,
+            LEDPatternName: 0x01,
+            VibrationPatternName: 0x02,
+            BeepPatternName: 0x03,
+        };
+        this._device = {};
+    }
+    setDeviceInfo(info) {
+        this._device = info;
+    }
+    parsePayload(pnum, buf) {
+        let offset = 0;
+        const parameters = [];
+        try {
+            for (let i = 0; i < pnum; i++) {
+                const pid = buf.readUInt8(offset++);
+                let plen_buf = buf.slice(offset, offset + 3);
+                plen_buf = Buffer.concat([plen_buf, Buffer.from([0x00])]);
+                const plen = plen_buf.readUInt32LE(0);
+                offset += 3;
+                const pvalue_buf = buf.slice(offset, offset + plen);
+                offset += plen;
+                parameters.push(this._parseParameter(pid, pvalue_buf));
+            }
+        }
+        catch (e) { }
+        return parameters;
+    }
+    _parseParameter(pid, buf) {
+        let parsed = null;
+        if (pid === 0x00) {
+            parsed = this._parseResultCode(buf);
+        }
+        else if (pid === 0x01) {
+            parsed = this._parseCancel(buf);
+        }
+        else if (pid === 0x02) {
+            parsed = this._parseSettingNameType(buf);
+        }
+        else if (pid === 0x03) {
+            parsed = this._parseAppName(buf);
+        }
+        else if (pid === 0x04) {
+            parsed = this._parseFileVer(buf);
+        }
+        else if (pid === 0x05) {
+            parsed = this._parseFileSize(buf);
+        }
+        else if (pid === 0x06) {
+            parsed = this._parseInstallConfirmStatus(buf);
+        }
+        else if (pid === 0x07) {
+            parsed = this._parseSettingInformationRequest(buf);
+        }
+        else if (pid === 0x08) {
+            parsed = this._parseSettingInformationData(buf);
+        }
+        else if (pid === 0x09) {
+            parsed = this._parseSettingNameData(buf);
+        }
+        if (parsed) {
+            parsed.parameterId = pid;
+        }
+        return parsed;
+    }
+    _parseResultCode(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, request processed correctly";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        return {
+            name: "ResultCode",
+            resultCode: code,
+            resultText: text,
+        };
+    }
+    _parseCancel(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "User cancel";
+        }
+        return {
+            name: "Cancel",
+            cancelCode: code,
+            cancelText: text,
+        };
+    }
+    _parseSettingNameType(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "LEDColorName";
+        }
+        else if (code === 0x01) {
+            text = "LEDPatternName";
+        }
+        else if (code === 0x02) {
+            text = "VibrationPatternName";
+        }
+        else if (code === 0x03) {
+            text = "BeepPatternName";
+        }
+        return {
+            name: "SettingNameType",
+            settingNameTypeCode: code,
+            settingNameTypeText: text,
+        };
+    }
+    _parseAppName(buf) {
+        return {
+            name: "AppName",
+            appName: buf.toString("UTF-8"),
+        };
+    }
+    _parseFileVer(buf) {
+        const list = [];
+        for (let i = 0; i < buf.length; i++) {
+            list.push(buf.readUInt8(i));
+        }
+        return {
+            name: "FileVer",
+            fileVer: list.join("."),
+        };
+    }
+    _parseFileSize(buf) {
+        return {
+            name: "FileSize",
+            fileSize: buf.readUInt32LE(0),
+        };
+    }
+    _parseInstallConfirmStatus(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "OK, Device has been ready for install";
+        }
+        else if (code === 0x01) {
+            text = "Cancel";
+        }
+        else if (code === 0x02) {
+            text = "Error, failed";
+        }
+        else if (code === 0x03) {
+            text = "Error, no reason defined";
+        }
+        else if (code === 0x04) {
+            text = "Error, data not available";
+        }
+        else if (code === 0x05) {
+            text = "Error, not supported";
+        }
+        else if (code === 0x06) {
+            text = "Error, Device has no space to install";
+        }
+        else if (code === 0x07) {
+            text = "Error, Requested file was already installed";
+        }
+        else if (code === 0x08) {
+            text = "Error, Newest file was already installed";
+        }
+        return {
+            name: "InstallConfirmStatus",
+            installConfirmStatusCode: code,
+            installConfirmStatusText: text,
+        };
+    }
+    _parseSettingInformationRequest(buf) {
+        const code = buf.readUInt8(0);
+        let text = "";
+        if (code === 0x00) {
+            text = "SETTING";
+        }
+        else if (code === 0x01) {
+            text = "START_DEMONSTRATION";
+        }
+        else if (code === 0x02) {
+            text = "STOP_DEMONSTRATION";
+        }
+        let offset = 1;
+        const settings = [];
+        while (true) {
+            const setting_code = buf.readUInt8(offset);
+            if (setting_code === 0x00) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "LED",
+                    colorMax: buf.readUInt8(offset + 1),
+                    colorNumber: buf.readUInt8(offset + 2),
+                    patternMax: buf.readUInt8(offset + 3),
+                    patternNumber: buf.readUInt8(offset + 4),
+                    duration: buf.readUInt8(offset + 5),
+                });
+                offset += 5;
+            }
+            else if (setting_code === 0x01) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "Vibration",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 3;
+            }
+            else if (setting_code === 0x02) {
+                settings.push({
+                    settingCode: setting_code,
+                    settingName: "Beep",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 3;
+            }
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingInformationRequest",
+            settingInformationRequestCode: code,
+            settingInformationRequestName: text,
+            settingInformationRequestData: settings,
+        };
+    }
+    _parseSettingInformationData(buf) {
+        let offset = 0;
+        const settings = [];
+        while (true) {
+            const setting_code = buf.readUInt8(offset);
+            if (setting_code === 0x00) {
+                settings.push({
+                    id: setting_code,
+                    name: "LED",
+                    colorMax: buf.readUInt8(offset + 1),
+                    colorNumber: buf.readUInt8(offset + 2),
+                    patternMax: buf.readUInt8(offset + 3),
+                    patternNumber: buf.readUInt8(offset + 4),
+                    duration: buf.readUInt8(offset + 5),
+                });
+                offset += 6;
+            }
+            else if (setting_code === 0x01) {
+                settings.push({
+                    id: setting_code,
+                    name: "Vibration",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 4;
+            }
+            else if (setting_code === 0x02) {
+                settings.push({
+                    id: setting_code,
+                    name: "Beep",
+                    patternMax: buf.readUInt8(offset + 1),
+                    patternNumber: buf.readUInt8(offset + 2),
+                    duration: buf.readUInt8(offset + 3),
+                });
+                offset += 4;
+            }
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingInformationData",
+            settingInformationData: settings,
+        };
+    }
+    _parseSettingNameData(buf) {
+        const list = [];
+        let offset = 0;
+        while (true) {
+            const len = buf.readUInt8(offset++);
+            const name = buf.slice(offset, offset + len - 1).toString("utf-8");
+            offset += len;
+            list.push(name);
+            if (offset >= buf.length) {
+                break;
+            }
+        }
+        return {
+            name: "SettingNameData",
+            settingNameData: list,
+        };
+    }
+    /* ------------------------------------------------------------------
+     * Method: createRequest(message_name, params)
+     * ---------------------------------------------------------------- */
+    createRequest(message_name, params) {
+        if (!(message_name in this._WRITE_MESSAGE_ID_MAP)) {
+            return null;
+        }
+        const buf_list = [];
+        // packet header
+        const header_buf = Buffer.alloc(1);
+        header_buf.writeUInt8(parseInt("00000011", 2));
+        buf_list.push(header_buf);
+        // Service ID
+        const sid_buf = Buffer.alloc(1);
+        sid_buf.writeUInt8(this.SERVICE_ID);
+        buf_list.push(sid_buf);
+        // Message ID
+        const mid_buf = Buffer.alloc(2);
+        mid_buf.writeUInt16LE(this._WRITE_MESSAGE_ID_MAP[message_name]);
+        buf_list.push(mid_buf);
+        // Number of parameters + Payload
+        const pl_buf = this._createPayload(message_name, params);
+        if (!pl_buf) {
+            return null;
+        }
+        buf_list.push(pl_buf);
+        return Buffer.concat(buf_list);
+    }
+    _createPayload(message_name, params) {
+        if (!params || typeof params !== "object") {
+            params = {};
+        }
+        if (message_name === "GET_APP_VERSION") {
+            return this._createPayloadGetAppVersion(params);
+        }
+        else if (message_name === "CONFIRM_INSTALL_APP") {
+            return this._createPayloadConfirmInstallApp(params);
+        }
+        else if (message_name === "GET_SETTING_INFORMATION") {
+            return this._createPayloadGetSettingInformation(params);
+        }
+        else if (message_name === "GET_SETTING_NAME") {
+            return this._createPayloadGetSettingName(params);
+        }
+        else if (message_name === "SELECT_SETTING_INFORMATION") {
+            return this._createPayloadSelectSettingInformation(params);
+        }
+        else {
+            return null;
+        }
+    }
+    _createPropertyBlockBuffer(pid, val_buf) {
+        const pid_buf = Buffer.from([pid]);
+        let len = 0;
+        if (val_buf) {
+            len = val_buf.length;
+        }
+        let len_buf = Buffer.alloc(4);
+        len_buf.writeUInt32LE(len);
+        len_buf = len_buf.slice(0, 3);
+        const buf_list = [pid_buf, len_buf];
+        if (val_buf) {
+            buf_list.push(val_buf);
+        }
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetAppVersion(params) {
+        let pnum = 0;
+        let app_name = null;
+        if ("AppName" in params && typeof params.AppName === "string") {
+            app_name = params.AppName;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // AppName
+        if (app_name !== null) {
+            const val_buf = Buffer.from(app_name);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadConfirmInstallApp(params) {
+        let pnum = 0;
+        let app_name = null;
+        if ("AppName" in params && typeof params.AppName === "string") {
+            app_name = params.AppName;
+            pnum++;
+        }
+        else {
+            return null;
+        }
+        let file_ver = null;
+        if ("FileVer" in params && typeof params.FileVer === "string") {
+            file_ver = params.FileVer;
+            pnum++;
+        }
+        let file_size = null;
+        if ("FileSize" in params && typeof params.FileSize === "number" && file_size % 1 === 0) {
+            file_size = params.FileSize;
+            pnum++;
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // AppName
+        if (app_name !== null) {
+            const val_buf = Buffer.from(app_name);
+            buf_list.push(this._createPropertyBlockBuffer(0x03, val_buf));
+        }
+        // FileVer
+        if (file_ver !== null) {
+            const val_buf = Buffer.from(file_ver);
+            buf_list.push(this._createPropertyBlockBuffer(0x04, val_buf));
+        }
+        // FileSize
+        if (file_size !== null) {
+            const val_buf = Buffer.alloc(4);
+            val_buf.writeUInt32LE(file_size);
+            buf_list.push(this._createPropertyBlockBuffer(0x05, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadGetSettingInformation(params) {
+        const pnum_buf = Buffer.from([0]);
+        return pnum_buf;
+    }
+    _createPayloadGetSettingName(params) {
+        let pnum = 0;
+        let type = null;
+        if ("SettingNameType" in params) {
+            type = params.SettingNameType;
+            if (typeof type === "number") {
+                let setting_name = "";
+                for (const name in this._SETTING_NAME_TYPE_MAP) {
+                    if (this._SETTING_NAME_TYPE_MAP[name] === type) {
+                        setting_name = name;
+                        break;
+                    }
+                }
+                if (!setting_name) {
+                    return null;
+                }
+            }
+            else if (typeof type === "string") {
+                if (type in this._SETTING_NAME_TYPE_MAP) {
+                    type = this._SETTING_NAME_TYPE_MAP[type];
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        else {
+            return null;
+        }
+        pnum++;
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SettingNameType
+        if (type !== null) {
+            const val_buf = Buffer.from([type]);
+            buf_list.push(this._createPropertyBlockBuffer(0x02, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+    _createPayloadSelectSettingInformation(params) {
+        let pnum = 0;
+        let code = null;
+        if ("SettingInformationRequest" in params && typeof params.SettingInformationRequest === "object") {
+            const req = params.SettingInformationRequest;
+            if ("requestCode" in req &&
+                typeof req.requestCode === "number" &&
+                req.requestCode >= 0 &&
+                req.requestCode <= 0x02 &&
+                req.requestCode % 1 === 0) {
+                code = req.requestCode;
+            }
+            else if ("requestName" in req && typeof req.requestName === "string") {
+                const name = req.requestName;
+                if (name === "SETTING") {
+                    code = 0x00;
+                }
+                else if (name === "START_DEMONSTRATION") {
+                    code = 0x01;
+                }
+                else if (name === "STOP_DEMONSTRATION") {
+                    code = 0x02;
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
+        pnum++;
+        let settings = null;
+        if ("SettingInformationData" in params) {
+            if (Array.isArray(params.SettingInformationData)) {
+                settings = [];
+                for (let i = 0; i < params.SettingInformationData.length; i++) {
+                    const s = params.SettingInformationData[i];
+                    let scode = null;
+                    let sname = "";
+                    if ("settingCode" in s &&
+                        typeof s.settingCode === "number" &&
+                        s.settingCode >= 0x00 &&
+                        s.settingCode <= 0x02 &&
+                        s.settingCode % 1 === 0) {
+                        scode = s.settingCode;
+                        if (scode === 0x00) {
+                            sname = "LED";
+                        }
+                        else if (scode === 0x01) {
+                            sname = "Vibration";
+                        }
+                        else if (scode === 0x02) {
+                            sname = "Beep";
+                        }
+                    }
+                    else if ("settingName" in s && typeof s.settingName === "string") {
+                        sname = s.settingName;
+                        if (sname === "LED") {
+                            scode = 0x00;
+                        }
+                        else if (sname === "Vibration") {
+                            scode = 0x01;
+                        }
+                        else if (sname === "Beep") {
+                            scode = 0x02;
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    if (!(sname in this._device.settings)) {
+                        return null;
+                    }
+                    let cn = null;
+                    let cm = null;
+                    if (scode === 0x00) {
+                        // LED
+                        if ("colorNumber" in s) {
+                            if (typeof s.colorNumber === "number" &&
+                                s.colorNumber >= 0 &&
+                                s.colorNumber <= this._device.settings.LED.colorMax &&
+                                s.colorNumber % 1 === 0) {
+                                cn = s.colorNumber;
+                            }
+                            else {
+                                return null;
+                            }
+                        }
+                        else {
+                            cn = this._device.settings.LED.colorNumber;
+                        }
+                        cm = this._device.settings.LED.colorMax;
+                    }
+                    let pn = null;
+                    if ("patternNumber" in s) {
+                        if (typeof s.patternNumber === "number" &&
+                            s.patternNumber >= 0 &&
+                            s.patternNumber <= this._device.settings[sname].patternMax &&
+                            s.patternNumber % 1 === 0) {
+                            pn = s.patternNumber;
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        pn = this._device.settings[sname].patternNumber;
+                    }
+                    const pm = this._device.settings[sname].patternMax;
+                    let dur = null;
+                    if ("duration" in s) {
+                        if (typeof s.duration === "number" && s.duration >= 0 && s.duration <= 0xff && s.duration % 1 === 0) {
+                            dur = s.duration;
+                            if (dur <= 0x05) {
+                                dur = 0x05;
+                            }
+                            else if (dur <= 0x0a) {
+                                dur = 0x0a;
+                            }
+                            else if (dur <= 0x1e) {
+                                dur = 0x1e;
+                            }
+                            else if (dur <= 0x3c) {
+                                dur = 0x3c;
+                            }
+                            else if (dur <= 0xb4) {
+                                dur = 0xb4;
+                            }
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        dur = this._device.settings[sname].duration;
+                    }
+                    settings.push({
+                        settingCode: scode,
+                        colorNumber: cn,
+                        colorMax: cm,
+                        patternNumber: pn,
+                        patternMax: pm,
+                        duration: dur,
+                    });
+                }
+            }
+            else {
+                return null;
+            }
+            if (settings.length === 0) {
+                settings = null;
+            }
+            else {
+                pnum++;
+            }
+        }
+        // buffer list
+        const buf_list = [];
+        // Number of parameters
+        const pnum_buf = Buffer.from([pnum]);
+        buf_list.push(pnum_buf);
+        // SettingInformationRequest
+        if (code !== null) {
+            const val_buf = Buffer.from([code]);
+            buf_list.push(this._createPropertyBlockBuffer(0x07, val_buf));
+        }
+        // SettingInformationData
+        if (settings !== null) {
+            const val_buf_list = [];
+            settings.forEach((s) => {
+                val_buf_list.push(Buffer.from([s.settingCode]));
+                if (s.colorNumber !== null) {
+                    val_buf_list.push(Buffer.from([s.colorMax, s.colorNumber]));
+                }
+                val_buf_list.push(Buffer.from([s.patternMax, s.patternNumber]));
+                val_buf_list.push(Buffer.from([s.duration]));
+            });
+            const val_buf = Buffer.concat(val_buf_list);
+            buf_list.push(this._createPropertyBlockBuffer(0x08, val_buf));
+        }
+        // Create a packet
+        return Buffer.concat(buf_list);
+    }
+}
+exports.default = LinkingServiceSetting;
+
+//# sourceMappingURL=service-setting.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/linking/modules/service.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* ------------------------------------------------------------------
+ * node-linking - service.js
+ *
+ * Copyright (c) 2017, Futomi Hatano, All rights reserved.
+ * Released under the MIT license
+ * Date: 2017-04-15
+ * ---------------------------------------------------------------- */
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const service_notification_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-notification.js"));
+const service_operation_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-operation.js"));
+const service_property_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-property.js"));
+const service_sensor_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-sensor.js"));
+const service_setting_js_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/linking/modules/service-setting.js"));
+class LinkingService {
+    constructor() {
+        this._services = {
+            "00": new service_property_js_1.default(),
+            "01": new service_notification_1.default(),
+            "02": new service_operation_js_1.default(),
+            "03": new service_sensor_js_1.default(),
+            "04": new service_setting_js_1.default(),
+        };
+        this._write_message_name_map = {
+            // PeripheralDevicePropertyInformation Service
+            GET_DEVICE_INFORMATION: "00",
+            // PeripheralDeviceNotification Service
+            CONFIRM_NOTIFY_CATEGORY: "01",
+            NOTIFY_INFORMATION: "01",
+            // PeripheralDeviceSensorInformation Service
+            GET_SENSOR_INFO: "03",
+            SET_NOTIFY_SENSOR_INFO: "03",
+            // PeripheralDeviceSettingOperation Service
+            GET_APP_VERSION: "04",
+            CONFIRM_INSTALL_APP: "04",
+            GET_SETTING_INFORMATION: "04",
+            GET_SETTING_NAME: "04",
+            SELECT_SETTING_INFORMATION: "04",
+        };
+        this._device_info = null;
+    }
+    setDeviceInfo(device_info) {
+        for (const code in this._services) {
+            this._services[code].setDeviceInfo(device_info);
+        }
+        this._device_info = device_info;
+    }
+    parseResponse(buf) {
+        const service_id_hex = buf.slice(1, 2).toString("hex");
+        const service = this._services[service_id_hex];
+        if (!service) {
+            return null;
+        }
+        const service_id = buf.readUInt8(1);
+        const msg_id = buf.readUInt16LE(2);
+        // let msg_id = buf.readUInt8(2);
+        const msg_id_hex = buf.slice(2, 3).toString("hex");
+        const pnum = buf.readUInt8(4);
+        const payload_buf = buf.slice(5, buf.length);
+        const parameters = service.parsePayload(pnum, payload_buf);
+        const parsed = {
+            buffer: buf,
+            serviceId: service_id,
+            serviceName: service.SERVICE_NAME,
+            messageId: msg_id,
+            messageName: service.MESSAGE_NAME_MAP[msg_id_hex],
+            parameters,
+        };
+        return parsed;
+    }
+    createRequest(message_name, params) {
+        if (!(message_name in this._write_message_name_map)) {
+            return null;
+        }
+        const sid = this._write_message_name_map[message_name];
+        const service = this._services[sid];
+        const buf = service.createRequest(message_name, params);
+        return buf;
+    }
+    isSupportedWriteMessageName(message_name) {
+        if (!message_name) {
+            return false;
+        }
+        let sid = this._write_message_name_map[message_name];
+        if (!sid) {
+            return false;
+        }
+        sid = parseInt(sid, 10);
+        const services = this._device_info && this._device_info.services ? this._device_info.services : null;
+        if (!services) {
+            return false;
+        }
+        let res = false;
+        for (const k in services) {
+            if (services[k] === sid) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+}
+exports.default = LinkingService;
+
+//# sourceMappingURL=service.js.map
 
 
 /***/ }),
@@ -22861,15 +27469,6 @@ exports.default = OMRON_2JCIE;
  * @packageDocumentation
  * @module Parts.ArduCAMMini
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ArduCAMMini {
     constructor() {
@@ -23534,16 +28133,14 @@ class ArduCAMMini {
         this.spi.write(data);
         this.io_cs.output(true);
     }
-    spi_readWait(addr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = [];
-            data.push(addr);
-            data.push(0x00);
-            this.io_cs.output(false);
-            const recv = yield this.spi.writeWait(data);
-            this.io_cs.output(true);
-            return recv[1];
-        });
+    async spi_readWait(addr) {
+        const data = [];
+        data.push(addr);
+        data.push(0x00);
+        this.io_cs.output(false);
+        const recv = await this.spi.writeWait(data);
+        this.io_cs.output(true);
+        return recv[1];
     }
     i2c_byte_write(addr, byteData) {
         this.i2c.write(this.sensor_addr, [addr, byteData]);
@@ -23556,20 +28153,16 @@ class ArduCAMMini {
     spi_write_reg(addr, byteData) {
         this.spi_write(addr | 0x80, byteData);
     }
-    spi_read_regWait(addr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.spi_readWait(addr & 0x7f);
-        });
+    async spi_read_regWait(addr) {
+        return await this.spi_readWait(addr & 0x7f);
     }
-    spi_pingpongWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const testVal = 0x55;
-            this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
-            const val = yield this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
-            if (val !== testVal) {
-                throw new Error("spi bus fail");
-            }
-        });
+    async spi_pingpongWait() {
+        const testVal = 0x55;
+        this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
+        const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
+        if (val !== testVal) {
+            throw new Error("spi bus fail");
+        }
     }
     setMode(mode) {
         const modes = {
@@ -23582,14 +28175,12 @@ class ArduCAMMini {
         }
         this.spi_write_reg(this.regs.ARDUCHIP_MODE, modes[mode]);
     }
-    getChipIdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.sensor_addr, [0x0a]);
-            const val0 = yield this.i2c.readWait(this.sensor_addr, 1);
-            this.i2c.write(this.sensor_addr, [0x0b]);
-            const val1 = yield this.i2c.readWait(this.sensor_addr, 1);
-            return (val0[0] << 8) + val1[0];
-        });
+    async getChipIdWait() {
+        this.i2c.write(this.sensor_addr, [0x0a]);
+        const val0 = await this.i2c.readWait(this.sensor_addr, 1);
+        this.i2c.write(this.sensor_addr, [0x0b]);
+        const val1 = await this.i2c.readWait(this.sensor_addr, 1);
+        return (val0[0] << 8) + val1[0];
     }
     init() {
         this.i2c_byte_write(0xff, 0x01);
@@ -23602,33 +28193,29 @@ class ArduCAMMini {
         this.i2c_byte_write(0x15, 0x00);
         this.setSize("320x240");
     }
-    startupWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.spi_pingpongWait();
-            this.setMode("MCU2LCD");
-            const chipid = yield this.getChipIdWait();
-            if (chipid !== 0x2642 && chipid !== 0x2641) {
-                throw new Error("unknown chip " + chipid);
-            }
-            this.init();
-        });
+    async startupWait() {
+        await this.spi_pingpongWait();
+        this.setMode("MCU2LCD");
+        const chipid = await this.getChipIdWait();
+        if (chipid !== 0x2642 && chipid !== 0x2641) {
+            throw new Error("unknown chip " + chipid);
+        }
+        this.init();
     }
-    takeWait(size) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof size === "string" && this._size !== size) {
-                this.setSize(size);
-                this.obniz.wait(1000);
+    async takeWait(size) {
+        if (typeof size === "string" && this._size !== size) {
+            this.setSize(size);
+            this.obniz.wait(1000);
+        }
+        this.flushFIFO();
+        this.flushFIFO();
+        this.startCapture();
+        while (true) {
+            if (await this.isCaptureDoneWait()) {
+                break;
             }
-            this.flushFIFO();
-            this.flushFIFO();
-            this.startCapture();
-            while (true) {
-                if (yield this.isCaptureDoneWait()) {
-                    break;
-                }
-            }
-            return yield this.readFIFOWait();
-        });
+        }
+        return await this.readFIFOWait();
     }
     setSize(string) {
         if (this._size === string) {
@@ -23663,49 +28250,43 @@ class ArduCAMMini {
     flushFIFO() {
         this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x01);
     }
-    readFIFOLengthWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const len1 = yield this.spi_read_regWait(this.regs.FIFO_SIZE1);
-            const len2 = yield this.spi_read_regWait(this.regs.FIFO_SIZE2);
-            const len3 = (yield this.spi_read_regWait(this.regs.FIFO_SIZE3)) & 0x07;
-            return ((len3 << 16) | (len2 << 8) | len1) & 0x07ffff;
-        });
+    async readFIFOLengthWait() {
+        const len1 = await this.spi_read_regWait(this.regs.FIFO_SIZE1);
+        const len2 = await this.spi_read_regWait(this.regs.FIFO_SIZE2);
+        const len3 = (await this.spi_read_regWait(this.regs.FIFO_SIZE3)) & 0x07;
+        return ((len3 << 16) | (len2 << 8) | len1) & 0x07ffff;
     }
     startCapture() {
         this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x02);
     }
-    isCaptureDoneWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const CAP_DONE_MASK = 0x08;
-            const val = yield this.spi_read_regWait(this.regs.ARDUCHIP_TRIG);
-            return val & CAP_DONE_MASK ? true : false;
-        });
+    async isCaptureDoneWait() {
+        const CAP_DONE_MASK = 0x08;
+        const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TRIG);
+        return val & CAP_DONE_MASK ? true : false;
     }
-    readFIFOWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // get length of image data
-            const length = yield this.readFIFOLengthWait();
-            // start bust
-            this.io_cs.output(false);
-            this.spi.write([this.regs.BURST_FIFO_READ]);
-            if (this.params.module_version === 0) {
-                this.spi.write([0xff]); // dummy read
+    async readFIFOWait() {
+        // get length of image data
+        const length = await this.readFIFOLengthWait();
+        // start bust
+        this.io_cs.output(false);
+        this.spi.write([this.regs.BURST_FIFO_READ]);
+        if (this.params.module_version === 0) {
+            this.spi.write([0xff]); // dummy read
+        }
+        const buf = [];
+        while (buf.length < length) {
+            let mustRead = length - buf.length;
+            if (mustRead > 1024) {
+                mustRead = 1024;
             }
-            const buf = [];
-            while (buf.length < length) {
-                let mustRead = length - buf.length;
-                if (mustRead > 1024) {
-                    mustRead = 1024;
-                }
-                const arr = new Array(mustRead);
-                arr.fill(0);
-                const sliced = yield this.spi.writeWait(arr);
-                buf.push(...sliced);
-            }
-            // end burst
-            this.io_cs.output(true);
-            return buf;
-        });
+            const arr = new Array(mustRead);
+            arr.fill(0);
+            const sliced = await this.spi.writeWait(arr);
+            buf.push(...sliced);
+        }
+        // end burst
+        this.io_cs.output(true);
+        return buf;
     }
     arrayToBase64(array) {
         return Buffer.from(array).toString("base64");
@@ -23728,15 +28309,6 @@ exports.default = ArduCAMMini;
  * @packageDocumentation
  * @module Parts.JpegSerialCam
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class JpegSerialCam {
     constructor() {
@@ -23759,22 +28331,20 @@ class JpegSerialCam {
         this.obniz.getIO(this.my_tx).drive("3v");
         this.uart = this.obniz.getFreeUart();
     }
-    _drainUntil(uart, search, recv) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!recv) {
-                recv = [];
+    async _drainUntil(uart, search, recv) {
+        if (!recv) {
+            recv = [];
+        }
+        while (true) {
+            const readed = uart.readBytes();
+            recv = recv.concat(readed);
+            const tail = this._seekTail(search, recv);
+            if (tail >= 0) {
+                recv.splice(0, tail);
+                return recv;
             }
-            while (true) {
-                const readed = uart.readBytes();
-                recv = recv.concat(readed);
-                const tail = this._seekTail(search, recv);
-                if (tail >= 0) {
-                    recv.splice(0, tail);
-                    return recv;
-                }
-                yield this.obniz.wait(10);
-            }
-        });
+            await this.obniz.wait(10);
+        }
     }
     _seekTail(search, src) {
         let f = 0;
@@ -23794,169 +28364,121 @@ class JpegSerialCam {
     arrayToBase64(array) {
         return Buffer.from(array).toString("base64");
     }
-    startWait(obj) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!obj) {
-                obj = {};
-            }
-            this.uart.start({
-                tx: this.my_tx,
-                rx: this.my_rx,
-                baud: obj.baud || 38400,
-            });
-            this.obniz.display.setPinName(this.my_tx, "JpegSerialCam", "camRx");
-            this.obniz.display.setPinName(this.my_rx, "JpegSerialCam", "camTx");
-            yield this.obniz.wait(2500);
+    async startWait(obj) {
+        if (!obj) {
+            obj = {};
+        }
+        this.uart.start({
+            tx: this.my_tx,
+            rx: this.my_rx,
+            baud: obj.baud || 38400,
+        });
+        this.obniz.display.setPinName(this.my_tx, "JpegSerialCam", "camRx");
+        this.obniz.display.setPinName(this.my_rx, "JpegSerialCam", "camTx");
+        await this.obniz.wait(2500);
+    }
+    async resetwait() {
+        this.uart.send([0x56, 0x00, 0x26, 0x00]);
+        await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
+        await this.obniz.wait(2500);
+    }
+    async setSizeWait(resolution) {
+        let val;
+        if (resolution === "640x480") {
+            val = 0x00;
+        }
+        else if (resolution === "320x240") {
+            val = 0x11;
+        }
+        else if (resolution === "160x120") {
+            val = 0x22;
+        }
+        else {
+            throw new Error("unsupported size");
+        }
+        this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
+        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        await this.resetwait();
+    }
+    async setCompressibilityWait(compress) {
+        const val = Math.floor((compress / 100) * 0xff);
+        this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        await this.resetwait();
+    }
+    async setBaudWait(baud) {
+        let val;
+        switch (baud) {
+            case 9600:
+                val = [0xae, 0xc8];
+                break;
+            case 19200:
+                val = [0x56, 0xe4];
+                break;
+            case 38400:
+                val = [0x2a, 0xf2];
+                break;
+            case 57600:
+                val = [0x1c, 0x4c];
+                break;
+            case 115200:
+                val = [0x0d, 0xa6];
+                break;
+            default:
+                throw new Error("invalid baud rate");
+        }
+        this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
+        await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+        // await this.obniz.wait(1000);
+        await this.startWait({
+            baud,
         });
     }
-    resetwait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.uart.send([0x56, 0x00, 0x26, 0x00]);
-            yield this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
-            yield this.obniz.wait(2500);
-        });
-    }
-    setSizeWait(resolution) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let val;
-            if (resolution === "640x480") {
-                val = 0x00;
+    async takeWait() {
+        const uart = this.uart;
+        // console.log("stop a photo")
+        uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
+        await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+        // console.log("take a photo")
+        uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
+        await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+        // console.log("read length")
+        uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
+        let recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
+        let XX;
+        let YY;
+        while (true) {
+            const readed = uart.readBytes();
+            // console.log(recv);
+            recv = recv.concat(readed);
+            if (recv.length >= 2) {
+                XX = recv[0];
+                YY = recv[1];
+                break;
             }
-            else if (resolution === "320x240") {
-                val = 0x11;
+            await this.obniz.wait(1000);
+        }
+        const databytes = XX * 256 + YY;
+        // console.log("image: " + databytes + " Bytes");
+        // const high = (databytes >> 8) & 0xff;
+        // const low = databytes & 0xff;
+        // console.log("start reading image")
+        uart.send([0x56, 0x00, 0x32, 0x0c, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xff]);
+        recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+        // console.log("reading...");
+        while (true) {
+            const readed = uart.readBytes();
+            recv = recv.concat(readed);
+            // console.log(readed.length);
+            if (recv.length >= databytes) {
+                break;
             }
-            else if (resolution === "160x120") {
-                val = 0x22;
-            }
-            else {
-                throw new Error("unsupported size");
-            }
-            this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
-            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-            yield this.resetwait();
-        });
-    }
-    setCompressibilityWait(compress) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const val = Math.floor((compress / 100) * 0xff);
-            this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
-            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-            yield this.resetwait();
-        });
-    }
-    setBaudWait(baud) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let val;
-            switch (baud) {
-                case 9600:
-                    val = [0xae, 0xc8];
-                    break;
-                case 19200:
-                    val = [0x56, 0xe4];
-                    break;
-                case 38400:
-                    val = [0x2a, 0xf2];
-                    break;
-                case 57600:
-                    val = [0x1c, 0x4c];
-                    break;
-                case 115200:
-                    val = [0x0d, 0xa6];
-                    break;
-                default:
-                    throw new Error("invalid baud rate");
-            }
-            this.uart.send([
-                0x56,
-                0x00,
-                0x31,
-                0x06,
-                0x04,
-                0x02,
-                0x00,
-                0x08,
-                val[0],
-                val[1],
-            ]);
-            yield this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-            // await this.obniz.wait(1000);
-            yield this.startWait({
-                baud,
-            });
-        });
-    }
-    takeWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const uart = this.uart;
-            // console.log("stop a photo")
-            uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-            yield this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-            // console.log("take a photo")
-            uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-            yield this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-            // console.log("read length")
-            uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-            let recv = yield this._drainUntil(uart, [
-                0x76,
-                0x00,
-                0x34,
-                0x00,
-                0x04,
-                0x00,
-                0x00,
-            ]); // ack
-            let XX;
-            let YY;
-            while (true) {
-                const readed = uart.readBytes();
-                // console.log(recv);
-                recv = recv.concat(readed);
-                if (recv.length >= 2) {
-                    XX = recv[0];
-                    YY = recv[1];
-                    break;
-                }
-                yield this.obniz.wait(1000);
-            }
-            const databytes = XX * 256 + YY;
-            // console.log("image: " + databytes + " Bytes");
-            // const high = (databytes >> 8) & 0xff;
-            // const low = databytes & 0xff;
-            // console.log("start reading image")
-            uart.send([
-                0x56,
-                0x00,
-                0x32,
-                0x0c,
-                0x00,
-                0x0a,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                XX,
-                YY,
-                0x00,
-                0xff,
-            ]);
-            recv = yield this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
-            // console.log("reading...");
-            while (true) {
-                const readed = uart.readBytes();
-                recv = recv.concat(readed);
-                // console.log(readed.length);
-                if (recv.length >= databytes) {
-                    break;
-                }
-                yield this.obniz.wait(10);
-            }
-            // console.log("done");
-            recv = recv.splice(0, databytes); // remove tail
-            recv = recv.concat([0xff, 0xd9]);
-            return recv;
-        });
+            await this.obniz.wait(10);
+        }
+        // console.log("done");
+        recv = recv.splice(0, databytes); // remove tail
+        recv = recv.concat([0xff, 0xd9]);
+        return recv;
     }
 }
 exports.default = JpegSerialCam;
@@ -23976,15 +28498,6 @@ exports.default = JpegSerialCam;
  * @packageDocumentation
  * @module Parts.PT550
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class PT550 {
     constructor() {
@@ -23996,8 +28509,7 @@ class PT550 {
             name: "PT550",
         };
     }
-    onchange(value) {
-    }
+    onchange(value) { }
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -24008,10 +28520,8 @@ class PT550 {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.signal.getWait();
-        });
+    async getWait() {
+        return await this.signal.getWait();
     }
 }
 exports.default = PT550;
@@ -24030,15 +28540,6 @@ exports.default = PT550;
  * @packageDocumentation
  * @module Parts.S11059
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class S11059 {
     constructor() {
@@ -24071,20 +28572,77 @@ class S11059 {
         const val = (gain << 3) | intergerTime;
         this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
     }
-    getVal() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [this.regAdrs.sensorRed]);
-            const ret = yield this.i2c.readWait(this.address, 8);
-            const level = [0, 0, 0, 0];
-            level[0] = (ret[0] << 8) | ret[1];
-            level[1] = (ret[2] << 8) | ret[3];
-            level[2] = (ret[4] << 8) | ret[5];
-            level[3] = (ret[6] << 8) | ret[7];
-            return level;
-        });
+    async getVal() {
+        this.i2c.write(this.address, [this.regAdrs.sensorRed]);
+        const ret = await this.i2c.readWait(this.address, 8);
+        const level = [0, 0, 0, 0];
+        level[0] = (ret[0] << 8) | ret[1];
+        level[1] = (ret[2] << 8) | ret[3];
+        level[2] = (ret[4] << 8) | ret[5];
+        level[3] = (ret[6] << 8) | ret[7];
+        return level;
     }
 }
 exports.default = S11059;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/DAConverter/MCP4725/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MCP4725 {
+    constructor() {
+        this.cmd = {
+            WRITEDAC: 0x40,
+            WRITEDACEEPROM: 0x60,
+        };
+        this._vcc_voltage = 5.0;
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.requiredKeys = [];
+        this.address = 0x60;
+    }
+    static info() {
+        return {
+            name: "MCP4725",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(100);
+    }
+    setVCCVoltage(voltage) {
+        this._vcc_voltage = voltage;
+    }
+    setVoltage(voltage, writeEEPROM = false) {
+        if (voltage > this._vcc_voltage) {
+            voltage = this._vcc_voltage;
+        }
+        else if (voltage < 0) {
+            voltage = 0;
+        }
+        const mv = Math.round((voltage / this._vcc_voltage) * (4096 - 1));
+        const hbits = mv >> 4;
+        const lbits = (mv & 0x0f) << 4;
+        if (writeEEPROM) {
+            this.i2c.write(this.address, [this.cmd.WRITEDACEEPROM, hbits, lbits]);
+        }
+        else {
+            this.i2c.write(this.address, [this.cmd.WRITEDAC, hbits, lbits]);
+        }
+    }
+}
+exports.default = MCP4725;
 
 //# sourceMappingURL=index.js.map
 
@@ -24103,32 +28661,9 @@ exports.default = S11059;
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLED {
     constructor() {
-        this.keys = [
-            "a",
-            "b",
-            "c",
-            "d",
-            "e",
-            "f",
-            "g",
-            "dp",
-            "common",
-            "commonType",
-        ];
+        this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
         this.requiredKeys = ["a", "b", "c", "d", "e", "f", "g"];
-        this.digits = [
-            0x3f,
-            0x06,
-            0x5b,
-            0x4f,
-            0x66,
-            0x6d,
-            0x7d,
-            0x07,
-            0x7f,
-            0x6f,
-            0x6f,
-        ];
+        this.digits = [0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x6f];
         this.displayIoNames = {
             a: "a",
             b: "b",
@@ -24401,7 +28936,7 @@ class _7SegmentLED_MAX7219 {
         }
     }
     encodeBCD(decimal, dp) {
-        const dpreg = (dp === true) ? 0x80 : 0x00;
+        const dpreg = dp === true ? 0x80 : 0x00;
         if (decimal >= 0 && decimal <= 9) {
             return decimal | dpreg;
         }
@@ -24433,6 +28968,121 @@ class _7SegmentLED_MAX7219 {
     }
 }
 exports.default = _7SegmentLED_MAX7219;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Display/MatrixLED_HT16K33/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class MatrixLED_HT16K33 {
+    constructor() {
+        this.width = 0;
+        this.height = 0;
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "address"];
+        this.requiredKeys = [];
+        this.command = {};
+        this.command.blink = 0x80;
+        this.command.brightness = 0xe0;
+        this.blink_mode = {};
+        this.blink_mode.display_on = 0x01;
+        this.blink_mode.blink_off = 0x00;
+        this.blink_mode.blink_2hz = 0x01;
+        this.blink_mode.blink_1hz = 0x02;
+        this.blink_mode.blink_halfhz = 0x03;
+        this.vram = [];
+    }
+    static info() {
+        return {
+            name: "MatrixLED_HT16K33",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.address = this.params.address || 0x70;
+        this.params.pull = "5v";
+        this.params.mode = "master";
+        this.params.clock = this.params.clock || 400 * 1000;
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(1000);
+    }
+    init(width) {
+        // 8 or 16
+        this.width = width;
+        this.height = 8; // IC static setting
+        this.prepareVram(width, this.height);
+        this.i2c.write(this.address, [0x21]);
+        this.blinkRate(this.blink_mode.blink_off);
+        this.brightness(15);
+        this.obniz.wait(10);
+    }
+    blinkRate(val) {
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 3) {
+            val = 3;
+        }
+        this.i2c.write(this.address, [this.command.blink | this.blink_mode.display_on | (val << 1)]);
+    }
+    brightness(val) {
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 15) {
+            val = 15;
+        }
+        this.i2c.write(this.address, [this.command.brightness | val]);
+    }
+    clear() {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0x00;
+        }
+        this.writeVram();
+    }
+    draw(ctx) {
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                const pos = i * this.height * 4 + j * 4;
+                const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
+                if (brightness > 0x7f) {
+                    this.vram[i] |= 0x1 << j;
+                }
+            }
+        }
+        this.writeVram();
+    }
+    dots(data) {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = data[i];
+        }
+        this.writeVram();
+    }
+    writeVram() {
+        const data = [0x00];
+        for (let i = 0; i < this.height; i++) {
+            data.push(this.vram[i] & 0xff);
+            data.push((this.vram[i] >> 8) & 0xff);
+        }
+        this.i2c.write(this.address, data);
+    }
+    prepareVram(width, height) {
+        this.vram = [];
+        for (let i = 0; i < height; i++) {
+            this.vram.push(0);
+        }
+    }
+}
+exports.default = MatrixLED_HT16K33;
 
 //# sourceMappingURL=index.js.map
 
@@ -24582,15 +29232,6 @@ exports.default = MatrixLED_MAX7219;
  * @packageDocumentation
  * @module Parts.ST7735S
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ST7735S {
     constructor() {
@@ -24638,8 +29279,7 @@ class ST7735S {
     }
     _deadSleep(waitMsec) {
         const startMsec = new Date();
-        while (new Date() - startMsec < waitMsec) {
-        }
+        while (new Date() - startMsec < waitMsec) { }
     }
     _reset() {
         this.io_res.output(false);
@@ -24666,10 +29306,8 @@ class ST7735S {
         this.writeCommand(cmd);
         this.writeData(data);
     }
-    asyncwait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.spi.writeWait([0x00]);
-        });
+    async asyncwait() {
+        return await this.spi.writeWait([0x00]);
     }
     _writeFlush() {
         while (this.writeBuffer.length > 0) {
@@ -26801,15 +31439,6 @@ const font = [
  * @packageDocumentation
  * @module Parts.SainSmartTFT18LCD
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class SainSmartTFT18LCD {
     constructor() {
@@ -26862,8 +31491,7 @@ class SainSmartTFT18LCD {
     }
     _deadSleep(waitMsec) {
         const startMsec = new Date();
-        while (new Date() - startMsec < waitMsec) {
-        }
+        while (new Date() - startMsec < waitMsec) { }
     }
     _reset() {
         this.io_res.output(false);
@@ -26890,10 +31518,8 @@ class SainSmartTFT18LCD {
         this.writeCommand(cmd);
         this.writeData(data);
     }
-    asyncwait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.spi.writeWait([0x00]);
-        });
+    async asyncwait() {
+        return await this.spi.writeWait([0x00]);
     }
     _writeFlush() {
         while (this.writeBuffer.length > 0) {
@@ -29316,15 +33942,6 @@ exports.default = SharpMemoryTFT;
  * @packageDocumentation
  * @module Parts.GP2Y0A21YK0F
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class GP2Y0A21YK0F {
     constructor() {
@@ -29372,16 +33989,16 @@ class GP2Y0A21YK0F {
         return distance;
     }
     getWait() {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+        return new Promise(async (resolve, reject) => {
             try {
-                const val = yield this.ad_signal.getWait();
+                const val = await this.ad_signal.getWait();
                 const distance = this._volt2distance(val);
                 resolve(distance);
             }
             catch (e) {
                 reject(e);
             }
-        }));
+        });
     }
     unit(unit) {
         if (unit === "mm") {
@@ -29411,15 +34028,6 @@ exports.default = GP2Y0A21YK0F;
  * @packageDocumentation
  * @module Parts.HC-SR04
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR04 {
     constructor() {
@@ -29458,7 +34066,7 @@ class HCSR04 {
             pulse_width: 0.011,
             measure_edges: 3,
             timeout: (10 / 340) * 1000,
-            callback: (edges) => __awaiter(this, void 0, void 0, function* () {
+            callback: async (edges) => {
                 if (this.reset_alltime) {
                     this.vccIO.output(false);
                     this.obniz.wait(100);
@@ -29470,8 +34078,7 @@ class HCSR04 {
                     // HCSR04's output of io_echo is initially high when trigger is finshed
                     if (edges[i].edge === true) {
                         const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
-                        distance =
-                            (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
+                        distance = (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
                         if (this._unit === "inch") {
                             distance = distance * 0.0393701;
                         }
@@ -29480,15 +34087,13 @@ class HCSR04 {
                 if (typeof callback === "function") {
                     callback(distance);
                 }
-            }),
+            },
         });
     }
-    measureWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve) => {
-                this.measure((distance) => {
-                    resolve(distance);
-                });
+    async measureWait() {
+        return new Promise((resolve) => {
+            this.measure((distance) => {
+                resolve(distance);
             });
         });
     }
@@ -29505,6 +34110,81 @@ class HCSR04 {
     }
 }
 exports.default = HCSR04;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/DistanceSensor/VL53L0X/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class VL53L0X {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.address = 0x29;
+        this.regs = {
+            IDENTIFICATION_MODEL_ID: 0xc0,
+            IDENTIFICATION_REVISION_ID: 0xc2,
+            PRE_RANGE_CONFIG_VCSEL_PERIOD: 0x50,
+            FINAL_RANGE_CONFIG_VCSEL_PERIOD: 0x70,
+            SYSRANGE_START: 0x00,
+            RESULT_INTERRUPT_STATUS: 0x13,
+            RESULT_RANGE_STATUS: 0x14,
+        };
+        this.acnt = 0;
+        this.scnt = 0;
+        this.status = 0;
+    }
+    static info() {
+        return {
+            name: "VL53L0X",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.obniz.wait(100);
+        this.params.clock = 100000;
+        this.params.pull = "3v";
+        this.params.mode = "master";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+    }
+    async getWait() {
+        this.i2c.write(this.address, [this.regs.SYSRANGE_START, 0x01]);
+        let val = [0];
+        let cnt = 0;
+        while (cnt < 10) {
+            await this.obniz.wait(10);
+            this.i2c.write(this.address, [this.regs.RESULT_RANGE_STATUS]);
+            val = await this.i2c.readWait(this.address, 1);
+            if (val[0] & 0x01) {
+                break;
+            }
+            else {
+                cnt++;
+            }
+        }
+        if (!(val[0] & 0x01)) {
+            return null;
+        } // sensor not ready
+        this.i2c.write(this.address, [0x14]);
+        const gbuf = await this.i2c.readWait(this.address, 12);
+        this.acnt = this.makeuint16(gbuf[7], gbuf[6]);
+        this.scnt = this.makeuint16(gbuf[9], gbuf[8]);
+        const dist = this.makeuint16(gbuf[11], gbuf[10]);
+        this.status = (gbuf[0] & 0x78) >> 3;
+        return dist;
+    }
+    makeuint16(lsb, msb) {
+        return ((msb & 0xff) << 8) | (lsb & 0xff);
+    }
+}
+exports.default = VL53L0X;
 
 //# sourceMappingURL=index.js.map
 
@@ -29704,10 +34384,7 @@ class GYSFDMAXB {
                         }
                         this.gpsInfo.satelliteInfo.inView = sat_count;
                         let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
-                        nsat =
-                            nsat + NMEA_SATINSENTENCE > sat_count
-                                ? sat_count - nsat
-                                : NMEA_SATINSENTENCE;
+                        nsat = nsat + NMEA_SATINSENTENCE > sat_count ? sat_count - nsat : NMEA_SATINSENTENCE;
                         for (let isat = 0; isat < nsat; ++isat) {
                             const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
                             if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
@@ -30231,23 +34908,14 @@ exports.default = MQGasSensor;
  * @packageDocumentation
  * @module Parts.Grove_3AxisAccelerometer
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_3AxisAccelerometer {
     constructor() {
         this.displayName = "3axis";
         this.displayIoNames = { sda: "sda", scl: "scl" };
         this.address = 0x53;
-        this.keys = ["gnd", "vcc", "sda", "scl"];
-        this.requiredKeys = ["sda", "scl"];
+        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.requiredKeys = [];
         this.ioKeys = this.keys;
         this.regAdrs = {};
         this.regAdrs.POWER_CTL = 0x2d;
@@ -30285,74 +34953,71 @@ class Grove_3AxisAccelerometer {
             name: "Grove_3AxisAccelerometer",
         };
     }
-    wired(obniz) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.obniz = obniz;
+    async wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            this.i2c = this.params.grove.getI2c(400000, "5v");
+        }
+        else {
             this.vcc = this.params.vcc;
             this.gnd = this.params.gnd;
             this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
             this.params.clock = 400000;
             this.params.mode = "master";
             this.i2c = obniz.getI2CWithConfig(this.params);
-            this.obniz.wait(100);
-            // power on
-            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
-            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
-            this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 8]);
-            this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
-            this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
-            this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
-            yield this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
-            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
-            yield this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
-            yield this.etRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
-            this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
-            this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
-            this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
-            this.i2c.write(this.address, [this.regAdrs.WINDOW, 200]); // setDoubleTapWindow
-            this.i2c.write(this.address, [this.regAdrs.THRESH_FF, 7]); // setFreeFallThreshold
-            this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
-            // setInterruptMapping
-            yield this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
-            yield this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
-            yield this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
-            yield this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
-            yield this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
-            // setInterrupt
-            yield this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
-            yield this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
-            yield this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
-            yield this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
-            yield this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
-        });
+        }
+        this.obniz.wait(100);
+        // power on
+        this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
+        this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
+        this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 8]);
+        this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
+        this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
+        this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
+        await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
+        await this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
+        await this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
+        await this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+        this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
+        this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
+        this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
+        this.i2c.write(this.address, [this.regAdrs.WINDOW, 200]); // setDoubleTapWindow
+        this.i2c.write(this.address, [this.regAdrs.THRESH_FF, 7]); // setFreeFallThreshold
+        this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
+        // setInterruptMapping
+        await this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
+        await this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
+        // setInterrupt
+        await this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
+        await this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
+        await this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
+        await this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
+        await this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
     }
-    setRegisterBit(regAddr, bitPos, state) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [regAddr]);
-            let b = yield this.i2c.readWait(this.address, 1);
-            if (state) {
-                b = b | (1 << bitPos); // forces nth bit of b to be 1.  all other bits left alone.
-            }
-            else {
-                b = b & ~(1 << bitPos); // forces nth bit of b to be 0.  all other bits left alone.
-            }
-            this.i2c.write(this.address, [b]);
-        });
+    async setRegisterBit(regAddr, bitPos, state) {
+        this.i2c.write(this.address, [regAddr]);
+        let b = await this.i2c.readWait(this.address, 1);
+        if (state) {
+            b = b | (1 << bitPos); // forces nth bit of b to be 1.  all other bits left alone.
+        }
+        else {
+            b = b & ~(1 << bitPos); // forces nth bit of b to be 0.  all other bits left alone.
+        }
+        this.i2c.write(this.address, [b]);
     }
-    setInterruptMapping(interruptBit, interruptPin) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
-        });
+    async setInterruptMapping(interruptBit, interruptPin) {
+        await this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
     }
-    setInterrupt(interruptBit, state) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
-        });
+    async setInterrupt(interruptBit, state) {
+        await this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
     }
     signHandling(val) {
         const sign = val >> 15;
@@ -30361,26 +35026,22 @@ class Grove_3AxisAccelerometer {
         }
         return val;
     }
-    getRawVal() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [this.regAdrs.DATAX0]);
-            const buff = yield this.i2c.readWait(this.address, 6);
-            const rawVal = [0, 0, 0];
-            rawVal[0] = this.signHandling((buff[1] << 8) | buff[0]);
-            rawVal[1] = this.signHandling((buff[3] << 8) | buff[2]);
-            rawVal[2] = this.signHandling((buff[5] << 8) | buff[4]);
-            return rawVal;
-        });
+    async getRawVal() {
+        this.i2c.write(this.address, [this.regAdrs.DATAX0]);
+        const buff = await this.i2c.readWait(this.address, 6);
+        const rawVal = [0, 0, 0];
+        rawVal[0] = this.signHandling((buff[1] << 8) | buff[0]);
+        rawVal[1] = this.signHandling((buff[3] << 8) | buff[2]);
+        rawVal[2] = this.signHandling((buff[5] << 8) | buff[4]);
+        return rawVal;
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const accelVal = [0, 0, 0];
-            const raw = yield this.getRawVal();
-            accelVal[0] = raw[0] * this.constVal.gainX;
-            accelVal[1] = raw[1] * this.constVal.gainY;
-            accelVal[2] = raw[2] * this.constVal.gainZ;
-            return accelVal;
-        });
+    async getWait() {
+        const accelVal = [0, 0, 0];
+        const raw = await this.getRawVal();
+        accelVal[0] = raw[0] * this.constVal.gainX;
+        accelVal[1] = raw[1] * this.constVal.gainY;
+        accelVal[2] = raw[2] * this.constVal.gainZ;
+        return accelVal;
     }
 }
 exports.default = Grove_3AxisAccelerometer;
@@ -30399,23 +35060,14 @@ exports.default = Grove_3AxisAccelerometer;
  * @packageDocumentation
  * @module Parts.Grove_Button
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Button {
     constructor() {
         this.isPressed = null;
         this.onchange = null;
         this.onChangeForStateWait = (pressed) => { };
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -30423,14 +35075,13 @@ class Grove_Button {
         };
     }
     wired(obniz) {
-        this.io_signal = obniz.getIO(this.params.signal);
-        if (obniz.isValidIO(this.params.vcc)) {
-            this.io_vcc = obniz.getIO(this.params.vcc);
-            this.io_vcc.output(true);
+        if (this.params.grove) {
+            const groveIOs = this.params.grove.getDigital("5v");
+            this.io_signal = groveIOs.primary;
         }
-        if (obniz.isValidIO(this.params.gnd)) {
-            this.io_supply = obniz.getIO(this.params.gnd);
-            this.io_supply.output(false);
+        else {
+            this.io_signal = obniz.getIO(this.params.signal);
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
         }
         this.io_signal.pull("5v");
         this.io_signal.input((value) => {
@@ -30441,17 +35092,14 @@ class Grove_Button {
             this.onChangeForStateWait(value);
         });
     }
-    isPressedWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.io_signal.inputWait();
-        });
+    async isPressedWait() {
+        return await this.io_signal.inputWait();
     }
     stateWait(isPressed) {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -30509,6 +35157,55 @@ class Grove_Buzzer {
     }
 }
 exports.default = Grove_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_EARTH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_EARTH {
+    constructor() {
+        this.keys = ["vcc", "aout", "dout", "gnd", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_EARTH",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            const groveIOs = this.params.grove.getAnalogDigital();
+            this.ad = groveIOs.analog;
+            this.io = groveIOs.digital;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.aout);
+            this.io = obniz.getIO(this.params.dout);
+        }
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    async getHumidityWait() {
+        return await this.ad.getWait();
+    }
+    async getDigitalHumidityWait() {
+        return await this.io.inputWait();
+    }
+}
+exports.default = Grove_EARTH;
 
 //# sourceMappingURL=index.js.map
 
@@ -30597,8 +35294,8 @@ class Grove_GPS {
     constructor() {
         this._latitude = 0;
         this._longitude = 0;
-        this.keys = ["tx", "rx", "vcc", "gnd"];
-        this.requiredKeys = ["tx", "rx"];
+        this.keys = ["tx", "rx", "vcc", "gnd", "grove"];
+        this.requiredKeys = [];
         this.ioKeys = this.keys;
         this.displayName = "gps";
         this.displayIoNames = { tx: "tx", rx: "rx" };
@@ -30617,13 +35314,18 @@ class Grove_GPS {
     }
     wired(obniz) {
         this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.uart = obniz.getFreeUart();
-        this.uart.start({
-            tx: this.params.tx,
-            rx: this.params.rx,
-            baud: 9600,
-        });
+        if (this.params.grove) {
+            this.uart = this.params.grove.getUart(9600, "5v");
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.uart = obniz.getFreeUart();
+            this.uart.start({
+                tx: this.params.tx,
+                rx: this.params.rx,
+                baud: 9600,
+            });
+        }
         this.editedData = {};
         this.editedData.enable = false;
         this.editedData.GPGSV = new Array(4);
@@ -30754,10 +35456,7 @@ class Grove_GPS {
                         }
                         this.gpsInfo.satelliteInfo.inView = sat_count;
                         let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
-                        nsat =
-                            nsat + NMEA_SATINSENTENCE > sat_count
-                                ? sat_count - nsat
-                                : NMEA_SATINSENTENCE;
+                        nsat = nsat + NMEA_SATINSENTENCE > sat_count ? sat_count - nsat : NMEA_SATINSENTENCE;
                         for (let isat = 0; isat < nsat; ++isat) {
                             const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
                             if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
@@ -30921,6 +35620,57 @@ exports.default = Grove_GPS;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_JoyStick/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_JoyStick {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_JoyStick",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        const speed = 400000;
+        if (this.params.grove) {
+            this.i2c = this.params.grove.getI2c(speed, "5v");
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.obniz.wait(100); // wait for booting of MEGA328
+            this.params.mode = "master";
+            this.params.clock = speed;
+            this.params.pull = "5v";
+            this.i2c = this.obniz.getI2CWithConfig(this.params);
+        }
+    }
+    async getXWait() {
+        const ret = await this.i2c.readWait(0x52, 3);
+        return ret[0];
+    }
+    async getYWait() {
+        const ret = await this.i2c.readWait(0x52, 3);
+        return ret[1];
+    }
+    async isPressedWait() {
+        const ret = await this.i2c.readWait(0x52, 3);
+        return Boolean(ret[2]);
+    }
+}
+exports.default = Grove_JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_MP3/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -30930,15 +35680,6 @@ exports.default = Grove_GPS;
  * @packageDocumentation
  * @module Parts.Grove_MP3
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_MP3 {
     constructor() {
@@ -30960,31 +35701,29 @@ class Grove_MP3 {
         this.my_rx = this.params.mp3_tx;
         this.uart = this.obniz.getFreeUart();
     }
-    initWait(strage) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.uart.start({
-                tx: this.my_tx,
-                rx: this.my_rx,
-                baud: 9600,
-            });
-            yield this.obniz.wait(100);
-            this.uartSend(0x0c, 0);
-            yield this.obniz.wait(500);
-            this.uartSend(0x0b, 0);
-            yield this.obniz.wait(100);
-            if (strage) {
-                if (strage === "usb") {
-                    this.uartSend(0x09, 1);
-                }
-                else if (strage === "sd") {
-                    this.uartSend(0x09, 2);
-                }
+    async initWait(strage) {
+        this.uart.start({
+            tx: this.my_tx,
+            rx: this.my_rx,
+            baud: 9600,
+        });
+        await this.obniz.wait(100);
+        this.uartSend(0x0c, 0);
+        await this.obniz.wait(500);
+        this.uartSend(0x0b, 0);
+        await this.obniz.wait(100);
+        if (strage) {
+            if (strage === "usb") {
+                this.uartSend(0x09, 1);
             }
-            else {
+            else if (strage === "sd") {
                 this.uartSend(0x09, 2);
             }
-            yield this.obniz.wait(200);
-        });
+        }
+        else {
+            this.uartSend(0x09, 2);
+        }
+        await this.obniz.wait(200);
     }
     setVolume(vol) {
         if (vol >= 0 && vol <= 31) {
@@ -31047,15 +35786,6 @@ exports.default = Grove_MP3;
  * @packageDocumentation
  * @module Parts.ENC03R_Module
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ENC03R_Module {
     constructor() {
@@ -31089,18 +35819,18 @@ class ENC03R_Module {
         });
     }
     get1Wait() {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad0.getWait();
+        return new Promise(async (resolve) => {
+            const value = await this.ad0.getWait();
             this.sens1 = (value - 1.45) / this.Sens;
             resolve(this.sens1);
-        }));
+        });
     }
     get2Wait() {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad1.getWait();
+        return new Promise(async (resolve) => {
+            const value = await this.ad1.getWait();
             this.sens2 = (value - 1.35) / this.Sens;
             resolve(this.sens2);
-        }));
+        });
     }
 }
 exports.default = ENC03R_Module;
@@ -31323,15 +36053,6 @@ exports.default = InfraredLED;
  * @packageDocumentation
  * @module Parts.YG1006
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class YG1006 {
     constructor() {
@@ -31354,13 +36075,384 @@ class YG1006 {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.signal.getWait();
-        });
+    async getWait() {
+        return await this.signal.getWait();
     }
 }
 exports.default = YG1006;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Button/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Button
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Button {
+    constructor() {
+        this.isPressed = null;
+        this.onchange = null;
+        this.onChangeForStateWait = (pressed) => { };
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Button",
+        };
+    }
+    wired(obniz) {
+        this.io_signal = obniz.getIO(this.params.signal);
+        if (obniz.isValidIO(this.params.vcc)) {
+            this.io_vcc = obniz.getIO(this.params.vcc);
+            this.io_vcc.output(true);
+        }
+        if (obniz.isValidIO(this.params.gnd)) {
+            this.io_supply = obniz.getIO(this.params.gnd);
+            this.io_supply.output(false);
+        }
+        this.io_signal.pull("5v");
+        this.io_signal.input((value) => {
+            this.isPressed = value;
+            if (this.onchange) {
+                this.onchange(value);
+            }
+            this.onChangeForStateWait(value);
+        });
+    }
+    async isPressedWait() {
+        return await this.io_signal.inputWait();
+    }
+    stateWait(isPressed) {
+        return new Promise((resolve, reject) => {
+            this.onChangeForStateWait = (pressed) => {
+                if (isPressed === pressed) {
+                    this.onChangeForStateWait = () => { };
+                    resolve();
+                }
+            };
+        });
+    }
+}
+exports.default = Keyestudio_Button;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_Buzzer
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_Buzzer {
+    constructor() {
+        this.keys = ["signal", "gnd", "vcc"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_Buzzer",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.pwm = obniz.getFreePwm();
+        this.pwm.start({ io: this.params.signal });
+    }
+    play(freq) {
+        if (typeof freq !== "number") {
+            throw new Error("freq must be a number");
+        }
+        freq = Math.floor(freq);
+        if (freq > 0) {
+            this.pwm.freq(freq);
+            this.pwm.pulse((1 / freq / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Keyestudio_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_HT16K33/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const MatrixLED_HT16K33_1 = __importDefault(__webpack_require__("./dist/src/parts/Display/MatrixLED_HT16K33/index.js"));
+class Keyestudio_HT16K33 extends MatrixLED_HT16K33_1.default {
+    constructor() {
+        super(...arguments);
+        this.bitArray = [7, 0, 1, 2, 3, 4, 5, 6];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_HT16K33",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        super.init(8);
+    }
+    draw(ctx) {
+        const imageData = ctx.getImageData(0, 0, this.width, this.height);
+        const data = imageData.data;
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                const pos = i * this.height * 4 + j * 4;
+                const brightness = 0.34 * data[pos] + 0.5 * data[pos + 1] + 0.16 * data[pos + 2];
+                if (brightness > 0x7f) {
+                    this.vram[i] |= 0x1 << this.bitArray[j];
+                }
+            }
+        }
+        super.writeVram();
+    }
+    dots(data) {
+        for (let i = 0; i < this.height; i++) {
+            this.vram[i] = 0;
+            for (let j = 0; j < this.width; j++) {
+                if (data[i] & (1 << j)) {
+                    this.vram[i] |= 0x1 << this.bitArray[j];
+                }
+            }
+        }
+        super.writeVram();
+    }
+}
+exports.default = Keyestudio_HT16K33;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_MoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_MoistureSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_MoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "signal", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_MoistureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    async getHumidityWait() {
+        return await this.ad.getWait();
+    }
+}
+exports.default = Keyestudio_MoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_PIR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_PIR
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_PIR {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
+    static info() {
+        return {
+            name: "Keyestudio_PIR",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.io_signal = obniz.getIO(this.params.signal);
+        this.io_signal.pull("0v");
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.io_signal.input((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+}
+exports.default = Keyestudio_PIR;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TemperatureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TemperatureSensor {
+    constructor() {
+        this.temp = 0;
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TemperatureSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+        this.ad = obniz.getAD(this.params.signal);
+        this.ad.start((voltage) => {
+            this.temp = this.calc(voltage);
+            this.onchange(this.temp);
+        });
+    }
+    async getWait() {
+        const voltage = await this.ad.getWait();
+        this.temp = this.calc(voltage);
+        return this.temp;
+    }
+    onchange(temp) { }
+    calc(voltage) {
+        return voltage * 100; // Temp(Celsius) = [AD Voltage] * 100l;
+    }
+}
+exports.default = Keyestudio_TemperatureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Keyestudio/Keyestudio_TrafficLight/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Keyestudio_TrafficLight
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Keyestudio_TrafficLight {
+    constructor() {
+        this.keys = ["gnd", "green", "yellow", "red"];
+        this.requiredKeys = ["green", "yellow", "red"];
+        this.state = "red";
+    }
+    static info() {
+        return {
+            name: "Keyestudio_TrafficLight",
+        };
+    }
+    wired(obniz) {
+        function getIO(io) {
+            if (io && typeof io === "object") {
+                if (typeof io.output === "function") {
+                    return io;
+                }
+            }
+            return obniz.getIO(io);
+        }
+        this.obniz = obniz;
+        obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.green = obniz.wired("LED", { anode: this.params.green });
+        this.yellow = obniz.wired("LED", { anode: this.params.yellow });
+        this.red = obniz.wired("LED", { anode: this.params.red });
+    }
+    single(led) {
+        this.green.off();
+        this.yellow.off();
+        this.red.off();
+        this.state = led;
+        switch (led) {
+            case "green":
+                this.green.on();
+                break;
+            case "yellow":
+                this.yellow.on();
+                break;
+            case "red":
+            default:
+                this.red.on();
+                this.state = "red";
+                break;
+        }
+    }
+    next() {
+        switch (this.state) {
+            case "green":
+                this.single("yellow");
+                break;
+            case "yellow":
+                this.single("red");
+                break;
+            case "red":
+            default:
+                this.single("green");
+                break;
+        }
+    }
+}
+exports.default = Keyestudio_TrafficLight;
 
 //# sourceMappingURL=index.js.map
 
@@ -32009,17 +37101,7 @@ class SNx4HC595_IO {
 class SNx4HC595 {
     constructor() {
         /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-        this.keys = [
-            "gnd",
-            "vcc",
-            "ser",
-            "srclk",
-            "rclk",
-            "oe",
-            "srclr",
-            "io_num",
-            "enabled",
-        ];
+        this.keys = ["gnd", "vcc", "ser", "srclk", "rclk", "oe", "srclr", "io_num", "enabled"];
         this.requiredKeys = ["ser", "srclk", "rclk"];
         this.autoFlash = true;
     }
@@ -32045,8 +37127,7 @@ class SNx4HC595 {
             this.io_oe = this.obniz.getIO(this.params.oe);
             this.io_oe.output(true);
         }
-        if (this.obniz.isValidIO(this.params.vcc) ||
-            this.obniz.isValidIO(this.params.gnd)) {
+        if (this.obniz.isValidIO(this.params.vcc) || this.obniz.isValidIO(this.params.gnd)) {
             this.obniz.wait(100);
         }
         if (typeof this.params.io_num !== "number") {
@@ -32123,6 +37204,742 @@ exports.default = SNx4HC595;
 
 /***/ }),
 
+/***/ "./dist/src/parts/M5Stack/M5StickC_ADC/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class M5StickC_ADC {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.requiredKeys = [];
+        this.address = 0x48;
+        this.conversionDelay = 100;
+        this.config_regs = {
+            OS_MASK: 0x80,
+            OS_NOEFFECT: 0x00,
+            OS_SINGLE: 0x80,
+            OS_BUSY: 0x00,
+            OS_NOTBUSY: 0x80,
+            MODE_MASK: 0x10,
+            MODE_CONTIN: 0x00,
+            MODE_SINGLE: 0x10,
+            DR_MASK: 0x0c,
+            DR_128SPS: 0x00,
+            DR_32SPS: 0x04,
+            DR_16SPS: 0x08,
+            DR_8SPS: 0x0c,
+            PGA_MASK: 0x03,
+            PGA_1: 0x00,
+            PGA_2: 0x01,
+            PGA_4: 0x02,
+            PGA_8: 0x03,
+        };
+        this.os = this.config_regs.OS_SINGLE;
+        this.mode = this.config_regs.MODE_CONTIN;
+        this.dataRate = this.config_regs.DR_8SPS;
+        this.pga = this.config_regs.PGA_1;
+        this.minCode = 32768;
+        this.updateConfig();
+    }
+    static info() {
+        return {
+            name: "M5StickC_ADC",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
+            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+                this.params.sda = hatI2c.sda;
+                this.params.scl = hatI2c.scl;
+            }
+            else {
+                throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
+            }
+        }
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.params.mode = "master";
+        this.params.clock = 400000;
+        this.params.pull = "5v";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(100);
+    }
+    async getVoltageWait() {
+        const raw = await this.getWait();
+        const voltage = ((raw * 3.3) / this.minCode) * 4;
+        return voltage;
+    }
+    setRate(dataRate) {
+        switch (dataRate) {
+            case 8:
+                this.dataRate = this.config_regs.DR_8SPS;
+                this.minCode = 32768;
+                break;
+            case 16:
+                this.dataRate = this.config_regs.DR_16SPS;
+                this.minCode = 16384;
+                break;
+            case 32:
+                this.dataRate = this.config_regs.DR_32SPS;
+                this.minCode = 8192;
+                break;
+            case 128:
+                this.dataRate = this.config_regs.DR_128SPS;
+                this.minCode = 2048;
+                break;
+            default:
+                throw new Error(`argument must be selected from 8, 16, 32, 128.`);
+        }
+    }
+    setGain(gain) {
+        switch (gain) {
+            case 1:
+                this.pga = this.config_regs.PGA_1;
+                break;
+            case 2:
+                this.pga = this.config_regs.PGA_2;
+                break;
+            case 4:
+                this.pga = this.config_regs.PGA_4;
+                break;
+            case 8:
+                this.pga = this.config_regs.PGA_8;
+                break;
+            default:
+                throw new Error(`argument must be selected from 1, 2, 4, 8.`);
+        }
+    }
+    setMode(mode) {
+        switch (mode) {
+            case "CONTIN":
+                this.mode = this.config_regs.MODE_CONTIN;
+                break;
+            case "SINGLE":
+                this.mode = this.config_regs.MODE_SINGLE;
+                break;
+            default:
+                throw new Error(`argument must be selected from "CONTIN" or "SINGLE".`);
+        }
+    }
+    async getWait() {
+        this.updateConfig();
+        this.i2c.write(this.address, [this.config]);
+        await this.obniz.wait(this.conversionDelay);
+        const ret = await this.i2c.readWait(this.address, 2);
+        return (ret[0] << 8) | ret[1];
+    }
+    updateConfig() {
+        this.config = 0x00;
+        this.config |= this.os;
+        this.config |= this.mode;
+        this.config |= this.dataRate;
+        this.config |= this.pga;
+    }
+}
+exports.default = M5StickC_ADC;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/M5Stack/M5StickC_DAC/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const MCP4725_1 = __importDefault(__webpack_require__("./dist/src/parts/DAConverter/MCP4725/index.js"));
+class M5StickC_DAC extends MCP4725_1.default {
+    static info() {
+        return {
+            name: "M5StickC_DAC",
+        };
+    }
+    wired(obniz) {
+        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
+            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+                this.params.sda = hatI2c.sda;
+                this.params.scl = hatI2c.scl;
+            }
+            else {
+                throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
+            }
+        }
+        super.wired(obniz);
+    }
+}
+exports.default = M5StickC_DAC;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/M5Stack/M5StickC_FINGER/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class M5StickC_FINGER {
+    constructor() {
+        this.HEAD = 0;
+        this.CMD = 1;
+        this.CHK = 6;
+        this.TAIL = 7;
+        this.P1 = 2;
+        this.P2 = 3;
+        this.P3 = 4;
+        this.Q1 = 2;
+        this.Q2 = 3;
+        this.Q3 = 4;
+        this.TxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.RxBuf = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.requiredKeys = [];
+        this.keys = ["tx", "rx", "gnd"];
+        this.ack = {
+            SUCCESS: 0x00,
+            FAIL: 0x01,
+            FULL: 0x04,
+            NOUSER: 0x05,
+            USER_EXIST: 0x07,
+            TIMEOUT: 0x08,
+            GO_OUT: 0x0f,
+            ALL_USER: 0x00,
+            GUEST_USER: 0x01,
+            NORMAL_USER: 0x02,
+            MASTER_USER: 0x03,
+        };
+        this.cmd = {
+            HEAD: 0xf5,
+            TAIL: 0xf5,
+            ADD_1: 0x01,
+            ADD_2: 0x02,
+            ADD_3: 0x03,
+            GET_PERMISSION: 0x0a,
+            MATCH: 0x0c,
+            DEL: 0x04,
+            DEL_ALL: 0x05,
+            USER_CNT: 0x09,
+            SECURITY_LEVEL: 0x28,
+            SLEEP_MODE: 0x2c,
+            ADD_MODE: 0x2d,
+            FINGER_DETECTED: 0x14,
+        };
+    }
+    static info() {
+        return {
+            name: "M5StickC_FINGER",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(null, this.params.gnd, "3v");
+        if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
+            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").uart;
+                this.params.tx = hatI2c.tx;
+                this.params.rx = hatI2c.rx;
+            }
+            else {
+                throw new Error("Cannot find m5stickc hat interface. Please set param 'tx'/'rx'");
+            }
+        }
+        this.uart = this.obniz.getFreeUart();
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: 19200,
+        });
+    }
+    async getUserNumWait() {
+        this.TxBuf[this.CMD] = this.cmd.USER_CNT;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0;
+        const res = await this.sendAndReceiveWait(200);
+        if (res === this.ack.SUCCESS && this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.RxBuf[this.Q2];
+        }
+        else {
+            return 0xff;
+        }
+    }
+    async addUserWait(userNum, userPermission) {
+        this.TxBuf[this.CMD] = this.cmd.ADD_1;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = userNum;
+        this.TxBuf[this.P3] = userPermission;
+        let res = await this.sendAndReceiveWait(3000);
+        if (res === this.ack.SUCCESS) {
+            if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+                this.TxBuf[this.CMD] = this.cmd.ADD_2;
+                res = await this.sendAndReceiveWait(3000);
+                if (res === this.ack.SUCCESS) {
+                    this.TxBuf[this.CMD] = this.cmd.ADD_3;
+                    res = await this.sendAndReceiveWait(3000);
+                    if (this.ack.SUCCESS) {
+                        return this.RxBuf[this.Q3];
+                    }
+                }
+            }
+        }
+        return res;
+    }
+    async compareFingerWait() {
+        this.TxBuf[this.CMD] = this.cmd.MATCH;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0;
+        const res = await this.sendAndReceiveWait(3000);
+        if (res === this.ack.SUCCESS) {
+            if (this.RxBuf[this.Q3] === this.ack.NOUSER) {
+                return this.ack.NOUSER;
+            }
+            if (this.RxBuf[this.Q3] === this.ack.TIMEOUT) {
+                return this.ack.TIMEOUT;
+            }
+            return this.RxBuf[this.Q3];
+        }
+        return res;
+    }
+    async sleepWait() {
+        this.TxBuf[this.CMD] = this.cmd.SLEEP_MODE;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0;
+        const res = await this.sendAndReceiveWait(500);
+        if (res === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        else {
+            return this.ack.FAIL;
+        }
+    }
+    async setAddModeWait(mode) {
+        this.TxBuf[this.CMD] = this.cmd.ADD_MODE;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = mode;
+        this.TxBuf[this.P3] = 0;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        throw Error("failed to set add mode.");
+    }
+    async readAddModeWait() {
+        this.TxBuf[this.CMD] = this.cmd.ADD_MODE;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0x01;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.RxBuf[this.Q2];
+        }
+        throw Error("failed to read add mode.");
+    }
+    async deleteAllUserWait() {
+        this.TxBuf[this.CMD] = this.cmd.DEL_ALL;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        throw Error("failed to delete all users.");
+    }
+    async deleteUserWait(userNum) {
+        this.TxBuf[this.CMD] = this.cmd.DEL;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = userNum;
+        this.TxBuf[this.P3] = 0;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        throw Error("failed to delete user: " + userNum);
+    }
+    async getUserPermissionWait(userNum) {
+        this.TxBuf[this.CMD] = this.cmd.GET_PERMISSION;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = userNum;
+        this.TxBuf[this.P3] = 0;
+        await this.sendAndReceiveWait(200);
+        return this.RxBuf[this.Q3];
+    }
+    async setSecurityLevelWait(level) {
+        if (level < 0 || level > 9) {
+            throw Error("security level argument must be between 0 and 9");
+        }
+        this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = level;
+        this.TxBuf[this.P3] = 0x00;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.ack.SUCCESS;
+        }
+        throw Error("failed to set security level.");
+    }
+    async getSecurityLevelWait() {
+        this.TxBuf[this.CMD] = this.cmd.SECURITY_LEVEL;
+        this.TxBuf[this.P1] = 0;
+        this.TxBuf[this.P2] = 0;
+        this.TxBuf[this.P3] = 0x01;
+        await this.sendAndReceiveWait(200);
+        if (this.RxBuf[this.Q3] === this.ack.SUCCESS) {
+            return this.RxBuf[this.Q2];
+        }
+        throw Error("failed to get security level.");
+    }
+    async sendAndReceiveWait(timeout) {
+        let checkSum = 0;
+        this.TxBuf[5] = 0;
+        this.uart.send(this.cmd.HEAD);
+        for (let i = 1; i < 6; i++) {
+            this.uart.send(this.TxBuf[i]);
+            checkSum ^= this.TxBuf[i];
+        }
+        this.uart.send(checkSum);
+        this.uart.send(this.cmd.TAIL);
+        await this.obniz.wait(timeout);
+        if (!this.uart.isDataExists()) {
+            return this.ack.TIMEOUT;
+        }
+        this.RxBuf = this.uart.readBytes();
+        // console.log("RxBuf: " + this.RxBuf);
+        if (this.RxBuf.length !== 8) {
+            return this.ack.TIMEOUT;
+        }
+        if (this.RxBuf[this.HEAD] !== this.cmd.HEAD) {
+            throw Error("communication failed.");
+        }
+        if (this.RxBuf[this.TAIL] !== this.cmd.TAIL) {
+            throw Error("communication failed.");
+        }
+        if (this.RxBuf[this.CMD] !== this.TxBuf[this.CMD]) {
+            throw Error("communication failed.");
+        }
+        checkSum = 0;
+        for (let i = 1; i < this.CHK; i++) {
+            checkSum ^= this.RxBuf[i];
+        }
+        if (checkSum !== this.RxBuf[this.CHK]) {
+            throw Error("communication failed.");
+        }
+        return this.ack.SUCCESS;
+    }
+}
+exports.default = M5StickC_FINGER;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/M5Stack/M5StickC_JoyStick/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class M5StickC_JoyStick {
+    constructor() {
+        this.keys = ["vcc", "gnd", "sda", "scl", "i2c"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "M5StickC_JoyStick",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
+            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+                this.params.sda = hatI2c.sda;
+                this.params.scl = hatI2c.scl;
+            }
+            else {
+                throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
+            }
+        }
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        this.obniz.wait(100); // wait for booting of STM32F030F4
+        this.params.mode = "master";
+        this.params.clock = 100000;
+        this.params.pull = "5v";
+        this.i2c = this.obniz.getI2CWithConfig(this.params);
+    }
+    async getXWait() {
+        const ret = await this.getXYWait();
+        let val = ret[0];
+        if (val > 0x7f) {
+            val = val - 0x100;
+        }
+        return val;
+    }
+    async getYWait() {
+        const ret = await this.getXYWait();
+        let val = ret[1];
+        if (val > 0x7f) {
+            val = val - 0x100;
+        }
+        return val;
+    }
+    async isPressedWait() {
+        this.i2c.write(0x38, [0x02]);
+        const ret = await this.i2c.readWait(0x38, 3);
+        return !Boolean(ret[2]);
+    }
+    async getXYWait() {
+        this.i2c.write(0x38, [0x02]);
+        const ret = await this.i2c.readWait(0x38, 3);
+        return ret;
+    }
+}
+exports.default = M5StickC_JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/M5Stack/M5StickC_RS485/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.M5StackC_RS485
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class M5StickC_RS485 {
+    constructor() {
+        this.keys = ["tx", "rx", "gnd", "vcc", "baud"];
+        this.requiredKeys = ["tx", "rx"];
+    }
+    static info() {
+        return {
+            name: "M5StickC_RS485",
+        };
+    }
+    wired(obniz) {
+        if (obniz.isValidIO(this.params.gnd)) {
+            obniz.getIO(this.params.gnd).output(false);
+        }
+        if (obniz.isValidIO(this.params.vcc)) {
+            obniz.getIO(this.params.vcc).output(true);
+        }
+        this.params.baud = this.params.baud || 9600;
+        this.uart = obniz.getFreeUart();
+        this.uart.start({
+            tx: this.params.tx,
+            rx: this.params.rx,
+            baud: this.params.baud,
+        });
+        this.uart.onreceive = (data, text) => {
+            if (typeof this.onreceive === "function") {
+                this.onreceive(data, text);
+            }
+        };
+    }
+    send(data) {
+        this.uart.send(data);
+    }
+}
+exports.default = M5StickC_RS485;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/M5Stack/M5StickC_ToF/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const VL53L0X_1 = __importDefault(__webpack_require__("./dist/src/parts/DistanceSensor/VL53L0X/index.js"));
+class M5StickC_ToF extends VL53L0X_1.default {
+    static info() {
+        return {
+            name: "M5StickC_ToF",
+        };
+    }
+    wired(obniz) {
+        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
+            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+                this.params.sda = hatI2c.sda;
+                this.params.scl = hatI2c.scl;
+            }
+            else {
+                throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
+            }
+        }
+        super.wired(obniz);
+    }
+}
+exports.default = M5StickC_ToF;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/M5Stack/M5StickC_YunHat/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.M5StickC_YunHat
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+class M5StickC_YunHat {
+    constructor() {
+        this.LED_LEN = 14;
+        this.requiredKeys = [];
+        this.keys = ["sda", "scl", "i2c"];
+        this.ioKeys = ["sda", "scl"];
+    }
+    static info() {
+        return {
+            name: "M5StickC_YunHat",
+        };
+    }
+    static _generateHsvColor(h, s, v) {
+        const C = v * s;
+        const Hp = h / 60;
+        const X = C * (1 - Math.abs((Hp % 2) - 1));
+        let R = 0;
+        let G = 0;
+        let B = 0;
+        if (0 <= Hp && Hp < 1) {
+            [R, G, B] = [C, X, 0];
+        }
+        if (1 <= Hp && Hp < 2) {
+            [R, G, B] = [X, C, 0];
+        }
+        if (2 <= Hp && Hp < 3) {
+            [R, G, B] = [0, C, X];
+        }
+        if (3 <= Hp && Hp < 4) {
+            [R, G, B] = [0, X, C];
+        }
+        if (4 <= Hp && Hp < 5) {
+            [R, G, B] = [X, 0, C];
+        }
+        if (5 <= Hp && Hp < 6) {
+            [R, G, B] = [C, 0, X];
+        }
+        const m = v - C;
+        [R, G, B] = [R + m, G + m, B + m];
+        R = Math.floor(R * 255);
+        G = Math.floor(G * 255);
+        B = Math.floor(B * 255);
+        return { red: R, green: G, blue: B };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.params.clock = 100 * 1000; // for i2c
+        this.params.mode = "master"; // for i2c
+        this.params.pull = "3v"; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.sht20 = obniz.wired("SHT20", { i2c: this.i2c });
+        this.bmp280 = obniz.wired("BMP280", { i2c: this.i2c });
+        this.bmp280.applyCalibration();
+    }
+    // public setColorCode(ledNum: number, colorCode: string) {
+    //   const hexConvert = (hex: string) => {
+    //     if (hex.slice(0, 1) === "#") {
+    //       hex = hex.slice(1);
+    //     }
+    //     if (hex.length === 3) {
+    //       hex = hex.slice(0, 1) + hex.slice(0, 1) + hex.slice(1, 2) + hex.slice(1, 2) + hex.slice(2, 3) + hex.slice(2, 3);
+    //     }
+    //
+    //     return [hex.slice(0, 2), hex.slice(2, 4), hex.slice(4, 6)].map((str) => {
+    //       return parseInt(str, 16);
+    //     });
+    //   };
+    //   const color: number[] = hexConvert(colorCode);
+    //   this.rgb(color[0], color[1], color[2]);
+    // }
+    rgb(red, green, blue) {
+        util_1.default.assertNumber(0, 255, "red", red);
+        util_1.default.assertNumber(0, 255, "green", green);
+        util_1.default.assertNumber(0, 255, "blue", blue);
+        const leds = [];
+        for (let i = 0; i < this.LED_LEN; i++) {
+            leds.push([red, green, blue]);
+        }
+        this.rgbs(leds);
+    }
+    hsv(hue, saturation, value) {
+        util_1.default.assertNumber(0, 300, "hue", hue);
+        util_1.default.assertNumber(0, 1, "saturation", saturation);
+        util_1.default.assertNumber(0, 1, "value", value);
+        const color = M5StickC_YunHat._generateHsvColor(hue, saturation, value);
+        this.rgb(color.red, color.green, color.blue);
+    }
+    rgbs(array) {
+        if (array.length <= this.LED_LEN) {
+            array.forEach((value, index) => {
+                this.i2c.write(0x38, [0x01, index, Math.floor(value[0]), Math.floor(value[1]), Math.floor(value[2])]);
+            });
+        }
+    }
+    hsvs(array) {
+        const leds = array.map((value, index) => {
+            const color = M5StickC_YunHat._generateHsvColor(value[0], value[1], value[2]);
+            return [color.red, color.green, color.blue];
+        });
+        this.rgbs(leds);
+    }
+    async getLightWait() {
+        this.i2c.write(0x38, [0x00]);
+        const d = await this.i2c.readWait(0x38, 2);
+        return (d[1] << 8) | d[0];
+    }
+    async getTempWait() {
+        return await this.sht20.getTempWait();
+    }
+    async getHumidWait() {
+        return await this.sht20.getHumidWait();
+    }
+    async getPressureWait() {
+        return await this.bmp280.getPressureWait();
+    }
+}
+exports.default = M5StickC_YunHat;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Magnet/CT10/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32132,15 +37949,6 @@ exports.default = SNx4HC595;
  * @packageDocumentation
  * @module Parts.CT10
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class CT10 {
     constructor() {
@@ -32148,8 +37956,7 @@ class CT10 {
         this.onchange = null;
         this.keys = ["signal", "gnd", "vcc"];
         this.requiredKeys = ["signal"];
-        this.onChangeForStateWait = () => {
-        };
+        this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
@@ -32175,17 +37982,14 @@ class CT10 {
             this.onChangeForStateWait(value);
         });
     }
-    isNearWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.io_signal.inputWait();
-        });
+    async isNearWait() {
+        return await this.io_signal.inputWait();
     }
     stateWait(isNear) {
         return new Promise((resolve) => {
             this.onChangeForStateWait = (near) => {
                 if (isNear === near) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -32208,25 +38012,24 @@ exports.default = CT10;
  * @packageDocumentation
  * @module Parts.HMC5883L
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-class HMC5883L {
+const i2cCompass_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cCompass.js"));
+class HMC5883L extends i2cCompass_1.default {
     constructor() {
-        this.address = {
-            device: 0x1e,
-            reset: [0x02, 0x00],
-            xMSB: [0x03],
+        super();
+        this.defaultUnit = "G";
+        this.i2cinfo = {
+            address: 0x1e,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
         };
-        this.keys = ["gnd", "sda", "scl", "i2c"];
-        this.requiredKeys = [];
+        this.sf = this.defaultUnit;
+        this.so = HMC5883L.scales[1];
+        this.range = "8G";
     }
     static info() {
         return {
@@ -32234,36 +38037,39 @@ class HMC5883L {
         };
     }
     wired(obniz) {
-        this.obniz = obniz;
-        obniz.setVccGnd(null, this.params.gnd, "3v");
-        this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
-        this.i2c = obniz.getI2CWithConfig(this.params);
-        this.obniz.wait(500);
+        super.wired(obniz);
+        // this.obniz.wait(500);
+        this.init();
     }
     init() {
-        this.i2c.write(this.address.device, this.address.reset);
-        this.obniz.wait(500);
+        this.reset();
+        // this.obniz.wait(500);
     }
-    get() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address.device, this.address.xMSB);
-            const readed = yield this.i2c.readWait(this.address.device, 2 * 3);
-            const obj = {};
-            const keys = ["x", "y", "z"];
-            for (let i = 0; i < 3; i++) {
-                let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
-                if (val & 0x8000) {
-                    val = val - 65536;
-                }
-                obj[keys[i]] = val;
-            }
-            return obj;
-        });
+    reset() {
+        this.write(HMC5883L.commands.mode, 0x00);
+    }
+    async getAdcWait() {
+        const raw = await this.readWait(HMC5883L.commands.x_MSB, 6);
+        return HMC5883L.charArrayToXyz(raw, "b");
+    }
+    setRange(index) {
+        this.write(HMC5883L.commands.config_b, index << 5);
+        this.so = HMC5883L.scales[index];
+    }
+    // legacy
+    async get() {
+        return await this.getWait();
     }
 }
 exports.default = HMC5883L;
+HMC5883L.commands = {
+    config_a: 0x00,
+    config_b: 0x01,
+    mode: 0x02,
+    x_MSB: 0x03,
+    status: 0x09,
+};
+HMC5883L.scales = [1 / 1370, 1 / 1090, 1 / 820, 1 / 660, 1 / 440, 1 / 390, 1 / 330, 1 / 230];
 
 //# sourceMappingURL=index.js.map
 
@@ -32279,15 +38085,6 @@ exports.default = HMC5883L;
  * @packageDocumentation
  * @module Parts.24LC256
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class _24LC256 {
     constructor() {
@@ -32313,17 +38110,132 @@ class _24LC256 {
         this.i2c.write(0x50, array);
         this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
     }
-    getWait(address, length) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const array = [];
-            array.push((address >> 8) & 0xff);
-            array.push(address & 0xff);
-            this.i2c.write(0x50, array);
-            return yield this.i2c.readWait(0x50, length);
-        });
+    async getWait(address, length) {
+        const array = [];
+        array.push((address >> 8) & 0xff);
+        array.push(address & 0xff);
+        this.i2c.write(0x50, array);
+        return await this.i2c.readWait(0x50, length);
     }
 }
 exports.default = _24LC256;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/AK09916/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class AK09916 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.i2cinfo = {
+            address: 0x0c,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+        this.ADDR = 0x0c;
+        this._WIA = 0x01;
+        this._HXL = 0x11;
+        this._HXH = 0x12;
+        this._HYL = 0x13;
+        this._HYH = 0x14;
+        this._HZL = 0x15;
+        this._HZH = 0x16;
+        this._ST2 = 0x18;
+        this._CNTL2 = 0x31;
+        this._ASAX = 0x60;
+        this._ASAY = 0x61;
+        this._ASAZ = 0x62;
+        this._MODE_POWER_DOWN = 0b00000000;
+        this.MODE_SINGLE_MEASURE = 0b00000001;
+        this.MODE_CONTINOUS_MEASURE_1 = 0b00000010; // 10Hz
+        this.MODE_CONTINOUS_MEASURE_2 = 0b00001000; // 100Hz
+        this.MODE_EXTERNAL_TRIGGER_MEASURE = 0b00000100;
+        this._MODE_SELF_TEST = 0b00001000;
+        this._MODE_FUSE_ROM_ACCESS = 0b00011111;
+        this.OUTPUT_14_BIT = 0b00000000;
+        this.OUTPUT_16_BIT = 0b00010000;
+        this._SO_14BIT = 0.6; // per digit when 14bit mode
+        this._SO_16BIT = 0.15; //  per digit when 16bit mode
+        this.offset = [0, 0, 0];
+        this.scale = [1, 1, 1];
+        this.so = this._SO_16BIT;
+    }
+    static info() {
+        return {
+            name: "AK09916",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        this.write(this._CNTL2, this.MODE_CONTINOUS_MEASURE_1);
+    }
+    async magnetic() {
+        // 0111 1111 1111 0000 4912 uT
+        // 1111 1111 1111 1111 -1 uT
+        // 1000 0000 0001 0000 -4912 uT
+        // data[0]下位ビット data[1] 上位ビット
+        const raw3 = await this.readThreeInt16Wait(this._HXL, "l");
+        this.readWait(this._ST2, 1);
+        const xyz = raw3.map((d, i) => {
+            return (d * this.so - this.offset[i]) * this.scale[i];
+        });
+        return xyz;
+    }
+    async whoamiWait() {
+        const result = await this.readWait(this._WIA, 1);
+        return result[0];
+    }
+    async calibrateWait(count = 256, delay = 200) {
+        this.offset = [0, 0, 0];
+        this.scale = [1, 1, 1];
+        let reading = await this.magnetic();
+        let minx = reading[0];
+        let maxx = reading[0];
+        let miny = reading[1];
+        let maxy = reading[1];
+        let minz = reading[2];
+        let maxz = reading[2];
+        while (count > 0) {
+            await new Promise((r) => setTimeout(r, delay));
+            reading = await this.magnetic();
+            minx = Math.min(minx, reading[0]);
+            maxx = Math.max(maxx, reading[0]);
+            miny = Math.min(miny, reading[1]);
+            maxy = Math.max(maxy, reading[1]);
+            minz = Math.min(minz, reading[2]);
+            maxz = Math.max(maxz, reading[2]);
+            count -= 1;
+        }
+        // Hard iron correction
+        const offset_x = (maxx + minx) / 2;
+        const offset_y = (maxy + miny) / 2;
+        const offset_z = (maxz + minz) / 2;
+        this.offset = [offset_x, offset_y, offset_z];
+        // Soft iron correction
+        const avg_delta_x = (maxx - minx) / 2;
+        const avg_delta_y = (maxy - miny) / 2;
+        const avg_delta_z = (maxz - minz) / 2;
+        const avg_delta = (avg_delta_x + avg_delta_y + avg_delta_z) / 3;
+        const scale_x = avg_delta / avg_delta_x;
+        const scale_y = avg_delta / avg_delta_y;
+        const scale_z = avg_delta / avg_delta_z;
+        this.scale = [scale_x, scale_y, scale_z];
+        return { offset: this.offset, scale: this.scale };
+    }
+}
+exports.default = AK09916;
 
 //# sourceMappingURL=index.js.map
 
@@ -32339,21 +38251,24 @@ exports.default = _24LC256;
  * @packageDocumentation
  * @module Parts.AK8963
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-class AK8963 {
+const i2cCompass_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cCompass.js"));
+class AK8963 extends i2cCompass_1.default {
     constructor() {
-        this._adc_cycle = 0;
-        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address", "adb_cycle"];
-        this.requiredKeys = [];
+        super();
+        this.defaultUnit = "uT";
+        this.i2cinfo = {
+            address: 0x0c,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+        this.sf = this.defaultUnit;
+        this.so = AK8963.scales.so_16bit;
+        this.range = "4912uT";
     }
     static info() {
         return {
@@ -32361,48 +38276,31 @@ class AK8963 {
         };
     }
     wired(obniz) {
-        this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
-        this._address = this.params.address || 0x0c;
-        this.i2c = obniz.getI2CWithConfig(this.params);
+        super.wired(obniz);
         this.setConfig(this.params.adc_cycle || 8);
     }
     setConfig(ADC_cycle) {
         switch (ADC_cycle) {
             case 8:
-                this.i2c.write(this._address, [0x0a, 0x12]);
+                this.write(0x0a, [0x12]); // 16bit
                 break;
             case 100:
-                this.i2c.write(this._address, [0x0a, 0x16]);
+                this.write(0x0a, [0x16]); // 16bit
                 break;
             default:
-                throw new Error("ADC_cycle variable 8,100 setting");
+                throw new Error("Invalid ADC_cycle value. Valid values are 8,100.");
         }
-        this._adc_cycle = ADC_cycle;
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this._address, [0x03]); // request AK8963 data
-            const raw_data_AK8963 = yield this.i2c.readWait(this._address, 7); // read 7byte(read mag_data[6] to refresh)
-            return {
-                x: this.char2short(raw_data_AK8963[0], raw_data_AK8963[1]),
-                y: this.char2short(raw_data_AK8963[2], raw_data_AK8963[3]),
-                z: this.char2short(raw_data_AK8963[4], raw_data_AK8963[5]),
-            };
-        });
-    }
-    char2short(valueH, valueL) {
-        const buffer = new ArrayBuffer(2);
-        const dv = new DataView(buffer);
-        dv.setUint8(0, valueH);
-        dv.setUint8(1, valueL);
-        return dv.getInt16(0, false);
+    async getAdcWait() {
+        const raw = await this.readWait(0x03, 7);
+        return AK8963.charArrayToXyz(raw, "l");
     }
 }
 exports.default = AK8963;
+AK8963.scales = {
+    so_14bit: 4912 / 8190,
+    so_16bit: 4912 / 32760,
+};
 
 //# sourceMappingURL=index.js.map
 
@@ -32418,15 +38316,6 @@ exports.default = AK8963;
  * @packageDocumentation
  * @module Parts.Button
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class Button {
     constructor() {
@@ -32434,8 +38323,7 @@ class Button {
         this.onchange = null;
         this.keys = ["signal", "gnd", "pull"];
         this.requiredKeys = ["signal"];
-        this.onChangeForStateWait = () => {
-        };
+        this.onChangeForStateWait = () => { };
     }
     static info() {
         return {
@@ -32466,18 +38354,15 @@ class Button {
             this.onChangeForStateWait(value === false);
         });
     }
-    isPressedWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.io_signal.inputWait();
-            return ret === false;
-        });
+    async isPressedWait() {
+        const ret = await this.io_signal.inputWait();
+        return ret === false;
     }
     stateWait(isPressed) {
         return new Promise((resolve, reject) => {
             this.onChangeForStateWait = (pressed) => {
                 if (isPressed === pressed) {
-                    this.onChangeForStateWait = () => {
-                    };
+                    this.onChangeForStateWait = () => { };
                     resolve();
                 }
             };
@@ -32500,15 +38385,6 @@ exports.default = Button;
  * @packageDocumentation
  * @module Parts.FlickHat
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class FlickHat {
     constructor() {
@@ -32553,61 +38429,59 @@ class FlickHat {
             this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
         }
     }
-    start(callback) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.io_ts.pull("3v");
-            this.io_reset.output(false);
-            yield this.obniz.wait(50);
-            this.io_reset.output(true);
-            yield this.obniz.wait(50);
-            this.onfwinfo = callback;
-            this.fwInfo = {
-                fwValid: 0,
-                fwInfoReceived: false,
-            };
-            this.rotation = 0;
-            this.lastRotation = 0;
-            this.readSize = 132;
-            yield this.polling();
-            yield this.obniz.wait(200);
-            this.i2c.write(this.address, [
-                0x10,
-                0x00,
-                0x00,
-                0xa2,
-                0xa1,
-                0x00,
-                0x00,
-                0x00,
-                0x1f,
-                0x00,
-                0x00,
-                0x00,
-                0xff,
-                0xff,
-                0xff,
-                0xff,
-            ]);
-            yield this.obniz.wait(100);
-            this.i2c.write(this.address, [
-                0x10,
-                0x00,
-                0x00,
-                0xa2,
-                0x80,
-                0x00,
-                0x00,
-                0x00,
-                0x3f,
-                0x00,
-                0x00,
-                0x00,
-                0x3f,
-                0x00,
-                0x00,
-                0x00,
-            ]);
-        });
+    async start(callback) {
+        this.io_ts.pull("3v");
+        this.io_reset.output(false);
+        await this.obniz.wait(50);
+        this.io_reset.output(true);
+        await this.obniz.wait(50);
+        this.onfwinfo = callback;
+        this.fwInfo = {
+            fwValid: 0,
+            fwInfoReceived: false,
+        };
+        this.rotation = 0;
+        this.lastRotation = 0;
+        this.readSize = 132;
+        await this.polling();
+        await this.obniz.wait(200);
+        this.i2c.write(this.address, [
+            0x10,
+            0x00,
+            0x00,
+            0xa2,
+            0xa1,
+            0x00,
+            0x00,
+            0x00,
+            0x1f,
+            0x00,
+            0x00,
+            0x00,
+            0xff,
+            0xff,
+            0xff,
+            0xff,
+        ]);
+        await this.obniz.wait(100);
+        this.i2c.write(this.address, [
+            0x10,
+            0x00,
+            0x00,
+            0xa2,
+            0x80,
+            0x00,
+            0x00,
+            0x00,
+            0x3f,
+            0x00,
+            0x00,
+            0x00,
+            0x3f,
+            0x00,
+            0x00,
+            0x00,
+        ]);
     }
     _dataArray2string(data) {
         let result = "";
@@ -32616,243 +38490,232 @@ class FlickHat {
         }
         return result;
     }
-    polling(timeout) {
-        return __awaiter(this, void 0, void 0, function* () {
-            timeout = timeout || 3000; // default: 3s
-            // DataOutputConfigMask	2byte
-            // const maskDSPStatus = 1;
-            const maskGestureInfo = 1 << 1;
-            const maskTouchInfo = 1 << 2;
-            const maskAirWheelInfo = 1 << 3;
-            const maskXYZPosition = 1 << 4;
-            // SystemInfo	1byte
-            const sysPositionValid = 1;
-            const sysAirWheelValid = 1 << 1;
-            // const sysDSPRunning = 1 << 7;
-            const startTime = new Date();
-            let ts = true;
-            while (ts && new Date() - startTime < timeout) {
-                ts = yield this.io_ts.inputWait();
-            }
-            if (!ts) {
-                this.io_ts.pull("0v");
-                // await this.obniz.wait(1);
-                const data = yield this.i2c.readWait(this.address, this.readSize);
-                const size = data[0];
-                // let flag = data[1];
-                const seq = data[2];
-                const msgID = data[3];
-                if (size !== 0xff && size > 0) {
-                    if (this.debugprint || this.obniz.debugprint) {
-                        console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
-                    }
-                    let configmask;
-                    let sysinfo;
-                    let gesture;
-                    let touch;
-                    let airwheel;
-                    let statusInfo;
-                    let fwInfo;
-                    switch (msgID) {
-                        case 0x91: // sensor data output
-                            configmask = data[4] | (data[5] << 8); // little endian
-                            // let timestamp = data[6]; // 200hz, 8-bit counter, max ~1.25sec
-                            sysinfo = data[7];
-                            // let dspstatus = data.slice(8, 10);
-                            gesture = data.slice(10, 14);
-                            touch = data.slice(14, 18);
-                            airwheel = data.slice(18, 20);
-                            // let xyz = data.slice(20, 26);
-                            // let noisepow = data.slice(27, 30);
-                            if (gesture[0] === 255 &&
-                                gesture[1] === 255 &&
-                                gesture[2] === 255 &&
-                                gesture[3] === 255) {
+    async polling(timeout) {
+        timeout = timeout || 3000; // default: 3s
+        // DataOutputConfigMask	2byte
+        // const maskDSPStatus = 1;
+        const maskGestureInfo = 1 << 1;
+        const maskTouchInfo = 1 << 2;
+        const maskAirWheelInfo = 1 << 3;
+        const maskXYZPosition = 1 << 4;
+        // SystemInfo	1byte
+        const sysPositionValid = 1;
+        const sysAirWheelValid = 1 << 1;
+        // const sysDSPRunning = 1 << 7;
+        const startTime = new Date();
+        let ts = true;
+        while (ts && new Date() - startTime < timeout) {
+            ts = await this.io_ts.inputWait();
+        }
+        if (!ts) {
+            this.io_ts.pull("0v");
+            // await this.obniz.wait(1);
+            const data = await this.i2c.readWait(this.address, this.readSize);
+            const size = data[0];
+            // let flag = data[1];
+            const seq = data[2];
+            const msgID = data[3];
+            if (size !== 0xff && size > 0) {
+                if (this.debugprint || this.obniz.debugprint) {
+                    console.log("flickHat: " + data.slice(0, size).map((v) => "0x" + v.toString(16)));
+                }
+                let configmask;
+                let sysinfo;
+                let gesture;
+                let touch;
+                let airwheel;
+                let statusInfo;
+                let fwInfo;
+                switch (msgID) {
+                    case 0x91: // sensor data output
+                        configmask = data[4] | (data[5] << 8); // little endian
+                        // let timestamp = data[6]; // 200hz, 8-bit counter, max ~1.25sec
+                        sysinfo = data[7];
+                        // let dspstatus = data.slice(8, 10);
+                        gesture = data.slice(10, 14);
+                        touch = data.slice(14, 18);
+                        airwheel = data.slice(18, 20);
+                        // let xyz = data.slice(20, 26);
+                        // let noisepow = data.slice(27, 30);
+                        if (gesture[0] === 255 && gesture[1] === 255 && gesture[2] === 255 && gesture[3] === 255) {
+                            break;
+                        }
+                        if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
+                            const xyz = {
+                                // little endian
+                                x: (data[20] | (data[21] << 8)) / 65536,
+                                y: (data[22] | (data[23] << 8)) / 65536,
+                                z: (data[24] | (data[25] << 8)) / 65536,
+                                seq,
+                            };
+                            this.xyz = xyz;
+                            if (typeof this.onxyz === "function") {
+                                this.onxyz(xyz);
+                            }
+                        }
+                        if (configmask & maskGestureInfo && gesture[0] > 0) {
+                            this.lastGesture = gesture[0];
+                            const gestures = [
+                                ["", "", ""],
+                                ["garbage", "", ""],
+                                ["flick", "west", "east"],
+                                ["flick", "east", "west"],
+                                ["flick", "south", "north"],
+                                ["flick", "north", "south"],
+                                ["circle", "clockwise", ""],
+                                ["circle", "counter-clockwise", ""],
+                                ["wave", "x", ""],
+                                ["wave", "y", ""],
+                                ["hold", "", ""],
+                            ];
+                            for (const index in gestures) {
+                                if (index === gesture[0] && typeof this.ongestureall === "function") {
+                                    this.ongestureall({
+                                        action: gestures[index][0],
+                                        from: gestures[index][1],
+                                        to: gestures[index][2],
+                                        raw: gesture,
+                                        seq,
+                                    });
+                                }
+                                if (index === gesture[0] && gestures[index][0] === "flick" && typeof this.ongesture === "function") {
+                                    this.ongesture({
+                                        action: "gesture",
+                                        from: gestures[index][1],
+                                        to: gestures[index][2],
+                                        raw: gesture,
+                                        seq,
+                                    });
+                                }
+                            }
+                        }
+                        if (configmask & maskTouchInfo && !(touch[0] === 0 && touch[1] === 0) && touch[3] === 0) {
+                            // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
+                            const touchAction = touch[0] | (touch[1] << 8); // little endian
+                            if (touchAction === 0xffff) {
                                 break;
                             }
-                            if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
-                                const xyz = {
-                                    // little endian
-                                    x: (data[20] | (data[21] << 8)) / 65536,
-                                    y: (data[22] | (data[23] << 8)) / 65536,
-                                    z: (data[24] | (data[25] << 8)) / 65536,
+                            // let touchCount = touch[2] * 5; // touch counter value * 5[ms]
+                            const actions = [
+                                ["touch", "south"],
+                                ["touch", "west"],
+                                ["touch", "north"],
+                                ["touch", "east"],
+                                ["touch", "center"],
+                                ["tap", "south"],
+                                ["tap", "west"],
+                                ["tap", "north"],
+                                ["tap", "east"],
+                                ["tap", "center"],
+                                ["doubletap", "south"],
+                                ["doubletap", "west"],
+                                ["doubletap", "north"],
+                                ["doubletap", "east"],
+                                ["doubletap", "center"],
+                            ];
+                            const touches = [];
+                            const taps = [];
+                            const doubletaps = [];
+                            this.lastTouch = touchAction;
+                            let comp = 1;
+                            for (const index in actions) {
+                                const value = actions[index];
+                                if (touchAction & comp) {
+                                    // console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
+                                    switch (value[0]) {
+                                        case "touch":
+                                            touches.push(value[1]);
+                                            break;
+                                        case "tap":
+                                            taps.push(value[1]);
+                                            break;
+                                        case "doubletap":
+                                            doubletaps.push(value[1]);
+                                            break;
+                                        default:
+                                    }
+                                }
+                                comp <<= 1;
+                            }
+                            if (touches.length > 0 && typeof this.ontouch === "function") {
+                                this.ontouch({
+                                    action: "touch",
+                                    positions: touches,
+                                    raw: touch,
                                     seq,
-                                };
-                                this.xyz = xyz;
-                                if (typeof this.onxyz === "function") {
-                                    this.onxyz(xyz);
-                                }
+                                });
                             }
-                            if (configmask & maskGestureInfo && gesture[0] > 0) {
-                                this.lastGesture = gesture[0];
-                                const gestures = [
-                                    ["", "", ""],
-                                    ["garbage", "", ""],
-                                    ["flick", "west", "east"],
-                                    ["flick", "east", "west"],
-                                    ["flick", "south", "north"],
-                                    ["flick", "north", "south"],
-                                    ["circle", "clockwise", ""],
-                                    ["circle", "counter-clockwise", ""],
-                                    ["wave", "x", ""],
-                                    ["wave", "y", ""],
-                                    ["hold", "", ""],
-                                ];
-                                for (const index in gestures) {
-                                    if (index === gesture[0] &&
-                                        typeof this.ongestureall === "function") {
-                                        this.ongestureall({
-                                            action: gestures[index][0],
-                                            from: gestures[index][1],
-                                            to: gestures[index][2],
-                                            raw: gesture,
-                                            seq,
-                                        });
-                                    }
-                                    if (index === gesture[0] &&
-                                        gestures[index][0] === "flick" &&
-                                        typeof this.ongesture === "function") {
-                                        this.ongesture({
-                                            action: "gesture",
-                                            from: gestures[index][1],
-                                            to: gestures[index][2],
-                                            raw: gesture,
-                                            seq,
-                                        });
-                                    }
-                                }
+                            if (taps.length > 0 && typeof this.ontap === "function") {
+                                this.ontap({
+                                    action: "tap",
+                                    positions: taps,
+                                    raw: touch,
+                                    seq,
+                                });
                             }
-                            if (configmask & maskTouchInfo &&
-                                !(touch[0] === 0 && touch[1] === 0) &&
-                                touch[3] === 0) {
-                                // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
-                                const touchAction = touch[0] | (touch[1] << 8); // little endian
-                                if (touchAction === 0xffff) {
-                                    break;
-                                }
-                                // let touchCount = touch[2] * 5; // touch counter value * 5[ms]
-                                const actions = [
-                                    ["touch", "south"],
-                                    ["touch", "west"],
-                                    ["touch", "north"],
-                                    ["touch", "east"],
-                                    ["touch", "center"],
-                                    ["tap", "south"],
-                                    ["tap", "west"],
-                                    ["tap", "north"],
-                                    ["tap", "east"],
-                                    ["tap", "center"],
-                                    ["doubletap", "south"],
-                                    ["doubletap", "west"],
-                                    ["doubletap", "north"],
-                                    ["doubletap", "east"],
-                                    ["doubletap", "center"],
-                                ];
-                                const touches = [];
-                                const taps = [];
-                                const doubletaps = [];
-                                this.lastTouch = touchAction;
-                                let comp = 1;
-                                for (const index in actions) {
-                                    const value = actions[index];
-                                    if (touchAction & comp) {
-                                        // console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
-                                        switch (value[0]) {
-                                            case "touch":
-                                                touches.push(value[1]);
-                                                break;
-                                            case "tap":
-                                                taps.push(value[1]);
-                                                break;
-                                            case "doubletap":
-                                                doubletaps.push(value[1]);
-                                                break;
-                                            default:
-                                        }
-                                    }
-                                    comp <<= 1;
-                                }
-                                if (touches.length > 0 && typeof this.ontouch === "function") {
-                                    this.ontouch({
-                                        action: "touch",
-                                        positions: touches,
-                                        raw: touch,
-                                        seq,
-                                    });
-                                }
-                                if (taps.length > 0 && typeof this.ontap === "function") {
-                                    this.ontap({
-                                        action: "tap",
-                                        positions: taps,
-                                        raw: touch,
-                                        seq,
-                                    });
-                                }
-                                if (doubletaps.length > 0 &&
-                                    typeof this.ondoubletap === "function") {
-                                    this.ondoubletap({
-                                        action: "doubletap",
-                                        positions: doubletaps,
-                                        raw: touch,
+                            if (doubletaps.length > 0 && typeof this.ondoubletap === "function") {
+                                this.ondoubletap({
+                                    action: "doubletap",
+                                    positions: doubletaps,
+                                    raw: touch,
+                                    seq,
+                                });
+                            }
+                        }
+                        if (configmask & maskAirWheelInfo && sysinfo & sysAirWheelValid) {
+                            const delta = (airwheel[0] - this.lastRotation) / 32.0;
+                            this.rotation += delta * 360.0;
+                            this.rotation %= 360;
+                            if (delta !== 0 && delta > -0.5 && delta < 0.5) {
+                                if (typeof this.onairwheel === "function") {
+                                    this.onairwheel({
+                                        delta: delta * 360.0,
+                                        rotation: this.rotation,
+                                        raw: airwheel,
                                         seq,
                                     });
                                 }
                             }
-                            if (configmask & maskAirWheelInfo && sysinfo & sysAirWheelValid) {
-                                const delta = (airwheel[0] - this.lastRotation) / 32.0;
-                                this.rotation += delta * 360.0;
-                                this.rotation %= 360;
-                                if (delta !== 0 && delta > -0.5 && delta < 0.5) {
-                                    if (typeof this.onairwheel === "function") {
-                                        this.onairwheel({
-                                            delta: delta * 360.0,
-                                            rotation: this.rotation,
-                                            raw: airwheel,
-                                            seq,
-                                        });
-                                    }
-                                }
-                                this.lastRotation = airwheel[0];
-                            }
-                            break;
-                        case 0x15: // system status
-                            statusInfo = {
-                                msgId: data[4],
-                                maxCmdSize: data[5],
-                                error: data[6] | (data[7] << 8),
-                            };
-                            this.statusInfo = statusInfo;
-                            if (this.debugprint || this.obniz.debugprint) {
-                                console.log(`flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`);
-                            }
-                            break;
-                        case 0x83: // farmware information
-                            fwInfo = {
-                                fwValid: data[4] === 0xaa,
-                                hwRev: [data[5], data[6]],
-                                paramStartAddr: data[7] * 128,
-                                libLoaderVer: [data[8], data[9]],
-                                libLoaderPlatform: data[10],
-                                fwStartAddr: data[11] * 128,
-                                fwVersion: this._dataArray2string(data.slice(12, 132)).split("\0")[0],
-                                fwInfoReceived: true,
-                            };
-                            this.fwInfo = fwInfo;
-                            if (typeof this.onfwinfo === "function") {
-                                this.onfwinfo(fwInfo);
-                            }
-                            this.readSize = 26;
-                            break;
-                        default:
-                            console.error(`unknown message: 0x${msgID.toString(16)}, data:${data
-                                .slice(0, size)
-                                .map((v) => "0x" + v.toString(16))}`);
-                    }
+                            this.lastRotation = airwheel[0];
+                        }
+                        break;
+                    case 0x15: // system status
+                        statusInfo = {
+                            msgId: data[4],
+                            maxCmdSize: data[5],
+                            error: data[6] | (data[7] << 8),
+                        };
+                        this.statusInfo = statusInfo;
+                        if (this.debugprint || this.obniz.debugprint) {
+                            console.log(`flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`);
+                        }
+                        break;
+                    case 0x83: // farmware information
+                        fwInfo = {
+                            fwValid: data[4] === 0xaa,
+                            hwRev: [data[5], data[6]],
+                            paramStartAddr: data[7] * 128,
+                            libLoaderVer: [data[8], data[9]],
+                            libLoaderPlatform: data[10],
+                            fwStartAddr: data[11] * 128,
+                            fwVersion: this._dataArray2string(data.slice(12, 132)).split("\0")[0],
+                            fwInfoReceived: true,
+                        };
+                        this.fwInfo = fwInfo;
+                        if (typeof this.onfwinfo === "function") {
+                            this.onfwinfo(fwInfo);
+                        }
+                        this.readSize = 26;
+                        break;
+                    default:
+                        console.error(`unknown message: 0x${msgID.toString(16)}, data:${data
+                            .slice(0, size)
+                            .map((v) => "0x" + v.toString(16))}`);
                 }
-                this.io_ts.pull("3v");
-                // await this.obniz.wait(1);
             }
-        });
+            this.io_ts.pull("3v");
+            // await this.obniz.wait(1);
+        }
     }
 }
 exports.default = FlickHat;
@@ -32871,15 +38734,6 @@ exports.default = FlickHat;
  * @packageDocumentation
  * @module Parts.HC-SR505
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR505 {
     constructor() {
@@ -32901,13 +38755,276 @@ class HCSR505 {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.io_signal.inputWait();
-        });
+    async getWait() {
+        return await this.io_signal.inputWait();
     }
 }
 exports.default = HCSR505;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/ICM20948/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class ICM20948 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.g = 9.80665;
+        this.i2cinfo = {
+            address: 0x69,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+        this._ADDR = 0x69;
+        this._WHO_AM_I = 0x00;
+        this._GYRO_CONFIG = 0x01;
+        this._ACCEL_CONFIG = 0x14;
+        this._ACCEL_CONFIG2 = 0x15;
+        this._INT_PIN_CFG = 0x0f;
+        this._ACCEL_XOUT_H = 0x2d;
+        this._ACCEL_XOUT_L = 0x2e;
+        this._ACCEL_YOUT_H = 0x2f;
+        this._ACCEL_YOUT_L = 0x30;
+        this._ACCEL_ZOUT_H = 0x31;
+        this._ACCEL_ZOUT_L = 0x32;
+        this._GYRO_XOUT_H = 0x33;
+        this._GYRO_XOUT_L = 0x34;
+        this._GYRO_YOUT_H = 0x35;
+        this._GYRO_YOUT_L = 0x36;
+        this._GYRO_ZOUT_H = 0x37;
+        this._GYRO_ZOUT_L = 0x38;
+        // #_ACCEL_FS_MASK = const(0b00011000)
+        this._ACCEL_FS_SEL_2G = 0b00000000;
+        this._ACCEL_FS_SEL_4G = 0b00000010;
+        this._ACCEL_FS_SEL_8G = 0b00000100;
+        this._ACCEL_FS_SEL_16G = 0b00000110;
+        this._ACCEL_SO_2G = 16384; // 1 / 16384 ie. 0.061 mg / digit
+        this._ACCEL_SO_4G = 8192; // 1 / 8192 ie. 0.122 mg / digit
+        this._ACCEL_SO_8G = 4096; // 1 / 4096 ie. 0.244 mg / digit
+        this._ACCEL_SO_16G = 2048; // 1 / 2048 ie. 0.488 mg / digit
+        this._GYRO_FS_MASK = 0b00000110;
+        this._GYRO_FS_SEL_250DPS = 0b00110001;
+        this._GYRO_FS_SEL_500DPS = 0b00110011;
+        this._GYRO_FS_SEL_1000DPS = 0b00110101;
+        this._GYRO_FS_SEL_2000DPS = 0b00110111;
+        this._GYRO_SO_250DPS = 131;
+        this._GYRO_SO_500DPS = 62.5;
+        this._GYRO_SO_1000DPS = 32.8;
+        this._GYRO_SO_2000DPS = 16.4;
+        // # Used for enablind and disabling the i2c bypass access
+        this._I2C_BYPASS_MASK = 0b00000010;
+        this._I2C_BYPASS_EN = 0b00000010;
+        this._I2C_BYPASS_DIS = 0b00000000;
+        this._SF_G = 1; //    g
+        this._SF_MG = 1000; //    mg
+        this._SF_M_S2 = 9.80665; // 1 g = 9.80665 m/s2 ie. standard gravity
+        this._SF_DEG_S = 1; // deg / s
+        this._SF_RAD_S = 57.295779578552; // 1 rad / s is 57.295779578552 deg / s;
+        this._accel_sf = this._SF_M_S2;
+        this._accel_so = this._ACCEL_SO_2G;
+        this._gyro_sf = this._SF_DEG_S;
+        this._gyro_so = this._GYRO_SO_250DPS;
+    }
+    static info() {
+        return {
+            name: "ICM20948",
+        };
+    }
+    wired(obniz) {
+        super.wired(obniz);
+        this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
+        this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
+    }
+    async initWait() {
+        const data = await this.whoamiWait();
+        if (data !== 0xea) {
+            throw new Error("ICM20948 not found in I2C bus.");
+        }
+        this.write(0x06, [0x01]); // wake;
+        this.write(0x0f, [0x02]); // passthrough;
+        this.write(0x03, [0x00]);
+        // this.write(12, 0x31, [0x00]);  // power down mode
+        // const buf3 = await this._studuinoI2C.readFromMem(12, 0x60, 3);
+        this._ak09916 = this.obniz.wired("AK09916", { i2c: this.i2c });
+    }
+    accelFs(value) {
+        if (value === "2g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_2G);
+        }
+        else if (value === "4g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_4G);
+        }
+        else if (value === "8g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_8G);
+        }
+        else if (value === "16g") {
+            this._accel_so = this._accelFs(this._ACCEL_FS_SEL_16G);
+        }
+        else {
+            throw new Error("must be '2g'/'4g'/'8g'/'16g'");
+        }
+    }
+    accelSf(value) {
+        if (value === "g") {
+            this._accel_sf = this._SF_G;
+        }
+        else if (value === "mg") {
+            this._accel_sf = this._SF_MG;
+        }
+        else if (value === "ms2") {
+            this._accel_sf = this._SF_M_S2;
+        }
+        else {
+            throw new Error("must be 'g'/'mg'/'ms2'");
+        }
+    }
+    async accelerationWait() {
+        /*
+        Acceleration measured by the sensor. By default will return a
+        3-tuple of X, Y, Z axis accelerationWait values in mG as integer.
+        */
+        const so = this._accel_so;
+        const sf = this._accel_sf;
+        const xyz = await this.readThreeInt16Wait(this._ACCEL_XOUT_H);
+        return xyz.map((e) => (e / so) * sf);
+    }
+    async gyroWait() {
+        // """
+        // X, Y, Z radians per second as floats.
+        // """
+        const so = this._gyro_so;
+        const sf = this._gyro_sf;
+        const xyz = await this.readThreeInt16Wait(this._GYRO_XOUT_H);
+        return xyz.map((e) => (e / so) * sf);
+    }
+    async magneticWait() {
+        return this._ak09916.magnetic();
+    }
+    async calibrateWait() {
+        return await this._ak09916.calibrateWait();
+    }
+    async whoamiWait() {
+        // Value of the whoamiWait register. """
+        const result = await this.readWait(this._WHO_AM_I, 1);
+        return result[0];
+    }
+    gyroFs(value) {
+        if (value === "250dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_250DPS);
+        }
+        else if (value === "500dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_500DPS);
+        }
+        else if (value === "1000dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_1000DPS);
+        }
+        else if (value === "2000dps") {
+            this._gyro_so = this._gyroFs(this._GYRO_FS_SEL_2000DPS);
+        }
+        else {
+            throw new Error("must be '250dps'/'500dps'/'1000dps'/'2000dps'");
+        }
+    }
+    gyroSf(value) {
+        if (value === "dps") {
+            this._gyro_sf = this._SF_DEG_S;
+        }
+        else if (value === "rps") {
+            this._gyro_sf = this._SF_RAD_S;
+        }
+        else {
+            throw new Error("must be 'dps'/'rps'");
+        }
+    }
+    async _gyroDlpfWait(dlpfcfg = -1) {
+        this.write(0x7f, [0x20]);
+        // # get ICM20948 gyroWait configuration.
+        let char = (await this.readWait(this._GYRO_CONFIG, 1))[0];
+        char &= this._GYRO_FS_MASK; // clear DLDF bits
+        if (dlpfcfg === -1) {
+            char |= 0x00000000;
+        }
+        else if (dlpfcfg === 0) {
+            char |= 0x00000001;
+        }
+        else if (dlpfcfg === 1) {
+            char |= 0x00001001;
+        }
+        else if (dlpfcfg === 2) {
+            char |= 0x00010001;
+        }
+        else if (dlpfcfg === 3) {
+            char |= 0x00011001;
+        }
+        else if (dlpfcfg === 4) {
+            char |= 0x00100001;
+        }
+        else if (dlpfcfg === 5) {
+            char |= 0x00101001;
+        }
+        else if (dlpfcfg === 6) {
+            char |= 0x00110001;
+        }
+        else if (dlpfcfg === 7) {
+            char |= 0x00111001;
+        }
+        else {
+            char |= 0x00000000;
+        }
+        this.write(this._GYRO_CONFIG, [char]);
+        this.write(0x7f, [0x00]);
+    }
+    _accelFs(value) {
+        this.write(0x7f, [0x20]);
+        this.write(this._ACCEL_CONFIG, [value]);
+        this.write(0x7f, [0x00]);
+        // # Return the sensitivity divider
+        if (this._ACCEL_FS_SEL_2G === value) {
+            return this._ACCEL_SO_2G;
+        }
+        else if (this._ACCEL_FS_SEL_4G === value) {
+            return this._ACCEL_SO_4G;
+        }
+        else if (this._ACCEL_FS_SEL_8G === value) {
+            return this._ACCEL_SO_8G;
+        }
+        else if (this._ACCEL_FS_SEL_16G === value) {
+            return this._ACCEL_SO_16G;
+        }
+        return 0;
+    }
+    _gyroFs(value) {
+        this.write(0x7f, [0x20]);
+        this.write(this._GYRO_CONFIG, [value]);
+        this.write(0x7f, [0x00]);
+        // # Return the sensitivity divider
+        if (this._GYRO_FS_SEL_250DPS === value) {
+            return this._GYRO_SO_250DPS;
+        }
+        else if (this._GYRO_FS_SEL_500DPS === value) {
+            return this._GYRO_SO_500DPS;
+        }
+        else if (this._GYRO_FS_SEL_1000DPS === value) {
+            return this._GYRO_SO_1000DPS;
+        }
+        else if (this._GYRO_FS_SEL_2000DPS === value) {
+            return this._GYRO_SO_2000DPS;
+        }
+        return 0;
+    }
+}
+exports.default = ICM20948;
 
 //# sourceMappingURL=index.js.map
 
@@ -32923,15 +39040,6 @@ exports.default = HCSR505;
  * @packageDocumentation
  * @module Parts.IPM-165
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class IPM_165 {
     constructor() {
@@ -32953,10 +39061,8 @@ class IPM_165 {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.signal.getWait();
-        });
+    async getWait() {
+        return await this.signal.getWait();
     }
 }
 exports.default = IPM_165;
@@ -32975,15 +39081,6 @@ exports.default = IPM_165;
  * @packageDocumentation
  * @module Parts.JoyStick
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class JoyStick {
     constructor() {
@@ -33024,25 +39121,19 @@ class JoyStick {
             }
         });
     }
-    isPressedWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.io_sig_sw.inputWait();
-            return ret === false;
-        });
+    async isPressedWait() {
+        const ret = await this.io_sig_sw.inputWait();
+        return ret === false;
     }
-    getXWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad_x.getWait();
-            this.positionX = value / 5.0;
-            return this.positionX * 2 - 1;
-        });
+    async getXWait() {
+        const value = await this.ad_x.getWait();
+        this.positionX = value / 5.0;
+        return this.positionX * 2 - 1;
     }
-    getYWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad_y.getWait();
-            this.positionY = value / 5.0;
-            return this.positionY * 2 - 1;
-        });
+    async getYWait() {
+        const value = await this.ad_y.getWait();
+        this.positionY = value / 5.0;
+        return this.positionY * 2 - 1;
     }
 }
 exports.default = JoyStick;
@@ -33061,15 +39152,6 @@ exports.default = JoyStick;
  * @packageDocumentation
  * @module Parts.KXR94-2050
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class KXR94_2050 {
     constructor() {
@@ -33146,13 +39228,11 @@ class KXR94_2050 {
             z: this.voltage2gravity(this._z_val),
         };
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this._x_val = yield this.ad_x.getWait();
-            this._y_val = yield this.ad_y.getWait();
-            this._z_val = yield this.ad_z.getWait();
-            return this._get();
-        });
+    async getWait() {
+        this._x_val = await this.ad_x.getWait();
+        this._y_val = await this.ad_y.getWait();
+        this._z_val = await this.ad_z.getWait();
+        return this._get();
     }
 }
 exports.default = KXR94_2050;
@@ -33171,15 +39251,6 @@ exports.default = KXR94_2050;
  * @packageDocumentation
  * @module Parts.KXSC7-2050
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class KXSC7_2050 {
     constructor() {
@@ -33191,38 +39262,36 @@ class KXSC7_2050 {
             name: "KXSC7-2050",
         };
     }
-    wired(obniz) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.obniz = obniz;
-            obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
-            this.ad_x = obniz.getAD(this.params.x);
-            this.ad_y = obniz.getAD(this.params.y);
-            this.ad_z = obniz.getAD(this.params.z);
-            yield obniz.wait(500);
-            const ad = obniz.getAD(this.params.vcc);
-            const pwrVoltage = yield ad.getWait();
-            const horizontalZ = yield this.ad_z.getWait();
-            const sensitivity = pwrVoltage / 5; // Set sensitivity (unit:V)
-            const offsetVoltage = horizontalZ - sensitivity; // Set offset voltage (Output voltage at 0g, unit:V)
-            const self = this;
-            this.ad_x.start((value) => {
-                self.gravity = (value - offsetVoltage) / sensitivity;
-                if (self.onchangex) {
-                    self.onchangex(self.gravity);
-                }
-            });
-            this.ad_y.start((value) => {
-                self.gravity = (value - offsetVoltage) / sensitivity;
-                if (self.onchangey) {
-                    self.onchangey(self.gravity);
-                }
-            });
-            this.ad_z.start((value) => {
-                self.gravity = (value - offsetVoltage) / sensitivity;
-                if (self.onchangez) {
-                    self.onchangez(self.gravity);
-                }
-            });
+    async wired(obniz) {
+        this.obniz = obniz;
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.ad_x = obniz.getAD(this.params.x);
+        this.ad_y = obniz.getAD(this.params.y);
+        this.ad_z = obniz.getAD(this.params.z);
+        await obniz.wait(500);
+        const ad = obniz.getAD(this.params.vcc);
+        const pwrVoltage = await ad.getWait();
+        const horizontalZ = await this.ad_z.getWait();
+        const sensitivity = pwrVoltage / 5; // Set sensitivity (unit:V)
+        const offsetVoltage = horizontalZ - sensitivity; // Set offset voltage (Output voltage at 0g, unit:V)
+        const self = this;
+        this.ad_x.start((value) => {
+            self.gravity = (value - offsetVoltage) / sensitivity;
+            if (self.onchangex) {
+                self.onchangex(self.gravity);
+            }
+        });
+        this.ad_y.start((value) => {
+            self.gravity = (value - offsetVoltage) / sensitivity;
+            if (self.onchangey) {
+                self.onchangey(self.gravity);
+            }
+        });
+        this.ad_z.start((value) => {
+            self.gravity = (value - offsetVoltage) / sensitivity;
+            if (self.onchangez) {
+                self.onchangez(self.gravity);
+            }
         });
     }
 }
@@ -33242,62 +39311,138 @@ exports.default = KXSC7_2050;
  * @packageDocumentation
  * @module Parts.MPU6050
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-class MPU6050 {
+const i2cImu6_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cImu6.js"));
+class MPU6050 extends i2cImu6_1.default {
     constructor() {
-        this._address = 0x68;
-        this.keys = [
-            "gnd",
-            "vcc",
-            "sda",
-            "scl",
-            "i2c",
-            "address",
-            "accelerometer_range",
-            "gyroscope_range",
-        ];
-        this.requiredKeys = [];
+        super();
+        this.i2cinfo = {
+            address: 0x68,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
     }
     static info() {
         return {
             name: "MPU6050",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
-        if (typeof this.params.address === "number") {
-            this._address = this.params.address;
+    calcTemp(data) {
+        if (typeof data === "undefined" || data === null) {
+            return null;
         }
-        this.i2c = obniz.getI2CWithConfig(this.params);
-        this.setConfig(this.params.accelerometer_range || 2, this.params.gyroscope_range || 250);
+        return data / 333.87 + 21;
     }
-    setConfig(accelerometer_range, gyroscope_range) {
+    wired(obniz) {
+        super.wired(obniz);
+        this.init();
+    }
+    init() {
+        this.write(MPU6050.commands.pwr_mgmt_1, 0x00);
+        this.obniz.wait(10);
+        // set dlpf
+        this.obniz.wait(1);
+        this.write(MPU6050.commands.config, 0x01);
+        // set samplerate div
+        this.obniz.wait(1);
+        this.write(MPU6050.commands.smplrt_div, 0x05);
+        // interrupt enable
+        this.obniz.wait(1);
+        this.write(MPU6050.commands.int_enable, 0x00);
+        this.obniz.wait(1);
+        this.write(MPU6050.commands.user_ctrl, 0x00);
+        this.obniz.wait(1);
+        this.write(MPU6050.commands.fifo_en, 0x00);
+        this.obniz.wait(1);
+        this.write(MPU6050.commands.int_pin_cfg, 0x22);
+        this.obniz.wait(1);
+        this.write(MPU6050.commands.int_enable, 0x01);
+        this.obniz.wait(1);
+        this.setConfig(2, 250);
+    }
+    async sleepWait() {
+        await this.writeFlagWait(MPU6050.commands.pwr_mgmt_1, 6);
+    }
+    async wakeWait() {
+        await this.clearFlagWait(MPU6050.commands.pwr_mgmt_1, 6);
+    }
+    async resetWait() {
+        await this.writeFlagWait(MPU6050.commands.pwr_mgmt_1, 7);
+    }
+    async configDlpfWait() { }
+    async bypassMagnetometerWait(flag = true) {
+        // Enable I2C bypass to access for MPU9250 magnetometer access.
+        if (flag === true) {
+            await this.writeFlagWait(MPU6050.commands.int_pin_cfg, 1);
+        }
+        else {
+            await this.clearFlagWait(MPU6050.commands.int_pin_cfg, 1);
+        }
+        // this.i2c.write(this.address, [MPU6050.commands.int_pin_cfg]);
+        // const data =  await this.i2c!.readWait(this.address, 1);
+        // data[0] |= MPU6050.commands.intPinConfigMask.bypass_en;
+        // this.i2c.write(this.address, [MPU6050.commands.int_pin_cfg, data[0]]);
+    }
+    async whoamiWait() {
+        const result = await this.readWait(MPU6050.commands.whoami, 1);
+        return result[0];
+    }
+    async getAccelAdcWait() {
+        const raw = await this.readWait(MPU6050.commands.accel_x_h, 6);
+        return MPU6050.charArrayToXyz(raw, "b");
+    }
+    async getGyroAdcWait() {
+        const raw = await this.readWait(MPU6050.commands.gyro_x_h, 6);
+        return MPU6050.charArrayToXyz(raw, "b");
+    }
+    async getTempAdcWait() {
+        const raw = await this.readWait(MPU6050.commands.temp_h, 2);
+        return MPU6050.charArrayToInt16(raw, "b");
+    }
+    async getAllAdcWait() {
+        const raw = await this.readWait(MPU6050.commands.accel_x_h, 14);
+        return {
+            accelerometer: MPU6050.charArrayToXyz(raw.slice(0, 6), "b"),
+            gyroscope: MPU6050.charArrayToXyz(raw.slice(8, 14), "b"),
+            temperature: MPU6050.charArrayToInt16(raw.slice(6, 8), "b"),
+        };
+    }
+    setAccelRange(accel_range) {
+        if (accel_range in MPU6050.commands.accel_fs_sel) {
+            this.write(MPU6050.commands.accel_config, MPU6050.commands.accel_fs_sel[accel_range]);
+            this.accel_so = accel_range;
+        }
+        else {
+            throw new Error(`Invalid accel range. Valid values are: ${Object.keys(MPU6050.commands.accel_fs_sel).join()}`);
+        }
+    }
+    setGyroRange(gyro_range) {
+        if (gyro_range in MPU6050.commands.gyro_fs_sel) {
+            this.write(MPU6050.commands.gyro_config, MPU6050.commands.gyro_fs_sel[gyro_range]);
+            this.gyro_so = gyro_range;
+        }
+        else {
+            throw new Error(`Invalid gyro range. Valid values are: ${Object.keys(MPU6050.commands.gyro_fs_sel).join()}`);
+        }
+    }
+    setConfig(accelerometer_range, gyroscope_range, ADC_cycle) {
         // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
         switch (accelerometer_range) {
             case 2:
-                this.i2c.write(this._address, [0x1c, 0x00]);
+                this.setAccelRange("2g");
                 break;
             case 4:
-                this.i2c.write(this._address, [0x1c, 0x08]);
+                this.setAccelRange("4g");
                 break;
             case 8:
-                this.i2c.write(this._address, [0x1c, 0x10]);
+                this.setAccelRange("8g");
                 break;
             case 16:
-                this.i2c.write(this._address, [0x1c, 0x18]);
+                this.setAccelRange("16g");
                 break;
             default:
                 throw new Error("accel_range variable 2,4,8,16 setting");
@@ -33305,55 +39450,98 @@ class MPU6050 {
         // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
         switch (gyroscope_range) {
             case 250:
-                this.i2c.write(this._address, [0x1b, 0x00]);
+                this.setGyroRange("250dps");
                 break;
             case 500:
-                this.i2c.write(this._address, [0x1b, 0x08]);
+                this.setGyroRange("500dps");
                 break;
             case 1000:
-                this.i2c.write(this._address, [0x1b, 0x10]);
+                this.setGyroRange("1000dps");
                 break;
             case 2000:
-                this.i2c.write(this._address, [0x1b, 0x18]);
+                this.setGyroRange("2000dps");
                 break;
             default:
                 throw new Error("accel_range variable 250,500,1000,2000 setting");
         }
-        this._accel_range = accelerometer_range;
-        this._gyro_range = gyroscope_range;
-    }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this._address, [0x3b]); // request MPU6050 data
-            const raw_data_MPU6050 = yield this.i2c.readWait(this._address, 14); // read 14byte
-            const ac_scale = this._accel_range / 32768;
-            const gy_scale = this._gyro_range / 32768;
-            return {
-                accelerometer: {
-                    x: this.char2short(raw_data_MPU6050[0], raw_data_MPU6050[1]) * ac_scale,
-                    y: this.char2short(raw_data_MPU6050[2], raw_data_MPU6050[3]) * ac_scale,
-                    z: this.char2short(raw_data_MPU6050[4], raw_data_MPU6050[5]) * ac_scale,
-                },
-                temp: this.char2short(raw_data_MPU6050[6], raw_data_MPU6050[7]) / 333.87 + 21,
-                gyroscope: {
-                    x: this.char2short(raw_data_MPU6050[8], raw_data_MPU6050[9]) * gy_scale,
-                    y: this.char2short(raw_data_MPU6050[10], raw_data_MPU6050[11]) *
-                        gy_scale,
-                    z: this.char2short(raw_data_MPU6050[12], raw_data_MPU6050[13]) *
-                        gy_scale,
-                },
-            };
-        });
-    }
-    char2short(valueH, valueL) {
-        const buffer = new ArrayBuffer(2);
-        const dv = new DataView(buffer);
-        dv.setUint8(0, valueH);
-        dv.setUint8(1, valueL);
-        return dv.getInt16(0, false);
     }
 }
 exports.default = MPU6050;
+MPU6050.commands = {
+    whoami: 0x75,
+    whoami_result: 0x71,
+    pwr_mgmt_1: 0x6b,
+    pwr_mgmt_2: 0x6c,
+    smplrt_div: 0x19,
+    int_pin_cfg: 0x37,
+    int_enable: 0x38,
+    user_ctrl: 0x6a,
+    config: 0x1a,
+    fifo_en: 0x23,
+    accel_x_h: 0x3b,
+    accel_x_l: 0x3c,
+    accel_y_h: 0x3d,
+    accel_y_l: 0x3e,
+    accel_z_h: 0x3f,
+    accel_z_l: 0x40,
+    temp_h: 0x41,
+    temp_l: 0x42,
+    gyro_x_h: 0x43,
+    gyro_x_l: 0x44,
+    gyro_y_h: 0x45,
+    gyro_y_l: 0x46,
+    gyro_z_h: 0x47,
+    gyro_z_l: 0x48,
+    gyro_config: 0x1b,
+    accel_config: 0x1c,
+    accel_fs_sel: {
+        "2g": 0x00,
+        "4g": 0x08,
+        "8g": 0x10,
+        "16g": 0x18,
+    },
+    gyro_fs_sel: {
+        "250dps": 0x00,
+        "500dps": 0x08,
+        "1000dps": 0x10,
+        "2000dps": 0x18,
+    },
+};
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/MovementSensor/MPU6500/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const MPU6050_1 = __importDefault(__webpack_require__("./dist/src/parts/MovementSensor/MPU6050/index.js"));
+class MPU6500 extends MPU6050_1.default {
+    static info() {
+        return {
+            name: "MPU6500",
+        };
+    }
+    constructor() {
+        super();
+        MPU6500.commands.whoami_result = 0x70;
+        MPU6500.commands.accel_intel_ctrl = 0x69;
+        MPU6500.commands.accel_config2 = 0x1d;
+    }
+    init() {
+        super.init();
+        this.obniz.wait(1);
+        this.write(MPU6500.commands.accel_config2, 0x00);
+    }
+}
+exports.default = MPU6500;
 
 //# sourceMappingURL=index.js.map
 
@@ -33369,175 +39557,33 @@ exports.default = MPU6050;
  * @packageDocumentation
  * @module Parts.MPU6886
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
-class MPU6886 extends i2cParts_1.default {
+const MPU6050_1 = __importDefault(__webpack_require__("./dist/src/parts/MovementSensor/MPU6050/index.js"));
+class MPU6886 extends MPU6050_1.default {
     constructor() {
         super();
-        this.commands = {};
-        this.commands.whoami = 0x75;
-        this.commands.accelIntelCtrl = 0x69;
-        this.commands.smplrtDiv = 0x19;
-        this.commands.intPinCfg = 0x37;
-        this.commands.intEnable = 0x38;
-        this.commands.accelXoutH = 0x3b;
-        this.commands.accelXoutL = 0x3c;
-        this.commands.accelYoutH = 0x3d;
-        this.commands.accelYoutL = 0x3e;
-        this.commands.accelZoutH = 0x3f;
-        this.commands.accelZoutL = 0x40;
-        this.commands.tempOutH = 0x41;
-        this.commands.tempOutL = 0x42;
-        this.commands.gyroXoutH = 0x43;
-        this.commands.gyroXoutL = 0x44;
-        this.commands.gyroYoutH = 0x45;
-        this.commands.gyroYoutL = 0x46;
-        this.commands.gyroZoutH = 0x47;
-        this.commands.gyroZoutL = 0x48;
-        this.commands.userCtrl = 0x6a;
-        this.commands.pwrMgmt1 = 0x6b;
-        this.commands.pwrMgmt2 = 0x6c;
-        this.commands.config = 0x1a;
-        this.commands.gyroConfig = 0x1b;
-        this.commands.accelConfig = 0x1c;
-        this.commands.accelConfig2 = 0x1d;
-        this.commands.fifoEn = 0x23;
+        this.i2cinfo = {
+            address: 0x68,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+        MPU6050_1.default.commands.accel_intel_ctrl = 0x69;
+        MPU6050_1.default.commands.accel_config2 = 0x1d;
+        MPU6050_1.default.commands.whoami_result = 0x68;
     }
-    static info() {
+    info() {
         return {
             name: "MPU6886",
         };
     }
-    wired(obniz) {
-        super.wired(obniz);
-        this.init();
-    }
-    i2cInfo() {
-        return {
-            address: 0x68,
-            clock: 100000,
-            voltage: "3v",
-        };
-    }
-    whoamiWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.readWait(this.commands.whoami, 1);
-            return result[0];
-        });
-    }
     init() {
-        this.write(this.commands.pwrMgmt1, 0x00);
-        this.obniz.wait(10);
-        this.write(this.commands.pwrMgmt1, 0x01 << 7);
-        this.obniz.wait(10);
-        this.write(this.commands.pwrMgmt1, 0x01 << 0);
-        this.obniz.wait(10);
-        this.setConfig(this.params.accelerometer_range || 2, this.params.gyroscope_range || 250);
+        super.init();
         this.obniz.wait(1);
-        this.write(this.commands.config, 0x01);
-        this.obniz.wait(1);
-        this.write(this.commands.smplrtDiv, 0x05);
-        this.obniz.wait(1);
-        this.write(this.commands.intEnable, 0x00);
-        this.obniz.wait(1);
-        this.write(this.commands.accelConfig2, 0x00);
-        this.obniz.wait(1);
-        this.write(this.commands.userCtrl, 0x00);
-        this.obniz.wait(1);
-        this.write(this.commands.fifoEn, 0x00);
-        this.obniz.wait(1);
-        this.write(this.commands.intPinCfg, 0x22);
-        this.obniz.wait(1);
-        this.write(this.commands.intEnable, 0x01);
-        this.obniz.wait(1);
-    }
-    setConfig(accelerometer_range, gyroscope_range) {
-        // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
-        switch (accelerometer_range) {
-            case 2:
-                this.write(this.commands.accelConfig, 0x00);
-                break;
-            case 4:
-                this.write(this.commands.accelConfig, 0x08);
-                break;
-            case 8:
-                this.write(this.commands.accelConfig, 0x10);
-                break;
-            case 16:
-                this.write(this.commands.accelConfig, 0x18);
-                break;
-            default:
-                throw new Error("accel_range variable 2,4,8,16 setting");
-        }
-        // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
-        switch (gyroscope_range) {
-            case 250:
-                this.write(this.commands.gyroConfig, 0x00);
-                break;
-            case 500:
-                this.write(this.commands.gyroConfig, 0x08);
-                break;
-            case 1000:
-                this.write(this.commands.gyroConfig, 0x10);
-                break;
-            case 2000:
-                this.write(this.commands.gyroConfig, 0x18);
-                break;
-            default:
-                throw new Error("accel_range variable 250,500,1000,2000 setting");
-        }
-        this._accel_range = accelerometer_range;
-        this._gyro_range = gyroscope_range;
-    }
-    getAllDataWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const raw_data = yield this.readWait(this.commands.accelXoutH, 14); // request all data
-            const ac_scale = this._accel_range / 32768;
-            const gy_scale = this._gyro_range / 32768;
-            const accelerometer = {
-                x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
-                y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
-                z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
-            };
-            const temperature = this.char2short(raw_data[6], raw_data[7]) / 326.8 + 25.0;
-            const gyroscope = {
-                x: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
-                y: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
-                z: this.char2short(raw_data[12], raw_data[13]) * gy_scale,
-            };
-            return {
-                accelerometer,
-                temperature,
-                gyroscope,
-            };
-        });
-    }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).temperature;
-        });
-    }
-    getAccelWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).accelerometer;
-        });
-    }
-    getGyroWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).gyroscope;
-        });
+        this.write(MPU6050_1.default.commands.accel_config2, 0x00);
     }
 }
 exports.default = MPU6886;
@@ -33556,20 +39602,14 @@ exports.default = MPU6886;
  * @packageDocumentation
  * @module Parts.MPU9250
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-class MPU9250 {
+const MPU6500_1 = __importDefault(__webpack_require__("./dist/src/parts/MovementSensor/MPU6500/index.js"));
+class MPU9250 extends MPU6500_1.default {
     constructor() {
-        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
-        this.requiredKeys = [];
+        super();
     }
     static info() {
         return {
@@ -33577,55 +39617,76 @@ class MPU9250 {
         };
     }
     wired(obniz) {
-        this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this._address = this.params.address || 0x68;
-        this.params.clock = 100000;
-        this.params.pull = "3v";
-        this.params.mode = "master";
-        this.i2c = obniz.getI2CWithConfig(this.params);
-        this.i2c.write(this._address, [0x6b, 0x00]); // activate MPU9250
-        this.i2c.write(this._address, [0x37, 0x02]); // activate AK8963 (bypass)
-        this.i2c.write(this._address, [0x1a, 0x06]); // activate LPF (search datasheet_p.13)
-        this.i2c.write(this._address, [0x1d, 0x02]); // accel LPF set.
-        this.mpu6050 = obniz.wired("MPU6050", { i2c: this.i2c });
+        super.wired(obniz);
         this.ak8963 = obniz.wired("AK8963", { i2c: this.i2c });
+        this.write(MPU6500_1.default.commands.pwr_mgmt_1, [0x00]); // activate MPU9250
+        this.write(MPU6500_1.default.commands.int_pin_cfg, [0x02]); // activate AK8963 (bypass)
+        this.write(MPU6500_1.default.commands.config, [0x06]); // activate LPF (search datasheet_p.13)
+        this.write(MPU6500_1.default.commands.accel_config2, [0x02]); // accel LPF set.
+        // this.mpu6050 = obniz.wired("MPU6050", { i2c: this.i2c });
+    }
+    init() {
+        super.init();
+        // this.bypassMagnetometerWait(true);
     }
     setConfig(accel_range, gyro_range, ADC_cycle) {
-        this.mpu6050.setConfig(accel_range, gyro_range);
-        this.ak8963.setConfig(ADC_cycle);
+        super.setConfig(accel_range, gyro_range);
+        if (ADC_cycle) {
+            this.ak8963.setConfig(ADC_cycle);
+        }
     }
-    _getAK8963Wait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.i2c.write(this._address, [0x02]); // request AK8983 data
-            const ST1 = yield this.i2c.readWait(this._address, 1); // confirm magnet value readable
-            if (ST1 & 0x01) {
-                return yield this.ak8963.getWait();
-            }
-            return {};
-        });
+    async getAllAdcWait() {
+        const data = await super.getAllAdcWait();
+        data.compass = await this.getCompassAdcWait();
+        return data;
     }
-    getAllWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.mpu6050.getWait();
-            data.compass = yield this.ak8963.getWait();
-            return data;
-        });
+    async getAllWait() {
+        const data = await super.getAllWait();
+        data.compass = await this.getCompassWait();
+        return data;
     }
-    getCompassWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.ak8963.getWait();
-        });
+    async getCompassWait() {
+        return await this.ak8963.getWait();
     }
-    getAccelerometerWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.mpu6050.getWait()).accelerometer;
-        });
+    async getCompassAdcWait() {
+        return await this.ak8963.getAdcWait();
     }
-    getGyroscopeWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.mpu6050.getWait()).gyroscope;
-        });
+    async getCompassArrayWait() {
+        return await this.ak8963.getArrayWait();
+    }
+    async getCompassAdcArrayWait() {
+        return await this.ak8963.getAdcArrayWait();
+    }
+    getCompassUnit() {
+        return this.ak8963.getUnit();
+    }
+    getCompassRange() {
+        return this.ak8963.getRange();
+    }
+    async getMagneticWait() {
+        return await this.getCompassWait();
+    }
+    async getMagneticAdcWait() {
+        return await this.getCompassAdcWait();
+    }
+    async getMagneticArrayWait() {
+        return await this.getCompassArrayWait();
+    }
+    async getMagneticAdcArrayWait() {
+        return await this.getCompassAdcArrayWait();
+    }
+    getMagneticUnit() {
+        return this.getCompassUnit();
+    }
+    getMagneticRange() {
+        return this.getCompassRange();
+    }
+    async _getAK8963Wait() {
+        const ST1 = await this.readWait(0x02, 1); // confirm magnet value readable
+        if (ST1[0] & 0x01) {
+            return await this.ak8963.getWait();
+        }
+        return {};
     }
 }
 exports.default = MPU9250;
@@ -33722,43 +39783,20 @@ exports.default = Potentiometer;
 
 "use strict";
 
-/**
- * @packageDocumentation
- * @module Parts.SH200Q
- */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
-class SH200Q extends i2cParts_1.default {
+const i2cImu6_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cImu6.js"));
+class SH200Q extends i2cImu6_1.default {
     constructor() {
         super();
-        this.commands = {};
-        this.commands.whoami = 0x30;
-        this.commands.accConfig = 0x0e;
-        this.commands.gyroConfig = 0x0f;
-        this.commands.gyroDlpf = 0x11;
-        this.commands.fifoConfig = 0x12;
-        this.commands.accRange = 0x16;
-        this.commands.gyroRange = 0x2b;
-        this.commands.outputAcc = 0x00;
-        this.commands.outputGyro = 0x06;
-        this.commands.outputTemp = 0x0c;
-        this.commands.regSet1 = 0xba;
-        this.commands.regSet2 = 0xca;
-        this.commands.adcReset = 0xc2;
-        this.commands.softReset = 0x7f;
-        this.commands.reset = 0x75;
+        this.i2cinfo = {
+            address: 0x6c,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
     }
     static info() {
         return {
@@ -33768,135 +39806,154 @@ class SH200Q extends i2cParts_1.default {
     wired(obniz) {
         super.wired(obniz);
     }
-    i2cInfo() {
-        return {
-            address: 0x6c,
-            clock: 100000,
-            voltage: "3v",
-        };
+    async whoamiWait() {
+        const result = await this.readWait(SH200Q.commands.whoami, 1);
+        return result[0];
     }
-    whoamiWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.readWait(this.commands.whoami, 1);
-            return result[0];
-        });
-    }
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.resetAdcWait();
-            yield this.writeFlagWait(0xd8, 7);
-            yield this.obniz.wait(1);
-            yield this.clearFlagWait(0xd8, 7);
-            yield this.write(0x78, 0x61);
-            yield this.obniz.wait(1);
-            yield this.write(0x78, 0x00);
-            // set acc odr 256hz
-            yield this.write(this.commands.accConfig, 0x91);
-            // set gyro odr 500hz
-            yield this.write(this.commands.gyroConfig, 0x13);
-            // set gyro dlpf 50hz
-            yield this.write(this.commands.gyroDlpf, 0x03);
-            // set no buffer mode
-            yield this.write(this.commands.fifoConfig, 0x00);
-            this.setConfig(8, 2000);
-            yield this.write(this.commands.regSet1, 0xc0);
-            // ADC Reset
-            yield this.writeFlagWait(this.commands.regSet2, 4);
-            yield this.obniz.wait(1);
-            yield this.clearFlagWait(this.commands.regSet2, 4);
-            yield this.obniz.wait(10);
-        });
+    async initWait() {
+        await this.resetAdcWait();
+        await this.writeFlagWait(0xd8, 7);
+        await this.obniz.wait(1);
+        await this.clearFlagWait(0xd8, 7);
+        this.write(0x78, 0x61);
+        await this.obniz.wait(1);
+        this.write(0x78, 0x00);
+        // set acc odr 256hz
+        this.write(SH200Q.commands.acc_config, 0x91);
+        // set gyro odr 500hz
+        this.write(SH200Q.commands.gyro_config, 0x13);
+        // set gyro dlpf 50hz
+        this.write(SH200Q.commands.gyro_dlpf, 0x03);
+        // set no buffer mode
+        this.write(SH200Q.commands.fifo_config, 0x00);
+        this.setConfig(8, 2000);
+        this.write(SH200Q.commands.reg_set1, 0xc0);
+        // ADC Reset
+        await this.writeFlagWait(SH200Q.commands.reg_set2, 4);
+        await this.obniz.wait(1);
+        await this.clearFlagWait(SH200Q.commands.reg_set2, 4);
+        await this.obniz.wait(10);
     }
     setConfig(accelerometer_range, gyroscope_range) {
-        // accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
         switch (accelerometer_range) {
             case 4:
-                this.write(this.commands.accRange, 0x00);
+                this.setAccelRange("4g");
                 break;
             case 8:
-                this.write(this.commands.accRange, 0x01);
+                this.setAccelRange("8g");
                 break;
             case 16:
-                this.write(this.commands.accRange, 0x10);
+                this.setAccelRange("16g");
                 break;
             default:
                 throw new Error("accel_range variable 4,8,16 setting");
         }
-        // gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
         switch (gyroscope_range) {
             case 125:
-                this.write(this.commands.gyroRange, 0x04);
+                this.setGyroRange("125dps");
                 break;
             case 250:
-                this.write(this.commands.gyroRange, 0x03);
+                this.setGyroRange("250dps");
                 break;
             case 500:
-                this.write(this.commands.gyroRange, 0x02);
+                this.setGyroRange("500dps");
                 break;
             case 1000:
-                this.write(this.commands.gyroRange, 0x01);
+                this.setGyroRange("1000dps");
                 break;
             case 2000:
-                this.write(this.commands.gyroRange, 0x00);
+                this.setGyroRange("2000dps");
                 break;
             default:
                 throw new Error("gyroscope_range variable 125,250,500,1000,2000 setting");
         }
-        this._accel_range = accelerometer_range;
-        this._gyro_range = gyroscope_range;
     }
-    resetAdcWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // set 0xC2 bit2 1-->0
-            const tempdata = yield this.readWait(this.commands.adcReset, 1);
-            tempdata[0] = tempdata[0] | 0x04; // tempdata[0] = 0x0E; //CC
-            this.write(this.commands.adcReset, tempdata);
-            yield this.obniz.wait(1);
-            tempdata[0] = tempdata[0] & 0xfb; // tempdata[0] = 0x0A; //C8
-            this.write(this.commands.adcReset, tempdata);
-        });
+    async resetAdcWait() {
+        // set 0xC2 bit2 1-->0
+        const tempdata = await this.readWait(SH200Q.commands.adc_reset, 1);
+        tempdata[0] = tempdata[0] | 0x04; // tempdata[0] = 0x0E; //CC
+        this.write(SH200Q.commands.adc_reset, tempdata);
+        await this.obniz.wait(1);
+        tempdata[0] = tempdata[0] & 0xfb; // tempdata[0] = 0x0A; //C8
+        this.write(SH200Q.commands.adc_reset, tempdata);
     }
-    getAllDataWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const raw_data = yield this.readWait(this.commands.outputAcc, 14); // request all data
-            const ac_scale = this._accel_range / 32768;
-            const gy_scale = this._gyro_range / 32768;
-            const accelerometer = {
-                x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
-                y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
-                z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
-            };
-            const gyroscope = {
-                x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
-                y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
-                z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
-            };
-            const temperature = this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
-            return {
-                accelerometer,
-                temperature,
-                gyroscope,
-            };
-        });
+    setAccelRange(accel_range) {
+        if (accel_range in SH200Q.commands.accel_fs_sel) {
+            this.write(SH200Q.commands.acc_range, SH200Q.commands.accel_fs_sel[accel_range]);
+            this.accel_so = accel_range;
+        }
+        else {
+            throw new Error(`Invalid accel range. Valid values are: ${Object.keys(SH200Q.commands.accel_fs_sel).join()}`);
+        }
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const raw_data = yield this.readWait(this.commands.outputTemp, 2); // request all data
-            return this.char2short(raw_data[1], raw_data[0]) / 333.87 + 21.0;
-        });
+    setGyroRange(gyro_range) {
+        if (gyro_range in SH200Q.commands.gyro_fs_sel) {
+            this.write(SH200Q.commands.gyro_range, SH200Q.commands.gyro_fs_sel[gyro_range]);
+            // @ts-ignore
+            this.gyro_so = gyro_range;
+        }
+        else {
+            throw new Error(`Invalid gyro range. Valid values are: ${Object.keys(SH200Q.commands.gyro_fs_sel).join()}`);
+        }
     }
-    getAccelWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).accelerometer;
-        });
+    calcTemp(data) {
+        if (typeof data === "undefined" || data === null) {
+            return null;
+        }
+        return data / 333.87 + 21.0;
     }
-    getGyroWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).gyroscope;
-        });
+    async getAccelAdcWait() {
+        const raw = await this.readWait(SH200Q.commands.output_acc, 6);
+        return SH200Q.charArrayToXyz(raw, "l");
+    }
+    async getGyroAdcWait() {
+        const raw = await this.readWait(SH200Q.commands.output_gyro, 6);
+        return SH200Q.charArrayToXyz(raw, "l");
+    }
+    async getTempAdcWait() {
+        const raw = await this.readWait(SH200Q.commands.output_temp, 2);
+        return SH200Q.charArrayToInt16(raw, "l");
+    }
+    async getAllAdcWait() {
+        const raw = await this.readWait(SH200Q.commands.output_acc, 14); // request all data
+        return {
+            accelerometer: SH200Q.charArrayToXyz(raw.slice(0, 6), "l"),
+            gyroscope: SH200Q.charArrayToXyz(raw.slice(6, 12), "l"),
+            temperature: SH200Q.charArrayToInt16(raw.slice(12, 14), "l"),
+        };
     }
 }
 exports.default = SH200Q;
+SH200Q.commands = {
+    whoami: 0x30,
+    whoami_result: 0x18,
+    acc_config: 0x0e,
+    gyro_config: 0x0f,
+    gyro_dlpf: 0x11,
+    fifo_config: 0x12,
+    acc_range: 0x16,
+    gyro_range: 0x2b,
+    output_acc: 0x00,
+    output_gyro: 0x06,
+    output_temp: 0x0c,
+    reg_set1: 0xba,
+    reg_set2: 0xca,
+    adc_reset: 0xc2,
+    soft_reset: 0x7f,
+    reset: 0x75,
+    accel_fs_sel: {
+        "4g": 0b00,
+        "8g": 0b01,
+        "16g": 0b10,
+    },
+    gyro_fs_sel: {
+        "125dps": 0b100,
+        "250dps": 0b011,
+        "500dps": 0b010,
+        "1000dps": 0b001,
+        "2000dps": 0b000,
+    },
+};
 
 //# sourceMappingURL=index.js.map
 
@@ -34030,17 +40087,7 @@ class PCA9685 {
         this.pwms = [];
         this._freq = 0;
         /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
-        this.keys = [
-            "gnd",
-            "vcc",
-            "scl",
-            "sda",
-            "oe",
-            "i2c",
-            "enabled",
-            "address",
-            "drive",
-        ];
+        this.keys = ["gnd", "vcc", "scl", "sda", "oe", "i2c", "enabled", "address", "drive"];
         this.requiredKeys = [];
         this.address = 0x40;
         this._commands = {
@@ -34095,18 +40142,12 @@ class PCA9685 {
             this.io_oe.output(false);
         }
         if (this.params.drive === "open-drain") {
-            this.i2c.write(this.address, [
-                this._commands.MODE2,
-                this._commands.bits.OUTDRV,
-            ]);
+            this.i2c.write(this.address, [this._commands.MODE2, this._commands.bits.OUTDRV]);
         }
         let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
         mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
         this.i2c.write(this.address, [this._commands.MODE1, mode1]);
-        this.i2c.write(this.address, [
-            this._commands.MODE1,
-            mode1 | this._commands.bits.RESTART,
-        ]);
+        this.i2c.write(this.address, [this._commands.MODE1, mode1 | this._commands.bits.RESTART]);
         this._regs[this._commands.MODE1] = mode1;
         obniz.wait(10);
     }
@@ -34140,10 +40181,7 @@ class PCA9685 {
         prescaleval -= 1.0;
         const prescale = Math.floor(Math.floor(prescaleval + 0.5));
         const mode1 = this._regs[this._commands.MODE1];
-        this.i2c.write(this.address, [
-            this._commands.MODE1,
-            (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE,
-        ]); // enter sleep
+        this.i2c.write(this.address, [this._commands.MODE1, (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE]); // enter sleep
         this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
         this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
         this.obniz.wait(5);
@@ -34177,13 +40215,7 @@ class PCA9685 {
         this.writeSingleONOFF(index, 0, (duty / 100.0) * 4095);
     }
     writeSingleONOFF(index, on, off) {
-        this.i2c.write(this.address, [
-            this._commands.LED0_ON_L + 4 * index,
-            on & 0xff,
-            on >> 8,
-            off & 0xff,
-            off >> 8,
-        ]);
+        this.i2c.write(this.address, [this._commands.LED0_ON_L + 4 * index, on & 0xff, on >> 8, off & 0xff, off >> 8]);
     }
     setEnable(enable) {
         if (!this.io_oe && enable === false) {
@@ -34335,15 +40367,6 @@ exports.default = Solenoid;
  * @packageDocumentation
  * @module Parts.StepperMotor
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class StepperMotor {
     constructor() {
@@ -34353,8 +40376,18 @@ class StepperMotor {
         this.milliMeterStepCount = 1;
         this.ios = [];
         this._stepInstructions = {
-            "1": [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
-            "2": [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
+            "1": [
+                [0, 1, 1, 1],
+                [1, 0, 1, 1],
+                [1, 1, 0, 1],
+                [1, 1, 1, 0],
+            ],
+            "2": [
+                [0, 0, 1, 1],
+                [1, 0, 0, 1],
+                [1, 1, 0, 0],
+                [0, 1, 1, 0],
+            ],
             "1-2": [
                 [0, 1, 1, 1],
                 [0, 0, 1, 1],
@@ -34391,92 +40424,84 @@ class StepperMotor {
         this.ios.push(obniz.getIO(this.params.aa));
         this.ios.push(obniz.getIO(this.params.bb));
     }
-    stepWait(step_count) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof step_count !== "number") {
-                throw new Error("must provide number");
-            }
-            step_count = Math.round(step_count);
-            if (step_count === 0) {
-                return;
-            }
-            const step_count_abs = Math.abs(step_count);
-            const instructions = this._getStepInstructions();
-            const instruction_length = instructions.length;
-            const array = [];
-            // set instructions
-            let currentPhase = this.currentStep % instruction_length;
-            if (currentPhase < 0) {
-                currentPhase = instruction_length - currentPhase * -1;
-            }
-            if (step_count > 0) {
-                for (let i = 0; i < instructions.length; i++) {
-                    if (++currentPhase >= instruction_length) {
-                        currentPhase = 0;
-                    }
-                    array.push(instructions[currentPhase]);
+    async stepWait(step_count) {
+        if (typeof step_count !== "number") {
+            throw new Error("must provide number");
+        }
+        step_count = Math.round(step_count);
+        if (step_count === 0) {
+            return;
+        }
+        const step_count_abs = Math.abs(step_count);
+        const instructions = this._getStepInstructions();
+        const instruction_length = instructions.length;
+        const array = [];
+        // set instructions
+        let currentPhase = this.currentStep % instruction_length;
+        if (currentPhase < 0) {
+            currentPhase = instruction_length - currentPhase * -1;
+        }
+        if (step_count > 0) {
+            for (let i = 0; i < instructions.length; i++) {
+                if (++currentPhase >= instruction_length) {
+                    currentPhase = 0;
                 }
+                array.push(instructions[currentPhase]);
             }
-            else {
-                for (let i = 0; i < instructions.length; i++) {
-                    if (--currentPhase < 0) {
-                        currentPhase = instruction_length - 1;
-                    }
-                    array.push(instructions[currentPhase]);
+        }
+        else {
+            for (let i = 0; i < instructions.length; i++) {
+                if (--currentPhase < 0) {
+                    currentPhase = instruction_length - 1;
                 }
+                array.push(instructions[currentPhase]);
             }
-            // prepare animation
-            let msec = 1000 / this.frequency;
-            msec = parseInt(msec);
-            if (msec < 1) {
-                msec = 1;
-            }
-            const state = (index) => {
-                const instruction = array[index];
-                for (let i = 0; i < this.ios.length; i++) {
-                    this.ios[i].output(instruction[i]);
-                }
-            };
-            const states = [];
-            for (let i = 0; i < instruction_length; i++) {
-                states.push({
-                    duration: msec,
-                    state,
-                });
-            }
-            // execute and wait
-            yield this.obniz.io.repeatWait(states, step_count_abs);
-            this.currentStep += step_count;
-        });
-    }
-    stepToWait(destination) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const mustmove = destination - this.currentStep;
-            yield this.stepWait(mustmove);
-        });
-    }
-    holdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const instructions = this._getStepInstructions();
-            const instruction_length = instructions.length;
-            // set instructions
-            let currentPhase = this.currentStep % instruction_length;
-            if (currentPhase < 0) {
-                currentPhase = instruction_length - currentPhase * -1;
-            }
+        }
+        // prepare animation
+        let msec = 1000 / this.frequency;
+        msec = parseInt(msec);
+        if (msec < 1) {
+            msec = 1;
+        }
+        const state = (index) => {
+            const instruction = array[index];
             for (let i = 0; i < this.ios.length; i++) {
-                this.ios[i].output(instructions[currentPhase][i] === 1);
+                this.ios[i].output(instruction[i]);
             }
-            yield this.obniz.pingWait();
-        });
+        };
+        const states = [];
+        for (let i = 0; i < instruction_length; i++) {
+            states.push({
+                duration: msec,
+                state,
+            });
+        }
+        // execute and wait
+        await this.obniz.io.repeatWait(states, step_count_abs);
+        this.currentStep += step_count;
     }
-    freeWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            for (let i = 0; i < this.ios.length; i++) {
-                this.ios[i].output(true);
-            }
-            yield this.obniz.pingWait();
-        });
+    async stepToWait(destination) {
+        const mustmove = destination - this.currentStep;
+        await this.stepWait(mustmove);
+    }
+    async holdWait() {
+        const instructions = this._getStepInstructions();
+        const instruction_length = instructions.length;
+        // set instructions
+        let currentPhase = this.currentStep % instruction_length;
+        if (currentPhase < 0) {
+            currentPhase = instruction_length - currentPhase * -1;
+        }
+        for (let i = 0; i < this.ios.length; i++) {
+            this.ios[i].output(instructions[currentPhase][i] === 1);
+        }
+        await this.obniz.pingWait();
+    }
+    async freeWait() {
+        for (let i = 0; i < this.ios.length; i++) {
+            this.ios[i].output(true);
+        }
+        await this.obniz.pingWait();
     }
     stepType(stepType) {
         const newType = this._stepInstructions[stepType];
@@ -34500,38 +40525,30 @@ class StepperMotor {
         }
         return angle;
     }
-    rotateWait(rotation) {
-        return __awaiter(this, void 0, void 0, function* () {
-            rotation /= 360;
-            const needed = rotation * this.rotationStepCount;
-            yield this.stepWait(needed);
-        });
+    async rotateWait(rotation) {
+        rotation /= 360;
+        const needed = rotation * this.rotationStepCount;
+        await this.stepWait(needed);
     }
-    rotateToWait(angle) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let needed = angle - this.currentAngle();
-            if (Math.abs(needed) > 180) {
-                needed = needed > 0 ? needed - 360 : 360 + needed;
-            }
-            needed = (needed / 360) * this.rotationStepCount;
-            yield this.stepWait(needed);
-        });
+    async rotateToWait(angle) {
+        let needed = angle - this.currentAngle();
+        if (Math.abs(needed) > 180) {
+            needed = needed > 0 ? needed - 360 : 360 + needed;
+        }
+        needed = (needed / 360) * this.rotationStepCount;
+        await this.stepWait(needed);
     }
     currentDistance() {
         // => mm
         return this.currentStep / this.milliMeterStepCount;
     }
-    moveWait(distance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const needed = distance * this.milliMeterStepCount;
-            yield this.stepWait(needed);
-        });
+    async moveWait(distance) {
+        const needed = distance * this.milliMeterStepCount;
+        await this.stepWait(needed);
     }
-    moveToWait(destination) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const needed = (destination - this.currentDistance()) * this.milliMeterStepCount;
-            yield this.stepWait(needed);
-        });
+    async moveToWait(destination) {
+        const needed = (destination - this.currentDistance()) * this.milliMeterStepCount;
+        await this.stepWait(needed);
     }
     _getStepInstructions() {
         return this._stepInstructions[this._stepType];
@@ -34553,15 +40570,6 @@ exports.default = StepperMotor;
  * @packageDocumentation
  * @module Parts.AXP192
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AXP192 {
     constructor() {
@@ -34582,46 +40590,40 @@ class AXP192 {
     set(address, data) {
         this.i2c.write(AXP192_ADDRESS, [address, data]);
     }
-    getWait(address) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(AXP192_ADDRESS, [address]);
-            return yield this.i2c.readWait(AXP192_ADDRESS, 1);
-        });
+    async getWait(address) {
+        this.i2c.write(AXP192_ADDRESS, [address]);
+        return await this.i2c.readWait(AXP192_ADDRESS, 1);
     }
-    setLDO2Voltage(voltage) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (voltage < 1.8) {
-                voltage = 1.8;
-            }
-            if (voltage > 3.3) {
-                voltage = 3.3;
-            }
-            let set = yield this.getWait(REG_VOLT_SET_LDO2_3);
-            let offset = (voltage - 1.8) * 10;
-            if (offset > 15) {
-                offset = 15;
-            }
-            set = (set & 0x0f) | (offset << 4);
-            console.log("set voltage to ", set);
-            this.set(REG_VOLT_SET_LDO2_3, set);
-        });
+    async setLDO2Voltage(voltage) {
+        if (voltage < 1.8) {
+            voltage = 1.8;
+        }
+        if (voltage > 3.3) {
+            voltage = 3.3;
+        }
+        let set = await this.getWait(REG_VOLT_SET_LDO2_3);
+        let offset = (voltage - 1.8) * 10;
+        if (offset > 15) {
+            offset = 15;
+        }
+        set = (set & 0x0f) | (offset << 4);
+        console.log("set voltage to ", set);
+        this.set(REG_VOLT_SET_LDO2_3, set);
     }
-    setLDO3Voltage(voltage) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (voltage < 1.8) {
-                voltage = 1.8;
-            }
-            if (voltage > 3.3) {
-                voltage = 3.3;
-            }
-            let set = yield this.getWait(REG_VOLT_SET_LDO2_3);
-            let offset = (voltage - 1.8) * 10;
-            if (offset > 15) {
-                offset = 15;
-            }
-            set = (set & 0xf0) | offset;
-            this.set(REG_VOLT_SET_LDO2_3, set);
-        });
+    async setLDO3Voltage(voltage) {
+        if (voltage < 1.8) {
+            voltage = 1.8;
+        }
+        if (voltage > 3.3) {
+            voltage = 3.3;
+        }
+        let set = await this.getWait(REG_VOLT_SET_LDO2_3);
+        let offset = (voltage - 1.8) * 10;
+        if (offset > 15) {
+            offset = 15;
+        }
+        set = (set & 0xf0) | offset;
+        this.set(REG_VOLT_SET_LDO2_3, set);
     }
     set3VLDO2_3() {
         this.set(REG_VOLT_SET_LDO2_3, 0xcc);
@@ -34629,21 +40631,17 @@ class AXP192 {
     enableLDO2_3() {
         this.set(REG_EN_DC1_LDO2_3, 0x4d);
     }
-    toggleLDO2(val) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const bit = val ? 1 : 0;
-            let state = yield this.getWait(REG_EN_DC1_LDO2_3);
-            state = (state & LDO2_EN_MASK) | (bit << 2);
-            this.set(REG_EN_DC1_LDO2_3, state);
-        });
+    async toggleLDO2(val) {
+        const bit = val ? 1 : 0;
+        let state = await this.getWait(REG_EN_DC1_LDO2_3);
+        state = (state & LDO2_EN_MASK) | (bit << 2);
+        this.set(REG_EN_DC1_LDO2_3, state);
     }
-    toggleLDO3(val) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const bit = val ? 1 : 0;
-            let state = yield this.getWait(REG_EN_DC1_LDO2_3);
-            state = (state & LDO3_EN_MASK) | (bit << 3);
-            this.set(REG_EN_DC1_LDO2_3, state);
-        });
+    async toggleLDO3(val) {
+        const bit = val ? 1 : 0;
+        let state = await this.getWait(REG_EN_DC1_LDO2_3);
+        state = (state & LDO3_EN_MASK) | (bit << 3);
+        this.set(REG_EN_DC1_LDO2_3, state);
     }
     initM5StickC() {
         this.i2c.write(AXP192_ADDRESS, [REG_EN_EXT_DC2, 0xff]);
@@ -34658,14 +40656,12 @@ class AXP192 {
         this.i2c.write(AXP192_ADDRESS, [REG_CHARGE_OVTEMP, 0xfc]);
         this.i2c.write(AXP192_ADDRESS, [REG_BCKUP_BAT, 0xa2]);
     }
-    getVbat() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
-            const vbat_lsb = yield this.i2c.readWait(AXP192_ADDRESS, 1);
-            this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
-            const vbat_msb = yield this.i2c.readWait(AXP192_ADDRESS, 1);
-            return (vbat_lsb << 4) + vbat_msb;
-        });
+    async getVbat() {
+        this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
+        const vbat_lsb = await this.i2c.readWait(AXP192_ADDRESS, 1);
+        this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
+        const vbat_msb = await this.i2c.readWait(AXP192_ADDRESS, 1);
+        return (vbat_lsb << 4) + vbat_msb;
     }
 }
 exports.default = AXP192;
@@ -34691,6 +40687,198 @@ const LDO3_EN_MASK = 0xf7;
 
 /***/ }),
 
+/***/ "./dist/src/parts/PressureSensor/BMP280/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.BMP280
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BMP280 {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = ["vcore", "vio", "gnd", "csb", "sdi", "sck", "sdo", "i2c", "address"];
+        this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
+        this.configration = {
+            sampling: {
+                temp: 1,
+                pres: 1,
+            },
+            interval: 5,
+            iir_strength: 0,
+            mode: 3,
+            Modes: {
+                sleep: 0,
+                forced: 1,
+                normal: 3,
+            },
+        };
+        this.commands = {};
+        this.commands.addresses = {
+            config: 0xf5,
+            ctrl_meas: 0xf4,
+        };
+    }
+    static info() {
+        return {
+            name: "BMP280",
+            datasheet: "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp280-ds001.pdf",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (obniz.isValidIO(this.params.csb)) {
+            // selecting I2C mode before powerup
+            this.io_csb = obniz.getIO(this.params.csb);
+            this.io_csb.drive("3v");
+            this.io_csb.output(true);
+        }
+        this.obniz.setVccGnd(this.params.vio, null, "3v");
+        this.obniz.setVccGnd(this.params.vcore, null, "3v");
+        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.wait(10);
+        this.address = 0x76;
+        if (this.params.address === 0x76) {
+            this.address = 0x76;
+        }
+        else if (this.params.address === 0x77) {
+            this.address = 0x77;
+        }
+        else if (this.params.address !== undefined) {
+            throw new Error("address must be 0x76 or 0x77");
+        }
+        if (obniz.isValidIO(this.params.sdo)) {
+            this.io_sdo = obniz.getIO(this.params.sdo);
+            this.io_sdo.drive("3v");
+            this.io_sdo.output(this.address === 0x76 ? false : true);
+        }
+        this.params.sda = this.params.sda || this.params.sdi;
+        this.params.scl = this.params.scl || this.params.sck;
+        this.params.clock = this.params.clock || 100 * 1000;
+        this.params.mode = "master";
+        this.params.pull = "3v";
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.obniz.wait(10);
+        this.config();
+        this.obniz.wait(10);
+    }
+    async setIIRStrength(strengh) {
+        this.configration.iir_strength = strengh;
+        this.config();
+    }
+    async applyCalibration() {
+        this.i2c.write(this.address, [0x88]);
+        const data = await this.i2c.readWait(this.address, 24);
+        this._calibrated = {
+            dig_T1: (data[1] << 8) | data[0],
+            dig_T2: this._readSigned16((data[3] << 8) | data[2]),
+            dig_T3: this._readSigned16((data[5] << 8) | data[4]),
+            dig_P1: (data[7] << 8) | data[6],
+            dig_P2: this._readSigned16((data[9] << 8) | data[8]),
+            dig_P3: this._readSigned16((data[11] << 8) | data[10]),
+            dig_P4: this._readSigned16((data[13] << 8) | data[12]),
+            dig_P5: this._readSigned16((data[15] << 8) | data[14]),
+            dig_P6: this._readSigned16((data[17] << 8) | data[16]),
+            dig_P7: this._readSigned16((data[19] << 8) | data[18]),
+            dig_P8: this._readSigned16((data[21] << 8) | data[20]),
+            dig_P9: this._readSigned16((data[23] << 8) | data[22]),
+        };
+        this._t_fine = 0;
+    }
+    async getAllWait() {
+        const data = await this.getData();
+        const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
+        const temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
+        const temperature = this.calibration_T(temp_raw) / 100.0;
+        const pressure = this.calibration_P(press_raw) / 100.0;
+        return { temperature, pressure };
+    }
+    async getTempWait() {
+        return (await this.getAllWait()).temperature;
+    }
+    async getPressureWait() {
+        return (await this.getAllWait()).pressure;
+    }
+    async getAltitudeWait() {
+        const pressure = await this.getPressureWait();
+        return this.calcAltitude(pressure);
+    }
+    calcAltitude(pressure, seaPressure) {
+        if (typeof seaPressure !== "number") {
+            seaPressure = 1013.25;
+        }
+        return (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048;
+    }
+    async config() {
+        this.write([
+            this.commands.addresses.config,
+            (this.configration.interval << 5) | (this.configration.iir_strength << 2) | 0,
+        ]);
+        this.write([
+            this.commands.addresses.ctrl_meas,
+            (this.configration.sampling.temp << 5) | (this.configration.sampling.pres << 2) | this.configration.mode,
+        ]);
+    }
+    _readSigned16(value) {
+        if (value >= 0x8000) {
+            value = value - 0x10000;
+        }
+        return value;
+    }
+    _readSigned8(value) {
+        if (value >= 0x80) {
+            value = value - 0x100;
+        }
+        return value;
+    }
+    write(data) {
+        this.i2c.write(this.address, data);
+    }
+    async getData() {
+        this.i2c.write(this.address, [0xf7]);
+        return await this.i2c.readWait(this.address, 6);
+    }
+    calibration_T(adc_T) {
+        let var1;
+        let var2;
+        let T;
+        var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) * this._calibrated.dig_T2) >> 11;
+        var2 =
+            (((((adc_T >> 4) - this._calibrated.dig_T1) * ((adc_T >> 4) - this._calibrated.dig_T1)) >> 12) *
+                this._calibrated.dig_T3) >>
+                14;
+        this._t_fine = var1 + var2;
+        T = (this._t_fine * 5 + 128) >> 8;
+        return T;
+    }
+    calibration_P(adc_P) {
+        let pvar1 = this._t_fine / 2 - 64000;
+        let pvar2 = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
+        pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
+        pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
+        pvar1 = ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 + this._calibrated.dig_P2 * pvar1) / 524288;
+        pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
+        if (pvar1 !== 0) {
+            let p = 1048576 - adc_P;
+            p = ((p - pvar2 / 4096) * 6250) / pvar1;
+            pvar1 = (this._calibrated.dig_P9 * p * p) / 2147483648;
+            pvar2 = (p * this._calibrated.dig_P8) / 32768;
+            p = p + (pvar1 + pvar2 + this._calibrated.dig_P7) / 16;
+            return p;
+        }
+        return 0;
+    }
+}
+exports.default = BMP280;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/PressureSensor/DPS310/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -34700,15 +40888,6 @@ const LDO3_EN_MASK = 0xf7;
  * @packageDocumentation
  * @module Parts.DPS310
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class DPS310 {
     constructor() {
@@ -34832,16 +41011,7 @@ class DPS310 {
                 length: 3,
             },
         };
-        this.scaling_facts = [
-            524288,
-            1572864,
-            3670016,
-            7864320,
-            253952,
-            516096,
-            1040384,
-            2088960,
-        ];
+        this.scaling_facts = [524288, 1572864, 3670016, 7864320, 253952, 516096, 1040384, 2088960];
         this.requiredKeys = ["sda", "scl"];
         this.keys = ["gpio3", "vcc", "gnd", "scl", "sda"];
         this.ioKeys = ["gpio3", "vcc", "gnd", "scl", "sda"];
@@ -34865,244 +41035,202 @@ class DPS310 {
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(10);
     }
-    initWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const prodId = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PROD_ID);
-            if (prodId !== 0) {
-                throw new Error("invalid prodId");
-            }
-            yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
-            yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
-            yield this.readCoeffsWait();
-            yield this.standbyWait();
-            yield this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
-            yield this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
-            yield this.standbyWait();
-            yield this.measureTempOnceWait();
-            yield this.standbyWait();
-            yield this.correctTempWait();
-        });
+    async initWait() {
+        const prodId = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PROD_ID);
+        if (prodId !== 0) {
+            throw new Error("invalid prodId");
+        }
+        await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
+        await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR, 0);
+        await this.readCoeffsWait();
+        await this.standbyWait();
+        await this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
+        await this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
+        await this.standbyWait();
+        await this.measureTempOnceWait();
+        await this.standbyWait();
+        await this.correctTempWait();
     }
-    measurePressureOnceWait(oversamplingRate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (oversamplingRate === undefined) {
-                oversamplingRate = this.prsOsr;
-            }
-            yield this.startMeasurePressureOnceWait(oversamplingRate);
-            yield this.obniz.wait(100);
-            const ret = yield this.getSingleResultWait();
+    async measurePressureOnceWait(oversamplingRate) {
+        if (oversamplingRate === undefined) {
+            oversamplingRate = this.prsOsr;
+        }
+        await this.startMeasurePressureOnceWait(oversamplingRate);
+        await this.obniz.wait(100);
+        const ret = await this.getSingleResultWait();
+        return ret;
+    }
+    async readByteWait(regAddress) {
+        this.i2c.write(this.address, [regAddress]);
+        await this.obniz.wait(1);
+        const results = await this.i2c.readWait(this.address, 1);
+        return results[0];
+    }
+    async readByteBitfieldWait(field) {
+        const regAddress = field.address;
+        const mask = field.mask;
+        const shift = field.shift;
+        let ret = await this.readByteWait(regAddress);
+        if (ret < 0) {
             return ret;
-        });
+        }
+        if (mask !== undefined) {
+            ret = ret & mask;
+        }
+        if (shift !== undefined) {
+            ret = ret >> shift;
+        }
+        return ret;
     }
-    readByteWait(regAddress) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [regAddress]);
-            yield this.obniz.wait(1);
-            const results = yield this.i2c.readWait(this.address, 1);
-            return results[0];
-        });
+    async readBlockWait(datablock) {
+        const address = datablock.address;
+        const length = datablock.length;
+        await this.obniz.wait(1);
+        this.i2c.write(this.address, [address]);
+        const results = await this.i2c.readWait(this.address, length);
+        return results;
     }
-    readByteBitfieldWait(field) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const regAddress = field.address;
-            const mask = field.mask;
-            const shift = field.shift;
-            let ret = yield this.readByteWait(regAddress);
-            if (ret < 0) {
-                return ret;
+    async writeByteWait(regAddress, data, check) {
+        this.i2c.write(this.address, [regAddress, data]);
+        if (check) {
+            if ((await this.readByteWait(regAddress)) !== data) {
+                throw new Error("DPS310 data write failed");
             }
-            if (mask !== undefined) {
-                ret = ret & mask;
-            }
-            if (shift !== undefined) {
-                ret = ret >> shift;
-            }
-            return ret;
-        });
+        }
     }
-    readBlockWait(datablock) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const address = datablock.address;
-            const length = datablock.length;
-            yield this.obniz.wait(1);
-            this.i2c.write(this.address, [address]);
-            const results = yield this.i2c.readWait(this.address, length);
-            return results;
-        });
+    async writeByteBitfield(field, data, check) {
+        const old = await this.readByteWait(field.address);
+        const sendData = (old & ~field.mask) | ((data << field.shift) & field.mask);
+        await this.writeByteWait(field.address, sendData, check);
     }
-    writeByteWait(regAddress, data, check) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [regAddress, data]);
-            if (check) {
-                if ((yield this.readByteWait(regAddress)) !== data) {
-                    throw new Error("DPS310 data write failed");
+    async setOpModeDetailWait(background, temperature, pressure) {
+        const opMode = ((background & this.DPS310__LSB) << 2) | ((temperature & this.DPS310__LSB) << 1) | (pressure & this.DPS310__LSB);
+        return await this.setOpModeWait(opMode);
+    }
+    async setOpModeWait(opMode) {
+        opMode &= this.bitFileds.DPS310__REG_INFO_OPMODE.mask >> this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
+        await this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
+        this.opMode = opMode;
+    }
+    async standbyWait() {
+        this.setOpModeWait(this.mode.IDLE);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
+    }
+    async configTempWait(tempMr, tempOsr) {
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
+        if (tempOsr > this.DPS310__OSR_SE) {
+            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
+        }
+        else {
+            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
+        }
+        this.tempMr = tempMr;
+        this.tempOsr = tempOsr;
+    }
+    async configPressureWait(prsMr, prsOsr) {
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
+        await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
+        if (prsOsr > this.DPS310__OSR_SE) {
+            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
+        }
+        else {
+            await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
+        }
+        this.prsMr = prsMr;
+        this.prsOsr = prsOsr;
+    }
+    async readCoeffsWait() {
+        const buffer = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_COEF);
+        this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
+        if (this.coeffs.m_c0Half & (1 << 11)) {
+            this.coeffs.m_c0Half -= 1 << 12;
+        }
+        this.coeffs.m_c0Half = this.coeffs.m_c0Half / 2;
+        this.coeffs.m_c1 = ((buffer[1] & 0x0f) << 8) | buffer[2];
+        if (this.coeffs.m_c1 & (1 << 11)) {
+            this.coeffs.m_c1 -= 1 << 12;
+        }
+        this.coeffs.m_c00 = (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
+        if (this.coeffs.m_c00 & (1 << 19)) {
+            this.coeffs.m_c00 -= 1 << 20;
+        }
+        this.coeffs.m_c10 = ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
+        if (this.coeffs.m_c10 & (1 << 19)) {
+            this.coeffs.m_c10 -= 1 << 20;
+        }
+        this.coeffs.m_c01 = (buffer[8] << 8) | buffer[9];
+        if (this.coeffs.m_c01 & (1 << 15)) {
+            this.coeffs.m_c01 -= 1 << 16;
+        }
+        this.coeffs.m_c11 = (buffer[10] << 8) | buffer[11];
+        if (this.coeffs.m_c11 & (1 << 15)) {
+            this.coeffs.m_c11 -= 1 << 16;
+        }
+        this.coeffs.m_c20 = (buffer[12] << 8) | buffer[13];
+        if (this.coeffs.m_c20 & (1 << 15)) {
+            this.coeffs.m_c20 -= 1 << 16;
+        }
+        this.coeffs.m_c21 = (buffer[14] << 8) | buffer[15];
+        if (this.coeffs.m_c21 & (1 << 15)) {
+            this.coeffs.m_c21 -= 1 << 16;
+        }
+        this.coeffs.m_c30 = (buffer[16] << 8) | buffer[17];
+        if (this.coeffs.m_c30 & (1 << 15)) {
+            this.coeffs.m_c30 -= 1 << 16;
+        }
+    }
+    async getSingleResultWait() {
+        let rdy;
+        switch (this.opMode) {
+            case this.mode.CMD_TEMP:
+                rdy = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_RDY);
+                break;
+            case this.mode.CMD_PRS:
+                rdy = await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_RDY);
+                break;
+            default:
+                return this.DPS310__FAIL_TOOBUSY;
+        }
+        let oldMode;
+        switch (rdy) {
+            case this.DPS310__FAIL_UNKNOWN:
+                throw new Error("DPS310__FAIL_UNKNOWN");
+            case 0:
+                return this.obniz.wait(10).then(() => {
+                    return this.getSingleResultWait();
+                });
+            case 1:
+                oldMode = this.opMode;
+                this.opMode = this.mode.IDLE;
+                switch (oldMode) {
+                    case this.mode.CMD_TEMP:
+                        return await this.getTempWait();
+                    case this.mode.CMD_PRS:
+                        return await this.getPressureWait();
+                    default:
+                        throw new Error("DPS310__FAIL_UNKNOWN");
                 }
-            }
-        });
+        }
+        throw new Error("DPS310__FAIL_UNKNOWN");
     }
-    writeByteBitfield(field, data, check) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const old = yield this.readByteWait(field.address);
-            const sendData = (old & ~field.mask) | ((data << field.shift) & field.mask);
-            yield this.writeByteWait(field.address, sendData, check);
-        });
+    async startMeasureTempOnceWait(oversamplingRate) {
+        await this.configTempWait(0, oversamplingRate);
+        await this.setOpModeDetailWait(0, 1, 0);
     }
-    setOpModeDetailWait(background, temperature, pressure) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const opMode = ((background & this.DPS310__LSB) << 2) |
-                ((temperature & this.DPS310__LSB) << 1) |
-                (pressure & this.DPS310__LSB);
-            return yield this.setOpModeWait(opMode);
-        });
-    }
-    setOpModeWait(opMode) {
-        return __awaiter(this, void 0, void 0, function* () {
-            opMode &=
-                this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
-                    this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
-            yield this.writeByteWait(this.bitFileds.DPS310__REG_INFO_OPMODE.address, opMode);
-            this.opMode = opMode;
-        });
-    }
-    standbyWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.setOpModeWait(this.mode.IDLE);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
-        });
-    }
-    configTempWait(tempMr, tempOsr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_MR, tempMr);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_OSR, tempOsr);
-            if (tempOsr > this.DPS310__OSR_SE) {
-                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 1);
-            }
-            else {
-                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SE, 0);
-            }
-            this.tempMr = tempMr;
-            this.tempOsr = tempOsr;
-        });
-    }
-    configPressureWait(prsMr, prsOsr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
-            yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
-            if (prsOsr > this.DPS310__OSR_SE) {
-                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 1);
-            }
-            else {
-                yield this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_SE, 0);
-            }
-            this.prsMr = prsMr;
-            this.prsOsr = prsOsr;
-        });
-    }
-    readCoeffsWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const buffer = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_COEF);
-            this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
-            if (this.coeffs.m_c0Half & (1 << 11)) {
-                this.coeffs.m_c0Half -= 1 << 12;
-            }
-            this.coeffs.m_c0Half = this.coeffs.m_c0Half / 2;
-            this.coeffs.m_c1 = ((buffer[1] & 0x0f) << 8) | buffer[2];
-            if (this.coeffs.m_c1 & (1 << 11)) {
-                this.coeffs.m_c1 -= 1 << 12;
-            }
-            this.coeffs.m_c00 =
-                (buffer[3] << 12) | (buffer[4] << 4) | ((buffer[5] >> 4) & 0x0f);
-            if (this.coeffs.m_c00 & (1 << 19)) {
-                this.coeffs.m_c00 -= 1 << 20;
-            }
-            this.coeffs.m_c10 =
-                ((buffer[5] & 0x0f) << 16) | (buffer[6] << 8) | buffer[7];
-            if (this.coeffs.m_c10 & (1 << 19)) {
-                this.coeffs.m_c10 -= 1 << 20;
-            }
-            this.coeffs.m_c01 = (buffer[8] << 8) | buffer[9];
-            if (this.coeffs.m_c01 & (1 << 15)) {
-                this.coeffs.m_c01 -= 1 << 16;
-            }
-            this.coeffs.m_c11 = (buffer[10] << 8) | buffer[11];
-            if (this.coeffs.m_c11 & (1 << 15)) {
-                this.coeffs.m_c11 -= 1 << 16;
-            }
-            this.coeffs.m_c20 = (buffer[12] << 8) | buffer[13];
-            if (this.coeffs.m_c20 & (1 << 15)) {
-                this.coeffs.m_c20 -= 1 << 16;
-            }
-            this.coeffs.m_c21 = (buffer[14] << 8) | buffer[15];
-            if (this.coeffs.m_c21 & (1 << 15)) {
-                this.coeffs.m_c21 -= 1 << 16;
-            }
-            this.coeffs.m_c30 = (buffer[16] << 8) | buffer[17];
-            if (this.coeffs.m_c30 & (1 << 15)) {
-                this.coeffs.m_c30 -= 1 << 16;
-            }
-        });
-    }
-    getSingleResultWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let rdy;
-            switch (this.opMode) {
-                case this.mode.CMD_TEMP:
-                    rdy = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_RDY);
-                    break;
-                case this.mode.CMD_PRS:
-                    rdy = yield this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_PRS_RDY);
-                    break;
-                default:
-                    return this.DPS310__FAIL_TOOBUSY;
-            }
-            let oldMode;
-            switch (rdy) {
-                case this.DPS310__FAIL_UNKNOWN:
-                    throw new Error("DPS310__FAIL_UNKNOWN");
-                case 0:
-                    return this.obniz.wait(10).then(() => {
-                        return this.getSingleResultWait();
-                    });
-                case 1:
-                    oldMode = this.opMode;
-                    this.opMode = this.mode.IDLE;
-                    switch (oldMode) {
-                        case this.mode.CMD_TEMP:
-                            return yield this.getTempWait();
-                        case this.mode.CMD_PRS:
-                            return yield this.getPressureWait();
-                        default:
-                            throw new Error("DPS310__FAIL_UNKNOWN");
-                    }
-            }
-            throw new Error("DPS310__FAIL_UNKNOWN");
-        });
-    }
-    startMeasureTempOnceWait(oversamplingRate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.configTempWait(0, oversamplingRate);
-            yield this.setOpModeDetailWait(0, 1, 0);
-        });
-    }
-    startMeasurePressureOnceWait(oversamplingRate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.configPressureWait(0, oversamplingRate);
-            yield this.setOpModeDetailWait(0, 0, 1);
-        });
+    async startMeasurePressureOnceWait(oversamplingRate) {
+        await this.configPressureWait(0, oversamplingRate);
+        await this.setOpModeDetailWait(0, 0, 1);
     }
     calcPressure(raw) {
         let prs = raw;
         prs /= this.scaling_facts[this.prsOsr];
         prs =
             this.coeffs.m_c00 +
-                prs *
-                    (this.coeffs.m_c10 +
-                        prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
-                this.m_lastTempScal *
-                    (this.coeffs.m_c01 +
-                        prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
+                prs * (this.coeffs.m_c10 + prs * (this.coeffs.m_c20 + prs * this.coeffs.m_c30)) +
+                this.m_lastTempScal * (this.coeffs.m_c01 + prs * (this.coeffs.m_c11 + prs * this.coeffs.m_c21));
         return prs;
     }
     calcTemp(raw) {
@@ -35112,45 +41240,37 @@ class DPS310 {
         temp = this.coeffs.m_c0Half + this.coeffs.m_c1 * temp;
         return temp;
     }
-    correctTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.writeByteWait(0x0e, 0xe5);
-            this.writeByteWait(0x0f, 0x96);
-            this.writeByteWait(0x62, 0x02);
-            this.writeByteWait(0x0e, 0x00);
-            this.writeByteWait(0x0f, 0x00);
-            yield this.measureTempOnceWait();
-        });
+    async correctTempWait() {
+        this.writeByteWait(0x0e, 0xe5);
+        this.writeByteWait(0x0f, 0x96);
+        this.writeByteWait(0x62, 0x02);
+        this.writeByteWait(0x0e, 0x00);
+        this.writeByteWait(0x0f, 0x00);
+        await this.measureTempOnceWait();
     }
-    measureTempOnceWait(oversamplingRate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (oversamplingRate === undefined) {
-                oversamplingRate = this.tempOsr;
-            }
-            yield this.startMeasureTempOnceWait(oversamplingRate);
-            yield this.obniz.wait(100);
-            return yield this.getSingleResultWait();
-        });
+    async measureTempOnceWait(oversamplingRate) {
+        if (oversamplingRate === undefined) {
+            oversamplingRate = this.tempOsr;
+        }
+        await this.startMeasureTempOnceWait(oversamplingRate);
+        await this.obniz.wait(100);
+        return await this.getSingleResultWait();
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_TEMP);
-            let temp = (data[0] << 16) | (data[1] << 8) | data[2];
-            if (temp & (1 << 23)) {
-                temp -= 1 << 24;
-            }
-            return this.calcTemp(temp);
-        });
+    async getTempWait() {
+        const data = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_TEMP);
+        let temp = (data[0] << 16) | (data[1] << 8) | data[2];
+        if (temp & (1 << 23)) {
+            temp -= 1 << 24;
+        }
+        return this.calcTemp(temp);
     }
-    getPressureWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.readBlockWait(this.dataBlock.DPS310__REG_ADR_PRS);
-            let prs = (data[0] << 16) | (data[1] << 8) | data[2];
-            if (prs & (1 << 23)) {
-                prs -= 1 << 24;
-            }
-            return this.calcPressure(prs);
-        });
+    async getPressureWait() {
+        const data = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_PRS);
+        let prs = (data[0] << 16) | (data[1] << 8) | data[2];
+        if (prs & (1 << 23)) {
+            prs -= 1 << 24;
+        }
+        return this.calcPressure(prs);
     }
 }
 exports.default = DPS310;
@@ -35169,15 +41289,6 @@ exports.default = DPS310;
  * @packageDocumentation
  * @module Parts.FSR40X
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class FSR40X {
     constructor() {
@@ -35204,13 +41315,11 @@ class FSR40X {
             }
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.ad.getWait();
-            const pressure = value * 100;
-            this.pressure = pressure;
-            return this.pressure;
-        });
+    async getWait() {
+        const value = await this.ad.getWait();
+        const pressure = value * 100;
+        this.pressure = pressure;
+        return this.pressure;
     }
 }
 exports.default = FSR40X;
@@ -35229,15 +41338,6 @@ exports.default = FSR40X;
  * @packageDocumentation
  * @module Parts.SEN0114
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class SEN0114 {
     constructor() {
@@ -35260,10 +41360,8 @@ class SEN0114 {
             }
         });
     }
-    getHumidityWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.ad.getWait();
-        });
+    async getHumidityWait() {
+        return await this.ad.getWait();
     }
 }
 exports.default = SEN0114;
@@ -35328,15 +41426,6 @@ exports.default = Speaker;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AnalogTemperatureSensor {
     constructor() {
@@ -35354,15 +41443,12 @@ class AnalogTemperatureSensor {
             this.onchange(this.temp);
         });
     }
-    getWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const voltage = yield this.ad.getWait();
-            this.temp = this.calc(voltage);
-            return this.temp;
-        });
+    async getWait() {
+        const voltage = await this.ad.getWait();
+        this.temp = this.calc(voltage);
+        return this.temp;
     }
-    onchange(temp) {
-    }
+    onchange(temp) { }
     calc(voltage) {
         return 0;
     }
@@ -35607,15 +41693,6 @@ exports.default = S8120C;
  * @packageDocumentation
  * @module Parts.ADT7410
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ADT7410 {
     constructor() {
@@ -35644,17 +41721,15 @@ class ADT7410 {
         this.params.mode = "master";
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.i2c.readWait(this.address, 2);
-            let tempBin = ret[0] << 8;
-            tempBin |= ret[1];
-            tempBin = tempBin >> 3;
-            if (tempBin & 0x1000) {
-                tempBin = tempBin - 8192;
-            }
-            return tempBin / 16;
-        });
+    async getTempWait() {
+        const ret = await this.i2c.readWait(this.address, 2);
+        let tempBin = ret[0] << 8;
+        tempBin |= ret[1];
+        tempBin = tempBin >> 3;
+        if (tempBin & 0x1000) {
+            tempBin = tempBin - 8192;
+        }
+        return tempBin / 16;
     }
 }
 exports.default = ADT7410;
@@ -35673,15 +41748,6 @@ exports.default = ADT7410;
  * @packageDocumentation
  * @module Parts.AM2320
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AM2320 {
     constructor() {
@@ -35702,35 +41768,28 @@ class AM2320 {
         this.params.clock = this.params.clock || 100 * 1000;
         this.i2c = obniz.getI2CWithConfig(this.params);
     }
-    getAllWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const i2cOnerror = this.i2c.onerror;
-            this.i2c.onerror = () => {
-            };
-            this.i2c.write(this.address, [0]); // wake
-            this.obniz.wait(2);
-            this.i2c.write(this.address, [0x03, 0x00, 0x04]);
-            this.obniz.wait(2);
-            this.i2c.write(this.address, [0x03, 0x00, 0x04]);
-            const ret = yield this.i2c.readWait(this.address, 6);
-            this.i2c.onerror = i2cOnerror;
-            if (ret[0] !== 3 || ret[1] !== 4) {
-                throw new Error(`Could not receive data correctly`);
-            }
-            const humidity = (ret[2] * 256 + ret[3]) / 10.0;
-            const temperature = (ret[4] * 256 + ret[5]) / 10.0;
-            return { temperature, humidity };
-        });
+    async getAllWait() {
+        const i2cOnerror = this.i2c.onerror;
+        this.i2c.onerror = () => { };
+        this.i2c.write(this.address, [0]); // wake
+        this.obniz.wait(2);
+        this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+        this.obniz.wait(2);
+        this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+        const ret = await this.i2c.readWait(this.address, 6);
+        this.i2c.onerror = i2cOnerror;
+        if (ret[0] !== 3 || ret[1] !== 4) {
+            throw new Error(`Could not receive data correctly`);
+        }
+        const humidity = (ret[2] * 256 + ret[3]) / 10.0;
+        const temperature = (ret[4] * 256 + ret[5]) / 10.0;
+        return { temperature, humidity };
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).temperature;
-        });
+    async getTempWait() {
+        return (await this.getAllWait()).temperature;
     }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).humidity;
-        });
+    async getHumdWait() {
+        return (await this.getAllWait()).humidity;
     }
 }
 exports.default = AM2320;
@@ -35749,15 +41808,6 @@ exports.default = AM2320;
  * @packageDocumentation
  * @module Parts.AMG8833
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class AMG8833 {
     constructor() {
@@ -35807,56 +41857,52 @@ class AMG8833 {
         this.i2c.write(this.address, this.commands.frameRate_10fps);
         this.i2c.write(this.address, this.commands.int_disable);
     }
-    getOnePixWait(pixel) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let pixelAddrL = 0x80;
-            let pixelAddrH = 0x81;
-            if (pixel >= 0 && pixel <= 63) {
-                pixelAddrL = 0x80 + pixel * 2;
-                pixelAddrH = 0x81 + pixel * 2;
-            }
-            else {
-                throw new Error("pixel number must be range of 0 to 63");
-            }
-            this.i2c.write(this.address, [pixelAddrL]);
-            const dataL = yield this.i2c.readWait(this.address, 1);
-            this.i2c.write(this.address, [pixelAddrH]);
-            const dataH = yield this.i2c.readWait(this.address, 1);
-            let temp12bit = (dataH << 8) | dataL;
-            if (dataH & 0x08) {
+    async getOnePixWait(pixel) {
+        let pixelAddrL = 0x80;
+        let pixelAddrH = 0x81;
+        if (pixel >= 0 && pixel <= 63) {
+            pixelAddrL = 0x80 + pixel * 2;
+            pixelAddrH = 0x81 + pixel * 2;
+        }
+        else {
+            throw new Error("pixel number must be range of 0 to 63");
+        }
+        this.i2c.write(this.address, [pixelAddrL]);
+        const dataL = await this.i2c.readWait(this.address, 1);
+        this.i2c.write(this.address, [pixelAddrH]);
+        const dataH = await this.i2c.readWait(this.address, 1);
+        let temp12bit = (dataH << 8) | dataL;
+        if (dataH & 0x08) {
+            // negative temperature
+            temp12bit = temp12bit - 1;
+            temp12bit = 0xfff - temp12bit; // bit inverting
+            return temp12bit * -0.25;
+        }
+        else {
+            // positive temperature
+            return temp12bit * 0.25;
+        }
+    }
+    async getAllPixWait() {
+        const tempArray = new Array(64);
+        this.i2c.write(this.address, [0x80]);
+        const datas = await this.i2c.readWait(this.address, 64 * 2);
+        for (let i = 0; i < 64; i++) {
+            let temp12bit = (datas[i * 2 + 1] << 8) | datas[i * 2];
+            let temp = 0;
+            if (datas[i * 2 + 1] & 0x08) {
                 // negative temperature
                 temp12bit = temp12bit - 1;
                 temp12bit = 0xfff - temp12bit; // bit inverting
-                return temp12bit * -0.25;
+                temp = temp12bit * -0.25;
             }
             else {
                 // positive temperature
-                return temp12bit * 0.25;
+                temp = temp12bit * 0.25;
             }
-        });
-    }
-    getAllPixWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const tempArray = new Array(64);
-            this.i2c.write(this.address, [0x80]);
-            const datas = yield this.i2c.readWait(this.address, 64 * 2);
-            for (let i = 0; i < 64; i++) {
-                let temp12bit = (datas[i * 2 + 1] << 8) | datas[i * 2];
-                let temp = 0;
-                if (datas[i * 2 + 1] & 0x08) {
-                    // negative temperature
-                    temp12bit = temp12bit - 1;
-                    temp12bit = 0xfff - temp12bit; // bit inverting
-                    temp = temp12bit * -0.25;
-                }
-                else {
-                    // positive temperature
-                    temp = temp12bit * 0.25;
-                }
-                tempArray[i] = temp;
-            }
-            return tempArray;
-        });
+            tempArray[i] = temp;
+        }
+        return tempArray;
     }
 }
 exports.default = AMG8833;
@@ -35875,30 +41921,11 @@ exports.default = AMG8833;
  * @packageDocumentation
  * @module Parts.BME280
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class BME280 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = [
-            "vcore",
-            "vio",
-            "gnd",
-            "csb",
-            "sdi",
-            "sck",
-            "sdo",
-            "i2c",
-            "address",
-        ];
+        this.keys = ["vcore", "vio", "gnd", "csb", "sdi", "sck", "sdo", "i2c", "address"];
         this.ioKeys = ["vcore", "vio", "gnd", "csb", "sdi", "sdo", "sck"];
         this.configration = {
             sampling: {
@@ -35965,64 +41992,51 @@ class BME280 {
         this.config();
         this.obniz.wait(10);
     }
-    config() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.write([
-                this.commands.addresses.config,
-                (this.configration.interval << 5) |
-                    (this.configration.iir_strength << 2) |
-                    0,
-            ]);
-            this.write([
-                this.commands.addresses.ctrl_hum,
-                this.configration.sampling.hum,
-            ]);
-            this.write([
-                this.commands.addresses.ctrl_meas,
-                (this.configration.sampling.temp << 5) |
-                    (this.configration.sampling.pres << 2) |
-                    this.configration.mode,
-            ]);
-        });
+    async config() {
+        this.write([
+            this.commands.addresses.config,
+            (this.configration.interval << 5) | (this.configration.iir_strength << 2) | 0,
+        ]);
+        this.write([this.commands.addresses.ctrl_hum, this.configration.sampling.hum]);
+        this.write([
+            this.commands.addresses.ctrl_meas,
+            (this.configration.sampling.temp << 5) | (this.configration.sampling.pres << 2) | this.configration.mode,
+        ]);
     }
-    setIIRStrength(strengh) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.configration.iir_strength = strengh;
-            this.config();
-        });
+    async setIIRStrength(strengh) {
+        this.configration.iir_strength = strengh;
+        this.config();
     }
-    applyCalibration() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [0x88]);
-            const data = yield this.i2c.readWait(this.address, 24);
-            this.i2c.write(this.address, [0xa1]);
-            let data_next = yield this.i2c.readWait(this.address, 1);
-            data.push(...data_next);
-            this.i2c.write(this.address, [0xe1]);
-            data_next = yield this.i2c.readWait(this.address, 7);
-            data.push(...data_next);
-            this._calibrated = {
-                dig_T1: (data[1] << 8) | data[0],
-                dig_T2: this._readSigned16((data[3] << 8) | data[2]),
-                dig_T3: this._readSigned16((data[5] << 8) | data[4]),
-                dig_P1: (data[7] << 8) | data[6],
-                dig_P2: this._readSigned16((data[9] << 8) | data[8]),
-                dig_P3: this._readSigned16((data[11] << 8) | data[10]),
-                dig_P4: this._readSigned16((data[13] << 8) | data[12]),
-                dig_P5: this._readSigned16((data[15] << 8) | data[14]),
-                dig_P6: this._readSigned16((data[17] << 8) | data[16]),
-                dig_P7: this._readSigned16((data[19] << 8) | data[18]),
-                dig_P8: this._readSigned16((data[21] << 8) | data[20]),
-                dig_P9: this._readSigned16((data[23] << 8) | data[22]),
-                dig_H1: this._readSigned8(data[24]),
-                dig_H2: this._readSigned16((data[26] << 8) | data[25]),
-                dig_H3: this._readSigned8(data[27]),
-                dig_H4: this._readSigned16((data[28] << 4) | (0x0f & data[29])),
-                dig_H5: this._readSigned16((data[30] << 4) | ((data[29] >> 4) & 0x0f)),
-                dig_H6: this._readSigned8(data[31]),
-            };
-            this._t_fine = 0;
-        });
+    async applyCalibration() {
+        this.i2c.write(this.address, [0x88]);
+        const data = await this.i2c.readWait(this.address, 24);
+        this.i2c.write(this.address, [0xa1]);
+        let data_next = await this.i2c.readWait(this.address, 1);
+        data.push(...data_next);
+        this.i2c.write(this.address, [0xe1]);
+        data_next = await this.i2c.readWait(this.address, 7);
+        data.push(...data_next);
+        this._calibrated = {
+            dig_T1: (data[1] << 8) | data[0],
+            dig_T2: this._readSigned16((data[3] << 8) | data[2]),
+            dig_T3: this._readSigned16((data[5] << 8) | data[4]),
+            dig_P1: (data[7] << 8) | data[6],
+            dig_P2: this._readSigned16((data[9] << 8) | data[8]),
+            dig_P3: this._readSigned16((data[11] << 8) | data[10]),
+            dig_P4: this._readSigned16((data[13] << 8) | data[12]),
+            dig_P5: this._readSigned16((data[15] << 8) | data[14]),
+            dig_P6: this._readSigned16((data[17] << 8) | data[16]),
+            dig_P7: this._readSigned16((data[19] << 8) | data[18]),
+            dig_P8: this._readSigned16((data[21] << 8) | data[20]),
+            dig_P9: this._readSigned16((data[23] << 8) | data[22]),
+            dig_H1: this._readSigned8(data[24]),
+            dig_H2: this._readSigned16((data[26] << 8) | data[25]),
+            dig_H3: this._readSigned8(data[27]),
+            dig_H4: this._readSigned16((data[28] << 4) | (0x0f & data[29])),
+            dig_H5: this._readSigned16((data[30] << 4) | ((data[29] >> 4) & 0x0f)),
+            dig_H6: this._readSigned8(data[31]),
+        };
+        this._t_fine = 0;
     }
     _readSigned16(value) {
         if (value >= 0x8000) {
@@ -36039,36 +42053,27 @@ class BME280 {
     write(data) {
         this.i2c.write(this.address, data);
     }
-    getData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [0xf7]);
-            return yield this.i2c.readWait(this.address, 8);
-        });
+    async getData() {
+        this.i2c.write(this.address, [0xf7]);
+        return await this.i2c.readWait(this.address, 8);
     }
-    getAllWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.getData();
-            const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
-            const temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
-            const hum_raw = (data[6] << 8) | data[7];
-            const temperature = this.calibration_T(temp_raw) / 100.0;
-            const pressure = this.calibration_P(press_raw) / 100.0;
-            const humidity = this.calibration_H(hum_raw);
-            return { temperature, humidity, pressure };
-        });
+    async getAllWait() {
+        const data = await this.getData();
+        const press_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
+        const temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
+        const hum_raw = (data[6] << 8) | data[7];
+        const temperature = this.calibration_T(temp_raw) / 100.0;
+        const pressure = this.calibration_P(press_raw) / 100.0;
+        const humidity = this.calibration_H(hum_raw);
+        return { temperature, humidity, pressure };
     }
     calibration_T(adc_T) {
         let var1;
         let var2;
         let T;
-        var1 =
-            (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
-                this._calibrated.dig_T2) >>
-                11;
+        var1 = (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) * this._calibrated.dig_T2) >> 11;
         var2 =
-            (((((adc_T >> 4) - this._calibrated.dig_T1) *
-                ((adc_T >> 4) - this._calibrated.dig_T1)) >>
-                12) *
+            (((((adc_T >> 4) - this._calibrated.dig_T1) * ((adc_T >> 4) - this._calibrated.dig_T1)) >> 12) *
                 this._calibrated.dig_T3) >>
                 14;
         this._t_fine = var1 + var2;
@@ -36080,10 +42085,7 @@ class BME280 {
         let pvar2 = (pvar1 * pvar1 * this._calibrated.dig_P6) / 32768;
         pvar2 = pvar2 + pvar1 * this._calibrated.dig_P5 * 2;
         pvar2 = pvar2 / 4 + this._calibrated.dig_P4 * 65536;
-        pvar1 =
-            ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 +
-                this._calibrated.dig_P2 * pvar1) /
-                524288;
+        pvar1 = ((this._calibrated.dig_P3 * pvar1 * pvar1) / 524288 + this._calibrated.dig_P2 * pvar1) / 524288;
         pvar1 = (1 + pvar1 / 32768) * this._calibrated.dig_P1;
         if (pvar1 !== 0) {
             let p = 1048576 - adc_P;
@@ -36098,43 +42100,30 @@ class BME280 {
     calibration_H(adc_H) {
         let h = this._t_fine - 76800;
         h =
-            (adc_H -
-                (this._calibrated.dig_H4 * 64 +
-                    (this._calibrated.dig_H5 / 16384) * h)) *
+            (adc_H - (this._calibrated.dig_H4 * 64 + (this._calibrated.dig_H5 / 16384) * h)) *
                 ((this._calibrated.dig_H2 / 65536) *
-                    (1 +
-                        (this._calibrated.dig_H6 / 67108864) *
-                            h *
-                            (1 + (this._calibrated.dig_H3 / 67108864) * h)));
+                    (1 + (this._calibrated.dig_H6 / 67108864) * h * (1 + (this._calibrated.dig_H3 / 67108864) * h)));
         h = h * (1 - (this._calibrated.dig_H1 * h) / 524288);
         return h;
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).temperature;
-        });
+    async getTempWait() {
+        return (await this.getAllWait()).temperature;
     }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).humidity;
-        });
+    async getHumdWait() {
+        return (await this.getAllWait()).humidity;
     }
-    getPressureWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).pressure;
-        });
+    async getPressureWait() {
+        return (await this.getAllWait()).pressure;
     }
-    getAltitudeWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const pressure = yield this.getPressureWait();
-            return this.calcAltitude(pressure);
-        });
+    async getAltitudeWait() {
+        const pressure = await this.getPressureWait();
+        return this.calcAltitude(pressure);
     }
     calcAltitude(pressure, seaPressure) {
         if (typeof seaPressure !== "number") {
             seaPressure = 1013.25;
         }
-        return ((1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048);
+        return (1.0 - Math.pow(pressure / seaPressure, 1 / 5.2553)) * 145366.45 * 0.3048;
     }
 }
 exports.default = BME280;
@@ -36153,15 +42142,6 @@ exports.default = BME280;
  * @packageDocumentation
  * @module Parts.D6T44L
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class D6T44L {
     constructor() {
@@ -36186,23 +42166,19 @@ class D6T44L {
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(50);
     }
-    getOnePixWait(pixcel) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.getAllPixWait();
-            return data[pixcel];
-        });
+    async getOnePixWait(pixcel) {
+        const data = await this.getAllPixWait();
+        return data[pixcel];
     }
-    getAllPixWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [0x4c]);
-            // await obniz.wait(160);
-            const raw = yield this.i2c.readWait(this.address, 35);
-            const data = [];
-            for (let i = 0; i < 16; i++) {
-                data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
-            }
-            return data;
-        });
+    async getAllPixWait() {
+        this.i2c.write(this.address, [0x4c]);
+        // await obniz.wait(160);
+        const raw = await this.i2c.readWait(this.address, 35);
+        const data = [];
+        for (let i = 0; i < 16; i++) {
+            data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
+        }
+        return data;
     }
 }
 exports.default = D6T44L;
@@ -36217,64 +42193,54 @@ exports.default = D6T44L;
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @module Parts.DHT12
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
 class DHT12 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.i2cinfo = {
+            address: 0x5c,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+    }
     static info() {
         return {
             name: "DHT12",
         };
     }
     i2cInfo() {
+        return this.i2cinfo;
+    }
+    async getAllDataWait() {
+        const data = await this.readWait(0x00, 5);
+        const humidity = data[0] + data[1] * 0.1;
+        let temperature = data[2] + (data[3] & 0x7f) * 0.1;
+        if (data[3] & 0x80) {
+            temperature *= -1;
+        }
+        const checksum = data[0] + data[1] + data[2] + data[3];
+        if (checksum !== data[4]) {
+            throw new Error(`checksum does not match`);
+        }
         return {
-            address: 0x5c,
-            clock: 100000,
-            voltage: "3v",
+            humidity,
+            temperature,
         };
     }
-    getAllDataWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield this.readWait(0x00, 5);
-            const humidity = data[0] + data[1] * 0.1;
-            let temperature = data[2] + (data[3] & 0x7f) * 0.1;
-            if (data[3] & 0x80) {
-                temperature *= -1;
-            }
-            const checksum = data[0] + data[1] + data[2] + data[3];
-            if (checksum !== data[4]) {
-                throw new Error(`checksum does not match`);
-            }
-            return {
-                humidity,
-                temperature,
-            };
-        });
+    async getTempWait() {
+        return (await this.getAllDataWait()).temperature;
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).temperature;
-        });
-    }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllDataWait()).humidity;
-        });
+    async getHumdWait() {
+        return (await this.getAllDataWait()).humidity;
     }
 }
 exports.default = DHT12;
@@ -36293,15 +42259,6 @@ exports.default = DHT12;
  * @packageDocumentation
  * @module Parts.S5851A
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class S5851A {
     constructor() {
@@ -36372,30 +42329,104 @@ class S5851A {
         this.i2c = obniz.getI2CWithConfig(this.params);
         // obniz.i2c0.write(address, [0x20, 0x24]);
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // console.log("gettempwait");
-            // obniz.i2c0.write(address, [0x20, 0x24]);
-            // obniz.i2c0.write(address, [0xE0, 0x00]);
-            const ret = yield this.i2c0.readWait(this.address, 2);
-            // console.log('ret:' + ret);
-            const tempBin = ret[0].toString(2) + ("00000000" + ret[1].toString(2)).slice(-8);
-            const temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
-            return temperature;
-        });
+    async getTempWait() {
+        // console.log("gettempwait");
+        // obniz.i2c0.write(address, [0x20, 0x24]);
+        // obniz.i2c0.write(address, [0xE0, 0x00]);
+        const ret = await this.i2c0.readWait(this.address, 2);
+        // console.log('ret:' + ret);
+        const tempBin = ret[0].toString(2) + ("00000000" + ret[1].toString(2)).slice(-8);
+        const temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
+        return temperature;
     }
-    getHumdWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [0x20, 0x24]);
-            this.i2c.write(this.address, [0xe0, 0x00]);
-            const ret = yield this.i2c.readWait(this.address, 4);
-            const humdBin = ret[2].toString(2) + ("00000000" + ret[3].toString(2)).slice(-8);
-            const humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
-            return humidity;
-        });
+    async getHumdWait() {
+        this.i2c.write(this.address, [0x20, 0x24]);
+        this.i2c.write(this.address, [0xe0, 0x00]);
+        const ret = await this.i2c.readWait(this.address, 4);
+        const humdBin = ret[2].toString(2) + ("00000000" + ret[3].toString(2)).slice(-8);
+        const humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
+        return humidity;
     }
 }
 exports.default = S5851A;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/SHT20/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class SHT20 {
+    constructor() {
+        this.requiredKeys = [];
+        this.keys = ["vcc", "sda", "scl", "gnd", "i2c", "pull"];
+        this.ioKeys = ["vcc", "sda", "scl", "gnd"];
+        this.commands = {};
+        this.commands.softReset = [0xfe];
+        this.commands.tempNoHold = [0xf3];
+        this.commands.humidityNoHold = [0xf5];
+    }
+    static info() {
+        return {
+            name: "SHT20",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+        this.address = 0x40;
+        this.params.clock = this.params.clock || 100 * 1000; // for i2c
+        this.params.mode = this.params.mode || "master"; // for i2c
+        this.params.pull = this.params.pull || "3v"; // for i2c
+        this.i2c = obniz.getI2CWithConfig(this.params);
+        this.i2c.write(this.address, this.commands.softReset);
+        this.obniz.wait(50);
+    }
+    async getData(command) {
+        this.i2c.write(this.address, command);
+        await this.obniz.wait(100);
+        const data = await this.i2c.readWait(this.address, 3);
+        const rawValue = (data[0] << 8) | data[1];
+        if (this.checkCRC(rawValue, data[2]) !== 0) {
+            return -2;
+        }
+        return rawValue & 0xfffc;
+    }
+    async getTempWait() {
+        const rawTemperature = await this.getData(this.commands.tempNoHold);
+        if (rawTemperature < 0) {
+            console.log("error sht20", rawTemperature);
+            return rawTemperature;
+        }
+        return rawTemperature * (175.72 / 65536.0) - 46.85;
+    }
+    async getHumidWait() {
+        const rawHumidity = await this.getData(this.commands.humidityNoHold);
+        if (rawHumidity < 0) {
+            console.log("error sht20", rawHumidity);
+            return rawHumidity;
+        }
+        return rawHumidity * (125.0 / 65536.0) - 6.0;
+    }
+    checkCRC(message_from_sensor, check_value_from_sensor) {
+        let remainder = message_from_sensor << 8;
+        remainder |= check_value_from_sensor;
+        let divsor = 0x988000;
+        for (let i = 0; i < 16; i++) {
+            if (remainder & (1 << (23 - i))) {
+                remainder ^= divsor;
+            }
+            divsor >>= 1;
+        }
+        return remainder;
+    }
+}
+exports.default = SHT20;
 
 //# sourceMappingURL=index.js.map
 
@@ -36411,30 +42442,11 @@ exports.default = S5851A;
  * @packageDocumentation
  * @module Parts.SHT31
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class SHT31 {
     constructor() {
         this.requiredKeys = [];
-        this.keys = [
-            "vcc",
-            "sda",
-            "scl",
-            "gnd",
-            "adr",
-            "addressmode",
-            "i2c",
-            "pull",
-            "address",
-        ];
+        this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull", "address"];
         this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
         this.commands = {};
         this.commands.softReset = [0x30, 0xa2];
@@ -36479,32 +42491,27 @@ class SHT31 {
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.i2c.write(this.address, this.commands.softReset);
     }
-    getData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, this.commands.highRepeat);
-            yield this.obniz.wait(this.waitTime.highRepeat);
-            return yield this.i2c.readWait(this.address, 6);
-        });
+    async getData() {
+        this.i2c.write(this.address, this.commands.highRepeat);
+        await this.obniz.wait(this.waitTime.highRepeat);
+        return await this.i2c.readWait(this.address, 6);
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).temperature;
-        });
+    async getTempWait() {
+        return (await this.getAllWait()).temperature;
     }
-    getHumidWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.getAllWait()).humidity;
-        });
+    async getHumdWait() {
+        return await this.getHumidWait();
     }
-    getAllWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ret = yield this.getData();
-            const tempBin = ret[0] * 256 + ret[1];
-            const temperature = -45 + 175 * (tempBin / (65536 - 1));
-            const humdBin = ret[3] * 256 + ret[4];
-            const humidity = 100 * (humdBin / (65536 - 1));
-            return { temperature, humidity };
-        });
+    async getHumidWait() {
+        return (await this.getAllWait()).humidity;
+    }
+    async getAllWait() {
+        const ret = await this.getData();
+        const tempBin = ret[0] * 256 + ret[1];
+        const temperature = -45 + 175 * (tempBin / (65536 - 1));
+        const humdBin = ret[3] * 256 + ret[4];
+        const humidity = 100 * (humdBin / (65536 - 1));
+        return { temperature, humidity };
     }
 }
 exports.default = SHT31;
@@ -36523,15 +42530,6 @@ exports.default = SHT31;
  * @packageDocumentation
  * @module Parts.ADT7310
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class ADT7310 {
     constructor() {
@@ -36552,19 +42550,17 @@ class ADT7310 {
         this.params.miso = this.params.dout;
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    getTempWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.spi.writeWait([0x54]); // send before each commands for stable
-            yield this.obniz.wait(200);
-            const ret = yield this.spi.writeWait([0x00, 0x00]);
-            let tempBin = ret[0] << 8;
-            tempBin |= ret[1];
-            tempBin = tempBin >> 3;
-            if (tempBin & 0x1000) {
-                tempBin = tempBin - 8192;
-            }
-            return tempBin / 16;
-        });
+    async getTempWait() {
+        await this.spi.writeWait([0x54]); // send before each commands for stable
+        await this.obniz.wait(200);
+        const ret = await this.spi.writeWait([0x00, 0x00]);
+        let tempBin = ret[0] << 8;
+        tempBin |= ret[1];
+        tempBin = tempBin >> 3;
+        if (tempBin & 0x1000) {
+            tempBin = tempBin - 8192;
+        }
+        return tempBin / 16;
     }
 }
 exports.default = ADT7310;
@@ -36583,15 +42579,6 @@ exports.default = ADT7310;
  * @packageDocumentation
  * @module Parts.MFRC522
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const OK = true;
 const ERROR = false;
@@ -36716,17 +42703,7 @@ class MFRC522 {
         // this.Reserved3Eh = 0x3E;
         // this.Reserved3Fh = 0x3F;
         // required pin of obniz
-        this.keys = [
-            "cs",
-            "clk",
-            "mosi",
-            "miso",
-            "rst",
-            "vcc",
-            "gnd",
-            "spi",
-            "spi_frequency",
-        ];
+        this.keys = ["cs", "clk", "mosi", "miso", "rst", "vcc", "gnd", "spi", "spi_frequency"];
         this.requiredKeys = ["cs", "mosi", "miso", "rst"];
     }
     static info() {
@@ -36748,24 +42725,22 @@ class MFRC522 {
         this.params.frequency = this.params.spi_frequency || 5 * 1000 * 1000;
         this.spi = this.obniz.getSpiWithConfig(this.params);
     }
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Initializes the MFRC522 chip
-            // Hardware and Software reset
-            this.rst.output(false);
-            yield this.obniz.wait(50); // 8.8.2 says the oscillator start-up time is the start up time of the crystal + 37,74us: 50ms.
-            this.rst.output(true);
-            this.writeRegister(this.CommandReg, this.PCD_SoftReset);
-            // Timer setup: When communicating with a PICC we need a timeout if something goes wrong.
-            // f_timer = 13.56 MHz / (2*TPreScaler+1) where TPreScaler = [TPrescaler_Hi:TPrescaler_Lo].
-            this.writeRegister(this.TModeReg, 0x80); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
-            this.writeRegister(this.TPrescalerReg, 0xa9); // TPreScaler = TModeReg[3..0]: TPrescalerReg, ie 0x0A9 = 169 => f_timer=40kHz, ie a timer period of 25us.
-            this.writeRegister(this.TReloadRegHi, 0x03);
-            this.writeRegister(this.TReloadRegLo, 0xe8); // Reload timer with 0x3E8 = 1000, ie. 25ms before timeout
-            this.writeRegister(this.TxASKReg, 0x40); // Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
-            this.writeRegister(this.ModeReg, 0x3d); // Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (6.2.4)
-            yield this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
-        });
+    async init() {
+        // Initializes the MFRC522 chip
+        // Hardware and Software reset
+        this.rst.output(false);
+        await this.obniz.wait(50); // 8.8.2 says the oscillator start-up time is the start up time of the crystal + 37,74us: 50ms.
+        this.rst.output(true);
+        this.writeRegister(this.CommandReg, this.PCD_SoftReset);
+        // Timer setup: When communicating with a PICC we need a timeout if something goes wrong.
+        // f_timer = 13.56 MHz / (2*TPreScaler+1) where TPreScaler = [TPrescaler_Hi:TPrescaler_Lo].
+        this.writeRegister(this.TModeReg, 0x80); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
+        this.writeRegister(this.TPrescalerReg, 0xa9); // TPreScaler = TModeReg[3..0]: TPrescalerReg, ie 0x0A9 = 169 => f_timer=40kHz, ie a timer period of 25us.
+        this.writeRegister(this.TReloadRegHi, 0x03);
+        this.writeRegister(this.TReloadRegLo, 0xe8); // Reload timer with 0x3E8 = 1000, ie. 25ms before timeout
+        this.writeRegister(this.TxASKReg, 0x40); // Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
+        this.writeRegister(this.ModeReg, 0x3d); // Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (6.2.4)
+        await this.antennaOn(); // Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
     }
     writeRegister(addr, val) {
         let data;
@@ -36780,371 +42755,318 @@ class MFRC522 {
         this.spi.write(data);
         this.cs.output(true);
     }
-    readRegister(addr) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = [((addr << 1) & 0x7e) | 0x80, 0];
-            this.cs.output(false);
-            const response = yield this.spi.writeWait(data);
-            this.cs.output(true);
-            return response[1];
-        });
+    async readRegister(addr) {
+        const data = [((addr << 1) & 0x7e) | 0x80, 0];
+        this.cs.output(false);
+        const response = await this.spi.writeWait(data);
+        this.cs.output(true);
+        return response[1];
     }
-    readRegister_nByte(addr, n) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const dataArray = [];
-            if (addr instanceof Array) {
-                // Multiple addresses(If addr is Array)
-                for (let i = 0; i < addr.length; i++) {
-                    dataArray.push(((addr[i] << 1) & 0x7e) | 0x80);
-                }
+    async readRegister_nByte(addr, n) {
+        const dataArray = [];
+        if (addr instanceof Array) {
+            // Multiple addresses(If addr is Array)
+            for (let i = 0; i < addr.length; i++) {
+                dataArray.push(((addr[i] << 1) & 0x7e) | 0x80);
             }
-            else {
-                // Single address & read n times
-                for (let i = 0; i < n; i++) {
-                    dataArray.push(((addr << 1) & 0x7e) | 0x80);
-                }
+        }
+        else {
+            // Single address & read n times
+            for (let i = 0; i < n; i++) {
+                dataArray.push(((addr << 1) & 0x7e) | 0x80);
             }
-            dataArray.push(0); // End reading
-            this.cs.output(false);
-            const values = yield this.spi.writeWait(dataArray);
-            this.cs.output(true);
-            values.shift();
-            return values;
-        });
+        }
+        dataArray.push(0); // End reading
+        this.cs.output(false);
+        const values = await this.spi.writeWait(dataArray);
+        this.cs.output(true);
+        values.shift();
+        return values;
     }
-    setRegisterBitMask(reg, mask) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = yield this.readRegister(reg);
-            this.writeRegister(reg, response | mask);
-        });
+    async setRegisterBitMask(reg, mask) {
+        const response = await this.readRegister(reg);
+        this.writeRegister(reg, response | mask);
     }
-    clearRegisterBitMask(reg, mask) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = yield this.readRegister(reg);
-            this.writeRegister(reg, response & ~mask);
-        });
+    async clearRegisterBitMask(reg, mask) {
+        const response = await this.readRegister(reg);
+        this.writeRegister(reg, response & ~mask);
     }
-    antennaOn() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Turns the antenna on by enabling pins TX1 and TX2
-            const response = yield this.readRegister(this.TxControlReg);
-            if ((response & 0x03) !== 0x03) {
-                // If TX1 and TX2 down
-                yield this.setRegisterBitMask(this.TxControlReg, response | 0x03);
-            }
-        });
+    async antennaOn() {
+        // Turns the antenna on by enabling pins TX1 and TX2
+        const response = await this.readRegister(this.TxControlReg);
+        if ((response & 0x03) !== 0x03) {
+            // If TX1 and TX2 down
+            await this.setRegisterBitMask(this.TxControlReg, response | 0x03);
+        }
     }
-    antennaOff() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Turns the antenna off by disabling pins TX1 and TX2
-            yield this.clearRegisterBitMask(this.TxControlReg, 0x03);
-        });
+    async antennaOff() {
+        // Turns the antenna off by disabling pins TX1 and TX2
+        await this.clearRegisterBitMask(this.TxControlReg, 0x03);
     }
     // RC522 and ISO14443 card communication
-    toCard(command, bitsToSend) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let data = [];
-            let bitSize = 0;
-            let status = ERROR;
-            let irqEn = 0x00;
-            let waitIRq = 0x00;
-            if (command === this.PCD_MFAuthent) {
-                irqEn = 0x12;
-                waitIRq = 0x10;
-            }
-            if (command === this.PCD_Transceive) {
-                irqEn = 0x77;
-                waitIRq = 0x30;
-            }
-            this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
-            this.writeRegister(this.ComlEnReg, irqEn | 0x80); // Interrupt request is enabled
-            this.writeRegister(this.ComIrqReg, 0x7f); // Clear all seven interrupt request bits
-            this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
-            this.writeRegister(this.FIFODataReg, bitsToSend); // Write sendData to the FIFO
-            this.writeRegister(this.CommandReg, command); // Execute the command
-            if (command === this.PCD_Transceive) {
-                yield this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
-            }
-            let TryingTimes = 10;
-            let n = 0;
-            do {
-                // Wait for the received data complete
-                n = yield this.readRegister(this.ComIrqReg);
-                TryingTimes--;
-            } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
-            // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
-            const response = yield this.readRegister_nByte([
-                this.ErrorReg,
-                this.FIFOLevelReg,
-                this.ControlReg,
-            ]);
-            if (TryingTimes !== 0) {
-                if ((response[0] & 0x1b) === 0x00) {
-                    // BufferOvfl CollErr ParityErr ProtocolErr
-                    status = n & irqEn & 0x01 ? ERROR : OK;
-                    if (command === this.PCD_Transceive) {
-                        n = response[1]; // Number of bytes in the FIFO
-                        const lastBits = response[2] & 0x07; // RxLastBits[2:0] indicates the number of valid bits in the last received byte. If this value is 000b, the whole byte is valid.
-                        if (lastBits) {
-                            bitSize = (n - 1) * 8 + lastBits;
-                        }
-                        else {
-                            bitSize = n * 8;
-                        }
-                        if (n === 0) {
-                            n = 1;
-                        }
-                        if (n > 16) {
-                            n = 16;
-                        } // Restrict until 16bytes
-                        data = yield this.readRegister_nByte(this.FIFODataReg, n); // Get received data from FIFO buffer
+    async toCard(command, bitsToSend) {
+        let data = [];
+        let bitSize = 0;
+        let status = ERROR;
+        let irqEn = 0x00;
+        let waitIRq = 0x00;
+        if (command === this.PCD_MFAuthent) {
+            irqEn = 0x12;
+            waitIRq = 0x10;
+        }
+        if (command === this.PCD_Transceive) {
+            irqEn = 0x77;
+            waitIRq = 0x30;
+        }
+        this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
+        this.writeRegister(this.ComlEnReg, irqEn | 0x80); // Interrupt request is enabled
+        this.writeRegister(this.ComIrqReg, 0x7f); // Clear all seven interrupt request bits
+        this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
+        this.writeRegister(this.FIFODataReg, bitsToSend); // Write sendData to the FIFO
+        this.writeRegister(this.CommandReg, command); // Execute the command
+        if (command === this.PCD_Transceive) {
+            await this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
+        }
+        let TryingTimes = 10;
+        let n = 0;
+        do {
+            // Wait for the received data complete
+            n = await this.readRegister(this.ComIrqReg);
+            TryingTimes--;
+        } while (TryingTimes !== 0 && !(n & 0x01) && !(n & waitIRq)); // !(Timer interrupt - nothing received before timeout) & !(One of the interrupts that signal success has been set)
+        // await this.clearRegisterBitMask(this.BitFramingReg, 0x80);	//Reset with resetAndInit()
+        const response = await this.readRegister_nByte([this.ErrorReg, this.FIFOLevelReg, this.ControlReg]);
+        if (TryingTimes !== 0) {
+            if ((response[0] & 0x1b) === 0x00) {
+                // BufferOvfl CollErr ParityErr ProtocolErr
+                status = n & irqEn & 0x01 ? ERROR : OK;
+                if (command === this.PCD_Transceive) {
+                    n = response[1]; // Number of bytes in the FIFO
+                    const lastBits = response[2] & 0x07; // RxLastBits[2:0] indicates the number of valid bits in the last received byte. If this value is 000b, the whole byte is valid.
+                    if (lastBits) {
+                        bitSize = (n - 1) * 8 + lastBits;
                     }
+                    else {
+                        bitSize = n * 8;
+                    }
+                    if (n === 0) {
+                        n = 1;
+                    }
+                    if (n > 16) {
+                        n = 16;
+                    } // Restrict until 16bytes
+                    data = await this.readRegister_nByte(this.FIFODataReg, n); // Get received data from FIFO buffer
                 }
-                else {
-                    status = ERROR;
-                }
-            }
-            return { status, data, bitSize };
-        });
-    }
-    findCardWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
-            yield this.searchTagWait();
-            const uid = yield this.getUidWait();
-            const PICC_Type = yield this.identifyCardTypeWait(uid);
-            return { uid, PICC_Type };
-        });
-    }
-    searchTagWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.writeRegister(this.BitFramingReg, 0x07);
-            const tagType = [this.PICC_REQA];
-            const response = yield this.toCard(this.PCD_Transceive, tagType);
-            if (response.bitSize !== 0x10) {
-                throw new Error("card_search_ERROR");
-            }
-        });
-    }
-    getUidWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.writeRegister(this.BitFramingReg, 0x00);
-            let uid = [this.PICC_SEL_CL1, 0x20];
-            const response = yield this.toCard(this.PCD_Transceive, uid);
-            if (!response.status) {
-                throw new Error("uid_scan_ERROR");
-            }
-            const uidCheck = response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
-            if (uidCheck !== response.data[4]) {
-                throw new Error("uid_check_ERROR");
-            }
-            uid = response.data;
-            // (uid).pop();
-            return uid;
-        });
-    }
-    calculateCRCWait(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
-            this.writeRegister(this.DivIrqReg, 0x04); // Clear the CRCIRq interrupt request bit
-            this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
-            this.writeRegister(this.FIFODataReg, data); // Write data to the FIFO
-            this.writeRegister(this.CommandReg, this.PCD_CalcCRC); // Start the calculation
-            let i = 0xff;
-            let n;
-            // Wait for the CRC calculation to complete
-            do {
-                n = yield this.readRegister(this.DivIrqReg);
-                i--;
-            } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
-            // CRC calculation result
-            return yield this.readRegister_nByte([
-                this.CRCResultRegLSB,
-                this.CRCResultRegMSB,
-            ]);
-        });
-    }
-    identifySoftwareWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let version = yield this.readRegister(this.VersionReg);
-            switch (version) {
-                case 0x88:
-                    version = "(clone)";
-                    break;
-                case 0x90:
-                    version = "v0.0";
-                    break;
-                case 0x91:
-                    version = "v1.0";
-                    break;
-                case 0x92:
-                    version = "v2.0";
-                    break;
-                case 0x12:
-                    version = "counterfeit chip";
-                    break;
-                default:
-                    version = "(unknown)";
-            }
-            // When 0x00 or 0xFF is returned, communication probably failed
-            if (version === 0x00 || version === 0xff) {
-                throw new Error("software_version_ERROR");
-            }
-            return version;
-        });
-    }
-    identifyCardTypeWait(uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Identify type of the scanned card
-            let buffer = [this.PICC_SElECTTAG, 0x70].concat(uid);
-            buffer = buffer.concat(yield this.calculateCRCWait(buffer));
-            const response = yield this.toCard(this.PCD_Transceive, buffer);
-            let PICC_Type;
-            if (response.status && response.bitSize === 0x18) {
-                PICC_Type = response.data[0];
-            }
-            switch (PICC_Type) {
-                case 0x04:
-                    PICC_Type = "SAK indicates UID is not complete.";
-                    break; // UID not complete
-                case 0x09:
-                    PICC_Type = "MIFARE Mini, 320 bytes";
-                    break;
-                case 0x08:
-                    PICC_Type = "MIFARE 1KB";
-                    break;
-                case 0x18:
-                    PICC_Type = "MIFARE 4KB";
-                    break;
-                case 0x00:
-                    PICC_Type = "MIFARE Ultralight or Ultralight C";
-                    break;
-                case 0x11:
-                    PICC_Type = "MIFARE Plus";
-                    break;
-                case 0x01:
-                    PICC_Type = "MIFARE TNP3XXX";
-                    break;
-                case 0x20:
-                    PICC_Type = "PICC compliant with ISO/IEC 14443-4";
-                    break;
-                case 0x40:
-                    PICC_Type = "PICC compliant with ISO/IEC 18092 (NFC)";
-                    break;
-                default:
-                    throw new Error("PICC_type_ERROR");
-            }
-            return PICC_Type;
-        });
-    }
-    readSectorDataWait(Sector, uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.authenticateSectorWait(Sector, uid);
-            return yield this.getSectorDataWait(Sector);
-        });
-    }
-    readBlockDataWait(Block, uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.authenticateBlockWait(Block, uid);
-            return yield this.getBlockDataWait(Block);
-        });
-    }
-    authenticateSectorWait(Sector, uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            /* Password authentication mode (A or B)
-                 * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
-                 * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
-                 */
-            const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
-            // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
-            const Block = Sector * 4;
-            let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
-            uid = uid.slice(0, 4); // Append the first 4 bit of the UID
-            buffer = buffer.concat(uid); // 12byte
-            // Start authentication itself
-            yield this.toCard(this.PCD_MFAuthent, buffer);
-            if (!((yield this.readRegister(this.Status2Reg)) & 0x08)) {
-                throw new Error("password_authentication_ERROR");
-            }
-        });
-    }
-    authenticateBlockWait(Block, uid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            /* Password authentication mode (A or B)
-                 * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
-                 * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
-                 */
-            const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
-            // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
-            let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
-            uid = uid.slice(0, 4); // Append the first 4 bit of the UID
-            buffer = buffer.concat(uid); // 12byte
-            // Start authentication itself
-            yield this.toCard(this.PCD_MFAuthent, buffer);
-            if (!((yield this.readRegister(this.Status2Reg)) & 0x08)) {
-                throw new Error("password_authentication_ERROR");
-            }
-        });
-    }
-    readAgainWait() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // If you finish reading and want to read again, this can use instead of init()
-            yield this.clearRegisterBitMask(this.Status2Reg, 0x08);
-        });
-    }
-    getSectorDataWait(address) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = [];
-            const blockData = [];
-            for (let i = 0; i < 4; i++) {
-                let request = [this.PICC_READ, address * 4 + i];
-                request = request.concat(yield this.calculateCRCWait(request));
-                response[i] = yield this.toCard(this.PCD_Transceive, request);
-                if (!response[i].status) {
-                    throw new Error("data_read_ERROR");
-                }
-                blockData[i] = response[i].data;
-            }
-            return blockData;
-        });
-    }
-    getBlockDataWait(address) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let request = [this.PICC_READ, address];
-            request = request.concat(yield this.calculateCRCWait(request));
-            const response = yield this.toCard(this.PCD_Transceive, request);
-            if (!response.status) {
-                throw new Error("data_read_ERROR");
-            }
-            return response.data;
-        });
-    }
-    appendCRCtoBufferAndSendToCardWait(buffer) {
-        return __awaiter(this, void 0, void 0, function* () {
-            buffer = buffer.concat(yield this.calculateCRCWait(buffer));
-            const response = yield this.toCard(this.PCD_Transceive, buffer);
-            if (!response.status ||
-                response.bitSize !== 4 ||
-                (response.data[0] & 0x0f) !== 0x0a) {
-                response.status = ERROR;
-            }
-            return response;
-        });
-    }
-    writeBlockDataWait(Block, sixteenBytes) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (Block === 0 || Block % 4 === 3) {
-                throw new Error("deny_Write");
-            }
-            const buffer = [this.PICC_WRITE, Block];
-            let response = yield this.appendCRCtoBufferAndSendToCardWait(buffer);
-            if (response.status) {
-                response = yield this.appendCRCtoBufferAndSendToCardWait(sixteenBytes);
             }
             else {
-                throw new Error("data_write_ERROR");
+                status = ERROR;
             }
-        });
+        }
+        return { status, data, bitSize };
+    }
+    async findCardWait() {
+        await this.init();
+        await this.searchTagWait();
+        const uid = await this.getUidWait();
+        const PICC_Type = await this.identifyCardTypeWait(uid);
+        return { uid, PICC_Type };
+    }
+    async searchTagWait() {
+        this.writeRegister(this.BitFramingReg, 0x07);
+        const tagType = [this.PICC_REQA];
+        const response = await this.toCard(this.PCD_Transceive, tagType);
+        if (response.bitSize !== 0x10) {
+            throw new Error("card_search_ERROR");
+        }
+    }
+    async getUidWait() {
+        this.writeRegister(this.BitFramingReg, 0x00);
+        let uid = [this.PICC_SEL_CL1, 0x20];
+        const response = await this.toCard(this.PCD_Transceive, uid);
+        if (!response.status) {
+            throw new Error("uid_scan_ERROR");
+        }
+        const uidCheck = response.data[0] ^ response.data[1] ^ response.data[2] ^ response.data[3];
+        if (uidCheck !== response.data[4]) {
+            throw new Error("uid_check_ERROR");
+        }
+        uid = response.data;
+        // (uid).pop();
+        return uid;
+    }
+    async calculateCRCWait(data) {
+        this.writeRegister(this.CommandReg, this.PCD_Idle); // Stop any active command
+        this.writeRegister(this.DivIrqReg, 0x04); // Clear the CRCIRq interrupt request bit
+        this.writeRegister(this.FIFOLevelReg, 0x80); // FlushBuffer = 1, FIFO initialization
+        this.writeRegister(this.FIFODataReg, data); // Write data to the FIFO
+        this.writeRegister(this.CommandReg, this.PCD_CalcCRC); // Start the calculation
+        let i = 0xff;
+        let n;
+        // Wait for the CRC calculation to complete
+        do {
+            n = await this.readRegister(this.DivIrqReg);
+            i--;
+        } while (i !== 0 && !(n & 0x04)); // CRCIrq = 1 (Calculation done)
+        // CRC calculation result
+        return await this.readRegister_nByte([this.CRCResultRegLSB, this.CRCResultRegMSB]);
+    }
+    async identifySoftwareWait() {
+        let version = await this.readRegister(this.VersionReg);
+        switch (version) {
+            case 0x88:
+                version = "(clone)";
+                break;
+            case 0x90:
+                version = "v0.0";
+                break;
+            case 0x91:
+                version = "v1.0";
+                break;
+            case 0x92:
+                version = "v2.0";
+                break;
+            case 0x12:
+                version = "counterfeit chip";
+                break;
+            default:
+                version = "(unknown)";
+        }
+        // When 0x00 or 0xFF is returned, communication probably failed
+        if (version === 0x00 || version === 0xff) {
+            throw new Error("software_version_ERROR");
+        }
+        return version;
+    }
+    async identifyCardTypeWait(uid) {
+        // Identify type of the scanned card
+        let buffer = [this.PICC_SElECTTAG, 0x70].concat(uid);
+        buffer = buffer.concat(await this.calculateCRCWait(buffer));
+        const response = await this.toCard(this.PCD_Transceive, buffer);
+        let PICC_Type;
+        if (response.status && response.bitSize === 0x18) {
+            PICC_Type = response.data[0];
+        }
+        switch (PICC_Type) {
+            case 0x04:
+                PICC_Type = "SAK indicates UID is not complete.";
+                break; // UID not complete
+            case 0x09:
+                PICC_Type = "MIFARE Mini, 320 bytes";
+                break;
+            case 0x08:
+                PICC_Type = "MIFARE 1KB";
+                break;
+            case 0x18:
+                PICC_Type = "MIFARE 4KB";
+                break;
+            case 0x00:
+                PICC_Type = "MIFARE Ultralight or Ultralight C";
+                break;
+            case 0x11:
+                PICC_Type = "MIFARE Plus";
+                break;
+            case 0x01:
+                PICC_Type = "MIFARE TNP3XXX";
+                break;
+            case 0x20:
+                PICC_Type = "PICC compliant with ISO/IEC 14443-4";
+                break;
+            case 0x40:
+                PICC_Type = "PICC compliant with ISO/IEC 18092 (NFC)";
+                break;
+            default:
+                throw new Error("PICC_type_ERROR");
+        }
+        return PICC_Type;
+    }
+    async readSectorDataWait(Sector, uid) {
+        await this.authenticateSectorWait(Sector, uid);
+        return await this.getSectorDataWait(Sector);
+    }
+    async readBlockDataWait(Block, uid) {
+        await this.authenticateBlockWait(Block, uid);
+        return await this.getBlockDataWait(Block);
+    }
+    async authenticateSectorWait(Sector, uid) {
+        /* Password authentication mode (A or B)
+         * PICC_AUTH_KEYA = Verify the A key are the first 6 bit of 4th Block of each sector
+         * PICC_AUTH_KEYB = Verify the B key are the last 6 bit of 4th Block of each sector
+         */
+        const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
+        // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+        const Block = Sector * 4;
+        let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
+        uid = uid.slice(0, 4); // Append the first 4 bit of the UID
+        buffer = buffer.concat(uid); // 12byte
+        // Start authentication itself
+        await this.toCard(this.PCD_MFAuthent, buffer);
+        if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
+            throw new Error("password_authentication_ERROR");
+        }
+    }
+    async authenticateBlockWait(Block, uid) {
+        /* Password authentication mode (A or B)
+         * PICC_AUTH_KEYA = Verify the A key (the first 6 bit of 3th Block fo each Sector)
+         * PICC_AUTH_KEYB = Verify the B key (the last 6 bit of 3th Block fo each Sector)
+         */
+        const KEY_A = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
+        // const KEY_B = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+        let buffer = [this.PICC_AUTH_KEYA, Block].concat(KEY_A); // Append key = 6 bit of 0xFF
+        uid = uid.slice(0, 4); // Append the first 4 bit of the UID
+        buffer = buffer.concat(uid); // 12byte
+        // Start authentication itself
+        await this.toCard(this.PCD_MFAuthent, buffer);
+        if (!((await this.readRegister(this.Status2Reg)) & 0x08)) {
+            throw new Error("password_authentication_ERROR");
+        }
+    }
+    async readAgainWait() {
+        // If you finish reading and want to read again, this can use instead of init()
+        await this.clearRegisterBitMask(this.Status2Reg, 0x08);
+    }
+    async getSectorDataWait(address) {
+        const response = [];
+        const blockData = [];
+        for (let i = 0; i < 4; i++) {
+            let request = [this.PICC_READ, address * 4 + i];
+            request = request.concat(await this.calculateCRCWait(request));
+            response[i] = await this.toCard(this.PCD_Transceive, request);
+            if (!response[i].status) {
+                throw new Error("data_read_ERROR");
+            }
+            blockData[i] = response[i].data;
+        }
+        return blockData;
+    }
+    async getBlockDataWait(address) {
+        let request = [this.PICC_READ, address];
+        request = request.concat(await this.calculateCRCWait(request));
+        const response = await this.toCard(this.PCD_Transceive, request);
+        if (!response.status) {
+            throw new Error("data_read_ERROR");
+        }
+        return response.data;
+    }
+    async appendCRCtoBufferAndSendToCardWait(buffer) {
+        buffer = buffer.concat(await this.calculateCRCWait(buffer));
+        const response = await this.toCard(this.PCD_Transceive, buffer);
+        if (!response.status || response.bitSize !== 4 || (response.data[0] & 0x0f) !== 0x0a) {
+            response.status = ERROR;
+        }
+        return response;
+    }
+    async writeBlockDataWait(Block, sixteenBytes) {
+        if (Block === 0 || Block % 4 === 3) {
+            throw new Error("deny_Write");
+        }
+        const buffer = [this.PICC_WRITE, Block];
+        let response = await this.appendCRCtoBufferAndSendToCardWait(buffer);
+        if (response.status) {
+            response = await this.appendCRCtoBufferAndSendToCardWait(sixteenBytes);
+        }
+        else {
+            throw new Error("data_write_ERROR");
+        }
     }
 }
 exports.default = MFRC522;
@@ -37281,15 +43203,7 @@ class RN42 {
             val = mode;
         }
         else if (typeof mode === "string") {
-            const modes = [
-                "SPP",
-                "DUN-DCE",
-                "DUN-DTE",
-                "MDM-SPP",
-                "SPP-DUN-DCE",
-                "APL",
-                "HID",
-            ];
+            const modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
             for (let i = 0; i < modes.length; i++) {
                 if (modes[i] === mode) {
                     val = i;
@@ -37374,15 +43288,6 @@ exports.default = RN42;
  * @packageDocumentation
  * @module Parts.XBee
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 class XBee {
     constructor() {
@@ -37466,9 +43371,7 @@ class XBee {
         }
     }
     sendCommand() {
-        if (this.isAtMode === true &&
-            this.currentCommand === null &&
-            this.commands.length > 0) {
+        if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
             this.currentCommand = "AT" + this.commands.shift();
             this.uart.send(this.currentCommand + "\r");
         }
@@ -37487,47 +43390,281 @@ class XBee {
     exitAtMode() {
         this.addCommand("CN");
     }
-    configWait(config) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.isAtMode) {
-                throw new Error("Xbee : duplicate config setting");
-            }
-            return new Promise((resolve, reject) => {
-                const standaloneKeys = {
-                    destination_address_high: "DH",
-                    destination_address_low: "DL",
-                    source_address: "MY",
-                };
-                const highLowKeys = ["destination_address"];
-                this.enterAtMode();
-                for (const key in config) {
-                    if (key.length === 2) {
-                        this.addCommand(key, config[key]);
-                    }
-                    else if (standaloneKeys[key]) {
-                        this.addCommand(standaloneKeys[key], config[key]);
-                    }
-                    else if (highLowKeys.includes(key)) {
-                        let high = config[key].slice(0, -8);
-                        if (!high) {
-                            high = "0";
-                        }
-                        const low = config[key].slice(-8);
-                        this.addCommand(standaloneKeys[key + "_high"], high);
-                        this.addCommand(standaloneKeys[key + "_low"], low);
-                    }
+    async configWait(config) {
+        if (this.isAtMode) {
+            throw new Error("Xbee : duplicate config setting");
+        }
+        return new Promise((resolve, reject) => {
+            const standaloneKeys = {
+                destination_address_high: "DH",
+                destination_address_low: "DL",
+                source_address: "MY",
+            };
+            const highLowKeys = ["destination_address"];
+            this.enterAtMode();
+            for (const key in config) {
+                if (key.length === 2) {
+                    this.addCommand(key, config[key]);
                 }
-                this.exitAtMode();
-                this.onFinishAtModeCallback = () => {
-                    resolve();
-                };
-            });
+                else if (standaloneKeys[key]) {
+                    this.addCommand(standaloneKeys[key], config[key]);
+                }
+                else if (highLowKeys.includes(key)) {
+                    let high = config[key].slice(0, -8);
+                    if (!high) {
+                        high = "0";
+                    }
+                    const low = config[key].slice(-8);
+                    this.addCommand(standaloneKeys[key + "_high"], high);
+                    this.addCommand(standaloneKeys[key + "_low"], low);
+                }
+            }
+            this.exitAtMode();
+            this.onFinishAtModeCallback = () => {
+                resolve();
+            };
         });
     }
 }
 exports.default = XBee;
 
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/i2cCompass.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class I2cCompassAbstract extends i2cParts_1.default {
+    static async calibrateWait() {
+        throw new Error("Method not implemented.");
+    }
+    static async headingWait() {
+        throw new Error("Method not implemented.");
+    }
+    async getWait() {
+        const adc = await this.getAdcWait();
+        return {
+            x: this.calcMag(adc.x),
+            y: this.calcMag(adc.y),
+            z: this.calcMag(adc.z),
+        };
+    }
+    async getAdcArrayWait() {
+        const obj = await this.getAdcWait();
+        return [obj.x, obj.y, obj.z];
+    }
+    async getArrayWait() {
+        const obj = await this.getWait();
+        return [obj.x, obj.y, obj.z];
+    }
+    getUnit() {
+        return this.sf;
+    }
+    getRange() {
+        return this.range;
+    }
+    setUnit(new_unit) {
+        if (Object.keys(I2cCompassAbstract.unitScales).includes(new_unit)) {
+            this.sf = new_unit;
+        }
+        else {
+            throw new Error(`Invalid compass unit. Valid values are ${Object.keys(I2cCompassAbstract.unitScales).join()}`);
+        }
+    }
+    calcMag(data) {
+        return (data * this.so * I2cCompassAbstract.unitScales[this.sf]) / I2cCompassAbstract.unitScales[this.defaultUnit];
+    }
+}
+exports.default = I2cCompassAbstract;
+I2cCompassAbstract.unitScales = {
+    G: 1,
+    uT: 100,
+    mT: 0.1,
+    T: 0.0001,
+    mG: 1000,
+    kG: 0.001,
+    uG: 1000 * 1000,
+};
+
+//# sourceMappingURL=i2cCompass.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/i2cImu6.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class I2cImu6Abstract extends i2cParts_1.default {
+    constructor() {
+        super(...arguments);
+        this.accel_so = "2g";
+        this.gyro_so = "250dps";
+        this.accel_sf = "g";
+        this.gyro_sf = "dps";
+    }
+    static _accelS(value, accel_so, accel_sf) {
+        return (value / I2cImu6Abstract.scales.accel.so[accel_so]) * I2cImu6Abstract.scales.accel.sf[accel_sf];
+    }
+    static _gyroS(value, gyro_so, gyro_sf) {
+        return (value / I2cImu6Abstract.scales.gyro.so[gyro_so]) * I2cImu6Abstract.scales.gyro.sf[gyro_sf];
+    }
+    async getAccelWait() {
+        const adc = await this.getAccelAdcWait();
+        return this.calcAccel(adc);
+    }
+    async getGyroWait() {
+        const adc = await this.getGyroAdcWait();
+        return this.calcGyro(adc);
+    }
+    async getTempWait() {
+        const adc = await this.getTempAdcWait();
+        return this.calcTemp(adc);
+    }
+    async getAllWait() {
+        const adc = await this.getAllAdcWait();
+        const ret = {
+            accelerometer: this.calcAccel(adc.accelerometer),
+            gyroscope: this.calcGyro(adc.gyroscope),
+            temperature: this.calcTemp(adc.temperature),
+        };
+        if ("compass" in adc) {
+            ret.compass = adc.compass;
+        }
+        return ret;
+    }
+    async getAccelArrayWait() {
+        const obj = await this.getAccelWait();
+        return [obj.x, obj.y, obj.z];
+    }
+    async getGyroArrayWait() {
+        const obj = await this.getGyroWait();
+        return [obj.x, obj.y, obj.z];
+    }
+    async getAllArrayWait() {
+        const obj = await this.getAllWait();
+        return [
+            [obj.accelerometer.x, obj.accelerometer.y, obj.accelerometer.z],
+            [obj.gyroscope.x, obj.gyroscope.y, obj.gyroscope.z],
+        ];
+    }
+    async getAccelAdcArrayWait() {
+        const obj = await this.getAccelAdcWait();
+        return [obj.x, obj.y, obj.z];
+    }
+    async getGyroAdcArrayWait() {
+        const obj = await this.getGyroAdcWait();
+        return [obj.x, obj.y, obj.z];
+    }
+    async getAllAdcArrayWait() {
+        const obj = await this.getAllAdcWait();
+        return [
+            [obj.accelerometer.x, obj.accelerometer.y, obj.accelerometer.z],
+            [obj.gyroscope.x, obj.gyroscope.y, obj.gyroscope.z],
+        ];
+    }
+    async getAccelerometerWait() {
+        return await this.getAccelWait();
+    }
+    async getGyroscopeWait() {
+        return await this.getGyroWait();
+    }
+    async getWait() {
+        return await this.getAllWait();
+    }
+    async getAllDataWait() {
+        return await this.getAllWait();
+    }
+    getAccelRange() {
+        return this.accel_so;
+    }
+    getGyroRange() {
+        return this.gyro_so;
+    }
+    getAccelUnit() {
+        return this.accel_sf;
+    }
+    getGyroUnit() {
+        return this.gyro_sf;
+    }
+    setAccelUnit(accel_unit) {
+        if (accel_unit in I2cImu6Abstract.scales.accel.sf) {
+            this.accel_sf = accel_unit;
+        }
+        else {
+            throw new Error(`Invalid accel unit. Valid values are: ${Object.keys(I2cImu6Abstract.scales.accel.sf).join()}`);
+        }
+    }
+    setGyroUnit(gyro_unit) {
+        if (gyro_unit in I2cImu6Abstract.scales.gyro.sf) {
+            this.gyro_sf = gyro_unit;
+        }
+        else {
+            throw new Error(`Invalid gyro unit. Valid values are: ${Object.keys(I2cImu6Abstract.scales.gyro.sf).join()}`);
+        }
+    }
+    calcAccel(adc) {
+        return {
+            x: I2cImu6Abstract._accelS(adc.x, this.accel_so, this.accel_sf),
+            y: I2cImu6Abstract._accelS(adc.y, this.accel_so, this.accel_sf),
+            z: I2cImu6Abstract._accelS(adc.z, this.accel_so, this.accel_sf),
+        };
+    }
+    calcGyro(adc) {
+        return {
+            x: I2cImu6Abstract._gyroS(adc.x, this.gyro_so, this.gyro_sf),
+            y: I2cImu6Abstract._gyroS(adc.y, this.gyro_so, this.gyro_sf),
+            z: I2cImu6Abstract._gyroS(adc.z, this.gyro_so, this.gyro_sf),
+        };
+    }
+}
+exports.default = I2cImu6Abstract;
+// d/so*sf
+I2cImu6Abstract.scales = {
+    accel: {
+        so: {
+            "2g": 16384,
+            "4g": 8192,
+            "8g": 4096,
+            "16g": 2048,
+        },
+        sf: {
+            m_s2: 9.80665,
+            g: 1,
+            mg: 1000,
+        },
+    },
+    gyro: {
+        so: {
+            "125dps": 262.144,
+            "250dps": 131.072,
+            "500dps": 65.536,
+            "1000dps": 32.768,
+            "2000dps": 16.384,
+        },
+        sf: {
+            dps: 1,
+            rps: 0.01745329251,
+        },
+    },
+};
+
+//# sourceMappingURL=i2cImu6.js.map
 
 
 /***/ }),
@@ -37541,40 +43678,45 @@ exports.default = XBee;
  * @packageDocumentation
  * @module Parts
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-class I2cPartsAbstruct {
+class I2cPartsAbstract {
     constructor() {
-        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "vcc"];
+        this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "pull", "clock", "voltage", "address"];
         this.requiredKeys = [];
-        this.i2cinfo = this.i2cInfo();
-        this.address = this.i2cinfo.address;
     }
-    i2cInfo() {
-        throw new Error("abstruct class");
-        // eslint-disable-next-line no-unreachable
+    static charArrayToInt16(values, endian = "b") {
+        const buffer = new ArrayBuffer(2);
+        const dv = new DataView(buffer);
+        dv.setUint8(0, values[0]);
+        dv.setUint8(1, values[1]);
+        return dv.getInt16(0, endian !== "b");
+    }
+    static charArrayToXyz(data, endian = "b", scaleFunc = (d) => d) {
         return {
-            address: 0x00,
-            clock: 100000,
-            voltage: "3v",
+            x: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian)),
+            y: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian)),
+            z: scaleFunc(I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian)),
         };
+    }
+    // public abstract info(): ObnizPartsInfo;
+    i2cInfo() {
+        return this.i2cinfo;
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.i2cinfo.voltage);
-        this.params.clock = this.i2cinfo.clock;
-        this.params.pull = this.i2cinfo.voltage;
+        Object.keys(this.i2cinfo).map((k) => {
+            if (typeof this.params[k] === "undefined") {
+                this.params[k] = this.i2cinfo[k];
+            }
+            else {
+                // @ts-ignore
+                this.i2cinfo[k] = this.params[k];
+            }
+        });
+        obniz.setVccGnd(this.params.vcc, this.params.gnd, this.params.voltage);
         this.params.mode = "master";
-        // @ts-ignore
         this.i2c = this.obniz.getI2CWithConfig(this.params);
+        this.address = this.i2cinfo.address;
     }
     char2short(val1, val2) {
         const buffer = new ArrayBuffer(2);
@@ -37583,24 +43725,40 @@ class I2cPartsAbstruct {
         dv.setUint8(1, val2);
         return dv.getInt16(0, false);
     }
-    readWait(command, length) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.i2c.write(this.address, [command]);
-            return yield this.i2c.readWait(this.address, length);
-        });
+    async readWait(command, length) {
+        this.i2c.write(this.address, [command]);
+        return await this.i2c.readWait(this.address, length);
     }
-    // public async readUint16Wait(command: number, length: number): Promise<number[]> {
-    //   this.i2c.write(this.address, [command]);
-    //   return await this.i2c.readWait(this.address, length);
-    // }
     write(command, buf) {
         if (!Array.isArray(buf)) {
             buf = [buf];
         }
         this.i2c.write(this.address, [command, ...buf]);
     }
+    async writeFlagWait(address, index) {
+        const tempdata = await this.readWait(address, 1);
+        tempdata[0] = tempdata[0] | (0b1 << index);
+        this.write(address, tempdata);
+    }
+    async clearFlagWait(address, index) {
+        const tempdata = await this.readWait(address, 1);
+        tempdata[0] = tempdata[0] & (0xff - (0b1 << index));
+        this.write(address, tempdata);
+    }
+    async readInt16Wait(register, endian = "b") {
+        const data = (await this.readWait(register, 2));
+        return I2cPartsAbstract.charArrayToInt16(data, endian);
+    }
+    async readThreeInt16Wait(register, endian = "b") {
+        const data = await this.readWait(register, 6);
+        const results = [0, 0, 0];
+        results[0] = I2cPartsAbstract.charArrayToInt16(data.slice(0, 2), endian);
+        results[1] = I2cPartsAbstract.charArrayToInt16(data.slice(2, 4), endian);
+        results[2] = I2cPartsAbstract.charArrayToInt16(data.slice(4, 6), endian);
+        return results;
+    }
 }
-exports.default = I2cPartsAbstruct;
+exports.default = I2cPartsAbstract;
 
 //# sourceMappingURL=i2cParts.js.map
 

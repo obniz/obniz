@@ -11,11 +11,12 @@ export interface ObnizPartsInfo {
 }
 
 export default abstract class ObnizPartsInterface {
-  public static info: (() => ObnizPartsInfo);
+  public static info: () => ObnizPartsInfo;
 
   public abstract keys: string[];
   public abstract requiredKeys: string[];
   public abstract ioKeys?: string[];
+  public params: any;
 
   public abstract wired(obniz: Obniz): void;
 }

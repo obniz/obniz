@@ -7,9 +7,9 @@ import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  JoyStickOptions {
+export interface JoyStickOptions {
   sw: number;
   x: number;
   y: number;
@@ -18,7 +18,6 @@ export interface  JoyStickOptions {
 }
 
 export default class JoyStick implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "JoyStick",
@@ -50,7 +49,7 @@ export default class JoyStick implements ObnizPartsInterface {
     this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
     this.requiredKeys = ["sw", "y", "x"];
     this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
-    this.pinname = {sw: "sw12"};
+    this.pinname = { sw: "sw12" };
     this.shortName = "joyS";
   }
 

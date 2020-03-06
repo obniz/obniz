@@ -5,7 +5,7 @@
 
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
-import {DriveType, PullType} from "./common";
+import { DriveType, PullType } from "./common";
 
 interface PeripheralPWMOptions {
   /**
@@ -36,7 +36,6 @@ export type PWMModulateType = "am";
  * @category Peripherals
  */
 export default class PeripheralPWM implements PWMInterface {
-
   /**
    * @ignore
    */

@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -29,10 +28,7 @@ class WSCommandAD extends WSCommand {
 
   public get(params: any, no: any) {
     const buf: any = new Uint8Array([no]);
-    this.sendCommand(
-      params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece,
-      buf,
-    );
+    this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
   }
 
   public deinit(params: any, no: any) {
@@ -48,8 +44,8 @@ class WSCommandAD extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/ad/deinit", onValid: this.deinit},
-        {uri: "/request/ad/get", onValid: this.get},
+        { uri: "/request/ad/deinit", onValid: this.deinit },
+        { uri: "/request/ad/get", onValid: this.get },
       ];
       const res: any = this.validateCommandSchema(schemaData, module, "ad" + i, i);
 

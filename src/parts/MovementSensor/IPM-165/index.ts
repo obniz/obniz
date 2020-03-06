@@ -6,16 +6,15 @@
 import Obniz from "../../../obniz";
 import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  IPM_165Options {
+export interface IPM_165Options {
   signal: number;
   vcc?: number;
   gnd?: number;
 }
 
 export default class IPM_165 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "IPM-165",

@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @module Parts.SainSmartTFT18LCD
@@ -7,9 +6,9 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  SainSmartTFT18LCDOptions {
+export interface SainSmartTFT18LCDOptions {
   scl: number;
   sda: number;
   dc: number;
@@ -22,7 +21,7 @@ export interface  SainSmartTFT18LCDOptions {
 export type RGB16 = number;
 export type RGB24 = number;
 
-export interface  PresetColor {
+export interface PresetColor {
   AliceBlue: RGB16;
   AntiqueWhite: RGB16;
   Aqua: RGB16;
@@ -167,7 +166,6 @@ export interface  PresetColor {
 }
 
 export default class SainSmartTFT18LCD implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "SainSmartTFT18LCD",
@@ -187,7 +185,7 @@ export default class SainSmartTFT18LCD implements ObnizPartsInterface {
   public height: number = 0;
   public writeBuffer: number[] = [];
   public color!: PresetColor;
-  protected displayIoNames: {[key: string]: string};
+  protected displayIoNames: { [key: string]: string };
 
   constructor() {
     this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];
@@ -233,16 +231,13 @@ export default class SainSmartTFT18LCD implements ObnizPartsInterface {
 
   public print_debug(v: any) {
     if (this.debugprint) {
-      console.log(
-        "SainSmartTFT18LCD: " + Array.prototype.slice.call(arguments).join(""),
-      );
+      console.log("SainSmartTFT18LCD: " + Array.prototype.slice.call(arguments).join(""));
     }
   }
 
   public _deadSleep(waitMsec: number) {
     const startMsec: any = new Date();
-    while ((new Date() as any) - startMsec < waitMsec) {
-    }
+    while ((new Date() as any) - startMsec < waitMsec) {}
   }
 
   public _reset() {
@@ -436,9 +431,7 @@ export default class SainSmartTFT18LCD implements ObnizPartsInterface {
   }
 
   public setAddrWindow(x0: number, y0: number, x1: number, y1: number) {
-    this.print_debug(
-      `setAddrWindow: (x0: ${x0}, y0: ${y0}) - (x1: ${x1}, y1: ${y1})`,
-    );
+    this.print_debug(`setAddrWindow: (x0: ${x0}, y0: ${y0}) - (x1: ${x1}, y1: ${y1})`);
 
     if (x0 < 0) {
       x0 = 0;
@@ -1091,9 +1084,7 @@ export default class SainSmartTFT18LCD implements ObnizPartsInterface {
         const cl = line & 0x1 ? color : bg;
         for (let w = 0; w < size; w++) {
           for (let h = 0; h < size; h++) {
-            pixels[
-            i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))
-              ] = cl;
+            pixels[i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))] = cl;
           }
         }
         line >>= 1;

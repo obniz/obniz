@@ -4,6 +4,54 @@
 
 
 
+##  request: <a name="-request-ble-hci-init">init</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.hci.initialize` |  boolean  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "hci": {
+                "initialize": true
+            }
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-ble-hci-deinit">deinit</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.hci` |  null  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "hci": null
+        }
+    }
+]
+```
+
+
 ##  request: <a name="-request-ble-hci-write">write</a>
 
 
@@ -22,6 +70,41 @@
         "ble": {
             "hci": {
                 "write": [16, 34, 242]
+            }
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-ble-hci-advertisement_filter">advertisement_filter</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.hci.advertisement_filter[].range.index` |  integer  | <ul><li>required</li><li>0 &le; value &le; 255</li></ul> | &nbsp; |
+| `ble.hci.advertisement_filter[].range.length` |  integer  | <ul><li>required</li><li>0 &le; value &le; 255</li></ul> | &nbsp; |
+| `ble.hci.advertisement_filter[].value` | [dataArray](#dataarray)  | &nbsp; | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "hci": {
+                "advertisement_filter": [
+                    {
+                        "range": {
+                            "index": 127,
+                            "length": 127
+                        },
+                        "value": [16, 34, 242]
+                    }
+                ]
             }
         }
     }

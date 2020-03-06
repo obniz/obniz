@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/pwm/modulate"
+
+type: object
+required: [modulate]
+properties:
+  modulate:
+    type: object
+    required: [type, symbol_length, data]
+    additionalProperties: false
+    properties:
+      type:
+        type: string
+        enum:
+          - am
+
+      symbol_length:
+        type: number
+        minimum: 0.05
+        maximum: 1000
+        description: "symbol width (ms)"
+
+      data: {$ref: "/bitArray" }

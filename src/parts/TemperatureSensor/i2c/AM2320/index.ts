@@ -10,13 +10,12 @@
 
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstructOptions} from "../../../i2cParts";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
+import { I2cPartsAbstractOptions } from "../../../i2cParts";
 
-export interface  AM2320Options extends I2cPartsAbstructOptions { }
+export interface AM2320Options extends I2cPartsAbstractOptions {}
 
 export default class AM2320 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "AM2320",
@@ -46,10 +45,12 @@ export default class AM2320 implements ObnizPartsInterface {
     this.i2c = obniz.getI2CWithConfig(this.params);
   }
 
-  public async getAllWait(): Promise<{ temperature: number; humidity: number }> {
+  public async getAllWait(): Promise<{
+    temperature: number;
+    humidity: number;
+  }> {
     const i2cOnerror: any = this.i2c.onerror;
-    this.i2c.onerror = () => {
-    };
+    this.i2c.onerror = () => {};
     this.i2c.write(this.address, [0]); // wake
     this.obniz.wait(2);
     this.i2c.write(this.address, [0x03, 0x00, 0x04]);
@@ -62,7 +63,7 @@ export default class AM2320 implements ObnizPartsInterface {
     }
     const humidity: any = (ret[2] * 256 + ret[3]) / 10.0;
     const temperature: any = (ret[4] * 256 + ret[5]) / 10.0;
-    return {temperature, humidity};
+    return { temperature, humidity };
   }
 
   public async getTempWait(): Promise<number | null> {

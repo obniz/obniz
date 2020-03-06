@@ -8,8 +8,7 @@
 /**
  * @ignore
  */
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 import events from "events";
 import os from "os";
@@ -100,10 +99,7 @@ class BlenoBindings extends events.EventEmitter {
     this._hci.on("readLocalVersion", this.onReadLocalVersion.bind(this));
 
     this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-    this._hci.on(
-      "leConnUpdateComplete",
-      this.onLeConnUpdateComplete.bind(this),
-    );
+    this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
     this._hci.on("rssiRead", this.onRssiRead.bind(this));
     this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
     this._hci.on("encryptChange", this.onEncryptChange.bind(this));
@@ -120,19 +116,11 @@ class BlenoBindings extends events.EventEmitter {
     this._state = state;
 
     if (state === "unauthorized") {
-      console.log(
-        "bleno warning: adapter state unauthorized, please run as root or with sudo",
-      );
-      console.log(
-        "               or see README for information on running without root/sudo:",
-      );
-      console.log(
-        "               https://github.com/sandeepmistry/bleno#running-on-linux",
-      );
+      console.log("bleno warning: adapter state unauthorized, please run as root or with sudo");
+      console.log("               or see README for information on running without root/sudo:");
+      console.log("               https://github.com/sandeepmistry/bleno#running-on-linux");
     } else if (state === "unsupported") {
-      console.log(
-        "bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).",
-      );
+      console.log("bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).");
       console.log("               Try to run with environment variable:");
       console.log("               [sudo] BLENO_HCI_DEVICE_ID=x node ...");
     }
@@ -144,8 +132,7 @@ class BlenoBindings extends events.EventEmitter {
     this.emit("addressChange", address);
   }
 
-  public onReadLocalVersion(hciVer: any, hciRev?: any, lmpVer?: any, manufacturer?: any, lmpSubVer?: any) {
-  }
+  public onReadLocalVersion(hciVer: any, hciRev?: any, lmpVer?: any, manufacturer?: any, lmpSubVer?: any) {}
 
   public onAdvertisingStart(error: any) {
     this.emit("advertisingStart", error);
@@ -173,14 +160,7 @@ class BlenoBindings extends events.EventEmitter {
 
     this._address = address;
     this._handle = handle;
-    this._aclStream = new AclStream(
-      this._hci,
-      handle,
-      this._hci.addressType,
-      this._hci.address,
-      addressType,
-      address,
-    );
+    this._aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
     this._gatt.setAclStream(this._aclStream);
 
     this.emit("accept", address);

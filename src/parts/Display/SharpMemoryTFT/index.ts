@@ -6,9 +6,9 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  SharpMemoryTFTOptions {
+export interface SharpMemoryTFTOptions {
   vcc?: number;
   gnd?: number;
   vcc_a?: number;
@@ -24,7 +24,6 @@ export interface  SharpMemoryTFTOptions {
 }
 
 export default class SharpMemoryTFT implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "SharpMemoryTFT",
@@ -50,7 +49,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
   public spi!: PeripheralSPI;
   public width = 0;
   public height = 0;
-  public _pos = {x: 0 , y: 0};
+  public _pos = { x: 0, y: 0 };
   public autoFlush = false;
   public fontSize = 0;
   public createCanvas: any;
@@ -165,15 +164,13 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
   // copy from display.js
 
   public _reset() {
-    this._pos = {x: 0, y: 0};
+    this._pos = { x: 0, y: 0 };
     this.autoFlush = true;
   }
 
   public warnCanvasAvailability() {
     if (this.obniz.isNode) {
-      throw new Error(
-        "MemoryDisplay require node-canvas to draw rich contents. see more detail on docs",
-      );
+      throw new Error("MemoryDisplay require node-canvas to draw rich contents. see more detail on docs");
     } else {
       throw new Error("MemoryDisplay cant create canvas element to body");
     }
@@ -185,7 +182,7 @@ export default class SharpMemoryTFT implements ObnizPartsInterface {
     }
     if (this.obniz.isNode) {
       try {
-        const {createCanvas} = require("canvas");
+        const { createCanvas } = require("canvas");
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();

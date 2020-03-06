@@ -1,0 +1,24 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral/characteristic_write"
+description: "write characteristic on own service"
+related: "/response/ble/peripheral/characteristic_write"
+deprecated: 3.0.0
+
+
+type: object
+required: [peripheral]
+properties:
+  peripheral:
+    type: object
+    required: [write_characteristic]
+    properties:
+      write_characteristic:
+        type: object
+        required: [service_uuid,characteristic_uuid,data]
+        additionalProperties: false
+        properties:
+          service_uuid: {$ref: "/uuid"}
+          characteristic_uuid: {$ref: "/uuid"}
+          data: {$ref: "/dataArray"}

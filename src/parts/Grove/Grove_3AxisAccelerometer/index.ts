@@ -4,18 +4,24 @@
  */
 
 import Obniz from "../../../obniz";
+import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  Grove_3AxisAccelerometerOptions {
+interface Grove_3AxisAccelerometerOptionsA {
   gnd?: number;
   vcc?: number;
   sda: number;
   scl: number;
 }
 
-export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
+interface Grove_3AxisAccelerometerOptionsB {
+  grove: PeripheralGrove;
+}
 
+export type Grove_3AxisAccelerometerOptions = Grove_3AxisAccelerometerOptionsA | Grove_3AxisAccelerometerOptionsB;
+
+export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: "Grove_3AxisAccelerometer",
@@ -26,7 +32,7 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
   public requiredKeys: string[];
   public ioKeys: string[];
   public displayName = "3axis";
-  public displayIoNames = {sda: "sda", scl: "scl"};
+  public displayIoNames = { sda: "sda", scl: "scl" };
 
   public address = 0x53;
   public regAdrs: any;
@@ -41,8 +47,8 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
   private etRegisterBit: any;
 
   constructor() {
-    this.keys = ["gnd", "vcc", "sda", "scl"];
-    this.requiredKeys = ["sda", "scl"];
+    this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+    this.requiredKeys = [];
 
     this.ioKeys = this.keys;
 
@@ -82,13 +88,19 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
 
   public async wired(obniz: any) {
     this.obniz = obniz;
-    this.vcc = this.params.vcc;
-    this.gnd = this.params.gnd;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
-    this.params.clock = 400000;
-    this.params.mode = "master";
-    this.i2c = obniz.getI2CWithConfig(this.params);
+    if (this.params.grove) {
+      this.i2c = this.params.grove.getI2c(400000, "5v");
+    } else {
+      this.vcc = this.params.vcc;
+      this.gnd = this.params.gnd;
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+      this.params.clock = 400000;
+      this.params.mode = "master";
+
+      this.i2c = obniz.getI2CWithConfig(this.params);
+    }
     this.obniz.wait(100);
 
     // power on
@@ -107,7 +119,7 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
     await this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
     await this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
-    await this.etRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+    await this.setRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
 
     this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
     this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
@@ -117,26 +129,11 @@ export default class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
 
     // setInterruptMapping
-    await this.setInterruptMapping(
-      this.regAdrs.INT_SINGLE_TAP_BIT,
-      this.constVal.INT1_PIN,
-    );
-    await this.setInterruptMapping(
-      this.regAdrs.INT_DOUBLE_TAP_BIT,
-      this.constVal.INT1_PIN,
-    );
-    await this.setInterruptMapping(
-      this.regAdrs.INT_FREE_FALL_BIT,
-      this.constVal.INT1_PIN,
-    );
-    await this.setInterruptMapping(
-      this.regAdrs.INT_ACTIVITY_BIT,
-      this.constVal.INT1_PIN,
-    );
-    await this.setInterruptMapping(
-      this.regAdrs.INT_INACTIVITY_BIT,
-      this.constVal.INT1_PIN,
-    );
+    await this.setInterruptMapping(this.regAdrs.INT_SINGLE_TAP_BIT, this.constVal.INT1_PIN);
+    await this.setInterruptMapping(this.regAdrs.INT_DOUBLE_TAP_BIT, this.constVal.INT1_PIN);
+    await this.setInterruptMapping(this.regAdrs.INT_FREE_FALL_BIT, this.constVal.INT1_PIN);
+    await this.setInterruptMapping(this.regAdrs.INT_ACTIVITY_BIT, this.constVal.INT1_PIN);
+    await this.setInterruptMapping(this.regAdrs.INT_INACTIVITY_BIT, this.constVal.INT1_PIN);
 
     // setInterrupt
     await this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);

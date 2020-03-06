@@ -6,11 +6,11 @@
 import Obniz from "../../../obniz";
 import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  OMRON_2JCIEOptions {}
+export interface OMRON_2JCIEOptions {}
 
-export interface  OMRON_2JCIE_Data {
+export interface OMRON_2JCIE_Data {
   row_number: number;
   temperature: number;
   relative_humidity: number;
@@ -24,7 +24,6 @@ export interface  OMRON_2JCIE_Data {
 }
 
 export default class OMRON_2JCIE implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "2JCIE",
@@ -35,6 +34,7 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
   public requiredKeys: string[];
   public periperal: bleRemotePeripheral | null;
   public obniz!: Obniz;
+  public params: any;
 
   constructor() {
     this.keys = [];
@@ -51,6 +51,7 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
       localName: "Env",
     };
 
+    await this.obniz.ble!.initWait();
     this.periperal = await this.obniz.ble!.scan.startOneWait(target);
 
     return this.periperal;
@@ -102,9 +103,9 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
   public async getLatestData(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
-    const c: bleRemoteCharacteristic = this.periperal!
-      .getService(this.omron_uuid("3000"))
-      .getCharacteristic(this.omron_uuid("3001"));
+    const c: bleRemoteCharacteristic = this.periperal!.getService(this.omron_uuid("3000")).getCharacteristic(
+      this.omron_uuid("3001"),
+    );
     const data: number[] = await c.readWait();
     const json: any = {
       row_number: data[0],
@@ -115,10 +116,8 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
       barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
       soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
       discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
-      heatstroke_risk_factor:
-        this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
-      battery_voltage:
-        this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+      heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
+      battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
     };
 
     return json;

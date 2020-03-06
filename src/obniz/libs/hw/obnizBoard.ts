@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module ObnizCore.Components.hw
+ * @module ObnizCore.Hardware
  */
 
 import Obniz from "../../index";

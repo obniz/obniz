@@ -5,9 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  JpegSerialCamOptions {
+export interface JpegSerialCamOptions {
   vcc?: number;
   cam_tx: number;
   cam_rx: number;
@@ -19,7 +19,6 @@ export type JpegSerialCamSize = "640x480" | "320x240" | "160x120";
 export type JpegSerialCamBaud = 9600 | 19200 | 38400 | 57600 | 115200;
 
 export default class JpegSerialCam implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "JpegSerialCam",
@@ -43,7 +42,7 @@ export default class JpegSerialCam implements ObnizPartsInterface {
 
     this.ioKeys = this.keys;
     this.displayName = "Jcam";
-    this.displayIoNames = {cam_tx: "camTx", cam_rx: "camRx"};
+    this.displayIoNames = { cam_tx: "camTx", cam_rx: "camRx" };
   }
 
   public wired(obniz: Obniz) {
@@ -156,18 +155,7 @@ export default class JpegSerialCam implements ObnizPartsInterface {
       default:
         throw new Error("invalid baud rate");
     }
-    this.uart.send([
-      0x56,
-      0x00,
-      0x31,
-      0x06,
-      0x04,
-      0x02,
-      0x00,
-      0x08,
-      val[0],
-      val[1],
-    ]);
+    this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     // await this.obniz.wait(1000);
     await this.startWait({
@@ -187,15 +175,7 @@ export default class JpegSerialCam implements ObnizPartsInterface {
 
     // console.log("read length")
     uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-    let recv = await this._drainUntil(uart, [
-      0x76,
-      0x00,
-      0x34,
-      0x00,
-      0x04,
-      0x00,
-      0x00,
-    ]); // ack
+    let recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
     let XX: any;
     let YY: any;
     while (true) {
@@ -215,24 +195,7 @@ export default class JpegSerialCam implements ObnizPartsInterface {
     // const low = databytes & 0xff;
 
     // console.log("start reading image")
-    uart.send([
-      0x56,
-      0x00,
-      0x32,
-      0x0c,
-      0x00,
-      0x0a,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      XX,
-      YY,
-      0x00,
-      0xff,
-    ]);
+    uart.send([0x56, 0x00, 0x32, 0x0c, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xff]);
     recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
     // console.log("reading...");
     while (true) {

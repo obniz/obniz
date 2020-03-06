@@ -5,16 +5,15 @@
 
 import Obniz from "../../../obniz";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  WS2812Options {
+export interface WS2812Options {
   din: number;
   vcc?: number;
   gnd?: number;
 }
 
 export default class WS2812 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "WS2812",
@@ -131,9 +130,7 @@ export default class WS2812 implements ObnizPartsInterface {
     let bytes: any = [];
     for (let i = 0; i < array.length; i++) {
       const oneArray: any = array[i];
-      bytes = bytes.concat(
-        WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2]),
-      );
+      bytes = bytes.concat(WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }
@@ -142,9 +139,7 @@ export default class WS2812 implements ObnizPartsInterface {
     let bytes: any = [];
     for (let i = 0; i < array.length; i++) {
       const oneArray: any = array[i];
-      bytes = bytes.concat(
-        WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]),
-      );
+      bytes = bytes.concat(WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }

@@ -4,12 +4,12 @@
  */
 
 import Obniz from "../../../obniz";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 import InfraredLED from "../InfraredLED";
 import IRSensor from "../IRSensor";
 
-export interface  IRModuleOptions {
+export interface IRModuleOptions {
   send: number;
   recv: number;
   vcc?: number;
@@ -17,7 +17,6 @@ export interface  IRModuleOptions {
 }
 
 export default class IRModule implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "IRModule",
@@ -92,13 +91,10 @@ export default class IRModule implements ObnizPartsInterface {
     Object.defineProperty(this, varName, {
       get() {
         return this[partsName][varName];
-      }
-      ,
+      },
       set(x: any) {
         this[partsName][varName] = x;
-      }
-      ,
-    })
-    ;
+      },
+    });
   }
 }

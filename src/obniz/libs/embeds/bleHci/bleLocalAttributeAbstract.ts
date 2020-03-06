@@ -21,8 +21,10 @@ enum BleResponseResult {
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
-
+export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<
+  ParentClass,
+  ChildrenClass
+> {
   /**
    * @ignore
    */
@@ -35,7 +37,6 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
 
   constructor(params: any) {
     super(params);
-
   }
 
   /**
@@ -63,10 +64,10 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
   public emit(name: any, ...params: any) {
     switch (name) {
       case "readRequest":
-        this._onReadRequest(...params as [any, any]);
+        this._onReadRequest(...(params as [any, any]));
         return true;
       case "writeRequest":
-        this._onWriteRequest(...params as [any, any]);
+        this._onWriteRequest(...(params as [any, any]));
         return true;
     }
     return false;
@@ -83,12 +84,11 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
       callback(BleResponseResult.SUCCESS, Buffer.from(this.data.slice(offset)));
       let address: any = null;
       if (this.parentName === "characteristic") {
-        address = this.characteristic!.service.peripheral
-          .currentConnectedDeviceAddress;
+        address = this.characteristic!.service.peripheral.currentConnectedDeviceAddress;
       } else if (this.parentName === "service") {
         address = this.service!.peripheral.currentConnectedDeviceAddress;
       }
-      this.notifyFromServer("onreadfromremote", {address});
+      this.notifyFromServer("onreadfromremote", { address });
     } else {
       callback(BleResponseResult.UNLIKELY_ERROR, null);
     }
@@ -108,12 +108,11 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
     callback(BleResponseResult.SUCCESS);
     let address: any = null;
     if (this.parentName === "characteristic") {
-      address = this.characteristic.service.peripheral
-        .currentConnectedDeviceAddress;
+      address = this.characteristic.service.peripheral.currentConnectedDeviceAddress;
     } else if (this.parentName === "service") {
       address = this.service.peripheral.currentConnectedDeviceAddress;
     }
-    this.notifyFromServer("onwritefromremote", {address, data});
+    this.notifyFromServer("onwritefromremote", { address, data });
   }
 
   /**
@@ -122,7 +121,7 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
    */
   public write(dataArray: number[]) {
     this.data = dataArray;
-    this.notifyFromServer("onwrite", {result: "success"});
+    this.notifyFromServer("onwrite", { result: "success" });
   }
 
   /**
@@ -130,6 +129,6 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
    * @param dataArray
    */
   public read() {
-    this.notifyFromServer("onread", {data: this.data});
+    this.notifyFromServer("onread", { data: this.data });
   }
 }

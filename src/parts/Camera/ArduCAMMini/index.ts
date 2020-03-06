@@ -4,12 +4,12 @@
  */
 
 import Obniz from "../../../obniz";
-import {DriveType} from "../../../obniz/libs/io_peripherals/common";
+import { DriveType } from "../../../obniz/libs/io_peripherals/common";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import PeripheralSPI from "../../../obniz/libs/io_peripherals/spi";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface ArduCAMMiniOptions {
   cs: number;
@@ -40,7 +40,6 @@ export type ArduCAMMiniSize =
   | "1600x1200";
 
 export default class ArduCAMMini implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "ArduCAMMini",

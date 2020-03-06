@@ -8,8 +8,7 @@
     "dist",
     "!dist/**/*.map",
     "index.js",
-    "obniz.js",
-    "obniz.min.js"
+    "obniz.js"
   ],
   "engines": {
     "node": ">=8.17.0"
@@ -24,15 +23,15 @@
     "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
-    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build && npm run doc",
+    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
     "doc": "typedoc --includes ./src/ --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
     "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "version": "npm run build && git add obniz.js && git add obniz.min.js",
+    "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
-    "clean": "rimraf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
+    "precommit": "lint-staged && npm run build && git add obniz.js",
+    "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -103,6 +102,7 @@
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
     "tslint": "^5.20.1",
+    "tslint-plugin-prettier": "^2.1.0",
     "typescript": "^3.7.5",
     "typedoc": "^0.16.9",
     "typedoc-plugin-external-module-name": "^3.0.0",

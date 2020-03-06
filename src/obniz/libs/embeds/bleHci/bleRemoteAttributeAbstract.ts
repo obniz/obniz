@@ -7,8 +7,10 @@ import BleAttributeAbstract from "./bleAttributeAbstract";
 /**
  * @category Use as Central
  */
-export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
-
+export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<
+  ParentClass,
+  ChildrenClass
+> {
   constructor(params: any) {
     super(params);
 
@@ -31,8 +33,7 @@ export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> exte
   /**
    * @ignore
    */
-  public discoverChildren() {
-  }
+  public discoverChildren() {}
 
   /**
    * @ignore
@@ -53,15 +54,13 @@ export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> exte
    * @ignore
    * @param child
    */
-  public ondiscover(child: any) {
-  }
+  public ondiscover(child: any) {}
 
   /**
    * @ignore
    * @param children
    */
-  public ondiscoverfinished(children: any) {
-  }
+  public ondiscoverfinished(children: any) {}
 
   /**
    * @ignore
@@ -75,7 +74,7 @@ export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> exte
         const uuid: any = params[this.wsChildUuidName!];
         let child: any = this.getChild(uuid);
         if (!child) {
-          child = this.addChild({uuid});
+          child = this.addChild({ uuid });
         }
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];

@@ -4,7 +4,7 @@
  */
 
 import ObnizComponents from "./ObnizComponents";
-import {ObnizOptions} from "./ObnizOptions";
+import { ObnizOptions } from "./ObnizOptions";
 
 export default class ObnizSystemMethods extends ObnizComponents {
   constructor(id: string, options?: ObnizOptions) {
@@ -50,7 +50,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
     } else if (msec > 60 * 1000) {
       msec = 60 * 1000;
     }
-    this.send({system: {wait: msec}});
+    this.send({ system: { wait: msec } });
     return new Promise((resolve) => setTimeout(resolve, msec));
   }
 
@@ -66,7 +66,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    * ```
    */
   public reset() {
-    this.send({system: {reset: true}});
+    this.send({ system: { reset: true } });
     this._resetComponents();
   }
 
@@ -78,14 +78,14 @@ export default class ObnizSystemMethods extends ObnizComponents {
    * ```
    */
   public reboot() {
-    this.send({system: {reboot: true}});
+    this.send({ system: { reboot: true } });
   }
 
   /**
    * @ignore
    */
   public selfCheck() {
-    this.send({system: {self_check: true}});
+    this.send({ system: { self_check: true } });
   }
 
   /**
@@ -101,7 +101,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    * @param working
    */
   public keepWorkingAtOffline(working: any) {
-    this.send({system: {keep_working_at_offline: working}});
+    this.send({ system: { keep_working_at_offline: working } });
   }
 
   /**
@@ -123,7 +123,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    * @param reset
    */
   public resetOnDisconnect(reset: any) {
-    this.send({ws: {reset_obniz_on_ws_disconnection: reset}});
+    this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
   }
 
   /**
@@ -146,7 +146,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
       // max 18h (60(s)*60(m)*18(h))
       throw new Error("Error max 18h(64800) sleep");
     }
-    this.send({system: {sleep_seconds: sec}});
+    this.send({ system: { sleep_seconds: sec } });
   }
 
   /**
@@ -170,7 +170,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
       // max 45day (60(m)*24(h)*45(d))
       throw new Error("max 45day(64800m) sleep");
     }
-    this.send({system: {sleep_minute: minute}});
+    this.send({ system: { sleep_minute: minute } });
   }
 
   /**
@@ -230,7 +230,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
     if (typeof trigger !== "boolean") {
       throw new Error("sleepIoTrigger need boolean arg");
     }
-    this.send({system: {sleep_io_trigger: trigger}});
+    this.send({ system: { sleep_io_trigger: trigger } });
   }
 
   /**
@@ -274,7 +274,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
       },
     };
 
-    this.send(obj, {local_connect: forceGlobalNetwork ? false : true});
+    this.send(obj, { local_connect: forceGlobalNetwork ? false : true });
 
     return new Promise((resolve: any) => {
       const callback: any = (systemObj: any) => {
@@ -298,10 +298,8 @@ export default class ObnizSystemMethods extends ObnizComponents {
         const obnizJsPongUnixtime: any = new Date().getTime();
         const allTime: any = obnizJsPongUnixtime - obnizJsPingUnixtime;
         const timeJs2server: any = systemObj.pong.pingServerTime - obnizJsPingUnixtime;
-        const timeServer2Obniz: any =
-          systemObj.pong.obnizTime - systemObj.pong.pingServerTime;
-        const timeObniz2Server: any =
-          systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
+        const timeServer2Obniz: any = systemObj.pong.obnizTime - systemObj.pong.pingServerTime;
+        const timeObniz2Server: any = systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
         const timeServer2Js: any = obnizJsPongUnixtime - systemObj.pong.pongServerTime;
         const str: any = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
 

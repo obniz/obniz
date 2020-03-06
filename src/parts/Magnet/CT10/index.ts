@@ -5,16 +5,15 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  CT10Options {
+export interface CT10Options {
   signal: number;
   vcc?: number;
   gnd?: number;
 }
 
 export default class CT10 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "CT10",
@@ -36,8 +35,7 @@ export default class CT10 implements ObnizPartsInterface {
     this.keys = ["signal", "gnd", "vcc"];
     this.requiredKeys = ["signal"];
 
-    this.onChangeForStateWait = () => {
-    };
+    this.onChangeForStateWait = () => {};
   }
 
   public wired(obniz: Obniz) {
@@ -71,10 +69,9 @@ export default class CT10 implements ObnizPartsInterface {
   public stateWait(isNear: boolean): Promise<any> {
     return new Promise((resolve) => {
       this.onChangeForStateWait = (near: boolean) => {
-          if (isNear === near) {
-            this.onChangeForStateWait = () => {
-          };
-            resolve();
+        if (isNear === near) {
+          this.onChangeForStateWait = () => {};
+          resolve();
         }
       };
     });

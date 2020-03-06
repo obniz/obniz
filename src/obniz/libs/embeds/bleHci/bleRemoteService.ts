@@ -5,13 +5,12 @@
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
 import BleRemotePeripheral from "./bleRemotePeripheral";
-import {UUID} from "./bleTypes";
+import { UUID } from "./bleTypes";
 
 /**
  * @category Use as Central
  */
 export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemotePeripheral, BleRemoteCharacteristic> {
-
   /**
    * Peripheral instance
    */
@@ -124,9 +123,31 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
   }
 
   /**
-   * @ignore
+   * Discover services.
+   *
+   * If connect setting param 'autoDiscovery' is true(default),
+   * services are automatically disvocer on connection established.
+   *
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.ble.initWait({});
+   * obniz.ble.scan.onfind = function(peripheral){
+   * if(peripheral.localName == "my peripheral"){
+   *      peripheral.onconnect = async function(){
+   *          console.log("success");
+   *          await peripheral.discoverAllServicesWait(); //manually discover
+   *          let service = peripheral.getService("1800");
+   *          await service.discoverAllCharacteristicsWait(); //manually discover
+   *          let characteristics = service.getCharacteristic("ff00")
+   *      }
+   *      peripheral.connect({autoDiscovery:false});
+   *     }
+   * }
+   * obniz.ble.scan.start();
+   * ```
    */
-  public discoverAllCharacteristicsWait() {
+  public discoverAllCharacteristicsWait(): Promise<BleRemoteCharacteristic[]> {
     return this.discoverChildrenWait();
   }
 
@@ -134,10 +155,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    */
   public discoverChildren() {
-    this.parent!.obnizBle.centralBindings.discoverCharacteristics(
-      this.peripheral.address,
-      this.uuid,
-    );
+    this.parent!.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
   }
 
   /**
@@ -160,13 +178,11 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    * @param characteristic
    */
-  public ondiscovercharacteristic(characteristic: any) {
-  }
+  public ondiscovercharacteristic(characteristic: any) {}
 
   /**
    * @ignore
    * @param characteristics
    */
-  public ondiscovercharacteristicfinished(characteristics: any[]) {
-  }
+  public ondiscovercharacteristicfinished(characteristics: any[]) {}
 }

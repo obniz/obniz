@@ -6,9 +6,9 @@
 import Obniz from "../../../obniz";
 
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  FullColorLEDOptions {
+export interface FullColorLEDOptions {
   r: number;
   g: number;
   b: number;
@@ -17,7 +17,6 @@ export interface  FullColorLEDOptions {
 }
 
 export default class FullColorLED implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "FullColorLED",
@@ -43,7 +42,6 @@ export default class FullColorLED implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-
     this.anode_keys = ["anode", "anode_common", "anodeCommon", "vcc"];
     this.cathode_keys = ["cathode", "cathode_common", "cathodeCommon", "gnd"];
     this.animationName = "FullColorLED-" + Math.round(Math.random() * 1000);
@@ -65,9 +63,7 @@ export default class FullColorLED implements ObnizPartsInterface {
     } else if (this.cathode_keys.includes(commontype)) {
       this.commontype = this.COMMON_TYPE_CATHODE;
     } else {
-      this.obniz.error(
-        "FullColorLED param need common type [  anode_common or cathode_common ] ",
-      );
+      this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
     }
 
     this.common = this.obniz.getIO(common);
@@ -77,13 +73,13 @@ export default class FullColorLED implements ObnizPartsInterface {
     this.obniz.getIO(g).output(this.commontype);
     this.obniz.getIO(b).output(this.commontype);
     this.pwmR = this.obniz.getFreePwm();
-    this.pwmR.start({io: r});
+    this.pwmR.start({ io: r });
     this.pwmR.freq(1000);
     this.pwmG = this.obniz.getFreePwm();
-    this.pwmG.start({io: g});
+    this.pwmG.start({ io: g });
     this.pwmG.freq(1000);
     this.pwmB = this.obniz.getFreePwm();
-    this.pwmB.start({io: b});
+    this.pwmB.start({ io: b });
     this.pwmB.freq(1000);
     this.rgb(0, 0, 0);
   }

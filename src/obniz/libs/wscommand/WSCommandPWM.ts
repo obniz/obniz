@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -108,11 +107,11 @@ class WSCommandPWM extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/pwm/init", onValid: this.init},
-        {uri: "/request/pwm/freq", onValid: this.freq},
-        {uri: "/request/pwm/pulse", onValid: this.pulse},
-        {uri: "/request/pwm/modulate", onValid: this.amModulate},
-        {uri: "/request/pwm/deinit", onValid: this.deinit},
+        { uri: "/request/pwm/init", onValid: this.init },
+        { uri: "/request/pwm/freq", onValid: this.freq },
+        { uri: "/request/pwm/pulse", onValid: this.pulse },
+        { uri: "/request/pwm/modulate", onValid: this.amModulate },
+        { uri: "/request/pwm/deinit", onValid: this.deinit },
       ];
       const res: any = this.validateCommandSchema(schemaData, module, "pwm" + i, i);
 

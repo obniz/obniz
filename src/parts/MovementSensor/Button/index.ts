@@ -5,15 +5,14 @@
 
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  ButtonOptions {
+export interface ButtonOptions {
   signal: number;
   gnd?: number;
 }
 
 export default class Button implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Button",
@@ -35,8 +34,7 @@ export default class Button implements ObnizPartsInterface {
     this.keys = ["signal", "gnd", "pull"];
     this.requiredKeys = ["signal"];
 
-    this.onChangeForStateWait = () => {
-    };
+    this.onChangeForStateWait = () => {};
   }
 
   public wired(obniz: Obniz) {
@@ -74,8 +72,7 @@ export default class Button implements ObnizPartsInterface {
     return new Promise((resolve, reject) => {
       this.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
-          this.onChangeForStateWait = () => {
-          };
+          this.onChangeForStateWait = () => {};
           resolve();
         }
       };

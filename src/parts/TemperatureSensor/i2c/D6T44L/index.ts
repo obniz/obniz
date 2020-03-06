@@ -6,13 +6,12 @@
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstructOptions} from "../../../i2cParts";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
+import { I2cPartsAbstractOptions } from "../../../i2cParts";
 
-export interface  D6T44LOptions extends I2cPartsAbstructOptions { }
+export interface D6T44LOptions extends I2cPartsAbstractOptions {}
 
 class D6T44L implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "D6T44L",
@@ -64,9 +63,7 @@ class D6T44L implements ObnizPartsInterface {
     const data: number[] = [];
 
     for (let i = 0; i < 16; i++) {
-      data[i] = parseFloat(
-        ((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1),
-      );
+      data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
     }
 
     return data;

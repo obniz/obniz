@@ -15,7 +15,7 @@ export type BleDeviceAddress = string;
 export type BleDeviceType = "ble" | "dumo" | "breder";
 export type BleDeviceAddressType = "public" | "random" | "rpa_public" | "rpa_random";
 export type BleEventType =
-  "connectable_advertisemnt"
+  | "connectable_advertisemnt"
   | "connectable_directed_advertisemnt"
   | "scannable_advertising"
   | "non_connectable_advertising"
@@ -24,7 +24,7 @@ export type BleEventType =
 export type BleAttributePropery = "broadcast" | "notify" | "read" | "write" | "write_without_response" | "indicate";
 
 export type BleAdvertisementFlag =
-  "limited_discoverable_mode"
+  | "limited_discoverable_mode"
   | "general_discoverable_mode"
   | "br_edr_not_supported"
   | "le_br_edr_controller"
@@ -44,7 +44,6 @@ export interface BleAdvertisementData extends BleScanResponseData {
 }
 
 export interface BleDescriptorDefine {
-
   /**
    * UUID
    */
@@ -66,7 +65,6 @@ export interface BleDescriptorDefine {
 }
 
 export interface BleCharacteristicDefine {
-
   /**
    * UUID
    */
@@ -92,7 +90,6 @@ export interface BleCharacteristicDefine {
 }
 
 export interface BleServiceDefine {
-
   /**
    * UUID
    */
@@ -101,6 +98,4 @@ export interface BleServiceDefine {
   characteristics?: Array<BleCharacteristicDefine | BleCharacteristic>;
 }
 
-export interface BlePeripheralDefine {
-
-}
+export interface BlePeripheralDefine {}

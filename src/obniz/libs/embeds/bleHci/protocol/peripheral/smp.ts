@@ -74,9 +74,7 @@ export default class Smp extends events.EventEmitter {
     this._diversifier = null;
 
     this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-    this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(
-      this,
-    );
+    this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(this);
     this.onAclStreamLtkNegReplyBinded = this.onAclStreamLtkNegReply.bind(this);
     this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
@@ -109,13 +107,7 @@ export default class Smp extends events.EventEmitter {
       if (this._stk && this._diversifier && this._random) {
         this.write(Buffer.concat([Buffer.from([SMP.ENCRYPT_INFO]), this._stk]));
 
-        this.write(
-          Buffer.concat([
-            Buffer.from([SMP.MASTER_IDENT]),
-            this._diversifier,
-            this._random,
-          ]),
-        );
+        this.write(Buffer.concat([Buffer.from([SMP.MASTER_IDENT]), this._diversifier, this._random]));
       }
     }
   }
@@ -128,14 +120,8 @@ export default class Smp extends events.EventEmitter {
 
   public onAclStreamEnd() {
     this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-    this._aclStream.removeListener(
-      "encryptChange",
-      this.onAclStreamEncryptChangeBinded,
-    );
-    this._aclStream.removeListener(
-      "ltkNegReply",
-      this.onAclStreamLtkNegReplyBinded,
-    );
+    this._aclStream.removeListener("encryptChange", this.onAclStreamEncryptChangeBinded);
+    this._aclStream.removeListener("ltkNegReply", this.onAclStreamLtkNegReplyBinded);
     this._aclStream.removeListener("end", this.onAclStreamEndBinded);
   }
 
@@ -163,16 +149,7 @@ export default class Smp extends events.EventEmitter {
     this.write(
       Buffer.concat([
         Buffer.from([SMP.PAIRING_CONFIRM]),
-        crypto.c1(
-          this._tk,
-          this._r,
-          this._pres,
-          this._preq,
-          this._iat,
-          this._ia,
-          this._rat,
-          this._ra,
-        ),
+        crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
       ]),
     );
   }
@@ -182,16 +159,7 @@ export default class Smp extends events.EventEmitter {
 
     const pcnf: any = Buffer.concat([
       Buffer.from([SMP.PAIRING_CONFIRM]),
-      crypto.c1(
-        this._tk,
-        r,
-        this._pres,
-        this._preq,
-        this._iat,
-        this._ia,
-        this._rat,
-        this._ra,
-      ),
+      crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
     ]);
 
     if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
@@ -199,15 +167,7 @@ export default class Smp extends events.EventEmitter {
       this._random = Buffer.from("0000000000000000", "hex");
       this._stk = crypto.s1(this._tk, this._r, r);
 
-      this._mgmt.addLongTermKey(
-        this._ia,
-        this._iat,
-        0,
-        0,
-        this._diversifier,
-        this._random,
-        this._stk,
-      );
+      this._mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
 
       this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
     } else {

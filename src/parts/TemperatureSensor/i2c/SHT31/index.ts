@@ -4,20 +4,19 @@
  */
 
 import Obniz from "../../../../obniz";
-import {PullType} from "../../../../obniz/libs/io_peripherals/common";
+import { PullType } from "../../../../obniz/libs/io_peripherals/common";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../../obniz/libs/io_peripherals/io";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
-import {I2cPartsAbstructOptions} from "../../../i2cParts";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
+import { I2cPartsAbstractOptions } from "../../../i2cParts";
 
-export interface  SHT31Options extends I2cPartsAbstructOptions {
+export interface SHT31Options extends I2cPartsAbstractOptions {
   adr: number;
   addressmode: number;
   pull?: PullType;
 }
 
 export default class SHT31 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "SHT31",
@@ -39,17 +38,7 @@ export default class SHT31 implements ObnizPartsInterface {
 
   constructor() {
     this.requiredKeys = [];
-    this.keys = [
-      "vcc",
-      "sda",
-      "scl",
-      "gnd",
-      "adr",
-      "addressmode",
-      "i2c",
-      "pull",
-      "address",
-    ];
+    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull", "address"];
 
     this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
     this.commands = {};
@@ -105,11 +94,18 @@ export default class SHT31 implements ObnizPartsInterface {
     return (await this.getAllWait()).temperature;
   }
 
+  public async getHumdWait(): Promise<number> {
+    return await this.getHumidWait();
+  }
+
   public async getHumidWait(): Promise<number> {
     return (await this.getAllWait()).humidity;
   }
 
-  public async getAllWait(): Promise<{ temperature: number, humidity: number }> {
+  public async getAllWait(): Promise<{
+    temperature: number;
+    humidity: number;
+  }> {
     const ret = await this.getData();
 
     const tempBin = ret[0] * 256 + ret[1];
@@ -117,6 +113,6 @@ export default class SHT31 implements ObnizPartsInterface {
 
     const humdBin = ret[3] * 256 + ret[4];
     const humidity = 100 * (humdBin / (65536 - 1));
-    return {temperature, humidity};
+    return { temperature, humidity };
   }
 }

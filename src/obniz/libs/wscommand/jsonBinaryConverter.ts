@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -18,10 +17,7 @@ class JsonBinaryConverter {
     const json: any = {};
     let count: any = 0;
     for (let i = 0; i < schema.length; i++) {
-      const data: any = binary.slice(
-        count,
-        schema[i].length ? count + schema[i].length : undefined,
-      );
+      const data: any = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
       json[schema[i].name] = types[schema[i].type](data, schema[i]);
 
       if (schema[i].length) {
@@ -80,7 +76,7 @@ class JsonBinaryConverter {
   }
 
   public static keyForVal(enumvals: any, val: any) {
-    return Object.keys(enumvals).filter ((k: any ) => {
+    return Object.keys(enumvals).filter((k: any) => {
       return enumvals[k] === val;
     })[0];
   }
@@ -184,7 +180,8 @@ class JsonBinaryConverter {
       path = [path];
     }
 
-    let index: any = 0; const length: any = path.length;
+    let index: any = 0;
+    const length: any = path.length;
 
     while (index < length) {
       object = object[path[index++]];

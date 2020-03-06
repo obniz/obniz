@@ -1,0 +1,17 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/message/send"
+related: "/response/message/receive"
+
+type: object
+additionalProperties: false
+required: [data, to]
+properties:
+  data:
+    example: "button pressed"
+    description: "All type of data is pass."
+  to:
+    type: array
+    minItems: 1
+    items: { $ref: "/obnizId" }

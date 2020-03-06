@@ -7,21 +7,20 @@ import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 
 export interface LogicAnalyzerOptions {
-
   /**
    * target pin no
    */
-  "io": number;
+  io: number;
 
   /**
    * a period(second) to read io value. (ms)
    */
-  "interval": number;
+  interval: number;
 
   /**
    * how long the logicAnalyzer will collect the data.
    */
-  "duration": number;
+  duration: number;
 }
 
 /**
@@ -36,12 +35,12 @@ export interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {
   /**
    * desired start value. true/false
    */
-  "triggerValue": boolean;
+  triggerValue: boolean;
 
   /**
    * after how many samples will the recording start.
    */
-  "triggerValueSamples": number;
+  triggerValueSamples: number;
 }
 
 /**
@@ -67,7 +66,6 @@ export interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {
  * @category Measurement
  */
 export default class LogicAnalyzer {
-
   /**
    * This is a callback function that will be called when data arrives.
    *
@@ -132,17 +130,9 @@ export default class LogicAnalyzer {
   public start(params: LogicAnalyzerOptions | LogicAnalyzerOptionsExt) {
     const err: any = ObnizUtil._requiredKeys(params, ["io", "interval", "duration"]);
     if (err) {
-      throw new Error(
-        "LogicAnalyzer start param '" + err + "' required, but not found ",
-      );
+      throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
     }
-    this.params = ObnizUtil._keyFilter(params, [
-      "io",
-      "interval",
-      "duration",
-      "triggerValue",
-      "triggerValueSamples",
-    ]);
+    this.params = ObnizUtil._keyFilter(params, ["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
 
     const obj: any = {};
     obj.logic_analyzer = {

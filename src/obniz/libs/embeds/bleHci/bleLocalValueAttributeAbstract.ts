@@ -10,8 +10,10 @@ import BleService from "./bleService";
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> extends BleLocalAttributeAbstract<ParentClass, ChildrenClass> {
-
+export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> extends BleLocalAttributeAbstract<
+  ParentClass,
+  ChildrenClass
+> {
   constructor(params: any) {
     super(params);
   }
@@ -22,7 +24,7 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    */
   public write(dataArray: number[]) {
     this.data = dataArray;
-    this.notifyFromServer("onwrite", {result: "success"});
+    this.notifyFromServer("onwrite", { result: "success" });
   }
 
   /**
@@ -30,7 +32,7 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    * @param dataArray
    */
   public read() {
-    this.notifyFromServer("onread", {data: this.data});
+    this.notifyFromServer("onread", { data: this.data });
   }
 
   /**
@@ -64,5 +66,4 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
   public readWait(): Promise<number[]> {
     return super.readWait();
   }
-
 }

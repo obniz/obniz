@@ -50,10 +50,10 @@ class NobleBindings extends events.EventEmitter {
     this._gap = new Gap(this._hci);
   }
 
-  public startScanning(serviceUuids: any, allowDuplicates: any) {
+  public startScanning(serviceUuids: any, allowDuplicates: any, activeScan: boolean) {
     this._scanServiceUuids = serviceUuids || [];
 
-    this._gap.startScanning(allowDuplicates);
+    this._gap.startScanning(allowDuplicates, activeScan);
   }
 
   public stopScanning() {
@@ -89,10 +89,7 @@ class NobleBindings extends events.EventEmitter {
     this._hci.on("stateChange", this.onStateChange.bind(this));
     this._hci.on("addressChange", this.onAddressChange.bind(this));
     this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-    this._hci.on(
-      "leConnUpdateComplete",
-      this.onLeConnUpdateComplete.bind(this),
-    );
+    this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
     this._hci.on("rssiRead", this.onRssiRead.bind(this));
     this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
     this._hci.on("encryptChange", this.onEncryptChange.bind(this));
@@ -106,19 +103,11 @@ class NobleBindings extends events.EventEmitter {
     this._state = state;
 
     if (state === "unauthorized") {
-      console.log(
-        "noble warning: adapter state unauthorized, please run as root or with sudo",
-      );
-      console.log(
-        "               or see README for information on running without root/sudo:",
-      );
-      console.log(
-        "               https://github.com/sandeepmistry/noble#running-on-linux",
-      );
+      console.log("noble warning: adapter state unauthorized, please run as root or with sudo");
+      console.log("               or see README for information on running without root/sudo:");
+      console.log("               https://github.com/sandeepmistry/noble#running-on-linux");
     } else if (state === "unsupported") {
-      console.log(
-        "noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).",
-      );
+      console.log("noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).");
       console.log("               Try to run with environment variable:");
       console.log("               [sudo] NOBLE_HCI_DEVICE_ID=x node ...");
     }
@@ -157,8 +146,7 @@ class NobleBindings extends events.EventEmitter {
       }
 
       for (i in serviceUuids) {
-        hasScanServiceUuids =
-          this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
+        hasScanServiceUuids = this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
 
         if (hasScanServiceUuids) {
           break;
@@ -172,15 +160,7 @@ class NobleBindings extends events.EventEmitter {
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = connectable;
 
-      this.emit(
-        "discover",
-        uuid,
-        address,
-        addressType,
-        connectable,
-        advertisement,
-        rssi,
-      );
+      this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
     }
   }
 
@@ -228,27 +208,15 @@ class NobleBindings extends events.EventEmitter {
       this._handles[handle] = uuid;
 
       this._gatts[handle].on("mtu", this.onMtu.bind(this));
-      this._gatts[handle].on(
-        "servicesDiscover",
-        this.onServicesDiscovered.bind(this),
-      );
-      this._gatts[handle].on(
-        "includedServicesDiscover",
-        this.onIncludedServicesDiscovered.bind(this),
-      );
-      this._gatts[handle].on(
-        "characteristicsDiscover",
-        this.onCharacteristicsDiscovered.bind(this),
-      );
+      this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
+      this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
+      this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
       this._gatts[handle].on("read", this.onRead.bind(this));
       this._gatts[handle].on("write", this.onWrite.bind(this));
       this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
       this._gatts[handle].on("notify", this.onNotify.bind(this));
       this._gatts[handle].on("notification", this.onNotification.bind(this));
-      this._gatts[handle].on(
-        "descriptorsDiscover",
-        this.onDescriptorsDiscovered.bind(this),
-      );
+      this._gatts[handle].on("descriptorsDiscover", this.onDescriptorsDiscovered.bind(this));
       this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
       this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
       this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
@@ -322,8 +290,7 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onMtu(address: any, mtu?: any) {
-  }
+  public onMtu(address: any, mtu?: any) {}
 
   public onRssiRead(handle: any, rssi?: any) {
     this.emit("rssiUpdate", this._handles[handle], rssi);
@@ -374,12 +341,7 @@ class NobleBindings extends events.EventEmitter {
       .join("")
       .toLowerCase();
 
-    this.emit(
-      "includedServicesDiscover",
-      uuid,
-      serviceUuid,
-      includedServiceUuids,
-    );
+    this.emit("includedServicesDiscover", uuid, serviceUuid, includedServiceUuids);
   }
 
   public discoverCharacteristics(peripheralUuid: any, serviceUuid: any, characteristicUuids?: any) {
@@ -419,24 +381,10 @@ class NobleBindings extends events.EventEmitter {
       .join("")
       .toLowerCase();
 
-    this.emit(
-      "read",
-      uuid,
-      serviceUuid,
-      characteristicUuid,
-      data,
-      false,
-      isSuccess,
-    );
+    this.emit("read", uuid, serviceUuid, characteristicUuid, data, false, isSuccess);
   }
 
-  public write(
-    peripheralUuid: any,
-    serviceUuid: any,
-    characteristicUuid: any,
-    data: any,
-    withoutResponse: any,
-  ) {
+  public write(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -516,24 +464,13 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onDescriptorsDiscovered(
-    address: any,
-    serviceUuid?: any,
-    characteristicUuid?: any,
-    descriptorUuids?: any,
-  ) {
+  public onDescriptorsDiscovered(address: any, serviceUuid?: any, characteristicUuid?: any, descriptorUuids?: any) {
     const uuid: any = address
       .split(":")
       .join("")
       .toLowerCase();
 
-    this.emit(
-      "descriptorsDiscover",
-      uuid,
-      serviceUuid,
-      characteristicUuid,
-      descriptorUuids,
-    );
+    this.emit("descriptorsDiscover", uuid, serviceUuid, characteristicUuid, descriptorUuids);
   }
 
   public readValue(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
@@ -560,24 +497,10 @@ class NobleBindings extends events.EventEmitter {
       .join("")
       .toLowerCase();
 
-    this.emit(
-      "valueRead",
-      uuid,
-      serviceUuid,
-      characteristicUuid,
-      descriptorUuid,
-      data,
-      isSuccess,
-    );
+    this.emit("valueRead", uuid, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess);
   }
 
-  public writeValue(
-    peripheralUuid: any,
-    serviceUuid: any,
-    characteristicUuid: any,
-    descriptorUuid: any,
-    data: any,
-  ) {
+  public writeValue(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, descriptorUuid: any, data: any) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
@@ -600,14 +523,7 @@ class NobleBindings extends events.EventEmitter {
       .join("")
       .toLowerCase();
 
-    this.emit(
-      "valueWrite",
-      uuid,
-      serviceUuid,
-      characteristicUuid,
-      descriptorUuid,
-      isSuccess,
-    );
+    this.emit("valueWrite", uuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess);
   }
 
   public readHandle(peripheralUuid: any, attHandle: any) {
@@ -666,13 +582,7 @@ class NobleBindings extends events.EventEmitter {
     latency?: any,
     supervisionTimeout?: any,
   ) {
-    this._hci.connUpdateLe(
-      handle,
-      minInterval,
-      maxInterval,
-      latency,
-      supervisionTimeout,
-    );
+    this._hci.connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout);
   }
 }
 

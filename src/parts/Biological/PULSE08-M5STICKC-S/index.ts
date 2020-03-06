@@ -5,9 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  Puls08M5stickcSOptions {
+export interface Puls08M5stickcSOptions {
   vcc?: number;
   gnd?: number;
   rx: number;
@@ -15,7 +15,6 @@ export interface  Puls08M5stickcSOptions {
 }
 
 export default class Puls08M5stickcS implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Puls08M5stickcS",
@@ -49,7 +48,7 @@ export default class Puls08M5stickcS implements ObnizPartsInterface {
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.uart = obniz.getFreeUart();
-    this.uart.start({tx: this.params.tx, rx: this.params.rx, baud: 19200});
+    this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 19200 });
     this.receivingData = [];
 
     this.init();

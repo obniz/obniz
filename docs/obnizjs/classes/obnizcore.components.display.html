@@ -76,7 +76,7 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>Here we will show letters and pictures on display on obniz Board.
-						<img src="../media/obniz_display_sphere.gif" alt=""></p>
+						<img src="media://obniz_display_sphere.gif" alt=""></p>
 					</div>
 				</div>
 			</section>
@@ -113,12 +113,16 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#draw" class="tsd-kind-icon">draw</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#drawing" class="tsd-kind-icon">drawing</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#font" class="tsd-kind-icon">font</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#getcolor" class="tsd-kind-icon">get<wbr>Color</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#getcolordepth" class="tsd-kind-icon">get<wbr>Color<wbr>Depth</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#line" class="tsd-kind-icon">line</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#pos" class="tsd-kind-icon">pos</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#print" class="tsd-kind-icon">print</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#qr" class="tsd-kind-icon">qr</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#raw" class="tsd-kind-icon">raw</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#rect" class="tsd-kind-icon">rect</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#setcolor" class="tsd-kind-icon">set<wbr>Color</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.display.html#setcolordepth" class="tsd-kind-icon">set<wbr>Color<wbr>Depth</a></li>
 							</ul>
 						</section>
 					</div>
@@ -130,19 +134,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Display<span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.components.display.html" class="tsd-signature-type">Display</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Display<span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, info<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.components.display.html" class="tsd-signature-type">Display</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:31</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:36</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>obniz: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>info: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="obnizcore.components.display.html" class="tsd-signature-type">Display</a></h4>
@@ -203,7 +210,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:246</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:285</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -246,7 +253,7 @@ obniz.display.circle(<span class="hljs-number">90</span>, <span class="hljs-numb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:85</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:124</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -270,7 +277,7 @@ obniz.display.clear();</code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:403</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:479</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -335,13 +342,13 @@ obniz.display.draw(ctx);</code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:430</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:506</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>You can specify to transfer the displayed data or not.
-									This affects only the functions that use canvas like clear/print/line/rect/circle/draw.</p>
+									This affects only the functions that use canvas like clear/print/line/rect/circle/draw.</p>
 								</div>
 								<p>Use false to stop updating display and true to restart updating.</p>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
@@ -378,7 +385,7 @@ obniz.display.drawing(<span class="hljs-literal">true</span>);</code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:66</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:74</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -395,9 +402,9 @@ obniz.display.print(<span class="hljs-string">"Avenir"</span>)
 
 obniz.display.font(<span class="hljs-literal">null</span>,<span class="hljs-number">30</span>) <span class="hljs-comment">//default font(Arial) 30px</span>
 obniz.display.font(<span class="hljs-string">'Avenir'</span>) <span class="hljs-comment">//Avenir with default size(16px)</span></code></pre>
-								<p><img src="../media/obniz_display_samples3.jpg" alt="">
-									<img src="../media/obniz_display_samples2.jpg" alt="">
-								<img src="../media/obniz_display_samples1.jpg" alt=""></p>
+								<p><img src="media://obniz_display_samples3.jpg" alt="">
+									<img src="media://obniz_display_samples2.jpg" alt="">
+								<img src="media://obniz_display_samples1.jpg" alt=""></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -419,6 +426,52 @@ obniz.display.font(<span class="hljs-string">'Avenir'</span>) <span class="hljs-
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getcolor" class="tsd-anchor"></a>
+					<h3>get<wbr>Color</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Color<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/display.ts:113</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Getting color for fill/stroke style for further rendering.</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-keyword">const</span> current = obniz.display.getColor();</code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getcolordepth" class="tsd-anchor"></a>
+					<h3>get<wbr>Color<wbr>Depth</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Color<wbr>Depth<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/display.ts:388</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Getting color depth for all communication for the display</p>
+								</div>
+								<pre><code class="language-javascript"><span class="hljs-keyword">const</span> current = obniz.display.getColorDepth(); <span class="hljs-comment">// =&gt; return current depth. 1 or higher</span></code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="line" class="tsd-anchor"></a>
 					<h3>line</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -428,7 +481,7 @@ obniz.display.font(<span class="hljs-string">'Avenir'</span>) <span class="hljs-
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:185</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:224</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -445,7 +498,7 @@ obniz.display.line(<span class="hljs-number">60</span>, <span class="hljs-number
 obniz.display.rect(<span class="hljs-number">50</span>, <span class="hljs-number">40</span>, <span class="hljs-number">20</span>, <span class="hljs-number">20</span>, <span class="hljs-literal">true</span>);
 obniz.display.line(<span class="hljs-number">50</span>, <span class="hljs-number">10</span>, <span class="hljs-number">100</span>, <span class="hljs-number">30</span>);
 obniz.display.circle(<span class="hljs-number">50</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-literal">true</span>);</code></pre>
-								<p><img src="../media/obniz_display_draws.jpg" alt=""></p>
+								<p><img src="media://obniz_display_draws.jpg" alt=""></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -478,7 +531,7 @@ obniz.display.circle(<span class="hljs-number">50</span>, <span class="hljs-numb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:117</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:156</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -489,7 +542,7 @@ obniz.display.circle(<span class="hljs-number">50</span>, <span class="hljs-numb
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 obniz.display.pos(<span class="hljs-number">0</span>,<span class="hljs-number">30</span>);
 obniz.display.print(<span class="hljs-string">"YES. こんにちは"</span>);</code></pre>
-								<p><img src="../media/obniz_display_pos.jpg" alt=""></p>
+								<p><img src="media://obniz_display_pos.jpg" alt=""></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -524,7 +577,7 @@ obniz.display.print(<span class="hljs-string">"YES. こんにちは"</span>);</c
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:145</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:184</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -536,7 +589,7 @@ obniz.display.print(<span class="hljs-string">"Hello!"</span>);</code></pre>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
 obniz.display.font(<span class="hljs-string">'Serif'</span>,<span class="hljs-number">18</span>)
 obniz.display.print(<span class="hljs-string">"Hello World🧡"</span>)</code></pre>
-								<p><img src="../media/obniz_display_print.jpg" alt=""></p>
+								<p><img src="media://obniz_display_print.jpg" alt=""></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -561,7 +614,7 @@ obniz.display.print(<span class="hljs-string">"Hello World🧡"</span>)</code></
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:280</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:319</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -604,27 +657,27 @@ obniz.display.qr(<span class="hljs-string">"https://obniz.io"</span>)</code></pr
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:308</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:348</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Draw BMP image</p>
 								</div>
-								<pre><code class="language-javascript">obniz.display.raw([<span class="hljs-number">255</span>, <span class="hljs-number">255</span>,,,,,])<span class="hljs-comment">// must be 128*64 bits(=1024byte)</span></code></pre>
+								<pre><code class="language-javascript">obniz.display.raw([<span class="hljs-number">255</span>, <span class="hljs-number">255</span>,,,,,])</code></pre>
+								<p>You should care about colorDepth before sending raw datas.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>data array. 1 bit represents 1 dot. 1=white, 0=black.
-											1 byte is part of one line.
+										<p>data array.
 											The order is as below.
 											{1byte} {2byte} {3byte}...{16byte}
 											{17byte} {18byte} {19byte}...
 											.....
-										.....................{1024byte}</p>
+										.....................</p>
 									</div>
 								</li>
 							</ul>
@@ -642,7 +695,7 @@ obniz.display.qr(<span class="hljs-string">"https://obniz.io"</span>)</code></pr
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/display.ts:216</li>
+									<li>Defined in src/obniz/libs/embeds/display.ts:255</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -678,6 +731,74 @@ obniz.display.rect(<span class="hljs-number">20</span>, <span class="hljs-number
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setcolor" class="tsd-anchor"></a>
+					<h3>set<wbr>Color</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Color<span class="tsd-signature-symbol">(</span>color<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/display.ts:98</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Setting color for fill/stroke style for further rendering.</p>
+								</div>
+								<pre><code class="language-javascript">obniz.display.color(<span class="hljs-string">'#FF0000'</span>);
+obniz.display.rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-literal">false</span>)
+obniz.display.color(<span class="hljs-string">'blue'</span>);
+obniz.display.rect(<span class="hljs-number">0</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-literal">false</span>)</code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>color: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setcolordepth" class="tsd-anchor"></a>
+					<h3>set<wbr>Color<wbr>Depth</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Color<wbr>Depth<span class="tsd-signature-symbol">(</span>depth<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/display.ts:372</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Setting color depth for all communication for the display
+										higher number will get more beautiful colors and lowest number 1 is just monochrome.
+									But 16 bit color mode is 16 times data bytes needed for same size rendering.</p>
+								</div>
+								<pre><code class="language-javascript">obniz.display.colorDepth(<span class="hljs-number">4</span>); <span class="hljs-comment">// =&gt; 4bit color mode.</span></code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>depth: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>monochrome display always 1. For color display 1(monochrome) and 4 and 16 can be selected.
+											default value is highest color depth for your display.
+										If you call just</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -686,13 +807,65 @@ obniz.display.rect(<span class="hljs-number">20</span>, <span class="hljs-number
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_index_.html">&quot;parts/<wbr>Ble/linking/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_advertising_.html">&quot;parts/<wbr>Ble/linking/modules/advertising&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_device_.html">&quot;parts/<wbr>Ble/linking/modules/device&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_ieee754_.html">&quot;parts/<wbr>Ble/linking/modules/ieee754&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_.html">&quot;parts/<wbr>Ble/linking/modules/service&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_notification_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>notification&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_operation_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>operation&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_property_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>property&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_sensor_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>sensor&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_setting_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>setting&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_display_matrixled_ht16k33_index_.html">&quot;parts/<wbr>Display/<wbr>MatrixLED_<wbr>HT16<wbr>K33/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_keyestudio_keyestudio_ht16k33_index_.html">&quot;parts/<wbr>Keyestudio/<wbr>Keyestudio_<wbr>HT16<wbr>K33/index&quot;</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
+						<ul>
+							<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+								<a href="../modules/obnizcore.components.html">Components</a>
+								<ul>
+									<li class=" tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+										<a href="../modules/obnizcore.components.ble.html">Ble</a>
+									</li>
+								</ul>
+							</li>
+							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.hardware.html">Hardware</a>
+							</li>
+						</ul>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.html">Parts</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.directive.html" class="tsd-kind-icon">Directive</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
@@ -723,6 +896,12 @@ obniz.display.rect(<span class="hljs-number">20</span>, <span class="hljs-number
 								<a href="obnizcore.components.display.html#font" class="tsd-kind-icon">font</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="obnizcore.components.display.html#getcolor" class="tsd-kind-icon">get<wbr>Color</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="obnizcore.components.display.html#getcolordepth" class="tsd-kind-icon">get<wbr>Color<wbr>Depth</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.display.html#line" class="tsd-kind-icon">line</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -740,118 +919,16 @@ obniz.display.rect(<span class="hljs-number">20</span>, <span class="hljs-number
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.display.html#rect" class="tsd-kind-icon">rect</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="obnizcore.components.display.html#setcolor" class="tsd-kind-icon">set<wbr>Color</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="obnizcore.components.display.html#setcolordepth" class="tsd-kind-icon">set<wbr>Color<wbr>Depth</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.logicanalyzer.html" class="tsd-kind-icon">Logic<wbr>Analyzer</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.obnizmeasure.html" class="tsd-kind-icon">Obniz<wbr>Measure</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.obnizswitch.html" class="tsd-kind-icon">Obniz<wbr>Switch</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheralad.html" class="tsd-kind-icon">PeripheralAD</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripherali2c.html" class="tsd-kind-icon">Peripheral<wbr>I2C</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheralio.html" class="tsd-kind-icon">PeripheralIO</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheralpwm.html" class="tsd-kind-icon">PeripheralPWM</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheralspi.html" class="tsd-kind-icon">PeripheralSPI</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.peripheraluart.html" class="tsd-kind-icon">PeripheralUART</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.tcp.html" class="tsd-kind-icon">Tcp</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.directiveanimationframe.html" class="tsd-kind-icon">Directive<wbr>Animation<wbr>Frame</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.logicanalyzeroptions.html" class="tsd-kind-icon">Logic<wbr>Analyzer<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.logicanalyzeroptionsext.html" class="tsd-kind-icon">Logic<wbr>Analyzer<wbr>Options<wbr>Ext</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.obnizmeasureoptions.html" class="tsd-kind-icon">Obniz<wbr>Measure<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.obnizmeasureresult.html" class="tsd-kind-icon">Obniz<wbr>Measure<wbr>Result</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.pwminterface.html" class="tsd-kind-icon">PWMInterface</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/obnizcore.components.peripherali2coptions.html" class="tsd-kind-icon">Peripheral<wbr>I2COptions</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/obnizcore.components.peripherali2cstate.html" class="tsd-kind-icon">Peripheral<wbr>I2CState</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/obnizcore.components.peripheralpwmoptions.html" class="tsd-kind-icon">PeripheralPWMOptions</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/obnizcore.components.peripheralspioptions.html" class="tsd-kind-icon">PeripheralSPIOptions</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.peripheraluartoptions.html" class="tsd-kind-icon">PeripheralUARTOptions</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#animationstatus" class="tsd-kind-icon">Animation<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#bittype" class="tsd-kind-icon">Bit<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#drivetype" class="tsd-kind-icon">Drive<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#flowcontroltype" class="tsd-kind-icon">Flow<wbr>Control<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#i2cmode" class="tsd-kind-icon">I2CMode</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#obnizmeasureresultarray" class="tsd-kind-icon">Obniz<wbr>Measure<wbr>Result<wbr>Array</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#obnizswitchcallback" class="tsd-kind-icon">Obniz<wbr>Switch<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#obnizswitchstate" class="tsd-kind-icon">Obniz<wbr>Switch<wbr>State</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#pwmmodulatetype" class="tsd-kind-icon">PWMModulate<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#paritytype" class="tsd-kind-icon">Parity<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#pulltype" class="tsd-kind-icon">Pull<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.html#stopbittype" class="tsd-kind-icon">Stop<wbr>Bit<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#tcpconnectioncallbackfunction" class="tsd-kind-icon">TCPConnection<wbr>Callback<wbr>Function</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#tcperrorcallbackfunction" class="tsd-kind-icon">TCPError<wbr>Callback<wbr>Function</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/obnizcore.components.html#tcpreceivecallbackfunction" class="tsd-kind-icon">TCPReceive<wbr>Callback<wbr>Function</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

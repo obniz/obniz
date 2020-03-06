@@ -3,7 +3,6 @@
  * @module ObnizCore
  */
 class ObnizUtil {
-
   /**
    * @ignore
    * @param params
@@ -68,10 +67,42 @@ class ObnizUtil {
     return [...buf];
   }
 
-  private obniz: any;
-  private width: any;
-  private height: any;
-  private createCanvas: any;
+  /**
+   * @ignore
+   * @param data
+   * @param schema
+   */
+  public static hexToBinary(data: string, reverse: boolean = false): number[] {
+    const array: number[] = [];
+    const hex: string = data.toLowerCase().replace(/[^0-9abcdef]/g, "");
+    for (let i = 0; i < hex.length / 2; i++) {
+      array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
+    }
+    if (reverse) {
+      array.reverse();
+    }
+    return array;
+  }
+
+  /**
+   * @ignore
+   * @param min
+   * @param max
+   * @param variable_name
+   * @param variable
+   */
+  public static assertNumber(min: number, max: number, variable_name: string, variable: number) {
+    if (!(min <= variable && variable <= max)) {
+      throw new Error(
+        `${variable_name} is out of range.Input value : ${variable} .value range [ ${min} <= ${variable_name} <= ${max} ]`,
+      );
+    }
+  }
+
+  public obniz: any;
+  public width: any;
+  public height: any;
+  public createCanvas: any;
 
   constructor(obniz: any) {
     this.obniz = obniz;
@@ -94,12 +125,10 @@ class ObnizUtil {
   public createCanvasContext(width: number, height: number) {
     if (this.obniz.isNode) {
       try {
-        const {createCanvas} = require("canvas");
+        const { createCanvas } = require("canvas");
         return createCanvas(this.width, this.height);
       } catch (e) {
-        throw new Error(
-          "obniz.js require node-canvas to draw rich contents. see more detail on docs",
-        );
+        throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
       }
     } else {
       const canvas: any = document.createElement("canvas");

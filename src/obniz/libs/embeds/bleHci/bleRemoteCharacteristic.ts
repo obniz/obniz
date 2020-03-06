@@ -6,13 +6,15 @@ import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
 import BleRemoteService from "./bleRemoteService";
 import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";
-import {BleAttributePropery, UUID} from "./bleTypes";
+import { BleAttributePropery, UUID } from "./bleTypes";
 
 /**
  * @category Use as Central
  */
-export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbstract<BleRemoteService, BleRemoteDescriptor> {
-
+export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbstract<
+  BleRemoteService,
+  BleRemoteDescriptor
+> {
   /**
    * @ignore
    */
@@ -92,7 +94,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    *
    *
    */
-  public onregisternotify?: (() => void);
+  public onregisternotify?: () => void;
 
   /**
    * @ignore
@@ -262,8 +264,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * ```
    */
   public unregisterNotify() {
-    this.onnotify = () => {
-    };
+    this.onnotify = () => {};
 
     this.service.peripheral.obnizBle.centralBindings.notify(
       this.service.peripheral.address,
@@ -455,10 +456,33 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   }
 
   /**
-   * @ignore
+   * Discover services.
    *
+   * If connect setting param 'autoDiscovery' is true(default),
+   * services are automatically disvocer on connection established.
+   *
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.ble.initWait({});
+   * obniz.ble.scan.onfind = function(peripheral){
+   * if(peripheral.localName == "my peripheral"){
+   *      peripheral.onconnect = async function(){
+   *          console.log("success");
+   *          await peripheral.discoverAllServicesWait(); //manually discover
+   *          let service = peripheral.getService("1800");
+   *          await service.discoverAllCharacteristicsWait(); //manually discover
+   *          let characteristics = service.getCharacteristic("ff00");
+   *          await characteristics.discoverAllDescriptorsWait(); //manually discover
+   *          let descriptor = characteristics.getDescriptor("fff1");
+   *      }
+   *      peripheral.connect({autoDiscovery:false});
+   *     }
+   * }
+   * obniz.ble.scan.start();
+   * ```
    */
-  public discoverAllDescriptorsWait() {
+  public discoverAllDescriptorsWait(): Promise<BleRemoteDescriptor[]> {
     return this.discoverChildrenWait();
   }
 

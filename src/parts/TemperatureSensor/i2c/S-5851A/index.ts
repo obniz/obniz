@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @module Parts.S5851A
@@ -6,9 +5,9 @@
 
 import Obniz from "../../../../obniz";
 import PeripheralI2C from "../../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../../obniz/ObnizPartsInterface";
 
-export interface  S5851AOptions {
+export interface S5851AOptions {
   vcc: number;
   gnd: number;
   sda: number;
@@ -19,7 +18,6 @@ export interface  S5851AOptions {
 }
 
 export default class S5851A implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "S5851A",
@@ -111,8 +109,7 @@ export default class S5851A implements ObnizPartsInterface {
     // obniz.i2c0.write(address, [0xE0, 0x00]);
     const ret: any = await this.i2c0.readWait(this.address, 2);
     // console.log('ret:' + ret);
-    const tempBin: any =
-      ret[0].toString(2) + ("00000000" + ret[1].toString(2)).slice(-8);
+    const tempBin: any = ret[0].toString(2) + ("00000000" + ret[1].toString(2)).slice(-8);
     const temperature: any = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
     return temperature;
   }
@@ -121,8 +118,7 @@ export default class S5851A implements ObnizPartsInterface {
     this.i2c.write(this.address, [0x20, 0x24]);
     this.i2c.write(this.address, [0xe0, 0x00]);
     const ret: any = await this.i2c.readWait(this.address, 4);
-    const humdBin: any =
-      ret[2].toString(2) + ("00000000" + ret[3].toString(2)).slice(-8);
+    const humdBin: any = ret[2].toString(2) + ("00000000" + ret[3].toString(2)).slice(-8);
     const humidity: any = 100 * (parseInt(humdBin, 2) / (65536 - 1));
     return humidity;
   }

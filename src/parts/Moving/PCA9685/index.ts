@@ -6,11 +6,11 @@
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
-import {PWMInterface} from "../../../obniz/libs/io_peripherals/pwm";
+import { PWMInterface } from "../../../obniz/libs/io_peripherals/pwm";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-class PCA9685_PWM  implements PWMInterface {
+class PCA9685_PWM implements PWMInterface {
   public chip: PCA9685;
   public id: number;
   public value = 0;
@@ -34,7 +34,7 @@ class PCA9685_PWM  implements PWMInterface {
   }
 }
 
-export interface  PCA9685Options {
+export interface PCA9685Options {
   gnd?: number;
   vcc?: number;
   oe?: number;
@@ -49,7 +49,6 @@ export interface  PCA9685Options {
 // tslint:disable:max-classes-per-file
 
 export default class PCA9685 implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "PCA9685",
@@ -79,17 +78,7 @@ export default class PCA9685 implements ObnizPartsInterface {
 
   constructor() {
     /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
-    this.keys = [
-      "gnd",
-      "vcc",
-      "scl",
-      "sda",
-      "oe",
-      "i2c",
-      "enabled",
-      "address",
-      "drive",
-    ];
+    this.keys = ["gnd", "vcc", "scl", "sda", "oe", "i2c", "enabled", "address", "drive"];
     this.requiredKeys = [];
 
     this.address = 0x40;
@@ -152,19 +141,13 @@ export default class PCA9685 implements ObnizPartsInterface {
     }
 
     if (this.params.drive === "open-drain") {
-      this.i2c.write(this.address, [
-        this._commands.MODE2,
-        this._commands.bits.OUTDRV,
-      ]);
+      this.i2c.write(this.address, [this._commands.MODE2, this._commands.bits.OUTDRV]);
     }
 
     let mode1: any = this._commands.bits.AUTO_INCREMENT_ENABLED;
     mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
     this.i2c.write(this.address, [this._commands.MODE1, mode1]);
-    this.i2c.write(this.address, [
-      this._commands.MODE1,
-      mode1 | this._commands.bits.RESTART,
-    ]);
+    this.i2c.write(this.address, [this._commands.MODE1, mode1 | this._commands.bits.RESTART]);
 
     this._regs[this._commands.MODE1] = mode1;
 
@@ -172,7 +155,6 @@ export default class PCA9685 implements ObnizPartsInterface {
   }
 
   public _preparePWM(num: any) {
-
     for (let i = 0; i < num; i++) {
       this.pwms.push(new PCA9685_PWM(this, i));
     }
@@ -207,10 +189,7 @@ export default class PCA9685 implements ObnizPartsInterface {
     const prescale: any = Math.floor(Math.floor(prescaleval + 0.5));
     const mode1: any = this._regs[this._commands.MODE1];
 
-    this.i2c.write(this.address, [
-      this._commands.MODE1,
-      (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE,
-    ]); // enter sleep
+    this.i2c.write(this.address, [this._commands.MODE1, (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE]); // enter sleep
     this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
     this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
 
@@ -249,13 +228,7 @@ export default class PCA9685 implements ObnizPartsInterface {
   }
 
   public writeSingleONOFF(index: number, on: number, off: number) {
-    this.i2c.write(this.address, [
-      this._commands.LED0_ON_L + 4 * index,
-      on & 0xff,
-      on >> 8,
-      off & 0xff,
-      off >> 8,
-    ]);
+    this.i2c.write(this.address, [this._commands.LED0_ON_L + 4 * index, on & 0xff, on >> 8, off & 0xff, off >> 8]);
   }
 
   public setEnable(enable: boolean) {

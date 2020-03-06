@@ -1,4 +1,3 @@
-
 /* tslint:disable:class-name max-classes-per-file */
 
 import Obniz from "../../../dist/src/obniz/index";
@@ -12,7 +11,16 @@ class ArduCAMMiniTest {
   public async startupWait1() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.spi_pingpongWait();
     cam.setMode("MCU2LCD");
     const chipid = await cam.getChipIdWait();
@@ -25,14 +33,32 @@ class ArduCAMMiniTest {
   public async startupWait2() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.startupWait();
   }
 
   public async takeWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.startupWait();
     const jpegData = await cam.takeWait("1024x768");
   }
@@ -40,7 +66,16 @@ class ArduCAMMiniTest {
   public async arrayToBase64() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.startupWait();
     const jpegData = await cam.takeWait("1024x768");
     console.log("image size = " + jpegData.length + " bytes");
@@ -53,21 +88,48 @@ class ArduCAMMiniTest {
   public async setMode() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     cam.setMode("MCU2LCD");
   }
 
   public async spi_pingpongWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.spi_pingpongWait();
   }
 
   public async getChipIdWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     const chipid = await cam.getChipIdWait();
     if (chipid !== 0x2642) {
       throw new Error("unknown chip " + chipid);
@@ -77,7 +139,16 @@ class ArduCAMMiniTest {
   public async init() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     cam.setMode("MCU2LCD");
     cam.init();
   }
@@ -85,7 +156,16 @@ class ArduCAMMiniTest {
   public async setSize() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.startupWait();
     cam.setSize("1600x1200");
     obniz.wait(1000);
@@ -94,7 +174,16 @@ class ArduCAMMiniTest {
   public async flushFIFO() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.startupWait();
     cam.flushFIFO();
     cam.flushFIFO();
@@ -110,7 +199,16 @@ class ArduCAMMiniTest {
   public async startCapture() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.startupWait();
     cam.flushFIFO();
     cam.flushFIFO();
@@ -126,7 +224,16 @@ class ArduCAMMiniTest {
   public async isCaptureDoneWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.startupWait();
     cam.flushFIFO();
     cam.flushFIFO();
@@ -142,7 +249,16 @@ class ArduCAMMiniTest {
   public async readFIFOWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.io11!.output(true);
-    const cam = obniz.wired("ArduCAMMini", { cs: 0, mosi: 1, miso: 2, sclk: 3, gnd: 4, vcc: 5, sda: 6, scl: 7 });
+    const cam = obniz.wired("ArduCAMMini", {
+      cs: 0,
+      mosi: 1,
+      miso: 2,
+      sclk: 3,
+      gnd: 4,
+      vcc: 5,
+      sda: 6,
+      scl: 7,
+    });
     await cam.startupWait();
     cam.flushFIFO();
     cam.flushFIFO();
@@ -165,7 +281,12 @@ class JpegSerialCamTest {
     obniz.onconnect = async () => {
       obniz.io6!.output(true);
       obniz.io9!.output(false);
-      const cam = obniz.wired("JpegSerialCam", { vcc: 0, cam_tx: 1, cam_rx: 2, gnd: 3 });
+      const cam = obniz.wired("JpegSerialCam", {
+        vcc: 0,
+        cam_tx: 1,
+        cam_rx: 2,
+        gnd: 3,
+      });
       await cam.startWait({ baud: 38400 });
       const data = await cam.takeWait();
     };
@@ -176,7 +297,12 @@ class JpegSerialCamTest {
     obniz.onconnect = async () => {
       obniz.io6!.output(true);
       obniz.io9!.output(false);
-      const cam = obniz.wired("JpegSerialCam", { vcc: 0, cam_tx: 1, cam_rx: 2, gnd: 3 });
+      const cam = obniz.wired("JpegSerialCam", {
+        vcc: 0,
+        cam_tx: 1,
+        cam_rx: 2,
+        gnd: 3,
+      });
       await cam.startWait({ baud: 38400 });
       await cam.setSizeWait("640x480");
       const data = await cam.takeWait();
@@ -188,7 +314,12 @@ class JpegSerialCamTest {
     obniz.onconnect = async () => {
       obniz.io6!.output(true);
       obniz.io9!.output(false);
-      const cam = obniz.wired("JpegSerialCam", { vcc: 0, cam_tx: 1, cam_rx: 2, gnd: 3 });
+      const cam = obniz.wired("JpegSerialCam", {
+        vcc: 0,
+        cam_tx: 1,
+        cam_rx: 2,
+        gnd: 3,
+      });
       await cam.startWait({ baud: 38400 });
       await cam.setBaudWait(115200);
       await cam.takeWait(); // baud is already changed to 115200.
@@ -200,7 +331,12 @@ class JpegSerialCamTest {
     obniz.onconnect = async () => {
       obniz.io6!.output(true);
       obniz.io9!.output(false);
-      const cam = obniz.wired("JpegSerialCam", { vcc: 0, cam_tx: 1, cam_rx: 2, gnd: 3 });
+      const cam = obniz.wired("JpegSerialCam", {
+        vcc: 0,
+        cam_tx: 1,
+        cam_rx: 2,
+        gnd: 3,
+      });
       await cam.startWait({ baud: 38400 });
       const jpegData = await cam.takeWait();
     };
@@ -211,7 +347,12 @@ class JpegSerialCamTest {
     obniz.onconnect = async () => {
       obniz.io6!.output(true);
       obniz.io9!.output(false);
-      const cam = obniz.wired("JpegSerialCam", { vcc: 0, cam_tx: 1, cam_rx: 2, gnd: 3 });
+      const cam = obniz.wired("JpegSerialCam", {
+        vcc: 0,
+        cam_tx: 1,
+        cam_rx: 2,
+        gnd: 3,
+      });
       await cam.startWait({ baud: 38400 });
       const jpegData = await cam.takeWait();
       const elm = document.getElementById("image") as HTMLImageElement;

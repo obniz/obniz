@@ -39,14 +39,7 @@ export default class BleRemotePeripheral {
     this.adv_data = null;
     this.scan_resp = null;
 
-    this.keys = [
-      "device_type",
-      "address_type",
-      "ble_event_type",
-      "rssi",
-      "adv_data",
-      "scan_resp",
-    ];
+    this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
 
     this._services = [];
     this.emitter = new emitter();
@@ -74,7 +67,7 @@ export default class BleRemotePeripheral {
     this.advertise_data_rows = null;
     for (const key in dic) {
       if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
-        (this as any) [key] = dic[key];
+        (this as any)[key] = dic[key];
       }
     }
     this.analyseAdvertisement();
@@ -136,14 +129,7 @@ export default class BleRemotePeripheral {
 
   public setIBeacon() {
     const data: any = this.searchTypeVal(0xff);
-    if (
-      !data ||
-      data[0] !== 0x4c ||
-      data[1] !== 0x00 ||
-      data[2] !== 0x02 ||
-      data[3] !== 0x15 ||
-      data.length !== 25
-    ) {
+    if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
       this.iBeacon = null;
       return;
     }
@@ -151,12 +137,7 @@ export default class BleRemotePeripheral {
     let uuid: any = "";
     for (let i = 0; i < uuidData.length; i++) {
       uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-      if (
-        i === 4 - 1 ||
-        i === 4 + 2 - 1 ||
-        i === 4 + 2 * 2 - 1 ||
-        i === 4 + 2 * 3 - 1
-      ) {
+      if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
         uuid += "-";
       }
     }
@@ -319,34 +300,24 @@ export default class BleRemotePeripheral {
     };
 
     const services: any = await this.discoverAllServicesWait();
-    const charsNest: any = await Promise.all(
-      services.map((s: any) => s.discoverAllCharacteristicsWait()),
-    );
+    const charsNest: any = await Promise.all(services.map((s: any) => s.discoverAllCharacteristicsWait()));
     const chars: any = ArrayFlat(charsNest);
-    const descriptorsNest: any = await Promise.all(
-      chars.map((c: any) => c.discoverAllDescriptorsWait()),
-    );
+    const descriptorsNest: any = await Promise.all(chars.map((c: any) => c.discoverAllDescriptorsWait()));
     // eslint-disable-next-line no-unused-vars
     const descriptors: any = ArrayFlat(descriptorsNest);
   }
 
-  public onconnect() {
-  }
+  public onconnect() {}
 
-  public ondisconnect() {
-  }
+  public ondisconnect() {}
 
-  public ondiscoverservice(child: any) {
-  }
+  public ondiscoverservice(child: any) {}
 
-  public ondiscoverservicefinished(children: any) {
-  }
+  public ondiscoverservicefinished(children: any) {}
 
-  public ondiscover() {
-  }
+  public ondiscover() {}
 
-  public ondiscoverfinished() {
-  }
+  public ondiscoverfinished() {}
 
   public async notifyFromServer(notifyName: any, params: any) {
     this.emitter.emit(notifyName, params);
@@ -368,7 +339,7 @@ export default class BleRemotePeripheral {
         const uuid: any = params.service_uuid;
         let child: any = this.getService(uuid);
         if (!child) {
-          const newService: any = new BleRemoteService({uuid});
+          const newService: any = new BleRemoteService({ uuid });
           newService.parent = this;
           this._services.push(newService);
           child = newService;
@@ -387,6 +358,5 @@ export default class BleRemotePeripheral {
     }
   }
 
-  public onerror() {
-  }
+  public onerror() {}
 }

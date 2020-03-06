@@ -7,13 +7,12 @@ import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 import BleLocalValueAttributeAbstract from "./bleLocalValueAttributeAbstract";
 import BleRemoteService from "./bleRemoteService";
 import BleService from "./bleService";
-import {BleAttributePropery, BleCharacteristicDefine, BleDescriptorDefine, BleDeviceAddress, UUID} from "./bleTypes";
+import { BleAttributePropery, BleCharacteristicDefine, BleDescriptorDefine, BleDeviceAddress, UUID } from "./bleTypes";
 
 /**
  * @category Use as Peripheral
  */
 export default class BleCharacteristic extends BleLocalValueAttributeAbstract<BleService, BleDescriptor> {
-
   /**
    * This is a callback function used when characteristic is read by an external device.
    *
@@ -118,11 +117,6 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     } else {
       this.properties = obj.properties || [];
     }
-    //
-    // this.permissions = obj.permissions || [];
-    // if (!Array.isArray(this.permissions)) {
-    //   this.permissions = [this.permissions];
-    // }
   }
 
   /**
@@ -189,18 +183,17 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     });
   }
 
-  //
-  // public addPermission(param: any) {
-  //   if (!this.permissions.includes(param)) {
-  //     this.permissions.push(param);
-  //   }
-  // }
-  //
-  // public removePermission(param: any) {
-  //   this.permissions = this.permissions.filter((elm: any) => {
-  //     return elm !== param;
-  //   });
-  // }
+  /**
+   * @ignore
+   * @param param
+   */
+  public addPermission(param: any) {}
+
+  /**
+   * @ignore
+   * @param param
+   */
+  public removePermission(param: any) {}
 
   /**
    * @ignore
@@ -214,7 +207,7 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
     }
     switch (name) {
       case "subscribe":
-        this._onSubscribe(...params as [any, any]);
+        this._onSubscribe(...(params as [any, any]));
         return true;
       case "unsubscribe":
         this._onUnsubscribe();
@@ -255,15 +248,13 @@ export default class BleCharacteristic extends BleLocalValueAttributeAbstract<Bl
    * @ignore
    * @private
    */
-  public _onNotify() {
-  }
+  public _onNotify() {}
 
   /**
    * @ignore
    * @private
    */
-  public _onIndicate() {
-  }
+  public _onIndicate() {}
 
   /**
    * This sends notify to the connected central.

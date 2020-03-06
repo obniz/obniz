@@ -5,22 +5,22 @@
 
 import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
-import {PullType} from "./common";
+import { PullType } from "./common";
 
 type I2CMode = "master" | "slave";
 
 interface PeripheralI2CState {
-  "mode": I2CMode;
-  "sda": number;
-  "scl": number;
-  "pull"?: PullType;
-  "gnd"?: number;
+  mode: I2CMode;
+  sda: number;
+  scl: number;
+  pull?: PullType;
+  gnd?: number;
 }
 
 interface PeripheralI2COptions extends PeripheralI2CState {
-  "mode": I2CMode;
-  "sda": number;
-  "scl": number;
+  mode: I2CMode;
+  sda: number;
+  scl: number;
   clock?: number;
   slave_address?: any;
   slave_address_length?: number;
@@ -33,7 +33,6 @@ interface PeripheralI2COptions extends PeripheralI2CState {
  * @category Peripherals
  */
 class PeripheralI2C {
-
   /**
    * from obniz.js 1.14.0
    *
@@ -135,13 +134,7 @@ class PeripheralI2C {
     if (err) {
       throw new Error("I2C start param '" + err + "' required, but not found ");
     }
-    this.state = ObnizUtil._keyFilter(arg, [
-      "mode",
-      "sda",
-      "scl",
-      "pull",
-      "gnd",
-    ]);
+    this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "pull", "gnd"]);
 
     const ioKeys: Array<keyof PeripheralI2CState> = ["sda", "scl", "gnd"];
     for (const key of ioKeys) {
@@ -152,14 +145,9 @@ class PeripheralI2C {
 
     const mode: I2CMode = this.state.mode!;
     const clock: number | null = typeof arg.clock === "number" ? Math.floor(arg.clock) : null;
-    const slave_address: number | null =
-      typeof arg.slave_address === "number"
-        ? Math.floor(arg.slave_address)
-        : null;
+    const slave_address: number | null = typeof arg.slave_address === "number" ? Math.floor(arg.slave_address) : null;
     const slave_address_length: number | null =
-      typeof arg.slave_address_length === "number"
-        ? Math.floor(arg.slave_address_length)
-        : null;
+      typeof arg.slave_address_length === "number" ? Math.floor(arg.slave_address_length) : null;
 
     if (mode !== "master" && mode !== "slave") {
       throw new Error("i2c: invalid mode " + mode);
@@ -172,14 +160,10 @@ class PeripheralI2C {
         throw new Error("i2c: invalid clock " + clock);
       }
       if (arg.pull === "5v" && clock > 400 * 1000) {
-        throw new Error(
-          "i2c: please use under 400khz when internal 5v internal pull-up",
-        );
+        throw new Error("i2c: please use under 400khz when internal 5v internal pull-up");
       }
       if (arg.pull === "3v" && clock > 100 * 1000) {
-        throw new Error(
-          "i2c: please use under 100khz when internal 3v internal pull-up",
-        );
+        throw new Error("i2c: please use under 100khz when internal 3v internal pull-up");
       }
     } else {
       if (slave_address === null) {

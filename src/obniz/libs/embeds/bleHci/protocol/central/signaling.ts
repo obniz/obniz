@@ -4,8 +4,7 @@
  * @ignore
  */
 // let debug = require('debug')('signaling');
-const debug: any = () => {
-};
+const debug: any = () => {};
 
 import events from "events";
 
@@ -91,14 +90,7 @@ class Signaling extends events.EventEmitter {
 
     this._aclStream.write(SIGNALING_CID, response);
 
-    this.emit(
-      "connectionParameterUpdateRequest",
-      this._handle,
-      minInterval,
-      maxInterval,
-      latency,
-      supervisionTimeout,
-    );
+    this.emit("connectionParameterUpdateRequest", this._handle, minInterval, maxInterval, latency, supervisionTimeout);
   }
 }
 

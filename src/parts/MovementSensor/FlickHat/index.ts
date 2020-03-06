@@ -5,9 +5,9 @@
 
 import Obniz from "../../../obniz";
 import PeripheralI2C from "../../../obniz/libs/io_peripherals/i2c";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  FlickHatOptions {
+export interface FlickHatOptions {
   vcc?: number;
   sda: number;
   scl: number;
@@ -21,14 +21,14 @@ export interface  FlickHatOptions {
 export type FlickHat_Direction = "west" | "east" | "north" | "south";
 export type FlickHat_Direction2 = "west" | "east" | "north" | "south" | "center";
 
-export interface  FlickHat_XYZ {
+export interface FlickHat_XYZ {
   x: number;
   y: number;
   z: number;
   seq: number;
 }
 
-export interface  FlickHat_Gesture {
+export interface FlickHat_Gesture {
   action: "gesture";
   from: FlickHat_Direction;
   to: FlickHat_Direction;
@@ -36,28 +36,28 @@ export interface  FlickHat_Gesture {
   raw: any;
 }
 
-export interface  FlickHat_Touch {
+export interface FlickHat_Touch {
   action: "touch";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;
 }
 
-export interface  FlickHat_Tap {
+export interface FlickHat_Tap {
   action: "tap";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;
 }
 
-export interface  FlickHat_DoubleTap {
+export interface FlickHat_DoubleTap {
   action: "doubletap";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;
 }
 
-export interface  FlickHat_AirWheel {
+export interface FlickHat_AirWheel {
   delta: number;
   rotation: number;
   seq: number;
@@ -65,7 +65,6 @@ export interface  FlickHat_AirWheel {
 }
 
 export default class FlickHat implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "FlickHat",
@@ -96,9 +95,9 @@ export default class FlickHat implements ObnizPartsInterface {
   public ongesture?: (gesture: FlickHat_Gesture) => void;
   public lastTouch: any;
   public ontouch?: (touch: FlickHat_Touch) => void;
-  public ontap?: ((tap: FlickHat_Tap) => void);
+  public ontap?: (tap: FlickHat_Tap) => void;
   public ondoubletap: any;
-  public onairwheel?: (airwheel: FlickHat_AirWheel) => void ;
+  public onairwheel?: (airwheel: FlickHat_AirWheel) => void;
   public statusInfo: any;
 
   protected obniz!: Obniz;
@@ -143,10 +142,10 @@ export default class FlickHat implements ObnizPartsInterface {
     this.i2c = this.obniz.getI2CWithConfig(this.params);
 
     if (this.obniz.isValidIO(this.params.led1)) {
-      this.led1 = this.obniz.wired("LED", {anode: this.params.led1});
+      this.led1 = this.obniz.wired("LED", { anode: this.params.led1 });
     }
     if (this.obniz.isValidIO(this.params.led2)) {
-      this.led2 = this.obniz.wired("LED", {anode: this.params.led2});
+      this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
     }
   }
 
@@ -250,9 +249,7 @@ export default class FlickHat implements ObnizPartsInterface {
 
       if (size !== 0xff && size > 0) {
         if (this.debugprint || this.obniz.debugprint) {
-          console.log(
-            "flickHat: " + data.slice(0, size).map((v: any) => "0x" + v.toString(16)),
-          );
+          console.log("flickHat: " + data.slice(0, size).map((v: any) => "0x" + v.toString(16)));
         }
         let configmask: any;
         let sysinfo: any;
@@ -272,12 +269,7 @@ export default class FlickHat implements ObnizPartsInterface {
             airwheel = data.slice(18, 20);
             // let xyz = data.slice(20, 26);
             // let noisepow = data.slice(27, 30);
-            if (
-              gesture[0] === 255 &&
-              gesture[1] === 255 &&
-              gesture[2] === 255 &&
-              gesture[3] === 255
-            ) {
+            if (gesture[0] === 255 && gesture[1] === 255 && gesture[2] === 255 && gesture[3] === 255) {
               break;
             }
 
@@ -311,10 +303,7 @@ export default class FlickHat implements ObnizPartsInterface {
                 ["hold", "", ""],
               ];
               for (const index in gestures) {
-                if (
-                  index === gesture[0] &&
-                  typeof this.ongestureall === "function"
-                ) {
+                if (index === gesture[0] && typeof this.ongestureall === "function") {
                   this.ongestureall({
                     action: gestures[index][0],
                     from: gestures[index][1],
@@ -323,11 +312,7 @@ export default class FlickHat implements ObnizPartsInterface {
                     seq,
                   });
                 }
-                if (
-                  index === gesture[0] &&
-                  gestures[index][0] === "flick" &&
-                  typeof this.ongesture === "function"
-                ) {
+                if (index === gesture[0] && gestures[index][0] === "flick" && typeof this.ongesture === "function") {
                   this.ongesture({
                     action: "gesture",
                     from: gestures[index][1],
@@ -339,11 +324,7 @@ export default class FlickHat implements ObnizPartsInterface {
               }
             }
 
-            if (
-              configmask & maskTouchInfo &&
-              !(touch[0] === 0 && touch[1] === 0) &&
-              touch[3] === 0
-            ) {
+            if (configmask & maskTouchInfo && !(touch[0] === 0 && touch[1] === 0) && touch[3] === 0) {
               // console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
               const touchAction: any = touch[0] | (touch[1] << 8); // little endian
               if (touchAction === 0xffff) {
@@ -412,10 +393,7 @@ export default class FlickHat implements ObnizPartsInterface {
                 });
               }
 
-              if (
-                doubletaps.length > 0 &&
-                typeof this.ondoubletap === "function"
-              ) {
+              if (doubletaps.length > 0 && typeof this.ondoubletap === "function") {
                 this.ondoubletap({
                   action: "doubletap",
                   positions: doubletaps,
@@ -452,11 +430,7 @@ export default class FlickHat implements ObnizPartsInterface {
             this.statusInfo = statusInfo;
             if (this.debugprint || this.obniz.debugprint) {
               console.log(
-                `flickHat: system status: {msgId: ${
-                  statusInfo.msgId
-                }, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${
-                  statusInfo.error
-                }}`,
+                `flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`,
               );
             }
             break;
@@ -469,9 +443,7 @@ export default class FlickHat implements ObnizPartsInterface {
               libLoaderVer: [data[8], data[9]],
               libLoaderPlatform: data[10],
               fwStartAddr: data[11] * 128,
-              fwVersion: this._dataArray2string(data.slice(12, 132)).split(
-                "\0",
-              )[0],
+              fwVersion: this._dataArray2string(data.slice(12, 132)).split("\0")[0],
               fwInfoReceived: true,
             };
             this.fwInfo = fwInfo;

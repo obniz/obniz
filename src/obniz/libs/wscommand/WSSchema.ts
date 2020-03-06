@@ -1,15 +1,14 @@
-
 /**
  * @packageDocumentation
  * @ignore
  */
 import tv4 = require("tv4");
-import {ValidationError} from "tv4";
+import { ValidationError } from "tv4";
 
 tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
 
 // @ts-ignore
-tv4.defineKeyword("uniqueKeys", (data: any, value: any, schema: tv4.JsonSchema): string | ValidationError | null => {
+tv4.defineKeyword("uniqueKeys", (data: any, value: any, schema: tv4.JsonSchema,): string | ValidationError | null => { // tslint:disable-line
   if (!Array.isArray(value)) {
     return null;
   }
@@ -25,7 +24,7 @@ tv4.defineKeyword("uniqueKeys", (data: any, value: any, schema: tv4.JsonSchema):
   if (duplicated.length > 0) {
     return {
       code: tv4.errorCodes.UNIQUE_KEYS,
-      message: {uniqueKeys: value.join(",")},
+      message: { uniqueKeys: value.join(",") },
     };
   }
   return null;
@@ -39,7 +38,6 @@ require.context = replaceContext;
 
 // @ts-ignore
 if (require.context && require.context.setBaseDir) {
-
   // @ts-ignore
   require.context.setBaseDir(__dirname);
 }

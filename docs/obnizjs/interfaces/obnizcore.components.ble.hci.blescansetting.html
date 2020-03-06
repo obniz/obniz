@@ -93,6 +93,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#activescan" class="tsd-kind-icon">active<wbr>Scan</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#duplicate" class="tsd-kind-icon">duplicate</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.blescansetting.html#duration" class="tsd-kind-icon">duration</a></li>
 							</ul>
@@ -103,36 +104,52 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="activescan" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> active<wbr>Scan</h3>
+					<div class="tsd-signature tsd-kind-icon">active<wbr>Scan<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:80</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>(obnizOS 3 or later only)
+								Active scan or Passive Scan
+							Default is true : activeScan.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="duplicate" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> duplicate</h3>
 					<div class="tsd-signature tsd-kind-icon">duplicate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:40</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:72</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>(obnizOS 3 or later only)</p>
+							<p>(obnizOS 3 or later only)
+							Specifying onfind will be called or not when an advertisement received from already known peripheral. Default is false : never called again.</p>
 						</div>
-						<p>Specifying onfind will be called or not when an advertisement received from already known peripheral.
-						Default is false : never called again.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="duration" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> duration</h3>
-					<div class="tsd-signature tsd-kind-icon">duration<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<div class="tsd-signature tsd-kind-icon">duration<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:30</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:66</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Timeout seconds of scanning.
-							Default is 30 seconds</p>
+							<p>Timeout seconds of scanning. Default is 30 seconds.</p>
 						</div>
+						<p>If set null, scan don&#39;t stop automatically.</p>
 					</div>
 				</section>
 			</section>
@@ -142,6 +159,69 @@
 				<ul>
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_index_.html">&quot;parts/<wbr>Ble/linking/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_advertising_.html">&quot;parts/<wbr>Ble/linking/modules/advertising&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_device_.html">&quot;parts/<wbr>Ble/linking/modules/device&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_ieee754_.html">&quot;parts/<wbr>Ble/linking/modules/ieee754&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_.html">&quot;parts/<wbr>Ble/linking/modules/service&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_notification_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>notification&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_operation_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>operation&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_property_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>property&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_sensor_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>sensor&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_linking_modules_service_setting_.html">&quot;parts/<wbr>Ble/linking/modules/service-<wbr>setting&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_display_matrixled_ht16k33_index_.html">&quot;parts/<wbr>Display/<wbr>MatrixLED_<wbr>HT16<wbr>K33/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_keyestudio_keyestudio_ht16k33_index_.html">&quot;parts/<wbr>Keyestudio/<wbr>Keyestudio_<wbr>HT16<wbr>K33/index&quot;</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
+						<ul>
+							<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+								<a href="../modules/obnizcore.components.html">Components</a>
+								<ul>
+									<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+										<a href="../modules/obnizcore.components.ble.html">Ble</a>
+										<ul>
+											<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
+												<a href="../modules/obnizcore.components.ble.hci.html">Hci</a>
+											</li>
+											<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+												<a href="../modules/obnizcore.components.ble.old.html">old</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.hardware.html">Hardware</a>
+							</li>
+						</ul>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.html">Parts</a>
 					</li>
 				</ul>
 			</nav>
@@ -228,6 +308,9 @@
 						<a href="obnizcore.components.ble.hci.blescansetting.html" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Setting</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.blescansetting.html#activescan" class="tsd-kind-icon">active<wbr>Scan</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="obnizcore.components.ble.hci.blescansetting.html#duplicate" class="tsd-kind-icon">duplicate</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
@@ -253,6 +336,9 @@
 						<a href="../modules/obnizcore.components.ble.hci.html#bleattributepropery" class="tsd-kind-icon">Ble<wbr>Attribute<wbr>Propery</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/obnizcore.components.ble.hci.html#blebinary" class="tsd-kind-icon">Ble<wbr>Binary</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/obnizcore.components.ble.hci.html#bleconnectionstate" class="tsd-kind-icon">Ble<wbr>Connection<wbr>State</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
@@ -266,6 +352,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/obnizcore.components.ble.hci.html#bleeventtype" class="tsd-kind-icon">Ble<wbr>Event<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/obnizcore.components.ble.hci.html#blescanmode" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Mode</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-kind-icon">UUID</a>

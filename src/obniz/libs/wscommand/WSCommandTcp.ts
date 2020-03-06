@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -64,9 +63,9 @@ class WSCommandTcp extends WSCommand {
       }
 
       const schemaData: any = [
-        {uri: "/request/tcp/connect", onValid: this.connect},
-        {uri: "/request/tcp/disconnect", onValid: this.disconnect},
-        {uri: "/request/tcp/write", onValid: this.write},
+        { uri: "/request/tcp/connect", onValid: this.connect },
+        { uri: "/request/tcp/disconnect", onValid: this.disconnect },
+        { uri: "/request/tcp/write", onValid: this.write },
       ];
       const res: any = this.validateCommandSchema(schemaData, module, "tcp" + i, i);
 

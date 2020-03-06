@@ -4,7 +4,6 @@
  */
 
 export default class HW {
-
   public static getDefinitionFor(hw: any) {
     if (hw === "obnizb1") {
       return require("./obnizb1.json");
@@ -14,6 +13,8 @@ export default class HW {
       return require("./esp32w.json");
     } else if (hw === "esp32p") {
       return require("./esp32p.json");
+    } else if (hw === "m5stickc") {
+      return require("./m5stickc.json");
     } else if (hw === "encored") {
       return require("./encored.json");
     }

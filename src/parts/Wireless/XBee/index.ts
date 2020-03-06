@@ -6,20 +6,19 @@
 import Obniz from "../../../obniz";
 import PeripheralUART from "../../../obniz/libs/io_peripherals/uart";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  XBeeOptions {
+export interface XBeeOptions {
   tx: number;
   rx: number;
   gnd?: number;
- }
+}
 
-export interface  XBeeConfig {
+export interface XBeeConfig {
   [key: string]: string;
 }
 
 export default class XBee implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "XBee",
@@ -30,7 +29,7 @@ export default class XBee implements ObnizPartsInterface {
   public requiredKeys: string[];
   public params: any;
 
-  public displayIoNames = {tx: "<tx", rx: ">rx"};
+  public displayIoNames = { tx: "<tx", rx: ">rx" };
   public currentCommand: any;
   public commands: any;
   public isAtMode: any;
@@ -122,11 +121,7 @@ export default class XBee implements ObnizPartsInterface {
   }
 
   public sendCommand() {
-    if (
-      this.isAtMode === true &&
-      this.currentCommand === null &&
-      this.commands.length > 0
-    ) {
+    if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
       this.currentCommand = "AT" + this.commands.shift();
       this.uart.send(this.currentCommand + "\r");
     }
@@ -152,36 +147,34 @@ export default class XBee implements ObnizPartsInterface {
     if (this.isAtMode) {
       throw new Error("Xbee : duplicate config setting");
     }
-    return new Promise(
-      (resolve, reject) => {
-        const standaloneKeys: any = {
-          destination_address_high: "DH",
-          destination_address_low: "DL",
-          source_address: "MY",
-        };
-        const highLowKeys: any = ["destination_address"];
-        this.enterAtMode();
-        for (const key in config) {
-          if (key.length === 2) {
-            this.addCommand(key, config[key]);
-          } else if (standaloneKeys[key]) {
-            this.addCommand(standaloneKeys[key], config[key]);
-          } else if (highLowKeys.includes(key)) {
-            let high: any = config[key].slice(0, -8);
-            if (!high) {
-              high = "0";
-            }
-            const low: any = config[key].slice(-8);
-
-            this.addCommand(standaloneKeys[key + "_high"], high);
-            this.addCommand(standaloneKeys[key + "_low"], low);
+    return new Promise((resolve, reject) => {
+      const standaloneKeys: any = {
+        destination_address_high: "DH",
+        destination_address_low: "DL",
+        source_address: "MY",
+      };
+      const highLowKeys: any = ["destination_address"];
+      this.enterAtMode();
+      for (const key in config) {
+        if (key.length === 2) {
+          this.addCommand(key, config[key]);
+        } else if (standaloneKeys[key]) {
+          this.addCommand(standaloneKeys[key], config[key]);
+        } else if (highLowKeys.includes(key)) {
+          let high: any = config[key].slice(0, -8);
+          if (!high) {
+            high = "0";
           }
+          const low: any = config[key].slice(-8);
+
+          this.addCommand(standaloneKeys[key + "_high"], high);
+          this.addCommand(standaloneKeys[key + "_low"], low);
         }
-        this.exitAtMode();
-        this.onFinishAtModeCallback = () => {
-          resolve();
-        };
-      },
-    );
+      }
+      this.exitAtMode();
+      this.onFinishAtModeCallback = () => {
+        resolve();
+      };
+    });
   }
 }

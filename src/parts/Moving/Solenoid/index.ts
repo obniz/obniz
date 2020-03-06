@@ -6,15 +6,14 @@
 import Obniz from "../../../obniz";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";
 
-import ObnizPartsInterface, {ObnizPartsInfo} from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface  SolenoidOptions {
+export interface SolenoidOptions {
   signal: number;
   gnd?: number;
 }
 
 export default class Solenoid implements ObnizPartsInterface {
-
   public static info(): ObnizPartsInfo {
     return {
       name: "Solenoid",

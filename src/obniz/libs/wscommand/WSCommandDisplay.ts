@@ -1,4 +1,3 @@
-
 /**
  * @packageDocumentation
  * @ignore
@@ -7,28 +6,19 @@ import qrcode from "../utils/qr";
 import WSCommand from "./WSCommand";
 
 class WSCommandDisplay extends WSCommand {
-  public module: any;
-  public _CommandClear: any;
-  public _CommandPrint: any;
-  public _CommandDrawCampusVerticalBytes: any;
-  public _CommandDrawCampusHorizonalBytes: any;
-  public _CommandDrawIOState: any;
-  public _CommandSetPinName: any;
+  public module = 8;
+
+  public _CommandClear = 0;
+  public _CommandPrint = 1;
+  public _CommandDrawCampusVerticalBytes = 2;
+  public _CommandDrawCampusHorizonalBytes = 3;
+  public _CommandDrawIOState = 4;
+  public _CommandSetPinName = 5;
+  public _CommandDrawCampusRawColors = 6;
+
   public sendCommand: any;
   public validateCommandSchema: any;
   public WSCommandNotFoundError: any;
-
-  constructor() {
-    super();
-    this.module = 8;
-
-    this._CommandClear = 0;
-    this._CommandPrint = 1;
-    this._CommandDrawCampusVerticalBytes = 2;
-    this._CommandDrawCampusHorizonalBytes = 3;
-    this._CommandDrawIOState = 4;
-    this._CommandSetPinName = 5;
-  }
 
   // Commands
 
@@ -36,14 +26,13 @@ class WSCommandDisplay extends WSCommand {
     this.sendCommand(this._CommandClear, null);
   }
 
-  public print(buf: any) {
+  public print(buf: Uint8Array) {
     this.sendCommand(this._CommandPrint, buf);
   }
 
   public printText(text: any) {
-    let result: any;
-    const buf: any = Buffer.from(text, "utf8");
-    result = new Uint8Array(buf);
+    const buf = Buffer.from(text, "utf8");
+    const result = new Uint8Array(buf);
     this.print(result);
   }
 
@@ -52,7 +41,11 @@ class WSCommandDisplay extends WSCommand {
   }
 
   public raw(params: any) {
-    this.drawHorizonally(new Uint8Array(params.raw));
+    if (typeof params.color_depth === "number" && params.color_depth > 1) {
+      this.drawRawColors(params.raw, params.color_depth);
+    } else {
+      this.drawHorizonally(new Uint8Array(params.raw));
+    }
   }
 
   public qr(params: any) {
@@ -88,8 +81,7 @@ class WSCommandDisplay extends WSCommand {
       for (let row = 0; row < size; row++) {
         for (let col = 0; col < size; col++) {
           if (!modules[Math.floor(row / 2)][Math.floor(col / 2)]) {
-            vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |=
-              0x80 >> (col + 2) % 8;
+            vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |= 0x80 >> (col + 2) % 8;
           }
         }
       }
@@ -100,20 +92,16 @@ class WSCommandDisplay extends WSCommand {
   public pinName(params: any) {
     for (let i = 0; i < 40; i++) {
       if (typeof params.pin_assign[i] === "object") {
-        this.setPinName(
-          i,
-          params.pin_assign[i].module_name || "?",
-          params.pin_assign[i].pin_name || "?",
-        );
+        this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
       }
     }
   }
 
-  public drawVertically(buf: any) {
+  public drawVertically(buf: Uint8Array) {
     this.sendCommand(this._CommandDrawCampusVerticalBytes, buf);
   }
 
-  public drawHorizonally(buf: any) {
+  public drawHorizonally(buf: Uint8Array) {
     this.sendCommand(this._CommandDrawCampusHorizonalBytes, buf);
   }
 
@@ -122,19 +110,26 @@ class WSCommandDisplay extends WSCommand {
     this.sendCommand(this._CommandDrawIOState, buf);
   }
 
-  public setPinName(no: any, moduleName: any, pinName: any) {
-    let str: any = moduleName.slice(0, 4) + " " + pinName;
+  public setPinName(no: number, moduleName: string, pinName: string) {
+    let str = moduleName.slice(0, 4) + " " + pinName;
     str = str.slice(0, 9);
 
-    const buf: any = new Uint8Array(1);
+    const buf = new Uint8Array(1);
     buf[0] = no;
 
-    const stringarray: any = new Uint8Array(Buffer.from(str, "utf8"));
-    const combined: any = new Uint8Array(buf.length + stringarray.length);
+    const stringarray = new Uint8Array(Buffer.from(str, "utf8"));
+    const combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
     combined.set(stringarray, 1);
 
     this.sendCommand(this._CommandSetPinName, combined);
+  }
+
+  public drawRawColors(raw: number[], colorDepth: number) {
+    const buf = new Uint8Array(1 + raw.length);
+    buf[0] = colorDepth;
+    buf.set(raw, 1);
+    this.sendCommand(this._CommandDrawCampusRawColors, buf);
   }
 
   public parseFromJson(json: any) {
@@ -144,11 +139,11 @@ class WSCommandDisplay extends WSCommand {
     }
 
     const schemaData: any = [
-      {uri: "/request/display/clear", onValid: this.clear},
-      {uri: "/request/display/text", onValid: this.text},
-      {uri: "/request/display/raw", onValid: this.raw},
-      {uri: "/request/display/pin_assign", onValid: this.pinName},
-      {uri: "/request/display/qr", onValid: this.qr},
+      { uri: "/request/display/clear", onValid: this.clear },
+      { uri: "/request/display/text", onValid: this.text },
+      { uri: "/request/display/raw", onValid: this.raw },
+      { uri: "/request/display/pin_assign", onValid: this.pinName },
+      { uri: "/request/display/qr", onValid: this.qr },
     ];
     const res: any = this.validateCommandSchema(schemaData, module, "display");
 
