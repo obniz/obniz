@@ -7,6 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dialogPollyfill_1 = __importDefault(require("./libs/webpackReplace/dialogPollyfill"));
 const ObnizSystemMethods_1 = __importDefault(require("./ObnizSystemMethods"));
 class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
@@ -60,6 +61,85 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
             return;
         }
         super.wsconnect(desired_server);
+    }
+    prompt(filled = "", callback) {
+        ObnizUIs._promptQueue.push({ filled, callback });
+        this._promptNext();
+    }
+    _promptNext() {
+        if (ObnizUIs._promptWaiting) {
+            return;
+        }
+        const next = ObnizUIs._promptQueue.shift();
+        if (next) {
+            this._promptOne(next.filled, next.callback);
+        }
+    }
+    _promptOne(filled, callback) {
+        ObnizUIs._promptWaiting = true;
+        const text = filled;
+        const selectorId = `obniz-id-prompt${Math.floor(Math.random() * 10000)}`;
+        let css = dialogPollyfill_1.default.css;
+        css +=
+            `dialog#${selectorId}::backdrop {\n` +
+                "  background: rgba(0, 0, 0, 0.5);\n" +
+                "  animation: modal-open .4s ease;\n" +
+                "}\n" +
+                "\n" +
+                `dialog#${selectorId}[open] {\n` +
+                "    position: fixed;\n" +
+                "    bottom: auto;\n" +
+                "    top: 10px;" +
+                "    animation: modal-slide .5s ease;\n" +
+                "    border: none;" +
+                "}\n" +
+                `dialog#${selectorId} button {\n` +
+                "    background-color: #00a4e3;\n" +
+                "    border-color: #00a4e3;\n" +
+                "    color: white;\n" +
+                "}" +
+                "@keyframes modal-open {\n" +
+                "  0% {\n" +
+                "    opacity: 0;\n" +
+                "  }\n" +
+                "  100%{\n" +
+                "    opacity: 1;\n" +
+                "  }\n" +
+                "}\n" +
+                "\n" +
+                "@keyframes modal-slide {\n" +
+                "  0% {\n" +
+                "    transform: translateY(-20px);\n" +
+                "  }\n" +
+                "  100%{\n" +
+                "    transform: translateY(0);\n" +
+                "  }\n" +
+                "}";
+        let html = "";
+        html += `<dialog id='${selectorId}'>`;
+        html += `Connect obniz device<br/>`;
+        html += ` <form method="dialog">`;
+        html += ` <input type="text" name="obniz-id" id="return_value" value="${text}" placeholder="obniz id">`;
+        html += '  <button id="close">Connect</button>';
+        html += "</form>";
+        html += "</dialog>";
+        html += "<style>";
+        html += css;
+        html += "</style>";
+        const div = document.createElement("div");
+        div.innerHTML = html;
+        const dialog = div.querySelector("dialog");
+        dialog.onclose = (param) => {
+            const inputValue = dialog.querySelector("#return_value").value;
+            div.parentElement.removeChild(div);
+            ObnizUIs._promptWaiting = false;
+            // @ts-ignore
+            callback(inputValue);
+            this._promptNext();
+        };
+        document.body.appendChild(div);
+        dialogPollyfill_1.default.dialogPolyfill.registerDialog(dialog);
+        dialog.showModal();
     }
     showAlertUI(obj) {
         if (this.isNode || !document.getElementById(this.options.debug_dom_id)) {
@@ -142,6 +222,8 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     }
 }
 exports.default = ObnizUIs;
+ObnizUIs._promptQueue = [];
+ObnizUIs._promptWaiting = false;
 /**
  *
  * @ignore

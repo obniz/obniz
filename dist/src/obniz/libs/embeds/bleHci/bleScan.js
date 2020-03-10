@@ -61,9 +61,13 @@ class BleScan {
         settings.filterOnDevice = !!settings.filterOnDevice;
         settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
-        this.scanTarget = target;
-        if (this.scanTarget && this.scanTarget.uuids) {
-            this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
+        target = target || {};
+        this.scanTarget.binary = target.binary;
+        this.scanTarget.deviceAddress = target.deviceAddress;
+        this.scanTarget.localName = target.localName;
+        this.scanTarget.localNamePrefix = target.localNamePrefix;
+        if (target && target.uuids) {
+            this.scanTarget.uuids = target.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
         }

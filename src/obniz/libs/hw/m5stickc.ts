@@ -376,6 +376,11 @@ export class M5StickC extends ObnizDevice {
     // @ts-ignore
     super._prepareComponents();
 
+    if (this.ir) {
+      // already wired parts
+      return;
+    }
+
     this.ir = this.wired("InfraredLED", { anode: 9 });
     this.led = this.wired("LED", { cathode: 10 });
     this.buttonA = this.wired("Button", { signal: 37 });

@@ -212,9 +212,13 @@ export default class BleScan {
     settings.activeScan = settings.activeScan !== false;
     this.scanSettings = settings;
 
-    this.scanTarget = target;
-    if (this.scanTarget && this.scanTarget.uuids) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map((elm: UUID) => {
+    target = target || {};
+    this.scanTarget.binary = target.binary;
+    this.scanTarget.deviceAddress = target.deviceAddress;
+    this.scanTarget.localName = target.localName;
+    this.scanTarget.localNamePrefix = target.localNamePrefix;
+    if (target && target.uuids) {
+      this.scanTarget.uuids = target.uuids.map((elm: UUID) => {
         return BleHelper.uuidFilter(elm);
       });
     }
