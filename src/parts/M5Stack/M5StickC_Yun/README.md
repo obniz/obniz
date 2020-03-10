@@ -1,23 +1,31 @@
-# M5StickC Yun Hat
+# M5StickC_Yun
 
-M5StickC と接続できる Yun Hat　です。
-温度、湿度、明るさのセンサーやLEDが付いています。
+M5StickC Yun Hat
 
 ![](image.jpg)
 
 ## wired(obniz,  {sda, scl, i2c} )
 
-obnizデバイスと接続します。  
-M5StickCと接続する場合は、G0をsdaに、G26をsclに指定してください。
-その他の場合には，更にvccとgndを適切なピンに指定してください．  
+connect to the obniz device.  
+When using M5StickC, You do not need to assign pins. 
+
+```javascript
+// JavaScript Examples
+var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
+obniz.onconnect = async function() {
+  var yun = obniz.wired("M5StickC_Yun");
+}
+```
+
+When using other devices, White, yellow, red and black wires correspond to scl, sda, vcc and gnd respectively.  
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
 vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
 gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
-sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
-i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
+scl | `number(obniz Board io)` | no |  &nbsp; | scl of I2C
+sda | `number(obniz Board io)` | no | &nbsp;  | sda of I2C
+i2c | `object` | no | &nbsp;  | obniz i2c object
 
 ```javascript
 // Javascript Example
@@ -26,7 +34,7 @@ var yun = obniz.wired("M5StickC_Yun", {sda:0, scl:26});
 
 ## [await] getTempWait()
 
-気温を取得します。
+Get a temperature. Unit is Celsius.
 
 ```javascript
 // Javascript Example
@@ -37,7 +45,7 @@ console.log('temperature:' + temp);
 
 ## [await] getHumidWait()
 
-湿度を取得します。
+Get a Humidity. Unit is Ratio(%).
 
 ```javascript
 // Javascript Example
@@ -48,7 +56,7 @@ console.log('Humidity:' + Humid);
 
 ## [await] getPressureWait()
 
-気圧を取得します。
+Get a Pressure. Unit is pressure(hPa).
 
 ```javascript
 // Javascript Example
@@ -60,7 +68,7 @@ console.log('Pressure:' + Pressure);
 
 ## [await] getLightWait()
 
-明るさレベルを取得します。
+Get a Light level. 
 
 ```javascript
 // Javascript Example
@@ -71,10 +79,7 @@ console.log('ligth:' + ligth);
 
 ## [await] rgb(red,green,blue)
 
-LEDの色をRGBで指定します。
-すべてのLEDが指定した色で光ります。
-
-0-255の範囲で指定してください。
+Specify the led color in RGB.range 0-255
 
 ```javascript
 // Javascript Example
@@ -84,8 +89,7 @@ yun.rgb(255,0,0);//red
 
 ## [await] hsv(hue,saturation,value)
 
-LEDの色をHSVで指定します。
-すべてのLEDが指定した色で光ります。
+Specify the led color in HSV.
 
 - hue : 0-300
 - saturation : 0-1
@@ -99,8 +103,7 @@ yun.hsv(100,0.5,0.2);
 
 ## [await] rgbs([[red,green,blue]])
 
-LEDの色をRGBで指定します。
-配列の順番通りにLEDの色を付けられます。
+Specify the led color in RGB.range 0-255
 
 ```javascript
 // Javascript Example
@@ -110,8 +113,11 @@ yun.rgbs([[255,0,0],[0,255,0]]);
 
 ## [await] hsvs([[hue,saturation,value]])
 
-LEDの色をHSVで指定します。
-配列の順番通りにLEDの色を付けられます。
+Specify the led color in HSV.
+
+- hue : 0-300
+- saturation : 0-1
+- value : 0-1
 
 ```javascript
 // Javascript Example
