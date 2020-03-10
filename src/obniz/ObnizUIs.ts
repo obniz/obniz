@@ -141,8 +141,16 @@ export default class ObnizUIs extends ObnizSystemMethods {
       const inputValue = (dialog.querySelector("#return_value") as HTMLInputElement).value;
       div.parentElement!.removeChild(div);
       ObnizUIs._promptWaiting = false;
-      // @ts-ignore
-      callback(inputValue);
+      if (inputValue && inputValue.length > 0) {
+        // @ts-ignore
+        callback(inputValue);
+      }
+      this._promptNext();
+    };
+    (dialog as HTMLDialogElement).oncancel = (param) => {
+      const inputValue = (dialog.querySelector("#return_value") as HTMLInputElement).value;
+      div.parentElement!.removeChild(div);
+      ObnizUIs._promptWaiting = false;
       this._promptNext();
     };
 
