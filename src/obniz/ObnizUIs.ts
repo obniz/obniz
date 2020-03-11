@@ -3,10 +3,15 @@
  * @module ObnizCore
  */
 
+import dialogPolyfill from "./libs/webpackReplace/dialogPollyfill";
 import { ObnizOptions } from "./ObnizOptions";
 import ObnizSystemMethods from "./ObnizSystemMethods";
 
 export default class ObnizUIs extends ObnizSystemMethods {
+  public static _promptQueue: any[] = [];
+  public static _promptWaiting: boolean = false;
+  public static _promptCount: number = 0;
+
   constructor(id: string, options?: ObnizOptions) {
     super(id, options);
   }
@@ -60,6 +65,125 @@ export default class ObnizUIs extends ObnizSystemMethods {
       return;
     }
     super.wsconnect(desired_server);
+  }
+
+  protected prompt(filled: string = "", callback: any) {
+    ObnizUIs._promptQueue.push({ filled, callback });
+    this._promptNext();
+  }
+
+  protected _promptNext() {
+    if (ObnizUIs._promptWaiting) {
+      return;
+    }
+    const next = ObnizUIs._promptQueue.shift();
+    if (next) {
+      this._promptOne(next.filled, next.callback);
+    }
+  }
+
+  protected _promptOne(filled: any, callback: any) {
+    ObnizUIs._promptWaiting = true;
+    ObnizUIs._promptCount++;
+    let result = "";
+    new Promise((resolve: any) => {
+      const text = filled;
+      const selectorId = `obniz-id-prompt${ObnizUIs._promptCount}`;
+      let css: string = dialogPolyfill.css;
+      css +=
+        `dialog#${selectorId}::backdrop {\n` +
+        "  background: rgba(0, 0, 0, 0.5);\n" +
+        "  animation: modal-open .4s ease;\n" +
+        "}\n" +
+        "\n" +
+        `dialog#${selectorId}[open] {\n` +
+        "    position: fixed;\n" +
+        "    bottom: auto;\n" +
+        "    top: 10px;" +
+        "    animation: modal-slide .5s ease;\n" +
+        "    border: none;" +
+        "    padding: 0;" +
+        "}\n" +
+        `dialog#${selectorId} .contents {\n` +
+        "    padding: 1em;" +
+        "}\n" +
+        `dialog#${selectorId} button {\n` +
+        "    background-color: #00a4e3;\n" +
+        "    border-color: #00a4e3;\n" +
+        "    color: white;\n" +
+        "}" +
+        "@keyframes modal-open {\n" +
+        "  0% {\n" +
+        "    opacity: 0;\n" +
+        "  }\n" +
+        "  100%{\n" +
+        "    opacity: 1;\n" +
+        "  }\n" +
+        "}\n" +
+        "\n" +
+        "@keyframes modal-slide {\n" +
+        "  0% {\n" +
+        "    transform: translateY(-20px);\n" +
+        "  }\n" +
+        "  100%{\n" +
+        "    transform: translateY(0);\n" +
+        "  }\n" +
+        "}";
+
+      let html = "";
+      html += `<dialog id='${selectorId}'><div class="contents">`;
+      html += `Connect obniz device`;
+      if (ObnizUIs._promptCount > 1) {
+        html += `(${ObnizUIs._promptCount})`;
+      }
+      html += `<br/>`;
+      html += ` <form method="dialog">`;
+      html += ` <input type="text" name="obniz-id" id="return_value" value="${text}" placeholder="obniz id">`;
+      html += '  <button id="close">Connect</button>';
+      html += "</form>";
+      html += "</div></dialog>";
+      html += "<style>";
+      html += css;
+      html += "</style>";
+
+      const div = document.createElement("div");
+      div.innerHTML = html;
+      const dialog: HTMLDialogElement = div.querySelector("dialog") as HTMLDialogElement;
+      dialog.addEventListener("click", () => {
+        // cancel
+        (dialog.querySelector("#return_value") as HTMLInputElement).value = "";
+        dialog.close();
+        resolve();
+      });
+      (dialog.querySelector(".contents") as HTMLElement).addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+
+      dialog.addEventListener("close", (param) => {
+        const inputValue = (dialog.querySelector("#return_value") as HTMLInputElement).value;
+        div.parentElement!.removeChild(div);
+        result = inputValue;
+        resolve();
+      });
+
+      dialog.addEventListener("cancel", (param) => {
+        // escape key
+        const inputValue = (dialog.querySelector("#return_value") as HTMLInputElement).value;
+        div.parentElement!.removeChild(div);
+        resolve();
+      });
+      document.body.appendChild(div);
+      dialogPolyfill.dialogPolyfill.registerDialog(dialog);
+      dialog.showModal();
+    }).then(() => {
+      ObnizUIs._promptWaiting = false;
+
+      if (result && result.length > 0) {
+        // @ts-ignore
+        callback(result);
+      }
+      this._promptNext();
+    });
   }
 
   protected showAlertUI(obj: any) {

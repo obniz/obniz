@@ -19,7 +19,7 @@ if (json.name === 'ESP32 Dev Kit') {
 } else if (json.name === 'M5STICK C') {
   checkBoard_ID = '88801217';
 } else if (json.name === 'obniz board') {
-  checkBoard_ID = '13928575';
+  checkBoard_ID = '71088113';
 } else if (json.name === 'obniz 1Y') {
   checkBoard_ID = '54371148';
 } else if (json.name === 'ESP32 Pico Kit v4') {
@@ -28,7 +28,7 @@ if (json.name === 'ESP32 Dev Kit') {
   checkBoard_ID = '41232281';
 }
 
-const obnizA_ID = '73566823';
+const obnizA_ID = '16438366';
 const obnizB_ID = '00747253';
 
 let obnizA, obnizB, checkBoard;

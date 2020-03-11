@@ -1,14 +1,14 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.M5StickC_YunHat
+ * @module Parts.M5StickC_Yun
  */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(require("../../../obniz/libs/utils/util"));
-class M5StickC_YunHat {
+class M5StickC_Yun {
     constructor() {
         this.LED_LEN = 14;
         this.requiredKeys = [];
@@ -17,7 +17,7 @@ class M5StickC_YunHat {
     }
     static info() {
         return {
-            name: "M5StickC_YunHat",
+            name: "M5StickC_Yun",
         };
     }
     static _generateHsvColor(h, s, v) {
@@ -54,6 +54,16 @@ class M5StickC_YunHat {
     }
     wired(obniz) {
         this.obniz = obniz;
+        if (!this.obniz.isValidIO(this.params.sda) && !this.obniz.isValidIO(this.params.scl) && !this.params.i2c) {
+            if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+                const hatI2c = this.obniz.getExtraInterface("m5stickc_hat").i2c;
+                this.params.sda = hatI2c.sda;
+                this.params.scl = hatI2c.scl;
+            }
+            else {
+                throw new Error("Cannot find m5stickc hat interface. Please set param 'sda'/'scl' or 'i2c'");
+            }
+        }
         this.params.clock = 100 * 1000; // for i2c
         this.params.mode = "master"; // for i2c
         this.params.pull = "3v"; // for i2c
@@ -92,7 +102,7 @@ class M5StickC_YunHat {
         util_1.default.assertNumber(0, 300, "hue", hue);
         util_1.default.assertNumber(0, 1, "saturation", saturation);
         util_1.default.assertNumber(0, 1, "value", value);
-        const color = M5StickC_YunHat._generateHsvColor(hue, saturation, value);
+        const color = M5StickC_Yun._generateHsvColor(hue, saturation, value);
         this.rgb(color.red, color.green, color.blue);
     }
     rgbs(array) {
@@ -104,7 +114,7 @@ class M5StickC_YunHat {
     }
     hsvs(array) {
         const leds = array.map((value, index) => {
-            const color = M5StickC_YunHat._generateHsvColor(value[0], value[1], value[2]);
+            const color = M5StickC_Yun._generateHsvColor(value[0], value[1], value[2]);
             return [color.red, color.green, color.blue];
         });
         this.rgbs(leds);
@@ -124,6 +134,6 @@ class M5StickC_YunHat {
         return await this.bmp280.getPressureWait();
     }
 }
-exports.default = M5StickC_YunHat;
+exports.default = M5StickC_Yun;
 
 //# sourceMappingURL=index.js.map

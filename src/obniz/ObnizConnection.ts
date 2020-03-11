@@ -393,13 +393,6 @@ export default class ObnizConnection {
     console.error("error:" + msg);
   }
 
-  protected prompt(filled: any, callback: any) {
-    const obnizid: any = prompt("Please enter obniz id", filled);
-    if (obnizid) {
-      callback(obnizid);
-    }
-  }
-
   protected wsOnOpen() {
     this.print_debug("ws connected");
     this._connectionRetryCount = 0;

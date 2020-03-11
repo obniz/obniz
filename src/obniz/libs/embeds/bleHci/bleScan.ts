@@ -212,9 +212,13 @@ export default class BleScan {
     settings.activeScan = settings.activeScan !== false;
     this.scanSettings = settings;
 
-    this.scanTarget = target;
-    if (this.scanTarget && this.scanTarget.uuids) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map((elm: UUID) => {
+    target = target || {};
+    this.scanTarget.binary = target.binary;
+    this.scanTarget.deviceAddress = target.deviceAddress;
+    this.scanTarget.localName = target.localName;
+    this.scanTarget.localNamePrefix = target.localNamePrefix;
+    if (target && target.uuids) {
+      this.scanTarget.uuids = target.uuids.map((elm: UUID) => {
         return BleHelper.uuidFilter(elm);
       });
     }
@@ -510,8 +514,6 @@ export default class BleScan {
 
   protected isTarget(peripheral: BleRemotePeripheral) {
     if (
-      !this.scanTarget ||
-      Object.keys(this.scanTarget).length === 0 ||
       this.isLocalNamePrefixTarget(peripheral) ||
       this.isLocalNameTarget(peripheral) ||
       this.isUuidTarget(peripheral) ||
@@ -548,11 +550,15 @@ export default class BleScan {
   }
 
   private isLocalNameTarget(peripheral: BleRemotePeripheral) {
-    if (this.scanTarget && this.scanTarget.localName) {
-      for (const name of this._arrayWrapper(this.scanTarget.localName)) {
-        if (name === peripheral.localName) {
-          return true;
-        }
+    if (!this.scanTarget) {
+      return true;
+    }
+    if (!this.scanTarget.localName) {
+      return true;
+    }
+    for (const name of this._arrayWrapper(this.scanTarget.localName)) {
+      if (name === peripheral.localName) {
+        return true;
       }
     }
 
@@ -560,11 +566,15 @@ export default class BleScan {
   }
 
   private isLocalNamePrefixTarget(peripheral: BleRemotePeripheral) {
-    if (this.scanTarget && this.scanTarget.localNamePrefix) {
-      for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
-        if (peripheral.localName && peripheral.localName.startsWith(name)) {
-          return true;
-        }
+    if (!this.scanTarget) {
+      return true;
+    }
+    if (!this.scanTarget.localNamePrefix) {
+      return true;
+    }
+    for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
+      if (peripheral.localName && peripheral.localName.startsWith(name)) {
+        return true;
       }
     }
 
@@ -572,33 +582,44 @@ export default class BleScan {
   }
 
   private isBinaryTarget(peripheral: BleRemotePeripheral) {
-    if (this.scanTarget && this.scanTarget.binary) {
-      return true; // cannot detect on obnizjs
+    if (!this.scanTarget) {
+      return true;
     }
+    if (!this.scanTarget.binary) {
+      return true;
+    }
+    return true; // cannot detect on obnizjs
 
     return false;
   }
 
   private isUuidTarget(peripheral: BleRemotePeripheral) {
-    if (this.scanTarget && this.scanTarget.uuids) {
-      const uuids: any = peripheral.advertisementServiceUuids().map((e: any) => {
-        return BleHelper.uuidFilter(e);
-      });
-      for (const uuid of this.scanTarget.uuids) {
-        if (uuids.includes(uuid)) {
-          return true;
-        }
+    if (!this.scanTarget) {
+      return true;
+    }
+    if (!this.scanTarget.uuids) {
+      return true;
+    }
+    const uuids: any = peripheral.advertisementServiceUuids().map((e: any) => {
+      return BleHelper.uuidFilter(e);
+    });
+    for (const uuid of this.scanTarget.uuids) {
+      if (uuids.includes(uuid)) {
+        return true;
       }
     }
-
     return false;
   }
 
   private isDeviceAddressTarget(peripheral: BleRemotePeripheral) {
-    if (this.scanTarget && this.scanTarget.deviceAddress) {
-      if (this.scanTarget.deviceAddress === peripheral.address) {
-        return true;
-      }
+    if (!this.scanTarget) {
+      return true;
+    }
+    if (!this.scanTarget.deviceAddress) {
+      return true;
+    }
+    if (this.scanTarget.deviceAddress === peripheral.address) {
+      return true;
     }
     return false;
   }

@@ -5,9 +5,25 @@ RS485-HAT is a TTL to RS485 converter for M5StickC.
 
 ## wired(obniz, {tx, rx,{vcc, gnd, baud}})
 
-connect to the obniz device.
-When using M5StickC, assign tx to 0, and rx to 26.
-When using other devices, assign vcc and gnd as appropriate pins.
+connect to the obniz device.  
+When using M5StickC, You do not need to assign pins. 
+
+```javascript
+// JavaScript Examples
+var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
+obniz.onconnect = async function() {
+  var rs485 = obniz.wired("M5StickC_RS485"); // M5stick C
+
+  rs485.onreceive = function(data, text) {
+    console.log(text);
+  }
+  $("#send").click(function(){
+    rs485.send("Hello")
+  })
+}
+```
+
+When using other devices, White, yellow, red and black wires correspond to scl, sda, vcc and gnd respectively.  
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
