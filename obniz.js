@@ -15196,6 +15196,9 @@ class M5StickC extends ObnizDevice_1.default {
         });
     }
     _prepareComponents() {
+        if (this.hw !== "m5stickc") {
+            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC.");
+        }
         // @ts-ignore
         super._prepareComponents();
         if (this.ir) {

@@ -373,6 +373,10 @@ export class M5StickC extends ObnizDevice {
   }
 
   protected _prepareComponents() {
+    if (this.hw !== "m5stickc") {
+      throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC.");
+    }
+
     // @ts-ignore
     super._prepareComponents();
 
