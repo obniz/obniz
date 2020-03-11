@@ -1,33 +1,31 @@
 /**
  * @packageDocumentation
- * @module Parts.iBS04i
+ * @module Parts.iBS03TP
  */
 
 import Obniz from "../../../obniz";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import { IBS04I_Data } from "../iBS04i";
 
-export interface IBS04IOptions {}
+export interface IBS03TPOptions {}
 
-export interface IBS04I_Data {
+export interface IBS03TP_Data {
   event: number;
   battery: number;
-  uuid: string;
-  major: number;
-  minor: number;
-  power: number;
-  rssi: number;
+  temp: number;
+  probe_temp: number;
 }
 
-export default class IBS04I implements ObnizPartsInterface {
+export default class IBS03TP implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "iBS04i",
+      name: "iBS03TP",
     };
   }
 
-  public onNotification?: (data: IBS04I_Data) => void;
+  public onNotification?: (data: IBS03TP_Data) => void;
 
   public keys: string[];
   public requiredKeys: string[];
@@ -44,10 +42,10 @@ export default class IBS04I implements ObnizPartsInterface {
     -1, // Battery
     -1, // Battery
     -1, // Event
-    0xff, // Temprature
-    0xff, // Temprature
-    0xff, // probe Temprature
-    0xff, // probe Temprature
+    -1, // Temprature
+    -1, // Temprature
+    -1, // probe Temprature
+    -1, // probe Temprature
     0x00, // user
     -1, // user
     -1, // subType
@@ -73,8 +71,7 @@ export default class IBS04I implements ObnizPartsInterface {
 
   public scan() {
     this.obniz.ble!.scan.onfind = (peripheral: BleRemotePeripheral) => {
-      // console.log(peripheral);
-      if (peripheral.address === "0081f9860531") {
+      if (peripheral.address === "806fb0c8a2cb") {
         console.log(peripheral);
       }
       const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
@@ -95,37 +92,20 @@ export default class IBS04I implements ObnizPartsInterface {
         }
         return find;
       });
+      //    console.log(advertise);
       if (advertise.length === 0) {
-        if (peripheral.localName && peripheral.localName === "iBS04") {
-          const d: IBS04I_Data = {
-            battery: -1,
-            event: -1,
-            uuid: peripheral.iBeacon.uuid,
-            major: peripheral.iBeacon.major,
-            minor: peripheral.iBeacon.minor,
-            power: peripheral.iBeacon.power,
-            rssi: peripheral.iBeacon.rssi,
-          };
-          if (this.onNotification) {
-            this.onNotification(d);
-          }
-        }
         return;
       }
       const type = advertise[0][14];
-      if (type !== 24) {
-        // iBS04i以外
+      if (type !== 23) {
+        // iBS03TP以外
         return;
       }
-      //    console.log(advertise);
-      const data: IBS04I_Data = {
+      const data: IBS03TP_Data = {
         battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
         event: advertise[0][7],
-        uuid: peripheral.iBeacon.uuid,
-        major: peripheral.iBeacon.major,
-        minor: peripheral.iBeacon.minor,
-        power: peripheral.iBeacon.power,
-        rssi: peripheral.iBeacon.rssi,
+        temp: this.signedNumberFromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+        probe_temp: this.signedNumberFromBinary(advertise[0][10], advertise[0][11]) * 0.01,
       };
 
       // console.log(
@@ -150,5 +130,13 @@ export default class IBS04I implements ObnizPartsInterface {
   public end() {
     this.repeat_flg = false;
     this.obniz.ble!.scan.end();
+  }
+
+  private signedNumberFromBinary(val1: number, val2: number): number {
+    let val: number = (val2 & 0x7f) * 256 + val1;
+    if ((val2 & 0x80) !== 0) {
+      val = val - Math.pow(2, 15);
+    }
+    return val;
   }
 }

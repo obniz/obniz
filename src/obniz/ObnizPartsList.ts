@@ -126,6 +126,7 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
+import IBS03TP, { IBS03TPOptions } from "../parts/Ble/iBS03TP";
 import IBS04I, { IBS04IOptions } from "../parts/Ble/iBS04i";
 import Linking, { LinkingOptions } from "../parts/Ble/linking";
 
@@ -304,6 +305,7 @@ export interface WiredNameMap {
   "2JCIE": OMRON_2JCIE;
   "Linking": Linking;
   "iBS04i": IBS04I;
+  "iBS03TP": IBS03TP;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -459,6 +461,7 @@ export interface WiredNameOptionsMap {
   "2JCIE": OMRON_2JCIEOptions;
   "Linking": LinkingOptions;
   "iBS04i": IBS04IOptions;
+  "iBS03TP": IBS03TPOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

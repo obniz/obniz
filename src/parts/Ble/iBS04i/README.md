@@ -51,7 +51,7 @@ ibs04i.scan();
 
 ## end()
 
-スキャンを終了します。
+Finish the scan.
 
 ```javascript
 // Javascript Example

@@ -23318,10 +23318,10 @@ class IBS03TP {
             -1,
             -1,
             -1,
-            0xff,
-            0xff,
-            0xff,
-            0xff,
+            -1,
+            -1,
+            -1,
+            -1,
             0x00,
             -1,
             -1,
@@ -23347,7 +23347,9 @@ class IBS03TP {
     }
     scan() {
         this.obniz.ble.scan.onfind = (peripheral) => {
-            console.log(peripheral);
+            if (peripheral.address === "806fb0c8a2cb") {
+                console.log(peripheral);
+            }
             const advertise = peripheral.advertise_data_rows.filter((adv) => {
                 let find = false;
                 if (this.deviceAdv.length > adv.length) {
@@ -23366,32 +23368,20 @@ class IBS03TP {
                 }
                 return find;
             });
+            //    console.log(advertise);
             if (advertise.length === 0) {
-                if (peripheral.localName && peripheral.localName === "iBS04") {
-                    const d = {
-                        battery: -1,
-                        event: -1,
-                        uuid: peripheral.iBeacon.uuid,
-                        major: peripheral.iBeacon.major,
-                        minor: peripheral.iBeacon.minor,
-                        power: peripheral.iBeacon.power,
-                        rssi: peripheral.iBeacon.rssi,
-                    };
-                    if (this.onNotification) {
-                        this.onNotification(d);
-                    }
-                }
                 return;
             }
-            //    console.log(advertise);
+            const type = advertise[0][14];
+            if (type !== 23) {
+                // iBS03TP以外
+                return;
+            }
             const data = {
                 battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
                 event: advertise[0][7],
-                uuid: peripheral.iBeacon.uuid,
-                major: peripheral.iBeacon.major,
-                minor: peripheral.iBeacon.minor,
-                power: peripheral.iBeacon.power,
-                rssi: peripheral.iBeacon.rssi,
+                temp: this.signedNumberFromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+                probe_temp: this.signedNumberFromBinary(advertise[0][10], advertise[0][11]) * 0.01,
             };
             // console.log(
             //   `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
@@ -23412,6 +23402,13 @@ class IBS03TP {
     end() {
         this.repeat_flg = false;
         this.obniz.ble.scan.end();
+    }
+    signedNumberFromBinary(val1, val2) {
+        let val = (val2 & 0x7f) * 256 + val1;
+        if ((val2 & 0x80) !== 0) {
+            val = val - Math.pow(2, 15);
+        }
+        return val;
     }
 }
 exports.default = IBS03TP;
@@ -23472,6 +23469,9 @@ class IBS04I {
     scan() {
         this.obniz.ble.scan.onfind = (peripheral) => {
             // console.log(peripheral);
+            if (peripheral.address === "0081f9860531") {
+                console.log(peripheral);
+            }
             const advertise = peripheral.advertise_data_rows.filter((adv) => {
                 let find = false;
                 if (this.deviceAdv.length > adv.length) {
@@ -23505,6 +23505,11 @@ class IBS04I {
                         this.onNotification(d);
                     }
                 }
+                return;
+            }
+            const type = advertise[0][14];
+            if (type !== 24) {
+                // iBS04i以外
                 return;
             }
             //    console.log(advertise);
