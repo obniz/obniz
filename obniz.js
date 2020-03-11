@@ -122,7 +122,7 @@ module.exports = {
     "lint": "npm run lint-ts && npm run lint-js",
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && npm add dist && git add obniz.js",
+    "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
@@ -217,7 +217,6 @@ module.exports = {
     "@types/semver": "^6.2.0",
     "@types/tv4": "^1.2.29",
     "@types/ws": "^6.0.4",
-    "dist": "^0.1.2",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",

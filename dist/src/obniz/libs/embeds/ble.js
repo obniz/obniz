@@ -18,4 +18,5 @@ const ObnizOldBLE = __importStar(require("./ble/ble"));
 exports.ObnizOldBLE = ObnizOldBLE;
 const ObnizHciBLE = __importStar(require("./bleHci/ble"));
 exports.ObnizHciBLE = ObnizHciBLE;
+
 //# sourceMappingURL=ble.js.map

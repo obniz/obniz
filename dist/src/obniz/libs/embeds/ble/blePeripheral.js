@@ -87,4 +87,5 @@ class BlePeripheral {
     onerror() { }
 }
 exports.default = BlePeripheral;
+
 //# sourceMappingURL=blePeripheral.js.map

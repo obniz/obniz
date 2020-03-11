@@ -109,4 +109,5 @@ class AK09916 extends i2cParts_1.default {
     }
 }
 exports.default = AK09916;
+
 //# sourceMappingURL=index.js.map

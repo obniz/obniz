@@ -19,4 +19,5 @@ class MQ9 extends MQGas_1.default {
     }
 }
 exports.default = MQ9;
+
 //# sourceMappingURL=index.js.map

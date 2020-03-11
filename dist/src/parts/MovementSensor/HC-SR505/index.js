@@ -29,4 +29,5 @@ class HCSR505 {
     }
 }
 exports.default = HCSR505;
+
 //# sourceMappingURL=index.js.map

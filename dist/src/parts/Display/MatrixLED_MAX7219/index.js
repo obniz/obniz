@@ -122,4 +122,5 @@ class MatrixLED_MAX7219 {
     }
 }
 exports.default = MatrixLED_MAX7219;
+
 //# sourceMappingURL=index.js.map

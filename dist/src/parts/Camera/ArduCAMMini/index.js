@@ -827,4 +827,5 @@ class ArduCAMMini {
     }
 }
 exports.default = ArduCAMMini;
+
 //# sourceMappingURL=index.js.map

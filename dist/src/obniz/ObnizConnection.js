@@ -612,4 +612,5 @@ class ObnizConnection {
     }
 }
 exports.default = ObnizConnection;
+
 //# sourceMappingURL=ObnizConnection.js.map

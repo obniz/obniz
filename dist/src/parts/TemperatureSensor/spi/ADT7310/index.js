@@ -37,4 +37,5 @@ class ADT7310 {
     }
 }
 exports.default = ADT7310;
+
 //# sourceMappingURL=index.js.map

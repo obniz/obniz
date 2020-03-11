@@ -15,4 +15,5 @@ class LM35DZ extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = LM35DZ;
+
 //# sourceMappingURL=index.js.map

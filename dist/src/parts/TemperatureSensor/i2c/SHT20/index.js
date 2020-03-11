@@ -70,4 +70,5 @@ class SHT20 {
     }
 }
 exports.default = SHT20;
+
 //# sourceMappingURL=index.js.map

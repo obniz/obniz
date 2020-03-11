@@ -301,4 +301,5 @@ class PeripheralUART {
     }
 }
 exports.default = PeripheralUART;
+
 //# sourceMappingURL=uart.js.map

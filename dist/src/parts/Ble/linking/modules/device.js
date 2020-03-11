@@ -873,4 +873,5 @@ class LinkingDevice {
     }
 }
 exports.default = LinkingDevice;
+
 //# sourceMappingURL=device.js.map

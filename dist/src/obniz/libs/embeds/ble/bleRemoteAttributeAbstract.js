@@ -69,4 +69,5 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     }
 }
 exports.default = BleRemoteAttributeAbstract;
+
 //# sourceMappingURL=bleRemoteAttributeAbstract.js.map
