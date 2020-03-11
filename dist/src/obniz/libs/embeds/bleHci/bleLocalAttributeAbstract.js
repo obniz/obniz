@@ -117,5 +117,4 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     }
 }
 exports.default = BleLocalAttributeAbstract;
-
 //# sourceMappingURL=bleLocalAttributeAbstract.js.map

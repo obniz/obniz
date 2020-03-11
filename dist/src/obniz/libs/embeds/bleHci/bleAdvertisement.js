@@ -132,5 +132,4 @@ class BleAdvertisement {
     }
 }
 exports.default = BleAdvertisement;
-
 //# sourceMappingURL=bleAdvertisement.js.map

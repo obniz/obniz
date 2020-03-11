@@ -38,5 +38,4 @@ WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
 WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
 exports.default = WSCommand_1.default;
-
 //# sourceMappingURL=index.js.map

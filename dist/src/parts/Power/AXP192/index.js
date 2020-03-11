@@ -114,5 +114,4 @@ const REG_GPIO0 = 0x90;
 const REG_CCOUNTER = 0xb8;
 const LDO2_EN_MASK = 0xfb;
 const LDO3_EN_MASK = 0xf7;
-
 //# sourceMappingURL=index.js.map

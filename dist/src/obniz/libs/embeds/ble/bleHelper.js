@@ -10,5 +10,4 @@ const BleHelper = {
     },
 };
 exports.default = BleHelper;
-
 //# sourceMappingURL=bleHelper.js.map

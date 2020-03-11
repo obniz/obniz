@@ -139,5 +139,4 @@ class WSCommandDisplay extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandDisplay;
-
 //# sourceMappingURL=WSCommandDisplay.js.map

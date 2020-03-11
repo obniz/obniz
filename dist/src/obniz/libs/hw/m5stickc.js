@@ -58,6 +58,10 @@ class M5StickC extends ObnizDevice_1.default {
     _prepareComponents() {
         // @ts-ignore
         super._prepareComponents();
+        if (this.ir) {
+            // already wired parts
+            return;
+        }
         this.ir = this.wired("InfraredLED", { anode: 9 });
         this.led = this.wired("LED", { cathode: 10 });
         this.buttonA = this.wired("Button", { signal: 37 });
@@ -76,5 +80,4 @@ class M5StickC extends ObnizDevice_1.default {
     }
 }
 exports.M5StickC = M5StickC;
-
 //# sourceMappingURL=m5stickc.js.map

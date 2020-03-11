@@ -151,6 +151,7 @@ gulp.task('tsc:copy:statics', function(done) {
     .src([
       path.join(__dirname, '../../src/**/*.yml'),
       path.join(__dirname, '../../src/**/*.json'),
+      path.join(__dirname, '../../src/**/*.css'),
     ])
     .pipe(gulp.dest(path.join(__dirname, '../../dist/src')))
     .on('end', function() {

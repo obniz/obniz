@@ -50,5 +50,4 @@ class DHT12 extends i2cParts_1.default {
     }
 }
 exports.default = DHT12;
-
 //# sourceMappingURL=index.js.map

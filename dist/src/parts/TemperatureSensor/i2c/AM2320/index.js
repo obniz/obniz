@@ -48,5 +48,4 @@ class AM2320 {
     }
 }
 exports.default = AM2320;
-
 //# sourceMappingURL=index.js.map

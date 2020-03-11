@@ -19,5 +19,4 @@ class MQ8 extends MQGas_1.default {
     }
 }
 exports.default = MQ8;
-
 //# sourceMappingURL=index.js.map

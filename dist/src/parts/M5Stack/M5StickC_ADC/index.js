@@ -134,5 +134,4 @@ class M5StickC_ADC {
     }
 }
 exports.default = M5StickC_ADC;
-
 //# sourceMappingURL=index.js.map

@@ -61,5 +61,4 @@ class IRModule {
     }
 }
 exports.default = IRModule;
-
 //# sourceMappingURL=index.js.map

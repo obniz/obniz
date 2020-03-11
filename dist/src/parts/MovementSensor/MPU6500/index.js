@@ -27,5 +27,4 @@ class MPU6500 extends MPU6050_1.default {
     }
 }
 exports.default = MPU6500;
-
 //# sourceMappingURL=index.js.map

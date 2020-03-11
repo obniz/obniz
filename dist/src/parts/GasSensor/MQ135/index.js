@@ -19,5 +19,4 @@ class MQ135 extends MQGas_1.default {
     }
 }
 exports.default = MQ135;
-
 //# sourceMappingURL=index.js.map

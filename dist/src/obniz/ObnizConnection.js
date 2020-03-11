@@ -250,12 +250,6 @@ class ObnizConnection {
     error(msg) {
         console.error("error:" + msg);
     }
-    prompt(filled, callback) {
-        const obnizid = prompt("Please enter obniz id", filled);
-        if (obnizid) {
-            callback(obnizid);
-        }
-    }
     wsOnOpen() {
         this.print_debug("ws connected");
         this._connectionRetryCount = 0;
@@ -618,5 +612,4 @@ class ObnizConnection {
     }
 }
 exports.default = ObnizConnection;
-
 //# sourceMappingURL=ObnizConnection.js.map
