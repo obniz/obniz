@@ -319,5 +319,4 @@ class BleRemotePeripheral {
     onerror() { }
 }
 exports.default = BleRemotePeripheral;
-
 //# sourceMappingURL=bleRemotePeripheral.js.map

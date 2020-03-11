@@ -283,5 +283,4 @@ exports.default = WSCommand;
 // tslint:disable:max-classes-per-file
 class WSCommandNotFoundError extends Error {
 }
-
 //# sourceMappingURL=WSCommand.js.map

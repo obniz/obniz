@@ -19,5 +19,4 @@ class MQ7 extends MQGas_1.default {
     }
 }
 exports.default = MQ7;
-
 //# sourceMappingURL=index.js.map

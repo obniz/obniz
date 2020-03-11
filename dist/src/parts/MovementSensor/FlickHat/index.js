@@ -337,5 +337,4 @@ class FlickHat {
     }
 }
 exports.default = FlickHat;
-
 //# sourceMappingURL=index.js.map

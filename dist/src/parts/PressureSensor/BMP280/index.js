@@ -180,5 +180,4 @@ class BMP280 {
     }
 }
 exports.default = BMP280;
-
 //# sourceMappingURL=index.js.map

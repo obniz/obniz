@@ -115,5 +115,4 @@ class _7SegmentLED {
     }
 }
 exports.default = _7SegmentLED;
-
 //# sourceMappingURL=index.js.map

@@ -53,5 +53,4 @@ class WSCommandSwitch extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandSwitch;
-
 //# sourceMappingURL=WSCommandSwitch.js.map

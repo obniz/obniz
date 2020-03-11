@@ -59,5 +59,4 @@ class ObnizBLEHci {
     onread(data) { }
 }
 exports.default = ObnizBLEHci;
-
 //# sourceMappingURL=hci.js.map

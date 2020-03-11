@@ -217,6 +217,7 @@ module.exports = {
     "@types/semver": "^6.2.0",
     "@types/tv4": "^1.2.29",
     "@types/ws": "^6.0.4",
+    "dist": "^0.1.2",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",
@@ -2270,12 +2271,6 @@ class ObnizConnection {
      */
     error(msg) {
         console.error("error:" + msg);
-    }
-    prompt(filled, callback) {
-        const obnizid = prompt("Please enter obniz id", filled);
-        if (obnizid) {
-            callback(obnizid);
-        }
     }
     wsOnOpen() {
         this.print_debug("ws connected");

@@ -124,5 +124,4 @@ class LogicAnalyzer {
     }
 }
 exports.default = LogicAnalyzer;
-
 //# sourceMappingURL=logicanalyzer.js.map
