@@ -10,6 +10,7 @@ import ObnizSystemMethods from "./ObnizSystemMethods";
 export default class ObnizUIs extends ObnizSystemMethods {
   public static _promptQueue: any[] = [];
   public static _promptWaiting: boolean = false;
+  public static _promptCount: number = 0;
 
   constructor(id: string, options?: ObnizOptions) {
     super(id, options);
@@ -83,10 +84,11 @@ export default class ObnizUIs extends ObnizSystemMethods {
 
   protected _promptOne(filled: any, callback: any) {
     ObnizUIs._promptWaiting = true;
+    ObnizUIs._promptCount++;
     let result = "";
     new Promise((resolve: any) => {
       const text = filled;
-      const selectorId = `obniz-id-prompt${Math.floor(Math.random() * 10000)}`;
+      const selectorId = `obniz-id-prompt${ObnizUIs._promptCount}`;
       let css: string = dialogPolyfill.css;
       css +=
         `dialog#${selectorId}::backdrop {\n` +
@@ -130,7 +132,11 @@ export default class ObnizUIs extends ObnizSystemMethods {
 
       let html = "";
       html += `<dialog id='${selectorId}'><div class="contents">`;
-      html += `Connect obniz device<br/>`;
+      html += `Connect obniz device`;
+      if (ObnizUIs._promptCount > 1) {
+        html += `(${ObnizUIs._promptCount})`;
+      }
+      html += `<br/>`;
       html += ` <form method="dialog">`;
       html += ` <input type="text" name="obniz-id" id="return_value" value="${text}" placeholder="obniz id">`;
       html += '  <button id="close">Connect</button>';

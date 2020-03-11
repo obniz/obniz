@@ -77,10 +77,11 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     }
     _promptOne(filled, callback) {
         ObnizUIs._promptWaiting = true;
+        ObnizUIs._promptCount++;
         let result = "";
         new Promise((resolve) => {
             const text = filled;
-            const selectorId = `obniz-id-prompt${Math.floor(Math.random() * 10000)}`;
+            const selectorId = `obniz-id-prompt${ObnizUIs._promptCount}`;
             let css = dialogPollyfill_1.default.css;
             css +=
                 `dialog#${selectorId}::backdrop {\n` +
@@ -123,7 +124,11 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
                     "}";
             let html = "";
             html += `<dialog id='${selectorId}'><div class="contents">`;
-            html += `Connect obniz device<br/>`;
+            html += `Connect obniz device`;
+            if (ObnizUIs._promptCount > 1) {
+                html += `(${ObnizUIs._promptCount})`;
+            }
+            html += `<br/>`;
             html += ` <form method="dialog">`;
             html += ` <input type="text" name="obniz-id" id="return_value" value="${text}" placeholder="obniz id">`;
             html += '  <button id="close">Connect</button>';
@@ -251,6 +256,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
 exports.default = ObnizUIs;
 ObnizUIs._promptQueue = [];
 ObnizUIs._promptWaiting = false;
+ObnizUIs._promptCount = 0;
 /**
  *
  * @ignore
