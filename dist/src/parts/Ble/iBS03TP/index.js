@@ -38,6 +38,13 @@ class IBS03TP {
             name: "iBS03TP",
         };
     }
+    static signed16FromBinary(val1, val2) {
+        let val = val1 + val2 * 256;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
+        }
+        return val;
+    }
     wired(obniz) {
         this.obniz = obniz;
     }
@@ -70,10 +77,10 @@ class IBS03TP {
                 return;
             }
             const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
+                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
                 event: advertise[0][7],
-                temperature: this.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-                probe_temperature: this.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
+                temperature: IBS03TP.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+                probe_temperature: IBS03TP.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
                 address: peripheral.address,
             };
             // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature}`);
@@ -98,13 +105,6 @@ class IBS03TP {
     end() {
         this.repeat_flg = false;
         this.obniz.ble.scan.end();
-    }
-    signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 0xff;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
-        }
-        return val;
     }
 }
 exports.default = IBS03TP;

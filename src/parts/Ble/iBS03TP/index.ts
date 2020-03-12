@@ -24,6 +24,14 @@ export default class IBS03TP implements ObnizPartsInterface {
     };
   }
 
+  private static signed16FromBinary(val1: number, val2: number): number {
+    let val: number = val1 + val2 * 256;
+    if ((val & 0x8000) !== 0) {
+      val = val - 0x10000;
+    }
+    return val;
+  }
+
   public onNotification?: (data: IBS03TP_Data) => void;
 
   public keys: string[];
@@ -95,10 +103,10 @@ export default class IBS03TP implements ObnizPartsInterface {
         return;
       }
       const data: IBS03TP_Data = {
-        battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
+        battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
         event: advertise[0][7],
-        temperature: this.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-        probe_temperature: this.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
+        temperature: IBS03TP.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+        probe_temperature: IBS03TP.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
         address: peripheral.address,
       };
       // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature}`);
@@ -125,13 +133,5 @@ export default class IBS03TP implements ObnizPartsInterface {
   public end() {
     this.repeat_flg = false;
     this.obniz.ble!.scan.end();
-  }
-
-  private signed16FromBinary(val1: number, val2: number): number {
-    let val: number = val1 + val2 * 0xff;
-    if ((val & 0x8000) !== 0) {
-      val = val - 0x10000;
-    }
-    return val;
   }
 }

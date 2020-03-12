@@ -76,7 +76,7 @@ class IBS01 {
                 return;
             }
             const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
+                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
                 event: advertise[0][7],
                 address: peripheral.address,
             };

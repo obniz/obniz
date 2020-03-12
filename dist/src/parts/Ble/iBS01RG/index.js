@@ -1,16 +1,16 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.iBS01T
+ * @module Parts.iBS01RG
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01T {
+class IBS01RG {
     constructor() {
         this.deviceAdv = [
             0xff,
             0x59,
             0x00,
-            0x80,
+            0x81,
             0xbc,
             -1,
             -1,
@@ -32,10 +32,12 @@ class IBS01T {
         };
         this.keys = [];
         this.requiredKeys = [];
+        this.oldActiveFlg = false;
+        this.oldButtonFlg = false;
     }
     static info() {
         return {
-            name: "iBS01T",
+            name: "iBS01RG",
         };
     }
     static signed16FromBinary(val1, val2) {
@@ -72,23 +74,40 @@ class IBS01T {
             if (advertise.length === 0) {
                 return;
             }
-            if (advertise[0][8] === 0xff &&
-                advertise[0][9] === 0xff &&
-                advertise[0][10] === 0xff &&
-                advertise[0][11] === 0xff) {
-                // error iBS01T
-                return;
+            const accelArray = [];
+            for (let i = 0; i < 3; i++) {
+                accelArray.push({
+                    x: IBS01RG.signed16FromBinary(advertise[0][7 + i * 6], advertise[0][8 + i * 6]),
+                    y: IBS01RG.signed16FromBinary(advertise[0][9 + i * 6], advertise[0][10 + i * 6]),
+                    z: IBS01RG.signed16FromBinary(advertise[0][11 + i * 6], advertise[0][12 + i * 6]),
+                });
             }
+            console.log((advertise[0][6] & 0x0f) * 0xff);
+            console.log((advertise[0][6] & 0x30) >> 4);
             const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                temperature: IBS01T.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-                humidity: IBS01T.signed16FromBinary(advertise[0][10], advertise[0][11]),
+                battery: (advertise[0][5] + (advertise[0][6] & 0x0f) * 256) * 0.01,
+                active: Boolean((advertise[0][6] & 0x10) >> 4),
+                button: Boolean((advertise[0][6] & 0x20) >> 5),
+                acceleration: accelArray,
                 address: peripheral.address,
             };
-            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
+            // console.log(`battery ${data.battery}V event ${data.event});
             if (this.onNotification) {
                 this.onNotification(data);
+            }
+            if (this.onChangeButton) {
+                const button = Boolean((advertise[0][6] & 0x20) >> 5);
+                if (button !== this.oldButtonFlg) {
+                    this.onChangeButton(button, peripheral.address);
+                    this.oldButtonFlg = button;
+                }
+            }
+            if (this.onChangeActive) {
+                const actived = Boolean((advertise[0][6] & 0x10) >> 4);
+                if (actived !== this.oldActiveFlg) {
+                    this.onChangeActive(actived, peripheral.address);
+                    this.oldActiveFlg = actived;
+                }
             }
         };
         this.obniz.ble.scan.onfinish = () => {
@@ -110,6 +129,6 @@ class IBS01T {
         this.obniz.ble.scan.end();
     }
 }
-exports.default = IBS01T;
+exports.default = IBS01RG;
 
 //# sourceMappingURL=index.js.map
