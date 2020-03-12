@@ -43,7 +43,7 @@ ibs01.scan();
 
 ## onChangeButton = function(pressed){}
 
-Calls the callback function when the button is pressed or released.
+ボタンに変化があれば、コールバック関数で返します。
 
 ```javascript
 // Javascript Example
@@ -56,7 +56,7 @@ ibs01.scan();
 
 ## onChangeHallSensor = function(closed){}
 
-Calls the callback function when the hall sensor is closed or opened.
+磁石センサの変化があれば、コールバック関数で返します。
 
 ```javascript
 // Javascript Example
@@ -70,7 +70,7 @@ ibs01.scan();
 
 ## onChangeMoving = function(moved){}
 
-Calls the callback function when the motion is moved or stopped.
+動きがあれば、コールバック関数で返します。
 
 ```javascript
 // Javascript Example
