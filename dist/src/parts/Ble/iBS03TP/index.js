@@ -42,11 +42,8 @@ class IBS03TP {
     wired(obniz) {
         this.obniz = obniz;
     }
-    scan() {
+    scan(address = "") {
         this.obniz.ble.scan.onfind = (peripheral) => {
-            if (peripheral.address === "806fb0c8a2cb") {
-                console.log(peripheral);
-            }
             const advertise = peripheral.advertise_data_rows.filter((adv) => {
                 let find = false;
                 if (this.deviceAdv.length > adv.length) {
@@ -65,7 +62,6 @@ class IBS03TP {
                 }
                 return find;
             });
-            //    console.log(advertise);
             if (advertise.length === 0) {
                 return;
             }
@@ -77,12 +73,11 @@ class IBS03TP {
             const data = {
                 battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
                 event: advertise[0][7],
-                temp: this.signedNumberFromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-                probe_temp: this.signedNumberFromBinary(advertise[0][10], advertise[0][11]) * 0.01,
+                temperature: this.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+                probe_temperature: this.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
+                address: peripheral.address,
             };
-            // console.log(
-            //   `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
-            // );
+            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature}`);
             if (this.onNotification) {
                 this.onNotification(data);
             }
@@ -93,17 +88,22 @@ class IBS03TP {
             }
         };
         this.obniz.ble.initWait();
-        this.obniz.ble.scan.start(null, this.ble_setting);
+        if (address && address.length >= 12) {
+            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        }
+        else {
+            this.obniz.ble.scan.start(null, this.ble_setting);
+        }
         this.repeat_flg = true;
     }
     end() {
         this.repeat_flg = false;
         this.obniz.ble.scan.end();
     }
-    signedNumberFromBinary(val1, val2) {
-        let val = (val2 & 0x7f) * 256 + val1;
-        if ((val2 & 0x80) !== 0) {
-            val = val - Math.pow(2, 15);
+    signed16FromBinary(val1, val2) {
+        let val = val1 + val2 * 0xff;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
         }
         return val;
     }

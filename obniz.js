@@ -22964,6 +22964,7 @@ var map = {
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
+	"./Ble/iBS01T/index.js": "./dist/src/parts/Ble/iBS01T/index.js",
 	"./Ble/iBS03TP/index.js": "./dist/src/parts/Ble/iBS03TP/index.js",
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
@@ -23460,6 +23461,130 @@ exports.default = OMRON_2JCIE;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/iBS01T/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS01T
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IBS01T {
+    constructor() {
+        this.deviceAdv = [
+            0xff,
+            0x59,
+            0x00,
+            0x80,
+            0xbc,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+        ];
+        this.repeat_flg = false;
+        this.ble_setting = {
+            duplicate: true,
+        };
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+    }
+    static info() {
+        return {
+            name: "iBS01T",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+    scan(address = "") {
+        this.obniz.ble.scan.onfind = (peripheral) => {
+            const advertise = peripheral.advertise_data_rows.filter((adv) => {
+                let find = false;
+                if (this.deviceAdv.length > adv.length) {
+                    return find;
+                }
+                for (let index = 0; index < this.deviceAdv.length; index++) {
+                    if (this.deviceAdv[index] === -1) {
+                        continue;
+                    }
+                    if (adv[index] === this.deviceAdv[index]) {
+                        find = true;
+                        continue;
+                    }
+                    find = false;
+                    break;
+                }
+                return find;
+            });
+            //    console.log(advertise);
+            if (advertise.length === 0) {
+                return;
+            }
+            if (advertise[0][8] === 0xff &&
+                advertise[0][9] === 0xff &&
+                advertise[0][10] === 0xff &&
+                advertise[0][11] === 0xff) {
+                // error iBS01T
+                return;
+            }
+            const data = {
+                battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
+                event: advertise[0][7],
+                temperature: this.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+                humidity: this.signed16FromBinary(advertise[0][10], advertise[0][11]),
+                address: peripheral.address,
+            };
+            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
+            if (this.onNotification) {
+                this.onNotification(data);
+            }
+        };
+        this.obniz.ble.scan.onfinish = () => {
+            if (this.repeat_flg) {
+                this.obniz.ble.scan.start(null, this.ble_setting);
+            }
+        };
+        this.obniz.ble.initWait();
+        if (address && address.length >= 12) {
+            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        }
+        else {
+            this.obniz.ble.scan.start(null, this.ble_setting);
+        }
+        this.repeat_flg = true;
+    }
+    end() {
+        this.repeat_flg = false;
+        this.obniz.ble.scan.end();
+    }
+    signed16FromBinary(val1, val2) {
+        let val = val1 + val2 * 0xff;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
+        }
+        return val;
+    }
+}
+exports.default = IBS01T;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/iBS03TP/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23508,11 +23633,8 @@ class IBS03TP {
     wired(obniz) {
         this.obniz = obniz;
     }
-    scan() {
+    scan(address = "") {
         this.obniz.ble.scan.onfind = (peripheral) => {
-            if (peripheral.address === "806fb0c8a2cb") {
-                console.log(peripheral);
-            }
             const advertise = peripheral.advertise_data_rows.filter((adv) => {
                 let find = false;
                 if (this.deviceAdv.length > adv.length) {
@@ -23531,7 +23653,6 @@ class IBS03TP {
                 }
                 return find;
             });
-            //    console.log(advertise);
             if (advertise.length === 0) {
                 return;
             }
@@ -23543,12 +23664,11 @@ class IBS03TP {
             const data = {
                 battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
                 event: advertise[0][7],
-                temp: this.signedNumberFromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-                probe_temp: this.signedNumberFromBinary(advertise[0][10], advertise[0][11]) * 0.01,
+                temperature: this.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+                probe_temperature: this.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
+                address: peripheral.address,
             };
-            // console.log(
-            //   `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
-            // );
+            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature}`);
             if (this.onNotification) {
                 this.onNotification(data);
             }
@@ -23559,17 +23679,22 @@ class IBS03TP {
             }
         };
         this.obniz.ble.initWait();
-        this.obniz.ble.scan.start(null, this.ble_setting);
+        if (address && address.length >= 12) {
+            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        }
+        else {
+            this.obniz.ble.scan.start(null, this.ble_setting);
+        }
         this.repeat_flg = true;
     }
     end() {
         this.repeat_flg = false;
         this.obniz.ble.scan.end();
     }
-    signedNumberFromBinary(val1, val2) {
-        let val = (val2 & 0x7f) * 256 + val1;
-        if ((val2 & 0x80) !== 0) {
-            val = val - Math.pow(2, 15);
+    signed16FromBinary(val1, val2) {
+        let val = val1 + val2 * 0xff;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
         }
         return val;
     }
@@ -23629,12 +23754,8 @@ class IBS04I {
     wired(obniz) {
         this.obniz = obniz;
     }
-    scan() {
+    scan(address = "") {
         this.obniz.ble.scan.onfind = (peripheral) => {
-            // console.log(peripheral);
-            if (peripheral.address === "0081f9860531") {
-                console.log(peripheral);
-            }
             const advertise = peripheral.advertise_data_rows.filter((adv) => {
                 let find = false;
                 if (this.deviceAdv.length > adv.length) {
@@ -23663,6 +23784,7 @@ class IBS04I {
                         minor: peripheral.iBeacon.minor,
                         power: peripheral.iBeacon.power,
                         rssi: peripheral.iBeacon.rssi,
+                        address: peripheral.address,
                     };
                     if (this.onNotification) {
                         this.onNotification(d);
@@ -23684,6 +23806,7 @@ class IBS04I {
                 minor: peripheral.iBeacon.minor,
                 power: peripheral.iBeacon.power,
                 rssi: peripheral.iBeacon.rssi,
+                address: peripheral.address,
             };
             // console.log(
             //   `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
@@ -23698,7 +23821,12 @@ class IBS04I {
             }
         };
         this.obniz.ble.initWait();
-        this.obniz.ble.scan.start(null, this.ble_setting);
+        if (address && address.length >= 12) {
+            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        }
+        else {
+            this.obniz.ble.scan.start(null, this.ble_setting);
+        }
         this.repeat_flg = true;
     }
     end() {

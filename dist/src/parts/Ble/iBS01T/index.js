@@ -1,30 +1,30 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.iBS04i
+ * @module Parts.iBS01T
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS04I {
+class IBS01T {
     constructor() {
         this.deviceAdv = [
             0xff,
-            0x0d,
+            0x59,
             0x00,
-            0x83,
+            0x80,
             0xbc,
             -1,
             -1,
             -1,
-            0xff,
-            0xff,
-            0xff,
-            0xff,
-            0x00,
             -1,
             -1,
             -1,
-            0x00,
-            0x00,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
         ];
         this.repeat_flg = false;
         this.ble_setting = {
@@ -36,7 +36,7 @@ class IBS04I {
     }
     static info() {
         return {
-            name: "iBS04i",
+            name: "iBS01T",
         };
     }
     wired(obniz) {
@@ -62,43 +62,25 @@ class IBS04I {
                 }
                 return find;
             });
-            if (advertise.length === 0) {
-                if (peripheral.localName && peripheral.localName === "iBS04") {
-                    const d = {
-                        battery: -1,
-                        event: -1,
-                        uuid: peripheral.iBeacon.uuid,
-                        major: peripheral.iBeacon.major,
-                        minor: peripheral.iBeacon.minor,
-                        power: peripheral.iBeacon.power,
-                        rssi: peripheral.iBeacon.rssi,
-                        address: peripheral.address,
-                    };
-                    if (this.onNotification) {
-                        this.onNotification(d);
-                    }
-                }
-                return;
-            }
-            const type = advertise[0][14];
-            if (type !== 24) {
-                // iBS04i以外
-                return;
-            }
             //    console.log(advertise);
+            if (advertise.length === 0) {
+                return;
+            }
+            if (advertise[0][8] === 0xff &&
+                advertise[0][9] === 0xff &&
+                advertise[0][10] === 0xff &&
+                advertise[0][11] === 0xff) {
+                // error iBS01T
+                return;
+            }
             const data = {
                 battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
                 event: advertise[0][7],
-                uuid: peripheral.iBeacon.uuid,
-                major: peripheral.iBeacon.major,
-                minor: peripheral.iBeacon.minor,
-                power: peripheral.iBeacon.power,
-                rssi: peripheral.iBeacon.rssi,
+                temperature: this.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+                humidity: this.signed16FromBinary(advertise[0][10], advertise[0][11]),
                 address: peripheral.address,
             };
-            // console.log(
-            //   `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
-            // );
+            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
             if (this.onNotification) {
                 this.onNotification(data);
             }
@@ -121,7 +103,14 @@ class IBS04I {
         this.repeat_flg = false;
         this.obniz.ble.scan.end();
     }
+    signed16FromBinary(val1, val2) {
+        let val = val1 + val2 * 0xff;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
+        }
+        return val;
+    }
 }
-exports.default = IBS04I;
+exports.default = IBS01T;
 
 //# sourceMappingURL=index.js.map

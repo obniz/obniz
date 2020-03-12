@@ -18,6 +18,7 @@ export interface IBS04I_Data {
   minor: number;
   power: number;
   rssi: number;
+  address: string;
 }
 
 export default class IBS04I implements ObnizPartsInterface {
@@ -71,12 +72,8 @@ export default class IBS04I implements ObnizPartsInterface {
     this.obniz = obniz;
   }
 
-  public scan() {
+  public scan(address: string = "") {
     this.obniz.ble!.scan.onfind = (peripheral: BleRemotePeripheral) => {
-      // console.log(peripheral);
-      if (peripheral.address === "0081f9860531") {
-        console.log(peripheral);
-      }
       const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
         let find = false;
         if (this.deviceAdv.length > adv.length) {
@@ -105,6 +102,7 @@ export default class IBS04I implements ObnizPartsInterface {
             minor: peripheral.iBeacon.minor,
             power: peripheral.iBeacon.power,
             rssi: peripheral.iBeacon.rssi,
+            address: peripheral.address,
           };
           if (this.onNotification) {
             this.onNotification(d);
@@ -126,6 +124,7 @@ export default class IBS04I implements ObnizPartsInterface {
         minor: peripheral.iBeacon.minor,
         power: peripheral.iBeacon.power,
         rssi: peripheral.iBeacon.rssi,
+        address: peripheral.address,
       };
 
       // console.log(
@@ -143,7 +142,11 @@ export default class IBS04I implements ObnizPartsInterface {
     };
 
     this.obniz.ble!.initWait();
-    this.obniz.ble!.scan.start(null, this.ble_setting);
+    if (address && address.length >= 12) {
+      this.obniz.ble!.scan.start({ deviceAddress: address }, this.ble_setting);
+    } else {
+      this.obniz.ble!.scan.start(null, this.ble_setting);
+    }
     this.repeat_flg = true;
   }
 

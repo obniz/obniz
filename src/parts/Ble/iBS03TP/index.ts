@@ -14,8 +14,9 @@ export interface IBS03TPOptions {}
 export interface IBS03TP_Data {
   event: number;
   battery: number;
-  temp: number;
-  probe_temp: number;
+  temperature: number;
+  probe_temperature: number;
+  address: string;
 }
 
 export default class IBS03TP implements ObnizPartsInterface {
@@ -69,11 +70,8 @@ export default class IBS03TP implements ObnizPartsInterface {
     this.obniz = obniz;
   }
 
-  public scan() {
+  public scan(address: string = "") {
     this.obniz.ble!.scan.onfind = (peripheral: BleRemotePeripheral) => {
-      if (peripheral.address === "806fb0c8a2cb") {
-        console.log(peripheral);
-      }
       const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
         let find = false;
         if (this.deviceAdv.length > adv.length) {
@@ -92,7 +90,6 @@ export default class IBS03TP implements ObnizPartsInterface {
         }
         return find;
       });
-      //    console.log(advertise);
       if (advertise.length === 0) {
         return;
       }
@@ -104,13 +101,11 @@ export default class IBS03TP implements ObnizPartsInterface {
       const data: IBS03TP_Data = {
         battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
         event: advertise[0][7],
-        temp: this.signedNumberFromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-        probe_temp: this.signedNumberFromBinary(advertise[0][10], advertise[0][11]) * 0.01,
+        temperature: this.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
+        probe_temperature: this.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
+        address: peripheral.address,
       };
-
-      // console.log(
-      //   `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
-      // );
+      // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature}`);
       if (this.onNotification) {
         this.onNotification(data);
       }
@@ -123,7 +118,11 @@ export default class IBS03TP implements ObnizPartsInterface {
     };
 
     this.obniz.ble!.initWait();
-    this.obniz.ble!.scan.start(null, this.ble_setting);
+    if (address && address.length >= 12) {
+      this.obniz.ble!.scan.start({ deviceAddress: address }, this.ble_setting);
+    } else {
+      this.obniz.ble!.scan.start(null, this.ble_setting);
+    }
     this.repeat_flg = true;
   }
 
@@ -132,10 +131,10 @@ export default class IBS03TP implements ObnizPartsInterface {
     this.obniz.ble!.scan.end();
   }
 
-  private signedNumberFromBinary(val1: number, val2: number): number {
-    let val: number = (val2 & 0x7f) * 256 + val1;
-    if ((val2 & 0x80) !== 0) {
-      val = val - Math.pow(2, 15);
+  private signed16FromBinary(val1: number, val2: number): number {
+    let val: number = val1 + val2 * 0xff;
+    if ((val & 0x8000) !== 0) {
+      val = val - 0x10000;
     }
     return val;
   }

@@ -19,7 +19,7 @@ iBS03TPを検索し、発見した場合、その情報をCallback関数で返�
 // Javascript Example
 let ibs03tp = obniz.wired('iBS03TP');
 ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temp ${data.temp} probe_temp ${data.probe_temp}`);
+            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature}`);
         });
 ibs03tp.scan();
 ```
@@ -30,14 +30,14 @@ ibs03tp.scan();
 
 - battery : 電池電圧
 - event : event
-- temp : モジュール内の温度センサの値
-- probe_temp : プローブの温度センサの値
+- temperature : モジュール内の温度センサの値
+- probe_temperature : プローブの温度センサの値
 
 ```javascript
 // Javascript Example
 let ibs03tp = obniz.wired('iBS03TP');
 ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temp ${data.temp} probe_temp ${data.probe_temp}`);
+            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature}`);
         });
 ibs03tp.scan();
 ```
