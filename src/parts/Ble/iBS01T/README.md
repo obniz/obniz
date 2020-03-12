@@ -19,7 +19,7 @@ Search for iBS01T, and if found, return that information in the Callback functio
 // Javascript Example
 let ibs01t = obniz.wired('iBS01T');
 ibs01t.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
+            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity} address ${data.address}`);
         });
 ibs01t.scan();
 ```
@@ -38,7 +38,7 @@ If found, return the information in the Callback function.
 // Javascript Example
 let ibs01t = obniz.wired('iBS01T');
 ibs01t.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
+            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity} address ${data.address}`);
         });
 ibs01t.scan();
 ```

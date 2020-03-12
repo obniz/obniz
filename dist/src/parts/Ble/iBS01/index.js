@@ -1,10 +1,10 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.iBS01T
+ * @module Parts.iBS01
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IBS01T {
+class IBS01 {
     constructor() {
         this.deviceAdv = [
             0xff,
@@ -32,10 +32,13 @@ class IBS01T {
         };
         this.keys = [];
         this.requiredKeys = [];
+        this.oldButtonFlg = false;
+        this.oldMovingFlg = false;
+        this.oldHallSensorFlg = false;
     }
     static info() {
         return {
-            name: "iBS01T",
+            name: "iBS01",
         };
     }
     wired(obniz) {
@@ -65,23 +68,42 @@ class IBS01T {
             if (advertise.length === 0) {
                 return;
             }
-            if (advertise[0][8] === 0xff &&
-                advertise[0][9] === 0xff &&
-                advertise[0][10] === 0xff &&
-                advertise[0][11] === 0xff) {
-                // error iBS01T
+            if (advertise[0][8] !== 0xff &&
+                advertise[0][9] !== 0xff &&
+                advertise[0][10] !== 0xff &&
+                advertise[0][11] !== 0xff) {
+                // error iBS01
                 return;
             }
             const data = {
                 battery: (advertise[0][5] + advertise[0][6] * 0xff) * 0.01,
                 event: advertise[0][7],
-                temperature: this.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-                humidity: this.signed16FromBinary(advertise[0][10], advertise[0][11]),
                 address: peripheral.address,
             };
-            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
+            // console.log(`battery ${data.battery}V event ${data.event});
             if (this.onNotification) {
                 this.onNotification(data);
+            }
+            if (this.onChangeButton) {
+                const button = Boolean(advertise[0][7] & 0b001);
+                if (button !== this.oldButtonFlg) {
+                    this.onChangeButton(button, peripheral.address);
+                    this.oldButtonFlg = button;
+                }
+            }
+            if (this.onChangeMoving) {
+                const moved = Boolean((advertise[0][7] & 0b010) >> 1);
+                if (moved !== this.oldMovingFlg) {
+                    this.onChangeMoving(moved, peripheral.address);
+                    this.oldMovingFlg = moved;
+                }
+            }
+            if (this.onChangeHallSensor) {
+                const closed = Boolean((advertise[0][7] & 0b100) >> 2);
+                if (closed !== this.oldHallSensorFlg) {
+                    this.onChangeHallSensor(closed, peripheral.address);
+                    this.oldHallSensorFlg = closed;
+                }
             }
         };
         this.obniz.ble.scan.onfinish = () => {
@@ -102,14 +124,7 @@ class IBS01T {
         this.repeat_flg = false;
         this.obniz.ble.scan.end();
     }
-    signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 0xff;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
-        }
-        return val;
-    }
 }
-exports.default = IBS01T;
+exports.default = IBS01;
 
 //# sourceMappingURL=index.js.map

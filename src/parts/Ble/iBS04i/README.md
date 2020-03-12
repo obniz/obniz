@@ -37,7 +37,7 @@ If found, return the information in the Callback function.
 - minor : iBeacon　minor
 - power : iBeacon　power
 - rssi :  Signal strength
-
+- address : module address
 ```javascript
 // Javascript Example
 let ibs04i = obniz.wired('iBS04i');

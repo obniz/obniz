@@ -19,7 +19,7 @@ iBS04iを検索し、発見した場合、その情報をCallback関数で返し
 let ibs04i = obniz.wired('iBS04i');
 ibs04i.onNotification = (data => {
             console.log(
-                `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
+                `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi} address ${data.address}`,
             );
         });
 ibs04i.scan();
@@ -36,13 +36,14 @@ ibs04i.scan();
 - minor : iBeacon　minor
 - power : iBeacon　power
 - rssi : 電波強度
+- address : モジュールのアドレス
 
 ```javascript
 // Javascript Example
 let ibs04i = obniz.wired('iBS04i');
 ibs04i.onNotification = (data => {
             console.log(
-                `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi} power ${data.power}`,
+                `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi} power ${data.power} address ${data.address}`,
             );
         });
 ibs04i.scan();

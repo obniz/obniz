@@ -32,7 +32,6 @@ class IBS04I {
         };
         this.keys = [];
         this.requiredKeys = [];
-        this.periperal = null;
     }
     static info() {
         return {

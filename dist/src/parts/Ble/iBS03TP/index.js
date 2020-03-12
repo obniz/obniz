@@ -32,7 +32,6 @@ class IBS03TP {
         };
         this.keys = [];
         this.requiredKeys = [];
-        this.periperal = null;
     }
     static info() {
         return {

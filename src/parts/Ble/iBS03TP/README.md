@@ -19,7 +19,7 @@ Search for iBS03TP, and if found, return that information in the Callback functi
 // Javascript Example
 let ibs03tp = obniz.wired('iBS03TP');
 ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature}`);
+            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature} address ${data.address}`);
         });
 ibs03tp.scan();
 ```
@@ -32,12 +32,13 @@ If found, return the information in the Callback function.
 - event : event
 - temperature : module sensor temperature
 - probe_temperature : probe sensor temperature
+- address : module address
 
 ```javascript
 // Javascript Example
 let ibs03tp = obniz.wired('iBS03TP');
 ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature}`);
+            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature} address ${data.address}`);
         });
 ibs03tp.scan();
 ```

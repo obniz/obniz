@@ -5,7 +5,6 @@
 
 import Obniz from "../../../obniz";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface IBS01TOptions {}
@@ -29,7 +28,6 @@ export default class IBS01T implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public periperal: bleRemotePeripheral | null;
   public obniz!: Obniz;
   public params: any;
 
@@ -42,8 +40,8 @@ export default class IBS01T implements ObnizPartsInterface {
     -1, // Battery
     -1, // Battery
     -1, // Event
-    -1, // Temprature
-    -1, // Temprature
+    -1, // temperature
+    -1, // temperature
     -1, // Humidity
     -1, // Humidity
     -1, // reserved
@@ -62,7 +60,6 @@ export default class IBS01T implements ObnizPartsInterface {
   constructor() {
     this.keys = [];
     this.requiredKeys = [];
-    this.periperal = null;
   }
 
   public wired(obniz: Obniz) {

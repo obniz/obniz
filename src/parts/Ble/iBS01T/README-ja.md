@@ -8,7 +8,7 @@ INGICS社製の温湿度センサーです。
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS01T');
+let ibs01t = obniz.wired('iBS01T');
 ```
 
 ## scan()
@@ -17,11 +17,11 @@ iBS01Tを検索し、発見した場合、その情報をCallback関数で返し
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS01T');
-ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
+let ibs01t = obniz.wired('iBS01T');
+ibs01t.onNotification = (data => {
+            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity} address ${data.address}`);
         });
-ibs03tp.scan();
+ibs01t.scan();
 ```
 
 ## onNotification = function(data){}
@@ -38,7 +38,7 @@ ibs03tp.scan();
 // Javascript Example
 let ibs01t = obniz.wired('iBS01T');
 ibs01t.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
+            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity} address ${data.address}`);
         });
 ibs01t.scan();
 ```
