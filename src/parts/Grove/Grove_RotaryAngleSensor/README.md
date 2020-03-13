@@ -10,28 +10,30 @@ It has three pins. between sides resistor values is constant. voltage of center 
 
 This parts can treat only 10 ohm to 10 k ohm.
 
+## wired(obniz, {[signal, vcc, gnd, grove]})
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
 signal | `number(obniz Board io)` | yes |  &nbsp; | signal (4 pin of Grove)
 vcc | `number(obniz Board io)` | no |  &nbsp; | VCC(2 pin of Grove)
 gnd | `number(obniz Board io)` | no |  &nbsp; | GND(0 pin of Grove)
+grove | `object` | no | &nbsp;  | grove interface object if a device has
 
 ![](wired.png)
 
 ```Javascript
 // Javascript Example
-const meter = obniz.wired("Grove_RotaryAngleSensor", {gnd:0, vcc:1, signal:3});
+const meter = obniz.wired("Grove_RotaryAngleSensor", {grove: obniz.grove0});
 ```
 
 ## onchange 
 Called when rotated.
 Position value return a resistor value.
-If you turn the knob to the middle, Position value return 0.5.
+A value of 0.0 to 3.3 (5.0) is returned according to the rotation.
 ```Javascript
 // Javascript Example
-const meter = obniz.wired("Grove_RotaryAngleSensor", {gnd:0, vcc:1, signal:3});
+const meter = obniz.wired("Grove_RotaryAngleSensor", {grove: obniz.grove0});
 meter.onchange = function(position) {
-  console.log("position: "+position);
+  console.log("position: " + position);
 };
 ```

@@ -9,26 +9,24 @@ Groveコネクタで利用できる可変抵抗です。ボリュームのよう
 
 このパーツで扱えるポテンションメーターの抵抗値は10Ω〜10kΩの間です。
 
-
 name | type | required | default | description
 --- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal 出力端子(4 pin of Grove)
+signal | `number(obniz Board io)` | no |  &nbsp; | signal 出力端子(4 pin of Grove)
 vcc | `number(obniz Board io)` | no |  &nbsp; | VCC端子(2 pin of Grove)
 gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(0 pin of Grove)
-
-![](wired.png)
+grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
 
 ```Javascript
 // Javascript Example
-const meter = obniz.wired("Grove_RotaryAngleSensor", {gnd:0, vcc:1, signal:3});
+const meter = obniz.wired("Grove_RotaryAngleSensor", {grove: obniz.grove0});
 ```
 
 ## onchange 
-回転を監視し、回転された時にcallback関数を呼び出します。回転に合わせて0.0~1.0の値が返ります。例えばちょうど真ん中であれば0.5です。
+回転を監視し、回転された時にcallback関数を呼び出します。回転に合わせて0.0〜3.3(5.0)の値が返ります。
 ```Javascript
 // Javascript Example
-const meter = obniz.wired("Grove_RotaryAngleSensor", {gnd:0, vcc:1, signal:3});
+const meter = obniz.wired("Grove_RotaryAngleSensor", {grove: obniz.grove0});
 meter.onchange = function(position) {
-  console.log("position: "+position);
+  console.log("position: " + position);
 };
 ```

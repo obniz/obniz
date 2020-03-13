@@ -115,7 +115,7 @@ import Grove_EARTH, { Grove_EARTHOptions } from "../parts/Grove/Grove_EARTH";
 import Grove_GPS, { Grove_GPSOptions } from "../parts/Grove/Grove_GPS";
 import Grove_JoyStick, { Grove_JoyStickOptions } from "../parts/Grove/Grove_JoyStick";
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
-
+import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
 // Keyestudio
 import Keyestudio_Button, { Keyestudio_ButtonOptions } from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, { Keyestudio_BuzzerOptions } from "../parts/Keyestudio/Keyestudio_Buzzer";
@@ -261,6 +261,8 @@ export interface WiredNameMap {
   "Grove_JoyStick": Grove_JoyStick;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  // "Grove_RotaryAngleSensor": Grove_RotaryAngleSensor;
+
   // StickCHat
   "M5StickC_JoyStick": M5StickC_JoyStick;
   "M5StickC_ADC": M5StickC_ADC;
@@ -415,6 +417,8 @@ export interface WiredNameOptionsMap {
   "Grove_EARTH": Grove_EARTHOptions;
   "Grove_JoyStick": Grove_JoyStickOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  "Grove_RotaryAnglesensor": Grove_RotaryAngleSensorOptions;
+
   // StickCHat
   "M5StickC_JoyStick": M5StickC_JoyStickOptions;
   "M5StickC_ADC": M5StickC_ADCOptions;
