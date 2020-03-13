@@ -338,6 +338,17 @@ class BleScan {
         this._setAdvertisementFilter(adFilters);
     }
     isTarget(peripheral) {
+        // no filter
+        if (!this.scanTarget) {
+            return true;
+        }
+        if (!this.scanTarget.localNamePrefix &&
+            !this.scanTarget.localName &&
+            !this.scanTarget.uuids &&
+            !this.scanTarget.deviceAddress &&
+            !this.scanTarget.binary) {
+            return true;
+        }
         if (this.isLocalNamePrefixTarget(peripheral) ||
             this.isLocalNameTarget(peripheral) ||
             this.isUuidTarget(peripheral) ||
@@ -369,11 +380,8 @@ class BleScan {
         }
     }
     isLocalNameTarget(peripheral) {
-        if (!this.scanTarget) {
-            return true;
-        }
         if (!this.scanTarget.localName) {
-            return true;
+            return false;
         }
         for (const name of this._arrayWrapper(this.scanTarget.localName)) {
             if (name === peripheral.localName) {
@@ -383,11 +391,8 @@ class BleScan {
         return false;
     }
     isLocalNamePrefixTarget(peripheral) {
-        if (!this.scanTarget) {
-            return true;
-        }
         if (!this.scanTarget.localNamePrefix) {
-            return true;
+            return false;
         }
         for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
             if (peripheral.localName && peripheral.localName.startsWith(name)) {
@@ -397,21 +402,15 @@ class BleScan {
         return false;
     }
     isBinaryTarget(peripheral) {
-        if (!this.scanTarget) {
-            return true;
-        }
         if (!this.scanTarget.binary) {
-            return true;
+            return false;
         }
         return true; // cannot detect on obnizjs
         return false;
     }
     isUuidTarget(peripheral) {
-        if (!this.scanTarget) {
-            return true;
-        }
         if (!this.scanTarget.uuids) {
-            return true;
+            return false;
         }
         const uuids = peripheral.advertisementServiceUuids().map((e) => {
             return bleHelper_1.default.uuidFilter(e);
@@ -424,11 +423,8 @@ class BleScan {
         return false;
     }
     isDeviceAddressTarget(peripheral) {
-        if (!this.scanTarget) {
-            return true;
-        }
         if (!this.scanTarget.deviceAddress) {
-            return true;
+            return false;
         }
         if (this.scanTarget.deviceAddress === peripheral.address) {
             return true;
