@@ -31,8 +31,7 @@
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
-    "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts",
-    "v": "node -v"
+    "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
