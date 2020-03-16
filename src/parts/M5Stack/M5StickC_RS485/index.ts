@@ -49,6 +49,16 @@ export default class M5StickC_RS485 implements ObnizPartsInterface {
 
     this.params.baud = this.params.baud || 9600;
 
+    if (!this.obniz.isValidIO(this.params.tx) && !this.obniz.isValidIO(this.params.rx)) {
+      if (this.obniz.hasExtraInterface("m5stickc_hat")) {
+        const uart = this.obniz.getExtraInterface("m5stickc_hat").uart;
+        this.params.tx = uart.tx;
+        this.params.rx = uart.rx;
+      } else {
+        throw new Error("Cannot find m5stickc hat interface. Please set param 'tx'/'rx'");
+      }
+    }
+
     this.uart = obniz.getFreeUart();
 
     this.uart.start({

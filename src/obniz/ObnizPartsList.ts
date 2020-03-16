@@ -133,7 +133,7 @@ import M5StickC_DAC, { M5StickC_DACOptions } from "../parts/M5Stack/M5StickC_DAC
 import M5StickC_FINGER, { M5StickC_FINGEROptions } from "../parts/M5Stack/M5StickC_FINGER";
 import M5StickC_JoyStick, { M5StickC_JoyStickOptions } from "../parts/M5Stack/M5StickC_JoyStick";
 import M5StickC_ToF, { M5StickC_ToFOptions } from "../parts/M5Stack/M5StickC_ToF";
-import M5StickC_YunHat, { M5StickC_YunHatOptions } from "../parts/M5Stack/M5StickC_YunHat";
+import M5StickC_Yun, { M5StickC_YunOptions } from "../parts/M5Stack/M5StickC_Yun";
 import BMP280, { BMP280Options } from "../parts/PressureSensor/BMP280";
 
 import M5StickC_RS485, { M5StickC_RS485Options } from "../parts/M5Stack/M5StickC_RS485";
@@ -268,7 +268,7 @@ export interface WiredNameMap {
   "M5StickC_ToF": M5StickC_ToF;
   "M5StickC_FINGER": M5StickC_FINGER;
   "M5StickC_RS485": M5StickC_RS485;
-  "M5StickC_YunHat": M5StickC_YunHat;
+  "M5StickC_Yun": M5StickC_Yun;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_Button;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensor;
@@ -422,7 +422,7 @@ export interface WiredNameOptionsMap {
   "M5StickC_ToF": M5StickC_ToFOptions;
   "M5StickC_FINGER": M5StickC_FINGEROptions;
   "M5StickC_RS485": M5StickC_RS485Options;
-  "M5StickC_YunHat": M5StickC_YunHatOptions;
+  "M5StickC_Yun": M5StickC_YunOptions;
   // Keyestudio
   "Keyestudio_Button": Keyestudio_ButtonOptions;
   "Keyestudio_MoistureSensor": Keyestudio_MoistureSensorOptions;

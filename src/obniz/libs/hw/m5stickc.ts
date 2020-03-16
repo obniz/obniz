@@ -376,6 +376,15 @@ export class M5StickC extends ObnizDevice {
     // @ts-ignore
     super._prepareComponents();
 
+    if (this.hw !== "m5stickc") {
+      throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
+    }
+
+    if (this.ir) {
+      // already wired parts
+      return;
+    }
+
     this.ir = this.wired("InfraredLED", { anode: 9 });
     this.led = this.wired("LED", { cathode: 10 });
     this.buttonA = this.wired("Button", { signal: 37 });

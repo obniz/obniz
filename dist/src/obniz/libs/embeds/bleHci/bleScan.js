@@ -61,9 +61,14 @@ class BleScan {
         settings.filterOnDevice = !!settings.filterOnDevice;
         settings.activeScan = settings.activeScan !== false;
         this.scanSettings = settings;
-        this.scanTarget = target;
-        if (this.scanTarget && this.scanTarget.uuids) {
-            this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
+        target = target || {};
+        this.scanTarget.binary = target.binary;
+        this.scanTarget.deviceAddress = target.deviceAddress;
+        this.scanTarget.localName = target.localName;
+        this.scanTarget.localNamePrefix = target.localNamePrefix;
+        this.scanTarget.uuids = [];
+        if (target && target.uuids) {
+            this.scanTarget.uuids = target.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
             });
         }
@@ -334,16 +339,39 @@ class BleScan {
         this._setAdvertisementFilter(adFilters);
     }
     isTarget(peripheral) {
-        if (!this.scanTarget ||
-            Object.keys(this.scanTarget).length === 0 ||
-            this.isLocalNamePrefixTarget(peripheral) ||
-            this.isLocalNameTarget(peripheral) ||
-            this.isUuidTarget(peripheral) ||
-            this.isDeviceAddressTarget(peripheral) ||
-            this.isBinaryTarget(peripheral)) {
+        const functionBinding = {
+            localNamePrefix: this.isLocalNamePrefixTarget.bind(this),
+            localName: this.isLocalNameTarget.bind(this),
+            uuids: this.isUuidTarget.bind(this),
+            deviceAddress: this.isDeviceAddressTarget.bind(this),
+            binary: this.isBinaryTarget.bind(this),
+        };
+        if (!this.scanTarget) {
+            // no filter
             return true;
         }
-        return false;
+        let noFilter = true;
+        // no filter
+        for (const key in functionBinding) {
+            const oneTarget = this.scanTarget[key];
+            if (oneTarget) {
+                if (Array.isArray(oneTarget) && oneTarget.length > 0) {
+                    noFilter = false;
+                }
+                else if (!Array.isArray(oneTarget) && oneTarget) {
+                    noFilter = false;
+                }
+            }
+        }
+        if (noFilter) {
+            return true;
+        }
+        let isTarget = false;
+        for (const key in functionBinding) {
+            const targetDetectFunc = functionBinding[key];
+            isTarget = isTarget || targetDetectFunc(peripheral);
+        }
+        return isTarget;
     }
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
@@ -367,49 +395,54 @@ class BleScan {
         }
     }
     isLocalNameTarget(peripheral) {
-        if (this.scanTarget && this.scanTarget.localName) {
-            for (const name of this._arrayWrapper(this.scanTarget.localName)) {
-                if (name === peripheral.localName) {
-                    return true;
-                }
+        if (!this.scanTarget.localName) {
+            return false;
+        }
+        for (const name of this._arrayWrapper(this.scanTarget.localName)) {
+            if (name === peripheral.localName) {
+                return true;
             }
         }
         return false;
     }
     isLocalNamePrefixTarget(peripheral) {
-        if (this.scanTarget && this.scanTarget.localNamePrefix) {
-            for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
-                if (peripheral.localName && peripheral.localName.startsWith(name)) {
-                    return true;
-                }
+        if (!this.scanTarget.localNamePrefix) {
+            return false;
+        }
+        for (const name of this._arrayWrapper(this.scanTarget.localNamePrefix)) {
+            if (peripheral.localName && peripheral.localName.startsWith(name)) {
+                return true;
             }
         }
         return false;
     }
     isBinaryTarget(peripheral) {
-        if (this.scanTarget && this.scanTarget.binary) {
-            return true; // cannot detect on obnizjs
+        if (!this.scanTarget.binary) {
+            return false;
         }
+        return true; // cannot detect on obnizjs
         return false;
     }
     isUuidTarget(peripheral) {
-        if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
-                return bleHelper_1.default.uuidFilter(e);
-            });
-            for (const uuid of this.scanTarget.uuids) {
-                if (uuids.includes(uuid)) {
-                    return true;
-                }
+        if (!this.scanTarget.uuids || this.scanTarget.uuids.length === 0) {
+            return false;
+        }
+        const uuids = peripheral.advertisementServiceUuids().map((e) => {
+            return bleHelper_1.default.uuidFilter(e);
+        });
+        for (const uuid of this.scanTarget.uuids) {
+            if (uuids.includes(uuid)) {
+                return true;
             }
         }
         return false;
     }
     isDeviceAddressTarget(peripheral) {
-        if (this.scanTarget && this.scanTarget.deviceAddress) {
-            if (this.scanTarget.deviceAddress === peripheral.address) {
-                return true;
-            }
+        if (!this.scanTarget.deviceAddress) {
+            return false;
+        }
+        if (this.scanTarget.deviceAddress === peripheral.address) {
+            return true;
         }
         return false;
     }

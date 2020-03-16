@@ -28,6 +28,10 @@ module.exports = {
         ],
       },
       {
+        test: /\.(css)$/,
+        use: 'raw-loader',
+      },
+      {
         test: /package.json$/,
         use: [
           {
@@ -44,6 +48,10 @@ module.exports = {
       modulesFromFile: {
         include: ['devDependencies'],
       },
+      whitelist: [
+        'dialog-polyfill',
+        'dialog-polyfill/dist/dialog-polyfill.css',
+      ],
     }),
   ],
   stats: {
