@@ -8,7 +8,7 @@ This unit output voltage regarding measured distance.
 ## wired(obniz, {[signal, vcc, gnd, grove]})
 
 connect to the obniz device.  
-White, yellow, red and black wires correspond to scl, sda, vcc and gnd respectively.  
+yellow, red and black wires correspond to signal, vcc and gnd respectively.  
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
