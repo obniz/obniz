@@ -23007,6 +23007,7 @@ var map = {
 	"./Grove/Grove_3AxisAccelerometer/index.js": "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js",
 	"./Grove/Grove_Button/index.js": "./dist/src/parts/Grove/Grove_Button/index.js",
 	"./Grove/Grove_Buzzer/index.js": "./dist/src/parts/Grove/Grove_Buzzer/index.js",
+	"./Grove/Grove_DistanceSensor/index.js": "./dist/src/parts/Grove/Grove_DistanceSensor/index.js",
 	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
@@ -35368,6 +35369,37 @@ class Grove_Buzzer {
     }
 }
 exports.default = Grove_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_DistanceSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts..Grove_DistanceSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class GP2Y0A21YK0F {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_distanceSensor",
+        };
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+}
+exports.default = GP2Y0A21YK0F;
 
 //# sourceMappingURL=index.js.map
 
