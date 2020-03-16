@@ -6,8 +6,8 @@ Ambient light sensor.
 
 ## wired(obniz, {[signal, vcc, gnd, grove]});
 
-connect to the obniz device.
-White, yellow, red and black wires correspond to scl, sda, vcc and gnd respectively.
+connect to the obniz device.  
+yellow, red and black wires correspond to signal, vcc and gnd respectively.
 
 
 name | type | required | default | description
@@ -22,13 +22,13 @@ grove | `object` | no | &nbsp;  | grove interface object if a device has
 // Javascript Example
 let sensor = obniz.wired("Grove_LightSensor", {grove: obniz.grove0});
 ```
-This sensor is a three-terminal photo resistor. When a voltage is applied to vcc and gnd, it generates a voltage according to the brightness.
+This sensor is a three-terminal photo resistor.  When a voltage is applied to vcc and gnd, it generates a voltage according to the brightness.  
 By using a resistor, the change in the voltage can be read.
 
 ## onchange = function(value)
 
-Change callback of brightness change.
-It's value range is 0 to vcc.
+Change callback of brightness change.  
+It's value range is 0 to vcc.  
 value will increase by brightness.
   
   
