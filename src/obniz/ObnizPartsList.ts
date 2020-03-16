@@ -103,6 +103,9 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
 import Linking, { LinkingOptions } from "../parts/Ble/linking";
+import Logtta_AD, { Logtta_ADOptions } from "../parts/Ble/LogttaAD";
+import Logtta_CO2, { Logtta_CO2Options } from "../parts/Ble/LogttaCO2";
+import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
 import PT550, { PT550Options } from "../parts/ColorSensor/PT550";
 import S11059, { S11059Options } from "../parts/ColorSensor/S11059";
 
@@ -279,6 +282,9 @@ export interface WiredNameMap {
   "Keyestudio_HT16K33": Keyestudio_HT16K33;
   // Ble
   "2JCIE": OMRON_2JCIE;
+  "Logtta_CO2": Logtta_CO2;
+  "Logtta_TH": Logtta_TH;
+  "Logtta_AD": Logtta_AD;
   "Linking": Linking;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
@@ -433,6 +439,9 @@ export interface WiredNameOptionsMap {
   "Keyestudio_HT16K33": Keyestudio_HT16K33Options;
   // Ble
   "2JCIE": OMRON_2JCIEOptions;
+  "Logtta_CO2": Logtta_CO2Options;
+  "Logtta_TH": Logtta_THOptions;
+  "Logtta_AD": Logtta_ADOptions;
   "Linking": LinkingOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
