@@ -96,8 +96,8 @@ class Logtta_AD {
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify({
-                    ampere: (((data[0] << 8) | data[1]) * 916) / 16,
-                    volt: (((data[0] << 8) | data[1]) * 916) / 4,
+                    ampere: (16 / 916) * ((data[0] << 8) | data[1]),
+                    volt: (4 / 916) * ((data[0] << 8) | data[1]),
                     count: (data[2] << 8) | data[3],
                 });
             }
