@@ -217,6 +217,7 @@ export default class BleScan {
     this.scanTarget.deviceAddress = target.deviceAddress;
     this.scanTarget.localName = target.localName;
     this.scanTarget.localNamePrefix = target.localNamePrefix;
+    this.scanTarget.uuids = [];
     if (target && target.uuids) {
       this.scanTarget.uuids = target.uuids.map((elm: UUID) => {
         return BleHelper.uuidFilter(elm);
@@ -514,31 +515,42 @@ export default class BleScan {
   }
 
   protected isTarget(peripheral: BleRemotePeripheral) {
-    // no filter
+    const functionBinding = {
+      localNamePrefix: this.isLocalNamePrefixTarget.bind(this),
+      localName: this.isLocalNameTarget.bind(this),
+      uuids: this.isUuidTarget.bind(this),
+      deviceAddress: this.isDeviceAddressTarget.bind(this),
+      binary: this.isBinaryTarget.bind(this),
+    };
+
     if (!this.scanTarget) {
-      return true;
-    }
-    if (
-      !this.scanTarget.localNamePrefix &&
-      !this.scanTarget.localName &&
-      !this.scanTarget.uuids &&
-      !this.scanTarget.deviceAddress &&
-      !this.scanTarget.binary
-    ) {
+      // no filter
       return true;
     }
 
-    if (
-      this.isLocalNamePrefixTarget(peripheral) ||
-      this.isLocalNameTarget(peripheral) ||
-      this.isUuidTarget(peripheral) ||
-      this.isDeviceAddressTarget(peripheral) ||
-      this.isBinaryTarget(peripheral)
-    ) {
+    let noFilter = true;
+    // no filter
+    for (const key in functionBinding) {
+      const oneTarget: any = (this.scanTarget as any)[key] as any;
+      if (oneTarget) {
+        if (Array.isArray(oneTarget) && oneTarget.length > 0) {
+          noFilter = false;
+        } else if (!Array.isArray(oneTarget) && oneTarget) {
+          noFilter = false;
+        }
+      }
+    }
+    if (noFilter) {
       return true;
     }
 
-    return false;
+    let isTarget = false;
+    for (const key in functionBinding) {
+      const targetDetectFunc = (functionBinding as any)[key];
+      isTarget = isTarget || targetDetectFunc(peripheral);
+    }
+
+    return isTarget;
   }
 
   protected clearTimeoutTimer() {
@@ -600,7 +612,7 @@ export default class BleScan {
   }
 
   private isUuidTarget(peripheral: BleRemotePeripheral) {
-    if (!this.scanTarget.uuids) {
+    if (!this.scanTarget.uuids || this.scanTarget.uuids.length === 0) {
       return false;
     }
     const uuids: any = peripheral.advertisementServiceUuids().map((e: any) => {
