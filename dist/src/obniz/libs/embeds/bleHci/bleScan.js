@@ -66,6 +66,7 @@ class BleScan {
         this.scanTarget.deviceAddress = target.deviceAddress;
         this.scanTarget.localName = target.localName;
         this.scanTarget.localNamePrefix = target.localNamePrefix;
+        this.scanTarget.uuids = [];
         if (target && target.uuids) {
             this.scanTarget.uuids = target.uuids.map((elm) => {
                 return bleHelper_1.default.uuidFilter(elm);
@@ -338,25 +339,39 @@ class BleScan {
         this._setAdvertisementFilter(adFilters);
     }
     isTarget(peripheral) {
-        // no filter
+        const functionBinding = {
+            localNamePrefix: this.isLocalNamePrefixTarget.bind(this),
+            localName: this.isLocalNameTarget.bind(this),
+            uuids: this.isUuidTarget.bind(this),
+            deviceAddress: this.isDeviceAddressTarget.bind(this),
+            binary: this.isBinaryTarget.bind(this),
+        };
         if (!this.scanTarget) {
+            // no filter
             return true;
         }
-        if (!this.scanTarget.localNamePrefix &&
-            !this.scanTarget.localName &&
-            !this.scanTarget.uuids &&
-            !this.scanTarget.deviceAddress &&
-            !this.scanTarget.binary) {
+        let noFilter = true;
+        // no filter
+        for (const key in functionBinding) {
+            const oneTarget = this.scanTarget[key];
+            if (oneTarget) {
+                if (Array.isArray(oneTarget) && oneTarget.length > 0) {
+                    noFilter = false;
+                }
+                else if (!Array.isArray(oneTarget) && oneTarget) {
+                    noFilter = false;
+                }
+            }
+        }
+        if (noFilter) {
             return true;
         }
-        if (this.isLocalNamePrefixTarget(peripheral) ||
-            this.isLocalNameTarget(peripheral) ||
-            this.isUuidTarget(peripheral) ||
-            this.isDeviceAddressTarget(peripheral) ||
-            this.isBinaryTarget(peripheral)) {
-            return true;
+        let isTarget = false;
+        for (const key in functionBinding) {
+            const targetDetectFunc = functionBinding[key];
+            isTarget = isTarget || targetDetectFunc(peripheral);
         }
-        return false;
+        return isTarget;
     }
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
@@ -409,7 +424,7 @@ class BleScan {
         return false;
     }
     isUuidTarget(peripheral) {
-        if (!this.scanTarget.uuids) {
+        if (!this.scanTarget.uuids || this.scanTarget.uuids.length === 0) {
             return false;
         }
         const uuids = peripheral.advertisementServiceUuids().map((e) => {
