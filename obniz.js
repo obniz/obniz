@@ -23011,6 +23011,7 @@ var map = {
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
+	"./Grove/Grove_LightSensor/index.js": "./dist/src/parts/Grove/Grove_LightSensor/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
@@ -35884,6 +35885,17 @@ class Grove_JoyStick {
     }
 }
 exports.default = Grove_JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_LightSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 //# sourceMappingURL=index.js.map
 
