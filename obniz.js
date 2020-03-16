@@ -23012,6 +23012,7 @@ var map = {
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
+	"./Grove/Grove_MoistureSensor/index.js": "./dist/src/parts/Grove/Grove_MoistureSensor/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
@@ -35990,6 +35991,53 @@ class Grove_MP3 {
     }
 }
 exports.default = Grove_MP3;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_MoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_MoistureSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_MoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_MoistureSensor",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    async getWait() {
+        return await this.ad.getWait();
+    }
+}
+exports.default = Grove_MoistureSensor;
 
 //# sourceMappingURL=index.js.map
 
