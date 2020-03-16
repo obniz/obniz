@@ -1,17 +1,17 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.Grove_MoistureSensor
+ * @module Parts.Grove_SoilMoistureSensor
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class Grove_MoistureSensor {
+class Grove_SoilMoistureSensor {
     constructor() {
         this.keys = ["vcc", "gnd", "signal", "grove"];
         this.requiredKeys = [];
     }
     static info() {
         return {
-            name: "Grove_MoistureSensor",
+            name: "Grove_SoilMoistureSensor",
         };
     }
     onchange(value) { }
@@ -34,6 +34,6 @@ class Grove_MoistureSensor {
         return await this.ad.getWait();
     }
 }
-exports.default = Grove_MoistureSensor;
+exports.default = Grove_SoilMoistureSensor;
 
 //# sourceMappingURL=index.js.map

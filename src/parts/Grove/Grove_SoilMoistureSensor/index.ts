@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts.Grove_MoistureSensor
+ * @module Parts.Grove_SoilMoistureSensor
  */
 
 import Obniz from "../../../obniz";
@@ -8,22 +8,22 @@ import PeripheralAD from "../../../obniz/libs/io_peripherals/ad";
 import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-interface Grove_MoistureSensorOptionsA {
+interface Grove_SoilMoistureSensorOptionsA {
   vcc?: number;
   gnd?: number;
   signal: number;
 }
 
-interface Grove_MoistureSensorOptionsB {
+interface Grove_SoilMoistureSensorOptionsB {
   grove: PeripheralGrove;
 }
 
-export type Grove_MoistureSensorOptions = Grove_MoistureSensorOptionsA | Grove_MoistureSensorOptionsB;
+export type Grove_SoilMoistureSensorOptions = Grove_SoilMoistureSensorOptionsA | Grove_SoilMoistureSensorOptionsB;
 
-export default class Grove_MoistureSensor implements ObnizPartsInterface {
+export default class Grove_SoilMoistureSensor implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Grove_MoistureSensor",
+      name: "Grove_SoilMoistureSensor",
     };
   }
 
