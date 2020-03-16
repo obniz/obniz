@@ -14,7 +14,6 @@ class Grove_LightSensor {
             name: "Grove_LightSensor",
         };
     }
-    // public value?: number;
     onchange(value) { }
     wired(obniz) {
         if (this.params.grove) {
@@ -30,6 +29,9 @@ class Grove_LightSensor {
                 this.onchange(value);
             }
         });
+    }
+    async getWait() {
+        return await this.ad.getWait();
     }
 }
 exports.default = Grove_LightSensor;

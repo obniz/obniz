@@ -39,7 +39,7 @@ export default class Grove_LightSensor implements ObnizPartsInterface {
     this.keys = ["vcc", "gnd", "signal", "grove"];
     this.requiredKeys = [];
   }
-  // public value?: number;
+
   public onchange(value: number) {}
 
   public wired(obniz: Obniz) {
@@ -55,5 +55,9 @@ export default class Grove_LightSensor implements ObnizPartsInterface {
         this.onchange(value);
       }
     });
+  }
+
+  public async getWait(): Promise<number> {
+    return await this.ad.getWait();
   }
 }
