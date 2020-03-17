@@ -1,14 +1,19 @@
-# iBS03TP
-INGICS社製の温度センサーです。
+# iBS03
+INGICS社製のイベントセンサーです。
 
 ![](image.jpg)
+
+サポートモジュールは次の通りです。 
+
+- iBS03(H) : Button, Magnet Event
+- iBS04 : Button Event
 
 
 ## wired(obniz)
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
+let ibs03 = obniz.wired('iBS03');
 ```
 
 ## scan()
@@ -17,11 +22,11 @@ iBS03TPを検索し、発見した場合、その情報をCallback関数で返�
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature} address ${data.address}`);
+let ibs03 = obniz.wired('iBS03');
+ibs03.onNotification = (data => {
+            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
         });
-ibs03tp.scan();
+ibs03.scan();
 ```
 
 ## onNotification = function(data){}
@@ -30,17 +35,15 @@ ibs03tp.scan();
 
 - battery : 電池電圧
 - event : event
-- temperature : モジュール内の温度センサの値
-- probe_temperature : プローブの温度センサの値
 - address : モジュールのアドレス
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature} address ${data.address}`);
+let ibs03 = obniz.wired('iBS03');
+ibs03.onNotification = (data => {
+            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
         });
-ibs03tp.scan();
+ibs03.scan();
 ```
 
 ## end()
@@ -49,6 +52,6 @@ ibs03tp.scan();
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.end();
+let ibs03 = obniz.wired('iBS03');
+ibs03.end();
 ```
