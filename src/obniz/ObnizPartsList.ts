@@ -103,6 +103,7 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
 import Linking, { LinkingOptions } from "../parts/Ble/linking";
+import Logtta_Accel, { Logtta_AccelOptions } from "../parts/Ble/LogttaAccel";
 import Logtta_AD, { Logtta_ADOptions } from "../parts/Ble/LogttaAD";
 import Logtta_CO2, { Logtta_CO2Options } from "../parts/Ble/LogttaCO2";
 import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
@@ -285,6 +286,7 @@ export interface WiredNameMap {
   "Logtta_CO2": Logtta_CO2;
   "Logtta_TH": Logtta_TH;
   "Logtta_AD": Logtta_AD;
+  "Logtta_Accel": Logtta_Accel;
   "Linking": Linking;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
@@ -442,6 +444,7 @@ export interface WiredNameOptionsMap {
   "Logtta_CO2": Logtta_CO2Options;
   "Logtta_TH": Logtta_THOptions;
   "Logtta_AD": Logtta_ADOptions;
+  "Logtta_Accel": Logtta_AccelOptions;
   "Linking": LinkingOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
