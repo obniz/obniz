@@ -22992,6 +22992,7 @@ var map = {
 	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
+	"./Ble/μ-prism/index.js": "./dist/src/parts/Ble/μ-prism/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -23650,9 +23651,7 @@ class Logtta_Accel {
             if (advertise.length === 0) {
                 return;
             }
-            console.log(peripheral);
             if (peripheral.adv_data && peripheral.adv_data.length === 31) {
-                console.log(peripheral.adv_data);
                 const d = peripheral.adv_data;
                 let sampling = 0;
                 switch (d[18]) {
@@ -23695,15 +23694,16 @@ class Logtta_Accel {
                     alert: alertArray,
                     address: peripheral.address,
                 };
-                console.log(`battery ${data.battery}% sequence ${data.sequence} revision ${data.revision} name:${data.name}\n` +
-                    `setting ${data.setting.temp_cycle}s ${data.setting.accel_sampling}Hz HPF:${data.setting.hpf} ${data.setting.accel_range}G ${data.setting.accel_axis} ${data.setting.accel_resolution}bit\n` +
-                    `temperature ${data.temperature} humidity ${data.humidity} alert ${data.alert} address ${data.address}`);
+                // console.log(
+                //   `battery ${data.battery}% sequence ${data.sequence} revision ${data.revision} name:${data.name}\n` +
+                //     `setting ${data.setting.temp_cycle}s ${data.setting.accel_sampling}Hz HPF:${data.setting.hpf} ${data.setting.accel_range}G ${data.setting.accel_axis} ${data.setting.accel_resolution}bit\n` +
+                //     `temperature ${data.temperature} humidity ${data.humidity} alert ${data.alert} address ${data.address}`,
+                // );
                 if (this.onNotification) {
                     this.onNotification(data);
                 }
             }
             if (peripheral.scan_resp && peripheral.scan_resp.length === 31) {
-                console.log(peripheral.scan_resp);
                 const d = peripheral.scan_resp;
                 const data = {
                     x: {
@@ -23720,7 +23720,9 @@ class Logtta_Accel {
                     },
                     address: peripheral.address,
                 };
-                console.log(`x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`);
+                // console.log(
+                //   `x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`,
+                // );
                 if (this.onAcceleration) {
                     this.onAcceleration(data);
                 }
@@ -28160,6 +28162,119 @@ class LinkingService {
 exports.default = LinkingService;
 
 //# sourceMappingURL=service.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/μ-prism/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Logtta_TH
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Logtta_TH {
+    constructor() {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+    }
+    static info() {
+        return {
+            name: "Logtta_TH",
+        };
+    }
+    static get_uuid(uuid) {
+        return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+    }
+    async findWait() {
+        const target = {
+            localName: "uPrism",
+        };
+        await this.obniz.ble.initWait();
+        this.periperal = await this.obniz.ble.scan.startOneWait(target);
+        return this.periperal;
+    }
+    async findListWait() {
+        const target = {
+            localName: "uPrism",
+        };
+        await this.obniz.ble.initWait();
+        return await this.obniz.ble.scan.startAllWait(target);
+    }
+    async directConnectWait(address) {
+        try {
+            this.periperal = await this.obniz.ble.scan.directConnectWait(address, "public");
+        }
+        catch (e) {
+            return false;
+        }
+        return true;
+    }
+    async connectWait() {
+        if (!this.periperal) {
+            await this.findWait();
+        }
+        if (!this.periperal) {
+            throw new Error("Logtta TH not found");
+        }
+        if (!this.periperal.connected) {
+            try {
+                await this.periperal.connectWait();
+            }
+            catch (e) {
+                return false;
+            }
+        }
+        return true;
+    }
+    async disconnectWait() {
+        if (this.periperal && this.periperal.connected) {
+            await this.periperal.disconnectWait();
+        }
+    }
+    async getAllWait() {
+        if (!(await this.connectWait())) {
+            return { temperature: -1, humidity: -1 };
+        }
+        const c = this.periperal.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        const data = await c.readWait();
+        return {
+            temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
+            humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
+        };
+    }
+    async getTemperatureWait() {
+        return (await this.getAllWait()).temperature;
+    }
+    async getHumidityWait() {
+        return (await this.getAllWait()).humidity;
+    }
+    async startNotifyWait() {
+        if (!(await this.connectWait())) {
+            return;
+        }
+        const c = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("0d6fcf18-d935-49d1-836d-384c7b857b83");
+        await c.registerNotifyWait((data) => {
+            if (this.onNotify) {
+                console.log("data arrive", data);
+                this.onNotify({
+                    temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
+                    humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
+                });
+            }
+        });
+    }
+}
+exports.default = Logtta_TH;
+
+//# sourceMappingURL=index.js.map
 
 
 /***/ }),

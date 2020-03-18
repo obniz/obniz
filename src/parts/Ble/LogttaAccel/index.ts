@@ -103,10 +103,8 @@ export default class Logtta_Accel implements ObnizPartsInterface {
       if (advertise.length === 0) {
         return;
       }
-      console.log(peripheral);
 
       if (peripheral.adv_data && peripheral.adv_data.length === 31) {
-        console.log(peripheral.adv_data);
         const d = peripheral.adv_data;
 
         let sampling = 0;
@@ -151,19 +149,17 @@ export default class Logtta_Accel implements ObnizPartsInterface {
           alert: alertArray,
           address: peripheral.address,
         };
-        console.log(
-          `battery ${data.battery}% sequence ${data.sequence} revision ${data.revision} name:${data.name}\n` +
-            `setting ${data.setting.temp_cycle}s ${data.setting.accel_sampling}Hz HPF:${data.setting.hpf} ${data.setting.accel_range}G ${data.setting.accel_axis} ${data.setting.accel_resolution}bit\n` +
-            `temperature ${data.temperature} humidity ${data.humidity} alert ${data.alert} address ${data.address}`,
-        );
+        // console.log(
+        //   `battery ${data.battery}% sequence ${data.sequence} revision ${data.revision} name:${data.name}\n` +
+        //     `setting ${data.setting.temp_cycle}s ${data.setting.accel_sampling}Hz HPF:${data.setting.hpf} ${data.setting.accel_range}G ${data.setting.accel_axis} ${data.setting.accel_resolution}bit\n` +
+        //     `temperature ${data.temperature} humidity ${data.humidity} alert ${data.alert} address ${data.address}`,
+        // );
         if (this.onNotification) {
           this.onNotification(data);
         }
       }
 
       if (peripheral.scan_resp && peripheral.scan_resp.length === 31) {
-        console.log(peripheral.scan_resp);
-
         const d = peripheral.scan_resp;
 
         const data: Logtta_Accel_AccelData = {
@@ -181,9 +177,9 @@ export default class Logtta_Accel implements ObnizPartsInterface {
           },
           address: peripheral.address,
         };
-        console.log(
-          `x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`,
-        );
+        // console.log(
+        //   `x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`,
+        // );
         if (this.onAcceleration) {
           this.onAcceleration(data);
         }
