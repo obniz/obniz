@@ -2,7 +2,7 @@
 
 Keyestudio PIR sensor. It is used tot detects human/animals' motion.  
 
-![](index.jpg)
+![](image.jpg)
 
 
 ## wired(obniz, {signal [,vcc, gnd]})
