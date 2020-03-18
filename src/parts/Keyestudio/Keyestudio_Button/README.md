@@ -2,7 +2,7 @@
 
 Keyestudio button module.
 
-![](index.jpg)
+![](image.jpg)
 
 ## wired(obniz,  { signal [, vcc, gnd]});
 

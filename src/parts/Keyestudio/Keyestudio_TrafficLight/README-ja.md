@@ -1,7 +1,7 @@
 # Keyestudio_TrafficLight
 Keyestudio社製の、緑、黄、赤色の3つのLEDを備えた信号機型モジュールです。  
 
-![](index.jpg)
+![](image.jpg)
 
 ## obniz.wired("Keyestudio_TrafficLight", {green, yellow, red [, gnd]})
 obniz Boardに接続します。
