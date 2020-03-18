@@ -1,4 +1,4 @@
-# Puls08M5stickcS
+# Pulse08 M5StickC S
 
 Pulse rate can be measured and graphed.
 
@@ -140,4 +140,3 @@ device.onrawupdate = (datas) => {
 };
     
 ```
-    

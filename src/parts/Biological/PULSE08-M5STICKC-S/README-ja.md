@@ -1,4 +1,4 @@
-# Puls08M5stickcS
+# Pulse08 M5StickC S
 
 脈波センサーです。脈拍数の計測及びグラフ化ができます。
 
@@ -140,4 +140,3 @@ device.onrawupdate = (datas) => {
     
 ```
     
-   
