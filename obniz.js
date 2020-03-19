@@ -23794,6 +23794,15 @@ class REX_BTPM25V {
         const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
         return this._analyzeResult(data);
     }
+    async measureOneShotExtWait() {
+        if (!this._oneShotMeasurementCharacteristic) {
+            throw new Error("device is not connected");
+        }
+        const sendData = new Array(20);
+        sendData[0] = 0x10;
+        const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
+        return this._analyzeResultExt(data);
+    }
     async getLedMode() {
         if (!this._ledCharacteristic) {
             throw new Error("device is not connected");
@@ -23830,6 +23839,64 @@ class REX_BTPM25V {
             humidity,
             lux,
             mode,
+        };
+    }
+    _bitValue(buffer, location) {
+        const startLoc = { byte: Math.floor(location.start / 8), bit: location.start % 8 };
+        const endLoc = { byte: Math.floor(location.end / 8), bit: location.end % 8 };
+        let result = 0;
+        result = buffer.readUInt8(endLoc.byte) & (~(0xff << (endLoc.bit + 1)) & 0xff);
+        if (startLoc.byte === endLoc.byte) {
+            return result >> startLoc.bit;
+        }
+        for (let byte = endLoc.byte - 1; byte > startLoc.byte; byte--) {
+            result = result << (8 + buffer.readInt8(byte));
+        }
+        result = (result << (8 - startLoc.bit)) + (buffer.readUInt8(startLoc.byte) >> startLoc.bit);
+        return result;
+    }
+    _analyzeResultExt(data) {
+        const buf = Buffer.from(data);
+        const buf1 = buf.slice(0, 4);
+        const minutes = this._bitValue(buf1, { start: 5, end: 10 });
+        const hour = this._bitValue(buf1, { start: 11, end: 15 });
+        const day = this._bitValue(buf1, { start: 16, end: 20 });
+        const month = this._bitValue(buf1, { start: 21, end: 24 });
+        const year = this._bitValue(buf1, { start: 25, end: 31 });
+        const buf2 = buf.slice(4, 8);
+        const pm2_5 = this._bitValue(buf2, { start: 0, end: 9 });
+        const pm10 = this._bitValue(buf2, { start: 10, end: 19 });
+        const uvi = this._bitValue(buf2, { start: 20, end: 23 });
+        const buf3 = buf.slice(8, 12);
+        const temperature = this._bitValue(buf3, { start: 0, end: 10 }) / 10 - 40;
+        const humidity = this._bitValue(buf3, { start: 11, end: 20 }) / 10;
+        const buf4 = buf.slice(12, 16);
+        const pressure = this._bitValue(buf4, { start: 0, end: 13 }) / 10;
+        const vocState_init = this._bitValue(buf4, { start: 14, end: 14 });
+        const vocState_wakeup = this._bitValue(buf4, { start: 15, end: 15 });
+        const lux = this._bitValue(buf4, { start: 16, end: 31 });
+        const buf5 = buf.slice(16, 20);
+        const tvoc = this._bitValue(buf5, { start: 0, end: 10 });
+        const eco2 = this._bitValue(buf5, { start: 11, end: 23 });
+        const mode = this._bitValue(buf5, { start: 24, end: 31 });
+        return {
+            minutes,
+            hour,
+            day,
+            month,
+            year,
+            pm2_5,
+            pm10,
+            pressure,
+            temperature,
+            humidity,
+            lux,
+            mode,
+            tvoc,
+            eco2,
+            uvi,
+            vocState_init,
+            vocState_wakeup,
         };
     }
 }
