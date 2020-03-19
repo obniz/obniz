@@ -136,6 +136,10 @@ import M5StickC_ToF, { M5StickC_ToFOptions } from "../parts/M5Stack/M5StickC_ToF
 import M5StickC_Yun, { M5StickC_YunOptions } from "../parts/M5Stack/M5StickC_Yun";
 import BMP280, { BMP280Options } from "../parts/PressureSensor/BMP280";
 
+import ENERTALK, { ENERTALKOptions } from "../parts/Ble/ENERTALK";
+import MINEW_S1, { MINEW_S1Options } from "../parts/Ble/MINEW_S1";
+import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
+import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import M5StickC_RS485, { M5StickC_RS485Options } from "../parts/M5Stack/M5StickC_RS485";
 
 export interface WiredNameMap {
@@ -291,6 +295,10 @@ export interface WiredNameMap {
   "S5851A": S5851A;
   "DPS310": DPS310;
   "BMP280": BMP280;
+  "MINEW_S1": MINEW_S1;
+  "RS_Seek3": RS_Seek3;
+  "REX_BTPM2V": REX_BTPM25V;
+  "ENERTALK": ENERTALK;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -447,4 +455,8 @@ export interface WiredNameOptionsMap {
   "DPS310": DPS310Options;
 
   "BMP280": BMP280Options;
+  "MINEW_S1": MINEW_S1Options;
+  "RS_Seek3": RS_Seek3Options;
+  "REX_BTPM2V": REX_BTPM25VOptions;
+  "ENERTALK": ENERTALKOptions;
 }

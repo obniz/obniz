@@ -8,8 +8,19 @@ import { ObnizOptions } from "./ObnizOptions";
 import ObnizSystemMethods from "./ObnizSystemMethods";
 
 export default class ObnizUIs extends ObnizSystemMethods {
+  /**
+   * @ignore
+   */
   public static _promptQueue: any[] = [];
+
+  /**
+   * @ignore
+   */
   public static _promptWaiting: boolean = false;
+
+  /**
+   * @ignore
+   */
   public static _promptCount: number = 0;
 
   constructor(id: string, options?: ObnizOptions) {

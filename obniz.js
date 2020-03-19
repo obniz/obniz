@@ -2899,15 +2899,15 @@ class ObnizParts extends ObnizConnection_1.default {
         }
     }
     /**
-     * @ignore
-     * @param name
+     * Get parts class.
+     * @param string
      * @constructor
      */
-    static Parts(name) {
+    static getPartsClass(name) {
         if (!_parts[name]) {
             throw new Error(`unknown parts [${name}]`);
         }
-        return new _parts[name]();
+        return _parts[name];
     }
     constructor(id, options) {
         super(id, options);
@@ -2933,10 +2933,11 @@ class ObnizParts extends ObnizConnection_1.default {
      * @param options
      */
     wired(partsname, options) {
-        const parts = ObnizParts.Parts(partsname);
-        if (!parts) {
+        const Parts = ObnizParts.getPartsClass(partsname);
+        if (!Parts) {
             throw new Error("No such a parts [" + partsname + "] found");
         }
+        const parts = new Parts();
         const args = Array.from(arguments);
         args.shift();
         args.unshift(this);
@@ -3554,8 +3555,17 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     }
 }
 exports.default = ObnizUIs;
+/**
+ * @ignore
+ */
 ObnizUIs._promptQueue = [];
+/**
+ * @ignore
+ */
 ObnizUIs._promptWaiting = false;
+/**
+ * @ignore
+ */
 ObnizUIs._promptCount = 0;
 /**
  *
@@ -22978,6 +22988,10 @@ var map = {
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
+	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
+	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
+	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
+	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
 	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
@@ -23466,6 +23480,432 @@ class OMRON_2JCIE {
     }
 }
 exports.default = OMRON_2JCIE;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/ENERTALK/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+class ENERTALK {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.onbuttonpressed = null;
+        this._uuids = {
+            service: "3526797e-448b-4bbb-9145-c5083e0e09dc",
+            temperatureChar: "2A6E",
+            humidityChar: "2A6F",
+            illuminanceChar: "74c3fe9d-25b2-4903-8dcd-680e5ef0a6b3",
+            accelerometerChar: "71ef0979-0e2c-4a55-8d3c-78083869fae6",
+        };
+        this._peripheral = null;
+        this._service = null;
+        this._temperatureChar = null;
+        this._humidityChar = null;
+        this._illuminanceChar = null;
+        this._accelerometerChar = null;
+        if (peripheral && !ENERTALK.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_BTIREX2");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "ENERTALK",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName && peripheral.localName.startsWith("ensensor_")) {
+            return true;
+        }
+        return false;
+    }
+    // @ts-ignore
+    wired(obniz) { }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("RS_BTIREX2 is not find.");
+        }
+        this._peripheral.ondisconnect = () => {
+            console.log("disconnect");
+        };
+        await this._peripheral.connectWait();
+        this._service = this._peripheral.getService(this._uuids.service);
+        this._temperatureChar = this._service.getCharacteristic(this._uuids.temperatureChar);
+        this._humidityChar = this._service.getCharacteristic(this._uuids.humidityChar);
+        this._illuminanceChar = this._service.getCharacteristic(this._uuids.illuminanceChar);
+        this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
+    }
+    async getTemperature() {
+        if (!this._temperatureChar) {
+            throw new Error("device is not connected");
+        }
+        const tempData = await this._temperatureChar.readWait();
+        const buf = Buffer.from(tempData);
+        const temp = buf.readInt16BE(0) / 100;
+        return temp;
+    }
+    async getHumidity() {
+        if (!this._humidityChar) {
+            throw new Error("device is not connected");
+        }
+        const humidityData = await this._humidityChar.readWait();
+        const humidity = humidityData[0];
+        return humidity;
+    }
+    async getIlluminance() {
+        if (!this._illuminanceChar) {
+            throw new Error("device is not connected");
+        }
+        const illuminanceData = await this._illuminanceChar.readWait();
+        const buf = Buffer.from(illuminanceData);
+        const illuminance = buf.readInt16BE(0);
+        return illuminance;
+    }
+    async getAccelerometer() {
+        if (!this._accelerometerChar) {
+            throw new Error("device is not connected");
+        }
+        const accelerometerData = await this._accelerometerChar.readWait();
+        const buf = Buffer.from(accelerometerData);
+        const x = buf.readInt16BE(0) / 1000;
+        const y = buf.readInt16BE(2) / 1000;
+        const z = buf.readInt16BE(4) / 1000;
+        return { x, y, z };
+    }
+}
+exports.default = ENERTALK;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MINEW_S1/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+class MINEW_S1 {
+    constructor() {
+        // non-wired device
+        this.keys = [];
+        this.requiredKeys = [];
+        this.params = {};
+    }
+    static info() {
+        return { name: "MINEW_S1" };
+    }
+    static isDevice(peripheral, macAddress = null) {
+        if (!this._hasPrefix(peripheral)) {
+            return false;
+        }
+        if (macAddress) {
+            const data = this.getInfoData(peripheral) || this.getHTData(peripheral);
+            if (data && data.macAddress === macAddress) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getInfoData(peripheral) {
+        if (!this._hasPrefix(peripheral)) {
+            return null;
+        }
+        if (!peripheral.adv_data || peripheral.adv_data.length < 20) {
+            return null;
+        }
+        const frameType = peripheral.adv_data[11];
+        const versionNumber = peripheral.adv_data[12];
+        if (frameType !== 0xa1 || versionNumber !== 0x08) {
+            return null;
+        }
+        const batteryLevel = peripheral.adv_data[13];
+        const macAddress = peripheral.adv_data
+            .slice(14, 20)
+            .map((e) => ("0" + e.toString(16)).slice(-2))
+            .join("")
+            .match(/.{1,2}/g)
+            .reverse()
+            .join("");
+        const name = util_1.default.dataArray2string(peripheral.adv_data.slice(20));
+        return {
+            frameType,
+            versionNumber,
+            batteryLevel,
+            name,
+            macAddress,
+        };
+    }
+    static getHTData(peripheral) {
+        if (!this._hasPrefix(peripheral)) {
+            return null;
+        }
+        if (!peripheral.adv_data || peripheral.adv_data.length !== 24) {
+            return null;
+        }
+        const frameType = peripheral.adv_data[11];
+        const versionNumber = peripheral.adv_data[12];
+        if (frameType !== 0xa1 || versionNumber !== 0x01) {
+            return null;
+        }
+        const batteryLevel = peripheral.adv_data[13];
+        const temperatureH = peripheral.adv_data[14];
+        const temperatureL = peripheral.adv_data[15];
+        const temperature = temperatureH + (temperatureL * 1) / (1 << 8);
+        const humidityH = peripheral.adv_data[16];
+        const humidityL = peripheral.adv_data[17];
+        const humidity = humidityH + (humidityL * 1) / (1 << 8);
+        const macAddress = peripheral.adv_data
+            .splice(18)
+            .map((e) => ("0" + e.toString(16)).slice(-2))
+            .join("")
+            .match(/.{1,2}/g)
+            .reverse()
+            .join("");
+        return {
+            frameType,
+            versionNumber,
+            batteryLevel,
+            temperature,
+            humidity,
+            macAddress,
+        };
+    }
+    static _hasPrefix(peripheral) {
+        if (!peripheral.adv_data || peripheral.adv_data.length < 10) {
+            return false;
+        }
+        const target = [
+            // flag
+            0x02,
+            0x01,
+            0x06,
+            // 16bit uuid
+            0x03,
+            0x03,
+            0xe1,
+            0xff,
+            // service data
+            -1,
+            0x16,
+            0xe1,
+            0xff,
+        ];
+        for (const index in target) {
+            if (target[index] >= 0 && target[index] !== peripheral.adv_data[index]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    wired(obniz) { }
+}
+exports.default = MINEW_S1;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/REX_BTPM25V/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+class REX_BTPM25V {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.onbuttonpressed = null;
+        this._uuids = {
+            service: "00001523-1212-EFDE-1523-785FEABCD123",
+            buttonChar: "000000A1-1212-EFDE-1523-785FEABCD123",
+            continuousMeasurementChar: "000000A5-1212-EFDE-1523-785FEABCD123",
+            oneShotMeasurementChar: "000000A8-1212-EFDE-1523-785FEABCD123",
+            ledChar: "000000A9-1212-EFDE-1523-785FEABCD123",
+        };
+        this._peripheral = null;
+        this._oneShotMeasurementCharacteristic = null;
+        this._continuousMeasurementCharacteristic = null;
+        this._ledCharacteristic = null;
+        this._buttonCharacteristic = null;
+        if (peripheral && !REX_BTPM25V.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_Seek3");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "REX_BTPM25V",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName !== "PM25V") {
+            return false;
+        }
+        return true;
+    }
+    // @ts-ignore
+    wired(obniz) { }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("RS_Seek3 is not find.");
+        }
+        await this._peripheral.connectWait();
+        this._oneShotMeasurementCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.oneShotMeasurementChar);
+        this._continuousMeasurementCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.continuousMeasurementChar);
+        this._ledCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.ledChar);
+        this._buttonCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.buttonChar);
+        if (this._buttonCharacteristic) {
+            this._buttonCharacteristic.registerNotify((data) => {
+                if (typeof this.onbuttonpressed === "function") {
+                    this.onbuttonpressed(data[0] === 1);
+                }
+            });
+        }
+    }
+    async measureOneShotWait() {
+        if (!this._oneShotMeasurementCharacteristic) {
+            throw new Error("device is not connected");
+        }
+        const sendData = new Array(20);
+        sendData[0] = 0x01;
+        const data = await this._sendAndReceiveWait(this._oneShotMeasurementCharacteristic, sendData);
+        return this._analyzeResult(data);
+    }
+    async getLedMode() {
+        if (!this._ledCharacteristic) {
+            throw new Error("device is not connected");
+        }
+        const data = this._sendAndReceiveWait(this._ledCharacteristic, [0xff, 0x00]);
+    }
+    _sendAndReceiveWait(char, data) {
+        return new Promise((resolve) => {
+            char.registerNotify(resolve);
+            char.write(data);
+        });
+    }
+    _analyzeResult(data) {
+        const buf = Buffer.from(data);
+        const [minutes, hour, day, month, year] = buf.slice(0, 5);
+        const pm2_5 = buf.readInt16LE(5);
+        const pm10 = buf.readInt16LE(7);
+        const pressure = buf.readInt16LE(9);
+        const temperature = buf.readInt8(11);
+        const humidity = buf.readInt8(12);
+        const lux = buf.readUInt16LE(13);
+        const dummy = buf.slice(15, 19);
+        const mode = buf.readInt8(19);
+        return {
+            minutes,
+            hour,
+            day,
+            month,
+            year,
+            pm2_5,
+            pm10,
+            pressure,
+            temperature,
+            humidity,
+            lux,
+            mode,
+        };
+    }
+}
+exports.default = REX_BTPM25V;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/RS_SEEK3/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class RS_Seek3 {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.onchange = null;
+        this._uuids = {
+            service: "0EE71523-981A-46B8-BA64-019261C88478",
+            buttonChar: "0EE71524-981A-46B8-BA64-019261C88478",
+            tempHumidChar: "0EE7152C-981A-46B8-BA64-019261C88478",
+        };
+        this._peripheral = null;
+        this._buttonCharacteristic = null;
+        this._tempHumidCharacteristic = null;
+        if (peripheral && !RS_Seek3.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_Seek3");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "RS_Seek3",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName !== "Seek3") {
+            return false;
+        }
+        return true;
+    }
+    // @ts-ignore
+    wired(obniz) { }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("RS_Seek3 is not find.");
+        }
+        await this._peripheral.connectWait();
+        this._buttonCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.buttonChar);
+        this._tempHumidCharacteristic = this._peripheral
+            .getService(this._uuids.service)
+            .getCharacteristic(this._uuids.tempHumidChar);
+        if (this._buttonCharacteristic) {
+            this._buttonCharacteristic.registerNotify((data) => {
+                if (typeof this.onchange === "function") {
+                    this.onchange(data[0] === 1);
+                }
+            });
+        }
+    }
+    async getTempHumidWait() {
+        if (!this._tempHumidCharacteristic) {
+            throw new Error("device is not connected");
+        }
+        const data = await this._tempHumidCharacteristic.readWait();
+        return { temperature: data[0], humidity: data[1] };
+    }
+}
+exports.default = RS_Seek3;
 
 //# sourceMappingURL=index.js.map
 
