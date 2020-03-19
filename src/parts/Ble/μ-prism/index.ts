@@ -64,7 +64,7 @@ export default class uPRISM implements ObnizPartsInterface {
   private readData: uPRISM_Data;
   private readIndex: number = -1;
   private target: any = {
-    localName: "uPrism_00210D",
+    localNamePrefix: "uPrism_",
   };
   private accelRange: number = 1024;
   constructor() {

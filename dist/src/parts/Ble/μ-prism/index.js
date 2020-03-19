@@ -8,7 +8,7 @@ class uPRISM {
     constructor() {
         this.readIndex = -1;
         this.target = {
-            localName: "uPrism_00210D",
+            localNamePrefix: "uPrism_",
         };
         this.accelRange = 1024;
         this.keys = [];
