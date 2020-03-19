@@ -103,6 +103,7 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
 import Linking, { LinkingOptions } from "../parts/Ble/linking";
+import uPRISM, { uPRISMOptions } from "../parts/Ble/μ-prism";
 import PT550, { PT550Options } from "../parts/ColorSensor/PT550";
 import S11059, { S11059Options } from "../parts/ColorSensor/S11059";
 
@@ -279,6 +280,7 @@ export interface WiredNameMap {
   "Keyestudio_HT16K33": Keyestudio_HT16K33;
   // Ble
   "2JCIE": OMRON_2JCIE;
+  "uPRISM": uPRISM;
   "Linking": Linking;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
@@ -434,6 +436,7 @@ export interface WiredNameOptionsMap {
   // Ble
   "2JCIE": OMRON_2JCIEOptions;
   "Linking": LinkingOptions;
+  "uPRISM": uPRISMOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 
