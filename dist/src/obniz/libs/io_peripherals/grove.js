@@ -57,6 +57,14 @@ class PeripheralGrove {
         });
         return this._current.uart;
     }
+    getPwm(drive = "5v") {
+        this.useWithType("pwm", drive);
+        this._current.pwm = this.Obniz.getFreePwm();
+        this._current.pwm.start({
+            io: this._params.pin1,
+        });
+        return this._current.pwm;
+    }
     /**
      * @ignore
      */

@@ -8,6 +8,7 @@ import PeripheralAD from "./ad";
 import { DriveType } from "./common";
 import PeripheralI2C from "./i2c";
 import PeripheralIO from "./io";
+import PeripheralPWM from "./pwm";
 import PeripheralUART from "./uart";
 
 export interface PeripheralGroveParams {
@@ -17,7 +18,7 @@ export interface PeripheralGroveParams {
   gnd?: number;
 }
 
-export type PeripheralGroveType = "digital" | "analog" | "analog-digital" | "i2c" | "uart";
+export type PeripheralGroveType = "digital" | "analog" | "analog-digital" | "i2c" | "uart" | "pwm";
 
 /**
  * @category Peripherals
@@ -32,6 +33,7 @@ export default class PeripheralGrove {
     drive?: DriveType;
     i2c?: PeripheralI2C;
     uart?: PeripheralUART;
+    pwm?: PeripheralPWM;
   } = {};
 
   constructor(obniz: Obniz, no: number, params: PeripheralGroveParams) {
@@ -85,6 +87,15 @@ export default class PeripheralGrove {
       drive,
     });
     return this._current.uart;
+  }
+
+  public getPwm(drive: DriveType = "5v"): PeripheralPWM {
+    this.useWithType("pwm", drive);
+    this._current.pwm = this.Obniz.getFreePwm();
+    this._current.pwm.start({
+      io: this._params.pin1,
+    });
+    return this._current.pwm;
   }
 
   /**
