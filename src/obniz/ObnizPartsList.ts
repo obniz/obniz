@@ -126,6 +126,7 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
+import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from "../parts/Ble/ENERTALK";
 import IBS01, { IBS01Options } from "../parts/Ble/iBS01";
 import IBS01RG, { IBS01RGOptions } from "../parts/Ble/iBS01RG";
 import IBS01T, { IBS01TOptions } from "../parts/Ble/iBS01T";
@@ -140,6 +141,9 @@ import Logtta_Accel, { Logtta_AccelOptions } from "../parts/Ble/LogttaAccel";
 import Logtta_AD, { Logtta_ADOptions } from "../parts/Ble/LogttaAD";
 import Logtta_CO2, { Logtta_CO2Options } from "../parts/Ble/LogttaCO2";
 import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
+import MINEW_S1, { MINEW_S1Options } from "../parts/Ble/MINEW_S1";
+import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
+import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/s-cbtgaaac";
 import uPRISM, { uPRISMOptions } from "../parts/Ble/μ-prism";
 
@@ -332,6 +336,10 @@ export interface WiredNameMap {
   "iBS01": IBS01;
   "iBS02IR": IBS02IR;
   "iBS02PIR": IBS02PIR;
+  "MINEW_S1": MINEW_S1;
+  "RS_Seek3": RS_Seek3;
+  "REX_BTPM25V": REX_BTPM25V;
+  "ENERTALK_TOUCH": ENERTALK_TOUCH;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -501,6 +509,11 @@ export interface WiredNameOptionsMap {
   "iBS03": IBS03Options;
   "iBS03T": IBS03TOptions;
   "iBS03TP": IBS03TPOptions;
+  "MINEW_S1": MINEW_S1Options;
+  "RS_Seek3": RS_Seek3Options;
+  "REX_BTPM25V": REX_BTPM25VOptions;
+  "ENERTALK_TOUCH": ENERTALK_TOUCHOptions;
+
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

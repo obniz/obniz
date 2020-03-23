@@ -366,7 +366,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param array
    * @param needResponse
    */
-  public write(array: number[], needResponse: boolean) {
+  public write(array: number[], needResponse?: boolean) {
     if (needResponse === undefined) {
       needResponse = true;
     }

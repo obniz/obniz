@@ -254,8 +254,17 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     }
 }
 exports.default = ObnizUIs;
+/**
+ * @ignore
+ */
 ObnizUIs._promptQueue = [];
+/**
+ * @ignore
+ */
 ObnizUIs._promptWaiting = false;
+/**
+ * @ignore
+ */
 ObnizUIs._promptCount = 0;
 /**
  *
