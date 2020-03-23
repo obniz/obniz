@@ -1,49 +1,47 @@
 # S-CBTGAAAC
-S-CBTGAAAC by ABLIC.
+
+This is a leak sensor manufactured by ABLIC.
 
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let tag = obniz.wired('S-CBTGAAAC');
+const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Search for S-CBTGAAAC, and if found, return that information in the Callback function.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let tag = obniz.wired('S-CBTGAAAC');
-tag.onNotification = (deviceId => {
-            console.log(`deviceID ${deviceId}`);
-        });
-tag.scan();
+const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (DEVICE.isDevice(p)) {
+        let name = DEVICE.getData(p);
+        console.log(name);
+    }
+};
 ```
 
-## onNotification = function(deviceId){}
+## getData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
-
-```javascript
-// Javascript Example
-let tag = obniz.wired('S-CBTGAAAC');
-tag.onNotification = (deviceId => {
-            console.log(`deviceID ${deviceId}`);
-        });
-tag.scan();
-```
-
-
-## end()
-
-Finish the scan.
+Returns the name of the device if found. Returns Null if not found.
 
 ```javascript
 // Javascript Example
-let tag = obniz.wired('S-CBTGAAAC');
-tag.end();
+const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (DEVICE.isDevice(p)) {
+        let name = DEVICE.getData(p);
+        console.log(name);
+    }
+};
 ```

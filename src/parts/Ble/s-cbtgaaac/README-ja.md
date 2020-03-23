@@ -1,50 +1,47 @@
 # S-CBTGAAAC
 
-ABLIC社製の漏水センサーです。
+ABLIC社製の漏水センサーです。 
 
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let tag = obniz.wired('S-CBTGAAAC');
+const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-S-CBTGAAACを検索し、発見した場合、その情報をCallback関数で返します。
+デバイスを発見した場合、trueを返します。
 
 ```javascript
 // Javascript Example
-let tag = obniz.wired('S-CBTGAAAC');
-tag.onNotification = (deviceId => {
-            console.log(`deviceID ${deviceId}`);
-        });
-tag.scan();
+const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (DEVICE.isDevice(p)) {
+        let name = DEVICE.getData(p);
+        console.log(name);
+    }
+};
 ```
 
-## onNotification = function(deviceId){}
+## getData(BleRemotePeripheral)
 
-発見した場合にその情報をCallback関数で返します。
-
-```javascript
-// Javascript Example
-let tag = obniz.wired('S-CBTGAAAC');
-tag.onNotification = (deviceId => {
-            console.log(`deviceID ${deviceId}`);
-        });
-tag.scan();
-```
-
-
-## end()
-
-スキャンを終了します。
+発見した場合にデバイスの名前を返します。発見できなかった場合にはNullを返します。
 
 ```javascript
 // Javascript Example
-let tag = obniz.wired('S-CBTGAAAC');
-tag.end();
+const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (DEVICE.isDevice(p)) {
+        let name = DEVICE.getData(p);
+        console.log(name);
+    }
+};
 ```
