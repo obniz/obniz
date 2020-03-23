@@ -22,7 +22,7 @@ export default class RS_Seek3 implements ObnizPartsInterface {
   public keys: string[] = [];
   public requiredKeys: string[] = [];
   public params: any;
-  public onchange: ((data: boolean) => void) | null = null;
+  public onpressed: (() => void) | null = null;
 
   private _uuids = {
     service: "0EE71523-981A-46B8-BA64-019261C88478",
@@ -57,14 +57,18 @@ export default class RS_Seek3 implements ObnizPartsInterface {
 
     if (this._buttonCharacteristic) {
       this._buttonCharacteristic.registerNotify((data: number[]) => {
-        if (typeof this.onchange === "function") {
-          this.onchange(data[0] === 1);
+        if (typeof this.onpressed === "function") {
+          this.onpressed();
         }
       });
     }
   }
 
-  public async getTempHumidWait() {
+  public async disconnectWait() {
+    await this._peripheral?.disconnectWait();
+  }
+
+  public async getTempHumidWait(): Promise<{ temperature: number; humidity: number }> {
     if (!this._tempHumidCharacteristic) {
       throw new Error("device is not connected");
     }

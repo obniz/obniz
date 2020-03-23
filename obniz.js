@@ -22991,6 +22991,7 @@ var map = {
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
+	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
@@ -23492,7 +23493,7 @@ exports.default = OMRON_2JCIE;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
-class ENERTALK {
+class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
@@ -23510,14 +23511,14 @@ class ENERTALK {
         this._humidityChar = null;
         this._illuminanceChar = null;
         this._accelerometerChar = null;
-        if (peripheral && !ENERTALK.isDevice(peripheral)) {
+        if (peripheral && !ENERTALK_TOUCH.isDevice(peripheral)) {
             throw new Error("peripheral is not RS_BTIREX2");
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "ENERTALK",
+            name: "ENERTALK_TOUCH",
         };
     }
     static isDevice(peripheral) {
@@ -23542,6 +23543,10 @@ class ENERTALK {
         this._illuminanceChar = this._service.getCharacteristic(this._uuids.illuminanceChar);
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
     }
+    async disconnectWait() {
+        var _a;
+        await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
+    }
     async getTemperature() {
         if (!this._temperatureChar) {
             throw new Error("device is not connected");
@@ -23559,7 +23564,7 @@ class ENERTALK {
         const humidity = humidityData[0];
         return humidity;
     }
-    async getIlluminance() {
+    async getIllumination() {
         if (!this._illuminanceChar) {
             throw new Error("device is not connected");
         }
@@ -23580,7 +23585,7 @@ class ENERTALK {
         return { x, y, z };
     }
 }
-exports.default = ENERTALK;
+exports.default = ENERTALK_TOUCH;
 
 //# sourceMappingURL=index.js.map
 
@@ -23785,6 +23790,10 @@ class REX_BTPM25V {
             });
         }
     }
+    async disconnectWait() {
+        var _a;
+        await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
+    }
     async measureOneShotWait() {
         if (!this._oneShotMeasurementCharacteristic) {
             throw new Error("device is not connected");
@@ -23820,21 +23829,21 @@ class REX_BTPM25V {
         const [minutes, hour, day, month, year] = buf.slice(0, 5);
         const pm2_5 = buf.readInt16LE(5);
         const pm10 = buf.readInt16LE(7);
-        const pressure = buf.readInt16LE(9);
+        const barometricPressure = buf.readInt16LE(9);
         const temperature = buf.readInt8(11);
         const humidity = buf.readInt8(12);
         const lux = buf.readUInt16LE(13);
         const dummy = buf.slice(15, 19);
         const mode = buf.readInt8(19);
         return {
-            minutes,
-            hour,
-            day,
-            month,
-            year,
+            // minutes,
+            // hour,
+            // day,
+            // month,
+            // year,
             pm2_5,
             pm10,
-            pressure,
+            barometricPressure,
             temperature,
             humidity,
             lux,
@@ -23866,12 +23875,12 @@ class REX_BTPM25V {
         const buf2 = buf.slice(4, 8);
         const pm2_5 = this._bitValue(buf2, { start: 0, end: 9 });
         const pm10 = this._bitValue(buf2, { start: 10, end: 19 });
-        const uvi = this._bitValue(buf2, { start: 20, end: 23 });
+        const uv = this._bitValue(buf2, { start: 20, end: 23 });
         const buf3 = buf.slice(8, 12);
         const temperature = this._bitValue(buf3, { start: 0, end: 10 }) / 10 - 40;
         const humidity = this._bitValue(buf3, { start: 11, end: 20 }) / 10;
         const buf4 = buf.slice(12, 16);
-        const pressure = this._bitValue(buf4, { start: 0, end: 13 }) / 10;
+        const barometricPressure = this._bitValue(buf4, { start: 0, end: 13 }) / 10;
         const vocState_init = this._bitValue(buf4, { start: 14, end: 14 });
         const vocState_wakeup = this._bitValue(buf4, { start: 15, end: 15 });
         const lux = this._bitValue(buf4, { start: 16, end: 31 });
@@ -23880,23 +23889,21 @@ class REX_BTPM25V {
         const eco2 = this._bitValue(buf5, { start: 11, end: 23 });
         const mode = this._bitValue(buf5, { start: 24, end: 31 });
         return {
-            minutes,
-            hour,
-            day,
-            month,
-            year,
+            // minutes,
+            // hour,
+            // day,
+            // month,
+            // year,
             pm2_5,
             pm10,
-            pressure,
+            barometricPressure,
             temperature,
             humidity,
             lux,
-            mode,
+            // mode,
             tvoc,
             eco2,
-            uvi,
-            vocState_init,
-            vocState_wakeup,
+            uv,
         };
     }
 }
@@ -23905,6 +23912,88 @@ exports.default = REX_BTPM25V;
 //# sourceMappingURL=index.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/RS_BTIREX2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// not working
+class RS_BTIREX2 {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.onbuttonpressed = null;
+        this._uuids = {
+            service: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+            rxChar: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+            txChar: "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+        };
+        this._peripheral = null;
+        this._rxCharacteristic = null;
+        this._txCharacteristic = null;
+        if (peripheral && !RS_BTIREX2.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_BTIREX2");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "RS_BTIREX2",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName && peripheral.localName.startsWith("BTIR")) {
+            return true;
+        }
+        return false;
+    }
+    // @ts-ignore
+    wired(obniz) { }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("RS_BTIREX2 is not find.");
+        }
+        this._peripheral.ondisconnect = () => {
+            console.log("disconnect");
+        };
+        await this._peripheral.connectWait();
+        console.error("encrypt start");
+        const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
+        // this._peripheral.obnizBle.centralBindings._aclStreams[handle].encrypt();
+        this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
+        this._txCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.txChar);
+    }
+    _sendAndReceiveWait(payload, crc = 0xb6) {
+        if (!this._rxCharacteristic || !this._txCharacteristic) {
+            throw new Error("device is not connected");
+        }
+        const data = new Array(payload.length + 4);
+        data[0] = 0xaa;
+        data[1] = 0;
+        data[2] = payload.length;
+        for (let index = 0; index < payload.length; index++) {
+            data[3 + index] = payload[index];
+        }
+        data[payload.length + 3] = crc;
+        const tx = this._txCharacteristic;
+        const p = new Promise((resolve) => {
+            tx.registerNotify((resultData) => {
+                console.error("CRC " + crc);
+                resolve(resultData);
+            });
+        });
+        this._rxCharacteristic.write(data);
+        return p;
+    }
+}
+exports.default = RS_BTIREX2;
+
+//# sourceMappingURL=index.js.map
+
 
 /***/ }),
 
@@ -23918,7 +24007,7 @@ class RS_Seek3 {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
-        this.onchange = null;
+        this.onpressed = null;
         this._uuids = {
             service: "0EE71523-981A-46B8-BA64-019261C88478",
             buttonChar: "0EE71524-981A-46B8-BA64-019261C88478",
@@ -23958,11 +24047,15 @@ class RS_Seek3 {
             .getCharacteristic(this._uuids.tempHumidChar);
         if (this._buttonCharacteristic) {
             this._buttonCharacteristic.registerNotify((data) => {
-                if (typeof this.onchange === "function") {
-                    this.onchange(data[0] === 1);
+                if (typeof this.onpressed === "function") {
+                    this.onpressed();
                 }
             });
         }
+    }
+    async disconnectWait() {
+        var _a;
+        await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
     async getTempHumidWait() {
         if (!this._tempHumidCharacteristic) {

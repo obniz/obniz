@@ -4,7 +4,7 @@ class RS_Seek3 {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
-        this.onchange = null;
+        this.onpressed = null;
         this._uuids = {
             service: "0EE71523-981A-46B8-BA64-019261C88478",
             buttonChar: "0EE71524-981A-46B8-BA64-019261C88478",
@@ -44,11 +44,15 @@ class RS_Seek3 {
             .getCharacteristic(this._uuids.tempHumidChar);
         if (this._buttonCharacteristic) {
             this._buttonCharacteristic.registerNotify((data) => {
-                if (typeof this.onchange === "function") {
-                    this.onchange(data[0] === 1);
+                if (typeof this.onpressed === "function") {
+                    this.onpressed();
                 }
             });
         }
+    }
+    async disconnectWait() {
+        var _a;
+        await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
     async getTempHumidWait() {
         if (!this._tempHumidCharacteristic) {

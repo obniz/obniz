@@ -1,12 +1,11 @@
 # RS_SEEK3
-Loss prevention tag made by RATOC Systems,Inc
+ラトックシステムズ社製の紛失防止タグです
 
-For BLE devices, use `isDevice` instead of` wired`
+BLEデバイスのため、`wired`は使わずに`isDevice`を使います
 
 ## isDevice(peripheral)
 
-
-Check whether it is RS_SEEK3 based on the advertisement information
+BLEで受信したアドバタイズ情報をもとに、RS_SEEK3かどうかを判定します
 
 ```javascript
 // Javascript Example
@@ -23,7 +22,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 ## new RS_Seek3(peripheral)
 
-Create an instance based on the advertisement information.
+BLEで受信したアドバタイズ情報をもとに、インスタンスを作成します。
 
 ```javascript
 // Javascript Example
@@ -41,8 +40,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## [await]connectWait()
-
-Connect to device.
+デバイスに接続します。
 
 
 ```javascript
@@ -67,8 +65,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## [await]disconnectWait()
-
-Disconnect from device.
+センサから切断します
 
 ```javascript
 // Javascript Example
@@ -90,9 +87,8 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## onpressed
-
-Callback when the button is pressed.
-Does not support when released.
+ボタンが押されたときにコールバックします。
+離されたときには反応しません。
 
 ```javascript
 // Javascript Example
@@ -116,7 +112,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## getTempHumidWait
-Get temperature and humidity value built into the device.
+デバイス内臓の温湿度センサの情報を取得します。
 
 ```javascript
 // Javascript Example

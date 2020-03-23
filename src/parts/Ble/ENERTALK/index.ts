@@ -4,12 +4,12 @@ import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeri
 import BleRemoteService from "../../../obniz/libs/embeds/bleHci/bleRemoteService";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface ENERTALKOptions {}
+export interface ENERTALK_TOUCHOptions {}
 
-export default class ENERTALK implements ObnizPartsInterface {
+export default class ENERTALK_TOUCH implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "ENERTALK",
+      name: "ENERTALK_TOUCH",
     };
   }
 
@@ -40,7 +40,7 @@ export default class ENERTALK implements ObnizPartsInterface {
   private _accelerometerChar: BleRemoteCharacteristic | null = null;
 
   constructor(peripheral: BleRemotePeripheral | null) {
-    if (peripheral && !ENERTALK.isDevice(peripheral)) {
+    if (peripheral && !ENERTALK_TOUCH.isDevice(peripheral)) {
       throw new Error("peripheral is not RS_BTIREX2");
     }
     this._peripheral = peripheral;
@@ -64,6 +64,10 @@ export default class ENERTALK implements ObnizPartsInterface {
     this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
   }
 
+  public async disconnectWait() {
+    await this._peripheral?.disconnectWait();
+  }
+
   public async getTemperature() {
     if (!this._temperatureChar) {
       throw new Error("device is not connected");
@@ -84,7 +88,7 @@ export default class ENERTALK implements ObnizPartsInterface {
     return humidity;
   }
 
-  public async getIlluminance() {
+  public async getIllumination() {
     if (!this._illuminanceChar) {
       throw new Error("device is not connected");
     }

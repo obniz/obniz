@@ -1,12 +1,11 @@
 # REX_BTPM25V
-Air quality monitor made by  RATOC Systems,Inc
+ラトックシステムズ社製のエアクオリティモニタです
 
-For BLE devices, use `isDevice` instead of` wired`
-
+BLEデバイスのため、`wired`は使わずに`isDevice`を使います
 
 ## isDevice(peripheral)
 
-Check whether it is REX_BTPM25V based on the advertisement information
+BLEで受信したアドバタイズ情報をもとに、REX_BTPM25V かどうかを判定します
 
 ```javascript
 // Javascript Example
@@ -23,7 +22,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 ## new REX_BTPM25V(peripheral)
 
-Create an instance based on the advertisement information.
+BLEで受信したアドバタイズ情報をもとに、インスタンスを作成します。
 
 ```javascript
 // Javascript Example
@@ -42,8 +41,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## [await]connectWait()
-
-Connect to device.
+デバイスに接続します。
 
 
 ```javascript
@@ -65,7 +63,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## [await]disconnectWait()
-Disconnect from device.
+センサから切断します
 
 ```javascript
 // Javascript Example
@@ -87,8 +85,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## onbuttonpressed
-
-Callback when the button is pressed.
+ボタンが押されたときにコールバックします。
 
 ```javascript
 // Javascript Example
@@ -111,8 +108,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## measureOneShotExtWait
-
-Measure air quality.
+エアクオリティを計測します。
 
 ```javascript
 // Javascript Example
@@ -132,7 +128,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 ```
 
-Output example is this. 
+出力形式は次のとおりです
 
 ```
 

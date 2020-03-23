@@ -1,18 +1,17 @@
 # MINEW_S1
-Temperature / Humidity beacon made byShenzhen Minew Technologies Co.
-It is necessary to set the inkjet output in advance using the dedicated application.
+MINEW社製の温湿度ビーコンです。
+事前に専用アプリによりビーコン出力の設定をする必要があります。
 
-It only supports HT sensor / information　SLOT.
+SLOTはHT Sensor / Infoのみ対応しています。
 
-For BLE devices, use `isDevice` instead of` wired`
+BLEデバイスのため、`wired`は使わずに`isDevice`を使います
 
 
 ## isDevice(peripheral)
 
-Check whether it is MINEW_S1 based on the advertisement information
-
-Return true if advertisement is HT sensor / information　SLOT.
-iBeacon / UID / URL / TLM SLOT are not supported, and return false.
+BLEで受信したアドバタイズ情報をもとに、MINEW_S1 かどうかを判定します。
+受信したアドバタイズのSLOTがHT Sensor / Info の場合のみ、trueを返します。
+SLOTがiBeacon / UID / URL / TLM は非対応で、falseを返します。
 
 ```javascript
 // Javascript Example
@@ -29,9 +28,8 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## getHTData()
-
-Get temperature and humidity data based on the advertisement information.
-Returns null for different SLOT advertisement information.
+BLEで受信したアドバタイズ情報をもとに、温湿度データを取得します。
+違うSLOTのアドバタイズ情報の場合はnullを返します。
 
 ```javascript
 // Javascript Example
@@ -47,7 +45,7 @@ obniz.ble.scan.onfind = (peripheral) => {
 
 ```
 
-Return data format is below.
+返り値のフォーマットは下記のとおりです。
 
 ```javascript
 {
@@ -63,9 +61,8 @@ Return data format is below.
 
 
 ## getHTData()
-
-Get device data based on the advertisement information.
-Returns null for different SLOT advertisement information.
+BLEで受信したアドバタイズ情報をもとに、デバイス情報を取得します。
+違うSLOTのアドバタイズ情報の場合はnullを返します。
 
 ```javascript
 // Javascript Example
@@ -81,7 +78,7 @@ obniz.ble.scan.onfind = (peripheral) => {
 
 ```
 
-Return data format is below.
+返り値のフォーマットは下記のとおりです。
 
 ```javascript
 {

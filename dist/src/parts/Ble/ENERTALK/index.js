@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class ENERTALK {
+class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
@@ -18,14 +18,14 @@ class ENERTALK {
         this._humidityChar = null;
         this._illuminanceChar = null;
         this._accelerometerChar = null;
-        if (peripheral && !ENERTALK.isDevice(peripheral)) {
+        if (peripheral && !ENERTALK_TOUCH.isDevice(peripheral)) {
             throw new Error("peripheral is not RS_BTIREX2");
         }
         this._peripheral = peripheral;
     }
     static info() {
         return {
-            name: "ENERTALK",
+            name: "ENERTALK_TOUCH",
         };
     }
     static isDevice(peripheral) {
@@ -50,6 +50,10 @@ class ENERTALK {
         this._illuminanceChar = this._service.getCharacteristic(this._uuids.illuminanceChar);
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
     }
+    async disconnectWait() {
+        var _a;
+        await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
+    }
     async getTemperature() {
         if (!this._temperatureChar) {
             throw new Error("device is not connected");
@@ -67,7 +71,7 @@ class ENERTALK {
         const humidity = humidityData[0];
         return humidity;
     }
-    async getIlluminance() {
+    async getIllumination() {
         if (!this._illuminanceChar) {
             throw new Error("device is not connected");
         }
@@ -88,6 +92,6 @@ class ENERTALK {
         return { x, y, z };
     }
 }
-exports.default = ENERTALK;
+exports.default = ENERTALK_TOUCH;
 
 //# sourceMappingURL=index.js.map

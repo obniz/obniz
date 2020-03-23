@@ -58,6 +58,10 @@ class REX_BTPM25V {
             });
         }
     }
+    async disconnectWait() {
+        var _a;
+        await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
+    }
     async measureOneShotWait() {
         if (!this._oneShotMeasurementCharacteristic) {
             throw new Error("device is not connected");
@@ -93,21 +97,21 @@ class REX_BTPM25V {
         const [minutes, hour, day, month, year] = buf.slice(0, 5);
         const pm2_5 = buf.readInt16LE(5);
         const pm10 = buf.readInt16LE(7);
-        const pressure = buf.readInt16LE(9);
+        const barometricPressure = buf.readInt16LE(9);
         const temperature = buf.readInt8(11);
         const humidity = buf.readInt8(12);
         const lux = buf.readUInt16LE(13);
         const dummy = buf.slice(15, 19);
         const mode = buf.readInt8(19);
         return {
-            minutes,
-            hour,
-            day,
-            month,
-            year,
+            // minutes,
+            // hour,
+            // day,
+            // month,
+            // year,
             pm2_5,
             pm10,
-            pressure,
+            barometricPressure,
             temperature,
             humidity,
             lux,
@@ -139,12 +143,12 @@ class REX_BTPM25V {
         const buf2 = buf.slice(4, 8);
         const pm2_5 = this._bitValue(buf2, { start: 0, end: 9 });
         const pm10 = this._bitValue(buf2, { start: 10, end: 19 });
-        const uvi = this._bitValue(buf2, { start: 20, end: 23 });
+        const uv = this._bitValue(buf2, { start: 20, end: 23 });
         const buf3 = buf.slice(8, 12);
         const temperature = this._bitValue(buf3, { start: 0, end: 10 }) / 10 - 40;
         const humidity = this._bitValue(buf3, { start: 11, end: 20 }) / 10;
         const buf4 = buf.slice(12, 16);
-        const pressure = this._bitValue(buf4, { start: 0, end: 13 }) / 10;
+        const barometricPressure = this._bitValue(buf4, { start: 0, end: 13 }) / 10;
         const vocState_init = this._bitValue(buf4, { start: 14, end: 14 });
         const vocState_wakeup = this._bitValue(buf4, { start: 15, end: 15 });
         const lux = this._bitValue(buf4, { start: 16, end: 31 });
@@ -153,23 +157,21 @@ class REX_BTPM25V {
         const eco2 = this._bitValue(buf5, { start: 11, end: 23 });
         const mode = this._bitValue(buf5, { start: 24, end: 31 });
         return {
-            minutes,
-            hour,
-            day,
-            month,
-            year,
+            // minutes,
+            // hour,
+            // day,
+            // month,
+            // year,
             pm2_5,
             pm10,
-            pressure,
+            barometricPressure,
             temperature,
             humidity,
             lux,
-            mode,
+            // mode,
             tvoc,
             eco2,
-            uvi,
-            vocState_init,
-            vocState_wakeup,
+            uv,
         };
     }
 }
