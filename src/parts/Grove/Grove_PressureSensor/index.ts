@@ -11,7 +11,7 @@ import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsIn
 interface Grove_PressureSensorOptionsA {
   vcc?: number;
   gnd?: number;
-  signal: number;
+  output: number;
 }
 
 interface Grove_PressureSensorOptionsB {
@@ -32,11 +32,12 @@ export default class Grove_PressureSensor implements ObnizPartsInterface {
   public params: any;
 
   public ad!: PeripheralAD;
+  public value?: number;
 
   protected obniz!: Obniz;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "signal", "grove"];
+    this.keys = ["vcc", "gnd", "output", "grove"];
     this.requiredKeys = [];
   }
 
@@ -48,16 +49,19 @@ export default class Grove_PressureSensor implements ObnizPartsInterface {
       this.ad = groveAd.primary;
     } else {
       this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-      this.ad = obniz.getAD(this.params.signal);
+      this.ad = obniz.getAD(this.params.output);
     }
     this.ad.start((value: any) => {
+      this.value = value * 100;
       if (this.onchange) {
-        this.onchange(value);
+        this.onchange(this.value);
       }
     });
   }
 
   public async getWait(): Promise<number> {
-    return await this.ad.getWait();
+    const value = await this.ad.getWait();
+    this.value = value * 100;
+    return this.value;
   }
 }

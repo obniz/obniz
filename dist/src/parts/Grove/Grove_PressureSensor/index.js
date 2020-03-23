@@ -6,7 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_PressureSensor {
     constructor() {
-        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.keys = ["vcc", "gnd", "output", "grove"];
         this.requiredKeys = [];
     }
     static info() {
@@ -22,16 +22,19 @@ class Grove_PressureSensor {
         }
         else {
             this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-            this.ad = obniz.getAD(this.params.signal);
+            this.ad = obniz.getAD(this.params.output);
         }
         this.ad.start((value) => {
+            this.value = value * 100;
             if (this.onchange) {
-                this.onchange(value);
+                this.onchange(this.value);
             }
         });
     }
     async getWait() {
-        return await this.ad.getWait();
+        const value = await this.ad.getWait();
+        this.value = value * 100;
+        return this.value;
     }
 }
 exports.default = Grove_PressureSensor;
