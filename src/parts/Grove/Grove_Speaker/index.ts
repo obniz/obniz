@@ -32,7 +32,6 @@ export default class Grove_Speaker implements ObnizPartsInterface {
   public params: any;
 
   public pwm!: PeripheralPWM;
-  public value?: number;
 
   protected obniz!: Obniz;
 
