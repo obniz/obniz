@@ -1,9 +1,9 @@
-# Grove_SoilMoisturesensor
+# Grove_SoilMoistureSensor
+
+A soil humidity sensor that can be used with Grove connectors. You can get the humidity of the soil.  
+The returned value ranges from 0 to voltage, and the higher the humidity, the lower the value (closer to 0).
 
 ![](image.jpg)
-
-A soil humidity sensor that can be used with Grove. You can get the soil humidity.  
-The value returned is in the range 0 to voltage, with higher humidity being value lower (closer to 0).
 
 ## wired(obniz, {[signal, vcc, gnd, grove]});
 

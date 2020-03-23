@@ -1,13 +1,13 @@
-# Grove_SoilMoisturesensor
+# Grove_SoilMoistureSensor
 
 ![](image.jpg)
 
-Groveで使用できる土壌湿度センサです。土壌の湿度を取得できます。
+Groveコネクタで利用できる土壌湿度センサです。土壌の湿度を取得できます。  
 返される値は0~3.3(5.0)の範囲で、湿度が高いほど値は低く(0に近く)なります。
 
 ## wired(obniz, {[signal, vcc, gnd, grove]});
 
-obnizデバイスと接続します。
+obnizデバイスと接続します。  
 黄線、赤線、黒線がそれぞれsignal、vcc、gndに対応します。
 
 name | type | required | default | description
