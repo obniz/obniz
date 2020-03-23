@@ -3,12 +3,10 @@
  * @module ObnizCore
  */
 
-import USB, { USBOptions } from "../parts/Accessory/USB";
-import HX711, { Hx711Options } from "../parts/ADConverter/hx711";
 // Camera
 import ArduCAMMini, { ArduCAMMiniOptions } from "../parts/Camera/ArduCAMMini";
 import JpegSerialCam, { JpegSerialCamOptions } from "../parts/Camera/JpegSerialCam";
-import MCP4725, { MCP4725Options } from "../parts/DAConverter/MCP4725";
+
 // Display
 import _7SegmentLED, { _7SegmentLEDOptions } from "../parts/Display/7SegmentLED";
 import _7SegmentLED_MAX7219, { _7SegmentLED_MAX7219Options } from "../parts/Display/7SegmentLED_MAX7219";
@@ -18,10 +16,12 @@ import MatrixLED_MAX7219, { MatrixLED_MAX7219Options } from "../parts/Display/Ma
 import SainSmartTFT18LCD, { SainSmartTFT18LCDOptions } from "../parts/Display/SainSmartTFT18LCD";
 import SharpMemoryTFT, { SharpMemoryTFTOptions } from "../parts/Display/SharpMemoryTFT";
 import ST7735S, { ST7735SOptions } from "../parts/Display/ST7735S";
+
 // DistanceSensor
 import GP2Y0A21YK0F, { GP2Y0A21YK0FOptions } from "../parts/DistanceSensor/GP2Y0A21YK0F";
 import HCSR04, { HCSR04Options } from "../parts/DistanceSensor/HC-SR04";
 import VL53L0X, { VL53L0XOptions } from "../parts/DistanceSensor/VL53L0X";
+
 // GasSensor
 import MQ135, { MQ135Options } from "../parts/GasSensor/MQ135";
 import MQ2, { MQ2Options } from "../parts/GasSensor/MQ2";
@@ -32,22 +32,24 @@ import MQ6, { MQ6Options } from "../parts/GasSensor/MQ6";
 import MQ7, { MQ7Options } from "../parts/GasSensor/MQ7";
 import MQ8, { MQ8Options } from "../parts/GasSensor/MQ8";
 import MQ9, { MQ9Options } from "../parts/GasSensor/MQ9";
+
+// GPS
 import GYSFDMAXB, { GYSFDMAXBOptions } from "../parts/GPS/GYSFDMAXB";
-import ENC03R_Module, { ENC03R_ModuleOptions } from "../parts/GyroSensor/ENC03R_Module";
+
+// Infrared
 import InfraredLED, { InfraredLEDOptions } from "../parts/Infrared/InfraredLED";
 import IRModule, { IRModuleOptions } from "../parts/Infrared/IRModule";
 import IRSensor, { IRSensorOptions } from "../parts/Infrared/IRSensor";
 import YG1006, { YG1006Options } from "../parts/Infrared/YG1006";
 
+// Light
 import FullColorLED, { FullColorLEDOptions } from "../parts/Light/FullColorLED";
 import LED, { LEDOptions } from "../parts/Light/LED";
 import WS2811, { WS2811Options } from "../parts/Light/WS2811";
 import WS2812, { WS2812Options } from "../parts/Light/WS2812";
 import WS2812B, { WS2812BOptions } from "../parts/Light/WS2812B";
-import SNx4HC595, { SNx4HC595Options } from "../parts/Logic/SNx4HC595";
-import CT10, { CT10Options } from "../parts/Magnet/CT10";
-import HMC5883L, { HMC5883LOptions } from "../parts/Magnet/HMC5883L";
-import _24LC256, { _24LC256Options } from "../parts/Memory/24LC256";
+
+// MovementSensor
 import AK09916, { AK09916Options } from "../parts/MovementSensor/AK09916";
 import AK8963, { AK8963Options } from "../parts/MovementSensor/AK8963";
 import Button, { ButtonOptions } from "../parts/MovementSensor/Button";
@@ -65,16 +67,33 @@ import MPU9250, { MPU9250Options } from "../parts/MovementSensor/MPU9250";
 import PaPIRsVZ, { PaPIRsVZOptions } from "../parts/MovementSensor/PaPIRsVZ";
 import Potentiometer, { PotentiometerOptions } from "../parts/MovementSensor/Potentiometer";
 import SH200Q, { SH200QOptions } from "../parts/MovementSensor/SH200Q";
+
+// Moving
 import DCMotor, { DCMotorOptions } from "../parts/Moving/DCMotor";
 import PCA9685, { PCA9685Options } from "../parts/Moving/PCA9685";
 import ServoMotor, { ServoMotorOptions } from "../parts/Moving/ServoMotor";
 import Solenoid, { SolenoidOptions } from "../parts/Moving/Solenoid";
 import StepperMotor, { StepperMotorOptions } from "../parts/Moving/StepperMotor";
+
+// etc
+import USB, { USBOptions } from "../parts/Accessory/USB";
+import HX711, { Hx711Options } from "../parts/ADConverter/hx711";
+import MCP4725, { MCP4725Options } from "../parts/DAConverter/MCP4725";
+import ENC03R_Module, { ENC03R_ModuleOptions } from "../parts/GyroSensor/ENC03R_Module";
+import SNx4HC595, { SNx4HC595Options } from "../parts/Logic/SNx4HC595";
+import CT10, { CT10Options } from "../parts/Magnet/CT10";
+import HMC5883L, { HMC5883LOptions } from "../parts/Magnet/HMC5883L";
+import _24LC256, { _24LC256Options } from "../parts/Memory/24LC256";
 import AXP192, { AXP192Options } from "../parts/Power/AXP192";
-import DPS310, { DPS310Options } from "../parts/PressureSensor/DPS310";
-import FSR40X, { FSR40XOptions } from "../parts/PressureSensor/FSR-40X";
 import SEN0114, { SEN0114Options } from "../parts/SoilSensor/SEN0114";
 import Speaker, { SpeakerOptions } from "../parts/Sound/Speaker";
+
+// PressureSensor
+import BMP280, { BMP280Options } from "../parts/PressureSensor/BMP280";
+import DPS310, { DPS310Options } from "../parts/PressureSensor/DPS310";
+import FSR40X, { FSR40XOptions } from "../parts/PressureSensor/FSR-40X";
+
+// TemperatureSensor
 import LM35DZ, { LM35DZOptions } from "../parts/TemperatureSensor/analog/LM35DZ";
 import LM60, { LM60Options } from "../parts/TemperatureSensor/analog/LM60";
 import LM61, { LM61Options } from "../parts/TemperatureSensor/analog/LM61";
@@ -93,6 +112,7 @@ import S5851A, { S5851AOptions } from "../parts/TemperatureSensor/i2c/S-5851A";
 import SHT20, { SHT20Options } from "../parts/TemperatureSensor/i2c/SHT20";
 import SHT31, { SHT31Options } from "../parts/TemperatureSensor/i2c/SHT31";
 import ADT7310, { ADT7310Options } from "../parts/TemperatureSensor/spi/ADT7310";
+
 // Wireless
 import RN42, { RN42Options } from "../parts/Wireless/RN42";
 import XBee, { XBeeOptions } from "../parts/Wireless/XBee";
@@ -106,6 +126,15 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
+import IBS01, { IBS01Options } from "../parts/Ble/iBS01";
+import IBS01RG, { IBS01RGOptions } from "../parts/Ble/iBS01RG";
+import IBS01T, { IBS01TOptions } from "../parts/Ble/iBS01T";
+import IBS02IR, { IBS02IROptions } from "../parts/Ble/iBS02IR";
+import IBS02PIR, { IBS02PIROptions } from "../parts/Ble/iBS02PIR";
+import IBS03, { IBS03Options } from "../parts/Ble/iBS03_iBS04";
+import IBS03T, { IBS03TOptions } from "../parts/Ble/iBS03T";
+import IBS03TP, { IBS03TPOptions } from "../parts/Ble/iBS03TP";
+import IBS04I, { IBS04IOptions } from "../parts/Ble/iBS04i";
 import Linking, { LinkingOptions } from "../parts/Ble/linking";
 import Logtta_Accel, { Logtta_AccelOptions } from "../parts/Ble/LogttaAccel";
 import Logtta_AD, { Logtta_ADOptions } from "../parts/Ble/LogttaAD";
@@ -114,8 +143,8 @@ import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/s-cbtgaaac";
 import uPRISM, { uPRISMOptions } from "../parts/Ble/μ-prism";
 
-import Grove_3AxisAccelerometer, { Grove_3AxisAccelerometerOptions } from "../parts/Grove/Grove_3AxisAccelerometer";
 // Grove
+import Grove_3AxisAccelerometer, { Grove_3AxisAccelerometerOptions } from "../parts/Grove/Grove_3AxisAccelerometer";
 import Grove_Button, { Grove_ButtonOptions } from "../parts/Grove/Grove_Button";
 import Grove_Buzzer, { Grove_BuzzerOptions } from "../parts/Grove/Grove_Buzzer";
 import Grove_EarHeartRate, { Grove_EarHeartRateOptions } from "../parts/Grove/Grove_EarHeartRate";
@@ -136,15 +165,15 @@ import Keyestudio_TemperatureSensor, {
   Keyestudio_TemperatureSensorOptions,
 } from "../parts/Keyestudio/Keyestudio_TemperatureSensor";
 import Keyestudio_TrafficLight, { Keyestudio_TrafficLightOptions } from "../parts/Keyestudio/Keyestudio_TrafficLight";
+
+// M5StackC
 import M5StickC_ADC, { M5StickC_ADCOptions } from "../parts/M5Stack/M5StickC_ADC";
 import M5StickC_DAC, { M5StickC_DACOptions } from "../parts/M5Stack/M5StickC_DAC";
 import M5StickC_FINGER, { M5StickC_FINGEROptions } from "../parts/M5Stack/M5StickC_FINGER";
 import M5StickC_JoyStick, { M5StickC_JoyStickOptions } from "../parts/M5Stack/M5StickC_JoyStick";
+import M5StickC_RS485, { M5StickC_RS485Options } from "../parts/M5Stack/M5StickC_RS485";
 import M5StickC_ToF, { M5StickC_ToFOptions } from "../parts/M5Stack/M5StickC_ToF";
 import M5StickC_Yun, { M5StickC_YunOptions } from "../parts/M5Stack/M5StickC_Yun";
-import BMP280, { BMP280Options } from "../parts/PressureSensor/BMP280";
-
-import M5StickC_RS485, { M5StickC_RS485Options } from "../parts/M5Stack/M5StickC_RS485";
 
 export interface WiredNameMap {
   // Light
@@ -294,6 +323,15 @@ export interface WiredNameMap {
   "Logtta_Accel": Logtta_Accel;
   "Linking": Linking;
   "SCBTGAAAC": SCBTGAAAC;
+  "iBS04i": IBS04I;
+  "iBS03": IBS03;
+  "iBS03T": IBS03T;
+  "iBS03TP": IBS03TP;
+  "iBS01T": IBS01T;
+  "iBS01RG": IBS01RG;
+  "iBS01": IBS01;
+  "iBS02IR": IBS02IR;
+  "iBS02PIR": IBS02PIR;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -454,6 +492,15 @@ export interface WiredNameOptionsMap {
   "Linking": LinkingOptions;
   "uPRISM": uPRISMOptions;
   "SCBTGAAAC": SCBTGAAACOptions;
+  "iBS04i": IBS04IOptions;
+  "iBS01T": IBS01TOptions;
+  "iBS01RG": IBS01RGOptions;
+  "iBS01": IBS01Options;
+  "iBS02IR": IBS02IROptions;
+  "iBS02PIR": IBS02PIROptions;
+  "iBS03": IBS03Options;
+  "iBS03T": IBS03TOptions;
+  "iBS03TP": IBS03TPOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 
