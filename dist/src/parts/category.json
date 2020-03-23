@@ -684,6 +684,12 @@
           "store": {
             "seedstudio": "https://www.seeedstudio.com/Grove-3-Axis-Digital-Accelerometer-16g-p-1156.html"
           }
+        },
+        {
+          "name": "Grove_PressureSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Round-Force-Sensor-FSR402.html"
+          }
         }
       ]
     },
