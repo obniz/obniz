@@ -143,6 +143,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.obniz.html#onconnect" class="tsd-kind-icon">onconnect</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.obniz.html#onmessage" class="tsd-kind-icon">onmessage</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="obnizcore.obniz.html#m5stickc" class="tsd-kind-icon">M5<wbr>StickC</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="obnizcore.obniz.html#_promptcount" class="tsd-kind-icon">_prompt<wbr>Count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="obnizcore.obniz.html#_promptqueue" class="tsd-kind-icon">_prompt<wbr>Queue</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="obnizcore.obniz.html#_promptwaiting" class="tsd-kind-icon">_prompt<wbr>Waiting</a></li>
 							</ul>
 							<h3>Peripherals Properties</h3>
 							<ul class="tsd-index-list">
@@ -583,6 +586,39 @@ obniz.onconnect = <span class="hljs-function"><span class="hljs-keyword">functio
 							<p>M5StickC device</p>
 						</div>
 					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="_promptcount" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> _prompt<wbr>Count</h3>
+					<div class="tsd-signature tsd-kind-icon">_prompt<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.obnizuis.html">ObnizUIs</a>.<a href="obnizcore.obnizuis.html#_promptcount">_promptCount</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizUIs.ts:13</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="_promptqueue" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> _prompt<wbr>Queue</h3>
+					<div class="tsd-signature tsd-kind-icon">_prompt<wbr>Queue<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.obnizuis.html">ObnizUIs</a>.<a href="obnizcore.obnizuis.html#_promptqueue">_promptQueue</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizUIs.ts:11</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="_promptwaiting" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> _prompt<wbr>Waiting</h3>
+					<div class="tsd-signature tsd-kind-icon">_prompt<wbr>Waiting<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="obnizcore.obnizuis.html">ObnizUIs</a>.<a href="obnizcore.obnizuis.html#_promptwaiting">_promptWaiting</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizUIs.ts:12</li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -1118,7 +1154,7 @@ obniz.onconnect = <span class="hljs-function"><span class="hljs-keyword">functio
 								<p>Inherited from <a href="obnizcore.obnizuis.html">ObnizUIs</a>.<a href="obnizcore.obnizuis.html#close">close</a></p>
 								<p>Overrides <a href="obnizcore.obnizsystemmethods.html">ObnizSystemMethods</a>.<a href="obnizcore.obnizsystemmethods.html#close">close</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizUIs.ts:31</li>
+									<li>Defined in src/obniz/ObnizUIs.ts:36</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2373,6 +2409,15 @@ led.off();
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
 								<a href="obnizcore.obniz.html#m5stickc" class="tsd-kind-icon">M5<wbr>StickC</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="obnizcore.obniz.html#_promptcount" class="tsd-kind-icon">_prompt<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="obnizcore.obniz.html#_promptqueue" class="tsd-kind-icon">_prompt<wbr>Queue</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="obnizcore.obniz.html#_promptwaiting" class="tsd-kind-icon">_prompt<wbr>Waiting</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
 								<a href="obnizcore.obniz.html#api" class="tsd-kind-icon">api</a>

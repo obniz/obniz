@@ -1,10 +1,9 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  * @ignore
  */
-// load from webpack
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {
     dialogPolyfill: {
         registerDialog: (dialog) => { },

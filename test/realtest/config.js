@@ -19,7 +19,7 @@ if (json.name === 'ESP32 Dev Kit') {
 } else if (json.name === 'M5STICK C') {
   checkBoard_ID = '88801217';
 } else if (json.name === 'obniz board') {
-  checkBoard_ID = '71088113';
+  checkBoard_ID = '50662155';
 } else if (json.name === 'obniz 1Y') {
   checkBoard_ID = '54371148';
 } else if (json.name === 'ESP32 Pico Kit v4') {
@@ -28,7 +28,7 @@ if (json.name === 'ESP32 Dev Kit') {
   checkBoard_ID = '41232281';
 }
 
-const obnizA_ID = '16438366';
+const obnizA_ID = '54371148';
 const obnizB_ID = '00747253';
 
 let obnizA, obnizB, checkBoard;
@@ -76,14 +76,14 @@ function connectTwoObniz(done, params) {
   checkBoard = new Obniz(checkBoard_ID, { local_connect: true }); //obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
   checkBoard.onconnect = () => {
     // if (process.env.DEBUG) {
-    // checkBoard.debugprint = true;
+    checkBoard.debugprint = true;
     // }
     console.log('checkBoard local_connect : ' + local_connect);
     if (json.board.some(board => board === 'obnizA')) {
       obnizA = new Obniz(obnizA_ID, { local_connect: local_connect });
       console.log('A local_connect : ' + local_connect);
       // if (process.env.DEBUG) {
-      // obnizA.debugprint = true;
+      obnizA.debugprint = true;
       // }
       obnizA.onconnect = () => {
         if (json.board.some(board => board === 'obnizB')) {

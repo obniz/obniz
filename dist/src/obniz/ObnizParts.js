@@ -34,15 +34,15 @@ class ObnizParts extends ObnizConnection_1.default {
         }
     }
     /**
-     * @ignore
-     * @param name
+     * Get parts class.
+     * @param string
      * @constructor
      */
-    static Parts(name) {
+    static getPartsClass(name) {
         if (!_parts[name]) {
             throw new Error(`unknown parts [${name}]`);
         }
-        return new _parts[name]();
+        return _parts[name];
     }
     constructor(id, options) {
         super(id, options);
@@ -68,10 +68,11 @@ class ObnizParts extends ObnizConnection_1.default {
      * @param options
      */
     wired(partsname, options) {
-        const parts = ObnizParts.Parts(partsname);
-        if (!parts) {
+        const Parts = ObnizParts.getPartsClass(partsname);
+        if (!Parts) {
             throw new Error("No such a parts [" + partsname + "] found");
         }
+        const parts = new Parts();
         const args = Array.from(arguments);
         args.shift();
         args.unshift(this);
