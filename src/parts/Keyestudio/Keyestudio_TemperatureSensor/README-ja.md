@@ -2,7 +2,7 @@
 
 Keyestudio社製温度センサです。センサで取得した温度を知ることができます。  
 
-![](index.jpg)
+![](image.jpg)
 
 ## wired(obniz, {signal [, vcc, gnd]})
 obniz Boardに温度センサをつなぎます。  
