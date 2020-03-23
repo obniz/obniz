@@ -98,8 +98,12 @@ import RN42, { RN42Options } from "../parts/Wireless/RN42";
 import XBee, { XBeeOptions } from "../parts/Wireless/XBee";
 
 // ColorSensor
+import PT550, { PT550Options } from "../parts/ColorSensor/PT550";
+import S11059, { S11059Options } from "../parts/ColorSensor/S11059";
+
 // biological
 import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PULSE08-M5STICKC-S";
+
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
 import Linking, { LinkingOptions } from "../parts/Ble/linking";
@@ -107,9 +111,8 @@ import Logtta_Accel, { Logtta_AccelOptions } from "../parts/Ble/LogttaAccel";
 import Logtta_AD, { Logtta_ADOptions } from "../parts/Ble/LogttaAD";
 import Logtta_CO2, { Logtta_CO2Options } from "../parts/Ble/LogttaCO2";
 import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
+import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/s-cbtgaaac";
 import uPRISM, { uPRISMOptions } from "../parts/Ble/μ-prism";
-import PT550, { PT550Options } from "../parts/ColorSensor/PT550";
-import S11059, { S11059Options } from "../parts/ColorSensor/S11059";
 
 import Grove_3AxisAccelerometer, { Grove_3AxisAccelerometerOptions } from "../parts/Grove/Grove_3AxisAccelerometer";
 // Grove
@@ -290,6 +293,7 @@ export interface WiredNameMap {
   "Logtta_AD": Logtta_AD;
   "Logtta_Accel": Logtta_Accel;
   "Linking": Linking;
+  "SCBTGAAAC": SCBTGAAAC;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -449,6 +453,7 @@ export interface WiredNameOptionsMap {
   "Logtta_Accel": Logtta_AccelOptions;
   "Linking": LinkingOptions;
   "uPRISM": uPRISMOptions;
+  "SCBTGAAAC": SCBTGAAACOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 
