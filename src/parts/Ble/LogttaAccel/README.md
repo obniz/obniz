@@ -8,33 +8,34 @@ Search Logtta Accel and get the data.
 
 ![](image.jpg)
 
-## wired(obniz)
+
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
+const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Search Logtta Accel, and if found, return the information with Callback function.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
-logtta.onNotification = (data => {
-            console.log(
-                `battery ${data.battery}% sequence ${data.sequence} revision ${data.revision} name:${data.name}\n` +
-                `setting ${data.setting.temp_cycle}s ${data.setting.accel_sampling}Hz HPF:${data.setting.hpf} ${data.setting.accel_range}G ${data.setting.accel_axis} ${data.setting.accel_resolution}bit\n` +
-                `temperature ${data.temperature} humidity ${data.humidity} alert ${data.alert} address ${data.address}`,
-              );
-        });
-logtta.scan();;
+const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA.isDevice(p)) {
+        let data = LOGTTA.getScanData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getScanData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
 - sequence : Sequence number
@@ -50,44 +51,36 @@ If found, return the information in the Callback function.
 - temperature: temperature
 - humidity: Humidity
 - alert: Alert status of the last four alerts
-- address: Address of the module
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
-logtta.onNotification = (data => {
-            console.log(
-                `battery ${data.battery}% sequence ${data.sequence} revision ${data.revision} name:${data.name}\n` +
-                `setting ${data.setting.temp_cycle}s ${data.setting.accel_sampling}Hz HPF:${data.setting.hpf} ${data.setting.accel_range}G ${data.setting.accel_axis} ${data.setting.accel_resolution}bit\n` +
-                `temperature ${data.temperature} humidity ${data.humidity} alert ${data.alert} address ${data.address}`,
-              );
-        });
-logtta.scan();
+const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA.isDevice(p)) {
+        let data = LOGTTA.getScanData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onAcceleration = function(data){}
+## getAccelData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns device information if found. Returns Null if not found.
 
 - peak : Acceleration peak data
 - rms : Acceleration RMS data
-- address : Address of the module
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
-logtta.onAcceleration = (data => {
-        console.log(`x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`);
-    });
-logtta.scan();
-```
-
-## end()
-
-スキャンを終了します。
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
-logtta.end();
+const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA.isDevice(p)) {
+        let data = LOGTTA.getAccelData(p);
+        console.log(data);
+    }
+};
 ```

@@ -4,37 +4,38 @@ http://www.uni-elec.co.jp/logtta_accel_3_0_torisetsu.pdf
 
 本ライブラリは、上記のドキュメントを参考にビーコンモード時に動作するものです。
 
-Logtta Accel を検索し、データを取得します。
+Logtta Accel を検索し、データを取得します
 
 ![](image.jpg)
 
-## wired(obniz)
+
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
+const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Logtta Accelを検索し、発見した場合その情報をCallback関数で返します。
+デバイスを発見した場合、trueを返します。
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
-logtta.onNotification = (data => {
-            console.log(
-                `battery ${data.battery}% sequence ${data.sequence} revision ${data.revision} name:${data.name}\n` +
-                `setting ${data.setting.temp_cycle}s ${data.setting.accel_sampling}Hz HPF:${data.setting.hpf} ${data.setting.accel_range}G ${data.setting.accel_axis} ${data.setting.accel_resolution}bit\n` +
-                `temperature ${data.temperature} humidity ${data.humidity} alert ${data.alert} address ${data.address}`,
-              );
-        });
-logtta.scan();;
+const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA.isDevice(p)) {
+        let data = LOGTTA.getScanData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getScanData(BleRemotePeripheral)
 
-発見した場合にその情報をCallback関数で返します。
+発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : バッテリの電圧
 - sequence : シーケンス番号
@@ -50,44 +51,36 @@ logtta.scan();;
 - temperature : 温度
 - humidity : 湿度
 - alert : 過去4回分のアラートの発生状態
-- address : モジュールのアドレス
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
-logtta.onNotification = (data => {
-            console.log(
-                `battery ${data.battery}% sequence ${data.sequence} revision ${data.revision} name:${data.name}\n` +
-                `setting ${data.setting.temp_cycle}s ${data.setting.accel_sampling}Hz HPF:${data.setting.hpf} ${data.setting.accel_range}G ${data.setting.accel_axis} ${data.setting.accel_resolution}bit\n` +
-                `temperature ${data.temperature} humidity ${data.humidity} alert ${data.alert} address ${data.address}`,
-              );
-        });
-logtta.scan();
+const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA.isDevice(p)) {
+        let data = LOGTTA.getScanData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onAcceleration = function(data){}
+## getAccelData(BleRemotePeripheral)
 
-発見した場合にその情報をCallback関数で返します。
+発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - peak : 加速度ピークデータ
 - rms : 加速度RMS データ
-- address : モジュールのアドレス
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
-logtta.onAcceleration = (data => {
-        console.log(`x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`);
-    });
-logtta.scan();
-```
-
-## end()
-
-スキャンを終了します。
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_Accel');
-logtta.end();
+const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA.isDevice(p)) {
+        let data = LOGTTA.getAccelData(p);
+        console.log(data);
+    }
+};
 ```
