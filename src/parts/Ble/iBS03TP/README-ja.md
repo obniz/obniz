@@ -1,54 +1,57 @@
-# iBS03TP
-INGICS社製の温度センサーです。
+# iBS03T
+INGICS社製の温度センサです。
+
+サポートデバイス
+
+- iBS03T
 
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
+const IBS03 = Obniz.getPartsClass('iBS03T');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-iBS03TPを検索し、発見した場合、その情報をCallback関数で返します。
+デバイスを発見した場合、trueを返します。
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature} address ${data.address}`);
-        });
-ibs03tp.scan();
+const IBS03 = Obniz.getPartsClass('iBS03T');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS03.isDevice(p)) {
+        let data = IBS03.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-発見した場合にその情報をCallback関数で返します。
+発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : 電池電圧
-- event : event
-- temperature : モジュール内の温度センサの値
-- probe_temperature : プローブの温度センサの値
-- address : モジュールのアドレス
+- button : ボタンを押すとtrue
+- moving : 動くとtrue
+- hall_sensor : 磁石が近づくとtrue
+- temperature : 温度センサの値
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature} address ${data.address}`);
-        });
-ibs03tp.scan();
+const IBS03 = Obniz.getPartsClass('iBS03T');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS03.isDevice(p)) {
+        let data = IBS03.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## end()
-
-スキャンを終了します。
-
-```javascript
-// Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.end();
-```

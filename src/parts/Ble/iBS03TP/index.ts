@@ -3,43 +3,74 @@
  * @module Parts.iBS03TP
  */
 
-import Obniz from "../../../obniz";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface IBS03TPOptions {}
 
 export interface IBS03TP_Data {
-  event: number;
   battery: number;
+  button: boolean;
+  moving: boolean;
+  hall_sensor: boolean;
   temperature: number;
   probe_temperature: number;
-  address: string;
 }
 
-export default class IBS03TP implements ObnizPartsInterface {
-  public static info(): ObnizPartsInfo {
+export default class IBS03TP implements ObnizPartsBleInterface {
+  public static info(): ObnizPartsBleInfo {
     return {
       name: "iBS03TP",
     };
   }
 
-  private static signed16FromBinary(val1: number, val2: number): number {
-    let val: number = val1 + val2 * 256;
-    if ((val & 0x8000) !== 0) {
-      val = val - 0x10000;
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    if (this.deviceAdv.length > peripheral.adv_data.length) {
+      return false;
     }
-    return val;
+    for (let index = 0; index < this.deviceAdv.length; index++) {
+      if (this.deviceAdv[index] === -1) {
+        continue;
+      }
+      if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+        continue;
+      }
+      return false;
+    }
+    return true;
   }
 
-  public onNotification?: (data: IBS03TP_Data) => void;
+  public static getData(peripheral: BleRemotePeripheral): IBS03TP_Data | null {
+    if (!IBS03TP.isDevice(peripheral)) {
+      return null;
+    }
+    const data: IBS03TP_Data = {
+      battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+      button: false,
+      moving: false,
+      hall_sensor: false,
+      temperature: ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+      probe_temperature:
+        ObnizPartsBleInterface.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]) * 0.01,
+    };
 
-  public keys: string[];
-  public requiredKeys: string[];
-  public obniz!: Obniz;
-  public params: any;
+    if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+      data.button = true;
+    }
+    if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+      data.moving = true;
+    }
+    if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+      data.hall_sensor = true;
+    }
+    return data;
+  }
 
-  private deviceAdv: number[] = [
+  private static deviceAdv: number[] = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
     0xff,
     0x0d, // Manufacturer vendor code
     0x00, // Manufacturer vendor code
@@ -48,90 +79,17 @@ export default class IBS03TP implements ObnizPartsInterface {
     -1, // Battery
     -1, // Battery
     -1, // Event
-    -1, // Temprature
-    -1, // Temprature
-    -1, // probe Temprature
-    -1, // probe Temprature
-    0x00, // user
-    -1, // user
-    -1, // subType
     -1, // reserved
-    0x00, // reserved
-    0x00, // reserved
+    -1, // reserved
+    -1, // reserved
+    -1, // reserved
+    -1, // user
+    -1, // user
+    0x17, // subType
+    -1, // reserved
+    -1, // reserved
+    -1, // reserved
   ];
-  private repeat_flg: boolean = false;
 
-  private ble_setting = {
-    duplicate: true,
-  };
-
-  constructor() {
-    this.keys = [];
-    this.requiredKeys = [];
-  }
-
-  public wired(obniz: Obniz) {
-    this.obniz = obniz;
-  }
-
-  public scan(address: string = "") {
-    this.obniz.ble!.scan.onfind = (peripheral: BleRemotePeripheral) => {
-      const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
-        let find = false;
-        if (this.deviceAdv.length > adv.length) {
-          return find;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-          if (this.deviceAdv[index] === -1) {
-            continue;
-          }
-          if (adv[index] === this.deviceAdv[index]) {
-            find = true;
-            continue;
-          }
-          find = false;
-          break;
-        }
-        return find;
-      });
-      if (advertise.length === 0) {
-        return;
-      }
-      const type = advertise[0][14];
-      if (type !== 23) {
-        // iBS03TP以外
-        return;
-      }
-      const data: IBS03TP_Data = {
-        battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-        event: advertise[0][7],
-        temperature: IBS03TP.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-        probe_temperature: IBS03TP.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
-        address: peripheral.address,
-      };
-      // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature}`);
-      if (this.onNotification) {
-        this.onNotification(data);
-      }
-    };
-
-    this.obniz.ble!.scan.onfinish = () => {
-      if (this.repeat_flg) {
-        this.obniz.ble!.scan.start(null, this.ble_setting);
-      }
-    };
-
-    this.obniz.ble!.initWait();
-    if (address && address.length >= 12) {
-      this.obniz.ble!.scan.start({ deviceAddress: address }, this.ble_setting);
-    } else {
-      this.obniz.ble!.scan.start(null, this.ble_setting);
-    }
-    this.repeat_flg = true;
-  }
-
-  public end() {
-    this.repeat_flg = false;
-    this.obniz.ble!.scan.end();
-  }
+  constructor() {}
 }

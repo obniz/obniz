@@ -1,38 +1,56 @@
 /**
  * @packageDocumentation
- * @module Parts.iBS02IR
+ * @module Parts.iBS02PIR
  */
 
-import Obniz from "../../../obniz";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface IBS02PIROptions {}
 
 export interface IBS02PIR_Data {
-  event: number;
+  event: boolean;
   battery: number;
-  address: string;
 }
 
-export default class IBS02PIR implements ObnizPartsInterface {
-  public static info(): ObnizPartsInfo {
+export default class IBS02PIR implements ObnizPartsBleInterface {
+  public static info(): ObnizPartsBleInfo {
     return {
       name: "iBS02PIR",
     };
   }
 
-  public onNotification?: (data: IBS02PIR_Data) => void;
-  public onChangeMoving?: (moved: boolean, address: string) => void;
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    if (this.deviceAdv.length > peripheral.adv_data.length) {
+      return false;
+    }
+    for (let index = 0; index < this.deviceAdv.length; index++) {
+      if (this.deviceAdv[index] === -1) {
+        continue;
+      }
+      if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+        continue;
+      }
+      return false;
+    }
+    return true;
+  }
 
-  public keys: string[];
-  public requiredKeys: string[];
-  public obniz!: Obniz;
-  public params: any;
+  public static getData(peripheral: BleRemotePeripheral): IBS02PIR_Data | null {
+    if (!IBS02PIR.isDevice(peripheral)) {
+      return null;
+    }
+    return {
+      battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+      event: Boolean(peripheral.adv_data[11] & 0b100),
+    };
+  }
 
-  private oldMovingFlg: boolean;
-
-  private deviceAdv: number[] = [
+  private static deviceAdv: number[] = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
     0xff,
     0x0d, // Manufacturer vendor code
     0x00, // Manufacturer vendor code
@@ -45,95 +63,13 @@ export default class IBS02PIR implements ObnizPartsInterface {
     -1, // reserved
     -1, // reserved
     -1, // reserved
-    -1, // user
-    -1, // user
-    -1, // type
+    -1, // reserved
+    -1, // reserved
+    0x01, // sub type
     -1, // reserved
     -1, // reserved
     -1, // reserved
   ];
-  private repeat_flg: boolean = false;
 
-  private ble_setting = {
-    duplicate: true,
-  };
-
-  constructor() {
-    this.keys = [];
-    this.requiredKeys = [];
-    this.oldMovingFlg = false;
-  }
-
-  public wired(obniz: Obniz) {
-    this.obniz = obniz;
-  }
-
-  public scan(address: string = "") {
-    this.obniz.ble!.scan.onfind = (peripheral: BleRemotePeripheral) => {
-      const advertise = peripheral.advertise_data_rows.filter((adv: number[]) => {
-        let find = false;
-        if (this.deviceAdv.length > adv.length) {
-          return find;
-        }
-        for (let index = 0; index < this.deviceAdv.length; index++) {
-          if (this.deviceAdv[index] === -1) {
-            continue;
-          }
-          if (adv[index] === this.deviceAdv[index]) {
-            find = true;
-            continue;
-          }
-          find = false;
-          break;
-        }
-        return find;
-      });
-      //    console.log(advertise);
-      if (advertise.length === 0) {
-        return;
-      }
-
-      if (advertise[0][14] !== 0x01) {
-        // error iBS02IR
-        return;
-      }
-
-      const data: IBS02PIR_Data = {
-        battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-        event: advertise[0][7],
-        address: peripheral.address,
-      };
-      // console.log(`battery ${data.battery}V event ${data.event} address ${data.address});
-      if (this.onNotification) {
-        this.onNotification(data);
-      }
-
-      if (this.onChangeMoving) {
-        const moved: boolean = Boolean((advertise[0][7] & 0b100) >> 2);
-        if (moved !== this.oldMovingFlg) {
-          this.onChangeMoving(moved, peripheral.address);
-          this.oldMovingFlg = moved;
-        }
-      }
-    };
-
-    this.obniz.ble!.scan.onfinish = () => {
-      if (this.repeat_flg) {
-        this.obniz.ble!.scan.start(null, this.ble_setting);
-      }
-    };
-
-    this.obniz.ble!.initWait();
-    if (address && address.length >= 12) {
-      this.obniz.ble!.scan.start({ deviceAddress: address }, this.ble_setting);
-    } else {
-      this.obniz.ble!.scan.start(null, this.ble_setting);
-    }
-    this.repeat_flg = true;
-  }
-
-  public end() {
-    this.repeat_flg = false;
-    this.obniz.ble!.scan.end();
-  }
+  constructor() {}
 }

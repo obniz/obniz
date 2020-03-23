@@ -1,124 +1,155 @@
-# 2JCIE
-enviroment sensor made by OMRON
+# μPRISM
 
-![](image.jpg)
+This is a very small IoT sensor module manufactured by Elex Industrial Co., Ltd.
 
+Because it is a BLE device, use `isDevice` instead of` wired`.
 
-## wired(obniz)
+## isDevice(peripheral)
 
+Judge whether it is μPRISM based on the advertisement information received by BLE
 
 ```javascript
 // Javascript Example
-let omron = obniz.wired('2JCIE');
+await obniz.ble.initWait();
+const U_PRISM = Obniz.getPartsClass("uPRISM");
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (U_PRISM.isDevice(peripheral)) {
+    console.log("device find");
+  }
+};
+
+```
+
+## new U_PRISM(peripheral)
+
+Create an instance based on the advertisement information received by BLE.
+
+```javascript
+// Javascript Example
+await obniz.ble.initWait();
+const U_PRISM = Obniz.getPartsClass("uPRISM");
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (U_PRISM.isDevice(peripheral) ) {
+    console.log("device find");
+    const device = new U_PRISM(peripheral);
+  }
+};
 
 ```
 
 
-
-## [await] findWait()
-
-Search device and return obniz.ble.peripheral object.
-If not found, return null.
-
-```javascript
-// Javascript Example
-let omron = obniz.wired('2JCIE');
-let results = await omron.findWait();
-
-if(results){
-  console.log("find");
-}else{
-  console.log("not find");
-}
-```
-
-## connectWait()
+## [await]connectWait()
 
 Connect to the device.
-Search device automatically, but if not found, throw error.
 
 ```javascript
 // Javascript Example
-let omron = obniz.wired('2JCIE');
-let results = await omron.findWait();
-
-if(results){
+await obniz.ble.initWait();
+const U_PRISM = Obniz.getPartsClass("uPRISM");
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (U_PRISM.isDevice(peripheral)) {
     console.log("find");
-  
-    await omron.connectWait();
-    let data = await omron.getLatestData();
-    
-    console.log(data);
-}else{
-    console.log("not find");
-}
+    const device = new U_PRISM(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (r) => {
+        console.log(
+          `accel x:${r.acceleration.x} y:${r.acceleration.y} z:${r.acceleration.z}\n` +
+            `geo x:${r.geomagnetic.x} y:${r.geomagnetic.y} z:${r.geomagnetic.z}\n` +
+            `temp:${r.temperature}℃ humid:${r.humidity}% light:${r.ambient_light}lx pressure:${r.pressure}Pa UV index:${r.uvi} index:${r.index}\n` +
+            `date ${r.time.year}/${r.time.month}/${r.time.day} ${r.time.hour}:${r.time.minute}:${r.time.second}:${r.time.micro_second}`,
+        );
+    };
+    device.startNotifyWait();
+  }
+};
+
 ```
 
 
 ## [await]disconnectWait()
-Disconnect from device.
+
+Disconnect from sensor
 
 ```javascript
 // Javascript Example
-let omron = obniz.wired('2JCIE');
-let results = await omron.findWait();
-
-if(results){
+await obniz.ble.initWait();
+const U_PRISM = Obniz.getPartsClass("uPRISM");
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (U_PRISM.isDevice(peripheral) ) {
     console.log("find");
-  
-    await omron.connectWait();
-    let data = await omron.getLatestData();
-    
-    console.log(data);
-    
-    await omron.disconnectWait();
-}else{
-    console.log("not find");
-}
+    const device = new U_PRISM(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.disconnectWait();
+    console.log("disconnected");
+  }
+};
 
 ```
 
 
-## [await]getLatestData()
-Get Latest Data from device.
+## onNotify =  function (data){}
+
+When data is received, return the data in a callback function.
+
+Called every time data comes from the device after starting `` startNotifyWait () ``.
 
 ```javascript
 // Javascript Example
-
-let omron = obniz.wired('2JCIE');
-let results = await omron.findWait();
-
-if(results){
+await obniz.ble.initWait();
+const U_PRISM = Obniz.getPartsClass("uPRISM");
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (U_PRISM.isDevice(peripheral)) {
     console.log("find");
-  
-    await omron.connectWait();
-    let data = await omron.getLatestData();
-    
-    console.log(data);
-    
-    await omron.disconnectWait();
-}else{
-    console.log("not find");
-}
-
+    const device = new U_PRISM(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (r) => {
+        console.log(
+          `accel x:${r.acceleration.x} y:${r.acceleration.y} z:${r.acceleration.z}\n` +
+            `geo x:${r.geomagnetic.x} y:${r.geomagnetic.y} z:${r.geomagnetic.z}\n` +
+            `temp:${r.temperature}℃ humid:${r.humidity}% light:${r.ambient_light}lx pressure:${r.pressure}Pa UV index:${r.uvi} index:${r.index}\n` +
+            `date ${r.time.year}/${r.time.month}/${r.time.day} ${r.time.hour}:${r.time.minute}:${r.time.second}:${r.time.micro_second}`,
+        );
+    };
+    device.startNotifyWait();
+  }
+};
 ```
 
 
-The format is below.
+
+## startNotifyWait()
+
+Instructs to start sending sensor data.
+
 ```javascript
-
-//example response
-{
-  row_number: 0,
-  temperature: 22.91,   //degC
-  relative_humidity: 46.46, //%RH
-  light: 75, //lx
-  uv_index: 0.02, 
-  barometric_pressure: 1010.4000000000001, // hPa
-  soud_noise: 39.42, //dB
-  discomfort_index: 68.75,  
-  heatstroke_risk_factor: 19,  //degC
-  battery_voltage: 30.12  // V
-}
-
+// Javascript Example
+await obniz.ble.initWait();
+const U_PRISM = Obniz.getPartsClass("uPRISM");
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (U_PRISM.isDevice(peripheral)) {
+    console.log("find");
+    const device = new U_PRISM(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (r) => {
+        console.log(
+          `accel x:${r.acceleration.x} y:${r.acceleration.y} z:${r.acceleration.z}\n` +
+            `geo x:${r.geomagnetic.x} y:${r.geomagnetic.y} z:${r.geomagnetic.z}\n` +
+            `temp:${r.temperature}℃ humid:${r.humidity}% light:${r.ambient_light}lx pressure:${r.pressure}Pa UV index:${r.uvi} index:${r.index}\n` +
+            `date ${r.time.year}/${r.time.month}/${r.time.day} ${r.time.hour}:${r.time.minute}:${r.time.second}:${r.time.micro_second}`,
+        );
+    };
+    device.startNotifyWait();
+  }
+};
 ```
+

@@ -1,54 +1,57 @@
 # iBS01T
 temperature & humidity made by INGICS.
 
+Support device
+
+- iBS01T
+
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs01t = obniz.wired('iBS01T');
+const IBS01T = Obniz.getPartsClass('iBS01T');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Search for iBS01T, and if found, return that information in the Callback function.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let ibs01t = obniz.wired('iBS01T');
-ibs01t.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity} address ${data.address}`);
-        });
-ibs01t.scan();
+let IBS01T = Obniz.getPartsClass('iBS01T');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS01T.isDevice(p)) {
+        let data = IBS01T.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- event : event
+- button : True when button is pressed
+- moving : True when moving
+- reed : True when reed bit 1
 - temperature : temperature(℃)
 - humidity : humidity (%)
-- address : module address
 
 ```javascript
 // Javascript Example
-let ibs01t = obniz.wired('iBS01T');
-ibs01t.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity} address ${data.address}`);
-        });
-ibs01t.scan();
-```
-
-## end()
-
-Finish the scan.
-
-```javascript
-// Javascript Example
-let ibs01t = obniz.wired('iBS01T');
-ibs01t.end();
+let IBS01T = Obniz.getPartsClass('iBS01T');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS01T.isDevice(p)) {
+        let data = IBS01T.getData(p);
+        console.log(data);
+    }
+};
 ```

@@ -1,80 +1,56 @@
 # iBS01RG
+
 Acceleration by INGICS.
+
+Support device
+
+- iBS01RG
 
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs01rg = obniz.wired('iBS01RG');
+const IBS01RG = Obniz.getPartsClass('iBS01RG');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Search for iBS01RG, and if found, return that information in the Callback function.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let ibs01rg = obniz.wired('iBS01RG');
-ibs01rg.onNotification = (data => {
-            console.log(`battery ${data.battery}V address ${data.address} button ${data.button} active ${data.active} acceleration ${data.acceleration[0].x},${data.acceleration[0].y},${data.acceleration[0].z} ${data.acceleration[1].x},${data.acceleration[1].y},${data.acceleration[1].z} ${data.acceleration[2].x},${data.acceleration[2].y},${data.acceleration[2].z}` ) ;
-        });
-ibs01rg.scan();
+const IBS01RG = Obniz.getPartsClass('iBS01RG');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS01RG.isDevice(p)) {
+        let data = IBS01RG.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
 - button : button status
 - active : active status
 - acceleration : acceleration array
-- address : module address
 
 ```javascript
 // Javascript Example
-let ibs01rg = obniz.wired('iBS01RG');
-ibs01rg.onNotification = (data => {
-            console.log(`battery ${data.battery}V address ${data.address} button ${data.button} active ${data.active} acceleration ${data.acceleration[0].x},${data.acceleration[0].y},${data.acceleration[0].z} ${data.acceleration[1].x},${data.acceleration[1].y},${data.acceleration[1].z} ${data.acceleration[2].x},${data.acceleration[2].y},${data.acceleration[2].z}` ) ;
-        });
-ibs01rg.scan();
-```
-
-## onChangeButton = function(pressed){}
-
-Calls the callback function when the button is pressed or released.
-
-```javascript
-// Javascript Example
-let ibs01rg = obniz.wired('iBS01RG');
-ibs01rg.onChangeButton = (pressed =>{
-            console.log(`button state ${pressed}`);
-        });
-ibs01rg.scan();
-```
-
-## onChangeActive = function(closed){}
-
-Calls the callback function when the active is active or in active.
-
-```javascript
-// Javascript Example
-let ibs01rg = obniz.wired('iBS01RG');
-ibs01rg.onChangeActive = (active =>{
-            console.log(`active state ${active}`);
-        });
-ibs01rg.scan();
-```
-
-## end()
-
-Finish the scan.
-
-```javascript
-// Javascript Example
-let ibs01rg = obniz.wired('iBS01RG');
-ibs01rg.end();
+const IBS01RG = Obniz.getPartsClass('iBS01RG');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS01RG.isDevice(p)) {
+        let data = IBS01RG.getData(p);
+        console.log(data);
+    }
+};
 ```

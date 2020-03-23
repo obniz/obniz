@@ -1,67 +1,54 @@
 # iBS02IR
+
 iBS02IR by INGICS.
+
+Support device
+
+- iBS02IR
 
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs02ir = obniz.wired('iBS02IR');
+const IBS02 = Obniz.getPartsClass('iBS02IR');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Search for iBS02IR, and if found, return that information in the Callback function.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let ibs02ir = obniz.wired('iBS02IR');
-ibs02ir.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-        });
-ibs02ir.scan();
+const IBS02 = Obniz.getPartsClass('iBS02IR');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS02.isDevice(p)) {
+        let data = IBS02.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- event : event
-- address : module address
+- event : True when sensor read
 
 ```javascript
 // Javascript Example
-let ibs02ir = obniz.wired('iBS02IR');
-ibs02ir.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-        });
-ibs02ir.scan();
-```
-
-
-## onChangeMoving = function(moved){}
-
-Calls the callback function when the motion is moved or stopped.
-
-```javascript
-// Javascript Example
-let ibs02ir = obniz.wired('iBS02IR');
-ibs02ir.onChangeMoving = (moved =>{
-                console.log(`moving state ${moved}`);
-            });
-ibs02ir.scan();
-```
-
-
-## end()
-
-Finish the scan.
-
-```javascript
-// Javascript Example
-let ibs02ir = obniz.wired('iBS02IR');
-ibs02ir.end();
+const IBS02 = Obniz.getPartsClass('iBS02IR');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS02.isDevice(p)) {
+        let data = IBS02.getData(p);
+        console.log(data);
+    }
+};
 ```

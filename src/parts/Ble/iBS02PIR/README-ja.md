@@ -1,66 +1,54 @@
-# iBS02IR
-INGICS社製の温湿度センサーです。
+# iBS02PIR
+
+INGICS社製の人感センサーです。
+
+Support device
+
+- iBS02PIR
 
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs02pir = obniz.wired('iBS02PIR');
+const IBS02 = Obniz.getPartsClass('iBS02PIR');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-iBS01Tを検索し、発見した場合、その情報をCallback関数で返します。
+デバイスを発見した場合、trueを返します。
 
 ```javascript
 // Javascript Example
-let ibs02pir = obniz.wired('iBS02PIR');
-ibs02pir.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-        });
-ibs02pir.scan();
+const IBS02 = Obniz.getPartsClass('iBS02PIR');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS02.isDevice(p)) {
+        let data = IBS02.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-発見した場合にその情報をCallback関数で返します。
+発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : 電池電圧
-- event : event
-- address : モジュールアドレス
+- event : センサーに反応があるときtrue
 
 ```javascript
 // Javascript Example
-let ibs02pir = obniz.wired('iBS02PIR');
-ibs02pir.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-        });
-ibs02pir.scan();
-```
-
-
-## onChangeMoving = function(moved){}
-
-動きがあれば、コールバック関数で返します。
-
-```javascript
-// Javascript Example
-let ibs02pir = obniz.wired('iBS02PIR');
-ibs02pir.onChangeMoving = (moved =>{
-                console.log(`moving state ${moved}`);
-            });
-ibs02pir.scan();
-```
-
-## end()
-
-スキャンを終了します。
-
-```javascript
-// Javascript Example
-let ibs02pir = obniz.wired('iBS02PIR');
-ibs02pir.end();
+const IBS02 = Obniz.getPartsClass('iBS02PIR');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS02.isDevice(p)) {
+        let data = IBS02.getData(p);
+        console.log(data);
+    }
+};
 ```

@@ -1,60 +1,58 @@
 # iBS04i
 beacon made by INGICS.
 
+Support device
+
+- iBS04i
+
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs04i = obniz.wired('iBS04i');
+const IBS04I = Obniz.getPartsClass('iBS04i');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Search for iBS04i, and if found, return that information in the Callback function.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let ibs04i = obniz.wired('iBS04i');
-ibs04i.onNotification = (data => {
-            console.log(
-                `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
-            );
-        });
-ibs04i.scan();
+const IBS04I = Obniz.getPartsClass('iBS04i');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS04I.isDevice(p)) {
+        let data = IBS04I.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- event : Button pressed: 1
+- button : Button pressed: true
 - uuid : iBeacon　UUID
 - major : iBeacon　major
 - minor : iBeacon　minor
 - power : iBeacon　power
 - rssi :  Signal strength
-- address : module address
-```javascript
-// Javascript Example
-let ibs04i = obniz.wired('iBS04i');
-ibs04i.onNotification = (data => {
-            console.log(
-                `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi} power ${data.power}`,
-            );
-        });
-ibs04i.scan();
-```
-
-## end()
-
-Finish the scan.
 
 ```javascript
 // Javascript Example
-let ibs04i = obniz.wired('iBS04i');
-ibs04i.end();
+const IBS04I = Obniz.getPartsClass('iBS04i');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS04I.isDevice(p)) {
+        let data = IBS04I.getData(p);
+        console.log(data);
+    }
+};
 ```

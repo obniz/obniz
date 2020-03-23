@@ -1,54 +1,57 @@
 # iBS01T
 INGICS社製の温湿度センサーです。
 
+Support device
+
+- iBS01T
+
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs01t = obniz.wired('iBS01T');
+const IBS01T = Obniz.getPartsClass('iBS01T');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-iBS01Tを検索し、発見した場合、その情報をCallback関数で返します。
+デバイスを発見した場合、trueを返します。
 
 ```javascript
 // Javascript Example
-let ibs01t = obniz.wired('iBS01T');
-ibs01t.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity} address ${data.address}`);
-        });
-ibs01t.scan();
+let IBS01T = Obniz.getPartsClass('iBS01T');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS01T.isDevice(p)) {
+        let data = IBS01T.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-発見した場合にその情報をCallback関数で返します。
+発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : 電池電圧
-- event : event
+- button : ボタンを押すとtrue
+- moving : 動くとtrue
+- reed : reedビットが1のときtrue
 - temperature : 温度センサの値
 - humidity : 湿度センサの値
-- address : モジュールアドレス
 
 ```javascript
 // Javascript Example
-let ibs01t = obniz.wired('iBS01T');
-ibs01t.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity} address ${data.address}`);
-        });
-ibs01t.scan();
-```
-
-## end()
-
-スキャンを終了します。
-
-```javascript
-// Javascript Example
-let ibs01t = obniz.wired('iBS01T');
-ibs01t.end();
+let IBS01T = Obniz.getPartsClass('iBS01T');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS01T.isDevice(p)) {
+        let data = IBS01T.getData(p);
+        console.log(data);
+    }
+};
 ```

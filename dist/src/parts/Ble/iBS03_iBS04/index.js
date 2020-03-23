@@ -6,105 +6,73 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS03 {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x0d,
-            0x00,
-            0x83,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            0x00,
-            -1,
-            -1,
-            -1,
-            0x00,
-            0x00,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
     }
     static info() {
         return {
             name: "iBS03",
         };
     }
-    static signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 256;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        return val;
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            if (advertise.length === 0) {
-                return;
-            }
-            const type = advertise[0][14];
-            if (type !== 16) {
-                // iBS03以外
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
+    static getData(peripheral) {
+        if (!IBS03.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
         };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
         }
-        this.repeat_flg = true;
-    }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        return data;
     }
 }
 exports.default = IBS03;
+IBS03.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x10,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map

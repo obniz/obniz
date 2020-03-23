@@ -1,54 +1,58 @@
 # iBS03TP
-temperature made by INGICS.
+temperature sensor made by INGICS.
+
+Support device
+
+- iBS03TP
 
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
+const IBS03 = Obniz.getPartsClass('iBS03TP');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Search for iBS03TP, and if found, return that information in the Callback function.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.probe_temperature} address ${data.address}`);
-        });
-ibs03tp.scan();
+const IBS03 = Obniz.getPartsClass('iBS03TP');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS03.isDevice(p)) {
+        let data = IBS03.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- event : event
-- temperature : module sensor temperature
-- probe_temperature : probe sensor temperature
-- address : module address
+- button : True when button is pressed
+- moving : True when moving
+- hall_sensor : True when the magnet approaches
+- temperature : temperature(℃)
+- probe_temperature : probe temperature(℃)
+
 
 ```javascript
 // Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature} address ${data.address}`);
-        });
-ibs03tp.scan();
-```
-
-## end()
-
-Finish the scan.
-
-```javascript
-// Javascript Example
-let ibs03tp = obniz.wired('iBS03TP');
-ibs03tp.end();
+const IBS03 = Obniz.getPartsClass('iBS03TP');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS03.isDevice(p)) {
+        let data = IBS03.getData(p);
+        console.log(data);
+    }
+};
 ```

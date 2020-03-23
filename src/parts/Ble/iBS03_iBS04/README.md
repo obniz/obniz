@@ -1,57 +1,57 @@
 # iBS03 iBS04
-event tag made by INGICS.
+INGICS BLE tag.
 
-![](image.jpg)
-
-support module 
+Support device
 
 - iBS03(H) : Button, Magnet Event
 - iBS04 : Button Event
 
+![](image.jpg)
 
-## wired(obniz)
 
-```javascript
-// Javascript Example
-let ibs03 = obniz.wired('iBS03');
-```
-
-## scan()
-
-Search for iBS03TP, and if found, return that information in the Callback function.
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs03 = obniz.wired('iBS03');
-ibs03.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-        });
-ibs03.scan();
+const IBS03 = Obniz.getPartsClass('iBS03');
 ```
 
-## onNotification = function(data){}
+## isDevice(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns true if a device was found.
+
+```javascript
+// Javascript Example
+const IBS03 = Obniz.getPartsClass('iBS03');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS03.isDevice(p)) {
+        let data = IBS03.getData(p);
+        console.log(data);
+    }
+};
+```
+
+## getData(BleRemotePeripheral)
+
+Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- event : event
-- address : module address
+- button : True when button is pressed
+- moving : True when moving
+- hall_sensor : True when the magnet approaches
+
 
 ```javascript
 // Javascript Example
-let ibs03 = obniz.wired('iBS03');
-ibs03.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-        });
-ibs03.scan();
-```
-
-## end()
-
-Finish the scan.
-
-```javascript
-// Javascript Example
-let ibs03 = obniz.wired('iBS03');
-ibs03.end();
+const IBS03 = Obniz.getPartsClass('iBS03');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS03.isDevice(p)) {
+        let data = IBS03.getData(p);
+        console.log(data);
+    }
+};
 ```

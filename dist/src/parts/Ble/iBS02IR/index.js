@@ -6,108 +6,61 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS02IR {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x0d,
-            0x00,
-            0x82,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
-        this.oldButtonFlg = false;
-        this.oldMovingFlg = false;
-        this.oldHallSensorFlg = false;
     }
     static info() {
         return {
             name: "iBS02IR",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            //    console.log(advertise);
-            if (advertise.length === 0) {
-                return;
-            }
-            if (advertise[0][14] !== 0x02) {
-                // error iBS02IR
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event} address ${data.address});
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
-            if (this.onChangeMoving) {
-                const moved = Boolean((advertise[0][7] & 0b100) >> 2);
-                if (moved !== this.oldMovingFlg) {
-                    this.onChangeMoving(moved, peripheral.address);
-                    this.oldMovingFlg = moved;
-                }
-            }
-        };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
         }
-        this.repeat_flg = true;
+        return true;
     }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+    static getData(peripheral) {
+        if (!IBS02IR.isDevice(peripheral)) {
+            return null;
+        }
+        return {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            event: Boolean(peripheral.adv_data[11] & 0b100),
+        };
     }
 }
 exports.default = IBS02IR;
+IBS02IR.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x82,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x02,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map

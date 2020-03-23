@@ -1,93 +1,58 @@
 # iBS01
-iBS01T or iBS01G by INGICS.
+INGICS BLE tag.
+
+Support device
+
+- iBS01H
+- iBS01G
 
 ![](image.jpg)
 
 
-## wired(obniz)
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let ibs01 = obniz.wired('iBS01');
+const IBS01 = Obniz.getPartsClass('iBS01');
 ```
 
-## scan()
+## isDevice(BleRemotePeripheral)
 
-Search for iBS01, and if found, return that information in the Callback function.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let ibs01 = obniz.wired('iBS01');
-ibs01.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-        });
-ibs01.scan();
+let IBS01 = Obniz.getPartsClass('iBS01');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS01.isDevice(p)) {
+        let data = IBS01.getData(p);
+        console.log(data);
+    }
+};
 ```
 
-## onNotification = function(data){}
+## getData(BleRemotePeripheral)
 
-If found, return the information in the Callback function.
+Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- event : event
-- address : module address
+- button : True when button is pressed
+- moving : True when moving
+- hall_sensor : True when the magnet approaches
+- fall : True when falling
+
 
 ```javascript
 // Javascript Example
-let ibs01 = obniz.wired('iBS01');
-ibs01.onNotification = (data => {
-            console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-        });
-ibs01.scan();
-```
-
-## onChangeButton = function(pressed){}
-
-Calls the callback function when the button is pressed or released.
-
-```javascript
-// Javascript Example
-let ibs01 = obniz.wired('iBS01');
-ibs01.onChangeButton = (pressed =>{
-            console.log(`button state ${pressed}`);
-        });
-ibs01.scan();
-```
-
-## onChangeHallSensor = function(closed){}
-
-Calls the callback function when the hall sensor is closed or opened.
-
-```javascript
-// Javascript Example
-let ibs01 = obniz.wired('iBS01');
-ibs01.onChangeHallSensor = (closed =>{
-            console.log(`hall sensor state ${closed}`);
-        });
-ibs01.scan();
-```
-
-
-## onChangeMoving = function(moved){}
-
-Calls the callback function when the motion is moved or stopped.
-
-```javascript
-// Javascript Example
-let ibs01 = obniz.wired('iBS01');
-ibs01.onChangeMoving = (moved =>{
-                console.log(`moving state ${moved}`);
-            });
-ibs01.scan();
-```
-
-
-## end()
-
-Finish the scan.
-
-```javascript
-// Javascript Example
-let ibs01 = obniz.wired('iBS01');
-ibs01.end();
+let IBS01 = Obniz.getPartsClass('iBS01');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (IBS01.isDevice(p)) {
+        let data = IBS01.getData(p);
+        console.log(data);
+    }
+};
 ```

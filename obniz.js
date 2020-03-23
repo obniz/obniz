@@ -2984,6 +2984,32 @@ exports.default = ObnizParts;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/ObnizPartsBleInterface.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class ObnizPartsBleInterface {
+    static signed16FromBinary(high, low) {
+        let val = (high << 8) | low;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
+        }
+        return val;
+    }
+}
+exports.default = ObnizPartsBleInterface;
+
+//# sourceMappingURL=ObnizPartsBleInterface.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/ObnizSystemMethods.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24653,126 +24679,81 @@ exports.default = acr1255;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS01 {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x59,
-            0x00,
-            0x80,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
-        this.oldButtonFlg = false;
-        this.oldMovingFlg = false;
-        this.oldHallSensorFlg = false;
     }
     static info() {
         return {
             name: "iBS01",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            //    console.log(advertise);
-            if (advertise.length === 0) {
-                return;
-            }
-            if (advertise[0][8] !== 0xff &&
-                advertise[0][9] !== 0xff &&
-                advertise[0][10] !== 0xff &&
-                advertise[0][11] !== 0xff) {
-                // error iBS01
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event});
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
-            if (this.onChangeButton) {
-                const button = Boolean(advertise[0][7] & 0b001);
-                if (button !== this.oldButtonFlg) {
-                    this.onChangeButton(button, peripheral.address);
-                    this.oldButtonFlg = button;
-                }
-            }
-            if (this.onChangeMoving) {
-                const moved = Boolean((advertise[0][7] & 0b010) >> 1);
-                if (moved !== this.oldMovingFlg) {
-                    this.onChangeMoving(moved, peripheral.address);
-                    this.oldMovingFlg = moved;
-                }
-            }
-            if (this.onChangeHallSensor) {
-                const closed = Boolean((advertise[0][7] & 0b100) >> 2);
-                if (closed !== this.oldHallSensorFlg) {
-                    this.onChangeHallSensor(closed, peripheral.address);
-                    this.oldHallSensorFlg = closed;
-                }
-            }
-        };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
         }
-        this.repeat_flg = true;
+        return (peripheral.adv_data[12] === 0xff &&
+            peripheral.adv_data[13] === 0xff &&
+            peripheral.adv_data[14] === 0xff &&
+            peripheral.adv_data[15] === 0xff);
     }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+    static getData(peripheral) {
+        if (!IBS01.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
+            fall: false,
+        };
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b1000)) {
+            data.fall = true;
+        }
+        return data;
     }
 }
 exports.default = IBS01;
+IBS01.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x59,
+    0x00,
+    0x80,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -24784,137 +24765,114 @@ exports.default = IBS01;
 
 "use strict";
 
-/**
- * @packageDocumentation
- * @module Parts.iBS01RG
- */
+//
+//   const accelArray: IBS01RG_Acceleration_Data[] = [];
+//   for (let i = 0; i < 3; i++) {
+//     accelArray.push({
+//       x: IBS01RG.signed16FromBinary(advertise[0][7 + i * 6], advertise[0][8 + i * 6]),
+//       y: IBS01RG.signed16FromBinary(advertise[0][9 + i * 6], advertise[0][10 + i * 6]),
+//       z: IBS01RG.signed16FromBinary(advertise[0][11 + i * 6], advertise[0][12 + i * 6]),
+//     });
+//   }
+//   console.log((advertise[0][6] & 0x0f) * 0xff);
+//   console.log((advertise[0][6] & 0x30) >> 4);
+//   const data: IBS01RG_Data = {
+//     battery: (advertise[0][5] + (advertise[0][6] & 0x0f) * 256) * 0.01,
+//     active: Boolean((advertise[0][6] & 0x10) >> 4),
+//     button: Boolean((advertise[0][6] & 0x20) >> 5),
+//     acceleration: accelArray,
+//     address: peripheral.address,
+//   };
+//   // console.log(`battery ${data.battery}V event ${data.event});
+//   if (this.onNotification) {
+//     this.onNotification(data);
+//   }
+//
+//   if (this.onChangeButton) {
+//     const button: boolean = Boolean((advertise[0][6] & 0x20) >> 5);
+//     if (button !== this.oldButtonFlg) {
+//       this.onChangeButton(button, peripheral.address);
+//       this.oldButtonFlg = button;
+//     }
+//   }
+//
+//   if (this.onChangeActive) {
+//     const actived: boolean = Boolean((advertise[0][6] & 0x10) >> 4);
+//     if (actived !== this.oldActiveFlg) {
+//       this.onChangeActive(actived, peripheral.address);
+//       this.oldActiveFlg = actived;
+//     }
+//   }
+// };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS01RG {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x59,
-            0x00,
-            0x81,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
-        this.oldActiveFlg = false;
-        this.oldButtonFlg = false;
     }
     static info() {
         return {
             name: "iBS01RG",
         };
     }
-    static signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 256;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        return val;
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
+    static getData(peripheral) {
+        if (!IBS01RG.isDevice(peripheral)) {
+            return null;
+        }
+        const accelArray = [];
+        for (let i = 0; i < 3; i++) {
+            accelArray.push({
+                x: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[12 + i * 6], peripheral.adv_data[11 + i * 6]),
+                y: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[14 + i * 6], peripheral.adv_data[13 + i * 6]),
+                z: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[16 + i * 6], peripheral.adv_data[15 + i * 6]),
             });
-            //    console.log(advertise);
-            if (advertise.length === 0) {
-                return;
-            }
-            const accelArray = [];
-            for (let i = 0; i < 3; i++) {
-                accelArray.push({
-                    x: IBS01RG.signed16FromBinary(advertise[0][7 + i * 6], advertise[0][8 + i * 6]),
-                    y: IBS01RG.signed16FromBinary(advertise[0][9 + i * 6], advertise[0][10 + i * 6]),
-                    z: IBS01RG.signed16FromBinary(advertise[0][11 + i * 6], advertise[0][12 + i * 6]),
-                });
-            }
-            console.log((advertise[0][6] & 0x0f) * 0xff);
-            console.log((advertise[0][6] & 0x30) >> 4);
-            const data = {
-                battery: (advertise[0][5] + (advertise[0][6] & 0x0f) * 256) * 0.01,
-                active: Boolean((advertise[0][6] & 0x10) >> 4),
-                button: Boolean((advertise[0][6] & 0x20) >> 5),
-                acceleration: accelArray,
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event});
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
-            if (this.onChangeButton) {
-                const button = Boolean((advertise[0][6] & 0x20) >> 5);
-                if (button !== this.oldButtonFlg) {
-                    this.onChangeButton(button, peripheral.address);
-                    this.oldButtonFlg = button;
-                }
-            }
-            if (this.onChangeActive) {
-                const actived = Boolean((advertise[0][6] & 0x10) >> 4);
-                if (actived !== this.oldActiveFlg) {
-                    this.onChangeActive(actived, peripheral.address);
-                    this.oldActiveFlg = actived;
-                }
-            }
-        };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
-        }
-        this.repeat_flg = true;
-    }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+        const data = {
+            battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) * 0.01,
+            active: Boolean((peripheral.adv_data[10] & 0x10) >> 4),
+            button: Boolean((peripheral.adv_data[10] & 0x20) >> 5),
+            acceleration: accelArray,
+        };
+        return data;
     }
 }
 exports.default = IBS01RG;
+IBS01RG.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x19,
+    0xff,
+    0x59,
+    0x00,
+    0x81,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -24930,114 +24888,86 @@ exports.default = IBS01RG;
  * @packageDocumentation
  * @module Parts.iBS01T
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS01T {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x59,
-            0x00,
-            0x80,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
     }
     static info() {
         return {
             name: "iBS01T",
         };
     }
-    static signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 256;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        return val;
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return !(peripheral.adv_data[12] === 0xff &&
+            peripheral.adv_data[13] === 0xff &&
+            peripheral.adv_data[14] === 0xff &&
+            peripheral.adv_data[15] === 0xff);
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            //    console.log(advertise);
-            if (advertise.length === 0) {
-                return;
-            }
-            if (advertise[0][8] === 0xff &&
-                advertise[0][9] === 0xff &&
-                advertise[0][10] === 0xff &&
-                advertise[0][11] === 0xff) {
-                // error iBS01T
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                temperature: IBS01T.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-                humidity: IBS01T.signed16FromBinary(advertise[0][10], advertise[0][11]),
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} humidity ${data.humidity}`);
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
+    static getData(peripheral) {
+        if (!IBS01T.isDevice(peripheral)) {
+            return null;
+        }
+        const d = {
+            button: false,
+            moving: false,
+            reed: false,
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+            humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
         };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            d.button = true;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            d.moving = true;
         }
-        this.repeat_flg = true;
-    }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            d.reed = true;
+        }
+        return d;
     }
 }
 exports.default = IBS01T;
+IBS01T.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x59,
+    0x00,
+    0x80,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -25056,109 +24986,62 @@ exports.default = IBS01T;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS02IR {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x0d,
-            0x00,
-            0x82,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
-        this.oldButtonFlg = false;
-        this.oldMovingFlg = false;
-        this.oldHallSensorFlg = false;
     }
     static info() {
         return {
             name: "iBS02IR",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            //    console.log(advertise);
-            if (advertise.length === 0) {
-                return;
-            }
-            if (advertise[0][14] !== 0x02) {
-                // error iBS02IR
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event} address ${data.address});
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
-            if (this.onChangeMoving) {
-                const moved = Boolean((advertise[0][7] & 0b100) >> 2);
-                if (moved !== this.oldMovingFlg) {
-                    this.onChangeMoving(moved, peripheral.address);
-                    this.oldMovingFlg = moved;
-                }
-            }
-        };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
         }
-        this.repeat_flg = true;
+        return true;
     }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+    static getData(peripheral) {
+        if (!IBS02IR.isDevice(peripheral)) {
+            return null;
+        }
+        return {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            event: Boolean(peripheral.adv_data[11] & 0b100),
+        };
     }
 }
 exports.default = IBS02IR;
+IBS02IR.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x82,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x02,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -25172,112 +25055,67 @@ exports.default = IBS02IR;
 
 /**
  * @packageDocumentation
- * @module Parts.iBS02IR
+ * @module Parts.iBS02PIR
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS02PIR {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x0d,
-            0x00,
-            0x82,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
-        this.oldMovingFlg = false;
     }
     static info() {
         return {
             name: "iBS02PIR",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            //    console.log(advertise);
-            if (advertise.length === 0) {
-                return;
-            }
-            if (advertise[0][14] !== 0x01) {
-                // error iBS02IR
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event} address ${data.address});
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
-            if (this.onChangeMoving) {
-                const moved = Boolean((advertise[0][7] & 0b100) >> 2);
-                if (moved !== this.oldMovingFlg) {
-                    this.onChangeMoving(moved, peripheral.address);
-                    this.oldMovingFlg = moved;
-                }
-            }
-        };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
         }
-        this.repeat_flg = true;
+        return true;
     }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+    static getData(peripheral) {
+        if (!IBS02PIR.isDevice(peripheral)) {
+            return null;
+        }
+        return {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            event: Boolean(peripheral.adv_data[11] & 0b100),
+        };
     }
 }
 exports.default = IBS02PIR;
+IBS02PIR.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x82,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x01,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -25293,110 +25131,82 @@ exports.default = IBS02PIR;
  * @packageDocumentation
  * @module Parts.iBS03T
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS03T {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x0d,
-            0x00,
-            0x83,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            0x00,
-            -1,
-            -1,
-            -1,
-            0x00,
-            0x00,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
     }
     static info() {
         return {
             name: "iBS03T",
         };
     }
-    static signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 256;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        return val;
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            if (advertise.length === 0) {
-                return;
-            }
-            const type = advertise[0][14];
-            if (type !== 0x15) {
-                // iBS03T以外
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                temperature: IBS03T.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} `);
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
+    static getData(peripheral) {
+        if (!IBS03T.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
         };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
         }
-        this.repeat_flg = true;
-    }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        return data;
     }
 }
 exports.default = IBS03T;
+IBS03T.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x15,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -25412,111 +25222,83 @@ exports.default = IBS03T;
  * @packageDocumentation
  * @module Parts.iBS03TP
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS03TP {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x0d,
-            0x00,
-            0x83,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            0x00,
-            -1,
-            -1,
-            -1,
-            0x00,
-            0x00,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
     }
     static info() {
         return {
             name: "iBS03TP",
         };
     }
-    static signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 256;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        return val;
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            if (advertise.length === 0) {
-                return;
-            }
-            const type = advertise[0][14];
-            if (type !== 23) {
-                // iBS03TP以外
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                temperature: IBS03TP.signed16FromBinary(advertise[0][8], advertise[0][9]) * 0.01,
-                probe_temperature: IBS03TP.signed16FromBinary(advertise[0][10], advertise[0][11]) * 0.01,
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event} temperature ${data.temperature} probe_temperature ${data.temperature}`);
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
+    static getData(peripheral) {
+        if (!IBS03TP.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+            probe_temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]) * 0.01,
         };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
         }
-        this.repeat_flg = true;
-    }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        return data;
     }
 }
 exports.default = IBS03TP;
+IBS03TP.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x17,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -25535,106 +25317,74 @@ exports.default = IBS03TP;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS03 {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x0d,
-            0x00,
-            0x83,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
-            0x00,
-            -1,
-            -1,
-            -1,
-            0x00,
-            0x00,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
     }
     static info() {
         return {
             name: "iBS03",
         };
     }
-    static signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 256;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
         }
-        return val;
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-            if (advertise.length === 0) {
-                return;
-            }
-            const type = advertise[0][14];
-            if (type !== 16) {
-                // iBS03以外
-                return;
-            }
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                address: peripheral.address,
-            };
-            // console.log(`battery ${data.battery}V event ${data.event} address ${data.address}`);
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
+    static getData(peripheral) {
+        if (!IBS03.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
         };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
         }
-        this.repeat_flg = true;
-    }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        return data;
     }
 }
 exports.default = IBS03;
+IBS03.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x10,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -25653,122 +25403,83 @@ exports.default = IBS03;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS04I {
     constructor() {
-        this.deviceAdv = [
-            0xff,
-            0x0d,
-            0x00,
-            0x83,
-            0xbc,
-            -1,
-            -1,
-            -1,
-            0xff,
-            0xff,
-            0xff,
-            0xff,
-            0x00,
-            -1,
-            -1,
-            -1,
-            0x00,
-            0x00,
-        ];
-        this.repeat_flg = false;
-        this.ble_setting = {
-            duplicate: true,
-        };
-        this.keys = [];
-        this.requiredKeys = [];
     }
     static info() {
         return {
             name: "iBS04i",
         };
     }
-    wired(obniz) {
-        this.obniz = obniz;
+    static isDevice(peripheral) {
+        return IBS04I.getDeviceArray(peripheral) !== null;
     }
-    scan(address = "") {
-        this.obniz.ble.scan.onfind = (peripheral) => {
-            const advertise = peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
+    static getData(peripheral) {
+        const adv = IBS04I.getDeviceArray(peripheral);
+        if (adv === null) {
+            return null;
+        }
+        const data = {
+            battery: (adv[5] + adv[6] * 256) * 0.01,
+            button: Boolean(adv[7]),
+            uuid: peripheral.iBeacon.uuid,
+            major: peripheral.iBeacon.major,
+            minor: peripheral.iBeacon.minor,
+            power: peripheral.iBeacon.power,
+            rssi: peripheral.iBeacon.rssi,
+            address: peripheral.address,
+        };
+        return data;
+    }
+    static getDeviceArray(peripheral) {
+        const advertise = peripheral.advertise_data_rows.filter((adv) => {
+            let find = false;
+            if (this.deviceAdv.length > adv.length) {
                 return find;
-            });
-            if (advertise.length === 0) {
-                if (peripheral.localName && peripheral.localName === "iBS04") {
-                    const d = {
-                        battery: -1,
-                        event: -1,
-                        uuid: peripheral.iBeacon.uuid,
-                        major: peripheral.iBeacon.major,
-                        minor: peripheral.iBeacon.minor,
-                        power: peripheral.iBeacon.power,
-                        rssi: peripheral.iBeacon.rssi,
-                        address: peripheral.address,
-                    };
-                    if (this.onNotification) {
-                        this.onNotification(d);
-                    }
+            }
+            for (let index = 0; index < this.deviceAdv.length; index++) {
+                if (this.deviceAdv[index] === -1) {
+                    continue;
                 }
-                return;
+                if (adv[index] === this.deviceAdv[index]) {
+                    find = true;
+                    continue;
+                }
+                find = false;
+                break;
             }
-            const type = advertise[0][14];
-            if (type !== 24) {
-                // iBS04i以外
-                return;
-            }
-            //    console.log(advertise);
-            const data = {
-                battery: (advertise[0][5] + advertise[0][6] * 256) * 0.01,
-                event: advertise[0][7],
-                uuid: peripheral.iBeacon.uuid,
-                major: peripheral.iBeacon.major,
-                minor: peripheral.iBeacon.minor,
-                power: peripheral.iBeacon.power,
-                rssi: peripheral.iBeacon.rssi,
-                address: peripheral.address,
-            };
-            // console.log(
-            //   `battery ${data.battery}V event ${data.event} uuid ${data.uuid} major ${data.major} minor ${data.minor} rssi ${data.rssi}`,
-            // );
-            if (this.onNotification) {
-                this.onNotification(data);
-            }
-        };
-        this.obniz.ble.scan.onfinish = () => {
-            if (this.repeat_flg) {
-                this.obniz.ble.scan.start(null, this.ble_setting);
-            }
-        };
-        this.obniz.ble.initWait();
-        if (address && address.length >= 12) {
-            this.obniz.ble.scan.start({ deviceAddress: address }, this.ble_setting);
+            return find;
+        });
+        if (advertise.length !== 1) {
+            return null;
         }
-        else {
-            this.obniz.ble.scan.start(null, this.ble_setting);
+        const type = advertise[0][14];
+        if (type !== 24) {
+            // iBS04i以外
+            return null;
         }
-        this.repeat_flg = true;
-    }
-    end() {
-        this.repeat_flg = false;
-        this.obniz.ble.scan.end();
+        return advertise[0];
     }
 }
 exports.default = IBS04I;
+IBS04I.deviceAdv = [
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    0xff,
+    0xff,
+    0xff,
+    0xff,
+    0x00,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -30068,86 +29779,44 @@ exports.default = SCBTGAAAC;
  * @packageDocumentation
  * @module Parts.uPRISM
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class uPRISM {
-    constructor() {
+    constructor(peripheral) {
         this.readIndex = -1;
-        this.target = {
-            localNamePrefix: "uPrism_",
-        };
         this.accelRange = 1024;
-        this.keys = [];
-        this.requiredKeys = [];
-        this.periperal = null;
-        this.readData = {
-            acceleration: { x: 0, y: 0, z: 0 },
-            geomagnetic: { x: 0, y: 0, z: 0 },
-            time: {
-                year: 0,
-                month: 0,
-                day: 0,
-                hour: 0,
-                minute: 0,
-                second: 0,
-                micro_second: 0,
-            },
-            index: 0,
-            temperature: 0,
-            humidity: 0,
-            ambient_light: 0,
-            uvi: 0,
-            pressure: 0,
+        this._uuids = {
+            service: "a587905b-ac98-4cb1-8b1d-5e22ae747d17",
+            settingEnableChar: "51bc99bd-b22e-4ff5-807e-b641d21af060",
+            notifyChar: "0d6fcf18-d935-49d1-836d-384c7b857b83",
         };
+        if (peripheral === null) {
+            throw new Error("peripheral is null");
+        }
+        if (peripheral && !uPRISM.isDevice(peripheral)) {
+            throw new Error("peripheral is not uPRISM");
+        }
+        this.periperal = peripheral;
     }
     static info() {
         return {
             name: "uPRISM",
         };
     }
-    static signed16FromBinary(val1, val2) {
-        let val = val1 + val2 * 256;
-        if ((val & 0x8000) !== 0) {
-            val = val - 0x10000;
-        }
-        return val;
-    }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    async findWait() {
-        await this.obniz.ble.initWait();
-        this.periperal = await this.obniz.ble.scan.startOneWait(this.target);
-        return this.periperal;
-    }
-    async findListWait() {
-        await this.obniz.ble.initWait();
-        return await this.obniz.ble.scan.startAllWait(this.target);
-    }
-    async directConnectWait(address) {
-        try {
-            this.periperal = await this.obniz.ble.scan.directConnectWait(address, "public");
-        }
-        catch (e) {
-            return false;
-        }
-        return true;
+    static isDevice(peripheral) {
+        var _a;
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("uPrism_")) === 0;
     }
     async connectWait() {
         if (!this.periperal) {
-            await this.findWait();
-        }
-        if (!this.periperal) {
-            throw new Error("uPrism not found");
+            throw new Error("peripheral is not uPRISM");
         }
         if (!this.periperal.connected) {
-            try {
-                await this.periperal.connectWait();
-            }
-            catch (e) {
-                return false;
-            }
+            await this.periperal.connectWait();
         }
-        return true;
     }
     async disconnectWait() {
         if (this.periperal && this.periperal.connected) {
@@ -30171,12 +29840,12 @@ class uPRISM {
         }
     }
     async startNotifyWait() {
-        if (!(await this.connectWait())) {
-            return;
+        if (!this.periperal || !this.periperal.connected) {
+            throw new Error("peripheral not connected uPRISM");
         }
-        const rc = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("51bc99bd-b22e-4ff5-807e-b641d21af060");
+        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x01]);
-        const c = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("0d6fcf18-d935-49d1-836d-384c7b857b83");
+        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
         await c.registerNotifyWait((data) => {
             if (data[1] !== 0x14) {
                 return;
@@ -30185,14 +29854,14 @@ class uPRISM {
                 this.readIndex = data[19];
                 this.readData = {
                     acceleration: {
-                        x: uPRISM.signed16FromBinary(data[2], data[3]) / this.accelRange,
-                        y: uPRISM.signed16FromBinary(data[4], data[5]) / this.accelRange,
-                        z: uPRISM.signed16FromBinary(data[6], data[7]) / this.accelRange,
+                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / this.accelRange,
+                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[5], data[4]) / this.accelRange,
+                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[7], data[6]) / this.accelRange,
                     },
                     geomagnetic: {
-                        x: uPRISM.signed16FromBinary(data[8], data[9]) / 16,
-                        y: uPRISM.signed16FromBinary(data[10], data[11]) / 16,
-                        z: uPRISM.signed16FromBinary(data[12], data[13]) / 16,
+                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[9], data[8]) / 16,
+                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[11], data[10]) / 16,
+                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[13], data[12]) / 16,
                     },
                     time: {
                         year: 0,
@@ -30212,8 +29881,8 @@ class uPRISM {
                 };
             }
             else if (data[0] === 0xb2) {
-                if (this.readIndex === data[19]) {
-                    this.readData.temperature = uPRISM.signed16FromBinary(data[2], data[3]) / 100;
+                if (this.readIndex === data[19] && this.readData) {
+                    this.readData.temperature = ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / 100;
                     this.readData.humidity = ((data[5] << 8) | data[4]) / 100;
                     this.readData.ambient_light = ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;
                     this.readData.uvi = data[9] / 16;
@@ -30236,12 +29905,12 @@ class uPRISM {
         });
     }
     async stopNotifyWait() {
-        if (!(await this.connectWait())) {
+        if (!(this.periperal && this.periperal.connected)) {
             return;
         }
-        const rc = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("51bc99bd-b22e-4ff5-807e-b641d21af060");
+        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x00]);
-        const c = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("0d6fcf18-d935-49d1-836d-384c7b857b83");
+        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
         await c.unregisterNotifyWait();
     }
 }
