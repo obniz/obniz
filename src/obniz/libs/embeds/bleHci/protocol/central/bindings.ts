@@ -584,6 +584,17 @@ class NobleBindings extends events.EventEmitter {
   ) {
     this._hci.connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout);
   }
+
+  public pairing(peripheralUuid: any) {
+    const handle: any = this._handles[peripheralUuid];
+    const gatt: any = this._gatts[handle];
+
+    if (gatt) {
+      gatt.encrypt();
+    } else {
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
+    }
+  }
 }
 
 export default NobleBindings;

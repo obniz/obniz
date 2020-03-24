@@ -713,6 +713,10 @@ export default class BleRemotePeripheral {
     return results;
   }
 
+  public pairing() {
+    this.obnizBle.centralBindings.pairing(this.address);
+  }
+
   protected analyseAdvertisement() {
     if (!this.advertise_data_rows) {
       this.advertise_data_rows = [];

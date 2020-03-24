@@ -145,24 +145,30 @@ class Gatt extends events_1.default.EventEmitter {
             debug(this._address + ": read: " + data.toString("hex"));
             this._currentCommand.callback(data);
             this._currentCommand = null;
-            while (this._commandQueue.length) {
-                this._currentCommand = this._commandQueue.shift();
-                this.writeAtt(this._currentCommand.buffer);
-                if (this._currentCommand.callback) {
-                    break;
-                }
-                else if (this._currentCommand.writeCallback) {
-                    this._currentCommand.writeCallback();
-                    this._currentCommand = null;
-                }
-            }
+            this._runQueueCommand();
         }
     }
     onAclStreamEncrypt(encrypt) {
         if (encrypt) {
             this._security = "medium";
-            this.writeAtt(this._currentCommand.buffer);
+            if (this._currentCommand.type === "encrypt") {
+                if (this._currentCommand.callback) {
+                    this._currentCommand.callback();
+                }
+                this._currentCommand = null;
+                this._runQueueCommand();
+            }
+            else {
+                this.writeAtt(this._currentCommand.buffer);
+            }
         }
+    }
+    encrypt(callback) {
+        this._commandQueue.push({
+            type: "encrypt",
+            callback,
+        });
+        this._runQueueCommand();
     }
     onAclStreamEncryptFail() { }
     onAclStreamEnd() {
@@ -189,16 +195,24 @@ class Gatt extends events_1.default.EventEmitter {
             callback,
             writeCallback,
         });
+        this._runQueueCommand();
+    }
+    _runQueueCommand() {
         if (this._currentCommand === null) {
             while (this._commandQueue.length) {
                 this._currentCommand = this._commandQueue.shift();
-                this.writeAtt(this._currentCommand.buffer);
-                if (this._currentCommand.callback) {
-                    break;
+                if (this._currentCommand.type === "encrypt") {
+                    this._aclStream.encrypt();
                 }
-                else if (this._currentCommand.writeCallback) {
-                    this._currentCommand.writeCallback();
-                    this._currentCommand = null;
+                else {
+                    this.writeAtt(this._currentCommand.buffer);
+                    if (this._currentCommand.callback) {
+                        break;
+                    }
+                    else if (this._currentCommand.writeCallback) {
+                        this._currentCommand.writeCallback();
+                        this._currentCommand = null;
+                    }
                 }
             }
         }
