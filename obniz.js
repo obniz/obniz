@@ -23079,6 +23079,7 @@ var map = {
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
+	"./Grove/Grove_Micro Switch/Index.js": "./dist/src/parts/Grove/Grove_Micro Switch/Index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
@@ -38017,6 +38018,17 @@ class Grove_MP3 {
 exports.default = Grove_MP3;
 
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_Micro Switch/Index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+//# sourceMappingURL=Index.js.map
 
 
 /***/ }),
