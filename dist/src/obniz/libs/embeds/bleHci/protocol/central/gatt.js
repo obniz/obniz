@@ -153,7 +153,14 @@ class Gatt extends events_1.default.EventEmitter {
             this._security = "medium";
             if (this._currentCommand.type === "encrypt") {
                 if (this._currentCommand.callback) {
-                    this._currentCommand.callback();
+                    this._currentCommand.callback({
+                        stk: this._aclStream._smp._stk,
+                        preq: this._aclStream._smp._preq,
+                        pres: this._aclStream._smp._pres,
+                        tk: this._aclStream._smp._tk,
+                        r: this._aclStream._smp._r,
+                        pcnf: this._aclStream._smp._pcnf,
+                    });
                 }
                 this._currentCommand = null;
                 this._runQueueCommand();
@@ -163,9 +170,10 @@ class Gatt extends events_1.default.EventEmitter {
             }
         }
     }
-    encrypt(callback) {
+    encrypt(callback, keys) {
         this._commandQueue.push({
             type: "encrypt",
+            keys,
             callback,
         });
         this._runQueueCommand();
@@ -202,7 +210,7 @@ class Gatt extends events_1.default.EventEmitter {
             while (this._commandQueue.length) {
                 this._currentCommand = this._commandQueue.shift();
                 if (this._currentCommand.type === "encrypt") {
-                    this._aclStream.encrypt();
+                    this._aclStream.encrypt(this._currentCommand.keys);
                 }
                 else {
                     this.writeAtt(this._currentCommand.buffer);

@@ -8809,8 +8809,10 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
         return results;
     }
-    pairing() {
-        this.obnizBle.centralBindings.pairing(this.address);
+    pairing(keys) {
+        return new Promise((resolve) => {
+            this.obnizBle.centralBindings.pairing(this.address, keys, resolve);
+        });
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {
@@ -9954,8 +9956,19 @@ class AclStream extends events_1.default.EventEmitter {
         this._smp.on("fail", this.onSmpFailBinded);
         this._smp.on("end", this.onSmpEndBinded);
     }
-    encrypt() {
-        this._smp.sendPairingRequest();
+    encrypt(keys) {
+        if (keys && keys.stk) {
+            console.error("skip pairing");
+            this._smp._preq = keys.preq;
+            this._smp._pres = keys.pres;
+            this._smp._tk = keys.tk;
+            this._smp._r = keys.r;
+            this._smp._pcnf = keys.pcnf;
+            this.onSmpStk(keys.stk);
+        }
+        else {
+            this._smp.sendPairingRequest();
+        }
     }
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
@@ -10443,11 +10456,11 @@ class NobleBindings extends events_1.default.EventEmitter {
     onConnectionParameterUpdateRequest(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         this._hci.connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout);
     }
-    pairing(peripheralUuid) {
+    pairing(peripheralUuid, keys, callback) {
         const handle = this._handles[peripheralUuid];
         const gatt = this._gatts[handle];
         if (gatt) {
-            gatt.encrypt();
+            gatt.encrypt(callback, keys);
         }
         else {
             console.warn("noble warning: unknown peripheral " + peripheralUuid);
@@ -11116,7 +11129,14 @@ class Gatt extends events_1.default.EventEmitter {
             this._security = "medium";
             if (this._currentCommand.type === "encrypt") {
                 if (this._currentCommand.callback) {
-                    this._currentCommand.callback();
+                    this._currentCommand.callback({
+                        stk: this._aclStream._smp._stk,
+                        preq: this._aclStream._smp._preq,
+                        pres: this._aclStream._smp._pres,
+                        tk: this._aclStream._smp._tk,
+                        r: this._aclStream._smp._r,
+                        pcnf: this._aclStream._smp._pcnf,
+                    });
                 }
                 this._currentCommand = null;
                 this._runQueueCommand();
@@ -11126,9 +11146,10 @@ class Gatt extends events_1.default.EventEmitter {
             }
         }
     }
-    encrypt(callback) {
+    encrypt(callback, keys) {
         this._commandQueue.push({
             type: "encrypt",
+            keys,
             callback,
         });
         this._runQueueCommand();
@@ -11165,7 +11186,7 @@ class Gatt extends events_1.default.EventEmitter {
             while (this._commandQueue.length) {
                 this._currentCommand = this._commandQueue.shift();
                 if (this._currentCommand.type === "encrypt") {
-                    this._aclStream.encrypt();
+                    this._aclStream.encrypt(this._currentCommand.keys);
                 }
                 else {
                     this.writeAtt(this._currentCommand.buffer);
@@ -11788,6 +11809,7 @@ var SMP;
 class Smp extends events_1.default.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
+        this._stk = null;
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(localAddress
@@ -11865,8 +11887,11 @@ class Smp extends events_1.default.EventEmitter {
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
-            const stk = crypto_1.default.s1(this._tk, r, this._r);
-            this.emit("stk", stk);
+            if (this._stk !== null) {
+                console.error("second stk");
+            }
+            this._stk = crypto_1.default.s1(this._tk, r, this._r);
+            this.emit("stk", this._stk);
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));

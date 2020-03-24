@@ -12,6 +12,7 @@ import AclStream from "./acl-stream";
 import Gap from "./gap";
 import Gatt from "./gatt";
 import Signaling from "./signaling";
+
 /**
  * @ignore
  */
@@ -585,12 +586,12 @@ class NobleBindings extends events.EventEmitter {
     this._hci.connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout);
   }
 
-  public pairing(peripheralUuid: any) {
+  public pairing(peripheralUuid: any, keys?: any, callback?: any) {
     const handle: any = this._handles[peripheralUuid];
     const gatt: any = this._gatts[handle];
 
     if (gatt) {
-      gatt.encrypt();
+      gatt.encrypt(callback, keys);
     } else {
       console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }

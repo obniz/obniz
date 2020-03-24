@@ -38,6 +38,8 @@ class Smp extends events.EventEmitter {
   public _r: any;
   public _pcnf: any;
 
+  public _stk: any = null;
+
   constructor(aclStream: any, localAddressType: any, localAddress: any, remoteAddressType: any, remoteAddress: any) {
     super();
     this._aclStream = aclStream;
@@ -138,9 +140,12 @@ class Smp extends events.EventEmitter {
     ]);
 
     if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
-      const stk: any = crypto.s1(this._tk, r, this._r);
+      if (this._stk !== null) {
+        console.error("second stk");
+      }
+      this._stk = crypto.s1(this._tk, r, this._r);
 
-      this.emit("stk", stk);
+      this.emit("stk", this._stk);
     } else {
       this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
 
