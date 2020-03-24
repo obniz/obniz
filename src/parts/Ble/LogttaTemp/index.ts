@@ -3,9 +3,8 @@
  * @module Parts.Logtta_TH
  */
 
-import Obniz from "../../../obniz";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface Logtta_THOptions {}
 
@@ -13,11 +12,15 @@ export interface Logtta_TH_Data {
   temperature: number;
   humidity: number;
 }
-export default class Logtta_TH implements ObnizPartsInterface {
-  public static info(): ObnizPartsInfo {
+export default class Logtta_TH implements ObnizPartsBleInterface {
+  public static info(): ObnizPartsBleInfo {
     return {
       name: "Logtta_TH",
     };
+  }
+
+  public static isDevice(peripheral: BleRemotePeripheral) {
+    return peripheral.localName === "TH Sensor";
   }
 
   private static get_uuid(uuid: string): string {
@@ -25,82 +28,37 @@ export default class Logtta_TH implements ObnizPartsInterface {
   }
 
   public onNotify?: (data: Logtta_TH_Data) => void;
-  public keys: string[];
-  public requiredKeys: string[];
-  public periperal: bleRemotePeripheral | null;
-  public obniz!: Obniz;
-  public params: any;
+  public _peripheral: null | BleRemotePeripheral;
 
-  constructor() {
-    this.keys = [];
-    this.requiredKeys = [];
-    this.periperal = null;
-  }
-
-  public wired(obniz: Obniz) {
-    this.obniz = obniz;
-  }
-
-  public async findWait(): Promise<any> {
-    const target: any = {
-      localName: "TH Sensor",
-    };
-
-    await this.obniz.ble!.initWait();
-    this.periperal = await this.obniz.ble!.scan.startOneWait(target);
-
-    return this.periperal;
-  }
-
-  public async findListWait(): Promise<bleRemotePeripheral[]> {
-    const target: any = {
-      localName: "TH Sensor",
-    };
-
-    await this.obniz.ble!.initWait();
-
-    return await this.obniz.ble!.scan.startAllWait(target);
-  }
-
-  public async directConnectWait(address: string): Promise<boolean> {
-    try {
-      this.periperal = await this.obniz.ble!.scan.directConnectWait(address, "public");
-    } catch (e) {
-      return false;
+  constructor(peripheral: BleRemotePeripheral | null) {
+    if (peripheral && !Logtta_TH.isDevice(peripheral)) {
+      throw new Error("peripheral is not logtta TH");
     }
-    return true;
+    this._peripheral = peripheral;
   }
 
-  public async connectWait(): Promise<boolean> {
-    if (!this.periperal) {
-      await this.findWait();
-    }
-    if (!this.periperal) {
+  public async connectWait() {
+    if (!this._peripheral) {
       throw new Error("Logtta TH not found");
     }
-    if (!this.periperal.connected) {
-      try {
-        await this.periperal.connectWait();
-      } catch (e) {
-        return false;
-      }
+    if (!this._peripheral.connected) {
+      await this._peripheral.connectWait();
     }
-    return true;
   }
 
   public async disconnectWait() {
-    if (this.periperal && this.periperal.connected) {
-      await this.periperal.disconnectWait();
+    if (this._peripheral && this._peripheral.connected) {
+      await this._peripheral.disconnectWait();
     }
   }
 
-  public async getAllWait(): Promise<Logtta_TH_Data> {
-    if (!(await this.connectWait())) {
-      return { temperature: -1, humidity: -1 };
+  public async getAllWait(): Promise<Logtta_TH_Data | null> {
+    if (!(this._peripheral && this._peripheral.connected)) {
+      return null;
     }
 
-    const c = this.periperal!.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
-    const data: number[] = await c.readWait();
+    const c = this._peripheral!.getService(Logtta_TH.get_uuid("AA20"))!.getCharacteristic(Logtta_TH.get_uuid("AA21"));
+    const data: number[] = await c!.readWait();
     return {
       temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
       humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
@@ -108,23 +66,22 @@ export default class Logtta_TH implements ObnizPartsInterface {
   }
 
   public async getTemperatureWait(): Promise<number> {
-    return (await this.getAllWait()).temperature;
+    return (await this.getAllWait())!.temperature;
   }
 
   public async getHumidityWait(): Promise<number> {
-    return (await this.getAllWait()).humidity;
+    return (await this.getAllWait())!.humidity;
   }
 
   public async startNotifyWait() {
-    if (!(await this.connectWait())) {
+    if (!(this._peripheral && this._peripheral.connected)) {
       return;
     }
 
-    const c = this.periperal!.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+    const c = this._peripheral!.getService(Logtta_TH.get_uuid("AA20"))!.getCharacteristic(Logtta_TH.get_uuid("AA21"));
 
-    await c.registerNotifyWait((data: number[]) => {
+    await c!.registerNotifyWait((data: number[]) => {
       if (this.onNotify) {
-        console.log("data arrive", data);
         this.onNotify({
           temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
           humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,

@@ -23645,73 +23645,41 @@ exports.default = ENERTALK_TOUCH;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_AD {
-    constructor() {
-        this.keys = [];
-        this.requiredKeys = [];
-        this.periperal = null;
+    constructor(peripheral) {
+        if (peripheral && !Logtta_AD.isDevice(peripheral)) {
+            throw new Error("peripheral is not logtta AD");
+        }
+        this._peripheral = peripheral;
     }
     static info() {
         return {
             name: "Logtta_AD",
         };
     }
+    static isDevice(peripheral) {
+        return peripheral.localName === "Analog";
+    }
     static get_uuid(uuid) {
         return `4e43${uuid}-6687-4f3c-a1c3-1c327583f29d`;
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    async findWait() {
-        const target = {
-            localName: "Analog",
-        };
-        await this.obniz.ble.initWait();
-        this.periperal = await this.obniz.ble.scan.startOneWait(target);
-        return this.periperal;
-    }
-    async findListWait() {
-        const target = {
-            localName: "TH Sensor",
-        };
-        await this.obniz.ble.initWait();
-        return await this.obniz.ble.scan.startAllWait(target);
-    }
-    async directConnectWait(address) {
-        try {
-            this.periperal = await this.obniz.ble.scan.directConnectWait(address, "public");
-        }
-        catch (e) {
-            return false;
-        }
-        return true;
-    }
     async connectWait() {
-        if (!this.periperal) {
-            await this.findWait();
-        }
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("Logtta AD not found");
         }
-        if (!this.periperal.connected) {
-            try {
-                await this.periperal.connectWait();
-            }
-            catch (e) {
-                return false;
-            }
+        if (!this._peripheral.connected) {
+            await this._peripheral.connectWait();
         }
-        return true;
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            await this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     async getAllWait() {
-        if (!(await this.connectWait())) {
-            return { ampere: -1, volt: -1, count: -1 };
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return null;
         }
-        const c = this.periperal.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+        const c = this._peripheral.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
         const data = await c.readWait();
         return {
             ampere: (((data[0] << 8) | data[1]) * 916) / 16,
@@ -23729,10 +23697,10 @@ class Logtta_AD {
         return (await this.getAllWait()).count;
     }
     async startNotifyWait() {
-        if (!(await this.connectWait())) {
+        if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this.periperal.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+        const c = this._peripheral.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify({
@@ -23890,81 +23858,49 @@ Logtta_Accel.deviceAdv = [
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_CO2 {
-    constructor() {
-        this.keys = [];
-        this.requiredKeys = [];
-        this.periperal = null;
+    constructor(peripheral) {
+        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
+            throw new Error("peripheral is not Logtta CO2");
+        }
+        this._peripheral = peripheral;
     }
     static info() {
         return {
             name: "Logtta_CO2",
         };
     }
+    static isDevice(peripheral) {
+        return peripheral.localName === "CO2 Sensor";
+    }
     static get_uuid(uuid) {
         return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    async findWait() {
-        const target = {
-            localName: "CO2 Sensor",
-        };
-        await this.obniz.ble.initWait();
-        this.periperal = await this.obniz.ble.scan.startOneWait(target);
-        return this.periperal;
-    }
-    async findListWait() {
-        const target = {
-            localName: "TH Sensor",
-        };
-        await this.obniz.ble.initWait();
-        return await this.obniz.ble.scan.startAllWait(target);
-    }
-    async directConnectWait(address) {
-        try {
-            this.periperal = await this.obniz.ble.scan.directConnectWait(address, "public");
-        }
-        catch (e) {
-            return false;
-        }
-        return true;
-    }
     async connectWait() {
-        if (!this.periperal) {
-            await this.findWait();
-        }
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("Logtta CO2 not found");
         }
-        if (!this.periperal.connected) {
-            try {
-                await this.periperal.connectWait();
-            }
-            catch (e) {
-                return false;
-            }
+        if (!this._peripheral.connected) {
+            await this._peripheral.connectWait();
         }
-        return true;
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            await this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     async getWait() {
-        if (!(await this.connectWait())) {
-            return -1;
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return null;
         }
-        const c = this.periperal.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
         const data = await c.readWait();
         return data[0] * 256 + data[1];
     }
     async startNotifyWait() {
-        if (!(await this.connectWait())) {
+        if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this.periperal.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
                 this.onNotify(data[0] * 256 + data[1]);
@@ -23990,73 +23926,41 @@ exports.default = Logtta_CO2;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_TH {
-    constructor() {
-        this.keys = [];
-        this.requiredKeys = [];
-        this.periperal = null;
+    constructor(peripheral) {
+        if (peripheral && !Logtta_TH.isDevice(peripheral)) {
+            throw new Error("peripheral is not logtta TH");
+        }
+        this._peripheral = peripheral;
     }
     static info() {
         return {
             name: "Logtta_TH",
         };
     }
+    static isDevice(peripheral) {
+        return peripheral.localName === "TH Sensor";
+    }
     static get_uuid(uuid) {
         return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
     }
-    wired(obniz) {
-        this.obniz = obniz;
-    }
-    async findWait() {
-        const target = {
-            localName: "TH Sensor",
-        };
-        await this.obniz.ble.initWait();
-        this.periperal = await this.obniz.ble.scan.startOneWait(target);
-        return this.periperal;
-    }
-    async findListWait() {
-        const target = {
-            localName: "TH Sensor",
-        };
-        await this.obniz.ble.initWait();
-        return await this.obniz.ble.scan.startAllWait(target);
-    }
-    async directConnectWait(address) {
-        try {
-            this.periperal = await this.obniz.ble.scan.directConnectWait(address, "public");
-        }
-        catch (e) {
-            return false;
-        }
-        return true;
-    }
     async connectWait() {
-        if (!this.periperal) {
-            await this.findWait();
-        }
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("Logtta TH not found");
         }
-        if (!this.periperal.connected) {
-            try {
-                await this.periperal.connectWait();
-            }
-            catch (e) {
-                return false;
-            }
+        if (!this._peripheral.connected) {
+            await this._peripheral.connectWait();
         }
-        return true;
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            await this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     async getAllWait() {
-        if (!(await this.connectWait())) {
-            return { temperature: -1, humidity: -1 };
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return null;
         }
-        const c = this.periperal.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
         const data = await c.readWait();
         return {
             temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
@@ -24070,13 +23974,12 @@ class Logtta_TH {
         return (await this.getAllWait()).humidity;
     }
     async startNotifyWait() {
-        if (!(await this.connectWait())) {
+        if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const c = this.periperal.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
         await c.registerNotifyWait((data) => {
             if (this.onNotify) {
-                console.log("data arrive", data);
                 this.onNotify({
                     temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
                     humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,

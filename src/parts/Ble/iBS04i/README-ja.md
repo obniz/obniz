@@ -34,7 +34,7 @@ obniz.ble.scan.onfind = (p) => {
 
 ## getData(BleRemotePeripheral)
 
-Returns device information if found. Returns Null if not found.
+発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : バッテリの電圧
 - button : Button を押したとき true

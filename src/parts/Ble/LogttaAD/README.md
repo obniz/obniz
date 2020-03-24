@@ -4,111 +4,140 @@ Look for Logtta AD and get the data.
 ![](image.jpg)
 
 
-## wired(obniz)
 
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 ```
 
+## isDevice(BleRemotePeripheral)
 
-
-## [await] findWait()
-
-Search device and return obniz.ble.peripheral object.
-If not found, return null.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-let results = await logtta.findWait();
-
-if(results){
-  console.log("find");
-}else{
-  console.log("not find");
-}
-```
-
-## connectWait()
-
-Connect to the device.
-Search device automatically.
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-let results = await logtta.findWait();
-
-if(results){
-    console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-    }else{
-        console.log("Failure");
-        return;
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA_AD.isDevice(p)) {
+        let data = LOGTTA_AD.getData(p);
+        console.log(data);
     }
-}else{
-    console.log("not find");
-}
+};
 ```
 
-##  [await]findListWait()
+## new LOGTTA_AD(peripheral)
 
-Search devices and return obniz.ble.peripheral objects.
+Create an instance based on the advertisement information received by BLE.
 
 ```javascript
 // Javascript Example
-const logtta = obniz.wired("Logtta_AD");
-const list = await logtta.findListWait()
-console.log(list);
-if(list.length >= 1){
-    await logtta.directConnectWait(list[0].address);
-    const data = await logtta.getAllWait();
-    console.log(`AD get volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
-}
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral) ) {
+    console.log("device find");
+    const device = new LOGTTA_AD(peripheral);
+  }
+};
+
 ```
 
 
-##  [await]directConnectWait(address)
+## [await]connectWait()
 
 Connect to the device.
 
 ```javascript
 // Javascript Example
-const logtta = obniz.wired("Logtta_AD");
-const list = await logtta.findListWait()
-console.log(list);
-if(list.length >= 1){
-    await logtta.directConnectWait(list[0].address);
-    const data = await logtta.getAllWait();
-    console.log(`AD get volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
-}
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+  }
+};
+
 ```
+
+
 ## [await]disconnectWait()
-Disconnect from device.
+
+Disonnect to the device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral) ) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.disconnectWait();
+    console.log("disconnected");
+  }
+};
+
+```
+
+
+## onNotify =  function (data){}
+
+When data is received, return the data in a callback function.
+
+Called every time data comes from the device after starting `` startNotifyWait () ``.
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (data) => {
+        console.log( `ampere:${data.ampere} volt:${data.volt} count:${data.count}` );
+    };
+    device.startNotifyWait();
+  }
+};
+```
+
+## startNotifyWait()
+
+Instructs to start sending sensor data.
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (data) => {
+        console.log( `ampere:${data.ampere} volt:${data.volt} count:${data.count}` );
+    };
+    device.startNotifyWait();
+  }
+};
 ```
 
 
@@ -117,24 +146,20 @@ Get All Data from device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const data = await logtta.getAllWait();
-        console.log(`AD get volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getAllWait();
+    console.log(`AD get volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
+  }
+};
 ```
 
 
@@ -153,24 +178,20 @@ Get Ampere Data from device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const data = await logtta.getAmpereWait();
-        console.log(`AD data ${data}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getAmpereWait();
+    console.log(`AD data ${data}`);
+  }
+};
 ```
 
 
@@ -179,24 +200,20 @@ Get Volt Data from device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const data = await logtta.getVoltWait();
-        console.log(`AD data ${data}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getVoltWait();
+    console.log(`AD data ${data}`);
+  }
+};
 ```
 
 
@@ -205,48 +222,18 @@ Get count Data from device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const data = await logtta.getCountWait();
-        console.log(`AD data ${data}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
-```
-
-## [await]startNotifyWait()
-Get Notify Data from device.
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_AD');
-let results = await logtta.findWait();
-
-if(results){
-    console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        logtta.onNotify = (data => {
-                    console.log(`AD notify volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
-                });
-        await logtta.startNotifyWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getCountWait();
+    console.log(`AD data ${data}`);
+  }
+};
 ```

@@ -71,7 +71,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 ## [await]disconnectWait()
-センサから切断します
+デバイスから切断します
 
 ```javascript
 // Javascript Example

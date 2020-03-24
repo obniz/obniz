@@ -4,162 +4,159 @@ Look for Logtta CO2 and get the data.
 ![](image.jpg)
 
 
-## wired(obniz)
 
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_CO2');
-
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 ```
 
+## isDevice(BleRemotePeripheral)
 
-
-## [await] findWait()
-
-Search device and return obniz.ble.peripheral object.
-If not found, return null.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_CO2');
-let results = await logtta.findWait();
-
-if(results){
-  console.log("find");
-}else{
-  console.log("not find");
-}
-```
-
-## connectWait()
-
-Connect to the device.
-Search device automatically.
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_CO2');
-let results = await logtta.findWait();
-
-if(results){
-    console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-    }else{
-        console.log("Failure");
-        return;
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA_CO2.isDevice(p)) {
+        console.log("find");
     }
-}else{
-    console.log("not find");
-}
+};
 ```
 
-##  [await]findListWait()
+## new Logtta_CO2(peripheral)
 
-Search devices and return obniz.ble.peripheral objects.
+Create an instance based on the advertisement information received by BLE.
 
 ```javascript
 // Javascript Example
-const logtta = obniz.wired("Logtta_CO2");
-const list = await logtta.findListWait()
-console.log(list);
-if(list.length >= 1){
-    await logtta.directConnectWait(list[0].address);
-    const co2 = await logtta.getWait();
-    console.log(`CO2 get ${co2} ppm`);
-}
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral) ) {
+    console.log("device find");
+    const device = new LOGTTA_CO2(peripheral);
+  }
+};
+
 ```
 
 
-##  [await]directConnectWait(address)
+## [await]connectWait()
 
 Connect to the device.
 
 ```javascript
 // Javascript Example
-const logtta = obniz.wired("Logtta_CO2");
-const list = await logtta.findListWait()
-console.log(list);
-if(list.length >= 1){
-    await logtta.directConnectWait(list[0].address);
-    const co2 = await logtta.getWait();
-    console.log(`CO2 get ${co2} ppm`);
-}
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+  }
+};
+
 ```
+
 
 ## [await]disconnectWait()
-Disconnect from device.
+
+Disonnect to the device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_CO2');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral) ) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.disconnectWait();
+    console.log("disconnected");
+  }
+};
+
+```
+
+
+## onNotify =  function (data){}
+
+When data is received, return the data in a callback function.
+
+Called every time data comes from the device after starting `` startNotifyWait () ``.
+
+```javascript
+// Javascript Example
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+        device.onNotify = (co2) => {
+            console.log(`CO2 ${co2}ppm`);
+        };
+    device.startNotifyWait();
+  }
+};
+```
+
+## startNotifyWait()
+
+Instructs to start sending sensor data.
+
+```javascript
+// Javascript Example
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (co2) => {
+        console.log(`CO2 ${co2}ppm`);
+    };
+    device.startNotifyWait();
+  }
+};
 ```
 
 
 ## [await]getWait()
-Get CO2 Data from device.
+Get Data from device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_CO2');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const co2 = await logtta.getWait();
-        console.log(`CO2 get ${co2} ppm`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
-```
-
-## [await]startNotifyWait()
-Get Notify Data from device.
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_CO2');
-let results = await logtta.findWait();
-
-if(results){
-    console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        logtta.onNotify = (co2 => {
-                    console.log(`CO2 notify ${co2} ppm`);
-                });
-        await logtta.startNotifyWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const co2 = await device.getWait();
+    console.log(`CO2 ${co2}ppm`);
+  }
+};
 ```

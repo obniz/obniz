@@ -5,7 +5,8 @@
 
 import Obniz from "../../../obniz";
 import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface Logtta_ADOptions {}
 
@@ -14,11 +15,15 @@ export interface Logtta_AD_Data {
   volt: number;
   count: number;
 }
-export default class Logtta_AD implements ObnizPartsInterface {
-  public static info(): ObnizPartsInfo {
+export default class Logtta_AD implements ObnizPartsBleInterface {
+  public static info(): ObnizPartsBleInfo {
     return {
       name: "Logtta_AD",
     };
+  }
+
+  public static isDevice(peripheral: BleRemotePeripheral) {
+    return peripheral.localName === "Analog";
   }
 
   private static get_uuid(uuid: string): string {
@@ -26,82 +31,37 @@ export default class Logtta_AD implements ObnizPartsInterface {
   }
 
   public onNotify?: (data: Logtta_AD_Data) => void;
-  public keys: string[];
-  public requiredKeys: string[];
-  public periperal: bleRemotePeripheral | null;
-  public obniz!: Obniz;
-  public params: any;
+  public _peripheral: null | BleRemotePeripheral;
 
-  constructor() {
-    this.keys = [];
-    this.requiredKeys = [];
-    this.periperal = null;
-  }
-
-  public wired(obniz: Obniz) {
-    this.obniz = obniz;
-  }
-
-  public async findWait(): Promise<any> {
-    const target: any = {
-      localName: "Analog",
-    };
-
-    await this.obniz.ble!.initWait();
-    this.periperal = await this.obniz.ble!.scan.startOneWait(target);
-
-    return this.periperal;
-  }
-
-  public async findListWait(): Promise<bleRemotePeripheral[]> {
-    const target: any = {
-      localName: "TH Sensor",
-    };
-
-    await this.obniz.ble!.initWait();
-
-    return await this.obniz.ble!.scan.startAllWait(target);
-  }
-
-  public async directConnectWait(address: string): Promise<boolean> {
-    try {
-      this.periperal = await this.obniz.ble!.scan.directConnectWait(address, "public");
-    } catch (e) {
-      return false;
+  constructor(peripheral: BleRemotePeripheral | null) {
+    if (peripheral && !Logtta_AD.isDevice(peripheral)) {
+      throw new Error("peripheral is not logtta AD");
     }
-    return true;
+    this._peripheral = peripheral;
   }
 
-  public async connectWait(): Promise<boolean> {
-    if (!this.periperal) {
-      await this.findWait();
-    }
-    if (!this.periperal) {
+  public async connectWait() {
+    if (!this._peripheral) {
       throw new Error("Logtta AD not found");
     }
-    if (!this.periperal.connected) {
-      try {
-        await this.periperal.connectWait();
-      } catch (e) {
-        return false;
-      }
+    if (!this._peripheral.connected) {
+      await this._peripheral.connectWait();
     }
-    return true;
   }
 
   public async disconnectWait() {
-    if (this.periperal && this.periperal.connected) {
-      await this.periperal.disconnectWait();
+    if (this._peripheral && this._peripheral.connected) {
+      await this._peripheral.disconnectWait();
     }
   }
 
-  public async getAllWait(): Promise<Logtta_AD_Data> {
-    if (!(await this.connectWait())) {
-      return { ampere: -1, volt: -1, count: -1 };
+  public async getAllWait(): Promise<Logtta_AD_Data | null> {
+    if (!(this._peripheral && this._peripheral.connected)) {
+      return null;
     }
 
-    const c = this.periperal!.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
-    const data: number[] = await c.readWait();
+    const c = this._peripheral!.getService(Logtta_AD.get_uuid("AE20"))!.getCharacteristic(Logtta_AD.get_uuid("AE21"));
+    const data: number[] = await c!.readWait();
     return {
       ampere: (((data[0] << 8) | data[1]) * 916) / 16,
       volt: (((data[0] << 8) | data[1]) * 916) / 4,
@@ -110,25 +70,25 @@ export default class Logtta_AD implements ObnizPartsInterface {
   }
 
   public async getAmpereWait(): Promise<number> {
-    return (await this.getAllWait()).ampere;
+    return (await this.getAllWait())!.ampere;
   }
 
   public async getVoltWait(): Promise<number> {
-    return (await this.getAllWait()).volt;
+    return (await this.getAllWait())!.volt;
   }
 
   public async getCountWait(): Promise<number> {
-    return (await this.getAllWait()).count;
+    return (await this.getAllWait())!.count;
   }
 
   public async startNotifyWait() {
-    if (!(await this.connectWait())) {
+    if (!(this._peripheral && this._peripheral.connected)) {
       return;
     }
 
-    const c = this.periperal!.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+    const c = this._peripheral!.getService(Logtta_AD.get_uuid("AE20"))!.getCharacteristic(Logtta_AD.get_uuid("AE21"));
 
-    await c.registerNotifyWait((data: number[]) => {
+    await c!.registerNotifyWait((data: number[]) => {
       if (this.onNotify) {
         this.onNotify({
           ampere: (16 / 916) * ((data[0] << 8) | data[1]),

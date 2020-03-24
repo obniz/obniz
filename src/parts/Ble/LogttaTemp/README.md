@@ -1,229 +1,219 @@
-# Logtta Temp
-Look for Logtta Temp and get the data.
-
-support device.
-
-- Logtta 
-- Logtta Cable 
-- Logtta WR 
+# Logtta TH
+Look for Logtta TH and get the data.
 
 ![](image.jpg)
 
 
-## wired(obniz)
+
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 ```
 
-## [await] findWait()
+## isDevice(BleRemotePeripheral)
 
-Search device and return obniz.ble.peripheral object.
-If not found, return null.
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
-  console.log("find");
-}else{
-  console.log("not find");
-}
-```
-
-## [await] connectWait()
-
-Connect to the device.
-Search device automatically.
+Returns true if a device was found.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
-    console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-    }else{
-        console.log("Failure");
-        return;
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (Logtta_TH.isDevice(p)) {
+        console.log("find");
     }
-}else{
-    console.log("not find");
-}
+};
 ```
 
-##  [await]findListWait()
+## new Logtta_TH(peripheral)
 
-Search devices and return obniz.ble.peripheral objects.
+Create an instance based on the advertisement information received by BLE.
 
 ```javascript
 // Javascript Example
-const logtta = obniz.wired("Logtta_TH");
-const list = await logtta.findListWait()
-console.log(list);
-if(list.length >= 1){
-    await logtta.directConnectWait(list[0].address);
-    const data = await logtta.getAllWait();
-    console.log(`TH get temp ${data.temperature} humid ${data.humidity}`);
-}
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral) ) {
+    console.log("device find");
+    const device = new Logtta_TH(peripheral);
+  }
+};
+
 ```
 
 
-##  [await]directConnectWait(address)
+## [await]connectWait()
 
 Connect to the device.
 
 ```javascript
 // Javascript Example
-const logtta = obniz.wired("Logtta_TH");
-const list = await logtta.findListWait()
-console.log(list);
-if(list.length >= 1){
-    await logtta.directConnectWait(list[0].address);
-    const data = await logtta.getAllWait();
-    console.log(`TH get temp ${data.temperature} humid ${data.humidity}`);
-}
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral)) {
+    console.log("find");
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+  }
+};
+
 ```
+
 
 ## [await]disconnectWait()
-Disconnect from device.
+
+Disonnect to the device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral) ) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.disconnectWait();
+    console.log("disconnected");
+  }
+};
+
+```
+
+
+## onNotify =  function (data){}
+
+When data is received, return the data in a callback function.
+
+Called every time data comes from the device after starting `` startNotifyWait () ``.
+
+```javascript
+// Javascript Example
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral)) {
+    console.log("find");
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (data) => {
+        console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
+    };
+    device.startNotifyWait();
+  }
+};
+```
+
+## startNotifyWait()
+
+Instructs to start sending sensor data.
+
+```javascript
+// Javascript Example
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral)) {
+    console.log("find");
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (data) => {
+        console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
+    };
+    device.startNotifyWait();
+  }
+};
 ```
 
 
 ## [await]getAllWait()
+
 Get All Data from device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const data = await logtta.getAllWait();
-        console.log(`TH get temperature ${data.temperature} humidity ${data.humidity}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getAllWait();
+    console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
+  }
+};
 ```
 
-
 The format is below.
+
 ```json
 // example response
 {
-  "temperature": 20, // ℃
-  "humidity": 30     //　%
+  "temperature": 20,
+  "humidity": 30, 
 }
 ```
 
 ## [await]getTemperatureWait()
-Get Temperature Data from device.
+
+Get temperature Data from device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const temp = await logtta.getTemperatureWait();
-        console.log(`TH data ${temp}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const temperature = await device.getTemperatureWait();
+    console.log(`temperature ${temperature}`);
+  }
+};
 ```
 
 
 ## [await]getHumidityWait()
-Get Humidity Data from device.
+
+Get humidity Data from device.
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const humid = await logtta.getHumidityWait();
-        console.log(`TH data ${humid}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const humidity = await device.getHumidityWait();
+    console.log(`humidity ${humidity}`);
+  }
+};
 ```
 
-
-## [await]startNotifyWait()
-Get Notify Data from device.
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
-    console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        logtta.onNotify = (data => {
-                    console.log(`TH notify temperature ${data.temperature} humidity ${data.humidity}`);
-                });
-        await logtta.startNotifyWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
-```

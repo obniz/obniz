@@ -1,98 +1,73 @@
-# Logtta Temp
-Logttaの温湿度センサーを搭載したデバイスを検索し、データを取得します。
+# Logtta TH
 
-次のデバイスをサポートしています。
-
-- Logtta 
-- Logtta Cable 
-- Logtta WR 
+Logtta TH からデータを取得します。
 
 ![](image.jpg)
 
 
-## wired(obniz)
+
+## getPartsClass(name)
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 ```
 
-## [await] findWait()
+## isDevice(BleRemotePeripheral)
 
-デバイスをスキャンし、obniz.ble.peripheralを返します。
-スキャンでみつけられない場合、Nullを返します。
-
-```javascript
-// Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
-  console.log("find");
-}else{
-  console.log("not find");
-}
-```
-
-##  [await]connectWait()
-
-
-デバイスに接続します。
-デバイスを見つけていなかった場合、自動的にスキャンを行います。
-
-接続に成功した場合trueを返します。
+デバイスを見つけたらtrueを返します。
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
-    console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-    }else{
-        console.log("Failure");
-        return;
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (Logtta_TH.isDevice(p)) {
+        console.log("find");
     }
-}else{
-    console.log("not find");
-}
+};
 ```
 
-##  [await]findListWait()
+## new Logtta_TH(peripheral)
 
-デバイスのスキャンを行い、周囲にあるデバイスのリストを作成します。
+アドバタイズ情報からインスタンスを生成します。
 
 ```javascript
 // Javascript Example
-const logtta = obniz.wired("Logtta_TH");
-const list = await logtta.findListWait()
-console.log(list);
-if(list.length >= 1){
-    await logtta.directConnectWait(list[0].address);
-    const data = await logtta.getAllWait();
-    console.log(`TH get temp ${data.temperature} humid ${data.humidity}`);
-}
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral) ) {
+    console.log("device find");
+    const device = new Logtta_TH(peripheral);
+  }
+};
+
 ```
 
 
-##  [await]directConnectWait(address)
+## [await]connectWait()
 
-macアドレスで指定したデバイスに接続を行います。
+デバイスと接続します。
 
 ```javascript
 // Javascript Example
-const logtta = obniz.wired("Logtta_TH");
-const list = await logtta.findListWait()
-console.log(list);
-if(list.length >= 1){
-    await logtta.directConnectWait(list[0].address);
-    const data = await logtta.getAllWait();
-    console.log(`TH get temp ${data.temperature} humid ${data.humidity}`);
-}
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral)) {
+    console.log("find");
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+  }
+};
+
 ```
+
 
 ## [await]disconnectWait()
 
@@ -100,22 +75,292 @@ if(list.length >= 1){
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral) ) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.disconnectWait();
+    console.log("disconnected");
+  }
+};
+
+```
+
+
+## onNotify =  function (data){}
+
+データを受信したら、そのデータをコールバック関数で返します。
+
+``startNotifyWait()``を開始した後にデバイスからデータが来るたびに呼び出されます。
+
+```javascript
+// Javascript Example
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral)) {
+    console.log("find");
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (data) => {
+        console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
+    };
+    device.startNotifyWait();
+  }
+};
+```
+
+## startNotifyWait()
+
+Notifyを開始します。
+
+```javascript
+// Javascript Example
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral)) {
+    console.log("find");
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (data) => {
+        console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
+    };
+    device.startNotifyWait();
+  }
+};
+```
+
+
+## [await]getAllWait()
+
+デバイスで取得できるすべての情報を取得します。
+
+```javascript
+// Javascript Example
+const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_TH.isDevice(peripheral)) {
+    console.log("find");
+    const device = new Logtta_TH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getAllWait();
+    console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
+  }
+};
+```
+
+データフォーマットは次の通りです。
+
+```json
+// example response
+{
+  "temperature": 20,
+  "humidity": 30, 
 }
+```
+
+## [await]getTemperatureWait()
+
+デバイスから温度データを取得できます。
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const temperature = await device.getTemperatureWait();
+    console.log(`temperature ${temperature}`);
+  }
+};
+```
+
+
+## [await]getHumidityWait()
+
+デバイスから湿度データを取得できます。
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const humidity = await device.getHumidityWait();
+    console.log(`humidity ${humidity}`);
+  }
+};
+```
+
+
+
+# Logtta AD
+Logtta AD を検索し、データを取得します。
+
+![](image.jpg)
+
+
+
+## getPartsClass(name)
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+```
+
+## isDevice(BleRemotePeripheral)
+
+デバイスを発見した場合、trueを返します。
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start(null, { duplicate: true, duration: null });
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA_AD.isDevice(p)) {
+        let data = LOGTTA_AD.getData(p);
+        console.log(data);
+    }
+};
+```
+
+## new LOGTTA_AD(peripheral)
+
+BLEが受信した広告情報に基づいてインスタンスを作成します。
+
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral) ) {
+    console.log("device find");
+    const device = new LOGTTA_AD(peripheral);
+  }
+};
+
+```
+
+
+## [await]connectWait()
+
+デバイスに接続します。
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+  }
+};
+
+```
+
+
+## [await]disconnectWait()
+
+デバイスとの接続を切断します。
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral) ) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.disconnectWait();
+    console.log("disconnected");
+  }
+};
+
+```
+
+
+## onNotify =  function (data){}
+
+データを受信したら、そのデータをコールバック関数で返します。
+
+``startNotifyWait()``を開始した後にデバイスからデータが来るたびに呼び出されます。
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (data) => {
+        console.log( `ampere:${data.ampere} volt:${data.volt} count:${data.count}` );
+    };
+    device.startNotifyWait();
+  }
+};
+```
+
+## startNotifyWait()
+
+センサーデータを送信を開始するように指示をします。
+
+```javascript
+// Javascript Example
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    device.onNotify = (data) => {
+        console.log( `ampere:${data.ampere} volt:${data.volt} count:${data.count}` );
+    };
+    device.startNotifyWait();
+  }
+};
 ```
 
 
@@ -125,24 +370,20 @@ if(results){
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const data = await logtta.getAllWait();
-        console.log(`TH get temperature ${data.temperature} humidity ${data.humidity}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getAllWait();
+    console.log(`AD get volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
+  }
+};
 ```
 
 取得できるデータフォーマットは次の通りです。
@@ -150,88 +391,80 @@ if(results){
 ```json
 // example response
 {
-  "temperature": 20, // ℃
-  "humidity": 30     //　%
+  "ampere": 5, // mA
+  "volt": 3,   // mV
+  "count": 10  // count
 }
 ```
 
-## [await]getTemperatureWait()
+## [await]getAmpereWait()
 
-デバイスから温度を取得します。
+デバイスから電流値を取得します。
+
+4mA - 20mAの間で取得できます。
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const temp = await logtta.getTemperatureWait();
-        console.log(`TH data ${temp}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getAmpereWait();
+    console.log(`AD data ${data}`);
+  }
+};
 ```
 
 
-## [await]getHumidityWait()
+## [await]getVoltWait()
 
-デバイスから湿度を取得します。
+デバイスから電圧値を取得します。
+
+1V - 5Vの間でデータを取得できます。
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        const humid = await logtta.getHumidityWait();
-        console.log(`TH data ${humid}`);
-        await logtta.disconnectWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getVoltWait();
+    console.log(`AD data ${data}`);
+  }
+};
 ```
 
 
-## [await]startNotifyWait()
+## [await]getCountWait()
 
-デバイスからNotifyでデータを取得できます。
+デバイスからカウント情報を取得できます。
 
 ```javascript
 // Javascript Example
-let logtta = obniz.wired('Logtta_TH');
-let results = await logtta.findWait();
-
-if(results){
+const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.start();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
-  
-    if(await logtta.connectWait()){
-        console.log("connected!");
-        logtta.onNotify = (data => {
-                    console.log(`TH notify temperature ${data.temperature} humidity ${data.humidity}`);
-                });
-        await logtta.startNotifyWait();
-    }else{
-        console.log("Failure");
-        return;
-    }
-}else{
-    console.log("not find");
-}
+    const device = new LOGTTA_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const data = await device.getCountWait();
+    console.log(`AD data ${data}`);
+  }
+};
 ```

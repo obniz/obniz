@@ -3,17 +3,20 @@
  * @module Parts.Logtta_CO2
  */
 
-import Obniz from "../../../obniz";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
+import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface Logtta_CO2Options {}
 
-export default class Logtta_CO2 implements ObnizPartsInterface {
-  public static info(): ObnizPartsInfo {
+export default class Logtta_CO2 implements ObnizPartsBleInterface {
+  public static info(): ObnizPartsBleInfo {
     return {
       name: "Logtta_CO2",
     };
+  }
+
+  public static isDevice(peripheral: BleRemotePeripheral) {
+    return peripheral.localName === "CO2 Sensor";
   }
 
   private static get_uuid(uuid: string): string {
@@ -21,93 +24,48 @@ export default class Logtta_CO2 implements ObnizPartsInterface {
   }
 
   public onNotify?: (co2: number) => void;
-  public keys: string[];
-  public requiredKeys: string[];
-  public periperal: bleRemotePeripheral | null;
-  public obniz!: Obniz;
-  public params: any;
+  public _peripheral: BleRemotePeripheral | null;
 
-  constructor() {
-    this.keys = [];
-    this.requiredKeys = [];
-    this.periperal = null;
-  }
-
-  public wired(obniz: Obniz) {
-    this.obniz = obniz;
-  }
-
-  public async findWait(): Promise<any> {
-    const target: any = {
-      localName: "CO2 Sensor",
-    };
-
-    await this.obniz.ble!.initWait();
-    this.periperal = await this.obniz.ble!.scan.startOneWait(target);
-
-    return this.periperal;
-  }
-
-  public async findListWait(): Promise<bleRemotePeripheral[]> {
-    const target: any = {
-      localName: "TH Sensor",
-    };
-
-    await this.obniz.ble!.initWait();
-
-    return await this.obniz.ble!.scan.startAllWait(target);
-  }
-
-  public async directConnectWait(address: string): Promise<boolean> {
-    try {
-      this.periperal = await this.obniz.ble!.scan.directConnectWait(address, "public");
-    } catch (e) {
-      return false;
+  constructor(peripheral: BleRemotePeripheral | null) {
+    if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
+      throw new Error("peripheral is not Logtta CO2");
     }
-    return true;
+    this._peripheral = peripheral;
   }
 
-  public async connectWait(): Promise<boolean> {
-    if (!this.periperal) {
-      await this.findWait();
-    }
-    if (!this.periperal) {
+  public async connectWait() {
+    if (!this._peripheral) {
       throw new Error("Logtta CO2 not found");
     }
-    if (!this.periperal.connected) {
-      try {
-        await this.periperal.connectWait();
-      } catch (e) {
-        return false;
-      }
+    if (!this._peripheral.connected) {
+      await this._peripheral.connectWait();
     }
-    return true;
   }
 
   public async disconnectWait() {
-    if (this.periperal && this.periperal.connected) {
-      await this.periperal.disconnectWait();
+    if (this._peripheral && this._peripheral.connected) {
+      await this._peripheral.disconnectWait();
     }
   }
 
-  public async getWait(): Promise<number> {
-    if (!(await this.connectWait())) {
-      return -1;
+  public async getWait(): Promise<number | null> {
+    if (!(this._peripheral && this._peripheral.connected)) {
+      return null;
     }
 
-    const c = this.periperal!.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
-    const data: number[] = await c.readWait();
+    const c = this._peripheral!.getService(Logtta_CO2.get_uuid("AB20"))!.getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+    const data: number[] = await c!.readWait();
     return data[0] * 256 + data[1];
   }
 
   public async startNotifyWait() {
-    if (!(await this.connectWait())) {
+    if (!(this._peripheral && this._peripheral.connected)) {
       return;
     }
 
-    const c = this.periperal!.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+    const c = this._peripheral!.getService(Logtta_CO2.get_uuid("AB20"))!.getCharacteristic(Logtta_CO2.get_uuid("AB21"));
 
-    await c.registerNotifyWait((data: number[]) => {
+    await c!.registerNotifyWait((data: number[]) => {
       if (this.onNotify) {
         this.onNotify(data[0] * 256 + data[1]);
       }
