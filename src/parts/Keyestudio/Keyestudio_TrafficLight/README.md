@@ -1,7 +1,7 @@
 # Keyestudio_TrafficLight
 Keyestudio traffic light module, which has green, yellow and red LEDs.  
 
-![](index.jpg)
+![](image.jpg)
 
 
 ## obniz.wired("Keyestudio_TrafficLight", {green, yellow, red [, gnd]})

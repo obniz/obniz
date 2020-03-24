@@ -1,11 +1,9 @@
-import dialogPolyfill from "dialog-polyfill";
-
 /**
  * @packageDocumentation
  * @ignore
  */
-// load from webpack
 
+import dialogPolyfill from "dialog-polyfill";
 export default {
   dialogPolyfill: {
     registerDialog: (dialog: any) => {},

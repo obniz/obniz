@@ -36,15 +36,15 @@ export default class ObnizParts extends ObnizConnection {
   }
 
   /**
-   * @ignore
-   * @param name
+   * Get parts class.
+   * @param string
    * @constructor
    */
-  public static Parts(name: any): any {
+  public static getPartsClass<K extends keyof WiredNameMap>(name: K): any {
     if (!_parts[name]) {
       throw new Error(`unknown parts [${name}]`);
     }
-    return new _parts[name]();
+    return _parts[name];
   }
 
   constructor(id: string, options?: ObnizOptions) {
@@ -74,10 +74,11 @@ export default class ObnizParts extends ObnizConnection {
    * @param options
    */
   public wired<K extends keyof WiredNameMap>(partsname: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K] {
-    const parts: any = ObnizParts.Parts(partsname);
-    if (!parts) {
+    const Parts: any = ObnizParts.getPartsClass(partsname);
+    if (!Parts) {
       throw new Error("No such a parts [" + partsname + "] found");
     }
+    const parts = new Parts();
     const args: any = Array.from(arguments);
     args.shift();
     args.unshift(this);
