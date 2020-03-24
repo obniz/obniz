@@ -2984,6 +2984,32 @@ exports.default = ObnizParts;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/ObnizPartsBleInterface.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class ObnizPartsBleInterface {
+    static signed16FromBinary(high, low) {
+        let val = (high << 8) | low;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
+        }
+        return val;
+    }
+}
+exports.default = ObnizPartsBleInterface;
+
+//# sourceMappingURL=ObnizPartsBleInterface.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/ObnizSystemMethods.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22989,9 +23015,23 @@ var map = {
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
+	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
+	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
+	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
+	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/acr1255/index.js": "./dist/src/parts/Ble/acr1255/index.js",
+	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
+	"./Ble/iBS01RG/index.js": "./dist/src/parts/Ble/iBS01RG/index.js",
+	"./Ble/iBS01T/index.js": "./dist/src/parts/Ble/iBS01T/index.js",
+	"./Ble/iBS02IR/index.js": "./dist/src/parts/Ble/iBS02IR/index.js",
+	"./Ble/iBS02PIR/index.js": "./dist/src/parts/Ble/iBS02PIR/index.js",
+	"./Ble/iBS03T/index.js": "./dist/src/parts/Ble/iBS03T/index.js",
+	"./Ble/iBS03TP/index.js": "./dist/src/parts/Ble/iBS03TP/index.js",
+	"./Ble/iBS03_iBS04/index.js": "./dist/src/parts/Ble/iBS03_iBS04/index.js",
+	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
 	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
@@ -23002,6 +23042,8 @@ var map = {
 	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
+	"./Ble/s-cbtgaaac/index.js": "./dist/src/parts/Ble/s-cbtgaaac/index.js",
+	"./Ble/μ-prism/index.js": "./dist/src/parts/Ble/μ-prism/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -23592,6 +23634,367 @@ exports.default = ENERTALK_TOUCH;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/LogttaAD/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Logtta_AD
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Logtta_AD {
+    constructor(peripheral) {
+        if (peripheral && !Logtta_AD.isDevice(peripheral)) {
+            throw new Error("peripheral is not logtta AD");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "Logtta_AD",
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName === "Analog";
+    }
+    static get_uuid(uuid) {
+        return `4e43${uuid}-6687-4f3c-a1c3-1c327583f29d`;
+    }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("Logtta AD not found");
+        }
+        if (!this._peripheral.connected) {
+            await this._peripheral.connectWait();
+        }
+    }
+    async disconnectWait() {
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
+        }
+    }
+    async getAllWait() {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return null;
+        }
+        const c = this._peripheral.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+        const data = await c.readWait();
+        return {
+            ampere: (((data[0] << 8) | data[1]) * 916) / 16,
+            volt: (((data[0] << 8) | data[1]) * 916) / 4,
+            count: (data[2] << 8) | data[3],
+        };
+    }
+    async getAmpereWait() {
+        return (await this.getAllWait()).ampere;
+    }
+    async getVoltWait() {
+        return (await this.getAllWait()).volt;
+    }
+    async getCountWait() {
+        return (await this.getAllWait()).count;
+    }
+    async startNotifyWait() {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return;
+        }
+        const c = this._peripheral.getService(Logtta_AD.get_uuid("AE20")).getCharacteristic(Logtta_AD.get_uuid("AE21"));
+        await c.registerNotifyWait((data) => {
+            if (this.onNotify) {
+                this.onNotify({
+                    ampere: (16 / 916) * ((data[0] << 8) | data[1]),
+                    volt: (4 / 916) * ((data[0] << 8) | data[1]),
+                    count: (data[2] << 8) | data[3],
+                });
+            }
+        });
+    }
+}
+exports.default = Logtta_AD;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/LogttaAccel/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Logtta_Accel
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Logtta_Accel {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "Logtta_Accel",
+        };
+    }
+    static isDevice(peripheral) {
+        const advertise = peripheral.advertise_data_rows.filter((adv) => {
+            let find = false;
+            if (this.deviceAdv.length > adv.length) {
+                return find;
+            }
+            for (let index = 0; index < this.deviceAdv.length; index++) {
+                if (this.deviceAdv[index] === -1) {
+                    continue;
+                }
+                if (adv[index] === this.deviceAdv[index]) {
+                    find = true;
+                    continue;
+                }
+                find = false;
+                break;
+            }
+            return find;
+        });
+        return advertise.length !== 0;
+    }
+    static getScanData(peripheral) {
+        if (!Logtta_Accel.isDevice(peripheral)) {
+            return null;
+        }
+        if (peripheral.adv_data && peripheral.adv_data.length === 31) {
+            const d = peripheral.adv_data;
+            let sampling = 0;
+            switch (d[18]) {
+                case 0x00:
+                    sampling = 800;
+                    break;
+                case 0x01:
+                    sampling = 400;
+                    break;
+                case 0x02:
+                    sampling = 200;
+                    break;
+                case 0x03:
+                    sampling = 100;
+                    break;
+                case 0x04:
+                    sampling = 50;
+                    break;
+            }
+            const alertArray = [];
+            alertArray.push((d[26] & 0b11110000) >> 4);
+            alertArray.push(d[26] & 0b00001111);
+            alertArray.push((d[27] & 0b11110000) >> 4);
+            alertArray.push(d[27] & 0b00001111);
+            return {
+                revision: d[5],
+                sequence: d[6],
+                battery: d[7],
+                name: new TextDecoder().decode(new Uint8Array(d.slice(8, 16))),
+                setting: {
+                    temp_cycle: d[16] | (d[17] << 8),
+                    accel_sampling: sampling,
+                    hpf: !!(d[19] & 0b00010000),
+                    accel_range: 2 * ((d[19] & 0b00000011) + 1),
+                    accel_axis: d[20] & 0b00000111,
+                    accel_resolution: d[21],
+                },
+                temperature: Math.floor((((d[22] | (d[23] << 8)) / 65535) * 175 - 45) * 100) / 100,
+                humidity: Math.floor(((d[24] | (d[25] << 8)) / 65535) * 100 * 100) / 100,
+                alert: alertArray,
+            };
+        }
+        return null;
+    }
+    static getAccelData(peripheral) {
+        if (!Logtta_Accel.isDevice(peripheral)) {
+            return null;
+        }
+        if (peripheral.scan_resp && peripheral.scan_resp.length === 31) {
+            const d = peripheral.scan_resp;
+            // console.log(
+            //   `x peak ${data.x.peak} rms ${data.x.rms} y peak ${data.y.peak} rms ${data.y.rms} z peak ${data.z.peak} rms ${data.z.rms} address ${data.address}`,
+            // );
+            return {
+                x: {
+                    peak: d[5] | (d[6] << 8),
+                    rms: d[7] | (d[8] << 8) | (d[9] << 16) | (d[10] << 24) | (d[11] << 32) | (d[12] << 40),
+                },
+                y: {
+                    peak: d[13] | (d[14] << 8),
+                    rms: d[15] | (d[16] << 8) | (d[17] << 16) | (d[18] << 24) | (d[19] << 32) | (d[20] << 40),
+                },
+                z: {
+                    peak: d[21] | (d[22] << 8),
+                    rms: d[23] | (d[24] << 8) | (d[25] << 16) | (d[26] << 24) | (d[27] << 32) | (d[28] << 40),
+                },
+            };
+        }
+        return null;
+    }
+}
+exports.default = Logtta_Accel;
+Logtta_Accel.deviceAdv = [
+    0xff,
+    0x10,
+    0x05,
+    0x05,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/LogttaCO2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Logtta_CO2
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Logtta_CO2 {
+    constructor(peripheral) {
+        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
+            throw new Error("peripheral is not Logtta CO2");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "Logtta_CO2",
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName === "CO2 Sensor";
+    }
+    static get_uuid(uuid) {
+        return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
+    }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("Logtta CO2 not found");
+        }
+        if (!this._peripheral.connected) {
+            await this._peripheral.connectWait();
+        }
+    }
+    async disconnectWait() {
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
+        }
+    }
+    async getWait() {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return null;
+        }
+        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+        const data = await c.readWait();
+        return data[0] * 256 + data[1];
+    }
+    async startNotifyWait() {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return;
+        }
+        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB21"));
+        await c.registerNotifyWait((data) => {
+            if (this.onNotify) {
+                this.onNotify(data[0] * 256 + data[1]);
+            }
+        });
+    }
+}
+exports.default = Logtta_CO2;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/LogttaTemp/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Logtta_TH
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Logtta_TH {
+    constructor(peripheral) {
+        if (peripheral && !Logtta_TH.isDevice(peripheral)) {
+            throw new Error("peripheral is not logtta TH");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "Logtta_TH",
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName === "TH Sensor";
+    }
+    static get_uuid(uuid) {
+        return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
+    }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("Logtta TH not found");
+        }
+        if (!this._peripheral.connected) {
+            await this._peripheral.connectWait();
+        }
+    }
+    async disconnectWait() {
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
+        }
+    }
+    async getAllWait() {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return null;
+        }
+        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        const data = await c.readWait();
+        return {
+            temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
+            humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
+        };
+    }
+    async getTemperatureWait() {
+        return (await this.getAllWait()).temperature;
+    }
+    async getHumidityWait() {
+        return (await this.getAllWait()).humidity;
+    }
+    async startNotifyWait() {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return;
+        }
+        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA21"));
+        await c.registerNotifyWait((data) => {
+            if (this.onNotify) {
+                this.onNotify({
+                    temperature: (((data[0] << 8) | data[1]) / 65536) * 175.72 - 46.85,
+                    humidity: (((data[2] << 8) | data[3]) / 65536) * 125 - 6,
+                });
+            }
+        });
+    }
+}
+exports.default = Logtta_TH;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/MINEW_S1/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23983,6 +24386,970 @@ class RS_Seek3 {
     }
 }
 exports.default = RS_Seek3;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/acr1255/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.uPRISM
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
+class acr1255 {
+    constructor() {
+        this.readIndex = -1;
+        this.target = {
+            localNamePrefix: "uPrism_",
+        };
+        this.masterKey = [
+            0x41,
+            0x43,
+            0x52,
+            0x31,
+            0x32,
+            0x35,
+            0x35,
+            0x55,
+            0x2d,
+            0x4a,
+            0x31,
+            0x20,
+            0x41,
+            0x75,
+            0x74,
+            0x68,
+        ];
+        this.keys = [];
+        this.requiredKeys = [];
+        this.periperal = null;
+    }
+    static info() {
+        return {
+            name: "acr1255",
+        };
+    }
+    static signed16FromBinary(val1, val2) {
+        let val = val1 + val2 * 256;
+        if ((val & 0x8000) !== 0) {
+            val = val - 0x10000;
+        }
+        return val;
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.encrypt([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16]);
+        this.decrypt([0x0c, 0xbe, 0xab, 0xf1, 0xa2, 0x0f, 0x07, 0xfb, 0x26, 0x74, 0x20, 0xc7, 0xda, 0xc6, 0xab, 0x8b]);
+    }
+    async findWait() {
+        await this.obniz.ble.initWait();
+        this.periperal = await this.obniz.ble.scan.startOneWait(this.target);
+        return this.periperal;
+    }
+    async findListWait() {
+        await this.obniz.ble.initWait();
+        return await this.obniz.ble.scan.startAllWait(this.target);
+    }
+    async directConnectWait(address) {
+        try {
+            this.periperal = await this.obniz.ble.scan.directConnectWait(address, "public");
+        }
+        catch (e) {
+            return false;
+        }
+        return true;
+    }
+    async connectWait() {
+        if (!this.periperal) {
+            await this.findWait();
+        }
+        if (!this.periperal) {
+            throw new Error("uPrism not found");
+        }
+        if (!this.periperal.connected) {
+            try {
+                await this.periperal.connectWait();
+            }
+            catch (e) {
+                return false;
+            }
+        }
+        return true;
+    }
+    async disconnectWait() {
+        if (this.periperal && this.periperal.connected) {
+            await this.periperal.disconnectWait();
+        }
+    }
+    async startNotifyWait() {
+        if (!(await this.connectWait())) {
+            return;
+        }
+        const rc = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("51bc99bd-b22e-4ff5-807e-b641d21af060");
+        await rc.writeWait([0x04, 0x03, 0x01]);
+        const c = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("0d6fcf18-d935-49d1-836d-384c7b857b83");
+        await c.registerNotifyWait((data) => { });
+    }
+    async stopNotifyWait() {
+        if (!(await this.connectWait())) {
+            return;
+        }
+        const rc = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("51bc99bd-b22e-4ff5-807e-b641d21af060");
+        await rc.writeWait([0x04, 0x03, 0x00]);
+        const c = this.periperal.getService("a587905b-ac98-4cb1-8b1d-5e22ae747d17").getCharacteristic("0d6fcf18-d935-49d1-836d-384c7b857b83");
+        await c.unregisterNotifyWait();
+    }
+    encrypt(data) {
+        // @ts-ignore
+        const c = crypto_1.default.createCipher("aes-128-cbc", new Buffer(this.masterKey));
+        // @ts-ignore
+        c.update(new Buffer(data), "binary", "hex");
+        const t = c.final("hex");
+        console.log(`encrypt ${t}`);
+        // 0cbeabf1a20f07fb267420c7dac6ab8b
+    }
+    decrypt(data) {
+        // @ts-ignore
+        const d = crypto_1.default.createDecipher("aes-128-cbc", new Buffer(this.masterKey));
+        // @ts-ignore
+        // d.update(new Buffer(data), "binary", "hex");
+        d.update("0cbeabf1a20f07fb267420c7dac6ab8b", "hex", "hex");
+        const t = d.final("hex");
+        console.log(`decrypt ${t}`);
+        // 0cbeabf1a20f07fb267420c7dac6ab8b
+    }
+}
+exports.default = acr1255;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS01/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS01
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IBS01 {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS01",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return (peripheral.adv_data[12] === 0xff &&
+            peripheral.adv_data[13] === 0xff &&
+            peripheral.adv_data[14] === 0xff &&
+            peripheral.adv_data[15] === 0xff);
+    }
+    static getData(peripheral) {
+        if (!IBS01.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
+            fall: false,
+        };
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b1000)) {
+            data.fall = true;
+        }
+        return data;
+    }
+}
+exports.default = IBS01;
+IBS01.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x59,
+    0x00,
+    0x80,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS01RG/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+//
+//   const accelArray: IBS01RG_Acceleration_Data[] = [];
+//   for (let i = 0; i < 3; i++) {
+//     accelArray.push({
+//       x: IBS01RG.signed16FromBinary(advertise[0][7 + i * 6], advertise[0][8 + i * 6]),
+//       y: IBS01RG.signed16FromBinary(advertise[0][9 + i * 6], advertise[0][10 + i * 6]),
+//       z: IBS01RG.signed16FromBinary(advertise[0][11 + i * 6], advertise[0][12 + i * 6]),
+//     });
+//   }
+//   console.log((advertise[0][6] & 0x0f) * 0xff);
+//   console.log((advertise[0][6] & 0x30) >> 4);
+//   const data: IBS01RG_Data = {
+//     battery: (advertise[0][5] + (advertise[0][6] & 0x0f) * 256) * 0.01,
+//     active: Boolean((advertise[0][6] & 0x10) >> 4),
+//     button: Boolean((advertise[0][6] & 0x20) >> 5),
+//     acceleration: accelArray,
+//     address: peripheral.address,
+//   };
+//   // console.log(`battery ${data.battery}V event ${data.event});
+//   if (this.onNotification) {
+//     this.onNotification(data);
+//   }
+//
+//   if (this.onChangeButton) {
+//     const button: boolean = Boolean((advertise[0][6] & 0x20) >> 5);
+//     if (button !== this.oldButtonFlg) {
+//       this.onChangeButton(button, peripheral.address);
+//       this.oldButtonFlg = button;
+//     }
+//   }
+//
+//   if (this.onChangeActive) {
+//     const actived: boolean = Boolean((advertise[0][6] & 0x10) >> 4);
+//     if (actived !== this.oldActiveFlg) {
+//       this.onChangeActive(actived, peripheral.address);
+//       this.oldActiveFlg = actived;
+//     }
+//   }
+// };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class IBS01RG {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS01RG",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!IBS01RG.isDevice(peripheral)) {
+            return null;
+        }
+        const accelArray = [];
+        for (let i = 0; i < 3; i++) {
+            accelArray.push({
+                x: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[12 + i * 6], peripheral.adv_data[11 + i * 6]),
+                y: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[14 + i * 6], peripheral.adv_data[13 + i * 6]),
+                z: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[16 + i * 6], peripheral.adv_data[15 + i * 6]),
+            });
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + (peripheral.adv_data[10] & 0x0f) * 256) * 0.01,
+            active: Boolean((peripheral.adv_data[10] & 0x10) >> 4),
+            button: Boolean((peripheral.adv_data[10] & 0x20) >> 5),
+            acceleration: accelArray,
+        };
+        return data;
+    }
+}
+exports.default = IBS01RG;
+IBS01RG.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x19,
+    0xff,
+    0x59,
+    0x00,
+    0x81,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS01T/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS01T
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class IBS01T {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS01T",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return !(peripheral.adv_data[12] === 0xff &&
+            peripheral.adv_data[13] === 0xff &&
+            peripheral.adv_data[14] === 0xff &&
+            peripheral.adv_data[15] === 0xff);
+    }
+    static getData(peripheral) {
+        if (!IBS01T.isDevice(peripheral)) {
+            return null;
+        }
+        const d = {
+            button: false,
+            moving: false,
+            reed: false,
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+            humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]),
+        };
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            d.button = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            d.moving = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            d.reed = true;
+        }
+        return d;
+    }
+}
+exports.default = IBS01T;
+IBS01T.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x59,
+    0x00,
+    0x80,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS02IR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS02IR
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IBS02IR {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS02IR",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!IBS02IR.isDevice(peripheral)) {
+            return null;
+        }
+        return {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            event: Boolean(peripheral.adv_data[11] & 0b100),
+        };
+    }
+}
+exports.default = IBS02IR;
+IBS02IR.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x82,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x02,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS02PIR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS02PIR
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IBS02PIR {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS02PIR",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!IBS02PIR.isDevice(peripheral)) {
+            return null;
+        }
+        return {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            event: Boolean(peripheral.adv_data[11] & 0b100),
+        };
+    }
+}
+exports.default = IBS02PIR;
+IBS02PIR.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x82,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x01,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS03T/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS03T
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class IBS03T {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS03T",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!IBS03T.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+        };
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        return data;
+    }
+}
+exports.default = IBS03T;
+IBS03T.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x15,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS03TP/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS03TP
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class IBS03TP {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS03TP",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!IBS03TP.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
+            temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[13], peripheral.adv_data[12]) * 0.01,
+            probe_temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(peripheral.adv_data[15], peripheral.adv_data[14]) * 0.01,
+        };
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        return data;
+    }
+}
+exports.default = IBS03TP;
+IBS03TP.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x17,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS03_iBS04/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS03
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IBS03 {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS03",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!IBS03.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: (peripheral.adv_data[9] + peripheral.adv_data[10] * 256) * 0.01,
+            button: false,
+            moving: false,
+            hall_sensor: false,
+        };
+        if (Boolean(peripheral.adv_data[11] & 0b0001)) {
+            data.button = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0010)) {
+            data.moving = true;
+        }
+        if (Boolean(peripheral.adv_data[11] & 0b0100)) {
+            data.hall_sensor = true;
+        }
+        return data;
+    }
+}
+exports.default = IBS03;
+IBS03.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x12,
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x10,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS04i/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS04i
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class IBS04I {
+    constructor() {
+    }
+    static info() {
+        return {
+            name: "iBS04i",
+        };
+    }
+    static isDevice(peripheral) {
+        return IBS04I.getDeviceArray(peripheral) !== null;
+    }
+    static getData(peripheral) {
+        const adv = IBS04I.getDeviceArray(peripheral);
+        if (adv === null) {
+            return null;
+        }
+        const data = {
+            battery: (adv[5] + adv[6] * 256) * 0.01,
+            button: Boolean(adv[7]),
+            uuid: peripheral.iBeacon.uuid,
+            major: peripheral.iBeacon.major,
+            minor: peripheral.iBeacon.minor,
+            power: peripheral.iBeacon.power,
+            rssi: peripheral.iBeacon.rssi,
+            address: peripheral.address,
+        };
+        return data;
+    }
+    static getDeviceArray(peripheral) {
+        const advertise = peripheral.advertise_data_rows.filter((adv) => {
+            let find = false;
+            if (this.deviceAdv.length > adv.length) {
+                return find;
+            }
+            for (let index = 0; index < this.deviceAdv.length; index++) {
+                if (this.deviceAdv[index] === -1) {
+                    continue;
+                }
+                if (adv[index] === this.deviceAdv[index]) {
+                    find = true;
+                    continue;
+                }
+                find = false;
+                break;
+            }
+            return find;
+        });
+        if (advertise.length !== 1) {
+            return null;
+        }
+        const type = advertise[0][14];
+        if (type !== 24) {
+            // iBS04i以外
+            return null;
+        }
+        return advertise[0];
+    }
+}
+exports.default = IBS04I;
+IBS04I.deviceAdv = [
+    0xff,
+    0x0d,
+    0x00,
+    0x83,
+    0xbc,
+    -1,
+    -1,
+    -1,
+    0xff,
+    0xff,
+    0xff,
+    0xff,
+    0x00,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -28183,6 +29550,216 @@ class LinkingService {
 exports.default = LinkingService;
 
 //# sourceMappingURL=service.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/s-cbtgaaac/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SCBTGAAAC
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class SCBTGAAAC {
+    static info() {
+        return {
+            name: "S-CBTGAAAC",
+        };
+    }
+    static isDevice(peripheral) {
+        return SCBTGAAAC.getData(peripheral) !== null;
+    }
+    static getData(peripheral) {
+        const data = SCBTGAAAC.searchTypeVal(peripheral.advertise_data_rows, 0xff);
+        if (!data || data[0] !== 0x31 || data[1] !== 0x07 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
+            return null;
+        }
+        const uuidData = data.slice(4, 20);
+        let uuid = "";
+        for (let i = 0; i < uuidData.length; i++) {
+            uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
+            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
+                uuid += "-";
+            }
+        }
+        const major = (data[20] << 8) + data[21];
+        const minor = (data[22] << 8) + data[23];
+        const power = data[24];
+        if (uuid === "5d490d6c-7eb9-474e-8160-45bde999119a" && major === 3) {
+            return `03-${minor}`;
+        }
+        return null;
+    }
+    static searchTypeVal(advertise_data_rows, type) {
+        for (let i = 0; i < advertise_data_rows.length; i++) {
+            if (advertise_data_rows[i][0] === type) {
+                const results = [].concat(advertise_data_rows[i]);
+                results.shift();
+                return results;
+            }
+        }
+        return undefined;
+    }
+    constructor() { }
+}
+exports.default = SCBTGAAAC;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/μ-prism/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.uPRISM
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class uPRISM {
+    constructor(peripheral) {
+        this.readIndex = -1;
+        this.accelRange = 1024;
+        this._uuids = {
+            service: "a587905b-ac98-4cb1-8b1d-5e22ae747d17",
+            settingEnableChar: "51bc99bd-b22e-4ff5-807e-b641d21af060",
+            notifyChar: "0d6fcf18-d935-49d1-836d-384c7b857b83",
+        };
+        if (peripheral === null) {
+            throw new Error("peripheral is null");
+        }
+        if (peripheral && !uPRISM.isDevice(peripheral)) {
+            throw new Error("peripheral is not uPRISM");
+        }
+        this.periperal = peripheral;
+    }
+    static info() {
+        return {
+            name: "uPRISM",
+        };
+    }
+    static isDevice(peripheral) {
+        var _a;
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("uPrism_")) === 0;
+    }
+    async connectWait() {
+        if (!this.periperal) {
+            throw new Error("peripheral is not uPRISM");
+        }
+        if (!this.periperal.connected) {
+            await this.periperal.connectWait();
+        }
+    }
+    async disconnectWait() {
+        if (this.periperal && this.periperal.connected) {
+            await this.periperal.disconnectWait();
+        }
+    }
+    setAccelRange(range) {
+        switch (range) {
+            case "2g":
+                this.accelRange = 1024;
+                break;
+            case "4g":
+                this.accelRange = 512;
+                break;
+            case "8g":
+                this.accelRange = 256;
+                break;
+            case "16g":
+                this.accelRange = 128;
+                break;
+        }
+    }
+    async startNotifyWait() {
+        if (!this.periperal || !this.periperal.connected) {
+            throw new Error("peripheral not connected uPRISM");
+        }
+        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        await rc.writeWait([0x04, 0x03, 0x01]);
+        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        await c.registerNotifyWait((data) => {
+            if (data[1] !== 0x14) {
+                return;
+            }
+            if (data[0] === 0xb1) {
+                this.readIndex = data[19];
+                this.readData = {
+                    acceleration: {
+                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / this.accelRange,
+                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[5], data[4]) / this.accelRange,
+                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[7], data[6]) / this.accelRange,
+                    },
+                    geomagnetic: {
+                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[9], data[8]) / 16,
+                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[11], data[10]) / 16,
+                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[13], data[12]) / 16,
+                    },
+                    time: {
+                        year: 0,
+                        month: 0,
+                        day: 0,
+                        hour: data[18],
+                        minute: data[17],
+                        second: data[16],
+                        micro_second: (data[15] << 8) | data[14],
+                    },
+                    index: data[19],
+                    temperature: 0,
+                    humidity: 0,
+                    ambient_light: 0,
+                    uvi: 0,
+                    pressure: 0,
+                };
+            }
+            else if (data[0] === 0xb2) {
+                if (this.readIndex === data[19] && this.readData) {
+                    this.readData.temperature = ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / 100;
+                    this.readData.humidity = ((data[5] << 8) | data[4]) / 100;
+                    this.readData.ambient_light = ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;
+                    this.readData.uvi = data[9] / 16;
+                    this.readData.pressure = (data[13] << 16) | (data[12] << 8) | data[11];
+                    this.readData.time.day = data[16];
+                    this.readData.time.month = data[17];
+                    this.readData.time.year = data[18];
+                    if (this.onNotify) {
+                        this.onNotify(this.readData);
+                    }
+                    // const r = this.readData;
+                    // console.log(
+                    //   `accel x:${r.acceleration.x} y:${r.acceleration.y} z:${r.acceleration.z}\n` +
+                    //     `geo x:${r.geomagnetic.x} y:${r.geomagnetic.y} z:${r.geomagnetic.z}\n` +
+                    //     `temp:${r.temperature}℃ humid:${r.humidity}% light:${r.ambient_light}lx pressure:${r.pressure}Pa UV index:${r.uvi} index:${r.index}\n` +
+                    //     `date ${r.time.year}/${r.time.month}/${r.time.day} ${r.time.hour}:${r.time.minute}:${r.time.second}:${r.time.micro_second}`,
+                    // );
+                }
+            }
+        });
+    }
+    async stopNotifyWait() {
+        if (!(this.periperal && this.periperal.connected)) {
+            return;
+        }
+        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        await rc.writeWait([0x04, 0x03, 0x00]);
+        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        await c.unregisterNotifyWait();
+    }
+}
+exports.default = uPRISM;
+
+//# sourceMappingURL=index.js.map
 
 
 /***/ }),
