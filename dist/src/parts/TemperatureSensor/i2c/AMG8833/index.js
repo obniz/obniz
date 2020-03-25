@@ -36,7 +36,7 @@ class AMG8833 {
         if (this.params.address === 0x69) {
             this.address = 0x69;
         }
-        else if (this.params.addressmode === 0x68) {
+        else if (this.params.address === 0x68) {
             this.address = 0x68;
         }
         else if (this.params.address !== undefined) {
