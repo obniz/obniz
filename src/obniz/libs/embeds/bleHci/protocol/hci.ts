@@ -119,7 +119,7 @@ class Hci extends events.EventEmitter {
     this._obnizHci = obnizHci;
     this._state = null;
 
-    this._handleBuffers = {};
+    this.resetBuffers();
 
     this.on("stateChange", this.onStateChange.bind(this));
 
