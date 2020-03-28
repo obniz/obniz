@@ -62,7 +62,7 @@ Return data format is below.
 
 
 
-## getHTData()
+## getInfoData()
 
 Get device data based on the advertisement information.
 Returns null for different SLOT advertisement information.
