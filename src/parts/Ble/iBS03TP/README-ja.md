@@ -1,9 +1,9 @@
-# iBS03T
+# iBS03TP
 INGICS社製の温度センサです。
 
 サポートデバイス
 
-- iBS03T
+- iBS03TP
 
 ![](image.jpg)
 
@@ -12,7 +12,7 @@ INGICS社製の温度センサです。
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03T');
+const IBS03 = Obniz.getPartsClass('iBS03TP');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -21,7 +21,7 @@ const IBS03 = Obniz.getPartsClass('iBS03T');
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03T');
+const IBS03 = Obniz.getPartsClass('iBS03TP');
 await obniz.ble.initWait();
 obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
@@ -44,7 +44,7 @@ obniz.ble.scan.onfind = (p) => {
 
 ```javascript
 // Javascript Example
-const IBS03 = Obniz.getPartsClass('iBS03T');
+const IBS03 = Obniz.getPartsClass('iBS03TP');
 await obniz.ble.initWait();
 obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
