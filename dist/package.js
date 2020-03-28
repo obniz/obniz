@@ -1,6 +1,6 @@
 module.exports = {
   "name": "obniz",
-  "version": "3.5.0-alpha.2",
+  "version": "3.5.0-alpha.3",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -146,5 +146,4 @@ module.exports = {
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
   }
-}
-;
+};

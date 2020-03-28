@@ -5,12 +5,12 @@ class RS_Seek3 {
         this.keys = [];
         this.requiredKeys = [];
         this.onpressed = null;
+        this._peripheral = null;
         this._uuids = {
             service: "0EE71523-981A-46B8-BA64-019261C88478",
             buttonChar: "0EE71524-981A-46B8-BA64-019261C88478",
             tempHumidChar: "0EE7152C-981A-46B8-BA64-019261C88478",
         };
-        this._peripheral = null;
         this._buttonCharacteristic = null;
         this._tempHumidCharacteristic = null;
         if (peripheral && !RS_Seek3.isDevice(peripheral)) {

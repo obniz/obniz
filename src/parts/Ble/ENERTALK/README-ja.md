@@ -86,7 +86,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 ```
 
 
-## getTemperature
+## getTemperatureWait()
 温度を計測します。
 
 ```javascript
@@ -101,14 +101,14 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new ENERTALK_TOUCH(peripheral);
     await device.connectWait();
     console.log("connected");
-    const temperature = await device.getTemperature();
+    const temperature = await device.getTemperatureWait();
     console.log(temperature);
   }
 };
 
 ```
 
-## getHumidity
+## getHumidityWait()
 湿度を計測します。
 
 ```javascript
@@ -123,7 +123,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new ENERTALK_TOUCH(peripheral);
     await device.connectWait();
     console.log("connected");
-    const humid = await device.getHumidity();
+    const humid = await device.getHumidityWait();
     console.log(humid);
   }
 };
@@ -132,7 +132,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 
 
-## getIllumination
+## getIlluminationWait()
 湿度を計測します。
 
 ```javascript
@@ -147,7 +147,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new ENERTALK_TOUCH(peripheral);
     await device.connectWait();
     console.log("connected");
-    const lux = await device.getIllumination();
+    const lux = await device.getIlluminationWait();
     console.log(lux);
   }
 };
@@ -155,7 +155,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 ```
 
 
-## getAccelerometer
+## getAccelerometerWait()
 加速度を計測します。
 
 ```javascript
@@ -170,7 +170,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new ENERTALK_TOUCH(peripheral);
     await device.connectWait();
     console.log("connected");
-    const accel = await device.getAccelerometer();
+    const accel = await device.getAccelerometerWait();
     console.log(accel.x, accel.y, accel.z );
   }
 };

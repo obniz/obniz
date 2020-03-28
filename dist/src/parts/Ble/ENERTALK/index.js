@@ -5,6 +5,7 @@ class ENERTALK_TOUCH {
         this.keys = [];
         this.requiredKeys = [];
         this.onbuttonpressed = null;
+        this._peripheral = null;
         this._uuids = {
             service: "3526797e-448b-4bbb-9145-c5083e0e09dc",
             temperatureChar: "2A6E",
@@ -12,7 +13,6 @@ class ENERTALK_TOUCH {
             illuminanceChar: "74c3fe9d-25b2-4903-8dcd-680e5ef0a6b3",
             accelerometerChar: "71ef0979-0e2c-4a55-8d3c-78083869fae6",
         };
-        this._peripheral = null;
         this._service = null;
         this._temperatureChar = null;
         this._humidityChar = null;
@@ -54,7 +54,7 @@ class ENERTALK_TOUCH {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
-    async getTemperature() {
+    async getTemperatureWait() {
         if (!this._temperatureChar) {
             throw new Error("device is not connected");
         }
@@ -63,7 +63,7 @@ class ENERTALK_TOUCH {
         const temp = buf.readInt16BE(0) / 100;
         return temp;
     }
-    async getHumidity() {
+    async getHumidityWait() {
         if (!this._humidityChar) {
             throw new Error("device is not connected");
         }
@@ -71,7 +71,7 @@ class ENERTALK_TOUCH {
         const humidity = humidityData[0];
         return humidity;
     }
-    async getIllumination() {
+    async getIlluminationWait() {
         if (!this._illuminanceChar) {
             throw new Error("device is not connected");
         }
@@ -80,7 +80,7 @@ class ENERTALK_TOUCH {
         const illuminance = buf.readInt16BE(0);
         return illuminance;
     }
-    async getAccelerometer() {
+    async getAccelerometerWait() {
         if (!this._accelerometerChar) {
             throw new Error("device is not connected");
         }
