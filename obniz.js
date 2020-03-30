@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.5.0-alpha.3",
+  "version": "3.5.0-alpha.4",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -23040,8 +23040,8 @@ var map = {
 	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
-	"./Ble/s-cbtgaaac/index.js": "./dist/src/parts/Ble/s-cbtgaaac/index.js",
-	"./Ble/μ-prism/index.js": "./dist/src/parts/Ble/μ-prism/index.js",
+	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
+	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -29407,7 +29407,7 @@ exports.default = LinkingService;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/s-cbtgaaac/index.js":
+/***/ "./dist/src/parts/Ble/scbtgaaac/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29420,7 +29420,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SCBTGAAAC {
     static info() {
         return {
-            name: "S-CBTGAAAC",
+            name: "SCBTGAAAC",
         };
     }
     static isDevice(peripheral) {
@@ -29466,7 +29466,7 @@ exports.default = SCBTGAAAC;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/μ-prism/index.js":
+/***/ "./dist/src/parts/Ble/uprism/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

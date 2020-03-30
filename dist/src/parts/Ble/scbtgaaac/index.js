@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SCBTGAAAC {
     static info() {
         return {
-            name: "S-CBTGAAAC",
+            name: "SCBTGAAAC",
         };
     }
     static isDevice(peripheral) {
