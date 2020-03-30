@@ -22,6 +22,7 @@ const logicanalyzer_1 = __importDefault(require("./libs/measurements/logicanalyz
 const measure_1 = __importDefault(require("./libs/measurements/measure"));
 const tcp_1 = __importDefault(require("./libs/protocol/tcp"));
 const ObnizParts_1 = __importDefault(require("./ObnizParts"));
+const ComponentAbstact_1 = require("./libs/ComponentAbstact");
 const hw_1 = __importDefault(require("./libs/hw"));
 const grove_1 = __importDefault(require("./libs/io_peripherals/grove"));
 class ObnizComponents extends ObnizParts_1.default {
@@ -238,15 +239,24 @@ class ObnizComponents extends ObnizParts_1.default {
     notifyToModule(obj) {
         super.notifyToModule(obj);
         for (const key of this._allComponentKeys) {
-            if (key === "logicAnalyzer") {
-                if (obj.hasOwnProperty("logic_analyzer")) {
-                    this.logicAnalyzer.notified(obj.logic_analyzer);
+            const targetComponent = this[key];
+            if (targetComponent instanceof ComponentAbstact_1.ComponentAbstract) {
+                const basePath = targetComponent.schemaBasePath();
+                if (obj.hasOwnProperty(basePath)) {
+                    targetComponent.notifyFromObniz(obj[key]);
                 }
-                continue;
             }
-            if (obj.hasOwnProperty(key)) {
-                /* because of nullable */
-                this[key].notified(obj[key]);
+            else {
+                if (key === "logicAnalyzer") {
+                    if (obj.hasOwnProperty("logic_analyzer")) {
+                        this.logicAnalyzer.notified(obj.logic_analyzer);
+                    }
+                    continue;
+                }
+                if (obj.hasOwnProperty(key)) {
+                    /* because of nullable */
+                    targetComponent.notified(obj[key]);
+                }
             }
         }
     }

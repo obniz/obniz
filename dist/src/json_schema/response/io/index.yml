@@ -6,3 +6,5 @@ basePath: "io0"
 
 "anyOf":
   - {$ref: "/response/io/get"}
+  - {$ref: "/response/io/warning"}
+  - {$ref: "/response/io/error"}

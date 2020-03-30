@@ -11,7 +11,9 @@ import packageJson from "../../package"; // pakcage.js will be created from pack
 import WSCommand from "./libs/wscommand";
 import { ObnizOptions } from "./ObnizOptions";
 
-export default class ObnizConnection {
+export type ObnizConnectionEventNames = "connect" | "close" | "notify";
+
+export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNames> {
   /**
    * obniz.js version
    */
@@ -148,7 +150,6 @@ export default class ObnizConnection {
   protected debugs: any;
   protected onConnectCalled: boolean;
   protected bufferdAmoundWarnBytes: number;
-  protected emitter: any;
   protected options: any;
   protected wscommand: any;
   protected wscommands: any;
@@ -159,6 +160,7 @@ export default class ObnizConnection {
   protected sendPool: any;
 
   constructor(id: string, options?: ObnizOptions) {
+    super();
     this.isNode = typeof window === "undefined";
     this.id = id;
     this.socket = null;
@@ -171,7 +173,6 @@ export default class ObnizConnection {
     this.firmware_ver = undefined;
     this.connectionState = "closed"; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-    this.emitter = new EventEmitter();
 
     this._connectionRetryCount = 0;
 
@@ -262,11 +263,11 @@ export default class ObnizConnection {
         resolve(true);
         return;
       }
-      this.emitter.once("connected", () => {
+      this.once("connect", () => {
         resolve(true);
       });
       if (!this.options.auto_connect) {
-        this.emitter.once("closed", () => {
+        this.once("close", () => {
           resolve(false);
         });
       }
@@ -425,10 +426,10 @@ export default class ObnizConnection {
   protected wsOnClose(event: any) {
     this.print_debug("closed");
     this.close();
-    this.emitter.emit("closed");
     if (typeof this.onclose === "function" && this.onConnectCalled === true) {
       this.onclose(this);
     }
+    this.emit("close", this);
     this.onConnectCalled = false;
 
     this._reconnect();
@@ -622,8 +623,6 @@ export default class ObnizConnection {
       }
     }
 
-    this.emitter.emit("connected");
-
     if (canChangeToConnected) {
       this.connectionState = "connected";
       if (typeof this.onconnect === "function") {
@@ -634,6 +633,7 @@ export default class ObnizConnection {
           });
         }
       }
+      this.emit("connect", this);
       this.onConnectCalled = true;
     }
   }

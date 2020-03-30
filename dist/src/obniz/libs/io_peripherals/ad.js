@@ -4,21 +4,20 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * @category Peripherals
  */
-class PeripheralAD {
+class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
-    }
-    /**
-     * @ignore
-     */
-    _reset() {
-        this.value = 0.0;
-        this.observers = [];
+        this.on("/response/ad/get", (obj) => {
+            this.value = obj;
+            if (this.onchange) {
+                this.onchange(obj);
+            }
+        });
     }
     /**
      * This starts measuring voltage on ioX until end() is called.
@@ -53,16 +52,13 @@ class PeripheralAD {
      * @return measured voltage
      *
      */
-    getWait() {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.addObserver(resolve);
-            const obj = {};
-            obj["ad" + self.id] = {
-                stream: false,
-            };
-            self.Obniz.send(obj);
-        });
+    async getWait() {
+        const obj = {};
+        obj["ad" + this.id] = {
+            stream: false,
+        };
+        const data = await this.sendAndReceiveJsonWait(obj, "/response/ad/get");
+        return data;
     }
     /**
      * This stops measuring voltage on ioX.
@@ -80,22 +76,17 @@ class PeripheralAD {
     }
     /**
      * @ignore
-     * @param obj
+     * @private
      */
-    notified(obj) {
-        this.value = obj;
-        if (this.onchange) {
-            this.onchange(obj);
-        }
-        const callback = this.observers.shift();
-        if (callback) {
-            callback(obj);
-        }
+    schemaBasePath() {
+        return "ad" + this.id;
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.value = 0.0;
     }
 }
 exports.default = PeripheralAD;

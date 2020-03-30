@@ -8,25 +8,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(require("semver"));
+const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * @category Peripherals
  */
-class Directive {
+class Directive extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.observers = [];
         this._animationIdentifier = 0;
-        this._reset();
-    }
-    /**
-     * @ignore
-     */
-    _reset() {
-        for (let i = 0; i < this.observers.length; i++) {
-            this.observers[i].reject(new Error("reset called"));
-        }
-        this.observers = [];
-        this._animationIdentifier = 0;
+        this.on("/response/ioAnimation/notify", (obj) => {
+            if (obj.animation.status === "finish") {
+                for (let i = this.observers.length - 1; i >= 0; i--) {
+                    if (obj.animation.name === this.observers[i].name) {
+                        this.observers[i].resolve();
+                        this.observers.splice(i, 1);
+                    }
+                }
+            }
+        });
     }
     /**
      * io animation is used when you wish to accelerate the serial sequence change of io.
@@ -143,7 +143,7 @@ class Directive {
      * ```
      *
      * @param animations instructions
-     * @param repeat 	The number of repeat count of animation.
+     * @param repeat  The number of repeat count of animation.
      */
     repeatWait(animations, repeat) {
         if (semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
@@ -164,19 +164,21 @@ class Directive {
             this.addObserver(name, resolve, reject);
         });
     }
+    schemaBasePath() {
+        return "io";
+    }
     /**
      * @ignore
-     * @param obj
+     * @private
      */
-    notified(obj) {
-        if (obj.animation.status === "finish") {
-            for (let i = this.observers.length - 1; i >= 0; i--) {
-                if (obj.animation.name === this.observers[i].name) {
-                    this.observers[i].resolve();
-                    this.observers.splice(i, 1);
-                }
+    _reset() {
+        if (this.observers) {
+            for (let i = 0; i < this.observers.length; i++) {
+                this.observers[i].reject(new Error("reset called"));
             }
         }
+        this.observers = [];
+        this._animationIdentifier = 0;
     }
     addObserver(name, resolve, reject) {
         if (name && resolve && reject) {

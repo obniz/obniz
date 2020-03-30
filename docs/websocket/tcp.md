@@ -108,6 +108,58 @@ tcp command
 ```
 
 
+##  response: <a name="-response-tcp-connect">connect</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `tcpX.connect.message` |  string  | <ul><li>required</li><li>enum <ul><li>`"ok"`</li><li>`"Port Used"`</li><li>`"Port Area Error"`</li><li>`"Lookup Error"`</li><li>`"Error"`</li></ul></li></ul> | &nbsp; |
+| `tcpX.connect.code` |  number  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "tcp0": {
+            "connect": {
+                "message": "ok",
+                "code": 500
+            }
+        }
+    }
+]
+```
+
+
+##  response: <a name="-response-tcp-connection">connection</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `tcpX.connection.connected` |  boolean  | &nbsp; | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "tcp0": {
+            "connection": {
+                "connected": true
+            }
+        }
+    }
+]
+```
+
+
 
 
 

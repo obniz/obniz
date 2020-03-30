@@ -217,6 +217,56 @@ Related item
 ```
 
 
+##  response: <a name="-response-i2c-error">error</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `i2cX.error.message` |  string  | <ul><li>required</li></ul> | io warning&nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "i2c0": {
+            "error": {
+                "message": "Heavy output"
+            }
+        }
+    }
+]
+```
+
+
+##  response: <a name="-response-i2c-warning">warning</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `i2cX.warning.message` |  string  | <ul><li>required</li></ul> | io warning&nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "i2c0": {
+            "warning": {
+                "message": "Heavy output"
+            }
+        }
+    }
+]
+```
+
+
 
 
 

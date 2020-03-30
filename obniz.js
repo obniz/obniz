@@ -387,12 +387,16 @@ var map = {
 	"./response/debug/error.yml": "./dist/src/json_schema/response/debug/error.yml",
 	"./response/debug/index.yml": "./dist/src/json_schema/response/debug/index.yml",
 	"./response/debug/warning.yml": "./dist/src/json_schema/response/debug/warning.yml",
+	"./response/i2c/error.yml": "./dist/src/json_schema/response/i2c/error.yml",
 	"./response/i2c/index.yml": "./dist/src/json_schema/response/i2c/index.yml",
 	"./response/i2c/master.yml": "./dist/src/json_schema/response/i2c/master.yml",
 	"./response/i2c/slave.yml": "./dist/src/json_schema/response/i2c/slave.yml",
+	"./response/i2c/warning.yml": "./dist/src/json_schema/response/i2c/warning.yml",
 	"./response/index.yml": "./dist/src/json_schema/response/index.yml",
+	"./response/io/error.yml": "./dist/src/json_schema/response/io/error.yml",
 	"./response/io/get.yml": "./dist/src/json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./dist/src/json_schema/response/io/index.yml",
+	"./response/io/warning.yml": "./dist/src/json_schema/response/io/warning.yml",
 	"./response/ioanimation/index.yml": "./dist/src/json_schema/response/ioanimation/index.yml",
 	"./response/ioanimation/notify.yml": "./dist/src/json_schema/response/ioanimation/notify.yml",
 	"./response/logicanalyzer/data.yml": "./dist/src/json_schema/response/logicanalyzer/data.yml",
@@ -407,6 +411,8 @@ var map = {
 	"./response/switch/index.yml": "./dist/src/json_schema/response/switch/index.yml",
 	"./response/system/index.yml": "./dist/src/json_schema/response/system/index.yml",
 	"./response/system/pong.yml": "./dist/src/json_schema/response/system/pong.yml",
+	"./response/tcp/connect.yml": "./dist/src/json_schema/response/tcp/connect.yml",
+	"./response/tcp/connection.yml": "./dist/src/json_schema/response/tcp/connection.yml",
 	"./response/tcp/index.yml": "./dist/src/json_schema/response/tcp/index.yml",
 	"./response/tcp/read.yml": "./dist/src/json_schema/response/tcp/read.yml",
 	"./response/uart/index.yml": "./dist/src/json_schema/response/uart/index.yml",
@@ -1419,10 +1425,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/i2c/error.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["message"],"properties":{"message":{"type":"string"}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/i2c/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c","basePath":"i2c0","anyOf":[{"$ref":"/response/i2c/master"},{"$ref":"/response/i2c/slave"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c","basePath":"i2c0","anyOf":[{"$ref":"/response/i2c/master"},{"$ref":"/response/i2c/slave"},{"$ref":"/response/i2c/error"},{"$ref":"/response/i2c/warning"}]}
 
 /***/ }),
 
@@ -1440,10 +1453,24 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/i2c/warning.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c/warning","type":"object","required":["warning"],"properties":{"warning":{"type":"object","required":["message"],"properties":{"message":{"type":"string"}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/io/error.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["message"],"properties":{"message":{"type":"string"}}}}}
 
 /***/ }),
 
@@ -1457,7 +1484,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/io/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","basePath":"io0","anyOf":[{"$ref":"/response/io/get"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","basePath":"io0","anyOf":[{"$ref":"/response/io/get"},{"$ref":"/response/io/warning"},{"$ref":"/response/io/error"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/io/warning.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io/warning","type":"object","required":["warning"],"properties":{"warning":{"type":"object","required":["message"],"properties":{"message":{"type":"string"}}}}}
 
 /***/ }),
 
@@ -1559,10 +1593,24 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/tcp/connect.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/connect","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["message","code"],"properties":{"message":{"type":"string","enum":["ok","Port Used","Port Area Error","Lookup Error","Error"]},"code":{"type":"number"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/tcp/connection.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/connection","type":"object","required":["connection"],"properties":{"connection":{"type":"object","required":["connect"],"properties":{"connected":{"type":"boolean"}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/tcp/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp","basePath":"tcp0","anyOf":[{"$ref":"/response/tcp/read"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp","basePath":"tcp0","anyOf":[{"$ref":"/response/tcp/read"},{"$ref":"/response/tcp/connect"},{"$ref":"/response/tcp/connection"}]}
 
 /***/ }),
 
@@ -1746,6 +1794,7 @@ const logicanalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/li
 const measure_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/measure.js"));
 const tcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/protocol/tcp.js"));
 const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const hw_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/hw/index.js"));
 const grove_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js"));
 class ObnizComponents extends ObnizParts_1.default {
@@ -1962,15 +2011,24 @@ class ObnizComponents extends ObnizParts_1.default {
     notifyToModule(obj) {
         super.notifyToModule(obj);
         for (const key of this._allComponentKeys) {
-            if (key === "logicAnalyzer") {
-                if (obj.hasOwnProperty("logic_analyzer")) {
-                    this.logicAnalyzer.notified(obj.logic_analyzer);
+            const targetComponent = this[key];
+            if (targetComponent instanceof ComponentAbstact_1.ComponentAbstract) {
+                const basePath = targetComponent.schemaBasePath();
+                if (obj.hasOwnProperty(basePath)) {
+                    targetComponent.notifyFromObniz(obj[key]);
                 }
-                continue;
             }
-            if (obj.hasOwnProperty(key)) {
-                /* because of nullable */
-                this[key].notified(obj[key]);
+            else {
+                if (key === "logicAnalyzer") {
+                    if (obj.hasOwnProperty("logic_analyzer")) {
+                        this.logicAnalyzer.notified(obj.logic_analyzer);
+                    }
+                    continue;
+                }
+                if (obj.hasOwnProperty(key)) {
+                    /* because of nullable */
+                    targetComponent.notified(obj[key]);
+                }
             }
         }
     }
@@ -2033,8 +2091,9 @@ const ws_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/webpackR
 // @ts-ignore
 const package_1 = __importDefault(__webpack_require__("./dist/package.js")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/index.js"));
-class ObnizConnection {
+class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
+        super();
         this.isNode = typeof window === "undefined";
         this.id = id;
         this.socket = null;
@@ -2047,7 +2106,6 @@ class ObnizConnection {
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
         this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-        this.emitter = new eventemitter3_1.default();
         this._connectionRetryCount = 0;
         if (!options) {
             options = {};
@@ -2145,11 +2203,11 @@ class ObnizConnection {
                 resolve(true);
                 return;
             }
-            this.emitter.once("connected", () => {
+            this.once("connect", () => {
                 resolve(true);
             });
             if (!this.options.auto_connect) {
-                this.emitter.once("closed", () => {
+                this.once("close", () => {
                     resolve(false);
                 });
             }
@@ -2302,10 +2360,10 @@ class ObnizConnection {
     wsOnClose(event) {
         this.print_debug("closed");
         this.close();
-        this.emitter.emit("closed");
         if (typeof this.onclose === "function" && this.onConnectCalled === true) {
             this.onclose(this);
         }
+        this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();
     }
@@ -2488,7 +2546,6 @@ class ObnizConnection {
                 /* local_connect is not used */
             }
         }
-        this.emitter.emit("connected");
         if (canChangeToConnected) {
             this.connectionState = "connected";
             if (typeof this.onconnect === "function") {
@@ -2499,6 +2556,7 @@ class ObnizConnection {
                     });
                 }
             }
+            this.emit("connect", this);
             this.onConnectCalled = true;
         }
     }
@@ -2855,6 +2913,52 @@ class ObnizDevice extends ObnizUIs_1.default {
 exports.default = ObnizDevice;
 
 //# sourceMappingURL=ObnizDevice.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/ObnizError.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// tslint:disable:max-classes-per-file
+Object.defineProperty(exports, "__esModule", { value: true });
+class ObnizError extends Error {
+    constructor(code, e) {
+        super(e);
+        this.code = code;
+        this.name = new.target.name;
+        Object.setPrototypeOf(this, new.target.prototype); // for ES3, ES5
+    }
+}
+exports.ObnizError = ObnizError;
+class ObnizOfflineError extends ObnizError {
+    constructor() {
+        super(1, "obniz is not online.");
+    }
+}
+exports.ObnizOfflineError = ObnizOfflineError;
+class ObnizTimeoutError extends ObnizError {
+    constructor() {
+        super(2, "Receive data timeout.");
+    }
+}
+exports.ObnizTimeoutError = ObnizTimeoutError;
+class ObnizI2cError extends ObnizError {
+    constructor() {
+        super(3, "I2C error.");
+    }
+}
+exports.ObnizI2cError = ObnizI2cError;
+class ObnizI2cWarning extends ObnizError {
+    constructor() {
+        super(3, "I2C error.");
+    }
+}
+exports.ObnizI2cWarning = ObnizI2cWarning;
+
+//# sourceMappingURL=ObnizError.js.map
 
 
 /***/ }),
@@ -3723,6 +3827,124 @@ module.exports = Obniz;
 //# sourceMappingURL=index.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/ComponentAbstact.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSSchema.js"));
+class ComponentAbstract extends eventemitter3_1.default {
+    constructor(obniz) {
+        super();
+        this.timeout = 10 * 1000;
+        this._eventHandlerQueue = {};
+        this.Obniz = obniz;
+        this._reset();
+    }
+    notifyFromObniz(json) {
+        for (const eventName of this.eventNames()) {
+            if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
+                return;
+            }
+            const errors = this.validate(eventName, json);
+            if (errors.valid) {
+                this.emit(eventName, json);
+            }
+        }
+        for (const eventName in this._eventHandlerQueue) {
+            if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
+                return;
+            }
+            const errors = this.validate(eventName, json);
+            if (errors.valid) {
+                const func = this._eventHandlerQueue[eventName].shift();
+                if (func) {
+                    func(json);
+                }
+            }
+        }
+    }
+    validate(commandUri, json) {
+        const schema = WSSchema_1.default.getSchema(commandUri);
+        const results = WSSchema_1.default.validateMultiple(json, schema);
+        return results;
+    }
+    onceQueue(eventName, func) {
+        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
+        if (typeof func === "function") {
+            this._eventHandlerQueue[eventName].push(func);
+        }
+    }
+    async sendAndReceiveJsonWait(sendObj, schemaPath, option) {
+        this.Obniz.send(sendObj);
+        const result = await this.receiveJsonWait(schemaPath, option);
+        return result;
+    }
+    receiveJsonWait(schemaPath, option) {
+        option = option || {};
+        option.timeout = option.timeout || this.timeout;
+        option.queue = option.queue !== false;
+        option.errors = option.errors || {};
+        return new Promise((resolve, reject) => {
+            if (this.Obniz.connectionState !== "connected") {
+                reject();
+            }
+            const clearListeners = () => {
+                this.Obniz.off("close", onObnizClosed);
+                this.off(schemaPath, onDataReceived);
+                clearTimeout(timeoutHandler);
+                for (const one of onErrorFuncs) {
+                    this.off(one.path, one.onError);
+                }
+            };
+            const onObnizClosed = () => {
+                clearListeners();
+                const error = new ObnizError_1.ObnizOfflineError();
+                reject(error);
+            };
+            const onDataReceived = (schemaData) => {
+                clearListeners();
+                resolve(schemaData);
+            };
+            const onTimeout = () => {
+                clearListeners();
+                const error = new ObnizError_1.ObnizTimeoutError();
+                reject(error);
+            };
+            const onErrorFuncs = [];
+            this.Obniz.once("close", onObnizClosed);
+            if (option.queue) {
+                this.onceQueue(schemaPath, onDataReceived);
+            }
+            else {
+                this.once(schemaPath, onDataReceived);
+            }
+            for (const path in option.errors) {
+                const onError = () => {
+                    clearListeners();
+                    const error = new option.errors[path]();
+                    reject(error);
+                };
+                this.on(path, onDataReceived);
+                onErrorFuncs.push({ onError, path });
+            }
+            const timeoutHandler = setTimeout(onTimeout, option.timeout);
+        });
+    }
+}
+exports.ComponentAbstract = ComponentAbstract;
+
+//# sourceMappingURL=ComponentAbstact.js.map
+
 
 /***/ }),
 
@@ -15307,21 +15529,20 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * @category Peripherals
  */
-class PeripheralAD {
+class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
-    }
-    /**
-     * @ignore
-     */
-    _reset() {
-        this.value = 0.0;
-        this.observers = [];
+        this.on("/response/ad/get", (obj) => {
+            this.value = obj;
+            if (this.onchange) {
+                this.onchange(obj);
+            }
+        });
     }
     /**
      * This starts measuring voltage on ioX until end() is called.
@@ -15356,16 +15577,13 @@ class PeripheralAD {
      * @return measured voltage
      *
      */
-    getWait() {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.addObserver(resolve);
-            const obj = {};
-            obj["ad" + self.id] = {
-                stream: false,
-            };
-            self.Obniz.send(obj);
-        });
+    async getWait() {
+        const obj = {};
+        obj["ad" + this.id] = {
+            stream: false,
+        };
+        const data = await this.sendAndReceiveJsonWait(obj, "/response/ad/get");
+        return data;
     }
     /**
      * This stops measuring voltage on ioX.
@@ -15383,22 +15601,17 @@ class PeripheralAD {
     }
     /**
      * @ignore
-     * @param obj
+     * @private
      */
-    notified(obj) {
-        this.value = obj;
-        if (this.onchange) {
-            this.onchange(obj);
-        }
-        const callback = this.observers.shift();
-        if (callback) {
-            callback(obj);
-        }
+    schemaBasePath() {
+        return "ad" + this.id;
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.value = 0.0;
     }
 }
 exports.default = PeripheralAD;
@@ -15422,25 +15635,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * @category Peripherals
  */
-class Directive {
+class Directive extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.observers = [];
         this._animationIdentifier = 0;
-        this._reset();
-    }
-    /**
-     * @ignore
-     */
-    _reset() {
-        for (let i = 0; i < this.observers.length; i++) {
-            this.observers[i].reject(new Error("reset called"));
-        }
-        this.observers = [];
-        this._animationIdentifier = 0;
+        this.on("/response/ioAnimation/notify", (obj) => {
+            if (obj.animation.status === "finish") {
+                for (let i = this.observers.length - 1; i >= 0; i--) {
+                    if (obj.animation.name === this.observers[i].name) {
+                        this.observers[i].resolve();
+                        this.observers.splice(i, 1);
+                    }
+                }
+            }
+        });
     }
     /**
      * io animation is used when you wish to accelerate the serial sequence change of io.
@@ -15557,7 +15770,7 @@ class Directive {
      * ```
      *
      * @param animations instructions
-     * @param repeat 	The number of repeat count of animation.
+     * @param repeat  The number of repeat count of animation.
      */
     repeatWait(animations, repeat) {
         if (semver_1.default.lt(this.Obniz.firmware_ver, "2.0.0")) {
@@ -15578,19 +15791,21 @@ class Directive {
             this.addObserver(name, resolve, reject);
         });
     }
+    schemaBasePath() {
+        return "io";
+    }
     /**
      * @ignore
-     * @param obj
+     * @private
      */
-    notified(obj) {
-        if (obj.animation.status === "finish") {
-            for (let i = this.observers.length - 1; i >= 0; i--) {
-                if (obj.animation.name === this.observers[i].name) {
-                    this.observers[i].resolve();
-                    this.observers.splice(i, 1);
-                }
+    _reset() {
+        if (this.observers) {
+            for (let i = 0; i < this.observers.length; i++) {
+                this.observers[i].reject(new Error("reset called"));
             }
         }
+        this.observers = [];
+        this._animationIdentifier = 0;
     }
     addObserver(name, resolve, reject) {
         if (name && resolve && reject) {
@@ -15747,6 +15962,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * i2c can be used.
@@ -15754,21 +15971,34 @@ const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/
  *  But slave mode only works with "written" events. You can't set data to be read.
  * @category Peripherals
  */
-class PeripheralI2C {
+class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
         this.onerror = undefined;
-    }
-    /**
-     * @ignore
-     * @private
-     */
-    _reset() {
-        this.observers = [];
-        this.used = false;
-        this.onwritten = undefined;
+        this.on("/response/i2c/slave", (obj) => {
+            if (typeof this.onwritten === "function") {
+                this.onwritten(obj.data, obj.address);
+            }
+        });
+        this.on("/response/i2c/error", (obj) => {
+            const message = `i2c${this.id}: ${obj.error.message}`;
+            if (typeof this.onerror === "function") {
+                this.onerror(new Error(message));
+            }
+            else {
+                this.Obniz.error({
+                    alert: "error",
+                    message,
+                });
+            }
+        });
+        this.on("/response/i2c/warning", (obj) => {
+            this.Obniz.warning({
+                alert: "warning",
+                message: `i2c${this.id}: ${obj.warning.message}`,
+            });
+        });
     }
     /**
      * It starts i2c on given io sda, scl.
@@ -15934,7 +16164,7 @@ class PeripheralI2C {
      * @param address
      * @param length Max is 1024;
      */
-    readWait(address, length) {
+    async readWait(address, length) {
         if (!this.used) {
             throw new Error(`i2c${this.id} is not started`);
         }
@@ -15953,53 +16183,17 @@ class PeripheralI2C {
             throw new Error("i2c: data length should be under 1024 bytes");
         }
         const self = this;
-        return new Promise((resolve, reject) => {
-            self.addObserver(resolve);
-            const obj = {};
-            obj["i2c" + self.id] = {
-                address,
-                read: length,
-            };
-            self.Obniz.send(obj);
-        });
-    }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (obj && typeof obj === "object") {
-            if (obj.data) {
-                if (obj.mode === "slave" && typeof this.onwritten === "function") {
-                    this.onwritten(obj.data, obj.address);
-                }
-                else {
-                    // TODO: we should compare byte length from sent
-                    const callback = this.observers.shift();
-                    if (callback) {
-                        callback(obj.data);
-                    }
-                }
-            }
-            if (obj.warning) {
-                this.Obniz.warning({
-                    alert: "warning",
-                    message: `i2c${this.id}: ${obj.warning.message}`,
-                });
-            }
-            if (obj.error) {
-                const message = `i2c${this.id}: ${obj.error.message}`;
-                if (typeof this.onerror === "function") {
-                    this.onerror(new Error(message));
-                }
-                else {
-                    this.Obniz.error({
-                        alert: "error",
-                        message,
-                    });
-                }
-            }
-        }
+        const obj = {};
+        obj["i2c" + self.id] = {
+            address,
+            read: length,
+        };
+        const errors = {
+            "/response/i2c/error": ObnizError_1.ObnizI2cError,
+            "/response/i2c/warning": ObnizError_1.ObnizI2cWarning,
+        };
+        const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/i2c/master", { errors });
+        return receiveData.data;
     }
     /**
      * @ignore
@@ -16022,10 +16216,20 @@ class PeripheralI2C {
         this.Obniz.send(obj);
         this.used = false;
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return "i2c" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.used = false;
+        this.onwritten = undefined;
     }
 }
 exports.default = PeripheralI2C;
@@ -16045,24 +16249,34 @@ exports.default = PeripheralI2C;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * General purpose IO
  * This is available on each io (for obniz Board series, it's io0 to io11)
  * @category Peripherals
  */
-class PeripheralIO {
+class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
-    }
-    /**
-     * @ignore
-     * @private
-     */
-    _reset() {
-        this.value = false;
-        this.observers = [];
+        this.on("/response/io/get", (obj) => {
+            this.value = obj;
+            if (typeof this.onchange === "function") {
+                this.onchange(obj);
+            }
+        });
+        this.on("/response/io/warning", (obj) => {
+            this.Obniz.warning({
+                alert: "warning",
+                message: `io${this.id}: ${obj.warning.message}`,
+            });
+        });
+        this.on("/response/io/error", (obj) => {
+            this.Obniz.error({
+                alert: "error",
+                message: `io${this.id}: ${obj.error.message}`,
+            });
+        });
     }
     /**
      * Make ioX to output mode and put out 1 or 0.
@@ -16196,17 +16410,14 @@ class PeripheralIO {
      * console.log(value);
      * ```
      */
-    inputWait() {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.addObserver(resolve);
-            const obj = {};
-            obj["io" + self.id] = {
-                direction: "input",
-                stream: false,
-            };
-            self.Obniz.send(obj);
-        });
+    async inputWait() {
+        const obj = {};
+        obj[this.schemaBasePath()] = {
+            direction: "input",
+            stream: false,
+        };
+        const data = await this.sendAndReceiveJsonWait(obj, "/response/io/get");
+        return data;
     }
     /**
      * This ends output/input on ioX.
@@ -16230,38 +16441,17 @@ class PeripheralIO {
     }
     /**
      * @ignore
-     * @param obj
+     * @private
      */
-    notified(obj) {
-        if (typeof obj === "boolean") {
-            this.value = obj;
-            const callback = this.observers.shift();
-            if (callback) {
-                callback(obj);
-            }
-            if (typeof this.onchange === "function") {
-                this.onchange(obj);
-            }
-        }
-        else if (obj && typeof obj === "object") {
-            if (obj.warning) {
-                this.Obniz.warning({
-                    alert: "warning",
-                    message: `io${this.id}: ${obj.warning.message}`,
-                });
-            }
-            if (obj.error) {
-                this.Obniz.error({
-                    alert: "error",
-                    message: `io${this.id}: ${obj.error.message}`,
-                });
-            }
-        }
+    schemaBasePath() {
+        return "io" + this.id;
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.value = false;
     }
 }
 exports.default = PeripheralIO;
@@ -16284,17 +16474,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * We will now generate PWM.
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
  * @category Peripherals
  */
-class PeripheralPWM {
+class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
     }
     /**
      * This starts a pwm on a given io.
@@ -16479,6 +16669,17 @@ class PeripheralPWM {
             },
         });
     }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return "pwm" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.state = {};
         this.used = false;
@@ -16510,16 +16711,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * It is General Purpose SPI
  * @category Peripherals
  */
-class PeripheralSPI {
+class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
     }
     /**
      * It starts spi. Now the mode is only "master".
@@ -16646,23 +16847,20 @@ class PeripheralSPI {
      * @param data Max length is 1024 bytes.
      * @return received data
      */
-    writeWait(data) {
+    async writeWait(data) {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
         if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.addObserver(resolve);
-            const obj = {};
-            obj["spi" + self.id] = {
-                data,
-                read: true,
-            };
-            self.Obniz.send(obj);
-        });
+        const obj = {};
+        obj["spi" + this.id] = {
+            data,
+            read: true,
+        };
+        const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/spi/read");
+        return receiveData.data;
     }
     /**
      * It only sends data to spi and does not receive it.
@@ -16689,17 +16887,6 @@ class PeripheralSPI {
             read: false,
         };
         self.Obniz.send(obj);
-    }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        // TODO: we should compare byte length from sent
-        const callback = this.observers.shift();
-        if (callback) {
-            callback(obj.data);
-        }
     }
     /**
      * @ignore
@@ -16731,15 +16918,20 @@ class PeripheralSPI {
             this.used = false;
         }
     }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return "spi" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
-        this.observers = [];
         this.used = false;
         this.params = null;
-    }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
     }
 }
 exports.default = PeripheralSPI;
@@ -16762,24 +16954,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * Uart module
  * @category Peripherals
  */
-class PeripheralUART {
+class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
         this._reset();
-    }
-    /**
-     * @ignore
-     * @private
-     */
-    _reset() {
-        this.received = new Uint8Array([]);
-        this.used = false;
+        this.on("/response/uart/receive", (obj) => {
+            if (this.onreceive) {
+                const string = this.tryConvertString(obj.data);
+                this.onreceive(obj.data, string);
+            }
+            else {
+                if (!this.received) {
+                    this.received = [];
+                }
+                this.received.push.apply(this.received, obj.data);
+            }
+        });
     }
     /**
      * It starts uart on io tx, rx.
@@ -17007,22 +17204,6 @@ class PeripheralUART {
     }
     /**
      * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (this.onreceive) {
-            const string = this.tryConvertString(obj.data);
-            this.onreceive(obj.data, string);
-        }
-        else {
-            if (!this.received) {
-                this.received = [];
-            }
-            this.received.push.apply(this.received, obj.data);
-        }
-    }
-    /**
-     * @ignore
      */
     isUsed() {
         return this.used;
@@ -17053,6 +17234,21 @@ class PeripheralUART {
      */
     tryConvertString(data) {
         return util_1.default.dataArray2string(data);
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return "uart" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.received = new Uint8Array([]);
+        this.used = false;
     }
 }
 exports.default = PeripheralUART;
@@ -17318,16 +17514,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * Create a TCP connection from a device throught the network the device is currently connected to.
  *
  * @category Protocol
  */
-class Tcp {
+class Tcp extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
+        this.on("/response/tcp/connection", (obj) => {
+            /* Connectino state update. response of connect(), close from destination, response from */
+            if (this.onconnection) {
+                this.onconnection(obj.connection.connected);
+            }
+            if (!obj.connection.connected) {
+                this._reset();
+            }
+        });
+        this.on("/response/tcp/read", (obj) => {
+            if (this.onreceive) {
+                this.onreceive(obj.read.data);
+            }
+            const callback = this.readObservers.shift();
+            if (callback) {
+                callback(obj.read.data);
+            }
+        });
+        this.on("/response/tcp/connect", (obj) => {
+            /* response of connect() */
+            /* `this.connection` will called before this function */
+            if (obj.connect.code !== 0) {
+                if (this.onerror) {
+                    this.onerror(obj.connect);
+                }
+            }
+            const callback = this.connectObservers.shift();
+            if (callback) {
+                callback(obj.connect.code);
+            }
+        });
     }
     /**
      * Starts a connection on the port and domain for which TCP is specified.
@@ -17450,46 +17677,21 @@ class Tcp {
     }
     /**
      * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (obj.connection) {
-            /* Connectino state update. response of connect(), close from destination, response from */
-            if (this.onconnection) {
-                this.onconnection(obj.connection.connected);
-            }
-            if (!obj.connection.connected) {
-                this._reset();
-            }
-        }
-        else if (obj.read) {
-            if (this.onreceive) {
-                this.onreceive(obj.read.data);
-            }
-            const callback = this.readObservers.shift();
-            if (callback) {
-                callback(obj.read.data);
-            }
-        }
-        else if (obj.connect) {
-            /* response of connect() */
-            /* `this.connection` will called before this function */
-            if (obj.connect.code !== 0) {
-                if (this.onerror) {
-                    this.onerror(obj.connect);
-                }
-            }
-            const callback = this.connectObservers.shift();
-            if (callback) {
-                callback(obj.connect.code);
-            }
-        }
-    }
-    /**
-     * @ignore
      */
     isUsed() {
         return this.used;
+    }
+    schemaBasePath() {
+        return "tcp" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.connectObservers = [];
+        this.readObservers = [];
+        this.used = false;
     }
     close() {
         if (!this.used) {
@@ -17500,11 +17702,6 @@ class Tcp {
             disconnect: true,
         };
         this.Obniz.send(obj);
-    }
-    _reset() {
-        this.connectObservers = [];
-        this.readObservers = [];
-        this.used = false;
     }
     _addConnectObserver(callback) {
         if (callback) {

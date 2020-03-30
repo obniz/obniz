@@ -4,6 +4,7 @@
  */
 
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 import ObnizUtil from "../utils/util";
 import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from "./common";
 
@@ -75,7 +76,7 @@ export interface PeripheralUARTOptions {
  * Uart module
  * @category Peripherals
  */
-export default class PeripheralUART {
+export default class PeripheralUART extends ComponentAbstract {
   public received: any;
 
   /**
@@ -106,23 +107,25 @@ export default class PeripheralUART {
    */
   public onreceive?: (data: number[], text: string) => void;
 
-  private Obniz: Obniz;
   private id: number;
   private params: any;
 
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
+    super(obniz);
     this.id = id;
     this._reset();
-  }
 
-  /**
-   * @ignore
-   * @private
-   */
-  public _reset() {
-    this.received = new Uint8Array([]);
-    this.used = false;
+    this.on("/response/uart/receive", (obj) => {
+      if (this.onreceive) {
+        const string: any = this.tryConvertString(obj.data);
+        this.onreceive(obj.data, string);
+      } else {
+        if (!this.received) {
+          this.received = [];
+        }
+        this.received.push.apply(this.received, obj.data);
+      }
+    });
   }
 
   /**
@@ -358,23 +361,6 @@ export default class PeripheralUART {
 
   /**
    * @ignore
-   * @param obj
-   */
-  public notified(obj: any) {
-    if (this.onreceive) {
-      const string: any = this.tryConvertString(obj.data);
-      this.onreceive(obj.data, string);
-    } else {
-      if (!this.received) {
-        this.received = [];
-      }
-
-      this.received.push.apply(this.received, obj.data);
-    }
-  }
-
-  /**
-   * @ignore
    */
   public isUsed(): boolean {
     return this.used;
@@ -407,5 +393,22 @@ export default class PeripheralUART {
    */
   public tryConvertString(data: number[]): string | null {
     return ObnizUtil.dataArray2string(data);
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public schemaBasePath(): string {
+    return "uart" + this.id;
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  protected _reset() {
+    this.received = new Uint8Array([]);
+    this.used = false;
   }
 }

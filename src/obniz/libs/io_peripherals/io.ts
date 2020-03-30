@@ -4,6 +4,7 @@
  */
 
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 import { DriveType, PullType } from "./common";
 
 /**
@@ -11,26 +12,35 @@ import { DriveType, PullType } from "./common";
  * This is available on each io (for obniz Board series, it's io0 to io11)
  * @category Peripherals
  */
-export default class PeripheralIO {
+export default class PeripheralIO extends ComponentAbstract {
   private value!: boolean;
   private onchange?: (value: boolean) => void;
-  private Obniz: Obniz;
   private id: number;
-  private observers!: Array<(value: boolean) => void>;
 
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
+    super(obniz);
     this.id = id;
-    this._reset();
-  }
 
-  /**
-   * @ignore
-   * @private
-   */
-  public _reset() {
-    this.value = false;
-    this.observers = [];
+    this.on("/response/io/get", (obj) => {
+      this.value = obj;
+      if (typeof this.onchange === "function") {
+        this.onchange(obj);
+      }
+    });
+
+    this.on("/response/io/warning", (obj) => {
+      this.Obniz.warning({
+        alert: "warning",
+        message: `io${this.id}: ${obj.warning.message}`,
+      });
+    });
+
+    this.on("/response/io/error", (obj) => {
+      this.Obniz.error({
+        alert: "error",
+        message: `io${this.id}: ${obj.error.message}`,
+      });
+    });
   }
 
   /**
@@ -171,17 +181,14 @@ export default class PeripheralIO {
    * console.log(value);
    * ```
    */
-  public inputWait(): Promise<boolean> {
-    const self: any = this;
-    return new Promise((resolve: any, reject: any) => {
-      self.addObserver(resolve);
-      const obj: any = {};
-      obj["io" + self.id] = {
-        direction: "input",
-        stream: false,
-      };
-      self.Obniz.send(obj);
-    });
+  public async inputWait(): Promise<boolean> {
+    const obj: any = {};
+    obj[this.schemaBasePath()] = {
+      direction: "input",
+      stream: false,
+    };
+    const data = await this.sendAndReceiveJsonWait(obj, "/response/io/get");
+    return data;
   }
 
   /**
@@ -207,37 +214,17 @@ export default class PeripheralIO {
 
   /**
    * @ignore
-   * @param obj
+   * @private
    */
-  public notified(obj: any) {
-    if (typeof obj === "boolean") {
-      this.value = obj;
-      const callback: any = this.observers.shift();
-      if (callback) {
-        callback(obj);
-      }
-      if (typeof this.onchange === "function") {
-        this.onchange(obj);
-      }
-    } else if (obj && typeof obj === "object") {
-      if (obj.warning) {
-        this.Obniz.warning({
-          alert: "warning",
-          message: `io${this.id}: ${obj.warning.message}`,
-        });
-      }
-      if (obj.error) {
-        this.Obniz.error({
-          alert: "error",
-          message: `io${this.id}: ${obj.error.message}`,
-        });
-      }
-    }
+  public schemaBasePath(): string {
+    return "io" + this.id;
   }
 
-  private addObserver(callback: any) {
-    if (callback) {
-      this.observers.push(callback);
-    }
+  /**
+   * @ignore
+   * @private
+   */
+  protected _reset() {
+    this.value = false;
   }
 }

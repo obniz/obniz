@@ -2,7 +2,7 @@ let chai = require('chai');
 let expect = chai.expect;
 let sinon = require('sinon');
 
-let testUtil = require(global.appRoot + '/test/functiontest/testUtil.js');
+let testUtil = require('../../../../../test/functiontest/testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 

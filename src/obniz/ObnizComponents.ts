@@ -23,6 +23,7 @@ import TCP from "./libs/protocol/tcp";
 
 import ObnizParts from "./ObnizParts";
 
+import { ComponentAbstract } from "./libs/ComponentAbstact";
 import HW from "./libs/hw";
 import PeripheralGrove from "./libs/io_peripherals/grove";
 import { ObnizOptions } from "./ObnizOptions";
@@ -486,15 +487,23 @@ export default class ObnizComponents extends ObnizParts {
   protected notifyToModule(obj: any) {
     super.notifyToModule(obj);
     for (const key of this._allComponentKeys) {
-      if (key === "logicAnalyzer") {
-        if (obj.hasOwnProperty("logic_analyzer")) {
-          (this as any).logicAnalyzer.notified(obj.logic_analyzer);
+      const targetComponent = (this as any)[key];
+      if (targetComponent instanceof ComponentAbstract) {
+        const basePath = targetComponent.schemaBasePath();
+        if (obj.hasOwnProperty(basePath)) {
+          targetComponent.notifyFromObniz(obj[key]);
         }
-        continue;
-      }
-      if (obj.hasOwnProperty(key)) {
-        /* because of nullable */
-        (this as any)[key].notified(obj[key]);
+      } else {
+        if (key === "logicAnalyzer") {
+          if (obj.hasOwnProperty("logic_analyzer")) {
+            (this as any).logicAnalyzer.notified(obj.logic_analyzer);
+          }
+          continue;
+        }
+        if (obj.hasOwnProperty(key)) {
+          /* because of nullable */
+          targetComponent.notified(obj[key]);
+        }
       }
     }
   }

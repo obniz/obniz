@@ -4,6 +4,8 @@
  */
 
 import Obniz from "../../index";
+import { ObnizError, ObnizI2cError, ObnizI2cWarning } from "../../ObnizError";
+import { ComponentAbstract } from "../ComponentAbstact";
 import ObnizUtil from "../utils/util";
 import { PullType } from "./common";
 
@@ -32,7 +34,7 @@ interface PeripheralI2COptions extends PeripheralI2CState {
  *  But slave mode only works with "written" events. You can't set data to be read.
  * @category Peripherals
  */
-class PeripheralI2C {
+class PeripheralI2C extends ComponentAbstract {
   /**
    * from obniz.js 1.14.0
    *
@@ -73,25 +75,36 @@ class PeripheralI2C {
    */
   public onwritten?: (data: number[], address: number) => void;
   private state!: PeripheralI2CState;
-  private Obniz: Obniz;
   private id: number;
-  private observers: any;
 
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
+    super(obniz);
     this.id = id;
-    this._reset();
     this.onerror = undefined;
-  }
 
-  /**
-   * @ignore
-   * @private
-   */
-  public _reset() {
-    this.observers = [];
-    this.used = false;
-    this.onwritten = undefined;
+    this.on("/response/i2c/slave", (obj) => {
+      if (typeof this.onwritten === "function") {
+        this.onwritten(obj.data, obj.address);
+      }
+    });
+
+    this.on("/response/i2c/error", (obj) => {
+      const message: any = `i2c${this.id}: ${obj.error.message}`;
+      if (typeof this.onerror === "function") {
+        this.onerror(new Error(message));
+      } else {
+        this.Obniz.error({
+          alert: "error",
+          message,
+        });
+      }
+    });
+    this.on("/response/i2c/warning", (obj) => {
+      this.Obniz.warning({
+        alert: "warning",
+        message: `i2c${this.id}: ${obj.warning.message}`,
+      });
+    });
   }
 
   /**
@@ -266,7 +279,7 @@ class PeripheralI2C {
    * @param address
    * @param length Max is 1024;
    */
-  public readWait(address: number, length: number): Promise<number[]> {
+  public async readWait(address: number, length: number): Promise<number[]> {
     if (!this.used) {
       throw new Error(`i2c${this.id} is not started`);
     }
@@ -285,52 +298,19 @@ class PeripheralI2C {
       throw new Error("i2c: data length should be under 1024 bytes");
     }
     const self: any = this;
-    return new Promise((resolve: any, reject: any) => {
-      self.addObserver(resolve);
-      const obj: any = {};
-      obj["i2c" + self.id] = {
-        address,
-        read: length,
-      };
-      self.Obniz.send(obj);
-    });
-  }
 
-  /**
-   * @ignore
-   * @param obj
-   */
-  public notified(obj: any) {
-    if (obj && typeof obj === "object") {
-      if (obj.data) {
-        if (obj.mode === "slave" && typeof this.onwritten === "function") {
-          this.onwritten(obj.data, obj.address);
-        } else {
-          // TODO: we should compare byte length from sent
-          const callback: any = this.observers.shift();
-          if (callback) {
-            callback(obj.data);
-          }
-        }
-      }
-      if (obj.warning) {
-        this.Obniz.warning({
-          alert: "warning",
-          message: `i2c${this.id}: ${obj.warning.message}`,
-        });
-      }
-      if (obj.error) {
-        const message: any = `i2c${this.id}: ${obj.error.message}`;
-        if (typeof this.onerror === "function") {
-          this.onerror(new Error(message));
-        } else {
-          this.Obniz.error({
-            alert: "error",
-            message,
-          });
-        }
-      }
-    }
+    const obj: any = {};
+    obj["i2c" + self.id] = {
+      address,
+      read: length,
+    };
+
+    const errors = {
+      "/response/i2c/error": ObnizI2cError,
+      "/response/i2c/warning": ObnizI2cWarning,
+    };
+    const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/i2c/master", { errors });
+    return receiveData.data;
   }
 
   /**
@@ -356,10 +336,21 @@ class PeripheralI2C {
     this.used = false;
   }
 
-  private addObserver(callback: any) {
-    if (callback) {
-      this.observers.push(callback);
-    }
+  /**
+   * @ignore
+   * @private
+   */
+  public schemaBasePath(): string {
+    return "i2c" + this.id;
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  protected _reset() {
+    this.used = false;
+    this.onwritten = undefined;
   }
 }
 

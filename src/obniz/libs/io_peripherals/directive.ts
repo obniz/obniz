@@ -5,6 +5,7 @@
 
 import semver from "semver";
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 import { AnimationStatus } from "./common";
 
 export interface DirectiveAnimationFrame {
@@ -23,27 +24,23 @@ export interface DirectiveAnimationFrame {
 /**
  * @category Peripherals
  */
-export default class Directive {
-  private Obniz: Obniz;
-  private observers: any[];
-  private _animationIdentifier: number;
+export default class Directive extends ComponentAbstract {
+  private observers: any[] = [];
+  private _animationIdentifier: number = 0;
 
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
-    this.observers = [];
-    this._animationIdentifier = 0;
-    this._reset();
-  }
+    super(obniz);
 
-  /**
-   * @ignore
-   */
-  public _reset() {
-    for (let i = 0; i < this.observers.length; i++) {
-      this.observers[i].reject(new Error("reset called"));
-    }
-    this.observers = [];
-    this._animationIdentifier = 0;
+    this.on("/response/ioAnimation/notify", (obj) => {
+      if (obj.animation.status === "finish") {
+        for (let i = this.observers.length - 1; i >= 0; i--) {
+          if (obj.animation.name === this.observers[i].name) {
+            this.observers[i].resolve();
+            this.observers.splice(i, 1);
+          }
+        }
+      }
+    });
   }
 
   /**
@@ -164,7 +161,7 @@ export default class Directive {
    * ```
    *
    * @param animations instructions
-   * @param repeat 	The number of repeat count of animation.
+   * @param repeat  The number of repeat count of animation.
    */
   public repeatWait(animations: DirectiveAnimationFrame[], repeat: number) {
     if (semver.lt(this.Obniz.firmware_ver!, "2.0.0")) {
@@ -188,19 +185,22 @@ export default class Directive {
     });
   }
 
+  public schemaBasePath(): string {
+    return "io";
+  }
+
   /**
    * @ignore
-   * @param obj
+   * @private
    */
-  public notified(obj: { [key: string]: any }) {
-    if (obj.animation.status === "finish") {
-      for (let i = this.observers.length - 1; i >= 0; i--) {
-        if (obj.animation.name === this.observers[i].name) {
-          this.observers[i].resolve();
-          this.observers.splice(i, 1);
-        }
+  protected _reset() {
+    if (this.observers) {
+      for (let i = 0; i < this.observers.length; i++) {
+        this.observers[i].reject(new Error("reset called"));
       }
     }
+    this.observers = [];
+    this._animationIdentifier = 0;
   }
 
   private addObserver(name: string, resolve: any, reject: any) {

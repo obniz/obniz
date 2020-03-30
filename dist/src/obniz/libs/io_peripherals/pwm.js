@@ -7,17 +7,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * We will now generate PWM.
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
  * @category Peripherals
  */
-class PeripheralPWM {
+class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
     }
     /**
      * This starts a pwm on a given io.
@@ -202,6 +202,17 @@ class PeripheralPWM {
             },
         });
     }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return "pwm" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
         this.state = {};
         this.used = false;

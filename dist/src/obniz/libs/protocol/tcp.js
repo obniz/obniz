@@ -8,16 +8,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(require("semver"));
+const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * Create a TCP connection from a device throught the network the device is currently connected to.
  *
  * @category Protocol
  */
-class Tcp {
+class Tcp extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
+        this.on("/response/tcp/connection", (obj) => {
+            /* Connectino state update. response of connect(), close from destination, response from */
+            if (this.onconnection) {
+                this.onconnection(obj.connection.connected);
+            }
+            if (!obj.connection.connected) {
+                this._reset();
+            }
+        });
+        this.on("/response/tcp/read", (obj) => {
+            if (this.onreceive) {
+                this.onreceive(obj.read.data);
+            }
+            const callback = this.readObservers.shift();
+            if (callback) {
+                callback(obj.read.data);
+            }
+        });
+        this.on("/response/tcp/connect", (obj) => {
+            /* response of connect() */
+            /* `this.connection` will called before this function */
+            if (obj.connect.code !== 0) {
+                if (this.onerror) {
+                    this.onerror(obj.connect);
+                }
+            }
+            const callback = this.connectObservers.shift();
+            if (callback) {
+                callback(obj.connect.code);
+            }
+        });
     }
     /**
      * Starts a connection on the port and domain for which TCP is specified.
@@ -140,46 +171,21 @@ class Tcp {
     }
     /**
      * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (obj.connection) {
-            /* Connectino state update. response of connect(), close from destination, response from */
-            if (this.onconnection) {
-                this.onconnection(obj.connection.connected);
-            }
-            if (!obj.connection.connected) {
-                this._reset();
-            }
-        }
-        else if (obj.read) {
-            if (this.onreceive) {
-                this.onreceive(obj.read.data);
-            }
-            const callback = this.readObservers.shift();
-            if (callback) {
-                callback(obj.read.data);
-            }
-        }
-        else if (obj.connect) {
-            /* response of connect() */
-            /* `this.connection` will called before this function */
-            if (obj.connect.code !== 0) {
-                if (this.onerror) {
-                    this.onerror(obj.connect);
-                }
-            }
-            const callback = this.connectObservers.shift();
-            if (callback) {
-                callback(obj.connect.code);
-            }
-        }
-    }
-    /**
-     * @ignore
      */
     isUsed() {
         return this.used;
+    }
+    schemaBasePath() {
+        return "tcp" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.connectObservers = [];
+        this.readObservers = [];
+        this.used = false;
     }
     close() {
         if (!this.used) {
@@ -190,11 +196,6 @@ class Tcp {
             disconnect: true,
         };
         this.Obniz.send(obj);
-    }
-    _reset() {
-        this.connectObservers = [];
-        this.readObservers = [];
-        this.used = false;
     }
     _addConnectObserver(callback) {
         if (callback) {

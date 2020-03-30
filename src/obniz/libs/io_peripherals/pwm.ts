@@ -4,6 +4,7 @@
  */
 
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 import ObnizUtil from "../utils/util";
 import { DriveType, PullType } from "./common";
 
@@ -35,20 +36,18 @@ export type PWMModulateType = "am";
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
  * @category Peripherals
  */
-export default class PeripheralPWM implements PWMInterface {
+export default class PeripheralPWM extends ComponentAbstract implements PWMInterface {
   /**
    * @ignore
    */
   public used: any;
-  private Obniz: Obniz;
   private id: number;
   private state: any;
   private params: any;
 
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
+    super(obniz);
     this.id = id;
-    this._reset();
   }
 
   /**
@@ -245,7 +244,19 @@ export default class PeripheralPWM implements PWMInterface {
     });
   }
 
-  private _reset() {
+  /**
+   * @ignore
+   * @private
+   */
+  public schemaBasePath(): string {
+    return "pwm" + this.id;
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  protected _reset() {
     this.state = {};
     this.used = false;
   }
