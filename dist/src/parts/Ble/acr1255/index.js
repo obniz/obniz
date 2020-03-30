@@ -76,7 +76,6 @@ class acr1255 {
             this.s(data);
         });
         await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00]); // auth step.1
-        console.log("auth start");
     }
     async write(data) {
         if (data.length % 16 !== 0) {
@@ -94,7 +93,6 @@ class acr1255 {
             checksum = (checksum ^ data[i]) & 0xff;
         }
         data[6] = checksum;
-        this.printHex(data, "write Data");
         data = this.encrypt(data, this.sessionKey);
         packet = packet.concat(data);
         checksum = 0;
@@ -103,7 +101,6 @@ class acr1255 {
         }
         packet.push(checksum);
         packet.push(0x0a);
-        this.printHex(packet, "write Packet");
         for (let i = 0; i < packet.length / 20; i++) {
             const d = packet.slice(i * 20, (i + 1) * 20);
             await this.readChar.writeWait(d);
@@ -115,7 +112,6 @@ class acr1255 {
         }
     }
     encrypt(data, key) {
-        console.log(`encrypt:${data.length}`);
         const c = crypto_1.default.createCipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
         c.setAutoPadding(false);
         let t = c.update(Buffer.from(data), undefined, "hex");
@@ -123,7 +119,6 @@ class acr1255 {
         return Array.from(Buffer.from(t, "hex"));
     }
     decrypt(data, key) {
-        console.log(`decrypt:${data.length}`);
         const dec = crypto_1.default.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
         dec.setAutoPadding(false);
         let t = dec.update(Buffer.from(data), "binary", "binary");
@@ -136,21 +131,15 @@ class acr1255 {
         return list;
     }
     s(data) {
-        this.printHex(data, "func Data");
-        //  console.log(this.decrypt(data));
         this.readData = this.readData.concat(data);
         if (this.readData[0] !== 0x05) {
-            console.log("fast data error");
             this.readData = [];
         }
         const dLength = ((this.readData[1] & 0xff) << 8) | (this.readData[2] & 0x00ff);
-        this.printHex(this.readData, "func add Data");
-        console.log(`readlength : ${dLength}`);
         if (this.readData.length - 5 < dLength) {
             // lack data length
             return;
         }
-        console.log(this.readData[dLength + 4]);
         if (this.readData[dLength + 4] === 0x0a) {
             // last packet check
             data = this.readData.slice(0, dLength + 5);
@@ -166,12 +155,11 @@ class acr1255 {
             }
         }
         else {
-            console.log("error data");
+            // console.log("error data");
             this.readData = [];
         }
     }
     parseBlePacket(data) {
-        this.printHex(data, "func fix Data");
         switch (data[3]) {
             case 0x83:
                 if (!this._authenticated) {
@@ -182,21 +170,11 @@ class acr1255 {
                             randomDevice.push(data[i]);
                         }
                         this.randomDeviceNumber = randomDevice;
-                        this.printHex(randomDevice, "raw Data");
                         randomDevice = this.decrypt(randomDevice, this.masterKey);
-                        this.printHex(randomDevice, "decrypt Data");
-                        console.log(`randomDevice length:${randomDevice.length}`);
-                        this.sessionKey = randomDevice.slice(0, 8);
-                        this.sessionKey = this.sessionKey.concat(this.randomNumber.slice(0, 8));
-                        this.printHex(this.sessionKey, "session Data");
-                        randomDevice = this.randomNumber.concat(randomDevice);
-                        this.printHex(randomDevice, "concat Data");
-                        console.log(`randomDevice length:${randomDevice.length}`);
-                        randomDevice = this.decrypt(randomDevice, this.masterKey);
-                        this.printHex(randomDevice, "encrypt Data");
+                        this.sessionKey = randomDevice.slice(0, 8).concat(this.randomNumber.slice(0, 8));
+                        randomDevice = this.decrypt(this.randomNumber.concat(randomDevice), this.masterKey);
                         let sendPacket = [0x6b, 0x00, 0x25, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x46, 0x00];
                         sendPacket = sendPacket.concat(randomDevice);
-                        this.printHex(sendPacket, "send Data");
                         this.writeBle(sendPacket);
                         return;
                         // auth step.3
@@ -207,17 +185,13 @@ class acr1255 {
                         for (let i = 15; i < data.length - 2; i++) {
                             randomDevice.push(data[i]);
                         }
-                        console.log(randomDevice);
                         randomDevice = this.decrypt(randomDevice, this.masterKey);
-                        console.log(`randomNumber ${this.randomNumber}`);
-                        console.log(`randomDevice ${randomDevice}`);
                         if (this.arrayMatch(this.randomNumber, randomDevice)) {
                             this._authenticated = true;
                             if (this.onAuthenticated) {
                                 this.onAuthenticated();
                             }
                         }
-                        console.log("setting fin");
                         return;
                     }
                 }
@@ -226,7 +200,6 @@ class acr1255 {
         let d = data.slice(3, data.length - 2);
         d = this.decrypt(d, this.sessionKey);
         const dLen = (((d[1] & 0xff) << 8) | (d[2] & 0x00ff)) + 7; // command Data Form 7 length
-        this.printHex(d, "Read decrypt Data");
         if (this.onNotify) {
             this.onNotify(d.slice(0, dLen));
         }
@@ -242,14 +215,12 @@ class acr1255 {
         }
         data[6] = checksum;
         packet = packet.concat(data);
-        console.log(packet);
         checksum = 0;
         for (let i = 1; i < packet.length; i++) {
             checksum = (checksum ^ packet[i]) & 0xff;
         }
         packet.push(checksum);
         packet.push(0x0a);
-        console.log(packet);
         for (let i = 0; i < packet.length / 20; i++) {
             const d = packet.slice(i * 20, (i + 1) * 20);
             await this.readChar.writeWait(d);
@@ -267,92 +238,7 @@ class acr1255 {
         }
         return false;
     }
-    printHex(data, tag) {
-        let s = "";
-        for (let i = 0; i < data.length; i++) {
-            s += "0x" + ("0" + data[i].toString(16)).slice(-2) + ", ";
-        }
-        console.log(`${tag} : ${s}`);
-    }
 }
 exports.default = acr1255;
-// //
-// const parts = new acr1255(null);
-// const da = [245, 94, 138, 141, 75, 55, 209, 68, 213, 195, 232, 82, 188, 6, 5, 24];
-// // console.log(`original  : ${da}`);
-// // const daee = parts.encrypt(da);
-// // console.log(`encrypted : ${daee}`);
-// // const dae = parts.decrypt(daee);
-// // console.log(`decrypted : ${dae}`);
-// parts.s([
-//   0x05,
-//   0x00,
-//   0x1c,
-//   0x83,
-//   0x00,
-//   0x15,
-//   0x00,
-//   0x00,
-//   0x02,
-//   0x52,
-//   0xe1,
-//   0x00,
-//   0x00,
-//   0x45,
-//   0x00,
-//   0x1d,
-//   0x92,
-//   0xd7,
-//   0x6b,
-//   0xa0,
-//   0x4a,
-//   0xf4,
-//   0x0a,
-//   0x46,
-//   0xd5,
-//   0x0f,
-//   0x9a,
-//   0x22,
-//   0x24,
-//   0x69,
-//   0x2c,
-//   0x1c,
-//   0x0a,
-//   0x05,
-//   0x00,
-//   0x1c,
-//   0x83,
-//   0x00,
-//   0x15,
-//   0x00,
-//   0x00,
-//   0x02,
-//   0x52,
-//   0xe1,
-//   0x00,
-//   0x00,
-//   0x45,
-//   0x00,
-//   0x1d,
-//   0x92,
-//   0xd7,
-//   0x6b,
-//   0xa0,
-//   0x4a,
-//   0xf4,
-//   0x0a,
-//   0x46,
-//   0xd5,
-//   0x0f,
-//   0x9a,
-//   0x22,
-//   0x24,
-//   0x69,
-//   0x2c,
-//   0x1c,
-//   0x0a,
-// ]);
-// parts.s([5, 0, 28, 131, 0, 21, 0, 0, 2, 126, 225, 0, 0, 69, 0, 245, 94, 138, 141, 75]);
-// parts.s([55, 209, 68, 213, 195, 232, 82, 188, 6, 5, 24, 28, 10]);
 
 //# sourceMappingURL=index.js.map

@@ -126,6 +126,7 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 
 // Ble
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
+import acr1255, { acr1255Options } from "../parts/Ble/acr1255";
 import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from "../parts/Ble/ENERTALK";
 import IBS01, { IBS01Options } from "../parts/Ble/iBS01";
 import IBS01RG, { IBS01RGOptions } from "../parts/Ble/iBS01RG";
@@ -340,6 +341,7 @@ export interface WiredNameMap {
   "RS_Seek3": RS_Seek3;
   "REX_BTPM25V": REX_BTPM25V;
   "ENERTALK_TOUCH": ENERTALK_TOUCH;
+  "acr1255": acr1255;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -513,7 +515,7 @@ export interface WiredNameOptionsMap {
   "RS_Seek3": RS_Seek3Options;
   "REX_BTPM25V": REX_BTPM25VOptions;
   "ENERTALK_TOUCH": ENERTALK_TOUCHOptions;
-
+  "acr1255": acr1255Options;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 
