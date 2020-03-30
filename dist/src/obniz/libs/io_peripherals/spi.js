@@ -18,6 +18,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
+        this._reset();
     }
     /**
      * It starts spi. Now the mode is only "master".

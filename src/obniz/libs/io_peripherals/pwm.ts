@@ -48,6 +48,8 @@ export default class PeripheralPWM extends ComponentAbstract implements PWMInter
   constructor(obniz: Obniz, id: number) {
     super(obniz);
     this.id = id;
+
+    this._reset();
   }
 
   /**

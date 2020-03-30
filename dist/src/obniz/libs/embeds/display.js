@@ -4,13 +4,15 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
  * @category Embeds
  */
-class Display {
+class Display extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, info) {
+        super(obniz);
         this.autoFlush = true;
         this.fontSize = 16;
         this._pos = { x: 0, y: 0 };
@@ -19,7 +21,6 @@ class Display {
         this._color = "#000";
         this._paper_white = true;
         this._raw_alternate = false;
-        this.Obniz = obniz;
         this.width = info.width;
         this.height = info.height;
         this._colorDepthCapabilities = info.color_depth;
@@ -482,6 +483,18 @@ class Display {
             this.draw(ctx);
         }
     }
+    schemaBasePath() {
+        return "display";
+    }
+    _reset() {
+        this.autoFlush = true;
+        // reset to default
+        this._pos = { x: 0, y: 0 };
+        this._color = this._paper_white ? "#000" : "#FFF";
+        this.fontSize = this.height > 200 ? 32 : 16;
+        this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+        this._reset_canvas();
+    }
     warnCanvasAvailability() {
         if (this.Obniz.isNode) {
             throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
@@ -500,15 +513,6 @@ class Display {
             ctx.strokeStyle = this._color;
             ctx.font = `${this.fontSize}px Arial`;
         }
-    }
-    _reset() {
-        this.autoFlush = true;
-        // reset to default
-        this._pos = { x: 0, y: 0 };
-        this._color = this._paper_white ? "#000" : "#FFF";
-        this.fontSize = this.height > 200 ? 32 : 16;
-        this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
-        this._reset_canvas();
     }
     _preparedCanvas() {
         if (this._canvas) {

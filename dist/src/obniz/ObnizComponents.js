@@ -242,8 +242,8 @@ class ObnizComponents extends ObnizParts_1.default {
             const targetComponent = this[key];
             if (targetComponent instanceof ComponentAbstact_1.ComponentAbstract) {
                 const basePath = targetComponent.schemaBasePath();
-                if (obj.hasOwnProperty(basePath)) {
-                    targetComponent.notifyFromObniz(obj[key]);
+                if (basePath && obj.hasOwnProperty(basePath)) {
+                    targetComponent.notifyFromObniz(obj[basePath]);
                 }
             }
             else {

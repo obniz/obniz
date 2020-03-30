@@ -364,13 +364,13 @@ var map = {
 	"./response/ble/central/descriptor_get_finish.yml": "./dist/src/json_schema/response/ble/central/descriptor_get_finish.yml",
 	"./response/ble/central/descriptor_read.yml": "./dist/src/json_schema/response/ble/central/descriptor_read.yml",
 	"./response/ble/central/descriptor_write.yml": "./dist/src/json_schema/response/ble/central/descriptor_write.yml",
-	"./response/ble/central/error.yml": "./dist/src/json_schema/response/ble/central/error.yml",
 	"./response/ble/central/index.yml": "./dist/src/json_schema/response/ble/central/index.yml",
 	"./response/ble/central/scan.yml": "./dist/src/json_schema/response/ble/central/scan.yml",
 	"./response/ble/central/scan_finish.yml": "./dist/src/json_schema/response/ble/central/scan_finish.yml",
 	"./response/ble/central/service_get.yml": "./dist/src/json_schema/response/ble/central/service_get.yml",
 	"./response/ble/central/service_get_finish.yml": "./dist/src/json_schema/response/ble/central/service_get_finish.yml",
 	"./response/ble/central/status_update.yml": "./dist/src/json_schema/response/ble/central/status_update.yml",
+	"./response/ble/error.yml": "./dist/src/json_schema/response/ble/error.yml",
 	"./response/ble/hci/index.yml": "./dist/src/json_schema/response/ble/hci/index.yml",
 	"./response/ble/hci/read.yml": "./dist/src/json_schema/response/ble/hci/read.yml",
 	"./response/ble/index.yml": "./dist/src/json_schema/response/ble/index.yml",
@@ -1264,17 +1264,10 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./dist/src/json_schema/response/ble/central/error.yml":
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","deprecated":"3.0.0","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"module_error_code":{"type":"integer"},"function_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
-
-/***/ }),
-
 /***/ "./dist/src/json_schema/response/ble/central/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","basePath":"ble","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/scan_finish"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/service_get_finish"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_get_finish"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"},{"$ref":"/response/ble/central/characteristic_register_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/descriptor_get"},{"$ref":"/response/ble/central/descriptor_get_finish"},{"$ref":"/response/ble/central/descriptor_write"},{"$ref":"/response/ble/central/descriptor_read"},{"$ref":"/response/ble/central/error"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","basePath":"ble","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/scan_finish"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/service_get_finish"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_get_finish"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"},{"$ref":"/response/ble/central/characteristic_register_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/descriptor_get"},{"$ref":"/response/ble/central/descriptor_get_finish"},{"$ref":"/response/ble/central/descriptor_write"},{"$ref":"/response/ble/central/descriptor_read"}]}
 
 /***/ }),
 
@@ -1313,6 +1306,13 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/ble/error.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/error","deprecated":"3.0.0","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"module_error_code":{"type":"integer"},"function_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/ble/hci/index.yml":
 /***/ (function(module, exports) {
 
@@ -1330,7 +1330,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/ble/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","basePath":"ble","anyOf":[{"$ref":"/response/ble/central"},{"$ref":"/response/ble/peripheral"},{"$ref":"/response/ble/hci"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","basePath":"ble","anyOf":[{"$ref":"/response/ble/central"},{"$ref":"/response/ble/peripheral"},{"$ref":"/response/ble/error"},{"$ref":"/response/ble/hci"}]}
 
 /***/ }),
 
@@ -2014,8 +2014,8 @@ class ObnizComponents extends ObnizParts_1.default {
             const targetComponent = this[key];
             if (targetComponent instanceof ComponentAbstact_1.ComponentAbstract) {
                 const basePath = targetComponent.schemaBasePath();
-                if (obj.hasOwnProperty(basePath)) {
-                    targetComponent.notifyFromObniz(obj[key]);
+                if (basePath && obj.hasOwnProperty(basePath)) {
+                    targetComponent.notifyFromObniz(obj[basePath]);
                 }
             }
             else {
@@ -3848,7 +3848,6 @@ class ComponentAbstract extends eventemitter3_1.default {
         this.timeout = 10 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = obniz;
-        this._reset();
     }
     notifyFromObniz(json) {
         for (const eventName of this.eventNames()) {
@@ -3991,6 +3990,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisement.js"));
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
@@ -4003,18 +4003,22 @@ const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/
  * Deprecated class.
  * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  */
-class ObnizBLE {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
+class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
+    constructor(obniz) {
+        super(obniz);
         this.remotePeripherals = [];
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
-        this.peripheral = new blePeripheral_1.default(Obniz);
+        this.peripheral = new blePeripheral_1.default(obniz);
         this.scanTarget = null;
-        this.advertisement = new bleAdvertisement_1.default(Obniz);
-        this.scan = new bleScan_1.default(Obniz);
-        this.security = new bleSecurity_1.default(Obniz);
+        this.advertisement = new bleAdvertisement_1.default(obniz);
+        this.scan = new bleScan_1.default(obniz);
+        this.security = new bleSecurity_1.default(obniz);
+        this._scanCallbackBind();
+        this._centralCallbackBind();
+        this._peripheralCallbackBind();
+        this._errorCallbackBind();
         this._reset();
     }
     static _dataArray2uuidHex(data, reverse) {
@@ -4057,8 +4061,11 @@ class ObnizBLE {
         }
         return null;
     }
-    notified(obj) {
-        if (obj.scan_result) {
+    schemaBasePath() {
+        return "ble";
+    }
+    _scanCallbackBind() {
+        this.on("/response/ble/central/scan", (obj) => {
             let val = this.findPeripheral(obj.scan_result.address);
             if (!val) {
                 val = new bleRemotePeripheral_1.default(this.Obniz, obj.scan_result.address);
@@ -4067,136 +4074,169 @@ class ObnizBLE {
             val.discoverdOnRemote = true;
             val.setParams(obj.scan_result);
             this.scan.notifyFromServer("onfind", val);
-        }
-        if (obj.scan_result_finish) {
+        });
+        this.on("/response/ble/central/scan_finish", (obj) => {
             this.scan.notifyFromServer("onfinish");
-        }
-        const remotePeripheralCallbackFunc = (val, func, type) => {
-            let target = null;
-            if (val === undefined) {
-                return;
-            }
-            const p = this.findPeripheral(val.address);
-            if (!p) {
-                return;
-            }
-            if (type === "peripheral") {
-                target = p;
-            }
-            else if (type === "service") {
-                target = p.findService(val);
-            }
-            else if (type === "characteristic") {
-                target = p.findCharacteristic(val);
-            }
-            else if (type === "descriptor") {
-                target = p.findDescriptor(val);
-            }
-            if (!target) {
-                return;
-            }
-            func(val, target);
-        };
-        const paramList = {
-            status_update: { name: "statusupdate", obj: "peripheral" },
-            get_service_result: { name: "discover", obj: "peripheral" },
-            get_service_result_finish: {
-                name: "discoverfinished",
-                obj: "peripheral",
-            },
-            get_characteristic_result: { name: "discover", obj: "service" },
-            get_characteristic_result_finish: {
-                name: "discoverfinished",
-                obj: "service",
-            },
-            write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-            read_characteristic_result: { name: "onread", obj: "characteristic" },
-            register_notify_characteristic_result: {
-                name: "onregisternotify",
-                obj: "characteristic",
-            },
-            // for typo
-            register_nofity_characteristic_result: {
-                name: "onregisternotify",
-                obj: "characteristic",
-            },
-            unregister_notify_characteristic_result: {
-                name: "onunregisternotify",
-                obj: "characteristic",
-            },
-            // for typo
-            unregister_nofity_characteristic_result: {
-                name: "onunregisternotify",
-                obj: "characteristic",
-            },
-            notify_characteristic: { name: "onnotify", obj: "characteristic" },
-            // for typo
-            nofity_characteristic: { name: "onnotify", obj: "characteristic" },
-            get_descriptor_result: { name: "discover", obj: "characteristic" },
-            get_descriptor_result_finish: {
-                name: "discoverfinished",
-                obj: "characteristic",
-            },
-            write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-            read_descriptor_result: { name: "onread", obj: "descriptor" },
-        };
-        for (const paramListKey in paramList) {
-            remotePeripheralCallbackFunc(obj[paramListKey], (val, bleobj) => {
-                bleobj.notifyFromServer(paramList[paramListKey].name, val);
-            }, paramList[paramListKey].obj);
-        }
-        const callbackFunc = (val, func, type) => {
-            let target = null;
-            if (val === undefined) {
-                return;
-            }
-            if (type === "peripheral") {
-                target = this.peripheral;
-            }
-            else if (type === "service") {
-                target = this.peripheral.getService(val);
-            }
-            else if (type === "characteristic") {
-                target = this.peripheral.findCharacteristic(val);
-            }
-            else if (type === "descriptor") {
-                target = this.peripheral.findDescriptor(val);
-            }
-            if (!target) {
-                return;
-            }
-            func(val, target);
-        };
-        if (obj.peripheral) {
-            callbackFunc(obj.peripheral.connection_status, (val) => {
-                this.peripheral.onconnectionupdates(val);
-            }, "peripheral");
-            const centralParamList = {
-                read_characteristic_result: { name: "onread", obj: "characteristic" },
-                write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-                notify_read_characteristic: {
-                    name: "onreadfromremote",
-                    obj: "characteristic",
-                },
-                notify_write_characteristic: {
-                    name: "onwritefromremote",
-                    obj: "characteristic",
-                },
-                read_descriptor_result: { name: "onread", obj: "descriptor" },
-                write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-                notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
-                notify_write_descriptor: {
-                    name: "onwritefromremote",
-                    obj: "descriptor",
-                },
+        });
+    }
+    _centralCallbackBind() {
+        const callback = (obj) => {
+            const remotePeripheralCallbackFunc = (val, func, type) => {
+                let target = null;
+                if (val === undefined) {
+                    return;
+                }
+                const p = this.findPeripheral(val.address);
+                if (!p) {
+                    return;
+                }
+                if (type === "peripheral") {
+                    target = p;
+                }
+                else if (type === "service") {
+                    target = p.findService(val);
+                }
+                else if (type === "characteristic") {
+                    target = p.findCharacteristic(val);
+                }
+                else if (type === "descriptor") {
+                    target = p.findDescriptor(val);
+                }
+                if (!target) {
+                    return;
+                }
+                func(val, target);
             };
-            for (const key in centralParamList) {
-                callbackFunc(obj.peripheral[key], (val, bleobj) => {
-                    bleobj.notifyFromServer(centralParamList[key].name, val);
-                }, centralParamList[key].obj);
+            const paramList = {
+                status_update: { name: "statusupdate", obj: "peripheral" },
+                get_service_result: { name: "discover", obj: "peripheral" },
+                get_service_result_finish: {
+                    name: "discoverfinished",
+                    obj: "peripheral",
+                },
+                get_characteristic_result: { name: "discover", obj: "service" },
+                get_characteristic_result_finish: {
+                    name: "discoverfinished",
+                    obj: "service",
+                },
+                write_characteristic_result: { name: "onwrite", obj: "characteristic" },
+                read_characteristic_result: { name: "onread", obj: "characteristic" },
+                register_notify_characteristic_result: {
+                    name: "onregisternotify",
+                    obj: "characteristic",
+                },
+                // for typo
+                register_nofity_characteristic_result: {
+                    name: "onregisternotify",
+                    obj: "characteristic",
+                },
+                unregister_notify_characteristic_result: {
+                    name: "onunregisternotify",
+                    obj: "characteristic",
+                },
+                // for typo
+                unregister_nofity_characteristic_result: {
+                    name: "onunregisternotify",
+                    obj: "characteristic",
+                },
+                notify_characteristic: { name: "onnotify", obj: "characteristic" },
+                // for typo
+                nofity_characteristic: { name: "onnotify", obj: "characteristic" },
+                get_descriptor_result: { name: "discover", obj: "characteristic" },
+                get_descriptor_result_finish: {
+                    name: "discoverfinished",
+                    obj: "characteristic",
+                },
+                write_descriptor_result: { name: "onwrite", obj: "descriptor" },
+                read_descriptor_result: { name: "onread", obj: "descriptor" },
+            };
+            for (const paramListKey in paramList) {
+                remotePeripheralCallbackFunc(obj[paramListKey], (val, bleobj) => {
+                    bleobj.notifyFromServer(paramList[paramListKey].name, val);
+                }, paramList[paramListKey].obj);
             }
-        }
-        if (obj.error) {
+        };
+        this.on("/response/ble/central/status_update", callback);
+        this.on("/response/ble/central/service_get", callback);
+        this.on("/response/ble/central/service_get_finish", callback);
+        this.on("/response/ble/central/characteristic_get", callback);
+        this.on("/response/ble/central/characteristic_get_finish", callback);
+        this.on("/response/ble/central/characteristic_write", callback);
+        this.on("/response/ble/central/characteristic_read", callback);
+        this.on("/response/ble/central/characteristic_register_notify", callback);
+        this.on("/response/ble/central/characteristic_notify", callback);
+        this.on("/response/ble/central/characteristic_notify", callback);
+        this.on("/response/ble/central/descriptor_get", callback);
+        this.on("/response/ble/central/descriptor_get_finish", callback);
+        this.on("/response/ble/central/descriptor_write", callback);
+        this.on("/response/ble/central/descriptor_read", callback);
+    }
+    _peripheralCallbackBind() {
+        const callback = (obj) => {
+            const callbackFunc = (val, func, type) => {
+                let target = null;
+                if (val === undefined) {
+                    return;
+                }
+                if (type === "peripheral") {
+                    target = this.peripheral;
+                }
+                else if (type === "service") {
+                    target = this.peripheral.getService(val);
+                }
+                else if (type === "characteristic") {
+                    target = this.peripheral.findCharacteristic(val);
+                }
+                else if (type === "descriptor") {
+                    target = this.peripheral.findDescriptor(val);
+                }
+                if (!target) {
+                    return;
+                }
+                func(val, target);
+            };
+            if (obj.peripheral) {
+                callbackFunc(obj.peripheral.connection_status, (val) => {
+                    this.peripheral.onconnectionupdates(val);
+                }, "peripheral");
+                const centralParamList = {
+                    read_characteristic_result: { name: "onread", obj: "characteristic" },
+                    write_characteristic_result: { name: "onwrite", obj: "characteristic" },
+                    notify_read_characteristic: {
+                        name: "onreadfromremote",
+                        obj: "characteristic",
+                    },
+                    notify_write_characteristic: {
+                        name: "onwritefromremote",
+                        obj: "characteristic",
+                    },
+                    read_descriptor_result: { name: "onread", obj: "descriptor" },
+                    write_descriptor_result: { name: "onwrite", obj: "descriptor" },
+                    notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
+                    notify_write_descriptor: {
+                        name: "onwritefromremote",
+                        obj: "descriptor",
+                    },
+                };
+                for (const key in centralParamList) {
+                    callbackFunc(obj.peripheral[key], (val, bleobj) => {
+                        bleobj.notifyFromServer(centralParamList[key].name, val);
+                    }, centralParamList[key].obj);
+                }
+            }
+        };
+        this.on("/response/ble/peripheral/status", callback);
+        this.on("/response/ble/peripheral/characteristic_read", callback);
+        this.on("/response/ble/peripheral/characteristic_write", callback);
+        this.on("/response/ble/peripheral/characteristic_notify_read", callback);
+        this.on("/response/ble/peripheral/characteristic_notify_write", callback);
+        this.on("/response/ble/peripheral/descriptor_read", callback);
+        this.on("/response/ble/peripheral/descriptor_write", callback);
+        this.on("/response/ble/peripheral/descriptor_notify_read", callback);
+        this.on("/response/ble/peripheral/descriptor_notify_write", callback);
+    }
+    _errorCallbackBind() {
+        this.on("/response/ble/error", (obj) => {
             const params = obj.error;
             let handled = false;
             let peripheral;
@@ -4233,7 +4273,7 @@ class ObnizBLE {
             if (!handled) {
                 this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
             }
-        }
+        });
     }
 }
 exports.default = ObnizBLE;
@@ -6171,6 +6211,7 @@ const bindings_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/em
 const hci_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const bindings_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js"));
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
 const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleDescriptor.js"));
@@ -6183,9 +6224,9 @@ const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
-class ObnizBLE {
+class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
-        this.Obniz = obniz;
+        super(obniz);
         this.hci = new hci_1.default(obniz);
         this.hciProtocol = new hci_2.default(this.hci);
         this.centralBindings = new bindings_1.default(this.hciProtocol);
@@ -6205,6 +6246,11 @@ class ObnizBLE {
         this.advertisement = new bleAdvertisement_1.default(this);
         this.scan = new bleScan_1.default(this);
         this.security = new bleSecurity_1.default(this);
+        this.on("/response/ble/hci/read", (obj) => {
+            if (obj.hci) {
+                this.hci.notified(obj.hci);
+            }
+        });
         this._bind();
         this._reset();
     }
@@ -6256,15 +6302,6 @@ class ObnizBLE {
                 this.hci.init();
             }
             await this.hciProtocol.initWait();
-        }
-    }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (obj.hci) {
-            this.hci.notified(obj.hci);
         }
     }
     /**
@@ -6340,6 +6377,9 @@ class ObnizBLE {
                 message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
             });
         }
+    }
+    schemaBasePath() {
+        return "ble";
     }
     onStateChange() { }
     findPeripheral(address) {
@@ -14609,13 +14649,15 @@ exports.default = Smp;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
  * @category Embeds
  */
-class Display {
+class Display extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, info) {
+        super(obniz);
         this.autoFlush = true;
         this.fontSize = 16;
         this._pos = { x: 0, y: 0 };
@@ -14624,7 +14666,6 @@ class Display {
         this._color = "#000";
         this._paper_white = true;
         this._raw_alternate = false;
-        this.Obniz = obniz;
         this.width = info.width;
         this.height = info.height;
         this._colorDepthCapabilities = info.color_depth;
@@ -15087,6 +15128,18 @@ class Display {
             this.draw(ctx);
         }
     }
+    schemaBasePath() {
+        return "display";
+    }
+    _reset() {
+        this.autoFlush = true;
+        // reset to default
+        this._pos = { x: 0, y: 0 };
+        this._color = this._paper_white ? "#000" : "#FFF";
+        this.fontSize = this.height > 200 ? 32 : 16;
+        this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+        this._reset_canvas();
+    }
     warnCanvasAvailability() {
         if (this.Obniz.isNode) {
             throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
@@ -15105,15 +15158,6 @@ class Display {
             ctx.strokeStyle = this._color;
             ctx.font = `${this.fontSize}px Arial`;
         }
-    }
-    _reset() {
-        this.autoFlush = true;
-        // reset to default
-        this._pos = { x: 0, y: 0 };
-        this._color = this._paper_white ? "#000" : "#FFF";
-        this.fontSize = this.height > 200 ? 32 : 16;
-        this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
-        this._reset_canvas();
     }
     _preparedCanvas() {
         if (this._canvas) {
@@ -15247,13 +15291,20 @@ exports.default = Display;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * The embedded switch on obniz Board.
  * @category Embeds
  */
-class ObnizSwitch {
-    constructor(Obniz, info) {
-        this.Obniz = Obniz;
+class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
+    constructor(obniz, info) {
+        super(obniz);
+        this.on("/response/switch/change", (obj) => {
+            this.state = obj.state;
+            if (this.onchange) {
+                this.onchange(this.state);
+            }
+        });
         this._reset();
     }
     /**
@@ -15269,14 +15320,11 @@ class ObnizSwitch {
      * ```
      *
      */
-    getWait() {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            const obj = {};
-            obj.switch = "get";
-            self.Obniz.send(obj);
-            self.addObserver(resolve);
-        });
+    async getWait() {
+        const obj = {};
+        obj.switch = "get";
+        const data = await this.sendAndReceiveJsonWait(obj, "/response/switch/change");
+        return data.state;
     }
     /**
      * With this you wait until the switch status changes to state.
@@ -15298,41 +15346,19 @@ class ObnizSwitch {
      *
      * @param state state for wait
      */
-    stateWait(state) {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.onChangeForStateWait = (pressed) => {
-                if (state === pressed) {
-                    self.onChangeForStateWait = () => { };
-                    resolve();
-                }
-            };
-        });
+    async stateWait(state) {
+        while (1) {
+            const data = await this.receiveJsonWait("/response/switch/change");
+            if (state === data.state) {
+                return;
+            }
+        }
     }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        this.state = obj.state;
-        if (this.onchange) {
-            this.onchange(this.state);
-        }
-        this.onChangeForStateWait(this.state);
-        const callback = this.observers.shift();
-        if (callback) {
-            callback(this.state);
-        }
+    schemaBasePath() {
+        return "switch";
     }
     _reset() {
         this.state = "none";
-        this.observers = [];
-        this.onChangeForStateWait = () => { };
-    }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
     }
 }
 exports.default = ObnizSwitch;
@@ -15543,6 +15569,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
                 this.onchange(obj);
             }
         });
+        this._reset();
     }
     /**
      * This starts measuring voltage on ioX until end() is called.
@@ -15654,6 +15681,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
                 }
             }
         });
+        this._reset();
     }
     /**
      * io animation is used when you wish to accelerate the serial sequence change of io.
@@ -15834,14 +15862,15 @@ exports.default = Directive;
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 /**
  * @category Peripherals
  */
-class PeripheralGrove {
+class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, no, params) {
+        super(obniz);
         this.used = false;
         this._current = {};
-        this.Obniz = obniz;
         this.no = no;
         this._params = params;
         this._reset();
@@ -15924,6 +15953,9 @@ class PeripheralGrove {
     notified(obj) {
         // nothing
     }
+    schemaBasePath() {
+        return null;
+    }
     useWithType(type, drive) {
         if (this.used) {
             if (this._current.type !== "i2c" || this._current.drive !== drive) {
@@ -15999,6 +16031,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
                 message: `i2c${this.id}: ${obj.warning.message}`,
             });
         });
+        this._reset();
     }
     /**
      * It starts i2c on given io sda, scl.
@@ -16277,6 +16310,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
                 message: `io${this.id}: ${obj.error.message}`,
             });
         });
+        this._reset();
     }
     /**
      * Make ioX to output mode and put out 1 or 0.
@@ -16485,6 +16519,7 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
+        this._reset();
     }
     /**
      * This starts a pwm on a given io.
@@ -16721,6 +16756,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
+        this._reset();
     }
     /**
      * It starts spi. Now the mode is only "master".
@@ -16964,7 +17000,6 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this._reset();
         this.on("/response/uart/receive", (obj) => {
             if (this.onreceive) {
                 const string = this.tryConvertString(obj.data);
@@ -16977,6 +17012,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
                 this.received.push.apply(this.received, obj.data);
             }
         });
+        this._reset();
     }
     /**
      * It starts uart on io tx, rx.
@@ -17272,6 +17308,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * LogicAnalyzer records samples read from io periodically.
@@ -17295,9 +17332,20 @@ const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/
  *
  * @category Measurement
  */
-class LogicAnalyzer {
+class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
-        this.obniz = obniz;
+        super(obniz);
+        this.on("/response/logicAnalyzer/data", (obj) => {
+            if (this.onmeasured) {
+                this.onmeasured(obj.data);
+            }
+            else {
+                if (!this.measured) {
+                    this.measured = [];
+                }
+                this.measured.push(obj.data);
+            }
+        });
         this._reset();
     }
     /**
@@ -17353,7 +17401,7 @@ class LogicAnalyzer {
                 samples: this.params.triggerValueSamples,
             };
         }
-        this.obniz.send(obj);
+        this.Obniz.send(obj);
         return;
     }
     /**
@@ -17368,24 +17416,11 @@ class LogicAnalyzer {
     end() {
         const obj = {};
         obj.logic_analyzer = null;
-        this.obniz.send(obj);
+        this.Obniz.send(obj);
         return;
     }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (this.onmeasured) {
-            this.onmeasured(obj.data);
-        }
-        else {
-            if (!this.measured) {
-                this.measured = [];
-            }
-            this.measured.push(obj.data);
-        }
-        return;
+    schemaBasePath() {
+        return "logic_analyzer";
     }
 }
 exports.default = LogicAnalyzer;
@@ -17408,14 +17443,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 /**
  * The measure module provides hardware level measurement.
  * @category Measurement
  */
-class ObnizMeasure {
+class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
-        this.obniz = obniz;
+        super(obniz);
         this._reset();
     }
     /**
@@ -17455,7 +17491,7 @@ class ObnizMeasure {
         if (err) {
             throw new Error("Measure start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
+        params = util_1.default._keyFilter(params, [
             "io_pulse",
             "pulse",
             "pulse_width",
@@ -17465,32 +17501,27 @@ class ObnizMeasure {
             "callback",
         ]);
         const echo = {};
-        echo.io_pulse = this.params.io_pulse;
-        echo.pulse = this.params.pulse;
-        echo.pulse_width = this.params.pulse_width;
-        echo.io_echo = this.params.io_echo;
-        echo.measure_edges = this.params.measure_edges;
-        if (typeof this.params.timeout === "number") {
-            echo.timeout = this.params.timeout;
+        echo.io_pulse = params.io_pulse;
+        echo.pulse = params.pulse;
+        echo.pulse_width = params.pulse_width;
+        echo.io_echo = params.io_echo;
+        echo.measure_edges = params.measure_edges;
+        if (typeof params.timeout === "number") {
+            echo.timeout = params.timeout;
         }
-        this.obniz.send({
+        this.Obniz.send({
             measure: {
                 echo,
             },
         });
-        if (this.params.callback) {
-            this.observers.push(this.params.callback);
+        if (params.callback) {
+            this.onceQueue("/response/measure/echo", (obj) => {
+                params.callback(obj.echo);
+            });
         }
     }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        const callback = this.observers.shift();
-        if (callback) {
-            callback(obj.echo);
-        }
+    schemaBasePath() {
+        return "measure";
     }
 }
 exports.default = ObnizMeasure;
@@ -17555,6 +17586,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
                 callback(obj.connect.code);
             }
         });
+        this._reset();
     }
     /**
      * Starts a connection on the port and domain for which TCP is specified.

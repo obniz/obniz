@@ -20,7 +20,6 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
   constructor(obniz: Obniz) {
     super();
     this.Obniz = obniz;
-    this._reset();
   }
 
   public notifyFromObniz(json: any) {
@@ -53,7 +52,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
     return results;
   }
 
-  public abstract schemaBasePath(): string;
+  public abstract schemaBasePath(): string | null;
 
   protected abstract _reset(): void;
 

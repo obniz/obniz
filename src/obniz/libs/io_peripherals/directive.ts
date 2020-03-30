@@ -41,6 +41,8 @@ export default class Directive extends ComponentAbstract {
         }
       }
     });
+
+    this._reset();
   }
 
   /**

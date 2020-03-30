@@ -118,6 +118,8 @@ export default class Tcp extends ComponentAbstract {
         callback(obj.connect.code);
       }
     });
+
+    this._reset();
   }
 
   /**

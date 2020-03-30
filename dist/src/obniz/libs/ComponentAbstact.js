@@ -12,7 +12,6 @@ class ComponentAbstract extends eventemitter3_1.default {
         this.timeout = 10 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = obniz;
-        this._reset();
     }
     notifyFromObniz(json) {
         for (const eventName of this.eventNames()) {

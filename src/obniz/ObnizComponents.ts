@@ -490,8 +490,8 @@ export default class ObnizComponents extends ObnizParts {
       const targetComponent = (this as any)[key];
       if (targetComponent instanceof ComponentAbstract) {
         const basePath = targetComponent.schemaBasePath();
-        if (obj.hasOwnProperty(basePath)) {
-          targetComponent.notifyFromObniz(obj[key]);
+        if (basePath && obj.hasOwnProperty(basePath)) {
+          targetComponent.notifyFromObniz(obj[basePath]);
         }
       } else {
         if (key === "logicAnalyzer") {

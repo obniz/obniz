@@ -13,6 +13,7 @@ const bindings_1 = __importDefault(require("./protocol/central/bindings"));
 const hci_2 = __importDefault(require("./protocol/hci"));
 const bindings_2 = __importDefault(require("./protocol/peripheral/bindings"));
 const semver_1 = __importDefault(require("semver"));
+const ComponentAbstact_1 = require("../../ComponentAbstact");
 const bleAdvertisement_1 = __importDefault(require("./bleAdvertisement"));
 const bleCharacteristic_1 = __importDefault(require("./bleCharacteristic"));
 const bleDescriptor_1 = __importDefault(require("./bleDescriptor"));
@@ -25,9 +26,9 @@ const bleService_1 = __importDefault(require("./bleService"));
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
-class ObnizBLE {
+class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
-        this.Obniz = obniz;
+        super(obniz);
         this.hci = new hci_1.default(obniz);
         this.hciProtocol = new hci_2.default(this.hci);
         this.centralBindings = new bindings_1.default(this.hciProtocol);
@@ -47,6 +48,11 @@ class ObnizBLE {
         this.advertisement = new bleAdvertisement_1.default(this);
         this.scan = new bleScan_1.default(this);
         this.security = new bleSecurity_1.default(this);
+        this.on("/response/ble/hci/read", (obj) => {
+            if (obj.hci) {
+                this.hci.notified(obj.hci);
+            }
+        });
         this._bind();
         this._reset();
     }
@@ -98,15 +104,6 @@ class ObnizBLE {
                 this.hci.init();
             }
             await this.hciProtocol.initWait();
-        }
-    }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (obj.hci) {
-            this.hci.notified(obj.hci);
         }
     }
     /**
@@ -182,6 +179,9 @@ class ObnizBLE {
                 message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
             });
         }
+    }
+    schemaBasePath() {
+        return "ble";
     }
     onStateChange() { }
     findPeripheral(address) {

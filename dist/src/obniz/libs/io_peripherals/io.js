@@ -32,6 +32,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
                 message: `io${this.id}: ${obj.error.message}`,
             });
         });
+        this._reset();
     }
     /**
      * Make ioX to output mode and put out 1 or 0.

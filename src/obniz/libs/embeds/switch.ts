@@ -3,6 +3,8 @@
  * @module ObnizCore.Components
  */
 
+import { ComponentAbstract } from "../ComponentAbstact";
+
 /**
  * switch state
  */
@@ -13,7 +15,7 @@ type ObnizSwitchCallback = (result: ObnizSwitchState) => void;
  * The embedded switch on obniz Board.
  * @category Embeds
  */
-export default class ObnizSwitch {
+export default class ObnizSwitch extends ComponentAbstract {
   /**
    * current switch state
    */
@@ -36,12 +38,16 @@ export default class ObnizSwitch {
    * ```
    */
   public onchange?: ObnizSwitchCallback;
-  private Obniz: any;
-  private observers!: ObnizSwitchCallback[];
-  private onChangeForStateWait!: ObnizSwitchCallback | (() => void);
 
-  constructor(Obniz: any, info: any) {
-    this.Obniz = Obniz;
+  constructor(obniz: any, info: any) {
+    super(obniz);
+    this.on("/response/switch/change", (obj) => {
+      this.state = obj.state;
+      if (this.onchange) {
+        this.onchange(this.state);
+      }
+    });
+
     this._reset();
   }
 
@@ -58,14 +64,11 @@ export default class ObnizSwitch {
    * ```
    *
    */
-  public getWait(): Promise<ObnizSwitchState> {
-    const self: any = this;
-    return new Promise((resolve: any, reject: any) => {
-      const obj: any = {};
-      obj.switch = "get";
-      self.Obniz.send(obj);
-      self.addObserver(resolve);
-    });
+  public async getWait(): Promise<ObnizSwitchState> {
+    const obj: any = {};
+    obj.switch = "get";
+    const data = await this.sendAndReceiveJsonWait(obj, "/response/switch/change");
+    return data.state;
   }
 
   /**
@@ -88,44 +91,20 @@ export default class ObnizSwitch {
    *
    * @param state state for wait
    */
-  public stateWait(state: ObnizSwitchState): Promise<void> {
-    const self: any = this;
-    return new Promise((resolve: any, reject: any) => {
-      self.onChangeForStateWait = (pressed: ObnizSwitchState) => {
-        if (state === pressed) {
-          self.onChangeForStateWait = () => {};
-          resolve();
-        }
-      };
-    });
-  }
-
-  /**
-   * @ignore
-   * @param obj
-   */
-  public notified(obj: any) {
-    this.state = obj.state;
-    if (this.onchange) {
-      this.onchange(this.state);
-    }
-    this.onChangeForStateWait(this.state);
-
-    const callback: any = this.observers.shift();
-    if (callback) {
-      callback(this.state);
+  public async stateWait(state: ObnizSwitchState): Promise<void> {
+    while (1) {
+      const data = await this.receiveJsonWait("/response/switch/change");
+      if (state === data.state) {
+        return;
+      }
     }
   }
 
-  private _reset() {
+  public schemaBasePath(): string {
+    return "switch";
+  }
+
+  protected _reset() {
     this.state = "none";
-    this.observers = [];
-    this.onChangeForStateWait = () => {};
-  }
-
-  private addObserver(callback: ObnizSwitchCallback) {
-    if (callback) {
-      this.observers.push(callback);
-    }
   }
 }

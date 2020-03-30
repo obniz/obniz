@@ -105,6 +105,8 @@ class PeripheralI2C extends ComponentAbstract {
         message: `i2c${this.id}: ${obj.warning.message}`,
       });
     });
+
+    this._reset();
   }
 
   /**

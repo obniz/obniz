@@ -27,6 +27,7 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
                 }
             }
         });
+        this._reset();
     }
     /**
      * io animation is used when you wish to accelerate the serial sequence change of io.

@@ -18,6 +18,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
                 this.onchange(obj);
             }
         });
+        this._reset();
     }
     /**
      * This starts measuring voltage on ioX until end() is called.

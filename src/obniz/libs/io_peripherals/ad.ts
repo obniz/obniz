@@ -45,6 +45,8 @@ export default class PeripheralAD extends ComponentAbstract {
         this.onchange(obj);
       }
     });
+
+    this._reset();
   }
 
   /**

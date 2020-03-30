@@ -4,7 +4,9 @@
  */
 
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 import ObnizUtil from "../utils/util";
+import { LogicAnalyzerOptions } from "./logicanalyzer";
 
 export interface ObnizMeasureResult {
   edge: boolean;
@@ -84,13 +86,12 @@ export interface ObnizMeasureOptions {
  * The measure module provides hardware level measurement.
  * @category Measurement
  */
-export default class ObnizMeasure {
-  private obniz: Obniz;
+export default class ObnizMeasure extends ComponentAbstract {
   private observers!: Array<(edges: ObnizMeasureResultArray) => void>;
   private params?: ObnizMeasureOptions;
 
   constructor(obniz: Obniz) {
-    this.obniz = obniz;
+    super(obniz);
     this._reset();
   }
 
@@ -132,7 +133,7 @@ export default class ObnizMeasure {
     if (err) {
       throw new Error("Measure start param '" + err + "' required, but not found ");
     }
-    this.params = ObnizUtil._keyFilter(params, [
+    params = ObnizUtil._keyFilter(params, [
       "io_pulse",
       "pulse",
       "pulse_width",
@@ -143,34 +144,29 @@ export default class ObnizMeasure {
     ]) as ObnizMeasureOptions;
 
     const echo: any = {};
-    echo.io_pulse = this.params.io_pulse;
-    echo.pulse = this.params.pulse;
-    echo.pulse_width = this.params.pulse_width;
-    echo.io_echo = this.params.io_echo;
-    echo.measure_edges = this.params.measure_edges;
-    if (typeof this.params.timeout === "number") {
-      echo.timeout = this.params.timeout;
+    echo.io_pulse = params.io_pulse;
+    echo.pulse = params.pulse;
+    echo.pulse_width = params.pulse_width;
+    echo.io_echo = params.io_echo;
+    echo.measure_edges = params.measure_edges;
+    if (typeof params.timeout === "number") {
+      echo.timeout = params.timeout;
     }
 
-    this.obniz.send({
+    this.Obniz.send({
       measure: {
         echo,
       },
     });
 
-    if (this.params.callback) {
-      this.observers.push(this.params.callback);
+    if (params.callback) {
+      this.onceQueue("/response/measure/echo", (obj) => {
+        params!.callback!(obj.echo);
+      });
     }
   }
 
-  /**
-   * @ignore
-   * @param obj
-   */
-  public notified(obj: any) {
-    const callback: any = this.observers.shift();
-    if (callback) {
-      callback(obj.echo);
-    }
+  public schemaBasePath(): string {
+    return "measure";
   }
 }

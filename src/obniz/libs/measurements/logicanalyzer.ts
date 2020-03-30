@@ -4,6 +4,7 @@
  */
 
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 import ObnizUtil from "../utils/util";
 
 export interface LogicAnalyzerOptions {
@@ -65,7 +66,7 @@ export interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {
  *
  * @category Measurement
  */
-export default class LogicAnalyzer {
+export default class LogicAnalyzer extends ComponentAbstract {
   /**
    * This is a callback function that will be called when data arrives.
    *
@@ -83,11 +84,21 @@ export default class LogicAnalyzer {
    */
   public onmeasured?: (array: number[]) => void;
   private measured?: number[];
-  private obniz: Obniz;
   private params: any;
 
   constructor(obniz: Obniz) {
-    this.obniz = obniz;
+    super(obniz);
+
+    this.on("/response/logicAnalyzer/data", (obj) => {
+      if (this.onmeasured) {
+        this.onmeasured(obj.data);
+      } else {
+        if (!this.measured) {
+          this.measured = [];
+        }
+        this.measured.push(obj.data);
+      }
+    });
     this._reset();
   }
 
@@ -147,7 +158,7 @@ export default class LogicAnalyzer {
       };
     }
 
-    this.obniz.send(obj);
+    this.Obniz.send(obj);
     return;
   }
 
@@ -163,23 +174,11 @@ export default class LogicAnalyzer {
   public end() {
     const obj: any = {};
     obj.logic_analyzer = null;
-    this.obniz.send(obj);
+    this.Obniz.send(obj);
     return;
   }
 
-  /**
-   * @ignore
-   * @param obj
-   */
-  public notified(obj: any) {
-    if (this.onmeasured) {
-      this.onmeasured(obj.data);
-    } else {
-      if (!this.measured) {
-        this.measured = [];
-      }
-      this.measured.push(obj.data);
-    }
-    return;
+  public schemaBasePath(): string {
+    return "logic_analyzer";
   }
 }

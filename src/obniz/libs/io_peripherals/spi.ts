@@ -63,6 +63,7 @@ export default class PeripheralSPI extends ComponentAbstract {
   constructor(obniz: Obniz, id: number) {
     super(obniz);
     this.id = id;
+    this._reset();
   }
 
   /**

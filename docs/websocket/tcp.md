@@ -90,7 +90,7 @@ tcp command
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `tcpX.read.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | TCP data&nbsp; |
+| `tcpX.read.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 

@@ -41,6 +41,8 @@ export default class PeripheralIO extends ComponentAbstract {
         message: `io${this.id}: ${obj.error.message}`,
       });
     });
+
+    this._reset();
   }
 
   /**

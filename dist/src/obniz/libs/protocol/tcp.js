@@ -49,6 +49,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
                 callback(obj.connect.code);
             }
         });
+        this._reset();
     }
     /**
      * Starts a connection on the port and domain for which TCP is specified.

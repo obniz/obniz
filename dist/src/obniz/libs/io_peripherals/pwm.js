@@ -18,6 +18,7 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
+        this._reset();
     }
     /**
      * This starts a pwm on a given io.

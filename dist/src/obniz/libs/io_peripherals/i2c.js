@@ -44,6 +44,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
                 message: `i2c${this.id}: ${obj.warning.message}`,
             });
         });
+        this._reset();
     }
     /**
      * It starts i2c on given io sda, scl.

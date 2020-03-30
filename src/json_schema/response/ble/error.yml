@@ -1,7 +1,7 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/ble/central/error"
+id: "/response/ble/error"
 deprecated: 3.0.0
 
 type: object

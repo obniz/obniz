@@ -17,7 +17,6 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
         super(obniz);
         this.id = id;
-        this._reset();
         this.on("/response/uart/receive", (obj) => {
             if (this.onreceive) {
                 const string = this.tryConvertString(obj.data);
@@ -30,6 +29,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
                 this.received.push.apply(this.received, obj.data);
             }
         });
+        this._reset();
     }
     /**
      * It starts uart on io tx, rx.

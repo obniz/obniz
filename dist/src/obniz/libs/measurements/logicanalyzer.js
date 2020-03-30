@@ -7,6 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * LogicAnalyzer records samples read from io periodically.
@@ -30,9 +31,20 @@ const util_1 = __importDefault(require("../utils/util"));
  *
  * @category Measurement
  */
-class LogicAnalyzer {
+class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
-        this.obniz = obniz;
+        super(obniz);
+        this.on("/response/logicAnalyzer/data", (obj) => {
+            if (this.onmeasured) {
+                this.onmeasured(obj.data);
+            }
+            else {
+                if (!this.measured) {
+                    this.measured = [];
+                }
+                this.measured.push(obj.data);
+            }
+        });
         this._reset();
     }
     /**
@@ -88,7 +100,7 @@ class LogicAnalyzer {
                 samples: this.params.triggerValueSamples,
             };
         }
-        this.obniz.send(obj);
+        this.Obniz.send(obj);
         return;
     }
     /**
@@ -103,24 +115,11 @@ class LogicAnalyzer {
     end() {
         const obj = {};
         obj.logic_analyzer = null;
-        this.obniz.send(obj);
+        this.Obniz.send(obj);
         return;
     }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (this.onmeasured) {
-            this.onmeasured(obj.data);
-        }
-        else {
-            if (!this.measured) {
-                this.measured = [];
-            }
-            this.measured.push(obj.data);
-        }
-        return;
+    schemaBasePath() {
+        return "logic_analyzer";
     }
 }
 exports.default = LogicAnalyzer;

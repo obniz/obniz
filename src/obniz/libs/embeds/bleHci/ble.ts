@@ -11,6 +11,7 @@ import PeripheralBindings from "./protocol/peripheral/bindings";
 
 import semver from "semver";
 import Obniz from "../../../index";
+import { ComponentAbstract } from "../../ComponentAbstact";
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
 import BleDescriptor from "./bleDescriptor";
@@ -25,7 +26,7 @@ import { BleDeviceAddress, BleDeviceAddressType, UUID } from "./bleTypes";
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
-export default class ObnizBLE {
+export default class ObnizBLE extends ComponentAbstract {
   /**
    * @ignore
    *
@@ -75,7 +76,6 @@ export default class ObnizBLE {
   /**
    * @ignore
    */
-  public Obniz: Obniz;
   protected advertisement: any;
   protected hciProtocol: HciProtocol;
   protected _initialized: boolean;
@@ -86,7 +86,7 @@ export default class ObnizBLE {
   protected descriptor: typeof BleDescriptor;
 
   constructor(obniz: Obniz) {
-    this.Obniz = obniz;
+    super(obniz);
     this.hci = new ObnizBLEHci(obniz);
     this.hciProtocol = new HciProtocol(this.hci);
 
@@ -114,6 +114,12 @@ export default class ObnizBLE {
     this.scan = new BleScan(this);
     this.security = new BleSecurity(this);
 
+    this.on("/response/ble/hci/read", (obj) => {
+      if (obj.hci) {
+        this.hci.notified(obj.hci);
+      }
+    });
+
     this._bind();
     this._reset();
   }
@@ -138,16 +144,6 @@ export default class ObnizBLE {
       }
 
       await this.hciProtocol.initWait();
-    }
-  }
-
-  /**
-   * @ignore
-   * @param obj
-   */
-  public notified(obj: any) {
-    if (obj.hci) {
-      this.hci.notified(obj.hci);
     }
   }
 
@@ -227,6 +223,10 @@ export default class ObnizBLE {
         message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
       });
     }
+  }
+
+  public schemaBasePath(): string {
+    return "ble";
   }
 
   protected onStateChange() {}
