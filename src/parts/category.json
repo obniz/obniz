@@ -728,6 +728,10 @@
         {
           "name": "Keyestudio_TrafficLight",
           "store": {}
+        },
+        {
+          "name": "Keyestudio_HT16K33",
+          "store": {}
         }
       ]
     },
