@@ -441,7 +441,7 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
         return results;
     }
-    pairing(keys) {
+    pairingWait(keys) {
         return new Promise((resolve) => {
             this.obnizBle.centralBindings.pairing(this.address, keys, resolve);
         });

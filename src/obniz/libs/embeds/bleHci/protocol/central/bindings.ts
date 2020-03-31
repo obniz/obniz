@@ -7,7 +7,7 @@
 
 import events from "events";
 
-import { UUID } from "../../bleTypes";
+import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
 import Hci from "../hci";
 import AclStream from "./acl-stream";
 import Gap from "./gap";
@@ -19,17 +19,17 @@ import Signaling from "./signaling";
  */
 class NobleBindings extends events.EventEmitter {
   public _state: any;
-  public _addresses: any;
-  public _addresseTypes: any;
+  public _addresses: { [uuid: string]: BleDeviceAddress };
+  public _addresseTypes: { [uuid: string]: BleDeviceAddressType };
   public _connectable: any;
   public _pendingConnectionUuid: any;
   public _connectionQueue: any;
   public _handles: any;
-  public _gatts: any;
-  public _aclStreams: any;
+  public _gatts: { [handle: string]: Gatt };
+  public _aclStreams: { [key: string]: AclStream };
   public _signalings: any;
   public _hci: Hci;
-  public _gap: any;
+  public _gap: Gap;
   public _scanServiceUuids: any;
 
   constructor(hciProtocol: any) {
@@ -58,8 +58,8 @@ class NobleBindings extends events.EventEmitter {
     await this._gap.startScanningWait(allowDuplicates, activeScan);
   }
 
-  public stopScanning() {
-    this._gap.stopScanning();
+  public async stopScanningWait() {
+    await this._gap.stopScanningWait();
   }
 
   public connect(peripheralUuid: any) {
@@ -168,7 +168,7 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onLeConnComplete(
+  public async onLeConnComplete(
     status: any,
     handle?: any,
     role?: any,
@@ -194,7 +194,7 @@ class NobleBindings extends events.EventEmitter {
         .join("")
         .toLowerCase();
 
-      const aclStream: any = new AclStream(
+      const aclStream: AclStream = new AclStream(
         this._hci,
         handle,
         this._hci.addressType,
@@ -211,7 +211,6 @@ class NobleBindings extends events.EventEmitter {
       this._handles[uuid] = handle;
       this._handles[handle] = uuid;
 
-      this._gatts[handle].on("mtu", this.onMtu.bind(this));
       this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
       this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
       this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
@@ -232,7 +231,8 @@ class NobleBindings extends events.EventEmitter {
         this.onConnectionParameterUpdateRequest.bind(this),
       );
 
-      this._gatts[handle].exchangeMtu(256);
+      await this._gatts[handle].exchangeMtuWait(256);
+      // public onMtu(address: any, mtu?: any) {}
     } else {
       uuid = this._pendingConnectionUuid;
       let statusMessage: any = Hci.STATUS_MAPPER[status] || "HCI Error: Unknown";
@@ -265,7 +265,6 @@ class NobleBindings extends events.EventEmitter {
     const uuid: any = this._handles[handle];
 
     if (uuid) {
-      this._aclStreams[handle].push(null, null);
       this._gatts[handle].removeAllListeners();
       this._signalings[handle].removeAllListeners();
 
@@ -294,14 +293,12 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  public onMtu(address: any, mtu?: any) {}
-
   public onRssiRead(handle: any, rssi?: any) {
     this.emit("rssiUpdate", this._handles[handle], rssi);
   }
 
   public onAclDataPkt(handle: any, cid?: any, data?: any) {
-    const aclStream: any = this._aclStreams[handle];
+    const aclStream: AclStream = this._aclStreams[handle];
 
     if (aclStream) {
       aclStream.push(cid, data);
@@ -309,11 +306,11 @@ class NobleBindings extends events.EventEmitter {
   }
 
   public discoverServices(peripheralUuid: any, uuids?: any) {
-    const handle: any = this._handles[peripheralUuid];
-    const gatt: any = this._gatts[handle];
+    const handle = this._handles[peripheralUuid];
+    const gatt = this._gatts[handle];
 
     if (gatt) {
-      gatt.discoverServices(uuids || []);
+      gatt.discoverServicesWait(uuids || []);
     } else {
       console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }

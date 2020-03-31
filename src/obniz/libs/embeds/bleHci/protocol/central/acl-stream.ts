@@ -7,6 +7,7 @@
 
 import events from "events";
 
+import { Handle } from "../../bleTypes";
 import Hci from "../hci";
 import Smp from "./smp";
 
@@ -15,15 +16,15 @@ import Smp from "./smp";
  */
 export default class AclStream extends events.EventEmitter {
   public _hci: Hci;
-  public _handle: any;
-  public _smp: any;
+  public _handle: Handle;
+  public _smp: Smp;
   public onSmpStkBinded: any;
   public onSmpFailBinded: any;
   public onSmpEndBinded: any;
 
   constructor(
-    hci: any,
-    handle: any,
+    hci: Hci,
+    handle: Handle,
     localAddressType: any,
     localAddress: any,
     remoteAddressType: any,

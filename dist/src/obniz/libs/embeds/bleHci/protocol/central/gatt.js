@@ -3,11 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- *
- * @ignore
- */
 // let debug = require('debug')('att');
 const debug = () => { };
 /* eslint-disable no-unused-vars */
@@ -197,34 +192,6 @@ class Gatt extends events_1.default.EventEmitter {
         buf.writeUInt8(status, 4);
         return buf;
     }
-    _queueCommand(buffer, callback, writeCallback) {
-        this._commandQueue.push({
-            buffer,
-            callback,
-            writeCallback,
-        });
-        this._runQueueCommand();
-    }
-    _runQueueCommand() {
-        if (this._currentCommand === null) {
-            while (this._commandQueue.length) {
-                this._currentCommand = this._commandQueue.shift();
-                if (this._currentCommand.type === "encrypt") {
-                    this._aclStream.encrypt(this._currentCommand.keys);
-                }
-                else {
-                    this.writeAtt(this._currentCommand.buffer);
-                    if (this._currentCommand.callback) {
-                        break;
-                    }
-                    else if (this._currentCommand.writeCallback) {
-                        this._currentCommand.writeCallback();
-                        this._currentCommand = null;
-                    }
-                }
-            }
-        }
-    }
     mtuRequest(mtu) {
         const buf = Buffer.alloc(3);
         buf.writeUInt8(ATT.OP_MTU_REQ, 0);
@@ -297,20 +264,22 @@ class Gatt extends events_1.default.EventEmitter {
         buf.writeUInt8(ATT.OP_HANDLE_CNF, 0);
         return buf;
     }
-    exchangeMtu(mtu) {
-        this._queueCommand(this.mtuRequest(mtu), (data) => {
-            const opcode = data[0];
-            if (opcode === ATT.OP_MTU_RESP) {
-                const newMtu = data.readUInt16LE(1);
-                debug(this._address + ": new MTU is " + newMtu);
-                this._mtu = newMtu;
-            }
-            this.emit("mtu", this._address, this._mtu);
-        });
+    async exchangeMtuWait(mtu) {
+        const data = await this._execCommand(this.mtuRequest(mtu));
+        const opcode = data[0];
+        if (opcode === ATT.OP_MTU_RESP) {
+            const newMtu = data.readUInt16LE(1);
+            debug(this._address + ": new MTU is " + newMtu);
+            this._mtu = newMtu;
+        }
+        this.emit("mtu", this._address, this._mtu);
+        return this._mtu;
     }
-    discoverServices(uuids) {
+    async discoverServicesWait(uuids) {
         const services = [];
-        const callback = (data) => {
+        let startHandle = 0x0001;
+        while (1) {
+            const data = await this._execCommand(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID));
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_READ_BY_GROUP_RESP) {
@@ -341,12 +310,10 @@ class Gatt extends events_1.default.EventEmitter {
                     this._services[services[i].uuid] = services[i];
                 }
                 this.emit("servicesDiscover", this._address, serviceUuids);
+                return serviceUuids;
             }
-            else {
-                this._queueCommand(this.readByGroupRequest(services[services.length - 1].endHandle + 1, 0xffff, GATT.PRIM_SVC_UUID), callback);
-            }
-        };
-        this._queueCommand(this.readByGroupRequest(0x0001, 0xffff, GATT.PRIM_SVC_UUID), callback);
+            startHandle = services[services.length - 1].endHandle + 1;
+        }
     }
     discoverIncludedServices(serviceUuid, uuids) {
         const service = this._services[serviceUuid];
@@ -699,6 +666,39 @@ class Gatt extends events_1.default.EventEmitter {
                 }
             });
         }
+    }
+    _queueCommand(buffer, callback, writeCallback) {
+        this._commandQueue.push({
+            buffer,
+            callback,
+            writeCallback,
+        });
+        this._runQueueCommand();
+    }
+    _runQueueCommand() {
+        if (this._currentCommand === null) {
+            while (this._commandQueue.length) {
+                this._currentCommand = this._commandQueue.shift();
+                if (this._currentCommand.type === "encrypt") {
+                    this._aclStream.encrypt(this._currentCommand.keys);
+                }
+                else {
+                    this.writeAtt(this._currentCommand.buffer);
+                    if (this._currentCommand.callback) {
+                        break;
+                    }
+                    else if (this._currentCommand.writeCallback) {
+                        this._currentCommand.writeCallback();
+                        this._currentCommand = null;
+                    }
+                }
+            }
+        }
+    }
+    _execCommand(buffer) {
+        return new Promise((resolve) => {
+            this._queueCommand(buffer, resolve);
+        });
     }
 }
 exports.default = Gatt;

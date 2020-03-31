@@ -3,6 +3,8 @@
  *
  * @ignore
  */
+import AclStream from "./acl-stream";
+
 // let debug = require('debug')('att');
 const debug: any = () => {};
 
@@ -79,7 +81,7 @@ namespace GATT {
  */
 class Gatt extends events.EventEmitter {
   public _address: any;
-  public _aclStream: any;
+  public _aclStream: AclStream;
   public _services: any;
   public _characteristics: any;
   public _descriptors: any;
@@ -92,7 +94,7 @@ class Gatt extends events.EventEmitter {
   public onAclStreamEncryptFailBinded: any;
   public onAclStreamEndBinded: any;
 
-  constructor(address: any, aclStream: any) {
+  constructor(address: any, aclStream: AclStream) {
     super();
     this._address = address;
     this._aclStream = aclStream;
@@ -233,37 +235,6 @@ class Gatt extends events.EventEmitter {
     return buf;
   }
 
-  public _queueCommand(buffer: any, callback: any, writeCallback?: any) {
-    this._commandQueue.push({
-      buffer,
-      callback,
-      writeCallback,
-    });
-
-    this._runQueueCommand();
-  }
-
-  public _runQueueCommand() {
-    if (this._currentCommand === null) {
-      while (this._commandQueue.length) {
-        this._currentCommand = this._commandQueue.shift();
-
-        if (this._currentCommand.type === "encrypt") {
-          this._aclStream.encrypt(this._currentCommand.keys);
-        } else {
-          this.writeAtt(this._currentCommand.buffer);
-          if (this._currentCommand.callback) {
-            break;
-          } else if (this._currentCommand.writeCallback) {
-            this._currentCommand.writeCallback();
-
-            this._currentCommand = null;
-          }
-        }
-      }
-    }
-  }
-
   public mtuRequest(mtu: any) {
     const buf: any = Buffer.alloc(3);
 
@@ -368,29 +339,30 @@ class Gatt extends events.EventEmitter {
     return buf;
   }
 
-  public exchangeMtu(mtu: any) {
-    this._queueCommand(this.mtuRequest(mtu), (data: any) => {
-      const opcode: any = data[0];
+  public async exchangeMtuWait(mtu: any) {
+    const data = await this._execCommand(this.mtuRequest(mtu));
+    const opcode: any = data[0];
 
-      if (opcode === ATT.OP_MTU_RESP) {
-        const newMtu: any = data.readUInt16LE(1);
+    if (opcode === ATT.OP_MTU_RESP) {
+      const newMtu: any = data.readUInt16LE(1);
 
-        debug(this._address + ": new MTU is " + newMtu);
+      debug(this._address + ": new MTU is " + newMtu);
 
-        this._mtu = newMtu;
-      }
+      this._mtu = newMtu;
+    }
 
-      this.emit("mtu", this._address, this._mtu);
-    });
+    this.emit("mtu", this._address, this._mtu);
+    return this._mtu;
   }
 
-  public discoverServices(uuids: any) {
+  public async discoverServicesWait(uuids: any): Promise<any> {
     const services: any = [];
+    let startHandle = 0x0001;
 
-    const callback: any = (data: any) => {
+    while (1) {
+      const data = await this._execCommand(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID));
       const opcode: any = data[0];
       let i: any = 0;
-
       if (opcode === ATT.OP_READ_BY_GROUP_RESP) {
         const type: any = data[1];
         const num: any = (data.length - 2) / type;
@@ -406,7 +378,7 @@ class Gatt extends events.EventEmitter {
                     .slice(2 + i * type + 4)
                     .slice(0, 16)
                     .toString("hex")
-                    .match(/.{1,2}/g)
+                    .match(/.{1,2}/g)!
                     .reverse()
                     .join(""),
           });
@@ -423,15 +395,10 @@ class Gatt extends events.EventEmitter {
           this._services[services[i].uuid] = services[i];
         }
         this.emit("servicesDiscover", this._address, serviceUuids);
-      } else {
-        this._queueCommand(
-          this.readByGroupRequest(services[services.length - 1].endHandle + 1, 0xffff, GATT.PRIM_SVC_UUID),
-          callback,
-        );
+        return serviceUuids;
       }
-    };
-
-    this._queueCommand(this.readByGroupRequest(0x0001, 0xffff, GATT.PRIM_SVC_UUID), callback);
+      startHandle = services[services.length - 1].endHandle + 1;
+    }
   }
 
   public discoverIncludedServices(serviceUuid: any, uuids: any) {
@@ -905,6 +872,43 @@ class Gatt extends events.EventEmitter {
         }
       });
     }
+  }
+
+  private _queueCommand(buffer: Buffer, callback: any, writeCallback?: any) {
+    this._commandQueue.push({
+      buffer,
+      callback,
+      writeCallback,
+    });
+
+    this._runQueueCommand();
+  }
+
+  private _runQueueCommand() {
+    if (this._currentCommand === null) {
+      while (this._commandQueue.length) {
+        this._currentCommand = this._commandQueue.shift();
+
+        if (this._currentCommand.type === "encrypt") {
+          this._aclStream.encrypt(this._currentCommand.keys);
+        } else {
+          this.writeAtt(this._currentCommand.buffer);
+          if (this._currentCommand.callback) {
+            break;
+          } else if (this._currentCommand.writeCallback) {
+            this._currentCommand.writeCallback();
+
+            this._currentCommand = null;
+          }
+        }
+      }
+    }
+  }
+
+  private _execCommand(buffer: Buffer): Promise<Buffer> {
+    return new Promise((resolve) => {
+      this._queueCommand(buffer, resolve);
+    });
   }
 }
 

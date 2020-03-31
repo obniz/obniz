@@ -9107,7 +9107,7 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
         return results;
     }
-    pairing(keys) {
+    pairingWait(keys) {
         return new Promise((resolve) => {
             this.obnizBle.centralBindings.pairing(this.address, keys, resolve);
         });
@@ -9645,8 +9645,14 @@ class BleScan {
      * ```
      */
     end() {
+        this.endWait().catch((reason) => {
+            this.finish(reason);
+        });
+    }
+    async endWait() {
         this.clearTimeoutTimer();
-        this.obnizBle.centralBindings.stopScanning();
+        await this.obnizBle.centralBindings.stopScanningWait();
+        // this.finish() will be called by emitter.
     }
     /**
      * @ignore
@@ -10406,8 +10412,8 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._scanServiceUuids = serviceUuids || [];
         await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
-    stopScanning() {
-        this._gap.stopScanning();
+    async stopScanningWait() {
+        await this._gap.stopScanningWait();
     }
     connect(peripheralUuid) {
         const address = this._addresses[peripheralUuid];
@@ -10495,7 +10501,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
         }
     }
-    onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+    async onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 0) {
             // not master, ignore
             return;
@@ -10515,7 +10521,6 @@ class NobleBindings extends events_1.default.EventEmitter {
             this._aclStreams[handle] = aclStream;
             this._handles[uuid] = handle;
             this._handles[handle] = uuid;
-            this._gatts[handle].on("mtu", this.onMtu.bind(this));
             this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
             this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
             this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
@@ -10531,7 +10536,8 @@ class NobleBindings extends events_1.default.EventEmitter {
             this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
             this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
             this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateRequest.bind(this));
-            this._gatts[handle].exchangeMtu(256);
+            await this._gatts[handle].exchangeMtuWait(256);
+            // public onMtu(address: any, mtu?: any) {}
         }
         else {
             uuid = this._pendingConnectionUuid;
@@ -10558,7 +10564,6 @@ class NobleBindings extends events_1.default.EventEmitter {
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
         if (uuid) {
-            this._aclStreams[handle].push(null, null);
             this._gatts[handle].removeAllListeners();
             this._signalings[handle].removeAllListeners();
             delete this._gatts[uuid];
@@ -10583,7 +10588,6 @@ class NobleBindings extends events_1.default.EventEmitter {
             aclStream.pushEncrypt(encrypt);
         }
     }
-    onMtu(address, mtu) { }
     onRssiRead(handle, rssi) {
         this.emit("rssiUpdate", this._handles[handle], rssi);
     }
@@ -10597,7 +10601,7 @@ class NobleBindings extends events_1.default.EventEmitter {
         const handle = this._handles[peripheralUuid];
         const gatt = this._gatts[handle];
         if (gatt) {
-            gatt.discoverServices(uuids || []);
+            gatt.discoverServicesWait(uuids || []);
         }
         else {
             console.warn("noble warning: unknown peripheral " + peripheralUuid);
@@ -10906,7 +10910,7 @@ exports.default = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
+
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10916,7 +10920,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const debug = () => { };
 const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
-const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 /**
  * @ignore
  */
@@ -10928,14 +10931,12 @@ class Gap extends events_1.default.EventEmitter {
         this._scanFilterDuplicates = null;
         this._discoveries = {};
         this._hci.on("error", this.onHciError.bind(this));
-        this._hci.on("leScanParametersSet", this.onHciLeScanParametersSet.bind(this));
         this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
         this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
         this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
         this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
         this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
-        this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
     async startScanningWait(allowDuplicates, activeScan) {
         this._scanState = "starting";
@@ -10945,32 +10946,16 @@ class Gap extends events_1.default.EventEmitter {
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         const scanStopStatus = await this._hci.setScanEnabledWait(false, true);
+        this.onHciLeScanEnableSet(scanStopStatus);
         const setParamStatus = await this._hci.setScanParametersWait(activeScan);
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await this._hci.setScanEnabledWait(true, this._scanFilterDuplicates);
     }
-    stopScanning() {
+    async stopScanningWait() {
         this._scanState = "stopping";
-        this._hci.setScanEnabledWait(false, true); // background
+        await this._hci.setScanEnabledWait(false, true);
     }
-    onHciLeScanParametersSet() { }
-    // Called when receive an event "Command Complete" for "LE Set Scan Enable"
-    onHciLeScanEnableSet(status) {
-        // Check the status we got from the command complete function.
-        if (status !== 0) {
-            // If it is non-zero there was an error, and we should not change
-            // our status as a result.
-            return;
-        }
-        if (this._scanState === "starting") {
-            this._scanState = "started";
-            this.emit("scanStart", this._scanFilterDuplicates);
-        }
-        else if (this._scanState === "stopping") {
-            this._scanState = "stopped";
-            this.emit("scanStop");
-        }
-    }
+    // TODO : is this really need?
     // Called when we see the actual command "LE Set Scan Enable"
     onLeScanEnableSetCmd(enable, filterDuplicates) {
         // Check to see if the new settings differ from what we expect.
@@ -11170,141 +11155,25 @@ class Gap extends events_1.default.EventEmitter {
         };
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
-    startAdvertising(name, serviceUuids) {
-        debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
-        let advertisementDataLength = 3;
-        let scanDataLength = 0;
-        const serviceUuids16bit = [];
-        const serviceUuids128bit = [];
-        let i = 0;
-        if (name && name.length) {
-            scanDataLength += 2 + name.length;
-        }
-        if (serviceUuids && serviceUuids.length) {
-            for (i = 0; i < serviceUuids.length; i++) {
-                const serviceUuid = Buffer.from(serviceUuids[i]
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
-                if (serviceUuid.length === 2) {
-                    serviceUuids16bit.push(serviceUuid);
-                }
-                else if (serviceUuid.length === 16) {
-                    serviceUuids128bit.push(serviceUuid);
-                }
-            }
-        }
-        if (serviceUuids16bit.length) {
-            advertisementDataLength += 2 + 2 * serviceUuids16bit.length;
-        }
-        if (serviceUuids128bit.length) {
-            advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
-        }
-        const advertisementData = Buffer.alloc(advertisementDataLength);
-        const scanData = Buffer.alloc(scanDataLength);
-        // flags
-        advertisementData.writeUInt8(2, 0);
-        advertisementData.writeUInt8(0x01, 1);
-        advertisementData.writeUInt8(0x06, 2);
-        let advertisementDataOffset = 3;
-        if (serviceUuids16bit.length) {
-            advertisementData.writeUInt8(1 + 2 * serviceUuids16bit.length, advertisementDataOffset);
-            advertisementDataOffset++;
-            advertisementData.writeUInt8(0x03, advertisementDataOffset);
-            advertisementDataOffset++;
-            for (i = 0; i < serviceUuids16bit.length; i++) {
-                serviceUuids16bit[i].copy(advertisementData, advertisementDataOffset);
-                advertisementDataOffset += serviceUuids16bit[i].length;
-            }
-        }
-        if (serviceUuids128bit.length) {
-            advertisementData.writeUInt8(1 + 16 * serviceUuids128bit.length, advertisementDataOffset);
-            advertisementDataOffset++;
-            advertisementData.writeUInt8(0x06, advertisementDataOffset);
-            advertisementDataOffset++;
-            for (i = 0; i < serviceUuids128bit.length; i++) {
-                serviceUuids128bit[i].copy(advertisementData, advertisementDataOffset);
-                advertisementDataOffset += serviceUuids128bit[i].length;
-            }
-        }
-        // name
-        if (name && name.length) {
-            const nameBuffer = Buffer.from(name);
-            scanData.writeUInt8(1 + nameBuffer.length, 0);
-            scanData.writeUInt8(0x08, 1);
-            nameBuffer.copy(scanData, 2);
-        }
-        this.startAdvertisingWithEIRData(advertisementData, scanData);
-    }
-    startAdvertisingIBeacon(data) {
-        debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
-        const dataLength = data.length;
-        const manufacturerDataLength = 4 + dataLength;
-        const advertisementDataLength = 5 + manufacturerDataLength;
-        const advertisementData = Buffer.alloc(advertisementDataLength);
-        const scanData = Buffer.alloc(0);
-        // flags
-        advertisementData.writeUInt8(2, 0);
-        advertisementData.writeUInt8(0x01, 1);
-        advertisementData.writeUInt8(0x06, 2);
-        advertisementData.writeUInt8(manufacturerDataLength + 1, 3);
-        advertisementData.writeUInt8(0xff, 4);
-        advertisementData.writeUInt16LE(0x004c, 5); // Apple Company Identifier LE (16 bit)
-        advertisementData.writeUInt8(0x02, 7); // type, 2 => iBeacon
-        advertisementData.writeUInt8(dataLength, 8);
-        data.copy(advertisementData, 9);
-        this.startAdvertisingWithEIRData(advertisementData, scanData);
-    }
-    startAdvertisingWithEIRData(advertisementData, scanData) {
-        advertisementData = advertisementData || Buffer.alloc(0);
-        scanData = scanData || Buffer.alloc(0);
-        debug("startAdvertisingWithEIRData: advertisement data = " +
-            advertisementData.toString("hex") +
-            ", scan data = " +
-            scanData.toString("hex"));
-        let error = null;
-        if (advertisementData.length > 31) {
-            error = new Error("Advertisement data is over maximum limit of 31 bytes");
-        }
-        else if (scanData.length > 31) {
-            error = new Error("Scan data is over maximum limit of 31 bytes");
-        }
-        if (error) {
-            this.emit("advertisingStart", error);
-        }
-        else {
-            this._advertiseState = "starting";
-            this._hci.setScanResponseDataWait(scanData); // background
-            this._hci.setAdvertisingDataWait(advertisementData); // background
-            this._hci.setAdvertiseEnableWait(true); // background
-            this._hci.setScanResponseDataWait(scanData); // background
-            this._hci.setAdvertisingDataWait(advertisementData); // background
-        }
-    }
-    restartAdvertising() {
-        this._advertiseState = "restarting";
-        this._hci.setAdvertiseEnableWait(true); // background
-    }
-    stopAdvertising() {
-        this._advertiseState = "stopping";
-        this._hci.setAdvertiseEnableWait(false); // background
-    }
     onHciError(error) { }
     onHciLeAdvertisingParametersSet(status) { }
     onHciLeAdvertisingDataSet(status) { }
     onHciLeScanResponseDataSet(status) { }
-    onHciLeAdvertiseEnableSet(status) {
-        if (this._advertiseState === "starting") {
-            this._advertiseState = "started";
-            let error = null;
-            if (status) {
-                error = new Error(hci_1.default.STATUS_MAPPER[status] || "Unknown (" + status + ")");
-            }
-            this.emit("advertisingStart", error);
+    // Called when receive an event "Command Complete" for "LE Set Scan Enable"
+    onHciLeScanEnableSet(status) {
+        // Check the status we got from the command complete function.
+        if (status !== 0) {
+            // If it is non-zero there was an error, and we should not change
+            // our status as a result.
+            return;
         }
-        else if (this._advertiseState === "stopping") {
-            this._advertiseState = "stopped";
-            this.emit("advertisingStop");
+        if (this._scanState === "starting") {
+            this._scanState = "started";
+            this.emit("scanStart", this._scanFilterDuplicates);
+        }
+        else if (this._scanState === "stopping") {
+            this._scanState = "stopped";
+            this.emit("scanStop");
         }
     }
 }
@@ -11312,7 +11181,6 @@ exports.default = Gap;
 
 //# sourceMappingURL=gap.js.map
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -11325,11 +11193,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- *
- * @ignore
- */
 // let debug = require('debug')('att');
 const debug = () => { };
 /* eslint-disable no-unused-vars */
@@ -11519,34 +11382,6 @@ class Gatt extends events_1.default.EventEmitter {
         buf.writeUInt8(status, 4);
         return buf;
     }
-    _queueCommand(buffer, callback, writeCallback) {
-        this._commandQueue.push({
-            buffer,
-            callback,
-            writeCallback,
-        });
-        this._runQueueCommand();
-    }
-    _runQueueCommand() {
-        if (this._currentCommand === null) {
-            while (this._commandQueue.length) {
-                this._currentCommand = this._commandQueue.shift();
-                if (this._currentCommand.type === "encrypt") {
-                    this._aclStream.encrypt(this._currentCommand.keys);
-                }
-                else {
-                    this.writeAtt(this._currentCommand.buffer);
-                    if (this._currentCommand.callback) {
-                        break;
-                    }
-                    else if (this._currentCommand.writeCallback) {
-                        this._currentCommand.writeCallback();
-                        this._currentCommand = null;
-                    }
-                }
-            }
-        }
-    }
     mtuRequest(mtu) {
         const buf = Buffer.alloc(3);
         buf.writeUInt8(ATT.OP_MTU_REQ, 0);
@@ -11619,20 +11454,22 @@ class Gatt extends events_1.default.EventEmitter {
         buf.writeUInt8(ATT.OP_HANDLE_CNF, 0);
         return buf;
     }
-    exchangeMtu(mtu) {
-        this._queueCommand(this.mtuRequest(mtu), (data) => {
-            const opcode = data[0];
-            if (opcode === ATT.OP_MTU_RESP) {
-                const newMtu = data.readUInt16LE(1);
-                debug(this._address + ": new MTU is " + newMtu);
-                this._mtu = newMtu;
-            }
-            this.emit("mtu", this._address, this._mtu);
-        });
+    async exchangeMtuWait(mtu) {
+        const data = await this._execCommand(this.mtuRequest(mtu));
+        const opcode = data[0];
+        if (opcode === ATT.OP_MTU_RESP) {
+            const newMtu = data.readUInt16LE(1);
+            debug(this._address + ": new MTU is " + newMtu);
+            this._mtu = newMtu;
+        }
+        this.emit("mtu", this._address, this._mtu);
+        return this._mtu;
     }
-    discoverServices(uuids) {
+    async discoverServicesWait(uuids) {
         const services = [];
-        const callback = (data) => {
+        let startHandle = 0x0001;
+        while (1) {
+            const data = await this._execCommand(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID));
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_READ_BY_GROUP_RESP) {
@@ -11663,12 +11500,10 @@ class Gatt extends events_1.default.EventEmitter {
                     this._services[services[i].uuid] = services[i];
                 }
                 this.emit("servicesDiscover", this._address, serviceUuids);
+                return serviceUuids;
             }
-            else {
-                this._queueCommand(this.readByGroupRequest(services[services.length - 1].endHandle + 1, 0xffff, GATT.PRIM_SVC_UUID), callback);
-            }
-        };
-        this._queueCommand(this.readByGroupRequest(0x0001, 0xffff, GATT.PRIM_SVC_UUID), callback);
+            startHandle = services[services.length - 1].endHandle + 1;
+        }
     }
     discoverIncludedServices(serviceUuid, uuids) {
         const service = this._services[serviceUuid];
@@ -12022,6 +11857,39 @@ class Gatt extends events_1.default.EventEmitter {
             });
         }
     }
+    _queueCommand(buffer, callback, writeCallback) {
+        this._commandQueue.push({
+            buffer,
+            callback,
+            writeCallback,
+        });
+        this._runQueueCommand();
+    }
+    _runQueueCommand() {
+        if (this._currentCommand === null) {
+            while (this._commandQueue.length) {
+                this._currentCommand = this._commandQueue.shift();
+                if (this._currentCommand.type === "encrypt") {
+                    this._aclStream.encrypt(this._currentCommand.keys);
+                }
+                else {
+                    this.writeAtt(this._currentCommand.buffer);
+                    if (this._currentCommand.callback) {
+                        break;
+                    }
+                    else if (this._currentCommand.writeCallback) {
+                        this._currentCommand.writeCallback();
+                        this._currentCommand = null;
+                    }
+                }
+            }
+        }
+    }
+    _execCommand(buffer) {
+        return new Promise((resolve) => {
+            this._queueCommand(buffer, resolve);
+        });
+    }
 }
 exports.default = Gatt;
 
@@ -12362,6 +12230,7 @@ const STATUS_MAPPER = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/p
 class Hci extends events.EventEmitter {
     constructor(obnizHci) {
         super();
+        this.aclStreamObservers = {};
         this._obnizHci = obnizHci;
         this._state = null;
         this.resetBuffers();
@@ -12382,12 +12251,6 @@ class Hci extends events.EventEmitter {
         // this.writeLeHostSupported();
         // this.readLeHostSupported();
         // this.readBdAddr();
-        return new Promise((resolve) => {
-            this.once("stateChange", () => {
-                // console.log('te');
-                resolve();
-            });
-        });
     }
     setEventMask() {
         const cmd = Buffer.alloc(12);
@@ -12645,18 +12508,6 @@ class Hci extends events.EventEmitter {
         this.emit("rssiRead", handle, rssi);
         return rssi;
     }
-    writeAclDataPkt(handle, cid, data) {
-        const pkt = Buffer.alloc(9 + data.length);
-        // header
-        pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
-        pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
-        pkt.writeUInt16LE(data.length + 4, 3); // data length 1
-        pkt.writeUInt16LE(data.length, 5); // data length 2
-        pkt.writeUInt16LE(cid, 7);
-        data.copy(pkt, 9);
-        debug("write acl data pkt - writing: " + pkt.toString("hex"));
-        this._socket.write(pkt);
-    }
     async setAdvertisingParametersWait() {
         const cmd = Buffer.alloc(19);
         // header
@@ -12817,6 +12668,18 @@ class Hci extends events.EventEmitter {
         debug("write acl data pkt frag " + pkt.fragId + " handle " + pkt.handle + " - writing: " + pkt.pkt.toString("hex"));
         this._socket.write(pkt.pkt);
     }
+    writeAclDataPkt(handle, cid, data) {
+        const pkt = Buffer.alloc(9 + data.length);
+        // header
+        pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
+        pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
+        pkt.writeUInt16LE(data.length + 4, 3); // data length 1
+        pkt.writeUInt16LE(data.length, 5); // data length 2
+        pkt.writeUInt16LE(cid, 7);
+        data.copy(pkt, 9);
+        debug("write acl data pkt - writing: " + pkt.toString("hex"));
+        this._socket.write(pkt);
+    }
     onSocketData(array) {
         const data = Buffer.from(array);
         debug("onSocketData: " + data.toString("hex"));
@@ -12917,6 +12780,10 @@ class Hci extends events.EventEmitter {
                     debug("\t\thandle = " + handle);
                     debug("\t\tdata = " + pktData.toString("hex"));
                     this.emit("aclDataPkt", handle, cid, pktData);
+                    if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][cid]) {
+                        const resolve = this.aclStreamObservers[handle][cid].shift();
+                        resolve(pktData);
+                    }
                 }
                 else {
                     this._handleBuffers[handle] = {
@@ -12933,6 +12800,10 @@ class Hci extends events.EventEmitter {
                 this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
                 if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
                     this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
+                    if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
+                        const resolve = this.aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
+                        resolve(this._handleBuffers[handle].data);
+                    }
                     delete this._handleBuffers[handle];
                 }
             }
@@ -13062,6 +12933,13 @@ class Hci extends events.EventEmitter {
     }
     onStateChange(state) {
         this._state = state;
+    }
+    async readAclStreamWait(handle, cid) {
+        return new Promise((resolve) => {
+            this.aclStreamObservers[handle] = this.aclStreamObservers[handle] || [];
+            this.aclStreamObservers[handle][cid] = this.aclStreamObservers[handle][cid] || [];
+            this.aclStreamObservers[handle][cid].push(resolve);
+        });
     }
     async readCmdCompleteEventWait(requestCmd, additionalResultFilter) {
         additionalResultFilter = additionalResultFilter || [];

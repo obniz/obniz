@@ -713,7 +713,7 @@ export default class BleRemotePeripheral {
     return results;
   }
 
-  public pairing(keys?: any) {
+  public pairingWait(keys?: any) {
     return new Promise((resolve) => {
       this.obnizBle.centralBindings.pairing(this.address, keys, resolve);
     });

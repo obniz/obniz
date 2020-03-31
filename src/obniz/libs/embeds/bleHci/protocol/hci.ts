@@ -113,6 +113,7 @@ class Hci extends events.EventEmitter {
   public _aclMaxInProgress: any;
   public addressType: any;
   public address: any;
+  private aclStreamObservers: { [key: string]: any[] } = {};
 
   constructor(obnizHci: any) {
     super();
@@ -140,13 +141,6 @@ class Hci extends events.EventEmitter {
     // this.writeLeHostSupported();
     // this.readLeHostSupported();
     // this.readBdAddr();
-
-    return new Promise((resolve: any) => {
-      this.once("stateChange", () => {
-        // console.log('te');
-        resolve();
-      });
-    });
   }
 
   public setEventMask() {
@@ -495,22 +489,6 @@ class Hci extends events.EventEmitter {
     return rssi;
   }
 
-  public writeAclDataPkt(handle: Handle, cid: any, data: any) {
-    const pkt: any = Buffer.alloc(9 + data.length);
-
-    // header
-    pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
-    pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
-    pkt.writeUInt16LE(data.length + 4, 3); // data length 1
-    pkt.writeUInt16LE(data.length, 5); // data length 2
-    pkt.writeUInt16LE(cid, 7);
-
-    data.copy(pkt, 9);
-
-    debug("write acl data pkt - writing: " + pkt.toString("hex"));
-    this._socket.write(pkt);
-  }
-
   public async setAdvertisingParametersWait() {
     const cmd: any = Buffer.alloc(19);
 
@@ -718,6 +696,22 @@ class Hci extends events.EventEmitter {
     this._socket.write(pkt.pkt);
   }
 
+  public writeAclDataPkt(handle: Handle, cid: any, data: any) {
+    const pkt: any = Buffer.alloc(9 + data.length);
+
+    // header
+    pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
+    pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
+    pkt.writeUInt16LE(data.length + 4, 3); // data length 1
+    pkt.writeUInt16LE(data.length, 5); // data length 2
+    pkt.writeUInt16LE(cid, 7);
+
+    data.copy(pkt, 9);
+
+    debug("write acl data pkt - writing: " + pkt.toString("hex"));
+    this._socket.write(pkt);
+  }
+
   public onSocketData(array: any) {
     const data: any = Buffer.from(array);
     debug("onSocketData: " + data.toString("hex"));
@@ -831,6 +825,10 @@ class Hci extends events.EventEmitter {
           debug("\t\tdata = " + pktData.toString("hex"));
 
           this.emit("aclDataPkt", handle, cid, pktData);
+          if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][cid]) {
+            const resolve = this.aclStreamObservers[handle][cid].shift();
+            resolve(pktData);
+          }
         } else {
           this._handleBuffers[handle] = {
             length,
@@ -847,7 +845,10 @@ class Hci extends events.EventEmitter {
 
         if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
           this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
-
+          if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
+            const resolve = this.aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
+            resolve(this._handleBuffers[handle].data);
+          }
           delete this._handleBuffers[handle];
         }
       }
@@ -1006,6 +1007,14 @@ class Hci extends events.EventEmitter {
 
   public onStateChange(state: any) {
     this._state = state;
+  }
+
+  public async readAclStreamWait(handle: Handle, cid: number) {
+    return new Promise((resolve) => {
+      this.aclStreamObservers[handle] = this.aclStreamObservers[handle] || [];
+      this.aclStreamObservers[handle][cid] = this.aclStreamObservers[handle][cid] || [];
+      this.aclStreamObservers[handle][cid].push(resolve);
+    });
   }
 
   protected async readCmdCompleteEventWait(

@@ -14,6 +14,7 @@ const debug: any = () => {};
 
 import events from "events";
 import os from "os";
+import { Handle } from "../../bleTypes";
 import AclStream from "./acl-stream";
 import Gap from "./gap";
 import Gatt from "./gatt";
@@ -218,7 +219,7 @@ class BlenoBindings extends events.EventEmitter {
     this.emit("rssiUpdate", rssi);
   }
 
-  public onAclDataPkt(handle: any, cid?: any, data?: any) {
+  public onAclDataPkt(handle: Handle, cid?: any, data?: any) {
     if (this._handle === handle && this._aclStream) {
       this._aclStream.push(cid, data);
     }

@@ -81,6 +81,7 @@ const STATUS_MAPPER = require("./hci-status");
 class Hci extends events.EventEmitter {
     constructor(obnizHci) {
         super();
+        this.aclStreamObservers = {};
         this._obnizHci = obnizHci;
         this._state = null;
         this.resetBuffers();
@@ -101,12 +102,6 @@ class Hci extends events.EventEmitter {
         // this.writeLeHostSupported();
         // this.readLeHostSupported();
         // this.readBdAddr();
-        return new Promise((resolve) => {
-            this.once("stateChange", () => {
-                // console.log('te');
-                resolve();
-            });
-        });
     }
     setEventMask() {
         const cmd = Buffer.alloc(12);
@@ -364,18 +359,6 @@ class Hci extends events.EventEmitter {
         this.emit("rssiRead", handle, rssi);
         return rssi;
     }
-    writeAclDataPkt(handle, cid, data) {
-        const pkt = Buffer.alloc(9 + data.length);
-        // header
-        pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
-        pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
-        pkt.writeUInt16LE(data.length + 4, 3); // data length 1
-        pkt.writeUInt16LE(data.length, 5); // data length 2
-        pkt.writeUInt16LE(cid, 7);
-        data.copy(pkt, 9);
-        debug("write acl data pkt - writing: " + pkt.toString("hex"));
-        this._socket.write(pkt);
-    }
     async setAdvertisingParametersWait() {
         const cmd = Buffer.alloc(19);
         // header
@@ -536,6 +519,18 @@ class Hci extends events.EventEmitter {
         debug("write acl data pkt frag " + pkt.fragId + " handle " + pkt.handle + " - writing: " + pkt.pkt.toString("hex"));
         this._socket.write(pkt.pkt);
     }
+    writeAclDataPkt(handle, cid, data) {
+        const pkt = Buffer.alloc(9 + data.length);
+        // header
+        pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
+        pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
+        pkt.writeUInt16LE(data.length + 4, 3); // data length 1
+        pkt.writeUInt16LE(data.length, 5); // data length 2
+        pkt.writeUInt16LE(cid, 7);
+        data.copy(pkt, 9);
+        debug("write acl data pkt - writing: " + pkt.toString("hex"));
+        this._socket.write(pkt);
+    }
     onSocketData(array) {
         const data = Buffer.from(array);
         debug("onSocketData: " + data.toString("hex"));
@@ -636,6 +631,10 @@ class Hci extends events.EventEmitter {
                     debug("\t\thandle = " + handle);
                     debug("\t\tdata = " + pktData.toString("hex"));
                     this.emit("aclDataPkt", handle, cid, pktData);
+                    if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][cid]) {
+                        const resolve = this.aclStreamObservers[handle][cid].shift();
+                        resolve(pktData);
+                    }
                 }
                 else {
                     this._handleBuffers[handle] = {
@@ -652,6 +651,10 @@ class Hci extends events.EventEmitter {
                 this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
                 if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
                     this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
+                    if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
+                        const resolve = this.aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
+                        resolve(this._handleBuffers[handle].data);
+                    }
                     delete this._handleBuffers[handle];
                 }
             }
@@ -781,6 +784,13 @@ class Hci extends events.EventEmitter {
     }
     onStateChange(state) {
         this._state = state;
+    }
+    async readAclStreamWait(handle, cid) {
+        return new Promise((resolve) => {
+            this.aclStreamObservers[handle] = this.aclStreamObservers[handle] || [];
+            this.aclStreamObservers[handle][cid] = this.aclStreamObservers[handle][cid] || [];
+            this.aclStreamObservers[handle][cid].push(resolve);
+        });
     }
     async readCmdCompleteEventWait(requestCmd, additionalResultFilter) {
         additionalResultFilter = additionalResultFilter || [];

@@ -337,8 +337,15 @@ export default class BleScan {
    * ```
    */
   public end() {
+    this.endWait().catch((reason) => {
+      this.finish(reason);
+    });
+  }
+
+  public async endWait() {
     this.clearTimeoutTimer();
-    this.obnizBle.centralBindings.stopScanning();
+    await this.obnizBle.centralBindings.stopScanningWait();
+    // this.finish() will be called by emitter.
   }
 
   /**
@@ -372,7 +379,6 @@ export default class BleScan {
           }, 10000);
           this._delayNotifyTimers.push({ timer, peripheral });
         }
-
         break;
       }
       case "onfinish": {

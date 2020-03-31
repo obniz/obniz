@@ -178,8 +178,14 @@ class BleScan {
      * ```
      */
     end() {
+        this.endWait().catch((reason) => {
+            this.finish(reason);
+        });
+    }
+    async endWait() {
         this.clearTimeoutTimer();
-        this.obnizBle.centralBindings.stopScanning();
+        await this.obnizBle.centralBindings.stopScanningWait();
+        // this.finish() will be called by emitter.
     }
     /**
      * @ignore

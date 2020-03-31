@@ -38,8 +38,8 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._scanServiceUuids = serviceUuids || [];
         await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
-    stopScanning() {
-        this._gap.stopScanning();
+    async stopScanningWait() {
+        await this._gap.stopScanningWait();
     }
     connect(peripheralUuid) {
         const address = this._addresses[peripheralUuid];
@@ -127,7 +127,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
         }
     }
-    onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+    async onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 0) {
             // not master, ignore
             return;
@@ -147,7 +147,6 @@ class NobleBindings extends events_1.default.EventEmitter {
             this._aclStreams[handle] = aclStream;
             this._handles[uuid] = handle;
             this._handles[handle] = uuid;
-            this._gatts[handle].on("mtu", this.onMtu.bind(this));
             this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
             this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
             this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
@@ -163,7 +162,8 @@ class NobleBindings extends events_1.default.EventEmitter {
             this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
             this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
             this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateRequest.bind(this));
-            this._gatts[handle].exchangeMtu(256);
+            await this._gatts[handle].exchangeMtuWait(256);
+            // public onMtu(address: any, mtu?: any) {}
         }
         else {
             uuid = this._pendingConnectionUuid;
@@ -190,7 +190,6 @@ class NobleBindings extends events_1.default.EventEmitter {
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
         if (uuid) {
-            this._aclStreams[handle].push(null, null);
             this._gatts[handle].removeAllListeners();
             this._signalings[handle].removeAllListeners();
             delete this._gatts[uuid];
@@ -215,7 +214,6 @@ class NobleBindings extends events_1.default.EventEmitter {
             aclStream.pushEncrypt(encrypt);
         }
     }
-    onMtu(address, mtu) { }
     onRssiRead(handle, rssi) {
         this.emit("rssiUpdate", this._handles[handle], rssi);
     }
@@ -229,7 +227,7 @@ class NobleBindings extends events_1.default.EventEmitter {
         const handle = this._handles[peripheralUuid];
         const gatt = this._gatts[handle];
         if (gatt) {
-            gatt.discoverServices(uuids || []);
+            gatt.discoverServicesWait(uuids || []);
         }
         else {
             console.warn("noble warning: unknown peripheral " + peripheralUuid);

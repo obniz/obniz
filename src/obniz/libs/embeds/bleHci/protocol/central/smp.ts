@@ -5,6 +5,8 @@
  */
 import events from "events";
 
+import { BleDeviceAddress, BleDeviceAddressType } from "../../bleTypes";
+import AclStream from "./acl-stream";
 import crypto from "./crypto";
 
 /**
@@ -25,7 +27,7 @@ namespace SMP {
  * @ignore
  */
 class Smp extends events.EventEmitter {
-  public _aclStream: any;
+  public _aclStream: AclStream;
   public _iat: any;
   public _ia: any;
   public _rat: any;
@@ -37,10 +39,15 @@ class Smp extends events.EventEmitter {
   public _tk: any;
   public _r: any;
   public _pcnf: any;
-
   public _stk: any = null;
 
-  constructor(aclStream: any, localAddressType: any, localAddress: any, remoteAddressType: any, remoteAddress: any) {
+  constructor(
+    aclStream: AclStream,
+    localAddressType: BleDeviceAddressType,
+    localAddress: BleDeviceAddress,
+    remoteAddressType: BleDeviceAddressType,
+    remoteAddress: BleDeviceAddress,
+  ) {
     super();
     this._aclStream = aclStream;
 
