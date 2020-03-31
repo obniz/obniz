@@ -58,7 +58,7 @@ export default class AMG8833 implements ObnizPartsInterface {
     this.address = 0x69;
     if (this.params.address === 0x69) {
       this.address = 0x69;
-    } else if (this.params.addressmode === 0x68) {
+    } else if (this.params.address === 0x68) {
       this.address = 0x68;
     } else if (this.params.address !== undefined) {
       throw new Error("address must be 0x68 or 0x69");

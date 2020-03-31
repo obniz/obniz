@@ -66,7 +66,7 @@ export default class Linking {
     this.initialized = true;
   }
 
-  public discover(p: any) {
+  public discover(p: any): Promise<any[]> {
     this._checkInitialized();
 
     let duration = 5000;

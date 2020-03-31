@@ -60,7 +60,7 @@ obniz.ble.scan.onfind = (peripheral) => {
 
 
 
-## getHTData()
+## getInfoData()
 BLEで受信したアドバタイズ情報をもとに、デバイス情報を取得します。
 違うSLOTのアドバタイズ情報の場合はnullを返します。
 

@@ -24,6 +24,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsInterface {
   public requiredKeys: string[] = [];
   public params: any;
   public onbuttonpressed: ((pressed: boolean) => void) | null = null;
+  public _peripheral: BleRemotePeripheral | null = null;
 
   private _uuids = {
     service: "3526797e-448b-4bbb-9145-c5083e0e09dc",
@@ -32,7 +33,6 @@ export default class ENERTALK_TOUCH implements ObnizPartsInterface {
     illuminanceChar: "74c3fe9d-25b2-4903-8dcd-680e5ef0a6b3",
     accelerometerChar: "71ef0979-0e2c-4a55-8d3c-78083869fae6",
   };
-  private _peripheral: BleRemotePeripheral | null = null;
   private _service: BleRemoteService | null = null;
   private _temperatureChar: BleRemoteCharacteristic | null = null;
   private _humidityChar: BleRemoteCharacteristic | null = null;
@@ -68,7 +68,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsInterface {
     await this._peripheral?.disconnectWait();
   }
 
-  public async getTemperature() {
+  public async getTemperatureWait() {
     if (!this._temperatureChar) {
       throw new Error("device is not connected");
     }
@@ -78,7 +78,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsInterface {
     return temp;
   }
 
-  public async getHumidity() {
+  public async getHumidityWait() {
     if (!this._humidityChar) {
       throw new Error("device is not connected");
     }
@@ -88,7 +88,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsInterface {
     return humidity;
   }
 
-  public async getIllumination() {
+  public async getIlluminationWait() {
     if (!this._illuminanceChar) {
       throw new Error("device is not connected");
     }
@@ -99,7 +99,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsInterface {
     return illuminance;
   }
 
-  public async getAccelerometer() {
+  public async getAccelerometerWait() {
     if (!this._accelerometerChar) {
       throw new Error("device is not connected");
     }

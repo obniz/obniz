@@ -23,13 +23,13 @@ export default class RS_Seek3 implements ObnizPartsInterface {
   public requiredKeys: string[] = [];
   public params: any;
   public onpressed: (() => void) | null = null;
+  public _peripheral: BleRemotePeripheral | null = null;
 
   private _uuids = {
     service: "0EE71523-981A-46B8-BA64-019261C88478",
     buttonChar: "0EE71524-981A-46B8-BA64-019261C88478",
     tempHumidChar: "0EE7152C-981A-46B8-BA64-019261C88478",
   };
-  private _peripheral: BleRemotePeripheral | null = null;
   private _buttonCharacteristic: BleRemoteCharacteristic | null = null;
   private _tempHumidCharacteristic: BleRemoteCharacteristic | null = null;
 
