@@ -24399,7 +24399,7 @@ exports.default = RS_Seek3;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
- * @module Parts.uPRISM
+ * @module Parts.acr1255
  */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -24410,6 +24410,8 @@ class acr1255 {
     constructor(peripheral) {
         this.onNotify = null;
         this.onAuthenticated = null;
+        this.onFelicaTouch = null;
+        this.onCardTouch = null;
         this._authenticated = false;
         this._peripheral = null;
         this.masterKey = [
@@ -24440,10 +24442,6 @@ class acr1255 {
         };
         this.readData = [];
         this.readChar = null;
-        if (peripheral === null) {
-            return;
-            // throw new Error("peripheral is null");
-        }
         if (peripheral && !acr1255.isDevice(peripheral)) {
             throw new Error("peripheral is not acr1255");
         }
@@ -24471,9 +24469,14 @@ class acr1255 {
         const service = this._peripheral.getService(this._uuids.service);
         this.readChar = service.getCharacteristic(this._uuids.writeChar);
         await service.getCharacteristic(this._uuids.readChar).registerNotifyWait(async (data) => {
-            this.s(data);
+            this.readPacket(data);
         });
-        await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00]); // auth step.1
+        await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
+    }
+    async disconnectWait() {
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
+        }
     }
     async write(data) {
         if (data.length % 16 !== 0) {
@@ -24482,31 +24485,50 @@ class acr1255 {
                 data.push(0xff);
             }
         }
-        let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
-        let checksum = 0;
-        for (let i = 0; i < data.length; i++) {
-            if (i === 6) {
-                continue; // check sum
-            }
-            checksum = (checksum ^ data[i]) & 0xff;
-        }
-        data[6] = checksum;
-        data = this.encrypt(data, this.sessionKey);
-        packet = packet.concat(data);
-        checksum = 0;
-        for (let i = 1; i < packet.length; i++) {
-            checksum = (checksum ^ packet[i]) & 0xff;
-        }
-        packet.push(checksum);
-        packet.push(0x0a);
-        for (let i = 0; i < packet.length / 20; i++) {
-            const d = packet.slice(i * 20, (i + 1) * 20);
-            await this.readChar.writeWait(d);
-        }
+        this.writeBle(data, this.sessionKey);
     }
-    async disconnectWait() {
-        if (this._peripheral && this._peripheral.connected) {
-            await this._peripheral.disconnectWait();
+    setMasterKey(key) {
+        if (key.length !== 16) {
+            throw new Error("setMasterKey length error");
+        }
+        this.masterKey = key;
+    }
+    async setAutoPollingWait(enable) {
+        if (!this._authenticated) {
+            throw new Error("acr1255 no authenticate");
+        }
+        await this.write([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, enable ? 0x01 : 0x00]);
+    }
+    async writeADPU(data) {
+        await this.write([0x6f, (data.length & 0xff00) >> 8, data.length & 0x00ff, 0x00, 0x00, 0x00, 0x00].concat(data));
+    }
+    readPacket(data) {
+        this.readData = this.readData.concat(data);
+        if (this.readData[0] !== 0x05) {
+            this.readData = [];
+        }
+        const dLength = ((this.readData[1] & 0xff) << 8) | (this.readData[2] & 0x00ff);
+        if (this.readData.length - 5 < dLength) {
+            // lack data length
+            return;
+        }
+        if (this.readData[dLength + 4] === 0x0a) {
+            // last packet check
+            data = this.readData.slice(0, dLength + 5);
+            this.parseBlePacket(data);
+            if (this.readData.length > dLength + 5) {
+                // more data
+                this.readData = this.readData.slice(dLength + 5);
+                this.readPacket([]);
+            }
+            else {
+                // delete data
+                this.readData = [];
+            }
+        }
+        else {
+            // console.log("error data");
+            this.readData = [];
         }
     }
     encrypt(data, key) {
@@ -24528,35 +24550,6 @@ class acr1255 {
         }
         return list;
     }
-    s(data) {
-        this.readData = this.readData.concat(data);
-        if (this.readData[0] !== 0x05) {
-            this.readData = [];
-        }
-        const dLength = ((this.readData[1] & 0xff) << 8) | (this.readData[2] & 0x00ff);
-        if (this.readData.length - 5 < dLength) {
-            // lack data length
-            return;
-        }
-        if (this.readData[dLength + 4] === 0x0a) {
-            // last packet check
-            data = this.readData.slice(0, dLength + 5);
-            this.parseBlePacket(data);
-            if (this.readData.length > dLength + 5) {
-                // more data
-                this.readData = this.readData.slice(dLength + 5);
-                this.s([]);
-            }
-            else {
-                // delete data
-                this.readData = [];
-            }
-        }
-        else {
-            // console.log("error data");
-            this.readData = [];
-        }
-    }
     parseBlePacket(data) {
         switch (data[3]) {
             case 0x83:
@@ -24573,7 +24566,7 @@ class acr1255 {
                         randomDevice = this.decrypt(this.randomNumber.concat(randomDevice), this.masterKey);
                         let sendPacket = [0x6b, 0x00, 0x25, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x46, 0x00];
                         sendPacket = sendPacket.concat(randomDevice);
-                        this.writeBle(sendPacket);
+                        this.writeBle(sendPacket, null);
                         return;
                         // auth step.3
                     }
@@ -24595,14 +24588,21 @@ class acr1255 {
                 }
                 break;
         }
-        let d = data.slice(3, data.length - 2);
-        d = this.decrypt(d, this.sessionKey);
+        const d = this.decrypt(data.slice(3, data.length - 2), this.sessionKey);
         const dLen = (((d[1] & 0xff) << 8) | (d[2] & 0x00ff)) + 7; // command Data Form 7 length
+        const dt = d.slice(0, dLen);
+        switch (dt[0]) {
+            case 0x50:
+                if (this.onCardTouch) {
+                    this.onCardTouch(dt[5] === 3);
+                }
+                break;
+        }
         if (this.onNotify) {
-            this.onNotify(d.slice(0, dLen));
+            this.onNotify(dt);
         }
     }
-    async writeBle(data) {
+    async writeBle(data, key) {
         let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
         let checksum = 0;
         for (let i = 0; i < data.length; i++) {
@@ -24612,6 +24612,9 @@ class acr1255 {
             checksum = (checksum ^ data[i]) & 0xff;
         }
         data[6] = checksum;
+        if (key !== null) {
+            data = this.encrypt(data, key);
+        }
         packet = packet.concat(data);
         checksum = 0;
         for (let i = 1; i < packet.length; i++) {

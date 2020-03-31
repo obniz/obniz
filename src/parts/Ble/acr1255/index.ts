@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts.uPRISM
+ * @module Parts.acr1255
  */
 
 import crypto from "crypto";
@@ -24,6 +24,8 @@ export default class acr1255 implements ObnizPartsBleInterface {
 
   public onNotify: ((data: number[]) => void) | null = null;
   public onAuthenticated: (() => void) | null = null;
+  public onFelicaTouch: ((idm: string | null) => void) | null = null;
+  public onCardTouch: ((state: boolean) => void) | null = null;
 
   private _authenticated: boolean = false;
   private _peripheral: BleRemotePeripheral | null = null;
@@ -55,11 +57,8 @@ export default class acr1255 implements ObnizPartsBleInterface {
   };
   private readData: number[] = [];
   private readChar: BleRemoteCharacteristic | null = null;
+
   constructor(peripheral: BleRemotePeripheral | null) {
-    if (peripheral === null) {
-      return;
-      // throw new Error("peripheral is null");
-    }
     if (peripheral && !acr1255.isDevice(peripheral)) {
       throw new Error("peripheral is not acr1255");
     }
@@ -79,10 +78,16 @@ export default class acr1255 implements ObnizPartsBleInterface {
     const service = this._peripheral.getService(this._uuids.service)!;
     this.readChar = service.getCharacteristic(this._uuids.writeChar);
     await service.getCharacteristic(this._uuids.readChar)!.registerNotifyWait(async (data: number[]) => {
-      this.s(data);
+      this.readPacket(data);
     });
 
-    await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00]); // auth step.1
+    await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
+  }
+
+  public async disconnectWait() {
+    if (this._peripheral && this._peripheral.connected) {
+      await this._peripheral.disconnectWait();
+    }
   }
 
   public async write(data: number[]) {
@@ -92,58 +97,28 @@ export default class acr1255 implements ObnizPartsBleInterface {
         data.push(0xff);
       }
     }
-    let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
-    let checksum = 0;
-    for (let i = 0; i < data.length; i++) {
-      if (i === 6) {
-        continue; // check sum
-      }
-      checksum = (checksum ^ data[i]) & 0xff;
-    }
-    data[6] = checksum;
-    data = this.encrypt(data, this.sessionKey);
-    packet = packet.concat(data);
-    checksum = 0;
-    for (let i = 1; i < packet.length; i++) {
-      checksum = (checksum ^ packet[i]) & 0xff;
-    }
-    packet.push(checksum);
-    packet.push(0x0a);
-    for (let i = 0; i < packet.length / 20; i++) {
-      const d = packet.slice(i * 20, (i + 1) * 20);
-      await this.readChar!.writeWait(d);
-    }
+    this.writeBle(data, this.sessionKey);
   }
 
-  public async disconnectWait() {
-    if (this._peripheral && this._peripheral.connected) {
-      await this._peripheral.disconnectWait();
+  public setMasterKey(key: number[]) {
+    if (key.length !== 16) {
+      throw new Error("setMasterKey length error");
     }
+    this.masterKey = key;
   }
 
-  public encrypt(data: number[], key: number[]): number[] {
-    const c = crypto.createCipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
-    c.setAutoPadding(false);
-
-    let t = c.update(Buffer.from(data), undefined, "hex");
-    t += c.final("hex");
-    return Array.from(Buffer.from(t, "hex"));
-  }
-
-  public decrypt(data: number[], key: number[]): number[] {
-    const dec = crypto.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
-    dec.setAutoPadding(false);
-    let t = dec.update(Buffer.from(data), "binary", "binary");
-    t += dec.final("binary");
-    const d = Array.from(Buffer.from(t));
-    const list: number[] = [];
-    for (let i = 0; i < d.length; i++) {
-      list.push(d[i] >= 194 ? ((d[i] & 0b00000011) << 6) | (d[++i] & 0b00111111) : d[i]);
+  public async setAutoPollingWait(enable: boolean) {
+    if (!this._authenticated) {
+      throw new Error("acr1255 no authenticate");
     }
-    return list;
+    await this.write([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, enable ? 0x01 : 0x00]);
   }
 
-  public s(data: number[]) {
+  public async writeADPU(data: number[]) {
+    await this.write([0x6f, (data.length & 0xff00) >> 8, data.length & 0x00ff, 0x00, 0x00, 0x00, 0x00].concat(data));
+  }
+
+  private readPacket(data: number[]) {
     this.readData = this.readData.concat(data);
     if (this.readData[0] !== 0x05) {
       this.readData = [];
@@ -161,7 +136,7 @@ export default class acr1255 implements ObnizPartsBleInterface {
       if (this.readData.length > dLength + 5) {
         // more data
         this.readData = this.readData.slice(dLength + 5);
-        this.s([]);
+        this.readPacket([]);
       } else {
         // delete data
         this.readData = [];
@@ -170,6 +145,28 @@ export default class acr1255 implements ObnizPartsBleInterface {
       // console.log("error data");
       this.readData = [];
     }
+  }
+
+  private encrypt(data: number[], key: number[]): number[] {
+    const c = crypto.createCipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+    c.setAutoPadding(false);
+
+    let t = c.update(Buffer.from(data), undefined, "hex");
+    t += c.final("hex");
+    return Array.from(Buffer.from(t, "hex"));
+  }
+
+  private decrypt(data: number[], key: number[]): number[] {
+    const dec = crypto.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+    dec.setAutoPadding(false);
+    let t = dec.update(Buffer.from(data), "binary", "binary");
+    t += dec.final("binary");
+    const d = Array.from(Buffer.from(t));
+    const list: number[] = [];
+    for (let i = 0; i < d.length; i++) {
+      list.push(d[i] >= 194 ? ((d[i] & 0b00000011) << 6) | (d[++i] & 0b00111111) : d[i]);
+    }
+    return list;
   }
 
   private parseBlePacket(data: number[]) {
@@ -188,7 +185,7 @@ export default class acr1255 implements ObnizPartsBleInterface {
             randomDevice = this.decrypt(this.randomNumber.concat(randomDevice), this.masterKey);
             let sendPacket = [0x6b, 0x00, 0x25, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x46, 0x00];
             sendPacket = sendPacket.concat(randomDevice);
-            this.writeBle(sendPacket);
+            this.writeBle(sendPacket, null);
             return;
             // auth step.3
           } else {
@@ -209,15 +206,22 @@ export default class acr1255 implements ObnizPartsBleInterface {
         }
         break;
     }
-    let d = data.slice(3, data.length - 2);
-    d = this.decrypt(d, this.sessionKey);
+    const d = this.decrypt(data.slice(3, data.length - 2), this.sessionKey);
     const dLen = (((d[1] & 0xff) << 8) | (d[2] & 0x00ff)) + 7; // command Data Form 7 length
+    const dt = d.slice(0, dLen);
+    switch (dt[0]) {
+      case 0x50:
+        if (this.onCardTouch) {
+          this.onCardTouch(dt[5] === 3);
+        }
+        break;
+    }
     if (this.onNotify) {
-      this.onNotify(d.slice(0, dLen));
+      this.onNotify(dt);
     }
   }
 
-  private async writeBle(data: number[]) {
+  private async writeBle(data: number[], key: number[] | null) {
     let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
     let checksum = 0;
     for (let i = 0; i < data.length; i++) {
@@ -227,6 +231,9 @@ export default class acr1255 implements ObnizPartsBleInterface {
       checksum = (checksum ^ data[i]) & 0xff;
     }
     data[6] = checksum;
+    if (key !== null) {
+      data = this.encrypt(data, key);
+    }
     packet = packet.concat(data);
     checksum = 0;
     for (let i = 1; i < packet.length; i++) {
