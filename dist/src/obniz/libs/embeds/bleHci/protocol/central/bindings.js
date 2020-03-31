@@ -34,9 +34,9 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
     }
-    startScanning(serviceUuids, allowDuplicates, activeScan) {
+    async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = serviceUuids || [];
-        this._gap.startScanning(allowDuplicates, activeScan);
+        await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
     stopScanning() {
         this._gap.stopScanning();
@@ -55,8 +55,10 @@ class NobleBindings extends events_1.default.EventEmitter {
     disconnect(peripheralUuid) {
         this._hci.disconnect(this._handles[peripheralUuid]);
     }
-    updateRssi(peripheralUuid) {
-        this._hci.readRssi(this._handles[peripheralUuid]);
+    async updateRssiWait(peripheralUuid) {
+        const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
+        this.emit("rssiUpdate", this._handles[peripheralUuid], rssi);
+        return rssi;
     }
     init() {
         this._gap.on("scanStart", this.onScanStart.bind(this));
@@ -66,7 +68,7 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._hci.on("addressChange", this.onAddressChange.bind(this));
         this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
         this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("rssiRead", this.onRssiRead.bind(this));
+        // this._hci.on("rssiRead", this.onRssiRead.bind(this));
         this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));

@@ -11,6 +11,7 @@ import BleDescriptor from "./bleDescriptor";
  */
 export type UUID = string;
 export type BleDeviceAddress = string;
+export type Handle = number;
 
 export type BleDeviceType = "ble" | "dumo" | "breder";
 export type BleDeviceAddressType = "public" | "random" | "rpa_public" | "rpa_random";

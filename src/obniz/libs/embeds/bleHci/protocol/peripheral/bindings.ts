@@ -5,6 +5,8 @@
  */
 // var debug = require('debug')('bindings');
 
+import Hci from "../hci";
+
 /**
  * @ignore
  */
@@ -22,7 +24,7 @@ import Gatt from "./gatt";
 class BlenoBindings extends events.EventEmitter {
   public _state: any;
   public _advertising: any;
-  public _hci: any;
+  public _hci: Hci;
   public _gap: any;
   public _gatt: any;
   public _address: any;
@@ -82,10 +84,13 @@ class BlenoBindings extends events.EventEmitter {
     }
   }
 
-  public updateRssi() {
+  public async updateRssiWait(): Promise<number | null> {
     if (this._handle) {
-      this._hci.readRssi(this._handle);
+      const rssi = await this._hci.readRssiWait(this._handle);
+      this.emit("rssiUpdate", rssi);
+      return rssi;
     }
+    return null;
   }
 
   public init() {

@@ -25,7 +25,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
   public notifyFromObniz(json: any) {
     for (const eventName of this.eventNames()) {
       if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
-        return;
+        continue;
       }
       const errors = this.validate(eventName, json);
       if (errors.valid) {
@@ -34,7 +34,10 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
     }
     for (const eventName in this._eventHandlerQueue) {
       if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
-        return;
+        continue;
+      }
+      if (this._eventHandlerQueue[eventName].length === 0) {
+        continue;
       }
       const errors = this.validate(eventName, json);
       if (errors.valid) {

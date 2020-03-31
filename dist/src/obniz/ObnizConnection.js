@@ -12,6 +12,7 @@ const ws_1 = __importDefault(require("ws"));
 // @ts-ignore
 const package_1 = __importDefault(require("../../package")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(require("./libs/wscommand"));
+const ObnizError_1 = require("./ObnizError");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
@@ -180,6 +181,12 @@ class ObnizConnection extends eventemitter3_1.default {
      * @param options.local_connect If false, send data via gloval internet.
      */
     send(obj, options) {
+        options = options || {};
+        options.local_connect = options.local_connect !== false;
+        options.connect_check = options.connect_check !== false;
+        if (options.connect_check && this.connectionState !== "connected") {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
         try {
             if (!obj || typeof obj !== "object") {
                 console.log("obnizjs. didnt send ", obj);
@@ -200,7 +207,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.print_debug("send: " + sendData);
             }
             /* compress */
-            if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
+            if (this.wscommand && options.local_connect) {
                 let compressed;
                 try {
                     compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);

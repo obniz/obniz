@@ -59,10 +59,13 @@ class BlenoBindings extends events_1.default.EventEmitter {
             this._hci.disconnect(this._handle);
         }
     }
-    updateRssi() {
+    async updateRssiWait() {
         if (this._handle) {
-            this._hci.readRssi(this._handle);
+            const rssi = await this._hci.readRssiWait(this._handle);
+            this.emit("rssiUpdate", rssi);
+            return rssi;
         }
+        return null;
     }
     init() {
         this._gap.on("advertisingStart", this.onAdvertisingStart.bind(this));

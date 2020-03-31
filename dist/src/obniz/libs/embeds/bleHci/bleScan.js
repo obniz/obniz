@@ -54,7 +54,12 @@ class BleScan {
      * @param target
      * @param settings
      */
-    start(target = {}, settings = {}) {
+    async start(target = {}, settings = {}) {
+        this.startWait(target, settings).catch((reason) => {
+            this.finish(reason);
+        });
+    }
+    async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
@@ -80,7 +85,7 @@ class BleScan {
         else {
             this._setTargetFilterOnDevice({}); // clear
         }
-        this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
+        await this.obnizBle.centralBindings.startScanningWait(null, false, settings.activeScan);
         this.clearTimeoutTimer();
         if (timeout !== null) {
             this._timeoutTimer = setTimeout(() => {
@@ -207,15 +212,18 @@ class BleScan {
                 break;
             }
             case "onfinish": {
-                this.clearTimeoutTimer();
-                this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
-                this._clearDelayNotifyTimer();
-                this.emitter.emit(notifyName, this.scanedPeripherals);
-                if (this.onfinish) {
-                    this.onfinish(this.scanedPeripherals);
-                }
+                this.finish();
                 break;
             }
+        }
+    }
+    finish(error) {
+        this.clearTimeoutTimer();
+        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+        this._clearDelayNotifyTimer();
+        this.emitter.emit("onfinish", this.scanedPeripherals, error);
+        if (this.onfinish) {
+            this.onfinish(this.scanedPeripherals, error);
         }
     }
     /**

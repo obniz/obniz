@@ -135,7 +135,7 @@ export default class BleScan {
    * ```
    *
    */
-  public onfinish?: (peripherals: BleRemotePeripheral[]) => void;
+  public onfinish?: (peripherals: BleRemotePeripheral[], error?: Error) => void;
 
   /**
    * This function gets called when obniz Board finds a new peripheral.
@@ -203,7 +203,13 @@ export default class BleScan {
    * @param target
    * @param settings
    */
-  public start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
+  public async start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
+    this.startWait(target, settings).catch((reason) => {
+      this.finish(reason);
+    });
+  }
+
+  public async startWait(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
     this.obnizBle.warningIfNotInitialize();
 
     const timeout: number | null = settings.duration === undefined ? 30 : settings.duration;
@@ -230,7 +236,7 @@ export default class BleScan {
     } else {
       this._setTargetFilterOnDevice({}); // clear
     }
-    this.obnizBle.centralBindings.startScanning(null, false, settings.activeScan);
+    await this.obnizBle.centralBindings.startScanningWait(null, false, settings.activeScan);
 
     this.clearTimeoutTimer();
     if (timeout !== null) {
@@ -370,15 +376,19 @@ export default class BleScan {
         break;
       }
       case "onfinish": {
-        this.clearTimeoutTimer();
-        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
-        this._clearDelayNotifyTimer();
-        this.emitter.emit(notifyName, this.scanedPeripherals);
-        if (this.onfinish) {
-          this.onfinish(this.scanedPeripherals);
-        }
+        this.finish();
         break;
       }
+    }
+  }
+
+  public finish(error?: Error) {
+    this.clearTimeoutTimer();
+    this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+    this._clearDelayNotifyTimer();
+    this.emitter.emit("onfinish", this.scanedPeripherals, error);
+    if (this.onfinish) {
+      this.onfinish(this.scanedPeripherals, error);
     }
   }
 

@@ -134,20 +134,20 @@ class Gap extends events_1.default.EventEmitter {
         }
         else {
             this._advertiseState = "starting";
-            this._hci.setScanResponseData(scanData);
-            this._hci.setAdvertisingData(advertisementData);
-            this._hci.setAdvertiseEnable(true);
-            this._hci.setScanResponseData(scanData);
-            this._hci.setAdvertisingData(advertisementData);
+            this._hci.setScanResponseDataWait(scanData); // background
+            this._hci.setAdvertisingDataWait(advertisementData); // background
+            this._hci.setAdvertiseEnableWait(true); // background
+            this._hci.setScanResponseDataWait(scanData); // background
+            this._hci.setAdvertisingDataWait(advertisementData); // background
         }
     }
     restartAdvertising() {
         this._advertiseState = "restarting";
-        this._hci.setAdvertiseEnable(true);
+        this._hci.setAdvertiseEnableWait(true); // background
     }
     stopAdvertising() {
         this._advertiseState = "stopping";
-        this._hci.setAdvertiseEnable(false);
+        this._hci.setAdvertiseEnableWait(false); // background
     }
     onHciError(error) { }
     onHciLeAdvertisingParametersSet(status) { }

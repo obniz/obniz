@@ -9,6 +9,7 @@ import wsClient from "ws";
 // @ts-ignore
 import packageJson from "../../package"; // pakcage.js will be created from package.json on build.
 import WSCommand from "./libs/wscommand";
+import { ObnizOfflineError } from "./ObnizError";
 import { ObnizOptions } from "./ObnizOptions";
 
 export type ObnizConnectionEventNames = "connect" | "close" | "notify";
@@ -321,7 +322,14 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
    * @param options send option
    * @param options.local_connect If false, send data via gloval internet.
    */
-  public send(obj: object | object[], options?: { local_connect?: boolean }) {
+  public send(obj: object | object[], options?: { local_connect?: boolean; connect_check?: boolean }) {
+    options = options || {};
+    options.local_connect = options.local_connect !== false;
+    options.connect_check = options.connect_check !== false;
+
+    if (options.connect_check && this.connectionState !== "connected") {
+      throw new ObnizOfflineError();
+    }
     try {
       if (!obj || typeof obj !== "object") {
         console.log("obnizjs. didnt send ", obj);
@@ -344,7 +352,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
       }
 
       /* compress */
-      if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
+      if (this.wscommand && options.local_connect) {
         let compressed: any;
         try {
           compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);

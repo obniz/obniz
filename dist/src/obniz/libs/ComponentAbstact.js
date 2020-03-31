@@ -16,7 +16,7 @@ class ComponentAbstract extends eventemitter3_1.default {
     notifyFromObniz(json) {
         for (const eventName of this.eventNames()) {
             if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
-                return;
+                continue;
             }
             const errors = this.validate(eventName, json);
             if (errors.valid) {
@@ -25,7 +25,10 @@ class ComponentAbstract extends eventemitter3_1.default {
         }
         for (const eventName in this._eventHandlerQueue) {
             if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
-                return;
+                continue;
+            }
+            if (this._eventHandlerQueue[eventName].length === 0) {
+                continue;
             }
             const errors = this.validate(eventName, json);
             if (errors.valid) {

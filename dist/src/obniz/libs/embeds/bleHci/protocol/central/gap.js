@@ -4,12 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * @packageDocumentation
- *
- * @ignore
- */
-// let debug = require('debug')('gap');
-/**
  * @ignore
  */
 const debug = () => { };
@@ -35,27 +29,21 @@ class Gap extends events_1.default.EventEmitter {
         this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
         this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
-    startScanning(allowDuplicates, activeScan) {
+    async startScanningWait(allowDuplicates, activeScan) {
         this._scanState = "starting";
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
         // Always set scan parameters before scanning
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
-        this._hci.setScanEnabled(false, true);
-        // console.log("scan enable false");
-        this._hci.once("leScanEnableSet", (scanStopStatus) => {
-            this._hci.setScanParameters(activeScan);
-            this._hci.once("leScanParametersSet", (setParamStatus) => {
-                setTimeout(() => {
-                    this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-                }, 1000);
-            });
-        });
+        const scanStopStatus = await this._hci.setScanEnabledWait(false, true);
+        const setParamStatus = await this._hci.setScanParametersWait(activeScan);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await this._hci.setScanEnabledWait(true, this._scanFilterDuplicates);
     }
     stopScanning() {
         this._scanState = "stopping";
-        this._hci.setScanEnabled(false, true);
+        this._hci.setScanEnabledWait(false, true); // background
     }
     onHciLeScanParametersSet() { }
     // Called when receive an event "Command Complete" for "LE Set Scan Enable"
@@ -378,20 +366,20 @@ class Gap extends events_1.default.EventEmitter {
         }
         else {
             this._advertiseState = "starting";
-            this._hci.setScanResponseData(scanData);
-            this._hci.setAdvertisingData(advertisementData);
-            this._hci.setAdvertiseEnable(true);
-            this._hci.setScanResponseData(scanData);
-            this._hci.setAdvertisingData(advertisementData);
+            this._hci.setScanResponseDataWait(scanData); // background
+            this._hci.setAdvertisingDataWait(advertisementData); // background
+            this._hci.setAdvertiseEnableWait(true); // background
+            this._hci.setScanResponseDataWait(scanData); // background
+            this._hci.setAdvertisingDataWait(advertisementData); // background
         }
     }
     restartAdvertising() {
         this._advertiseState = "restarting";
-        this._hci.setAdvertiseEnable(true);
+        this._hci.setAdvertiseEnableWait(true); // background
     }
     stopAdvertising() {
         this._advertiseState = "stopping";
-        this._hci.setAdvertiseEnable(false);
+        this._hci.setAdvertiseEnableWait(false); // background
     }
     onHciError(error) { }
     onHciLeAdvertisingParametersSet(status) { }

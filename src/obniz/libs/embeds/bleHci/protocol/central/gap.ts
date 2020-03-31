@@ -4,6 +4,8 @@
  * @ignore
  */
 // let debug = require('debug')('gap');
+import ObnizBLEHci from "../../hci";
+
 /**
  * @ignore
  */
@@ -16,13 +18,13 @@ import Hci from "../hci";
  * @ignore
  */
 class Gap extends events.EventEmitter {
-  public _hci: any;
+  public _hci: Hci;
   public _scanState: any;
   public _scanFilterDuplicates: any;
   public _discoveries: any;
   public _advertiseState: any;
 
-  constructor(hci: any) {
+  constructor(hci: Hci) {
     super();
     this._hci = hci;
 
@@ -43,30 +45,22 @@ class Gap extends events.EventEmitter {
     this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
   }
 
-  public startScanning(allowDuplicates: boolean, activeScan: boolean) {
+  public async startScanningWait(allowDuplicates: boolean, activeScan: boolean) {
     this._scanState = "starting";
     this._scanFilterDuplicates = !allowDuplicates;
     this._discoveries = {};
     // Always set scan parameters before scanning
     // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
     // p106 - p107
-    this._hci.setScanEnabled(false, true);
-
-    // console.log("scan enable false");
-    this._hci.once("leScanEnableSet", (scanStopStatus: number) => {
-      this._hci.setScanParameters(activeScan);
-      this._hci.once("leScanParametersSet", (setParamStatus: number) => {
-        setTimeout(() => {
-          this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-        }, 1000);
-      });
-    });
+    const scanStopStatus = await this._hci.setScanEnabledWait(false, true);
+    const setParamStatus = await this._hci.setScanParametersWait(activeScan);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await this._hci.setScanEnabledWait(true, this._scanFilterDuplicates);
   }
 
   public stopScanning() {
     this._scanState = "stopping";
-
-    this._hci.setScanEnabled(false, true);
+    this._hci.setScanEnabledWait(false, true); // background
   }
 
   public onHciLeScanParametersSet() {}
@@ -454,25 +448,24 @@ class Gap extends events.EventEmitter {
     } else {
       this._advertiseState = "starting";
 
-      this._hci.setScanResponseData(scanData);
-      this._hci.setAdvertisingData(advertisementData);
-
-      this._hci.setAdvertiseEnable(true);
-      this._hci.setScanResponseData(scanData);
-      this._hci.setAdvertisingData(advertisementData);
+      this._hci.setScanResponseDataWait(scanData); // background
+      this._hci.setAdvertisingDataWait(advertisementData); // background
+      this._hci.setAdvertiseEnableWait(true); // background
+      this._hci.setScanResponseDataWait(scanData); // background
+      this._hci.setAdvertisingDataWait(advertisementData); // background
     }
   }
 
   public restartAdvertising() {
     this._advertiseState = "restarting";
 
-    this._hci.setAdvertiseEnable(true);
+    this._hci.setAdvertiseEnableWait(true); // background
   }
 
   public stopAdvertising() {
     this._advertiseState = "stopping";
 
-    this._hci.setAdvertiseEnable(false);
+    this._hci.setAdvertiseEnableWait(false); // background
   }
 
   public onHciError(error: any) {}

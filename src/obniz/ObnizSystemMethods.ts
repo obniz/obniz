@@ -123,7 +123,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
    * @param reset
    */
   public resetOnDisconnect(reset: any) {
-    this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
+    this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }, { connect_check: false });
   }
 
   /**

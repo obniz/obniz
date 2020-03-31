@@ -5,13 +5,14 @@
  */
 import events from "events";
 
+import Hci from "../hci";
 import Smp from "./smp";
 
 /**
  * @ignore
  */
 class AclStream extends events.EventEmitter {
-  public _hci: any;
+  public _hci: Hci;
   public _handle: any;
   public encypted: any;
   public _smp: any;

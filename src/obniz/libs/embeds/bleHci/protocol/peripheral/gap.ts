@@ -17,7 +17,7 @@ import Hci from "../hci";
  * @ignore
  */
 class Gap extends events.EventEmitter {
-  public _hci: any;
+  public _hci: Hci;
   public _advertiseState: any;
 
   constructor(hci: any) {
@@ -173,24 +173,24 @@ class Gap extends events.EventEmitter {
     } else {
       this._advertiseState = "starting";
 
-      this._hci.setScanResponseData(scanData);
-      this._hci.setAdvertisingData(advertisementData);
-      this._hci.setAdvertiseEnable(true);
-      this._hci.setScanResponseData(scanData);
-      this._hci.setAdvertisingData(advertisementData);
+      this._hci.setScanResponseDataWait(scanData); // background
+      this._hci.setAdvertisingDataWait(advertisementData); // background
+      this._hci.setAdvertiseEnableWait(true); // background
+      this._hci.setScanResponseDataWait(scanData); // background
+      this._hci.setAdvertisingDataWait(advertisementData); // background
     }
   }
 
   public restartAdvertising() {
     this._advertiseState = "restarting";
 
-    this._hci.setAdvertiseEnable(true);
+    this._hci.setAdvertiseEnableWait(true); // background
   }
 
   public stopAdvertising() {
     this._advertiseState = "stopping";
 
-    this._hci.setAdvertiseEnable(false);
+    this._hci.setAdvertiseEnableWait(false); // background
   }
 
   public onHciError(error: any) {}

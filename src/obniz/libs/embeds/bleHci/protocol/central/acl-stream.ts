@@ -7,13 +7,14 @@
 
 import events from "events";
 
+import Hci from "../hci";
 import Smp from "./smp";
 
 /**
  * @ignore
  */
 export default class AclStream extends events.EventEmitter {
-  public _hci: any;
+  public _hci: Hci;
   public _handle: any;
   public _smp: any;
   public onSmpStkBinded: any;
