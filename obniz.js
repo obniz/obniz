@@ -24410,7 +24410,6 @@ class acr1255 {
     constructor(peripheral) {
         this.onNotify = null;
         this.onAuthenticated = null;
-        this.onFelicaTouch = null;
         this.onCardTouch = null;
         this._authenticated = false;
         this._peripheral = null;

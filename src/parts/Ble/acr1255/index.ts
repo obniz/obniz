@@ -24,7 +24,6 @@ export default class acr1255 implements ObnizPartsBleInterface {
 
   public onNotify: ((data: number[]) => void) | null = null;
   public onAuthenticated: (() => void) | null = null;
-  public onFelicaTouch: ((idm: string | null) => void) | null = null;
   public onCardTouch: ((state: boolean) => void) | null = null;
 
   private _authenticated: boolean = false;
