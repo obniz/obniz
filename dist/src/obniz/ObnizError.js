@@ -41,5 +41,25 @@ class ObnizBleUnknownPeripheralError extends ObnizError {
     }
 }
 exports.ObnizBleUnknownPeripheralError = ObnizBleUnknownPeripheralError;
+class ObnizBleUnknownCharacteristicError extends ObnizError {
+    constructor(peripheralUuid, serviceUuid, characteristicUuid) {
+        super(5, "unknown characteristic.  peripheral :" +
+            peripheralUuid +
+            " service :" +
+            serviceUuid +
+            " characteristic :" +
+            characteristicUuid);
+        this.peripheralUuid = peripheralUuid;
+        this.serviceUuid = serviceUuid;
+        this.characteristicUuid = characteristicUuid;
+    }
+}
+exports.ObnizBleUnknownCharacteristicError = ObnizBleUnknownCharacteristicError;
+class ObnizBleOpError extends ObnizError {
+    constructor() {
+        super(5, "BLE operation error");
+    }
+}
+exports.ObnizBleOpError = ObnizBleOpError;
 
 //# sourceMappingURL=ObnizError.js.map

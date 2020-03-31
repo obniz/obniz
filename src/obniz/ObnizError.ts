@@ -37,3 +37,23 @@ export class ObnizBleUnknownPeripheralError extends ObnizError {
     super(5, "unknown peripheral :" + peripheralUuid);
   }
 }
+
+export class ObnizBleUnknownCharacteristicError extends ObnizError {
+  constructor(public peripheralUuid: string, public serviceUuid: string, public characteristicUuid: string) {
+    super(
+      5,
+      "unknown characteristic.  peripheral :" +
+        peripheralUuid +
+        " service :" +
+        serviceUuid +
+        " characteristic :" +
+        characteristicUuid,
+    );
+  }
+}
+
+export class ObnizBleOpError extends ObnizError {
+  constructor() {
+    super(5, "BLE operation error");
+  }
+}

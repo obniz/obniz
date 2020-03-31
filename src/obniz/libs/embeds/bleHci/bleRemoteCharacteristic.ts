@@ -195,13 +195,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param callback
    */
   public registerNotify(callback: (data: any) => void) {
-    this.onnotify = callback;
-    this.service.peripheral.obnizBle.centralBindings.notify(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid,
-      true,
-    );
+    this.registerNotifyWait(callback); // background
   }
 
   /**
@@ -225,13 +219,14 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param callback
    *
    */
-  public registerNotifyWait(callback: (data: any) => void): Promise<void> {
-    return new Promise((resolve: any) => {
-      this.emitter.once("onregisternotify", () => {
-        resolve();
-      });
-      this.registerNotify(callback);
-    });
+  public async registerNotifyWait(callback: (data: any) => void): Promise<void> {
+    this.onnotify = callback;
+    await this.service.peripheral.obnizBle.centralBindings.notifyWait(
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      true,
+    );
   }
 
   /**
@@ -264,14 +259,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * ```
    */
   public unregisterNotify() {
-    this.onnotify = () => {};
-
-    this.service.peripheral.obnizBle.centralBindings.notify(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid,
-      false,
-    );
+    this.unregisterNotifyWait(); // background
   }
 
   /**
@@ -298,13 +286,15 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * ```
    *
    */
-  public unregisterNotifyWait(): Promise<void> {
-    return new Promise((resolve: any) => {
-      this.emitter.once("onunregisternotify", () => {
-        resolve();
-      });
-      this.unregisterNotify();
-    });
+  public async unregisterNotifyWait(): Promise<void> {
+    this.onnotify = () => {};
+
+    await this.service.peripheral.obnizBle.centralBindings.notifyWait(
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      false,
+    );
   }
 
   /**
@@ -335,11 +325,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    *
    */
   public read() {
-    this.service.peripheral.obnizBle.centralBindings.read(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid,
-    );
+    this.readWait(); // background
   }
 
   /**
@@ -433,8 +419,13 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * }
    * ```
    */
-  public readWait(): Promise<number[]> {
-    return super.readWait();
+  public async readWait(): Promise<number[]> {
+    const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+    );
+    return Array.from(buf);
   }
 
   /**

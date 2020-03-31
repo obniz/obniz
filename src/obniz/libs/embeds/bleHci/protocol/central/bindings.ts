@@ -353,10 +353,10 @@ class NobleBindings extends events.EventEmitter {
     this.emit("characteristicsDiscover", uuid, serviceUuid, characteristics);
   }
 
-  public read(peripheralUuid: any, serviceUuid: any, characteristicUuid: any) {
+  public async readWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-
-    gatt.read(serviceUuid, characteristicUuid);
+    const data = await gatt.readWait(serviceUuid, characteristicUuid);
+    return data;
   }
 
   public onRead(address: any, serviceUuid?: any, characteristicUuid?: any, data?: any, isSuccess?: any) {
@@ -396,9 +396,9 @@ class NobleBindings extends events.EventEmitter {
     this.emit("broadcast", uuid, serviceUuid, characteristicUuid, state);
   }
 
-  public notify(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, notify: any) {
+  public async notifyWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, notify: any) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    gatt.notify(serviceUuid, characteristicUuid, notify);
+    await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
   }
 
   public onNotify(address: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
@@ -488,9 +488,9 @@ class NobleBindings extends events.EventEmitter {
     this.emit("handleRead", uuid, handle, data);
   }
 
-  public writeHandle(peripheralUuid: any, attHandle: any, data: any, withoutResponse: any) {
+  public async writeHandle(peripheralUuid: any, attHandle: any, data: any, withoutResponse: any) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    gatt.writeHandle(attHandle, data, withoutResponse);
+    await gatt.writeHandleWait(attHandle, data, withoutResponse);
   }
 
   public onHandleWrite(address: any, handle?: any) {

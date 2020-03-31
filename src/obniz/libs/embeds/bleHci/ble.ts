@@ -430,12 +430,6 @@ export default class ObnizBLE extends ComponentAbstract {
     descriptor.notifyFromServer("onwrite", obj);
   }
 
-  protected onHandleRead(peripheralUuid: any, handle?: any, data?: any) {}
-
-  protected onHandleWrite(peripheralUuid: any, handle?: any) {}
-
-  protected onHandleNotify(peripheralUuid: any, handle?: any, data?: any) {}
-
   protected onPeripheralStateChange(state: any) {
     // console.error("onPeripheralStateChange")
   }
@@ -510,9 +504,6 @@ export default class ObnizBLE extends ComponentAbstract {
     this.centralBindings.on("descriptorsDiscover", this.onDescriptorsDiscover.bind(this));
     this.centralBindings.on("valueRead", this.onValueRead.bind(this));
     this.centralBindings.on("valueWrite", this.onValueWrite.bind(this));
-    this.centralBindings.on("handleRead", this.onHandleRead.bind(this));
-    this.centralBindings.on("handleWrite", this.onHandleWrite.bind(this));
-    this.centralBindings.on("handleNotify", this.onHandleNotify.bind(this));
 
     this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
     this.peripheralBindings.on("addressChange", this.onPeripheralAddressChange.bind(this));
