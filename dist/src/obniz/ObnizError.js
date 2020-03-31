@@ -30,9 +30,16 @@ class ObnizI2cError extends ObnizError {
 exports.ObnizI2cError = ObnizI2cError;
 class ObnizI2cWarning extends ObnizError {
     constructor() {
-        super(3, "I2C error.");
+        super(4, "I2C error.");
     }
 }
 exports.ObnizI2cWarning = ObnizI2cWarning;
+class ObnizBleUnknownPeripheralError extends ObnizError {
+    constructor(peripheralUuid) {
+        super(5, "unknown peripheral :" + peripheralUuid);
+        this.peripheralUuid = peripheralUuid;
+    }
+}
+exports.ObnizBleUnknownPeripheralError = ObnizBleUnknownPeripheralError;
 
 //# sourceMappingURL=ObnizError.js.map

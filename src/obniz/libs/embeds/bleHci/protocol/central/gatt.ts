@@ -11,6 +11,7 @@ const debug: any = () => {};
 /* eslint-disable no-unused-vars */
 
 import events from "events";
+import { UUID } from "../../bleTypes";
 
 /**
  * @ignore
@@ -401,11 +402,12 @@ class Gatt extends events.EventEmitter {
     }
   }
 
-  public discoverIncludedServices(serviceUuid: any, uuids: any) {
+  public async discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]) {
     const service: any = this._services[serviceUuid];
     const includedServices: any = [];
-
-    const callback: any = (data: any) => {
+    let startHandle = service.startHandle;
+    while (1) {
+      const data = await this._execCommand(this.readByTypeRequest(startHandle, service.endHandle, GATT.INCLUDE_UUID));
       const opcode: any = data[0];
       let i: any = 0;
 
@@ -424,7 +426,7 @@ class Gatt extends events.EventEmitter {
                     .slice(2 + i * type + 6)
                     .slice(0, 16)
                     .toString("hex")
-                    .match(/.{1,2}/g)
+                    .match(/.{1,2}/g)!
                     .reverse()
                     .join(""),
           });
@@ -444,29 +446,23 @@ class Gatt extends events.EventEmitter {
         }
 
         this.emit("includedServicesDiscover", this._address, service.uuid, includedServiceUuids);
-      } else {
-        this._queueCommand(
-          this.readByTypeRequest(
-            includedServices[includedServices.length - 1].endHandle + 1,
-            service.endHandle,
-            GATT.INCLUDE_UUID,
-          ),
-          callback,
-        );
+        return includedServiceUuids;
       }
-    };
-
-    this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.INCLUDE_UUID), callback);
+      startHandle = includedServices[includedServices.length - 1].endHandle + 1;
+    }
   }
 
-  public discoverCharacteristics(serviceUuid: any, characteristicUuids: any) {
+  public async discoverCharacteristicsWait(serviceUuid: any, characteristicUuids: any) {
     const service: any = this._services[serviceUuid];
     const characteristics: any = [];
 
     this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
     this._descriptors[serviceUuid] = this._descriptors[serviceUuid] || {};
+    let startHandle = service.startHandle;
 
-    const callback: any = (data: any) => {
+    while (1) {
+      const data = await this._execCommand(this.readByTypeRequest(startHandle, service.endHandle, GATT.CHARAC_UUID));
+
       const opcode: any = data[0];
       let i: any = 0;
 
@@ -486,7 +482,7 @@ class Gatt extends events.EventEmitter {
                     .slice(2 + i * type + 5)
                     .slice(0, 16)
                     .toString("hex")
-                    .match(/.{1,2}/g)
+                    .match(/.{1,2}/g)!
                     .reverse()
                     .join(""),
           });
@@ -554,19 +550,10 @@ class Gatt extends events.EventEmitter {
         }
 
         this.emit("characteristicsDiscover", this._address, serviceUuid, characteristicsDiscovered);
-      } else {
-        this._queueCommand(
-          this.readByTypeRequest(
-            characteristics[characteristics.length - 1].valueHandle + 1,
-            service.endHandle,
-            GATT.CHARAC_UUID,
-          ),
-          callback,
-        );
+        return characteristicsDiscovered;
       }
-    };
-
-    this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.CHARAC_UUID), callback);
+      startHandle = characteristics[characteristics.length - 1].valueHandle + 1;
+    }
   }
 
   public read(serviceUuid: any, characteristicUuid: any) {

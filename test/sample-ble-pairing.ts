@@ -1,14 +1,13 @@
 import Obniz from "../dist/src/obniz/index";
 import BleRemoteCharacteristic from "../src/obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
 import BleRemotePeripheral from "../src/obniz/libs/embeds/bleHci/bleRemotePeripheral";
-import ObnizPartsInterface, {ObnizPartsInfo} from "../src/obniz/ObnizPartsInterface";
+import ObnizPartsInterface, { ObnizPartsInfo } from "../src/obniz/ObnizPartsInterface";
 import REX_BTPM25V from "../src/parts/Ble/REX_BTPM25V";
 
 console.log("start");
 const stick = new Obniz.M5StickC("14436407");
 
-export interface RS_BTIREX2Options {
-}
+export interface RS_BTIREX2Options {}
 
 // not working
 export default class RS_BTIREX2 implements ObnizPartsInterface {
@@ -47,8 +46,7 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
   }
 
   // @ts-ignore
-  public wired(obniz: Obniz): void {
-  }
+  public wired(obniz: Obniz): void {}
 
   public async connectWait() {
     if (!this._peripheral) {
@@ -98,7 +96,7 @@ stick.onconnect = async () => {
   // stick.debugprint = true;
 
   let isFirst = true;
-  stick.ble.scan.start(null, {duplicate: true, duration: null});
+  stick.ble.scan.start(null, { duplicate: true, duration: null });
   stick.ble.scan.onfind = async (p: BleRemotePeripheral) => {
     if (RS_BTIREX2.isDevice(p) && isFirst) {
       isFirst = false;

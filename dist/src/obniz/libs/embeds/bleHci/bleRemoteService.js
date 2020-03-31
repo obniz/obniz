@@ -136,14 +136,9 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * obniz.ble.scan.start();
      * ```
      */
-    discoverAllCharacteristicsWait() {
-        return this.discoverChildrenWait();
-    }
-    /**
-     * @ignore
-     */
-    discoverChildren() {
-        this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
+    async discoverAllCharacteristicsWait() {
+        await this.parent.obnizBle.centralBindings.discoverCharacteristicsWait(this.peripheral.address, this.uuid);
+        return this.characteristics;
     }
     /**
      * @ignore

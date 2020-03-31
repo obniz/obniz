@@ -25,8 +25,15 @@ export class ObnizI2cError extends ObnizError {
     super(3, "I2C error.");
   }
 }
+
 export class ObnizI2cWarning extends ObnizError {
   constructor() {
-    super(3, "I2C error.");
+    super(4, "I2C error.");
+  }
+}
+
+export class ObnizBleUnknownPeripheralError extends ObnizError {
+  constructor(public peripheralUuid: string) {
+    super(5, "unknown peripheral :" + peripheralUuid);
   }
 }

@@ -314,13 +314,6 @@ class BleRemotePeripheral {
         return null;
     }
     /**
-     * @ignore
-     *
-     */
-    discoverAllServices() {
-        this.obnizBle.centralBindings.discoverServices(this.address);
-    }
-    /**
      * Discover services.
      *
      * If connect setting param 'autoDiscovery' is true(default),
@@ -343,16 +336,28 @@ class BleRemotePeripheral {
      * obniz.ble.scan.start();
      * ```
      */
-    discoverAllServicesWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverAllServices();
+    async discoverAllServicesWait() {
+        const serviceUuids = await this.obnizBle.centralBindings.discoverServicesWait(this.address);
+        for (const uuid of serviceUuids) {
+            let child = this.getService(uuid);
+            if (!child) {
+                const newService = new bleRemoteService_1.default({ uuid });
+                newService.parent = this;
+                this._services.push(newService);
+                child = newService;
+            }
+            child.discoverdOnRemote = true;
+            if (this.ondiscoverservice) {
+                this.ondiscoverservice(child);
+            }
+        }
+        const children = this._services.filter((elm) => {
+            return elm.discoverdOnRemote;
         });
+        if (this.ondiscoverservicefinished) {
+            this.ondiscoverservicefinished(children);
+        }
+        return children;
     }
     /**
      * @ignore
@@ -399,30 +404,6 @@ class BleRemotePeripheral {
                     if (this.ondisconnect) {
                         this.ondisconnect();
                     }
-                }
-                break;
-            }
-            case "discover": {
-                const uuid = params.service_uuid;
-                let child = this.getService(uuid);
-                if (!child) {
-                    const newService = new bleRemoteService_1.default({ uuid });
-                    newService.parent = this;
-                    this._services.push(newService);
-                    child = newService;
-                }
-                child.discoverdOnRemote = true;
-                if (this.ondiscoverservice) {
-                    this.ondiscoverservice(child);
-                }
-                break;
-            }
-            case "discoverfinished": {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                if (this.ondiscoverservicefinished) {
-                    this.ondiscoverservicefinished(children);
                 }
                 break;
             }

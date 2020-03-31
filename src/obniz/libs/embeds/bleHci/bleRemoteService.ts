@@ -147,15 +147,9 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * obniz.ble.scan.start();
    * ```
    */
-  public discoverAllCharacteristicsWait(): Promise<BleRemoteCharacteristic[]> {
-    return this.discoverChildrenWait();
-  }
-
-  /**
-   * @ignore
-   */
-  public discoverChildren() {
-    this.parent!.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
+  public async discoverAllCharacteristicsWait(): Promise<BleRemoteCharacteristic[]> {
+    await this.parent!.obnizBle.centralBindings.discoverCharacteristicsWait(this.peripheral.address, this.uuid);
+    return this.characteristics;
   }
 
   /**

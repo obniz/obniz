@@ -315,10 +315,12 @@ class Gatt extends events_1.default.EventEmitter {
             startHandle = services[services.length - 1].endHandle + 1;
         }
     }
-    discoverIncludedServices(serviceUuid, uuids) {
+    async discoverIncludedServicesWait(serviceUuid, uuids) {
         const service = this._services[serviceUuid];
         const includedServices = [];
-        const callback = (data) => {
+        let startHandle = service.startHandle;
+        while (1) {
+            const data = await this._execCommand(this.readByTypeRequest(startHandle, service.endHandle, GATT.INCLUDE_UUID));
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
@@ -349,19 +351,19 @@ class Gatt extends events_1.default.EventEmitter {
                     }
                 }
                 this.emit("includedServicesDiscover", this._address, service.uuid, includedServiceUuids);
+                return includedServiceUuids;
             }
-            else {
-                this._queueCommand(this.readByTypeRequest(includedServices[includedServices.length - 1].endHandle + 1, service.endHandle, GATT.INCLUDE_UUID), callback);
-            }
-        };
-        this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.INCLUDE_UUID), callback);
+            startHandle = includedServices[includedServices.length - 1].endHandle + 1;
+        }
     }
-    discoverCharacteristics(serviceUuid, characteristicUuids) {
+    async discoverCharacteristicsWait(serviceUuid, characteristicUuids) {
         const service = this._services[serviceUuid];
         const characteristics = [];
         this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
         this._descriptors[serviceUuid] = this._descriptors[serviceUuid] || {};
-        const callback = (data) => {
+        let startHandle = service.startHandle;
+        while (1) {
+            const data = await this._execCommand(this.readByTypeRequest(startHandle, service.endHandle, GATT.CHARAC_UUID));
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
@@ -429,12 +431,10 @@ class Gatt extends events_1.default.EventEmitter {
                     }
                 }
                 this.emit("characteristicsDiscover", this._address, serviceUuid, characteristicsDiscovered);
+                return characteristicsDiscovered;
             }
-            else {
-                this._queueCommand(this.readByTypeRequest(characteristics[characteristics.length - 1].valueHandle + 1, service.endHandle, GATT.CHARAC_UUID), callback);
-            }
-        };
-        this._queueCommand(this.readByTypeRequest(service.startHandle, service.endHandle, GATT.CHARAC_UUID), callback);
+            startHandle = characteristics[characteristics.length - 1].valueHandle + 1;
+        }
     }
     read(serviceUuid, characteristicUuid) {
         if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
