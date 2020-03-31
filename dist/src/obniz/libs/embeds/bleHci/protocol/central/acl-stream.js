@@ -27,8 +27,19 @@ class AclStream extends events_1.default.EventEmitter {
         this._smp.on("fail", this.onSmpFailBinded);
         this._smp.on("end", this.onSmpEndBinded);
     }
-    encrypt() {
-        this._smp.sendPairingRequest();
+    encrypt(keys) {
+        if (keys && keys.stk) {
+            console.error("skip pairing");
+            this._smp._preq = keys.preq;
+            this._smp._pres = keys.pres;
+            this._smp._tk = keys.tk;
+            this._smp._r = keys.r;
+            this._smp._pcnf = keys.pcnf;
+            this.onSmpStk(keys.stk);
+        }
+        else {
+            this._smp.sendPairingRequest();
+        }
     }
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);

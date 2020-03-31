@@ -30,6 +30,7 @@ var SMP;
 class Smp extends events_1.default.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
+        this._stk = null;
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(localAddress
@@ -107,8 +108,11 @@ class Smp extends events_1.default.EventEmitter {
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
-            const stk = crypto_1.default.s1(this._tk, r, this._r);
-            this.emit("stk", stk);
+            if (this._stk !== null) {
+                console.error("second stk");
+            }
+            this._stk = crypto_1.default.s1(this._tk, r, this._r);
+            this.emit("stk", this._stk);
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));

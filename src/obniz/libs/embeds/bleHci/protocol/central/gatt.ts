@@ -71,6 +71,7 @@ namespace GATT {
   export const CLIENT_CHARAC_CFG_UUID: any = 0x2902;
   export const SERVER_CHARAC_CFG_UUID: any = 0x2903;
 }
+
 /* eslint-enable no-unused-vars */
 
 /**
@@ -170,20 +171,7 @@ class Gatt extends events.EventEmitter {
       this._currentCommand.callback(data);
 
       this._currentCommand = null;
-
-      while (this._commandQueue.length) {
-        this._currentCommand = this._commandQueue.shift();
-
-        this.writeAtt(this._currentCommand.buffer);
-
-        if (this._currentCommand.callback) {
-          break;
-        } else if (this._currentCommand.writeCallback) {
-          this._currentCommand.writeCallback();
-
-          this._currentCommand = null;
-        }
-      }
+      this._runQueueCommand();
     }
   }
 
@@ -191,8 +179,32 @@ class Gatt extends events.EventEmitter {
     if (encrypt) {
       this._security = "medium";
 
-      this.writeAtt(this._currentCommand.buffer);
+      if (this._currentCommand.type === "encrypt") {
+        if (this._currentCommand.callback) {
+          this._currentCommand.callback({
+            stk: this._aclStream._smp._stk,
+            preq: this._aclStream._smp._preq,
+            pres: this._aclStream._smp._pres,
+            tk: this._aclStream._smp._tk,
+            r: this._aclStream._smp._r,
+            pcnf: this._aclStream._smp._pcnf,
+          });
+        }
+        this._currentCommand = null;
+        this._runQueueCommand();
+      } else {
+        this.writeAtt(this._currentCommand.buffer);
+      }
     }
+  }
+
+  public encrypt(callback: any, keys: any) {
+    this._commandQueue.push({
+      type: "encrypt",
+      keys,
+      callback,
+    });
+    this._runQueueCommand();
   }
 
   public onAclStreamEncryptFail() {}
@@ -228,18 +240,25 @@ class Gatt extends events.EventEmitter {
       writeCallback,
     });
 
+    this._runQueueCommand();
+  }
+
+  public _runQueueCommand() {
     if (this._currentCommand === null) {
       while (this._commandQueue.length) {
         this._currentCommand = this._commandQueue.shift();
 
-        this.writeAtt(this._currentCommand.buffer);
+        if (this._currentCommand.type === "encrypt") {
+          this._aclStream.encrypt(this._currentCommand.keys);
+        } else {
+          this.writeAtt(this._currentCommand.buffer);
+          if (this._currentCommand.callback) {
+            break;
+          } else if (this._currentCommand.writeCallback) {
+            this._currentCommand.writeCallback();
 
-        if (this._currentCommand.callback) {
-          break;
-        } else if (this._currentCommand.writeCallback) {
-          this._currentCommand.writeCallback();
-
-          this._currentCommand = null;
+            this._currentCommand = null;
+          }
         }
       }
     }

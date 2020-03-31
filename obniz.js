@@ -9107,6 +9107,11 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
         return results;
     }
+    pairing(keys) {
+        return new Promise((resolve) => {
+            this.obnizBle.centralBindings.pairing(this.address, keys, resolve);
+        });
+    }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {
             this.advertise_data_rows = [];
@@ -10307,8 +10312,19 @@ class AclStream extends events_1.default.EventEmitter {
         this._smp.on("fail", this.onSmpFailBinded);
         this._smp.on("end", this.onSmpEndBinded);
     }
-    encrypt() {
-        this._smp.sendPairingRequest();
+    encrypt(keys) {
+        if (keys && keys.stk) {
+            console.error("skip pairing");
+            this._smp._preq = keys.preq;
+            this._smp._pres = keys.pres;
+            this._smp._tk = keys.tk;
+            this._smp._r = keys.r;
+            this._smp._pcnf = keys.pcnf;
+            this.onSmpStk(keys.stk);
+        }
+        else {
+            this._smp.sendPairingRequest();
+        }
     }
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
@@ -10797,6 +10813,16 @@ class NobleBindings extends events_1.default.EventEmitter {
     }
     onConnectionParameterUpdateRequest(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         this._hci.connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    }
+    pairing(peripheralUuid, keys, callback) {
+        const handle = this._handles[peripheralUuid];
+        const gatt = this._gatts[handle];
+        if (gatt) {
+            gatt.encrypt(callback, keys);
+        }
+        else {
+            console.warn("noble warning: unknown peripheral " + peripheralUuid);
+        }
     }
 }
 exports.default = NobleBindings;
@@ -11441,24 +11467,38 @@ class Gatt extends events_1.default.EventEmitter {
             debug(this._address + ": read: " + data.toString("hex"));
             this._currentCommand.callback(data);
             this._currentCommand = null;
-            while (this._commandQueue.length) {
-                this._currentCommand = this._commandQueue.shift();
-                this.writeAtt(this._currentCommand.buffer);
-                if (this._currentCommand.callback) {
-                    break;
-                }
-                else if (this._currentCommand.writeCallback) {
-                    this._currentCommand.writeCallback();
-                    this._currentCommand = null;
-                }
-            }
+            this._runQueueCommand();
         }
     }
     onAclStreamEncrypt(encrypt) {
         if (encrypt) {
             this._security = "medium";
-            this.writeAtt(this._currentCommand.buffer);
+            if (this._currentCommand.type === "encrypt") {
+                if (this._currentCommand.callback) {
+                    this._currentCommand.callback({
+                        stk: this._aclStream._smp._stk,
+                        preq: this._aclStream._smp._preq,
+                        pres: this._aclStream._smp._pres,
+                        tk: this._aclStream._smp._tk,
+                        r: this._aclStream._smp._r,
+                        pcnf: this._aclStream._smp._pcnf,
+                    });
+                }
+                this._currentCommand = null;
+                this._runQueueCommand();
+            }
+            else {
+                this.writeAtt(this._currentCommand.buffer);
+            }
         }
+    }
+    encrypt(callback, keys) {
+        this._commandQueue.push({
+            type: "encrypt",
+            keys,
+            callback,
+        });
+        this._runQueueCommand();
     }
     onAclStreamEncryptFail() { }
     onAclStreamEnd() {
@@ -11485,16 +11525,24 @@ class Gatt extends events_1.default.EventEmitter {
             callback,
             writeCallback,
         });
+        this._runQueueCommand();
+    }
+    _runQueueCommand() {
         if (this._currentCommand === null) {
             while (this._commandQueue.length) {
                 this._currentCommand = this._commandQueue.shift();
-                this.writeAtt(this._currentCommand.buffer);
-                if (this._currentCommand.callback) {
-                    break;
+                if (this._currentCommand.type === "encrypt") {
+                    this._aclStream.encrypt(this._currentCommand.keys);
                 }
-                else if (this._currentCommand.writeCallback) {
-                    this._currentCommand.writeCallback();
-                    this._currentCommand = null;
+                else {
+                    this.writeAtt(this._currentCommand.buffer);
+                    if (this._currentCommand.callback) {
+                        break;
+                    }
+                    else if (this._currentCommand.writeCallback) {
+                        this._currentCommand.writeCallback();
+                        this._currentCommand = null;
+                    }
                 }
             }
         }
@@ -12107,6 +12155,7 @@ var SMP;
 class Smp extends events_1.default.EventEmitter {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
+        this._stk = null;
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(localAddress
@@ -12184,8 +12233,11 @@ class Smp extends events_1.default.EventEmitter {
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
         ]);
         if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
-            const stk = crypto_1.default.s1(this._tk, r, this._r);
-            this.emit("stk", stk);
+            if (this._stk !== null) {
+                console.error("second stk");
+            }
+            this._stk = crypto_1.default.s1(this._tk, r, this._r);
+            this.emit("stk", this._stk);
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
@@ -23326,6 +23378,7 @@ var map = {
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
+	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01RG/index.js": "./dist/src/parts/Ble/iBS01RG/index.js",
@@ -24618,6 +24671,88 @@ exports.default = REX_BTPM25V;
 //# sourceMappingURL=index.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/RS_BTIREX2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// not working
+class RS_BTIREX2 {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.onbuttonpressed = null;
+        this._uuids = {
+            service: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+            rxChar: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+            txChar: "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+        };
+        this._peripheral = null;
+        this._rxCharacteristic = null;
+        this._txCharacteristic = null;
+        if (peripheral && !RS_BTIREX2.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_BTIREX2");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "RS_BTIREX2",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName && peripheral.localName.startsWith("BTIR")) {
+            return true;
+        }
+        return false;
+    }
+    // @ts-ignore
+    wired(obniz) { }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("RS_BTIREX2 is not find.");
+        }
+        this._peripheral.ondisconnect = () => {
+            console.log("disconnect");
+        };
+        await this._peripheral.connectWait();
+        console.error("encrypt start");
+        const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
+        // this._peripheral.obnizBle.centralBindings._aclStreams[handle].encrypt();
+        this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
+        this._txCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.txChar);
+    }
+    _sendAndReceiveWait(payload, crc = 0xb6) {
+        if (!this._rxCharacteristic || !this._txCharacteristic) {
+            throw new Error("device is not connected");
+        }
+        const data = new Array(payload.length + 4);
+        data[0] = 0xaa;
+        data[1] = 0;
+        data[2] = payload.length;
+        for (let index = 0; index < payload.length; index++) {
+            data[3 + index] = payload[index];
+        }
+        data[payload.length + 3] = crc;
+        const tx = this._txCharacteristic;
+        const p = new Promise((resolve) => {
+            tx.registerNotify((resultData) => {
+                console.error("CRC " + crc);
+                resolve(resultData);
+            });
+        });
+        this._rxCharacteristic.write(data);
+        return p;
+    }
+}
+exports.default = RS_BTIREX2;
+
+//# sourceMappingURL=index.js.map
+
 
 /***/ }),
 
