@@ -145,8 +145,8 @@ import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
 import MINEW_S1, { MINEW_S1Options } from "../parts/Ble/MINEW_S1";
 import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
 import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
-import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/s-cbtgaaac";
-import uPRISM, { uPRISMOptions } from "../parts/Ble/μ-prism";
+import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/scbtgaaac";
+import uPRISM, { uPRISMOptions } from "../parts/Ble/uprism";
 
 // Grove
 import Grove_3AxisAccelerometer, { Grove_3AxisAccelerometerOptions } from "../parts/Grove/Grove_3AxisAccelerometer";

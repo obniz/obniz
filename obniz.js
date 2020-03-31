@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.4.0",
+  "version": "3.5.0-alpha.4",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -238,8 +238,7 @@ module.exports = {
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
   }
-}
-;
+};
 
 /***/ }),
 
@@ -11996,7 +11995,7 @@ class Hci extends events.EventEmitter {
         super();
         this._obnizHci = obnizHci;
         this._state = null;
-        this._handleBuffers = {};
+        this.resetBuffers();
         this.on("stateChange", this.onStateChange.bind(this));
         this._socket = {
             write: (data) => {
@@ -23042,8 +23041,8 @@ var map = {
 	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
-	"./Ble/s-cbtgaaac/index.js": "./dist/src/parts/Ble/s-cbtgaaac/index.js",
-	"./Ble/μ-prism/index.js": "./dist/src/parts/Ble/μ-prism/index.js",
+	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
+	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./dist/src/parts/ColorSensor/PT550/index.js",
@@ -23539,6 +23538,7 @@ class ENERTALK_TOUCH {
         this.keys = [];
         this.requiredKeys = [];
         this.onbuttonpressed = null;
+        this._peripheral = null;
         this._uuids = {
             service: "3526797e-448b-4bbb-9145-c5083e0e09dc",
             temperatureChar: "2A6E",
@@ -23546,7 +23546,6 @@ class ENERTALK_TOUCH {
             illuminanceChar: "74c3fe9d-25b2-4903-8dcd-680e5ef0a6b3",
             accelerometerChar: "71ef0979-0e2c-4a55-8d3c-78083869fae6",
         };
-        this._peripheral = null;
         this._service = null;
         this._temperatureChar = null;
         this._humidityChar = null;
@@ -23588,7 +23587,7 @@ class ENERTALK_TOUCH {
         var _a;
         await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
     }
-    async getTemperature() {
+    async getTemperatureWait() {
         if (!this._temperatureChar) {
             throw new Error("device is not connected");
         }
@@ -23597,7 +23596,7 @@ class ENERTALK_TOUCH {
         const temp = buf.readInt16BE(0) / 100;
         return temp;
     }
-    async getHumidity() {
+    async getHumidityWait() {
         if (!this._humidityChar) {
             throw new Error("device is not connected");
         }
@@ -23605,7 +23604,7 @@ class ENERTALK_TOUCH {
         const humidity = humidityData[0];
         return humidity;
     }
-    async getIllumination() {
+    async getIlluminationWait() {
         if (!this._illuminanceChar) {
             throw new Error("device is not connected");
         }
@@ -23614,7 +23613,7 @@ class ENERTALK_TOUCH {
         const illuminance = buf.readInt16BE(0);
         return illuminance;
     }
-    async getAccelerometer() {
+    async getAccelerometerWait() {
         if (!this._accelerometerChar) {
             throw new Error("device is not connected");
         }
@@ -24328,12 +24327,12 @@ class RS_Seek3 {
         this.keys = [];
         this.requiredKeys = [];
         this.onpressed = null;
+        this._peripheral = null;
         this._uuids = {
             service: "0EE71523-981A-46B8-BA64-019261C88478",
             buttonChar: "0EE71524-981A-46B8-BA64-019261C88478",
             tempHumidChar: "0EE7152C-981A-46B8-BA64-019261C88478",
         };
-        this._peripheral = null;
         this._buttonCharacteristic = null;
         this._tempHumidCharacteristic = null;
         if (peripheral && !RS_Seek3.isDevice(peripheral)) {
@@ -29670,7 +29669,7 @@ exports.default = LinkingService;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/s-cbtgaaac/index.js":
+/***/ "./dist/src/parts/Ble/scbtgaaac/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29683,7 +29682,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class SCBTGAAAC {
     static info() {
         return {
-            name: "S-CBTGAAAC",
+            name: "SCBTGAAAC",
         };
     }
     static isDevice(peripheral) {
@@ -29729,7 +29728,7 @@ exports.default = SCBTGAAAC;
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/μ-prism/index.js":
+/***/ "./dist/src/parts/Ble/uprism/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44333,7 +44332,7 @@ class AMG8833 {
         if (this.params.address === 0x69) {
             this.address = 0x69;
         }
-        else if (this.params.addressmode === 0x68) {
+        else if (this.params.address === 0x68) {
             this.address = 0x68;
         }
         else if (this.params.address !== undefined) {

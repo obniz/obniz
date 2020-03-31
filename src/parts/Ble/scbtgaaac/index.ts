@@ -11,7 +11,7 @@ export interface SCBTGAAACOptions {}
 export default class SCBTGAAAC implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: "S-CBTGAAAC",
+      name: "SCBTGAAAC",
     };
   }
 
