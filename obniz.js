@@ -24478,6 +24478,9 @@ class acr1255 {
         }
     }
     async write(data) {
+        if (!this._authenticated) {
+            throw new Error("acr1255 no authenticate");
+        }
         if (data.length % 16 !== 0) {
             const l = 16 - (data.length % 16);
             for (let i = 0; i < l; i++) {
@@ -24499,6 +24502,9 @@ class acr1255 {
         await this.write([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, enable ? 0x01 : 0x00]);
     }
     async writeADPU(data) {
+        if (!this._authenticated) {
+            throw new Error("acr1255 no authenticate");
+        }
         await this.write([0x6f, (data.length & 0xff00) >> 8, data.length & 0x00ff, 0x00, 0x00, 0x00, 0x00].concat(data));
     }
     readPacket(data) {
