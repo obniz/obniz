@@ -62,7 +62,6 @@ class NobleBindings extends eventemitter3_1.default {
     }
     async updateRssiWait(peripheralUuid) {
         const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
-        this.emit("rssiUpdate", this._handles[peripheralUuid], rssi);
         return rssi;
     }
     init() {
@@ -204,9 +203,6 @@ class NobleBindings extends eventemitter3_1.default {
         if (aclStream) {
             aclStream.pushEncrypt(encrypt);
         }
-    }
-    onRssiRead(handle, rssi) {
-        this.emit("rssiUpdate", this._handles[handle], rssi);
     }
     onAclDataPkt(handle, cid, data) {
         const aclStream = this._aclStreams[handle];

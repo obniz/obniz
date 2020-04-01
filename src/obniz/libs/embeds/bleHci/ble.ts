@@ -293,8 +293,6 @@ export default class ObnizBLE extends ComponentAbstract {
     peripheral.notifyFromServer("statusupdate", { status: "disconnected" });
   }
 
-  protected onRssiUpdate() {}
-
   protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     for (const serviceUuid of serviceUuids) {
@@ -492,7 +490,6 @@ export default class ObnizBLE extends ComponentAbstract {
     this.centralBindings.on("discover", this.onDiscover.bind(this));
     this.centralBindings.on("connect", this.onConnect.bind(this));
     this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-    this.centralBindings.on("rssiUpdate", this.onRssiUpdate.bind(this));
     this.centralBindings.on("servicesDiscover", this.onServicesDiscover.bind(this));
     this.centralBindings.on("includedServicesDiscover", this.onIncludedServicesDiscover.bind(this));
     this.centralBindings.on("characteristicsDiscover", this.onCharacteristicsDiscover.bind(this));

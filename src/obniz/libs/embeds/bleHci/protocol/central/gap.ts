@@ -12,6 +12,7 @@ import ObnizBLEHci from "../../hci";
 const debug: any = () => {};
 
 import EventEmitter from "eventemitter3";
+import { ObnizBleOpError } from "../../../../../ObnizError";
 import Hci from "../hci";
 
 type GapEventTypes = "scanStop" | "scanStart" | "discover";
@@ -34,10 +35,7 @@ class Gap extends EventEmitter<GapEventTypes> {
     this._discoveries = {};
 
     this._hci.on("error", this.onHciError.bind(this));
-    // this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
     this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
-
-    this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
 
     this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
     this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
@@ -51,37 +49,25 @@ class Gap extends EventEmitter<GapEventTypes> {
     // Always set scan parameters before scanning
     // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
     // p106 - p107
-    const scanStopStatus = await this._hci.setScanEnabledWait(false, true);
-    this.onHciLeScanEnableSet(scanStopStatus);
+
+    try {
+      await this.setScanEnabledWait(false, true);
+    } catch (e) {
+      if (e instanceof ObnizBleOpError) {
+        // nop
+      } else {
+        throw e;
+      }
+    }
+
     const setParamStatus = await this._hci.setScanParametersWait(activeScan);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    await this._hci.setScanEnabledWait(true, this._scanFilterDuplicates);
+    await this.setScanEnabledWait(true, this._scanFilterDuplicates);
   }
 
   public async stopScanningWait() {
     this._scanState = "stopping";
     await this._hci.setScanEnabledWait(false, true);
-  }
-
-  // TODO : is this really need?
-  // Called when we see the actual command "LE Set Scan Enable"
-  public onLeScanEnableSetCmd(enable: any, filterDuplicates?: any) {
-    // Check to see if the new settings differ from what we expect.
-    // If we are scanning, then a change happens if the new command stops
-    // scanning or if duplicate filtering changes.
-    // If we are not scanning, then a change happens if scanning was enabled.
-    if (this._scanState === "starting" || this._scanState === "started") {
-      if (!enable) {
-        this.emit("scanStop");
-      } else if (this._scanFilterDuplicates !== filterDuplicates) {
-        this._scanFilterDuplicates = filterDuplicates;
-
-        this.emit("scanStart", this._scanFilterDuplicates);
-      }
-    } else if ((this._scanState === "stopping" || this._scanState === "stopped") && enable) {
-      // Someone started scanning on us.
-      this.emit("scanStart", this._scanFilterDuplicates);
-    }
   }
 
   public onHciLeAdvertisingReport(status: any, type?: any, address?: any, addressType?: any, eir?: any, rssi?: any) {
@@ -297,23 +283,24 @@ class Gap extends EventEmitter<GapEventTypes> {
 
   public onHciLeScanResponseDataSet(status: any) {}
 
-  // Called when receive an event "Command Complete" for "LE Set Scan Enable"
-  private onHciLeScanEnableSet(status: any) {
+  private async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
+    const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
+
     // Check the status we got from the command complete function.
-    if (status !== 0) {
+    if (scanStopStatus !== 0) {
       // If it is non-zero there was an error, and we should not change
       // our status as a result.
-      return;
-    }
+      // throw new ObnizBleOpError();
+    } else {
+      if (this._scanState === "starting") {
+        this._scanState = "started";
 
-    if (this._scanState === "starting") {
-      this._scanState = "started";
+        this.emit("scanStart", this._scanFilterDuplicates);
+      } else if (this._scanState === "stopping") {
+        this._scanState = "stopped";
 
-      this.emit("scanStart", this._scanFilterDuplicates);
-    } else if (this._scanState === "stopping") {
-      this._scanState = "stopped";
-
-      this.emit("scanStop");
+        this.emit("scanStop");
+      }
     }
   }
 }

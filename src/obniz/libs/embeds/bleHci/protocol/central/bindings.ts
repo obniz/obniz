@@ -16,27 +16,29 @@ import Gatt from "./gatt";
 import Signaling from "./signaling";
 
 type NobleBindingsEventType =
+  // response of command
   | "scanStart"
   | "scanStop"
   | "discover"
-  | "rssiUpdate"
   | "connect"
-  | "disconnect"
-  | "addressChange"
-  | "stateChange"
   | "servicesDiscover"
   | "includedServicesDiscover"
   | "characteristicsDiscover"
   | "descriptorsDiscover"
-  | "notify"
   | "broadcast"
   | "write"
   | "read"
   | "valueWrite"
   | "valueRead"
-  | "handleNotify"
   | "handleWrite"
-  | "handleRead";
+  | "handleRead"
+
+  // notify from peripheral
+  | "disconnect"
+  | "stateChange"
+  | "addressChange"
+  | "notify"
+  | "handleNotify";
 
 /**
  * @ignore
@@ -118,7 +120,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
   public async updateRssiWait(peripheralUuid: UUID) {
     const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
-    this.emit("rssiUpdate", this._handles[peripheralUuid], rssi);
     return rssi;
   }
 
@@ -307,10 +308,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     if (aclStream) {
       aclStream.pushEncrypt(encrypt);
     }
-  }
-
-  public onRssiRead(handle: any, rssi?: any) {
-    this.emit("rssiUpdate", this._handles[handle], rssi);
   }
 
   public onAclDataPkt(handle: any, cid?: any, data?: any) {

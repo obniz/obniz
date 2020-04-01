@@ -6489,7 +6489,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         const peripheral = this.findPeripheral(peripheralUuid);
         peripheral.notifyFromServer("statusupdate", { status: "disconnected" });
     }
-    onRssiUpdate() { }
     onServicesDiscover(peripheralUuid, serviceUuids) {
         const peripheral = this.findPeripheral(peripheralUuid);
         for (const serviceUuid of serviceUuids) {
@@ -6643,7 +6642,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.centralBindings.on("discover", this.onDiscover.bind(this));
         this.centralBindings.on("connect", this.onConnect.bind(this));
         this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-        this.centralBindings.on("rssiUpdate", this.onRssiUpdate.bind(this));
         this.centralBindings.on("servicesDiscover", this.onServicesDiscover.bind(this));
         this.centralBindings.on("includedServicesDiscover", this.onIncludedServicesDiscover.bind(this));
         this.centralBindings.on("characteristicsDiscover", this.onCharacteristicsDiscover.bind(this));
@@ -8819,7 +8817,6 @@ class BleRemotePeripheral {
             reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
         }));
         await Promise.race([p1, p2]);
-        console.warn("connected");
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
@@ -9019,7 +9016,6 @@ class BleRemotePeripheral {
      * @ignore
      */
     async discoverAllHandlesWait() {
-        console.warn("discoverAllHandlesWait");
         const ArrayFlat = (array, depth) => {
             const flattend = [];
             (function flat(_array, _depth) {
@@ -9034,7 +9030,6 @@ class BleRemotePeripheral {
             })(array, Math.floor(depth) || 1);
             return flattend;
         };
-        console.warn("discoverAllServicesWait");
         const services = await this.discoverAllServicesWait();
         console.warn("discoverAllCharacteristicsWait");
         const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
@@ -9547,21 +9542,22 @@ class BleScan {
      */
     startOneWait(target, settings) {
         let state = 0;
-        return new Promise((resolve) => {
-            this.emitter.once("onfind", (param) => {
-                if (state === 0) {
-                    state = 1;
-                    this.end();
-                    resolve(param);
-                }
+        return this.startWait(target, settings).then(() => {
+            return new Promise((resolve) => {
+                this.emitter.once("onfind", (param) => {
+                    if (state === 0) {
+                        state = 1;
+                        this.end();
+                        resolve(param);
+                    }
+                });
+                this.emitter.once("onfinish", () => {
+                    if (state === 0) {
+                        state = 1;
+                        resolve(null);
+                    }
+                });
             });
-            this.emitter.once("onfinish", () => {
-                if (state === 0) {
-                    state = 1;
-                    resolve(null);
-                }
-            });
-            this.start(target, settings);
         });
     }
     /**
@@ -10403,7 +10399,6 @@ class NobleBindings extends eventemitter3_1.default {
     }
     async updateRssiWait(peripheralUuid) {
         const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
-        this.emit("rssiUpdate", this._handles[peripheralUuid], rssi);
         return rssi;
     }
     init() {
@@ -10545,9 +10540,6 @@ class NobleBindings extends eventemitter3_1.default {
         if (aclStream) {
             aclStream.pushEncrypt(encrypt);
         }
-    }
-    onRssiRead(handle, rssi) {
-        this.emit("rssiUpdate", this._handles[handle], rssi);
     }
     onAclDataPkt(handle, cid, data) {
         const aclStream = this._aclStreams[handle];
@@ -10815,6 +10807,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const debug = () => { };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 /**
  * @ignore
  */
@@ -10826,9 +10819,7 @@ class Gap extends eventemitter3_1.default {
         this._scanFilterDuplicates = null;
         this._discoveries = {};
         this._hci.on("error", this.onHciError.bind(this));
-        // this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
-        this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
         this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
         this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
         this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
@@ -10840,36 +10831,24 @@ class Gap extends eventemitter3_1.default {
         // Always set scan parameters before scanning
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
-        const scanStopStatus = await this._hci.setScanEnabledWait(false, true);
-        this.onHciLeScanEnableSet(scanStopStatus);
+        try {
+            await this.setScanEnabledWait(false, true);
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleOpError) {
+                // nop
+            }
+            else {
+                throw e;
+            }
+        }
         const setParamStatus = await this._hci.setScanParametersWait(activeScan);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        await this._hci.setScanEnabledWait(true, this._scanFilterDuplicates);
+        await this.setScanEnabledWait(true, this._scanFilterDuplicates);
     }
     async stopScanningWait() {
         this._scanState = "stopping";
         await this._hci.setScanEnabledWait(false, true);
-    }
-    // TODO : is this really need?
-    // Called when we see the actual command "LE Set Scan Enable"
-    onLeScanEnableSetCmd(enable, filterDuplicates) {
-        // Check to see if the new settings differ from what we expect.
-        // If we are scanning, then a change happens if the new command stops
-        // scanning or if duplicate filtering changes.
-        // If we are not scanning, then a change happens if scanning was enabled.
-        if (this._scanState === "starting" || this._scanState === "started") {
-            if (!enable) {
-                this.emit("scanStop");
-            }
-            else if (this._scanFilterDuplicates !== filterDuplicates) {
-                this._scanFilterDuplicates = filterDuplicates;
-                this.emit("scanStart", this._scanFilterDuplicates);
-            }
-        }
-        else if ((this._scanState === "stopping" || this._scanState === "stopped") && enable) {
-            // Someone started scanning on us.
-            this.emit("scanStart", this._scanFilterDuplicates);
-        }
     }
     onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
         const previouslyDiscovered = !!this._discoveries[address];
@@ -11054,21 +11033,23 @@ class Gap extends eventemitter3_1.default {
     onHciLeAdvertisingParametersSet(status) { }
     onHciLeAdvertisingDataSet(status) { }
     onHciLeScanResponseDataSet(status) { }
-    // Called when receive an event "Command Complete" for "LE Set Scan Enable"
-    onHciLeScanEnableSet(status) {
+    async setScanEnabledWait(enabled, filterDuplicates) {
+        const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
         // Check the status we got from the command complete function.
-        if (status !== 0) {
+        if (scanStopStatus !== 0) {
             // If it is non-zero there was an error, and we should not change
             // our status as a result.
-            return;
+            // throw new ObnizBleOpError();
         }
-        if (this._scanState === "starting") {
-            this._scanState = "started";
-            this.emit("scanStart", this._scanFilterDuplicates);
-        }
-        else if (this._scanState === "stopping") {
-            this._scanState = "stopped";
-            this.emit("scanStop");
+        else {
+            if (this._scanState === "starting") {
+                this._scanState = "started";
+                this.emit("scanStart", this._scanFilterDuplicates);
+            }
+            else if (this._scanState === "stopping") {
+                this._scanState = "stopped";
+                this.emit("scanStop");
+            }
         }
     }
 }
@@ -12153,6 +12134,9 @@ class Hci extends eventemitter3_1.default {
         this._state = null;
         this.resetBuffers();
         this.on("stateChange", this.onStateChange.bind(this));
+        this._obnizHci.Obniz.on("disconnect", () => {
+            this.emit("stateChange", "poweredOff");
+        });
         this._socket = {
             write: (data) => {
                 const arr = Array.from(data);
@@ -12163,12 +12147,6 @@ class Hci extends eventemitter3_1.default {
     }
     async initWait() {
         await this.resetWait();
-        // this.setEventMask();
-        // this.setLeEventMask();
-        // this.readLocalVersion();
-        // this.writeLeHostSupported();
-        // this.readLeHostSupported();
-        // this.readBdAddr();
     }
     setEventMask() {
         const cmd = Buffer.alloc(12);
@@ -12313,7 +12291,6 @@ class Hci extends eventemitter3_1.default {
         debug("set scan parameters - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
-        this.emit("leScanParametersSet", data.status);
         return data.status;
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
@@ -12329,7 +12306,6 @@ class Hci extends eventemitter3_1.default {
         debug("set scan enabled - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
-        this.emit("leScanEnableSet", data.status);
         return data.status;
     }
     async createLeConnWait(address, addressType) {
@@ -12728,20 +12704,6 @@ class Hci extends eventemitter3_1.default {
                     }
                     delete this._handleBuffers[handle];
                 }
-            }
-        }
-        else if (COMMANDS.HCI_COMMAND_PKT === eventType) {
-            const cmd = data.readUInt16LE(1);
-            const len = data.readUInt8(3);
-            debug("\t\tcmd = " + cmd);
-            debug("\t\tdata len = " + len);
-            if (cmd === COMMANDS.LE_SET_SCAN_ENABLE_CMD) {
-                const enable = data.readUInt8(4) === 0x1;
-                const filterDuplicates = data.readUInt8(5) === 0x1;
-                debug("\t\t\tLE enable scan command");
-                debug("\t\t\tenable scanning = " + enable);
-                debug("\t\t\tfilter duplicates = " + filterDuplicates);
-                this.emit("leScanEnableSetCmd", enable, filterDuplicates);
             }
         }
     }

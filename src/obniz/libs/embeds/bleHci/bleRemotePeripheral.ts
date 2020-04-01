@@ -415,7 +415,6 @@ export default class BleRemotePeripheral {
       }),
     );
     await Promise.race([p1, p2]);
-    console.warn("connected");
     if (this._connectSetting.autoDiscovery) {
       await this.discoverAllHandlesWait();
     }
@@ -626,7 +625,6 @@ export default class BleRemotePeripheral {
    * @ignore
    */
   public async discoverAllHandlesWait() {
-    console.warn("discoverAllHandlesWait");
     const ArrayFlat: any = (array: any, depth: any) => {
       const flattend: any = [];
       (function flat(_array: any, _depth: any) {
@@ -640,7 +638,6 @@ export default class BleRemotePeripheral {
       })(array, Math.floor(depth) || 1);
       return flattend;
     };
-    console.warn("discoverAllServicesWait");
     const services: any = await this.discoverAllServicesWait();
     console.warn("discoverAllCharacteristicsWait");
     const charsNest: any = await Promise.all(services.map((s: any) => s.discoverAllCharacteristicsWait()));

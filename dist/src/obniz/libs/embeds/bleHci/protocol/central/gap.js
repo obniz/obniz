@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const debug = () => { };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
+const ObnizError_1 = require("../../../../../ObnizError");
 /**
  * @ignore
  */
@@ -19,9 +20,7 @@ class Gap extends eventemitter3_1.default {
         this._scanFilterDuplicates = null;
         this._discoveries = {};
         this._hci.on("error", this.onHciError.bind(this));
-        // this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
-        this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
         this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
         this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
         this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
@@ -33,36 +32,24 @@ class Gap extends eventemitter3_1.default {
         // Always set scan parameters before scanning
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
-        const scanStopStatus = await this._hci.setScanEnabledWait(false, true);
-        this.onHciLeScanEnableSet(scanStopStatus);
+        try {
+            await this.setScanEnabledWait(false, true);
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleOpError) {
+                // nop
+            }
+            else {
+                throw e;
+            }
+        }
         const setParamStatus = await this._hci.setScanParametersWait(activeScan);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        await this._hci.setScanEnabledWait(true, this._scanFilterDuplicates);
+        await this.setScanEnabledWait(true, this._scanFilterDuplicates);
     }
     async stopScanningWait() {
         this._scanState = "stopping";
         await this._hci.setScanEnabledWait(false, true);
-    }
-    // TODO : is this really need?
-    // Called when we see the actual command "LE Set Scan Enable"
-    onLeScanEnableSetCmd(enable, filterDuplicates) {
-        // Check to see if the new settings differ from what we expect.
-        // If we are scanning, then a change happens if the new command stops
-        // scanning or if duplicate filtering changes.
-        // If we are not scanning, then a change happens if scanning was enabled.
-        if (this._scanState === "starting" || this._scanState === "started") {
-            if (!enable) {
-                this.emit("scanStop");
-            }
-            else if (this._scanFilterDuplicates !== filterDuplicates) {
-                this._scanFilterDuplicates = filterDuplicates;
-                this.emit("scanStart", this._scanFilterDuplicates);
-            }
-        }
-        else if ((this._scanState === "stopping" || this._scanState === "stopped") && enable) {
-            // Someone started scanning on us.
-            this.emit("scanStart", this._scanFilterDuplicates);
-        }
     }
     onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
         const previouslyDiscovered = !!this._discoveries[address];
@@ -247,21 +234,23 @@ class Gap extends eventemitter3_1.default {
     onHciLeAdvertisingParametersSet(status) { }
     onHciLeAdvertisingDataSet(status) { }
     onHciLeScanResponseDataSet(status) { }
-    // Called when receive an event "Command Complete" for "LE Set Scan Enable"
-    onHciLeScanEnableSet(status) {
+    async setScanEnabledWait(enabled, filterDuplicates) {
+        const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
         // Check the status we got from the command complete function.
-        if (status !== 0) {
+        if (scanStopStatus !== 0) {
             // If it is non-zero there was an error, and we should not change
             // our status as a result.
-            return;
+            // throw new ObnizBleOpError();
         }
-        if (this._scanState === "starting") {
-            this._scanState = "started";
-            this.emit("scanStart", this._scanFilterDuplicates);
-        }
-        else if (this._scanState === "stopping") {
-            this._scanState = "stopped";
-            this.emit("scanStop");
+        else {
+            if (this._scanState === "starting") {
+                this._scanState = "started";
+                this.emit("scanStart", this._scanFilterDuplicates);
+            }
+            else if (this._scanState === "stopping") {
+                this._scanState = "stopped";
+                this.emit("scanStop");
+            }
         }
     }
 }

@@ -114,21 +114,22 @@ class BleScan {
      */
     startOneWait(target, settings) {
         let state = 0;
-        return new Promise((resolve) => {
-            this.emitter.once("onfind", (param) => {
-                if (state === 0) {
-                    state = 1;
-                    this.end();
-                    resolve(param);
-                }
+        return this.startWait(target, settings).then(() => {
+            return new Promise((resolve) => {
+                this.emitter.once("onfind", (param) => {
+                    if (state === 0) {
+                        state = 1;
+                        this.end();
+                        resolve(param);
+                    }
+                });
+                this.emitter.once("onfinish", () => {
+                    if (state === 0) {
+                        state = 1;
+                        resolve(null);
+                    }
+                });
             });
-            this.emitter.once("onfinish", () => {
-                if (state === 0) {
-                    state = 1;
-                    resolve(null);
-                }
-            });
-            this.start(target, settings);
         });
     }
     /**

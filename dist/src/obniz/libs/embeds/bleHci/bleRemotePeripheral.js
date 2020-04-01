@@ -155,7 +155,6 @@ class BleRemotePeripheral {
             reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
         }));
         await Promise.race([p1, p2]);
-        console.warn("connected");
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
@@ -355,7 +354,6 @@ class BleRemotePeripheral {
      * @ignore
      */
     async discoverAllHandlesWait() {
-        console.warn("discoverAllHandlesWait");
         const ArrayFlat = (array, depth) => {
             const flattend = [];
             (function flat(_array, _depth) {
@@ -370,7 +368,6 @@ class BleRemotePeripheral {
             })(array, Math.floor(depth) || 1);
             return flattend;
         };
-        console.warn("discoverAllServicesWait");
         const services = await this.discoverAllServicesWait();
         console.warn("discoverAllCharacteristicsWait");
         const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));

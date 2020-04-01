@@ -99,23 +99,26 @@ namespace COMMANDS {
 const STATUS_MAPPER: any = require("./hci-status");
 
 type HciEventTypes =
-  | "stateChange"
-  | "leScanResponseDataSet"
+  // central
   | "leAdvertisingReport"
+
+  // peripheral
   | "leAdvertisingParametersSet"
-  | "leScanEnableSet"
-  | "leScanEnableSetCmd"
+  | "leAdvertisingDataSet"
+  | "leScanResponseDataSet"
+  | "leAdvertiseEnableSet"
+
+  // common
+  | "stateChange"
+  | "rssiRead" // mode:central is not use
   | "readLocalVersion"
   | "addressChange"
-  | "disconnComplete"
-  | "encryptChange"
-  | "leAdvertisingDataSet"
-  | "aclDataPkt"
-  | "rssiRead"
-  | "leAdvertiseEnableSet"
-  | "leLtkNegReply"
   | "leConnUpdateComplete"
   | "leConnComplete"
+  | "disconnComplete"
+  | "encryptChange"
+  | "aclDataPkt"
+  | "leLtkNegReply"
   | "leScanParametersSet"
   | "error";
 
@@ -144,6 +147,9 @@ class Hci extends EventEmitter<HciEventTypes> {
     this.resetBuffers();
 
     this.on("stateChange", this.onStateChange.bind(this));
+    this._obnizHci.Obniz.on("disconnect", () => {
+      this.emit("stateChange", "poweredOff");
+    });
 
     this._socket = {
       write: (data: any) => {
@@ -156,12 +162,6 @@ class Hci extends EventEmitter<HciEventTypes> {
 
   public async initWait() {
     await this.resetWait();
-    // this.setEventMask();
-    // this.setLeEventMask();
-    // this.readLocalVersion();
-    // this.writeLeHostSupported();
-    // this.readLeHostSupported();
-    // this.readBdAddr();
   }
 
   public setEventMask() {
@@ -350,7 +350,6 @@ class Hci extends EventEmitter<HciEventTypes> {
     debug("set scan parameters - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
     const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
-    this.emit("leScanParametersSet", data.status);
     return data.status;
   }
 
@@ -371,7 +370,6 @@ class Hci extends EventEmitter<HciEventTypes> {
     debug("set scan enabled - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
     const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
-    this.emit("leScanEnableSet", data.status);
     return data.status;
   }
 
@@ -877,23 +875,6 @@ class Hci extends EventEmitter<HciEventTypes> {
           }
           delete this._handleBuffers[handle];
         }
-      }
-    } else if (COMMANDS.HCI_COMMAND_PKT === eventType) {
-      const cmd: any = data.readUInt16LE(1);
-      const len: any = data.readUInt8(3);
-
-      debug("\t\tcmd = " + cmd);
-      debug("\t\tdata len = " + len);
-
-      if (cmd === COMMANDS.LE_SET_SCAN_ENABLE_CMD) {
-        const enable: any = data.readUInt8(4) === 0x1;
-        const filterDuplicates: any = data.readUInt8(5) === 0x1;
-
-        debug("\t\t\tLE enable scan command");
-        debug("\t\t\tenable scanning = " + enable);
-        debug("\t\t\tfilter duplicates = " + filterDuplicates);
-
-        this.emit("leScanEnableSetCmd", enable, filterDuplicates);
       }
     }
   }
