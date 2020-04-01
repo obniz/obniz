@@ -11,18 +11,29 @@ import Hci from "../hci";
  * @ignore
  */
 const debug: any = () => {};
-
-import events from "events";
+import EventEmitter from "eventemitter3";
 import os from "os";
 import { Handle } from "../../bleTypes";
 import AclStream from "./acl-stream";
 import Gap from "./gap";
 import Gatt from "./gatt";
 
+type BlenoBindingsEventType =
+  | "servicesSet"
+  | "rssiUpdate"
+  | "platform"
+  | "stateChange"
+  | "mtuChange"
+  | "accept"
+  | "disconnect"
+  | "advertisingStop"
+  | "addressChange"
+  | "advertisingStart";
+
 /**
  * @ignore
  */
-class BlenoBindings extends events.EventEmitter {
+class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   public _state: any;
   public _advertising: any;
   public _hci: Hci;

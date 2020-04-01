@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const debug = () => { };
-const events_1 = __importDefault(require("events"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const os_1 = __importDefault(require("os"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
 const gap_1 = __importDefault(require("./gap"));
@@ -21,7 +21,7 @@ const gatt_1 = __importDefault(require("./gatt"));
 /**
  * @ignore
  */
-class BlenoBindings extends events_1.default.EventEmitter {
+class BlenoBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;

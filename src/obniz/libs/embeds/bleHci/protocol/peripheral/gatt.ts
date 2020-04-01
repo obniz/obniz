@@ -6,7 +6,7 @@
 // var debug = require('debug')('gatt');
 const debug: any = () => {};
 
-import events from "events";
+import EventEmitter from "eventemitter3";
 
 /* eslint-disable no-unused-vars */
 
@@ -79,10 +79,11 @@ namespace GATT {
 
 /* eslint-enable no-unused-vars */
 
+type GattEventTypes = "mtuChange";
 /**
  * @ignore
  */
-export default class Gatt extends events.EventEmitter {
+export default class Gatt extends EventEmitter<GattEventTypes> {
   public maxMtu: any;
   public _mtu: any;
   public _preparedWriteRequest: any;

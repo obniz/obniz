@@ -12888,12 +12888,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * @ignore
  */
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/smp.js"));
 /**
  * @ignore
  */
-class AclStream extends events_1.default.EventEmitter {
+class AclStream extends eventemitter3_1.default {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._hci = hci;
@@ -12946,7 +12946,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const debug = () => { };
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const os_1 = __importDefault(__webpack_require__("./node_modules/os-browserify/browser.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js"));
 const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gap.js"));
@@ -12954,7 +12954,7 @@ const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds
 /**
  * @ignore
  */
-class BlenoBindings extends events_1.default.EventEmitter {
+class BlenoBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
@@ -13193,12 +13193,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const debug = () => { };
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 /**
  * @ignore
  */
-class Gap extends events_1.default.EventEmitter {
+class Gap extends eventemitter3_1.default {
     constructor(hci) {
         super();
         this._hci = hci;
@@ -13372,7 +13372,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 // var debug = require('debug')('gatt');
 const debug = () => { };
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 /* eslint-disable no-unused-vars */
 /**
  * @ignore
@@ -13438,11 +13438,10 @@ var GATT;
     GATT.CLIENT_CHARAC_CFG_UUID = 0x2902;
     GATT.SERVER_CHARAC_CFG_UUID = 0x2903;
 })(GATT || (GATT = {}));
-/* eslint-enable no-unused-vars */
 /**
  * @ignore
  */
-class Gatt extends events_1.default.EventEmitter {
+class Gatt extends eventemitter3_1.default {
     constructor() {
         super();
         this.maxMtu = 256;
@@ -14410,7 +14409,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * @ignore
  */
-const events = __webpack_require__("./node_modules/events/events.js");
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js"));
 const mgmt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js"));
 var SMP;
@@ -14428,7 +14427,7 @@ var SMP;
 /**
  * @ignore
  */
-class Smp extends events.EventEmitter {
+class Smp extends eventemitter3_1.default {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress, hciProtocol) {
         super();
         this._aclStream = aclStream;

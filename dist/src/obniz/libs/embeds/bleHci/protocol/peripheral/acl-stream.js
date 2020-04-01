@@ -8,12 +8,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * @ignore
  */
-const events_1 = __importDefault(require("events"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const smp_1 = __importDefault(require("./smp"));
 /**
  * @ignore
  */
-class AclStream extends events_1.default.EventEmitter {
+class AclStream extends eventemitter3_1.default {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._hci = hci;

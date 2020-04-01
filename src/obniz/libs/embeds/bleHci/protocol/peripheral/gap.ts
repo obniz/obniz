@@ -9,14 +9,14 @@
  * @ignore
  */
 const debug: any = () => {};
-
-import events from "events";
+import EventEmitter from "eventemitter3";
 import Hci from "../hci";
 
+type GapEventTypes = "advertisingStart" | "advertisingStop";
 /**
  * @ignore
  */
-class Gap extends events.EventEmitter {
+class Gap extends EventEmitter<GapEventTypes> {
   public _hci: Hci;
   public _advertiseState: any;
 

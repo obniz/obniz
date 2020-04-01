@@ -3,15 +3,16 @@
  *
  * @ignore
  */
-import events from "events";
+import EventEmitter from "eventemitter3";
 
 import Hci from "../hci";
 import Smp from "./smp";
 
+type AclStreamEventTypes = "data" | "end" | "encryptChange" | "ltkNegReply";
 /**
  * @ignore
  */
-class AclStream extends events.EventEmitter {
+class AclStream extends EventEmitter<AclStreamEventTypes> {
   public _hci: Hci;
   public _handle: any;
   public encypted: any;
