@@ -10,7 +10,7 @@ const debug: any = () => {};
 
 /* eslint-disable no-unused-vars */
 
-import events from "events";
+import EventEmitter from "eventemitter3";
 import {
   ObnizBleOpError,
   ObnizBleUnknownCharacteristicError,
@@ -83,10 +83,28 @@ namespace GATT {
 
 /* eslint-enable no-unused-vars */
 
+type GattEventTypes =
+  | "mtu"
+  | "servicesDiscover"
+  | "includedServicesDiscover"
+  | "characteristicsDiscover"
+  | "descriptorsDiscover"
+  | "notification"
+  | "write"
+  | "read"
+  | "notify"
+  | "broadcast"
+  | "valueRead"
+  | "valueWrite"
+  | "handleWrite"
+  | "handleRead"
+  | "handleConfirmation"
+  | "handleNotify";
+
 /**
  * @ignore
  */
-class Gatt extends events.EventEmitter {
+class Gatt extends EventEmitter<GattEventTypes> {
   public _address: any;
   public _aclStream: AclStream;
   public _services: any;
@@ -96,6 +114,7 @@ class Gatt extends events.EventEmitter {
   public _commandQueue: any;
   public _mtu: any;
   public _security: any;
+  public _commandPromises: Array<Promise<any>>;
   public onAclStreamDataBinded: any;
   public onAclStreamEncryptBinded: any;
   public onAclStreamEncryptFailBinded: any;
@@ -112,6 +131,7 @@ class Gatt extends events.EventEmitter {
 
     this._currentCommand = null;
     this._commandQueue = [];
+    this._commandPromises = [];
 
     this._mtu = 23;
     this._security = "low";
@@ -889,9 +909,17 @@ class Gatt extends events.EventEmitter {
   }
 
   private _execCommand(buffer: Buffer): Promise<Buffer> {
-    return new Promise((resolve) => {
-      this._queueCommand(buffer, resolve);
-    });
+    const doPromise = Promise.all(this._commandPromises)
+      .then(() => {
+        return new Promise((resolve) => {
+          this._queueCommand(buffer, resolve);
+        });
+      })
+      .finally(() => {
+        this._commandPromises = this._commandPromises.filter((e) => e === doPromise);
+      });
+    this._commandPromises.push(doPromise);
+    return doPromise as Promise<any>;
   }
 
   private _execNoRespCommand(buffer: Buffer): Promise<Buffer> {

@@ -1,10 +1,17 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 // let debug = require('debug')('hci');
 const debug = (...params) => {
     // console.log(...params);
 };
-const events = require("events");
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -78,7 +85,7 @@ const STATUS_MAPPER = require("./hci-status");
 /**
  * @ignore
  */
-class Hci extends events.EventEmitter {
+class Hci extends eventemitter3_1.default {
     constructor(obnizHci) {
         super();
         this.aclStreamObservers = {};

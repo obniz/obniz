@@ -9,7 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const events_1 = __importDefault(require("events"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
 const hci_1 = __importDefault(require("../hci"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
@@ -19,15 +19,14 @@ const signaling_1 = __importDefault(require("./signaling"));
 /**
  * @ignore
  */
-class NobleBindings extends events_1.default.EventEmitter {
+class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
         this._connectable = {};
-        this._pendingConnectionUuid = null;
-        this._connectionQueue = [];
+        this._connectPromises = [];
         this._handles = {};
         this._gatts = {};
         this._aclStreams = {};
@@ -42,17 +41,21 @@ class NobleBindings extends events_1.default.EventEmitter {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    async connectWait(peripheralUuid) {
+    connectWait(peripheralUuid) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
-        if (!this._pendingConnectionUuid) {
-            this._pendingConnectionUuid = peripheralUuid;
-            const result = await this._hci.createLeConnWait(address, addressType);
-            await this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-        }
-        else {
-            this._connectionQueue.push(peripheralUuid);
-        }
+        const doPromise = Promise.all(this._connectPromises)
+            .then(() => {
+            return this._hci.createLeConnWait(address, addressType);
+        })
+            .then((result) => {
+            return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+        })
+            .finally(() => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+        });
+        this._connectPromises.push(doPromise);
+        return doPromise;
     }
     disconnect(peripheralUuid) {
         this._hci.disconnect(this._handles[peripheralUuid]);
@@ -135,7 +138,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             return;
         }
         let uuid = null;
-        let error = null;
+        const error = null;
         if (status === 0) {
             uuid = address
                 .split(":")
@@ -168,23 +171,12 @@ class NobleBindings extends events_1.default.EventEmitter {
             // public onMtu(address: any, mtu?: any) {}
         }
         else {
-            uuid = this._pendingConnectionUuid;
             let statusMessage = hci_1.default.STATUS_MAPPER[status] || "HCI Error: Unknown";
             const errorCode = " (0x" + status.toString(16) + ")";
             statusMessage = statusMessage + errorCode;
-            error = new Error(statusMessage);
+            throw new Error(statusMessage);
         }
         this.emit("connect", uuid, error);
-        if (this._connectionQueue.length > 0) {
-            const peripheralUuid = this._connectionQueue.shift();
-            address = this._addresses[peripheralUuid];
-            addressType = this._addresseTypes[peripheralUuid];
-            this._pendingConnectionUuid = peripheralUuid;
-            this._hci.createLeConnWait(address, addressType); // background
-        }
-        else {
-            this._pendingConnectionUuid = null;
-        }
     }
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];

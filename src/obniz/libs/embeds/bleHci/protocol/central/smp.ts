@@ -3,7 +3,8 @@
  *
  * @ignore
  */
-import events from "events";
+
+import EventEmitter from "eventemitter3";
 
 import { BleDeviceAddress, BleDeviceAddressType } from "../../bleTypes";
 import AclStream from "./acl-stream";
@@ -23,10 +24,12 @@ namespace SMP {
   export const MASTER_IDENT: any = 0x07;
 }
 
+type SmpEventTypes = "masterIdent" | "ltk" | "fail" | "stk" | "end";
+
 /**
  * @ignore
  */
-class Smp extends events.EventEmitter {
+class Smp extends EventEmitter<SmpEventTypes> {
   public _aclStream: AclStream;
   public _iat: any;
   public _ia: any;

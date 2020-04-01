@@ -7,11 +7,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const debug = () => { };
-const events_1 = __importDefault(require("events"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 /**
  * @ignore
  */
-class Gap extends events_1.default.EventEmitter {
+class Gap extends eventemitter3_1.default {
     constructor(hci) {
         super();
         this._hci = hci;

@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
+import EventEmitter from "eventemitter3";
 import ObnizBLEHci from "../hci";
 
 // let debug = require('debug')('hci');
@@ -9,7 +10,6 @@ const debug: any = (...params: any[]) => {
   // console.log(...params);
 };
 
-import events = require("events");
 import { Handle } from "../bleTypes";
 
 namespace COMMANDS {
@@ -98,10 +98,31 @@ namespace COMMANDS {
  */
 const STATUS_MAPPER: any = require("./hci-status");
 
+type HciEventTypes =
+  | "stateChange"
+  | "leScanResponseDataSet"
+  | "leAdvertisingReport"
+  | "leAdvertisingParametersSet"
+  | "leScanEnableSet"
+  | "leScanEnableSetCmd"
+  | "readLocalVersion"
+  | "addressChange"
+  | "disconnComplete"
+  | "encryptChange"
+  | "leAdvertisingDataSet"
+  | "aclDataPkt"
+  | "rssiRead"
+  | "leAdvertiseEnableSet"
+  | "leLtkNegReply"
+  | "leConnUpdateComplete"
+  | "leConnComplete"
+  | "leScanParametersSet"
+  | "error";
+
 /**
  * @ignore
  */
-class Hci extends events.EventEmitter {
+class Hci extends EventEmitter<HciEventTypes> {
   public static STATUS_MAPPER: any;
   public _obnizHci: ObnizBLEHci;
   public _state: any;

@@ -5,7 +5,7 @@
  */
 // var debug = require('debug')('bindings');
 
-import events from "events";
+import EventEmitter from "eventemitter3";
 
 import { ObnizBleUnknownPeripheralError, ObnizError } from "../../../../../ObnizError";
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
@@ -15,16 +15,38 @@ import Gap from "./gap";
 import Gatt from "./gatt";
 import Signaling from "./signaling";
 
+type NobleBindingsEventType =
+  | "scanStart"
+  | "scanStop"
+  | "discover"
+  | "rssiUpdate"
+  | "connect"
+  | "disconnect"
+  | "addressChange"
+  | "stateChange"
+  | "servicesDiscover"
+  | "includedServicesDiscover"
+  | "characteristicsDiscover"
+  | "descriptorsDiscover"
+  | "notify"
+  | "broadcast"
+  | "write"
+  | "read"
+  | "valueWrite"
+  | "valueRead"
+  | "handleNotify"
+  | "handleWrite"
+  | "handleRead";
+
 /**
  * @ignore
  */
-class NobleBindings extends events.EventEmitter {
+class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public _state: any;
   public _addresses: { [uuid: string]: BleDeviceAddress };
   public _addresseTypes: { [uuid: string]: BleDeviceAddressType };
   public _connectable: any;
-  public _pendingConnectionUuid: any;
-  public _connectionQueue: any;
+  public _connectPromises: Array<Promise<any>>;
   public _handles: any;
   public _gatts: { [handle: string]: Gatt };
   public _aclStreams: { [key: string]: AclStream };
@@ -41,8 +63,7 @@ class NobleBindings extends events.EventEmitter {
     this._addresseTypes = {};
     this._connectable = {};
 
-    this._pendingConnectionUuid = null;
-    this._connectionQueue = [];
+    this._connectPromises = [];
 
     this._handles = {};
     this._gatts = {};
@@ -63,28 +84,32 @@ class NobleBindings extends events.EventEmitter {
     await this._gap.stopScanningWait();
   }
 
-  public async connectWait(peripheralUuid: any) {
+  public connectWait(peripheralUuid: any) {
     const address: any = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
 
-    if (!this._pendingConnectionUuid) {
-      this._pendingConnectionUuid = peripheralUuid;
-
-      const result = await this._hci.createLeConnWait(address, addressType);
-      await this.onLeConnComplete(
-        result.status,
-        result.handle,
-        result.role,
-        result.addressType,
-        result.address,
-        result.interval,
-        result.latency,
-        result.supervisionTimeout,
-        result.masterClockAccuracy,
-      );
-    } else {
-      this._connectionQueue.push(peripheralUuid);
-    }
+    const doPromise = Promise.all(this._connectPromises)
+      .then(() => {
+        return this._hci.createLeConnWait(address, addressType);
+      })
+      .then((result) => {
+        return this.onLeConnComplete(
+          result.status,
+          result.handle,
+          result.role,
+          result.addressType,
+          result.address,
+          result.interval,
+          result.latency,
+          result.supervisionTimeout,
+          result.masterClockAccuracy,
+        );
+      })
+      .finally(() => {
+        this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+      });
+    this._connectPromises.push(doPromise);
+    return doPromise;
   }
 
   public disconnect(peripheralUuid: any) {
@@ -198,7 +223,7 @@ class NobleBindings extends events.EventEmitter {
 
     let uuid: any = null;
 
-    let error: any = null;
+    const error: any = null;
 
     if (status === 0) {
       uuid = address
@@ -243,27 +268,13 @@ class NobleBindings extends events.EventEmitter {
       await this._gatts[handle].exchangeMtuWait(256);
       // public onMtu(address: any, mtu?: any) {}
     } else {
-      uuid = this._pendingConnectionUuid;
       let statusMessage: any = Hci.STATUS_MAPPER[status] || "HCI Error: Unknown";
       const errorCode: any = " (0x" + status.toString(16) + ")";
       statusMessage = statusMessage + errorCode;
-      error = new Error(statusMessage);
+      throw new Error(statusMessage);
     }
 
     this.emit("connect", uuid, error);
-
-    if (this._connectionQueue.length > 0) {
-      const peripheralUuid: any = this._connectionQueue.shift();
-
-      address = this._addresses[peripheralUuid];
-      addressType = this._addresseTypes[peripheralUuid];
-
-      this._pendingConnectionUuid = peripheralUuid;
-
-      this._hci.createLeConnWait(address, addressType); // background
-    } else {
-      this._pendingConnectionUuid = null;
-    }
   }
 
   public onDisconnComplete(handle: any, reason?: any) {

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('att');
 const debug = () => { };
 /* eslint-disable no-unused-vars */
-const events_1 = __importDefault(require("events"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
 /**
  * @ignore
@@ -67,11 +67,10 @@ var GATT;
     GATT.CLIENT_CHARAC_CFG_UUID = 0x2902;
     GATT.SERVER_CHARAC_CFG_UUID = 0x2903;
 })(GATT || (GATT = {}));
-/* eslint-enable no-unused-vars */
 /**
  * @ignore
  */
-class Gatt extends events_1.default.EventEmitter {
+class Gatt extends eventemitter3_1.default {
     constructor(address, aclStream) {
         super();
         this._address = address;
@@ -81,6 +80,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._descriptors = {};
         this._currentCommand = null;
         this._commandQueue = [];
+        this._commandPromises = [];
         this._mtu = 23;
         this._security = "low";
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
@@ -699,9 +699,17 @@ class Gatt extends events_1.default.EventEmitter {
         }
     }
     _execCommand(buffer) {
-        return new Promise((resolve) => {
-            this._queueCommand(buffer, resolve);
+        const doPromise = Promise.all(this._commandPromises)
+            .then(() => {
+            return new Promise((resolve) => {
+                this._queueCommand(buffer, resolve);
+            });
+        })
+            .finally(() => {
+            this._commandPromises = this._commandPromises.filter((e) => e === doPromise);
         });
+        this._commandPromises.push(doPromise);
+        return doPromise;
     }
     _execNoRespCommand(buffer) {
         return new Promise((resolve) => {

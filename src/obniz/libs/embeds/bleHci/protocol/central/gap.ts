@@ -11,13 +11,15 @@ import ObnizBLEHci from "../../hci";
  */
 const debug: any = () => {};
 
-import events from "events";
+import EventEmitter from "eventemitter3";
 import Hci from "../hci";
+
+type GapEventTypes = "scanStop" | "scanStart" | "discover";
 
 /**
  * @ignore
  */
-class Gap extends events.EventEmitter {
+class Gap extends EventEmitter<GapEventTypes> {
   public _hci: Hci;
   public _scanState: null | "starting" | "started" | "stopping" | "stopped";
   public _scanFilterDuplicates: null | boolean;

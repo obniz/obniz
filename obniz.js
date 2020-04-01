@@ -10266,12 +10266,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/smp.js"));
 /**
+ *
  * @ignore
  */
-class AclStream extends events_1.default.EventEmitter {
+class AclStream extends eventemitter3_1.default {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._hci = hci;
@@ -10349,7 +10350,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js"));
@@ -10359,15 +10360,14 @@ const signaling_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
 /**
  * @ignore
  */
-class NobleBindings extends events_1.default.EventEmitter {
+class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
         this._connectable = {};
-        this._pendingConnectionUuid = null;
-        this._connectionQueue = [];
+        this._connectPromises = [];
         this._handles = {};
         this._gatts = {};
         this._aclStreams = {};
@@ -10382,17 +10382,21 @@ class NobleBindings extends events_1.default.EventEmitter {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    async connectWait(peripheralUuid) {
+    connectWait(peripheralUuid) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
-        if (!this._pendingConnectionUuid) {
-            this._pendingConnectionUuid = peripheralUuid;
-            const result = await this._hci.createLeConnWait(address, addressType);
-            await this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-        }
-        else {
-            this._connectionQueue.push(peripheralUuid);
-        }
+        const doPromise = Promise.all(this._connectPromises)
+            .then(() => {
+            return this._hci.createLeConnWait(address, addressType);
+        })
+            .then((result) => {
+            return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+        })
+            .finally(() => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+        });
+        this._connectPromises.push(doPromise);
+        return doPromise;
     }
     disconnect(peripheralUuid) {
         this._hci.disconnect(this._handles[peripheralUuid]);
@@ -10475,7 +10479,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             return;
         }
         let uuid = null;
-        let error = null;
+        const error = null;
         if (status === 0) {
             uuid = address
                 .split(":")
@@ -10508,23 +10512,12 @@ class NobleBindings extends events_1.default.EventEmitter {
             // public onMtu(address: any, mtu?: any) {}
         }
         else {
-            uuid = this._pendingConnectionUuid;
             let statusMessage = hci_1.default.STATUS_MAPPER[status] || "HCI Error: Unknown";
             const errorCode = " (0x" + status.toString(16) + ")";
             statusMessage = statusMessage + errorCode;
-            error = new Error(statusMessage);
+            throw new Error(statusMessage);
         }
         this.emit("connect", uuid, error);
-        if (this._connectionQueue.length > 0) {
-            const peripheralUuid = this._connectionQueue.shift();
-            address = this._addresses[peripheralUuid];
-            addressType = this._addresseTypes[peripheralUuid];
-            this._pendingConnectionUuid = peripheralUuid;
-            this._hci.createLeConnWait(address, addressType); // background
-        }
-        else {
-            this._pendingConnectionUuid = null;
-        }
     }
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
@@ -10821,11 +10814,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const debug = () => { };
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 /**
  * @ignore
  */
-class Gap extends events_1.default.EventEmitter {
+class Gap extends eventemitter3_1.default {
     constructor(hci) {
         super();
         this._hci = hci;
@@ -11098,7 +11091,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('att');
 const debug = () => { };
 /* eslint-disable no-unused-vars */
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 /**
  * @ignore
@@ -11159,11 +11152,10 @@ var GATT;
     GATT.CLIENT_CHARAC_CFG_UUID = 0x2902;
     GATT.SERVER_CHARAC_CFG_UUID = 0x2903;
 })(GATT || (GATT = {}));
-/* eslint-enable no-unused-vars */
 /**
  * @ignore
  */
-class Gatt extends events_1.default.EventEmitter {
+class Gatt extends eventemitter3_1.default {
     constructor(address, aclStream) {
         super();
         this._address = address;
@@ -11173,6 +11165,7 @@ class Gatt extends events_1.default.EventEmitter {
         this._descriptors = {};
         this._currentCommand = null;
         this._commandQueue = [];
+        this._commandPromises = [];
         this._mtu = 23;
         this._security = "low";
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
@@ -11791,9 +11784,17 @@ class Gatt extends events_1.default.EventEmitter {
         }
     }
     _execCommand(buffer) {
-        return new Promise((resolve) => {
-            this._queueCommand(buffer, resolve);
+        const doPromise = Promise.all(this._commandPromises)
+            .then(() => {
+            return new Promise((resolve) => {
+                this._queueCommand(buffer, resolve);
+            });
+        })
+            .finally(() => {
+            this._commandPromises = this._commandPromises.filter((e) => e === doPromise);
         });
+        this._commandPromises.push(doPromise);
+        return doPromise;
     }
     _execNoRespCommand(buffer) {
         return new Promise((resolve) => {
@@ -11825,7 +11826,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 // let debug = require('debug')('signaling');
 const debug = () => { };
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 /**
  * @ignore
  */
@@ -11841,7 +11842,7 @@ const SIGNALING_CID = 0x0005;
 /**
  * @ignore
  */
-class Signaling extends events_1.default.EventEmitter {
+class Signaling extends eventemitter3_1.default {
     constructor(handle, aclStream) {
         super();
         this._handle = handle;
@@ -11902,16 +11903,16 @@ exports.default = Signaling;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
  *
  * @ignore
  */
-const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
 /**
  * @ignore
@@ -11930,7 +11931,7 @@ var SMP;
 /**
  * @ignore
  */
-class Smp extends events_1.default.EventEmitter {
+class Smp extends eventemitter3_1.default {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._stk = null;
@@ -12058,12 +12059,19 @@ module.exports = JSON.parse("[\"Success\",\"Unknown HCI Command\",\"Unknown Conn
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer, process) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 // let debug = require('debug')('hci');
 const debug = (...params) => {
     // console.log(...params);
 };
-const events = __webpack_require__("./node_modules/events/events.js");
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -12137,7 +12145,7 @@ const STATUS_MAPPER = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/p
 /**
  * @ignore
  */
-class Hci extends events.EventEmitter {
+class Hci extends eventemitter3_1.default {
     constructor(obnizHci) {
         super();
         this.aclStreamObservers = {};

@@ -5,16 +5,19 @@
  */
 // var debug = require('debug')('acl-att-stream');
 
-import events from "events";
+import EventEmitter from "eventemitter3";
 
 import { Handle } from "../../bleTypes";
 import Hci from "../hci";
 import Smp from "./smp";
 
+type AclStreamEventTypes = "data" | "end" | "encrypt" | "encryptFail";
+
 /**
+ *
  * @ignore
  */
-export default class AclStream extends events.EventEmitter {
+export default class AclStream extends EventEmitter<AclStreamEventTypes> {
   public _hci: Hci;
   public _handle: Handle;
   public _smp: Smp;
