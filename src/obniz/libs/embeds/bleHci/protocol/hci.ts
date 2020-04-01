@@ -389,9 +389,7 @@ class Hci extends events.EventEmitter {
 
     debug("create le conn - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    console.warn("readLeMetaEventWait");
     const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
-    console.warn("readLeMetaEventWait finish");
     return this.processLeConnComplete(status, data);
   }
 

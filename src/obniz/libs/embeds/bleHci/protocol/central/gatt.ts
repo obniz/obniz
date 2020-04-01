@@ -366,7 +366,6 @@ class Gatt extends events.EventEmitter {
     const services: any = [];
     let startHandle = 0x0001;
 
-    console.warn(`discoverServicesWait ${startHandle} `);
     while (1) {
       const data = await this._execCommand(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID));
       const opcode: any = data[0];
@@ -403,7 +402,6 @@ class Gatt extends events.EventEmitter {
           this._services[services[i].uuid] = services[i];
         }
         this.emit("servicesDiscover", this._address, serviceUuids);
-        console.warn(`discoverServicesWait ${startHandle} finish`);
         return serviceUuids;
       }
       startHandle = services[services.length - 1].endHandle + 1;

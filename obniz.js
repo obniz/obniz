@@ -10504,9 +10504,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
             this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
             this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
-            console.warn("exchangeMtuWait");
             await this._gatts[handle].exchangeMtuWait(256);
-            console.warn("exchangeMtuWait finish");
             // public onMtu(address: any, mtu?: any) {}
         }
         else {
@@ -10516,7 +10514,6 @@ class NobleBindings extends events_1.default.EventEmitter {
             statusMessage = statusMessage + errorCode;
             error = new Error(statusMessage);
         }
-        console.warn("emit connect");
         this.emit("connect", uuid, error);
         if (this._connectionQueue.length > 0) {
             const peripheralUuid = this._connectionQueue.shift();
@@ -11374,7 +11371,6 @@ class Gatt extends events_1.default.EventEmitter {
     async discoverServicesWait(uuids) {
         const services = [];
         let startHandle = 0x0001;
-        console.warn(`discoverServicesWait ${startHandle} `);
         while (1) {
             const data = await this._execCommand(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID));
             const opcode = data[0];
@@ -11407,7 +11403,6 @@ class Gatt extends events_1.default.EventEmitter {
                     this._services[services[i].uuid] = services[i];
                 }
                 this.emit("servicesDiscover", this._address, serviceUuids);
-                console.warn(`discoverServicesWait ${startHandle} finish`);
                 return serviceUuids;
             }
             startHandle = services[services.length - 1].endHandle + 1;
@@ -12354,9 +12349,7 @@ class Hci extends events.EventEmitter {
         cmd.writeUInt16LE(0x0006, 27); // max ce length
         debug("create le conn - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        console.warn("readLeMetaEventWait");
         const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
-        console.warn("readLeMetaEventWait finish");
         return this.processLeConnComplete(status, data);
     }
     async connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {

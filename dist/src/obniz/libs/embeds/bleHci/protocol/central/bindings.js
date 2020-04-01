@@ -164,9 +164,7 @@ class NobleBindings extends events_1.default.EventEmitter {
             this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
             this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
             this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
-            console.warn("exchangeMtuWait");
             await this._gatts[handle].exchangeMtuWait(256);
-            console.warn("exchangeMtuWait finish");
             // public onMtu(address: any, mtu?: any) {}
         }
         else {
@@ -176,7 +174,6 @@ class NobleBindings extends events_1.default.EventEmitter {
             statusMessage = statusMessage + errorCode;
             error = new Error(statusMessage);
         }
-        console.warn("emit connect");
         this.emit("connect", uuid, error);
         if (this._connectionQueue.length > 0) {
             const peripheralUuid = this._connectionQueue.shift();
