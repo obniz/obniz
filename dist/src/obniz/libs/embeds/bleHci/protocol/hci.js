@@ -265,7 +265,7 @@ class Hci extends events.EventEmitter {
         this.emit("leScanEnableSet", data.status);
         return data.status;
     }
-    createLeConn(address, addressType) {
+    async createLeConnWait(address, addressType) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -290,8 +290,12 @@ class Hci extends events.EventEmitter {
         cmd.writeUInt16LE(0x0006, 27); // max ce length
         debug("create le conn - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
+        console.warn("readLeMetaEventWait");
+        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+        console.warn("readLeMetaEventWait finish");
+        return this.processLeConnComplete(status, data);
     }
-    connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+    async connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         const cmd = Buffer.alloc(18);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -308,6 +312,8 @@ class Hci extends events.EventEmitter {
         cmd.writeUInt16LE(0x0000, 16); // max ce length
         debug("conn update le - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
+        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
+        return this.processLeConnUpdateComplete(status, data);
     }
     startLeEncryption(handle, random, diversifier, key) {
         const cmd = Buffer.alloc(32);
@@ -692,14 +698,8 @@ class Hci extends events.EventEmitter {
         }
     }
     processLeMetaEvent(eventType, status, data) {
-        if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-            this.processLeConnComplete(status, data);
-        }
-        else if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
+        if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
             this.processLeAdvertisingReport(status, data);
-        }
-        else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
-            this.processLeConnUpdateComplete(status, data);
         }
     }
     processLeConnComplete(status, data) {
@@ -726,6 +726,17 @@ class Hci extends events.EventEmitter {
         debug("\t\t\tmaster clock accuracy = " + masterClockAccuracy);
         this._handleAclsInProgress[handle] = 0;
         this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+        return {
+            status,
+            handle,
+            role,
+            addressType,
+            address,
+            interval,
+            latency,
+            supervisionTimeout,
+            masterClockAccuracy,
+        };
     }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
@@ -759,6 +770,7 @@ class Hci extends events.EventEmitter {
         debug("\t\t\tlatency = " + latency);
         debug("\t\t\tsupervision timeout = " + supervisionTimeout);
         this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
+        return { status, handle, interval, latency, supervisionTimeout };
     }
     processCmdStatusEvent(cmd, status) {
         if (cmd === COMMANDS.LE_CREATE_CONN_CMD) {
@@ -791,6 +803,17 @@ class Hci extends events.EventEmitter {
             this.aclStreamObservers[handle][cid] = this.aclStreamObservers[handle][cid] || [];
             this.aclStreamObservers[handle][cid].push(resolve);
         });
+    }
+    async readLeMetaEventWait(eventType) {
+        const filter = this.createLeMetaEventFilter(eventType);
+        const data = await this._obnizHci.readWait(filter);
+        const type = data.readUInt8(3);
+        const status = data.readUInt8(4);
+        const _data = data.slice(5);
+        return { type, status, data: _data };
+    }
+    createLeMetaEventFilter(eventType) {
+        return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_LE_META_EVENT, -1, eventType];
     }
     async readCmdCompleteEventWait(requestCmd, additionalResultFilter) {
         additionalResultFilter = additionalResultFilter || [];

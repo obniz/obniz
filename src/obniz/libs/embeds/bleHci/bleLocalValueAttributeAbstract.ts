@@ -48,7 +48,16 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    * @param data
    */
   public writeWait(data: any): Promise<void> {
-    return super.writeWait(data);
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onwrite", (params: any) => {
+        if (params.result === "success") {
+          resolve(true);
+        } else {
+          reject(new Error("writeWait failed"));
+        }
+      });
+      this.write(data);
+    });
   }
 
   /**
@@ -64,6 +73,15 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    * ```
    */
   public readWait(): Promise<number[]> {
-    return super.readWait();
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onread", (params: any) => {
+        if (params.result === "success") {
+          resolve(params.data);
+        } else {
+          reject(new Error("readWait failed"));
+        }
+      });
+      this.read();
+    });
   }
 }

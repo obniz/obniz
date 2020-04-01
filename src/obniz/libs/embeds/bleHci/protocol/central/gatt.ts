@@ -11,7 +11,12 @@ const debug: any = () => {};
 /* eslint-disable no-unused-vars */
 
 import events from "events";
-import { ObnizBleOpError, ObnizBleUnknownCharacteristicError } from "../../../../../ObnizError";
+import {
+  ObnizBleOpError,
+  ObnizBleUnknownCharacteristicError,
+  ObnizBleUnknownDescriptorError,
+  ObnizBleUnknownServiceError,
+} from "../../../../../ObnizError";
 import { UUID } from "../../bleTypes";
 
 /**
@@ -361,6 +366,7 @@ class Gatt extends events.EventEmitter {
     const services: any = [];
     let startHandle = 0x0001;
 
+    console.warn(`discoverServicesWait ${startHandle} `);
     while (1) {
       const data = await this._execCommand(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID));
       const opcode: any = data[0];
@@ -397,6 +403,7 @@ class Gatt extends events.EventEmitter {
           this._services[services[i].uuid] = services[i];
         }
         this.emit("servicesDiscover", this._address, serviceUuids);
+        console.warn(`discoverServicesWait ${startHandle} finish`);
         return serviceUuids;
       }
       startHandle = services[services.length - 1].endHandle + 1;
@@ -404,7 +411,7 @@ class Gatt extends events.EventEmitter {
   }
 
   public async discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]) {
-    const service: any = this._services[serviceUuid];
+    const service: any = this.getService(serviceUuid);
     const includedServices: any = [];
     let startHandle = service.startHandle;
     while (1) {
@@ -454,7 +461,7 @@ class Gatt extends events.EventEmitter {
   }
 
   public async discoverCharacteristicsWait(serviceUuid: any, characteristicUuids: any) {
-    const service: any = this._services[serviceUuid];
+    const service: any = this.getService(serviceUuid);
     const characteristics: any = [];
 
     this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
@@ -588,114 +595,57 @@ class Gatt extends events.EventEmitter {
     }
   }
 
-  public write(serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any) {
-    if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
-      this.emit("write", this._address, serviceUuid, characteristicUuid, false);
-      return;
-    }
-
-    const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
+  public async writeWait(serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any) {
+    const characteristic: any = this.getCharacteristic(serviceUuid, characteristicUuid);
     if (withoutResponse) {
-      this._queueCommand(this.writeRequest(characteristic.valueHandle, data, true), null, () => {
-        this.emit("write", this._address, serviceUuid, characteristicUuid);
-      });
+      await this._execNoRespCommand(this.writeRequest(characteristic.valueHandle, data, true));
     } else if (data.length + 3 > this._mtu) {
-      return this.longWrite(serviceUuid, characteristicUuid, data, withoutResponse);
+      await this.longWriteWait(serviceUuid, characteristicUuid, data, withoutResponse);
     } else {
-      this._queueCommand(this.writeRequest(characteristic.valueHandle, data, false), (_data: any) => {
-        const opcode: any = _data[0];
+      const _data = await this._execCommand(this.writeRequest(characteristic.valueHandle, data, false));
+      const opcode: any = _data[0];
 
-        if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
-          this.emit("write", this._address, serviceUuid, characteristicUuid, opcode === ATT.OP_WRITE_RESP);
-        }
-      });
-    }
-  }
-
-  /* Perform a "long write" as described Bluetooth Spec section 4.9.4 "Write Long Characteristic Values" */
-  public longWrite(serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any) {
-    const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
-    const limit: any = this._mtu - 5;
-
-    const prepareWriteCallback: any = (data_chunk: any) => {
-      return (resp: any) => {
-        const opcode: any = resp[0];
-
-        if (opcode !== ATT.OP_PREPARE_WRITE_RESP) {
-          debug(this._address + ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)", opcode);
-        } else {
-          const expected_length: any = data_chunk.length + 5;
-
-          if (resp.length !== expected_length) {
-            /* the response should contain the data packet echoed back to the caller */
-            debug(
-              this._address + ": unexpected prepareWriteResponse length %d (expecting %d)",
-              resp.length,
-              expected_length,
-            );
-          }
-        }
-      };
-    };
-
-    /* split into prepare-write chunks and queue them */
-    let offset: any = 0;
-
-    while (offset < data.length) {
-      const end: any = offset + limit;
-      const chunk: any = data.slice(offset, end);
-      this._queueCommand(
-        this.prepareWriteRequest(characteristic.valueHandle, offset, chunk),
-        prepareWriteCallback(chunk),
-      );
-      offset = end;
-    }
-
-    /* queue the execute command with a callback to emit the write signal when done */
-    this._queueCommand(this.executeWriteRequest(characteristic.valueHandle), (resp: any) => {
-      const opcode: any = resp[0];
-
-      if (opcode === ATT.OP_EXECUTE_WRITE_RESP && !withoutResponse) {
-        this.emit("write", this._address, serviceUuid, characteristicUuid);
+      if (opcode !== ATT.OP_WRITE_RESP) {
       }
-    });
+    }
+    this.emit("write", this._address, serviceUuid, characteristicUuid);
   }
 
-  public broadcast(serviceUuid: any, characteristicUuid: any, broadcast: any) {
-    const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
+  public async broadcastWait(serviceUuid: any, characteristicUuid: any, broadcast: any) {
+    const characteristic: any = this.getCharacteristic(serviceUuid, characteristicUuid);
 
-    this._queueCommand(
+    const data = await this._execCommand(
       this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.SERVER_CHARAC_CFG_UUID),
-      (data: any) => {
-        const opcode: any = data[0];
-        if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
-          // let type = data[1];
-          const handle: any = data.readUInt16LE(2);
-          let value: any = data.readUInt16LE(4);
-
-          if (broadcast) {
-            value |= 0x0001;
-          } else {
-            value &= 0xfffe;
-          }
-
-          const valueBuffer: any = Buffer.alloc(2);
-          valueBuffer.writeUInt16LE(value, 0);
-
-          this._queueCommand(this.writeRequest(handle, valueBuffer, false), (_data: any) => {
-            const _opcode: any = _data[0];
-
-            if (_opcode === ATT.OP_WRITE_RESP) {
-              this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
-            }
-          });
-        }
-      },
     );
+
+    const opcode: any = data[0];
+    if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
+      // let type = data[1];
+      const handle: any = data.readUInt16LE(2);
+      let value: any = data.readUInt16LE(4);
+
+      if (broadcast) {
+        value |= 0x0001;
+      } else {
+        value &= 0xfffe;
+      }
+
+      const valueBuffer: any = Buffer.alloc(2);
+      valueBuffer.writeUInt16LE(value, 0);
+
+      const _data = await this._execCommand(this.writeRequest(handle, valueBuffer, false));
+      const _opcode: any = _data[0];
+
+      if (_opcode === ATT.OP_WRITE_RESP) {
+        this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
+        return;
+      }
+    }
+    throw new ObnizBleOpError();
   }
 
   public async notifyWait(serviceUuid: any, characteristicUuid: any, notify: any) {
-    const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
+    const characteristic: any = this.getCharacteristic(serviceUuid, characteristicUuid);
 
     const data = await this._execCommand(
       this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID),
@@ -738,13 +688,15 @@ class Gatt extends events.EventEmitter {
     throw new ObnizBleOpError();
   }
 
-  public discoverDescriptors(serviceUuid: any, characteristicUuid: any) {
-    const characteristic: any = this._characteristics[serviceUuid][characteristicUuid];
+  public async discoverDescriptorsWait(serviceUuid: any, characteristicUuid: any) {
+    const characteristic: any = this.getCharacteristic(serviceUuid, characteristicUuid);
     const descriptors: any = [];
 
     this._descriptors[serviceUuid][characteristicUuid] = {};
+    let startHandle = characteristic.valueHandle + 1;
+    while (1) {
+      const data = await this._execCommand(this.findInfoRequest(startHandle, characteristic.endHandle));
 
-    const callback: any = (data: any) => {
       const opcode: any = data[0];
       let i: any = 0;
 
@@ -768,82 +720,63 @@ class Gatt extends events.EventEmitter {
         }
 
         this.emit("descriptorsDiscover", this._address, serviceUuid, characteristicUuid, descriptorUuids);
-      } else {
-        this._queueCommand(
-          this.findInfoRequest(descriptors[descriptors.length - 1].handle + 1, characteristic.endHandle),
-          callback,
-        );
+        return descriptorUuids;
       }
-    };
-
-    this._queueCommand(this.findInfoRequest(characteristic.valueHandle + 1, characteristic.endHandle), callback);
+      startHandle = descriptors[descriptors.length - 1].handle + 1;
+    }
   }
 
-  public readValue(serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
-    if (
-      !this._descriptors[serviceUuid] ||
-      !this._descriptors[serviceUuid][characteristicUuid] ||
-      !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]
-    ) {
-      this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, Buffer.alloc(0), false);
+  public async readValueWait(serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
+    const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
+
+    const data = await this._execCommand(this.readRequest(descriptor.handle));
+    const opcode: any = data[0];
+
+    if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_ERROR) {
+      this.emit(
+        "valueRead",
+        this._address,
+        serviceUuid,
+        characteristicUuid,
+        descriptorUuid,
+        data.slice(1),
+        opcode === ATT.OP_READ_RESP,
+      );
+      return data.slice(1);
+    }
+    throw new ObnizBleOpError();
+  }
+
+  public async writeValueWait(serviceUuid: any, characteristicUuid: any, descriptorUuid: any, data: any) {
+    const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
+
+    const _data = await this._execCommand(this.writeRequest(descriptor.handle, data, false));
+    const opcode: any = _data[0];
+
+    if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
+      this.emit(
+        "valueWrite",
+        this._address,
+        serviceUuid,
+        characteristicUuid,
+        descriptorUuid,
+        opcode === ATT.OP_WRITE_RESP,
+      );
       return;
     }
 
-    const descriptor: any = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
-
-    this._queueCommand(this.readRequest(descriptor.handle), (data: any) => {
-      const opcode: any = data[0];
-
-      if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_ERROR) {
-        this.emit(
-          "valueRead",
-          this._address,
-          serviceUuid,
-          characteristicUuid,
-          descriptorUuid,
-          data.slice(1),
-          opcode === ATT.OP_READ_RESP,
-        );
-      }
-    });
+    throw new ObnizBleOpError();
   }
 
-  public writeValue(serviceUuid: any, characteristicUuid: any, descriptorUuid: any, data: any) {
-    if (
-      !this._descriptors[serviceUuid] ||
-      !this._descriptors[serviceUuid][characteristicUuid] ||
-      !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]
-    ) {
-      this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, false);
-      return;
+  public async readHandle(handle: any) {
+    const data = await this._execCommand(this.readRequest(handle));
+    const opcode: any = data[0];
+
+    if (opcode === ATT.OP_READ_RESP) {
+      this.emit("handleRead", this._address, handle, data.slice(1));
+      return data.slice(1);
     }
-
-    const descriptor: any = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
-
-    this._queueCommand(this.writeRequest(descriptor.handle, data, false), (_data: any) => {
-      const opcode: any = _data[0];
-
-      if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
-        this.emit(
-          "valueWrite",
-          this._address,
-          serviceUuid,
-          characteristicUuid,
-          descriptorUuid,
-          opcode === ATT.OP_WRITE_RESP,
-        );
-      }
-    });
-  }
-
-  public readHandle(handle: any) {
-    this._queueCommand(this.readRequest(handle), (data: any) => {
-      const opcode: any = data[0];
-
-      if (opcode === ATT.OP_READ_RESP) {
-        this.emit("handleRead", this._address, handle, data.slice(1));
-      }
-    });
+    throw new ObnizBleOpError();
   }
 
   public async writeHandleWait(handle: any, data: any, withoutResponse: any) {
@@ -861,12 +794,69 @@ class Gatt extends events.EventEmitter {
     }
   }
 
+  /* Perform a "long write" as described Bluetooth Spec section 4.9.4 "Write Long Characteristic Values" */
+  private async longWriteWait(serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any) {
+    const characteristic: any = this.getCharacteristic(serviceUuid, characteristicUuid);
+    const limit: any = this._mtu - 5;
+
+    /* split into prepare-write chunks and queue them */
+    let offset: any = 0;
+
+    while (offset < data.length) {
+      const end: any = offset + limit;
+      const chunk: any = data.slice(offset, end);
+      const _resp = await this._execCommand(this.prepareWriteRequest(characteristic.valueHandle, offset, chunk));
+
+      const _opcode: any = _resp[0];
+
+      if (_opcode !== ATT.OP_PREPARE_WRITE_RESP) {
+        throw new Error(": unexpected reply opcode " + _opcode + " (expecting ATT.OP_PREPARE_WRITE_RESP)");
+      } else {
+        const expected_length: any = chunk.length + 5;
+
+        if (_resp.length !== expected_length) {
+          /* the response should contain the data packet echoed back to the caller */
+          throw new Error(`unexpected prepareWriteResponse length ${_resp.length} (expecting ${expected_length})`);
+        }
+      }
+      offset = end;
+    }
+
+    /* queue the execute command with a callback to emit the write signal when done */
+    const resp = await this._execCommand(this.executeWriteRequest(characteristic.valueHandle));
+    const opcode: any = resp[0];
+    if (opcode === ATT.OP_EXECUTE_WRITE_RESP && !withoutResponse) {
+      return;
+    }
+    throw new ObnizBleOpError();
+  }
+
+  private getService(serviceUuid: any) {
+    if (!this._services[serviceUuid]) {
+      throw new ObnizBleUnknownServiceError(this._address, serviceUuid);
+    }
+
+    return this._services[serviceUuid];
+  }
+
   private getCharacteristic(serviceUuid: any, characteristicUuid: any) {
     if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
       throw new ObnizBleUnknownCharacteristicError(this._address, serviceUuid, characteristicUuid);
     }
 
     return this._characteristics[serviceUuid][characteristicUuid];
+  }
+
+  private getDescriptor(serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
+    if (
+      !this._descriptors[serviceUuid] ||
+      !this._descriptors[serviceUuid][characteristicUuid] ||
+      !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]
+    ) {
+      throw new ObnizBleUnknownDescriptorError(this._address, serviceUuid, characteristicUuid, descriptorUuid);
+    }
+
+    return this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
   }
 
   private _queueCommand(buffer: Buffer, callback: any, writeCallback?: any) {

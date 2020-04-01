@@ -39,7 +39,17 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      * @param data
      */
     writeWait(data) {
-        return super.writeWait(data);
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeWait failed"));
+                }
+            });
+            this.write(data);
+        });
     }
     /**
      * It reads data.
@@ -54,7 +64,17 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      * ```
      */
     readWait() {
-        return super.readWait();
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onread", (params) => {
+                if (params.result === "success") {
+                    resolve(params.data);
+                }
+                else {
+                    reject(new Error("readWait failed"));
+                }
+            });
+            this.read();
+        });
     }
 }
 exports.default = BleLocalValueAttributeAbstract;

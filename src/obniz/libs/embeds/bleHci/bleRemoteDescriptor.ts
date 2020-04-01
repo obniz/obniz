@@ -51,12 +51,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    *
    */
   public read() {
-    this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(
-      this.characteristic.service.peripheral.address,
-      this.characteristic.service.uuid,
-      this.characteristic.uuid,
-      this.uuid,
-    );
+    this.readWait(); // background
   }
 
   /**
@@ -84,8 +79,14 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    * ```
    *
    */
-  public readWait(): Promise<number[]> {
-    return super.readWait();
+  public async readWait(): Promise<number[]> {
+    const data = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(
+      this.characteristic.service.peripheral.address,
+      this.characteristic.service.uuid,
+      this.characteristic.uuid,
+      this.uuid,
+    );
+    return Array.from(data);
   }
 
   /**
@@ -112,13 +113,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    * @param data
    */
   public write(data: number[]) {
-    this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(
-      this.characteristic.service.peripheral.address,
-      this.characteristic.service.uuid,
-      this.characteristic.uuid,
-      this.uuid,
-      Buffer.from(data),
-    );
+    this.writeWait(data); // background
   }
 
   /**
@@ -145,9 +140,14 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    * ```
    *
    * @param data
-   * @param needResponse
    */
-  public writeWait(data: number[], needResponse: boolean): Promise<void> {
-    return super.writeWait(data, needResponse);
+  public async writeWait(data: number[]): Promise<void> {
+    await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(
+      this.characteristic.service.peripheral.address,
+      this.characteristic.service.uuid,
+      this.characteristic.uuid,
+      this.uuid,
+      Buffer.from(data),
+    );
   }
 }

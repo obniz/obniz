@@ -38,6 +38,12 @@ export class ObnizBleUnknownPeripheralError extends ObnizError {
   }
 }
 
+export class ObnizBleUnknownServiceError extends ObnizError {
+  constructor(public peripheralUuid: string, public serviceUuid: string) {
+    super(5, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+  }
+}
+
 export class ObnizBleUnknownCharacteristicError extends ObnizError {
   constructor(public peripheralUuid: string, public serviceUuid: string, public characteristicUuid: string) {
     super(
@@ -48,6 +54,27 @@ export class ObnizBleUnknownCharacteristicError extends ObnizError {
         serviceUuid +
         " characteristic :" +
         characteristicUuid,
+    );
+  }
+}
+
+export class ObnizBleUnknownDescriptorError extends ObnizError {
+  constructor(
+    public peripheralUuid: string,
+    public serviceUuid: string,
+    public characteristicUuid: string,
+    public descriptorUuid: string,
+  ) {
+    super(
+      5,
+      "unknown descriptor.  peripheral :" +
+        peripheralUuid +
+        " service :" +
+        serviceUuid +
+        " characteristic :" +
+        characteristicUuid +
+        " descriptor :" +
+        descriptorUuid,
     );
   }
 }

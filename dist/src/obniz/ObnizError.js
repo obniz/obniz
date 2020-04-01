@@ -41,6 +41,14 @@ class ObnizBleUnknownPeripheralError extends ObnizError {
     }
 }
 exports.ObnizBleUnknownPeripheralError = ObnizBleUnknownPeripheralError;
+class ObnizBleUnknownServiceError extends ObnizError {
+    constructor(peripheralUuid, serviceUuid) {
+        super(5, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+        this.peripheralUuid = peripheralUuid;
+        this.serviceUuid = serviceUuid;
+    }
+}
+exports.ObnizBleUnknownServiceError = ObnizBleUnknownServiceError;
 class ObnizBleUnknownCharacteristicError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid) {
         super(5, "unknown characteristic.  peripheral :" +
@@ -55,6 +63,23 @@ class ObnizBleUnknownCharacteristicError extends ObnizError {
     }
 }
 exports.ObnizBleUnknownCharacteristicError = ObnizBleUnknownCharacteristicError;
+class ObnizBleUnknownDescriptorError extends ObnizError {
+    constructor(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
+        super(5, "unknown descriptor.  peripheral :" +
+            peripheralUuid +
+            " service :" +
+            serviceUuid +
+            " characteristic :" +
+            characteristicUuid +
+            " descriptor :" +
+            descriptorUuid);
+        this.peripheralUuid = peripheralUuid;
+        this.serviceUuid = serviceUuid;
+        this.characteristicUuid = characteristicUuid;
+        this.descriptorUuid = descriptorUuid;
+    }
+}
+exports.ObnizBleUnknownDescriptorError = ObnizBleUnknownDescriptorError;
 class ObnizBleOpError extends ObnizError {
     constructor() {
         super(5, "BLE operation error");

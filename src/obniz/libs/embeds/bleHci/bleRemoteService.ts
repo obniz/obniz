@@ -119,7 +119,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    */
   public discoverAllCharacteristics() {
-    return this.discoverChildren();
+    this.discoverAllCharacteristicsWait(); // background
   }
 
   /**

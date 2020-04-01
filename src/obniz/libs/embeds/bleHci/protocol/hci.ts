@@ -354,7 +354,7 @@ class Hci extends events.EventEmitter {
     return data.status;
   }
 
-  public createLeConn(address: any, addressType: any) {
+  public async createLeConnWait(address: any, addressType: any) {
     const cmd: any = Buffer.alloc(29);
 
     // header
@@ -389,9 +389,13 @@ class Hci extends events.EventEmitter {
 
     debug("create le conn - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+    console.warn("readLeMetaEventWait");
+    const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+    console.warn("readLeMetaEventWait finish");
+    return this.processLeConnComplete(status, data);
   }
 
-  public connUpdateLe(
+  public async connUpdateLeWait(
     handle: Handle,
     minInterval: number,
     maxInterval: number,
@@ -418,6 +422,9 @@ class Hci extends events.EventEmitter {
 
     debug("conn update le - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+
+    const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
+    return this.processLeConnUpdateComplete(status, data);
   }
 
   public startLeEncryption(handle: Handle, random: Buffer, diversifier: Buffer, key: Buffer) {
@@ -893,12 +900,8 @@ class Hci extends events.EventEmitter {
   }
 
   public processLeMetaEvent(eventType: any, status: any, data: any) {
-    if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-      this.processLeConnComplete(status, data);
-    } else if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
+    if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
       this.processLeAdvertisingReport(status, data);
-    } else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
-      this.processLeConnUpdateComplete(status, data);
     }
   }
 
@@ -940,6 +943,17 @@ class Hci extends events.EventEmitter {
       supervisionTimeout,
       masterClockAccuracy,
     );
+    return {
+      status,
+      handle,
+      role,
+      addressType,
+      address,
+      interval,
+      latency,
+      supervisionTimeout,
+      masterClockAccuracy,
+    };
   }
 
   public processLeAdvertisingReport(count: any, data: any) {
@@ -980,6 +994,7 @@ class Hci extends events.EventEmitter {
     debug("\t\t\tsupervision timeout = " + supervisionTimeout);
 
     this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
+    return { status, handle, interval, latency, supervisionTimeout };
   }
 
   public processCmdStatusEvent(cmd: any, status: any) {
@@ -1015,6 +1030,20 @@ class Hci extends events.EventEmitter {
       this.aclStreamObservers[handle][cid] = this.aclStreamObservers[handle][cid] || [];
       this.aclStreamObservers[handle][cid].push(resolve);
     });
+  }
+
+  protected async readLeMetaEventWait(eventType: number) {
+    const filter = this.createLeMetaEventFilter(eventType);
+    const data = await this._obnizHci.readWait(filter);
+
+    const type: any = data.readUInt8(3);
+    const status: any = data.readUInt8(4);
+    const _data: any = data.slice(5);
+    return { type, status, data: _data };
+  }
+
+  protected createLeMetaEventFilter(eventType: number): number[] {
+    return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_LE_META_EVENT, -1, eventType];
   }
 
   protected async readCmdCompleteEventWait(

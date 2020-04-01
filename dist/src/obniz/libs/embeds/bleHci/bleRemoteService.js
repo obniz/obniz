@@ -109,7 +109,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     discoverAllCharacteristics() {
-        return this.discoverChildren();
+        this.discoverAllCharacteristicsWait(); // background
     }
     /**
      * Discover services.

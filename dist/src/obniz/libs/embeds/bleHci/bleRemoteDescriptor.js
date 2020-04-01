@@ -45,7 +45,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      *
      */
     read() {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
+        this.readWait(); // background
     }
     /**
      * Read data from descriptor.
@@ -72,8 +72,9 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * ```
      *
      */
-    readWait() {
-        return super.readWait();
+    async readWait() {
+        const data = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
+        return Array.from(data);
     }
     /**
      * This writes dataArray to descriptor.
@@ -99,7 +100,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * @param data
      */
     write(data) {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
+        this.writeWait(data); // background
     }
     /**
      * This writes dataArray to descriptor.
@@ -125,10 +126,9 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * ```
      *
      * @param data
-     * @param needResponse
      */
-    writeWait(data, needResponse) {
-        return super.writeWait(data, needResponse);
+    async writeWait(data) {
+        await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
     }
 }
 exports.default = BleRemoteDescriptor;

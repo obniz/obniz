@@ -32,7 +32,7 @@ class Gap extends events.EventEmitter {
     this._discoveries = {};
 
     this._hci.on("error", this.onHciError.bind(this));
-    this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
+    // this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
     this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
 
     this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));

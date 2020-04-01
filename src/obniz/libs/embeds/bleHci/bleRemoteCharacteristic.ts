@@ -353,16 +353,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param needResponse
    */
   public write(array: number[], needResponse?: boolean) {
-    if (needResponse === undefined) {
-      needResponse = true;
-    }
-    this.service.peripheral.obnizBle.centralBindings.write(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid,
-      Buffer.from(array),
-      !needResponse,
-    );
+    this.writeWait(array, needResponse); // background
   }
 
   /**
@@ -391,8 +382,17 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param data
    * @param needResponse
    */
-  public writeWait(data: any, needResponse?: any): Promise<void> {
-    return super.writeWait(data, needResponse);
+  public async writeWait(data: any, needResponse?: any): Promise<void> {
+    if (needResponse === undefined) {
+      needResponse = true;
+    }
+    await this.service.peripheral.obnizBle.centralBindings.writeWait(
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      Buffer.from(data),
+      !needResponse,
+    );
   }
 
   /**
@@ -429,24 +429,6 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   }
 
   /**
-   * @ignore
-   */
-  public discoverChildren() {
-    this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid,
-    );
-  }
-
-  /**
-   * @ignore
-   */
-  public discoverAllDescriptors() {
-    return this.discoverChildren();
-  }
-
-  /**
    * Discover services.
    *
    * If connect setting param 'autoDiscovery' is true(default),
@@ -473,8 +455,15 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * obniz.ble.scan.start();
    * ```
    */
-  public discoverAllDescriptorsWait(): Promise<BleRemoteDescriptor[]> {
-    return this.discoverChildrenWait();
+  public async discoverAllDescriptorsWait(): Promise<BleRemoteDescriptor[]> {
+    await this.service.peripheral.obnizBle.centralBindings.discoverDescriptorsWait(
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+    );
+    return this.descriptors.filter((elm: any) => {
+      return elm.discoverdOnRemote;
+    });
   }
 
   /**

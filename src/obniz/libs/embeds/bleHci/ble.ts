@@ -280,9 +280,9 @@ export default class ObnizBLE extends ComponentAbstract {
 
   protected async onConnect(peripheralUuid: any, error?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
-    if (!error && peripheral._connectSetting.autoDiscovery) {
-      await peripheral.discoverAllHandlesWait();
-    }
+    // if (!error && peripheral._connectSetting.autoDiscovery) {
+    //   await peripheral.discoverAllHandlesWait();
+    // }
     peripheral.notifyFromServer("statusupdate", {
       status: error ? "disconnected" : "connected",
     });

@@ -41,14 +41,6 @@ export default class BleRemoteValueAttributeAbstract<ParentClass, ChildrenClass>
     return super.writeText(str, needResponse);
   }
 
-  public readWait(): Promise<number[]> {
-    return super.readWait();
-  }
-
-  public writeWait(data: number[], needResponse: boolean): Promise<void> {
-    return super.writeWait(data, needResponse);
-  }
-
   /**
    * Wrapper for [[writeWait]] with data converting from text.
    * It convert string to UTF-8 and write binary array.

@@ -19,7 +19,7 @@ class Gap extends events_1.default.EventEmitter {
         this._scanFilterDuplicates = null;
         this._discoveries = {};
         this._hci.on("error", this.onHciError.bind(this));
-        this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
+        // this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
         this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
         this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));

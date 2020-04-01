@@ -30,12 +30,6 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
     writeText(str, needResponse) {
         return super.writeText(str, needResponse);
     }
-    readWait() {
-        return super.readWait();
-    }
-    writeWait(data, needResponse) {
-        return super.writeWait(data, needResponse);
-    }
     /**
      * Wrapper for [[writeWait]] with data converting from text.
      * It convert string to UTF-8 and write binary array.

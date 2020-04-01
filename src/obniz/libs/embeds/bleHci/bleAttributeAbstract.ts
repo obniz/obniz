@@ -174,38 +174,6 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public readWait(): Promise<number[]> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onread", (params: any) => {
-        if (params.result === "success") {
-          resolve(params.data);
-        } else {
-          reject(new Error("readWait failed"));
-        }
-      });
-      this.read();
-    });
-  }
-
-  /**
-   * @ignore
-   */
-  public writeWait(data: number[], needResponse?: boolean): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeWait failed"));
-        }
-      });
-      this.write(data, needResponse);
-    });
-  }
-
-  /**
-   * @ignore
-   */
   public writeTextWait(data: string, needResponse?: boolean): Promise<void> {
     return new Promise((resolve: any, reject: any) => {
       this.emitter.once("onwrite", (params: any) => {

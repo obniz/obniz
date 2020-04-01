@@ -42,12 +42,13 @@ class NobleBindings extends events_1.default.EventEmitter {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    connect(peripheralUuid) {
+    async connectWait(peripheralUuid) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         if (!this._pendingConnectionUuid) {
             this._pendingConnectionUuid = peripheralUuid;
-            this._hci.createLeConn(address, addressType);
+            const result = await this._hci.createLeConnWait(address, addressType);
+            await this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
         }
         else {
             this._connectionQueue.push(peripheralUuid);
@@ -67,8 +68,8 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._gap.on("discover", this.onDiscover.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
         this._hci.on("addressChange", this.onAddressChange.bind(this));
-        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
+        // this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
+        // this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
         // this._hci.on("rssiRead", this.onRssiRead.bind(this));
         this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
@@ -162,8 +163,10 @@ class NobleBindings extends events_1.default.EventEmitter {
             this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
             this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
             this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
-            this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateRequest.bind(this));
+            this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
+            console.warn("exchangeMtuWait");
             await this._gatts[handle].exchangeMtuWait(256);
+            console.warn("exchangeMtuWait finish");
             // public onMtu(address: any, mtu?: any) {}
         }
         else {
@@ -173,20 +176,18 @@ class NobleBindings extends events_1.default.EventEmitter {
             statusMessage = statusMessage + errorCode;
             error = new Error(statusMessage);
         }
+        console.warn("emit connect");
         this.emit("connect", uuid, error);
         if (this._connectionQueue.length > 0) {
             const peripheralUuid = this._connectionQueue.shift();
             address = this._addresses[peripheralUuid];
             addressType = this._addresseTypes[peripheralUuid];
             this._pendingConnectionUuid = peripheralUuid;
-            this._hci.createLeConn(address, addressType);
+            this._hci.createLeConnWait(address, addressType); // background
         }
         else {
             this._pendingConnectionUuid = null;
         }
-    }
-    onLeConnUpdateComplete(handle, interval, latency, supervisionTimeout) {
-        // no-op
     }
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
@@ -272,9 +273,9 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("read", uuid, serviceUuid, characteristicUuid, data, false, isSuccess);
     }
-    write(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
+    async writeWait(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.write(serviceUuid, characteristicUuid, data, withoutResponse);
+        const resp = await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
     }
     onWrite(address, serviceUuid, characteristicUuid, isSuccess) {
         const uuid = address
@@ -283,9 +284,9 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("write", uuid, serviceUuid, characteristicUuid, isSuccess);
     }
-    broadcast(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
+    async broadcastWait(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.broadcast(serviceUuid, characteristicUuid, broadcast);
+        await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
     }
     onBroadcast(address, serviceUuid, characteristicUuid, state) {
         const uuid = address
@@ -312,9 +313,10 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("read", uuid, serviceUuid, characteristicUuid, data, true, true);
     }
-    discoverDescriptors(peripheralUuid, serviceUuid, characteristicUuid) {
+    async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.discoverDescriptors(serviceUuid, characteristicUuid);
+        const uuids = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
+        return uuids;
     }
     onDescriptorsDiscovered(address, serviceUuid, characteristicUuid, descriptorUuids) {
         const uuid = address
@@ -323,9 +325,10 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("descriptorsDiscover", uuid, serviceUuid, characteristicUuid, descriptorUuids);
     }
-    readValue(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
+    async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.readValue(serviceUuid, characteristicUuid, descriptorUuid);
+        const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
+        return resp;
     }
     onValueRead(address, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess) {
         const uuid = address
@@ -334,9 +337,9 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("valueRead", uuid, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess);
     }
-    writeValue(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
+    async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.writeValue(serviceUuid, characteristicUuid, descriptorUuid, data);
+        await gatt.writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data);
     }
     onValueWrite(address, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
         const uuid = address
@@ -374,8 +377,9 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("handleNotify", uuid, handle, data);
     }
-    onConnectionParameterUpdateRequest(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-        this._hci.connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    async onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+        await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+        // this.onLeConnUpdateComplete(); is nop
     }
     pairing(peripheralUuid, keys, callback) {
         const gatt = this.getGatt(peripheralUuid);

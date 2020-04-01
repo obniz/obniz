@@ -30,24 +30,6 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     }
     /**
      * @ignore
-     */
-    discoverChildren() { }
-    /**
-     * @ignore
-     */
-    discoverChildrenWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this.children.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverChildren();
-        });
-    }
-    /**
-     * @ignore
      * @param child
      */
     ondiscover(child) { }

@@ -370,12 +370,7 @@ export default class BleRemotePeripheral {
    * obniz.ble.scan.start();
    * ```
    */
-  public connect(setting?: BleConnectSetting) {
-    this._connectSetting = setting || {};
-    this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
-    this.obnizBle.scan.end();
-    this.obnizBle.centralBindings.connect(this.address);
-  }
+  public connect(setting?: BleConnectSetting) {}
 
   /**
    * This connects obniz to the peripheral.
@@ -407,23 +402,23 @@ export default class BleRemotePeripheral {
    * ```
    *
    */
-  public connectWait(setting?: BleConnectSetting): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      // if (this.connected) {
-      //   resolve();
-      //   return;
-      // }
-      this.emitter.once("statusupdate", (params: any) => {
-        if (params.status === "connected") {
-          resolve(true); // for compatibility
-        } else {
-          reject(
-            new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`),
-          );
-        }
-      });
-      this.connect(setting);
-    });
+  public async connectWait(setting?: BleConnectSetting): Promise<void> {
+    this._connectSetting = setting || {};
+    this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+    this.obnizBle.scan.end();
+    const p1 = this.obnizBle.centralBindings.connectWait(this.address);
+    const p2 = new Promise((resolve, reject) =>
+      this.emitter.once("disconnect", () => {
+        reject(
+          new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`),
+        );
+      }),
+    );
+    await Promise.race([p1, p2]);
+    console.warn("connected");
+    if (this._connectSetting.autoDiscovery) {
+      await this.discoverAllHandlesWait();
+    }
   }
 
   /**
@@ -631,6 +626,7 @@ export default class BleRemotePeripheral {
    * @ignore
    */
   public async discoverAllHandlesWait() {
+    console.warn("discoverAllHandlesWait");
     const ArrayFlat: any = (array: any, depth: any) => {
       const flattend: any = [];
       (function flat(_array: any, _depth: any) {
@@ -644,10 +640,12 @@ export default class BleRemotePeripheral {
       })(array, Math.floor(depth) || 1);
       return flattend;
     };
-
+    console.warn("discoverAllServicesWait");
     const services: any = await this.discoverAllServicesWait();
+    console.warn("discoverAllCharacteristicsWait");
     const charsNest: any = await Promise.all(services.map((s: any) => s.discoverAllCharacteristicsWait()));
     const chars: any = ArrayFlat(charsNest);
+    console.warn("discoverAllDescriptorsWait");
     const descriptorsNest: any = await Promise.all(chars.map((c: any) => c.discoverAllDescriptorsWait()));
 
     // eslint-disable-next-line no-unused-vars
@@ -668,12 +666,14 @@ export default class BleRemotePeripheral {
           if (this.onconnect) {
             this.onconnect();
           }
+          this.emitter.emit("connect");
         }
         if (params.status === "disconnected") {
           this.connected = false;
           if (this.ondisconnect) {
             this.ondisconnect();
           }
+          this.emitter.emit("disconnect");
         }
         break;
       }

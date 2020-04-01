@@ -32,26 +32,6 @@ export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> exte
 
   /**
    * @ignore
-   */
-  public discoverChildren() {}
-
-  /**
-   * @ignore
-   */
-  public discoverChildrenWait(): Promise<ChildrenClass[]> {
-    return new Promise((resolve: any) => {
-      this.emitter.once("discoverfinished", () => {
-        const children = this.children.filter((elm: any) => {
-          return elm.discoverdOnRemote;
-        });
-        resolve(children);
-      });
-      this.discoverChildren();
-    });
-  }
-
-  /**
-   * @ignore
    * @param child
    */
   public ondiscover(child: any) {}

@@ -2971,6 +2971,14 @@ class ObnizBleUnknownPeripheralError extends ObnizError {
     }
 }
 exports.ObnizBleUnknownPeripheralError = ObnizBleUnknownPeripheralError;
+class ObnizBleUnknownServiceError extends ObnizError {
+    constructor(peripheralUuid, serviceUuid) {
+        super(5, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+        this.peripheralUuid = peripheralUuid;
+        this.serviceUuid = serviceUuid;
+    }
+}
+exports.ObnizBleUnknownServiceError = ObnizBleUnknownServiceError;
 class ObnizBleUnknownCharacteristicError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid) {
         super(5, "unknown characteristic.  peripheral :" +
@@ -2985,6 +2993,23 @@ class ObnizBleUnknownCharacteristicError extends ObnizError {
     }
 }
 exports.ObnizBleUnknownCharacteristicError = ObnizBleUnknownCharacteristicError;
+class ObnizBleUnknownDescriptorError extends ObnizError {
+    constructor(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
+        super(5, "unknown descriptor.  peripheral :" +
+            peripheralUuid +
+            " service :" +
+            serviceUuid +
+            " characteristic :" +
+            characteristicUuid +
+            " descriptor :" +
+            descriptorUuid);
+        this.peripheralUuid = peripheralUuid;
+        this.serviceUuid = serviceUuid;
+        this.characteristicUuid = characteristicUuid;
+        this.descriptorUuid = descriptorUuid;
+    }
+}
+exports.ObnizBleUnknownDescriptorError = ObnizBleUnknownDescriptorError;
 class ObnizBleOpError extends ObnizError {
     constructor() {
         super(5, "BLE operation error");
@@ -6453,9 +6478,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     async onConnect(peripheralUuid, error) {
         const peripheral = this.findPeripheral(peripheralUuid);
-        if (!error && peripheral._connectSetting.autoDiscovery) {
-            await peripheral.discoverAllHandlesWait();
-        }
+        // if (!error && peripheral._connectSetting.autoDiscovery) {
+        //   await peripheral.discoverAllHandlesWait();
+        // }
         peripheral.notifyFromServer("statusupdate", {
             status: error ? "disconnected" : "connected",
         });
@@ -7073,38 +7098,6 @@ class BleAttributeAbstract {
      */
     writeText(str, needResponse) {
         this.write(util_1.default.string2dataArray(str), needResponse);
-    }
-    /**
-     * @ignore
-     */
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
-    }
-    /**
-     * @ignore
-     */
-    writeWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data, needResponse);
-        });
     }
     /**
      * @ignore
@@ -7753,7 +7746,17 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      * @param data
      */
     writeWait(data) {
-        return super.writeWait(data);
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onwrite", (params) => {
+                if (params.result === "success") {
+                    resolve(true);
+                }
+                else {
+                    reject(new Error("writeWait failed"));
+                }
+            });
+            this.write(data);
+        });
     }
     /**
      * It reads data.
@@ -7768,7 +7771,17 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      * ```
      */
     readWait() {
-        return super.readWait();
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onread", (params) => {
+                if (params.result === "success") {
+                    resolve(params.data);
+                }
+                else {
+                    reject(new Error("readWait failed"));
+                }
+            });
+            this.read();
+        });
     }
 }
 exports.default = BleLocalValueAttributeAbstract;
@@ -7974,24 +7987,6 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         }
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
-    }
-    /**
-     * @ignore
-     */
-    discoverChildren() { }
-    /**
-     * @ignore
-     */
-    discoverChildrenWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this.children.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverChildren();
-        });
     }
     /**
      * @ignore
@@ -8322,10 +8317,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param needResponse
      */
     write(array, needResponse) {
-        if (needResponse === undefined) {
-            needResponse = true;
-        }
-        this.service.peripheral.obnizBle.centralBindings.write(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(array), !needResponse);
+        this.writeWait(array, needResponse); // background
     }
     /**
      * This writes dataArray to the characteristic.
@@ -8353,8 +8345,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param data
      * @param needResponse
      */
-    writeWait(data, needResponse) {
-        return super.writeWait(data, needResponse);
+    async writeWait(data, needResponse) {
+        if (needResponse === undefined) {
+            needResponse = true;
+        }
+        await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
     }
     /**
      * It reads data from the characteristic.
@@ -8385,18 +8380,6 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         return Array.from(buf);
     }
     /**
-     * @ignore
-     */
-    discoverChildren() {
-        this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(this.service.peripheral.address, this.service.uuid, this.uuid);
-    }
-    /**
-     * @ignore
-     */
-    discoverAllDescriptors() {
-        return this.discoverChildren();
-    }
-    /**
      * Discover services.
      *
      * If connect setting param 'autoDiscovery' is true(default),
@@ -8423,8 +8406,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * obniz.ble.scan.start();
      * ```
      */
-    discoverAllDescriptorsWait() {
-        return this.discoverChildrenWait();
+    async discoverAllDescriptorsWait() {
+        await this.service.peripheral.obnizBle.centralBindings.discoverDescriptorsWait(this.service.peripheral.address, this.service.uuid, this.uuid);
+        return this.descriptors.filter((elm) => {
+            return elm.discoverdOnRemote;
+        });
     }
     /**
      * @ignore
@@ -8578,7 +8564,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      *
      */
     read() {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
+        this.readWait(); // background
     }
     /**
      * Read data from descriptor.
@@ -8605,8 +8591,9 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * ```
      *
      */
-    readWait() {
-        return super.readWait();
+    async readWait() {
+        const data = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
+        return Array.from(data);
     }
     /**
      * This writes dataArray to descriptor.
@@ -8632,7 +8619,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * @param data
      */
     write(data) {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
+        this.writeWait(data); // background
     }
     /**
      * This writes dataArray to descriptor.
@@ -8658,10 +8645,9 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * ```
      *
      * @param data
-     * @param needResponse
      */
-    writeWait(data, needResponse) {
-        return super.writeWait(data, needResponse);
+    async writeWait(data) {
+        await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
     }
 }
 exports.default = BleRemoteDescriptor;
@@ -8793,12 +8779,7 @@ class BleRemotePeripheral {
      * obniz.ble.scan.start();
      * ```
      */
-    connect(setting) {
-        this._connectSetting = setting || {};
-        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
-        this.obnizBle.scan.end();
-        this.obnizBle.centralBindings.connect(this.address);
-    }
+    connect(setting) { }
     /**
      * This connects obniz to the peripheral.
      * If ble scannning is undergoing, scan will be terminated immidiately.
@@ -8829,22 +8810,19 @@ class BleRemotePeripheral {
      * ```
      *
      */
-    connectWait(setting) {
-        return new Promise((resolve, reject) => {
-            // if (this.connected) {
-            //   resolve();
-            //   return;
-            // }
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "connected") {
-                    resolve(true); // for compatibility
-                }
-                else {
-                    reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
-                }
-            });
-            this.connect(setting);
-        });
+    async connectWait(setting) {
+        this._connectSetting = setting || {};
+        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+        this.obnizBle.scan.end();
+        const p1 = this.obnizBle.centralBindings.connectWait(this.address);
+        const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", () => {
+            reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+        }));
+        await Promise.race([p1, p2]);
+        console.warn("connected");
+        if (this._connectSetting.autoDiscovery) {
+            await this.discoverAllHandlesWait();
+        }
     }
     /**
      * This disconnects obniz from peripheral.
@@ -9041,6 +9019,7 @@ class BleRemotePeripheral {
      * @ignore
      */
     async discoverAllHandlesWait() {
+        console.warn("discoverAllHandlesWait");
         const ArrayFlat = (array, depth) => {
             const flattend = [];
             (function flat(_array, _depth) {
@@ -9055,9 +9034,12 @@ class BleRemotePeripheral {
             })(array, Math.floor(depth) || 1);
             return flattend;
         };
+        console.warn("discoverAllServicesWait");
         const services = await this.discoverAllServicesWait();
+        console.warn("discoverAllCharacteristicsWait");
         const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
         const chars = ArrayFlat(charsNest);
+        console.warn("discoverAllDescriptorsWait");
         const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
         // eslint-disable-next-line no-unused-vars
         const descriptors = ArrayFlat(descriptorsNest);
@@ -9076,12 +9058,14 @@ class BleRemotePeripheral {
                     if (this.onconnect) {
                         this.onconnect();
                     }
+                    this.emitter.emit("connect");
                 }
                 if (params.status === "disconnected") {
                     this.connected = false;
                     if (this.ondisconnect) {
                         this.ondisconnect();
                     }
+                    this.emitter.emit("disconnect");
                 }
                 break;
             }
@@ -9315,7 +9299,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     discoverAllCharacteristics() {
-        return this.discoverChildren();
+        this.discoverAllCharacteristicsWait(); // background
     }
     /**
      * Discover services.
@@ -9413,12 +9397,6 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      */
     writeText(str, needResponse) {
         return super.writeText(str, needResponse);
-    }
-    readWait() {
-        return super.readWait();
-    }
-    writeWait(data, needResponse) {
-        return super.writeWait(data, needResponse);
     }
     /**
      * Wrapper for [[writeWait]] with data converting from text.
@@ -10404,12 +10382,13 @@ class NobleBindings extends events_1.default.EventEmitter {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    connect(peripheralUuid) {
+    async connectWait(peripheralUuid) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         if (!this._pendingConnectionUuid) {
             this._pendingConnectionUuid = peripheralUuid;
-            this._hci.createLeConn(address, addressType);
+            const result = await this._hci.createLeConnWait(address, addressType);
+            await this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
         }
         else {
             this._connectionQueue.push(peripheralUuid);
@@ -10429,8 +10408,8 @@ class NobleBindings extends events_1.default.EventEmitter {
         this._gap.on("discover", this.onDiscover.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
         this._hci.on("addressChange", this.onAddressChange.bind(this));
-        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
+        // this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
+        // this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
         // this._hci.on("rssiRead", this.onRssiRead.bind(this));
         this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
@@ -10524,8 +10503,10 @@ class NobleBindings extends events_1.default.EventEmitter {
             this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
             this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
             this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
-            this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateRequest.bind(this));
+            this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
+            console.warn("exchangeMtuWait");
             await this._gatts[handle].exchangeMtuWait(256);
+            console.warn("exchangeMtuWait finish");
             // public onMtu(address: any, mtu?: any) {}
         }
         else {
@@ -10535,20 +10516,18 @@ class NobleBindings extends events_1.default.EventEmitter {
             statusMessage = statusMessage + errorCode;
             error = new Error(statusMessage);
         }
+        console.warn("emit connect");
         this.emit("connect", uuid, error);
         if (this._connectionQueue.length > 0) {
             const peripheralUuid = this._connectionQueue.shift();
             address = this._addresses[peripheralUuid];
             addressType = this._addresseTypes[peripheralUuid];
             this._pendingConnectionUuid = peripheralUuid;
-            this._hci.createLeConn(address, addressType);
+            this._hci.createLeConnWait(address, addressType); // background
         }
         else {
             this._pendingConnectionUuid = null;
         }
-    }
-    onLeConnUpdateComplete(handle, interval, latency, supervisionTimeout) {
-        // no-op
     }
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
@@ -10634,9 +10613,9 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("read", uuid, serviceUuid, characteristicUuid, data, false, isSuccess);
     }
-    write(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
+    async writeWait(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.write(serviceUuid, characteristicUuid, data, withoutResponse);
+        const resp = await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
     }
     onWrite(address, serviceUuid, characteristicUuid, isSuccess) {
         const uuid = address
@@ -10645,9 +10624,9 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("write", uuid, serviceUuid, characteristicUuid, isSuccess);
     }
-    broadcast(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
+    async broadcastWait(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.broadcast(serviceUuid, characteristicUuid, broadcast);
+        await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
     }
     onBroadcast(address, serviceUuid, characteristicUuid, state) {
         const uuid = address
@@ -10674,9 +10653,10 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("read", uuid, serviceUuid, characteristicUuid, data, true, true);
     }
-    discoverDescriptors(peripheralUuid, serviceUuid, characteristicUuid) {
+    async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.discoverDescriptors(serviceUuid, characteristicUuid);
+        const uuids = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
+        return uuids;
     }
     onDescriptorsDiscovered(address, serviceUuid, characteristicUuid, descriptorUuids) {
         const uuid = address
@@ -10685,9 +10665,10 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("descriptorsDiscover", uuid, serviceUuid, characteristicUuid, descriptorUuids);
     }
-    readValue(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
+    async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.readValue(serviceUuid, characteristicUuid, descriptorUuid);
+        const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
+        return resp;
     }
     onValueRead(address, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess) {
         const uuid = address
@@ -10696,9 +10677,9 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("valueRead", uuid, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess);
     }
-    writeValue(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
+    async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.writeValue(serviceUuid, characteristicUuid, descriptorUuid, data);
+        await gatt.writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data);
     }
     onValueWrite(address, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
         const uuid = address
@@ -10736,8 +10717,9 @@ class NobleBindings extends events_1.default.EventEmitter {
             .toLowerCase();
         this.emit("handleNotify", uuid, handle, data);
     }
-    onConnectionParameterUpdateRequest(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-        this._hci.connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    async onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+        await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+        // this.onLeConnUpdateComplete(); is nop
     }
     pairing(peripheralUuid, keys, callback) {
         const gatt = this.getGatt(peripheralUuid);
@@ -10854,7 +10836,7 @@ class Gap extends events_1.default.EventEmitter {
         this._scanFilterDuplicates = null;
         this._discoveries = {};
         this._hci.on("error", this.onHciError.bind(this));
-        this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
+        // this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
         this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
         this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
@@ -11392,6 +11374,7 @@ class Gatt extends events_1.default.EventEmitter {
     async discoverServicesWait(uuids) {
         const services = [];
         let startHandle = 0x0001;
+        console.warn(`discoverServicesWait ${startHandle} `);
         while (1) {
             const data = await this._execCommand(this.readByGroupRequest(startHandle, 0xffff, GATT.PRIM_SVC_UUID));
             const opcode = data[0];
@@ -11424,13 +11407,14 @@ class Gatt extends events_1.default.EventEmitter {
                     this._services[services[i].uuid] = services[i];
                 }
                 this.emit("servicesDiscover", this._address, serviceUuids);
+                console.warn(`discoverServicesWait ${startHandle} finish`);
                 return serviceUuids;
             }
             startHandle = services[services.length - 1].endHandle + 1;
         }
     }
     async discoverIncludedServicesWait(serviceUuid, uuids) {
-        const service = this._services[serviceUuid];
+        const service = this.getService(serviceUuid);
         const includedServices = [];
         let startHandle = service.startHandle;
         while (1) {
@@ -11471,7 +11455,7 @@ class Gatt extends events_1.default.EventEmitter {
         }
     }
     async discoverCharacteristicsWait(serviceUuid, characteristicUuids) {
-        const service = this._services[serviceUuid];
+        const service = this.getService(serviceUuid);
         const characteristics = [];
         this._characteristics[serviceUuid] = this._characteristics[serviceUuid] || {};
         this._descriptors[serviceUuid] = this._descriptors[serviceUuid] || {};
@@ -11581,91 +11565,49 @@ class Gatt extends events_1.default.EventEmitter {
             }
         }
     }
-    write(serviceUuid, characteristicUuid, data, withoutResponse) {
-        if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
-            this.emit("write", this._address, serviceUuid, characteristicUuid, false);
-            return;
-        }
-        const characteristic = this._characteristics[serviceUuid][characteristicUuid];
+    async writeWait(serviceUuid, characteristicUuid, data, withoutResponse) {
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
         if (withoutResponse) {
-            this._queueCommand(this.writeRequest(characteristic.valueHandle, data, true), null, () => {
-                this.emit("write", this._address, serviceUuid, characteristicUuid);
-            });
+            await this._execNoRespCommand(this.writeRequest(characteristic.valueHandle, data, true));
         }
         else if (data.length + 3 > this._mtu) {
-            return this.longWrite(serviceUuid, characteristicUuid, data, withoutResponse);
+            await this.longWriteWait(serviceUuid, characteristicUuid, data, withoutResponse);
         }
         else {
-            this._queueCommand(this.writeRequest(characteristic.valueHandle, data, false), (_data) => {
-                const opcode = _data[0];
-                if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
-                    this.emit("write", this._address, serviceUuid, characteristicUuid, opcode === ATT.OP_WRITE_RESP);
-                }
-            });
-        }
-    }
-    /* Perform a "long write" as described Bluetooth Spec section 4.9.4 "Write Long Characteristic Values" */
-    longWrite(serviceUuid, characteristicUuid, data, withoutResponse) {
-        const characteristic = this._characteristics[serviceUuid][characteristicUuid];
-        const limit = this._mtu - 5;
-        const prepareWriteCallback = (data_chunk) => {
-            return (resp) => {
-                const opcode = resp[0];
-                if (opcode !== ATT.OP_PREPARE_WRITE_RESP) {
-                    debug(this._address + ": unexpected reply opcode %d (expecting ATT.OP_PREPARE_WRITE_RESP)", opcode);
-                }
-                else {
-                    const expected_length = data_chunk.length + 5;
-                    if (resp.length !== expected_length) {
-                        /* the response should contain the data packet echoed back to the caller */
-                        debug(this._address + ": unexpected prepareWriteResponse length %d (expecting %d)", resp.length, expected_length);
-                    }
-                }
-            };
-        };
-        /* split into prepare-write chunks and queue them */
-        let offset = 0;
-        while (offset < data.length) {
-            const end = offset + limit;
-            const chunk = data.slice(offset, end);
-            this._queueCommand(this.prepareWriteRequest(characteristic.valueHandle, offset, chunk), prepareWriteCallback(chunk));
-            offset = end;
-        }
-        /* queue the execute command with a callback to emit the write signal when done */
-        this._queueCommand(this.executeWriteRequest(characteristic.valueHandle), (resp) => {
-            const opcode = resp[0];
-            if (opcode === ATT.OP_EXECUTE_WRITE_RESP && !withoutResponse) {
-                this.emit("write", this._address, serviceUuid, characteristicUuid);
+            const _data = await this._execCommand(this.writeRequest(characteristic.valueHandle, data, false));
+            const opcode = _data[0];
+            if (opcode !== ATT.OP_WRITE_RESP) {
             }
-        });
+        }
+        this.emit("write", this._address, serviceUuid, characteristicUuid);
     }
-    broadcast(serviceUuid, characteristicUuid, broadcast) {
-        const characteristic = this._characteristics[serviceUuid][characteristicUuid];
-        this._queueCommand(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.SERVER_CHARAC_CFG_UUID), (data) => {
-            const opcode = data[0];
-            if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
-                // let type = data[1];
-                const handle = data.readUInt16LE(2);
-                let value = data.readUInt16LE(4);
-                if (broadcast) {
-                    value |= 0x0001;
-                }
-                else {
-                    value &= 0xfffe;
-                }
-                const valueBuffer = Buffer.alloc(2);
-                valueBuffer.writeUInt16LE(value, 0);
-                this._queueCommand(this.writeRequest(handle, valueBuffer, false), (_data) => {
-                    const _opcode = _data[0];
-                    if (_opcode === ATT.OP_WRITE_RESP) {
-                        this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
-                    }
-                });
+    async broadcastWait(serviceUuid, characteristicUuid, broadcast) {
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+        const data = await this._execCommand(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.SERVER_CHARAC_CFG_UUID));
+        const opcode = data[0];
+        if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
+            // let type = data[1];
+            const handle = data.readUInt16LE(2);
+            let value = data.readUInt16LE(4);
+            if (broadcast) {
+                value |= 0x0001;
             }
-        });
+            else {
+                value &= 0xfffe;
+            }
+            const valueBuffer = Buffer.alloc(2);
+            valueBuffer.writeUInt16LE(value, 0);
+            const _data = await this._execCommand(this.writeRequest(handle, valueBuffer, false));
+            const _opcode = _data[0];
+            if (_opcode === ATT.OP_WRITE_RESP) {
+                this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
+                return;
+            }
+        }
+        throw new ObnizError_1.ObnizBleOpError();
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
-        const characteristic = this._characteristics[serviceUuid][characteristicUuid];
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
         const data = await this._execCommand(this.readByTypeRequest(characteristic.startHandle, characteristic.endHandle, GATT.CLIENT_CHARAC_CFG_UUID));
         const opcode = data[0];
         if (opcode === ATT.OP_READ_BY_TYPE_RESP) {
@@ -11702,11 +11644,13 @@ class Gatt extends events_1.default.EventEmitter {
         }
         throw new ObnizError_1.ObnizBleOpError();
     }
-    discoverDescriptors(serviceUuid, characteristicUuid) {
-        const characteristic = this._characteristics[serviceUuid][characteristicUuid];
+    async discoverDescriptorsWait(serviceUuid, characteristicUuid) {
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
         const descriptors = [];
         this._descriptors[serviceUuid][characteristicUuid] = {};
-        const callback = (data) => {
+        let startHandle = characteristic.valueHandle + 1;
+        while (1) {
+            const data = await this._execCommand(this.findInfoRequest(startHandle, characteristic.endHandle));
             const opcode = data[0];
             let i = 0;
             if (opcode === ATT.OP_FIND_INFO_RESP) {
@@ -11725,50 +11669,39 @@ class Gatt extends events_1.default.EventEmitter {
                     this._descriptors[serviceUuid][characteristicUuid][descriptors[i].uuid] = descriptors[i];
                 }
                 this.emit("descriptorsDiscover", this._address, serviceUuid, characteristicUuid, descriptorUuids);
+                return descriptorUuids;
             }
-            else {
-                this._queueCommand(this.findInfoRequest(descriptors[descriptors.length - 1].handle + 1, characteristic.endHandle), callback);
-            }
-        };
-        this._queueCommand(this.findInfoRequest(characteristic.valueHandle + 1, characteristic.endHandle), callback);
+            startHandle = descriptors[descriptors.length - 1].handle + 1;
+        }
     }
-    readValue(serviceUuid, characteristicUuid, descriptorUuid) {
-        if (!this._descriptors[serviceUuid] ||
-            !this._descriptors[serviceUuid][characteristicUuid] ||
-            !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]) {
-            this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, Buffer.alloc(0), false);
+    async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
+        const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
+        const data = await this._execCommand(this.readRequest(descriptor.handle));
+        const opcode = data[0];
+        if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_ERROR) {
+            this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1), opcode === ATT.OP_READ_RESP);
+            return data.slice(1);
+        }
+        throw new ObnizError_1.ObnizBleOpError();
+    }
+    async writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data) {
+        const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
+        const _data = await this._execCommand(this.writeRequest(descriptor.handle, data, false));
+        const opcode = _data[0];
+        if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
+            this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, opcode === ATT.OP_WRITE_RESP);
             return;
         }
-        const descriptor = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
-        this._queueCommand(this.readRequest(descriptor.handle), (data) => {
-            const opcode = data[0];
-            if (opcode === ATT.OP_READ_RESP || opcode === ATT.OP_ERROR) {
-                this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1), opcode === ATT.OP_READ_RESP);
-            }
-        });
+        throw new ObnizError_1.ObnizBleOpError();
     }
-    writeValue(serviceUuid, characteristicUuid, descriptorUuid, data) {
-        if (!this._descriptors[serviceUuid] ||
-            !this._descriptors[serviceUuid][characteristicUuid] ||
-            !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]) {
-            this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, false);
-            return;
+    async readHandle(handle) {
+        const data = await this._execCommand(this.readRequest(handle));
+        const opcode = data[0];
+        if (opcode === ATT.OP_READ_RESP) {
+            this.emit("handleRead", this._address, handle, data.slice(1));
+            return data.slice(1);
         }
-        const descriptor = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
-        this._queueCommand(this.writeRequest(descriptor.handle, data, false), (_data) => {
-            const opcode = _data[0];
-            if (opcode === ATT.OP_WRITE_RESP || opcode === ATT.OP_ERROR) {
-                this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, opcode === ATT.OP_WRITE_RESP);
-            }
-        });
-    }
-    readHandle(handle) {
-        this._queueCommand(this.readRequest(handle), (data) => {
-            const opcode = data[0];
-            if (opcode === ATT.OP_READ_RESP) {
-                this.emit("handleRead", this._address, handle, data.slice(1));
-            }
-        });
+        throw new ObnizError_1.ObnizBleOpError();
     }
     async writeHandleWait(handle, data, withoutResponse) {
         if (withoutResponse) {
@@ -11783,11 +11716,56 @@ class Gatt extends events_1.default.EventEmitter {
             }
         }
     }
+    /* Perform a "long write" as described Bluetooth Spec section 4.9.4 "Write Long Characteristic Values" */
+    async longWriteWait(serviceUuid, characteristicUuid, data, withoutResponse) {
+        const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
+        const limit = this._mtu - 5;
+        /* split into prepare-write chunks and queue them */
+        let offset = 0;
+        while (offset < data.length) {
+            const end = offset + limit;
+            const chunk = data.slice(offset, end);
+            const _resp = await this._execCommand(this.prepareWriteRequest(characteristic.valueHandle, offset, chunk));
+            const _opcode = _resp[0];
+            if (_opcode !== ATT.OP_PREPARE_WRITE_RESP) {
+                throw new Error(": unexpected reply opcode " + _opcode + " (expecting ATT.OP_PREPARE_WRITE_RESP)");
+            }
+            else {
+                const expected_length = chunk.length + 5;
+                if (_resp.length !== expected_length) {
+                    /* the response should contain the data packet echoed back to the caller */
+                    throw new Error(`unexpected prepareWriteResponse length ${_resp.length} (expecting ${expected_length})`);
+                }
+            }
+            offset = end;
+        }
+        /* queue the execute command with a callback to emit the write signal when done */
+        const resp = await this._execCommand(this.executeWriteRequest(characteristic.valueHandle));
+        const opcode = resp[0];
+        if (opcode === ATT.OP_EXECUTE_WRITE_RESP && !withoutResponse) {
+            return;
+        }
+        throw new ObnizError_1.ObnizBleOpError();
+    }
+    getService(serviceUuid) {
+        if (!this._services[serviceUuid]) {
+            throw new ObnizError_1.ObnizBleUnknownServiceError(this._address, serviceUuid);
+        }
+        return this._services[serviceUuid];
+    }
     getCharacteristic(serviceUuid, characteristicUuid) {
         if (!this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]) {
             throw new ObnizError_1.ObnizBleUnknownCharacteristicError(this._address, serviceUuid, characteristicUuid);
         }
         return this._characteristics[serviceUuid][characteristicUuid];
+    }
+    getDescriptor(serviceUuid, characteristicUuid, descriptorUuid) {
+        if (!this._descriptors[serviceUuid] ||
+            !this._descriptors[serviceUuid][characteristicUuid] ||
+            !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]) {
+            throw new ObnizError_1.ObnizBleUnknownDescriptorError(this._address, serviceUuid, characteristicUuid, descriptorUuid);
+        }
+        return this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
     }
     _queueCommand(buffer, callback, writeCallback) {
         this._commandQueue.push({
@@ -12351,7 +12329,7 @@ class Hci extends events.EventEmitter {
         this.emit("leScanEnableSet", data.status);
         return data.status;
     }
-    createLeConn(address, addressType) {
+    async createLeConnWait(address, addressType) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -12376,8 +12354,12 @@ class Hci extends events.EventEmitter {
         cmd.writeUInt16LE(0x0006, 27); // max ce length
         debug("create le conn - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
+        console.warn("readLeMetaEventWait");
+        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+        console.warn("readLeMetaEventWait finish");
+        return this.processLeConnComplete(status, data);
     }
-    connUpdateLe(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+    async connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         const cmd = Buffer.alloc(18);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -12394,6 +12376,8 @@ class Hci extends events.EventEmitter {
         cmd.writeUInt16LE(0x0000, 16); // max ce length
         debug("conn update le - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
+        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
+        return this.processLeConnUpdateComplete(status, data);
     }
     startLeEncryption(handle, random, diversifier, key) {
         const cmd = Buffer.alloc(32);
@@ -12778,14 +12762,8 @@ class Hci extends events.EventEmitter {
         }
     }
     processLeMetaEvent(eventType, status, data) {
-        if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-            this.processLeConnComplete(status, data);
-        }
-        else if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
+        if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
             this.processLeAdvertisingReport(status, data);
-        }
-        else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
-            this.processLeConnUpdateComplete(status, data);
         }
     }
     processLeConnComplete(status, data) {
@@ -12812,6 +12790,17 @@ class Hci extends events.EventEmitter {
         debug("\t\t\tmaster clock accuracy = " + masterClockAccuracy);
         this._handleAclsInProgress[handle] = 0;
         this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+        return {
+            status,
+            handle,
+            role,
+            addressType,
+            address,
+            interval,
+            latency,
+            supervisionTimeout,
+            masterClockAccuracy,
+        };
     }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
@@ -12845,6 +12834,7 @@ class Hci extends events.EventEmitter {
         debug("\t\t\tlatency = " + latency);
         debug("\t\t\tsupervision timeout = " + supervisionTimeout);
         this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
+        return { status, handle, interval, latency, supervisionTimeout };
     }
     processCmdStatusEvent(cmd, status) {
         if (cmd === COMMANDS.LE_CREATE_CONN_CMD) {
@@ -12877,6 +12867,17 @@ class Hci extends events.EventEmitter {
             this.aclStreamObservers[handle][cid] = this.aclStreamObservers[handle][cid] || [];
             this.aclStreamObservers[handle][cid].push(resolve);
         });
+    }
+    async readLeMetaEventWait(eventType) {
+        const filter = this.createLeMetaEventFilter(eventType);
+        const data = await this._obnizHci.readWait(filter);
+        const type = data.readUInt8(3);
+        const status = data.readUInt8(4);
+        const _data = data.slice(5);
+        return { type, status, data: _data };
+    }
+    createLeMetaEventFilter(eventType) {
+        return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_LE_META_EVENT, -1, eventType];
     }
     async readCmdCompleteEventWait(requestCmd, additionalResultFilter) {
         additionalResultFilter = additionalResultFilter || [];
