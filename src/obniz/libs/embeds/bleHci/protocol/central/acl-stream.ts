@@ -48,19 +48,19 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._smp.on("end", this.onSmpEndBinded);
   }
 
-  public encrypt(keys?: any) {
-    if (keys && keys.stk) {
+  public encrypt(options?: any) {
+    if (options && options.keys && options.keys.stk) {
       console.error("skip pairing");
 
-      this._smp._preq = keys.preq;
-      this._smp._pres = keys.pres;
-      this._smp._tk = keys.tk;
-      this._smp._r = keys.r;
-      this._smp._pcnf = keys.pcnf;
+      this._smp._preq = options.keys.preq;
+      this._smp._pres = options.keys.pres;
+      this._smp._tk = options.keys.tk;
+      this._smp._r = options.keys.r;
+      this._smp._pcnf = options.keys.pcnf;
 
-      this.onSmpStk(keys.stk);
+      this.onSmpStk(options.keys.stk);
     } else {
-      this._smp.sendPairingRequest();
+      this._smp.sendPairingRequest(options);
     }
   }
 
@@ -96,4 +96,6 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._smp.removeListener("fail", this.onSmpFailBinded);
     this._smp.removeListener("end", this.onSmpEndBinded);
   }
+
+  public startEncrypt(option: any) {}
 }

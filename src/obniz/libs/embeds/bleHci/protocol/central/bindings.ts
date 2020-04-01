@@ -548,9 +548,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     // this.onLeConnUpdateComplete(); is nop
   }
 
-  public pairing(peripheralUuid: any, keys?: any, callback?: any) {
+  public pairing(peripheralUuid: any, options?: any, callback?: any) {
+    options = options || {};
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    gatt.encrypt(callback, keys);
+    gatt.encrypt(callback, options);
   }
 
   private getGatt(peripheralUuid: any): Gatt {

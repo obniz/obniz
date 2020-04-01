@@ -6,6 +6,8 @@
 
 import EventEmitter from "eventemitter3";
 
+const readline = require("readline");
+import { networkInterfaces } from "os";
 import { BleDeviceAddress, BleDeviceAddressType } from "../../bleTypes";
 import AclStream from "./acl-stream";
 import crypto from "./crypto";
@@ -22,6 +24,7 @@ namespace SMP {
   export const PAIRING_FAILED: any = 0x05;
   export const ENCRYPT_INFO: any = 0x06;
   export const MASTER_IDENT: any = 0x07;
+  export const SMP_SECURITY_REQUEST: any = 0x0b;
 }
 
 type SmpEventTypes = "masterIdent" | "ltk" | "fail" | "stk" | "end";
@@ -43,6 +46,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
   public _r: any;
   public _pcnf: any;
   public _stk: any = null;
+  private _options: any = null;
 
   constructor(
     aclStream: AclStream,
@@ -78,16 +82,30 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this._aclStream.on("end", this.onAclStreamEndBinded);
   }
 
-  public sendPairingRequest() {
-    this._preq = Buffer.from([
-      SMP.PAIRING_REQUEST,
-      0x03, // IO capability: NoInputNoOutput
-      0x00, // OOB data: Authentication data not present
-      0x01, // Authentication requirement: Bonding - No MITM
-      0x10, // Max encryption key size
-      0x00, // Initiator key distribution: <none>
-      0x01, // Responder key distribution: EncKey
-    ]);
+  public sendPairingRequest(options?: any) {
+    this._options = options;
+
+    if (this.isPasskeyMode()) {
+      this._preq = Buffer.from([
+        SMP.PAIRING_REQUEST,
+        0x02, // IO capability: Keyboard
+        0x00, // OOB data: Authentication data not present
+        0x05, // Authentication requirement: Bonding - MITM
+        0x10, // Max encryption key size
+        0x00, // Initiator key distribution: <none>
+        0x01, // Responder key distribution: EncKey
+      ]);
+    } else {
+      this._preq = Buffer.from([
+        SMP.PAIRING_REQUEST,
+        0x03, // IO capability: NoInputNoOutput
+        0x00, // OOB data: Authentication data not present
+        0x01, // Authentication requirement: Bonding - No MITM
+        0x10, // Max encryption key size
+        0x00, // Initiator key distribution: <none>
+        0x01, // Responder key distribution: EncKey
+      ]);
+    }
 
     this.write(this._preq);
   }
@@ -99,6 +117,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
     const code: any = data.readUInt8(0);
 
+    console.warn("pairing " + code);
     if (SMP.PAIRING_RESPONSE === code) {
       this.handlePairingResponse(data);
     } else if (SMP.PAIRING_CONFIRM === code) {
@@ -111,6 +130,10 @@ class Smp extends EventEmitter<SmpEventTypes> {
       this.handleEncryptInfo(data);
     } else if (SMP.MASTER_IDENT === code) {
       this.handleMasterIdent(data);
+    } else if (SMP.SMP_SECURITY_REQUEST === code) {
+      this.handleSecurityRequest(data);
+    } else {
+      throw new Error();
     }
   }
 
@@ -121,10 +144,24 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this.emit("end");
   }
 
-  public handlePairingResponse(data: any) {
+  public async handlePairingResponse(data: any) {
     this._pres = data;
 
-    this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+    if (this.isPasskeyMode()) {
+      let passkeyNumber = 0;
+      try {
+        passkeyNumber = await this._options.passkeyCallback();
+      } catch {}
+      const passkey = new Array(16);
+      for (let i = 0; i < 3; i++) {
+        passkey[i] = (passkeyNumber >> (i * 8)) & 0xff;
+      }
+
+      this._tk = Buffer.from(passkey);
+    } else {
+      this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+    }
+
     this._r = crypto.r();
 
     this.write(
@@ -182,6 +219,17 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   public write(data: any) {
     this._aclStream.write(SMP.CID, data);
+  }
+
+  public handleSecurityRequest(data: any) {
+    this.sendPairingRequest();
+  }
+
+  private isPasskeyMode() {
+    if (this._options && this._options.passkey === true && this._options.passkeyCallback) {
+      return true;
+    }
+    return false;
   }
 }
 

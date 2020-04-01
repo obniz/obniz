@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
+const readline = require("readline");
 const crypto_1 = __importDefault(require("./crypto"));
 /**
  * @ignore
@@ -23,6 +24,7 @@ var SMP;
     SMP.PAIRING_FAILED = 0x05;
     SMP.ENCRYPT_INFO = 0x06;
     SMP.MASTER_IDENT = 0x07;
+    SMP.SMP_SECURITY_REQUEST = 0x0b;
 })(SMP || (SMP = {}));
 /**
  * @ignore
@@ -31,6 +33,7 @@ class Smp extends eventemitter3_1.default {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._stk = null;
+        this._options = null;
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(localAddress
@@ -47,16 +50,30 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.on("data", this.onAclStreamDataBinded);
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
-    sendPairingRequest() {
-        this._preq = Buffer.from([
-            SMP.PAIRING_REQUEST,
-            0x03,
-            0x00,
-            0x01,
-            0x10,
-            0x00,
-            0x01,
-        ]);
+    sendPairingRequest(options) {
+        this._options = options;
+        if (this.isPasskeyMode()) {
+            this._preq = Buffer.from([
+                SMP.PAIRING_REQUEST,
+                0x02,
+                0x00,
+                0x05,
+                0x10,
+                0x00,
+                0x01,
+            ]);
+        }
+        else {
+            this._preq = Buffer.from([
+                SMP.PAIRING_REQUEST,
+                0x03,
+                0x00,
+                0x01,
+                0x10,
+                0x00,
+                0x01,
+            ]);
+        }
         this.write(this._preq);
     }
     onAclStreamData(cid, data) {
@@ -64,6 +81,7 @@ class Smp extends eventemitter3_1.default {
             return;
         }
         const code = data.readUInt8(0);
+        console.warn("pairing " + code);
         if (SMP.PAIRING_RESPONSE === code) {
             this.handlePairingResponse(data);
         }
@@ -82,15 +100,35 @@ class Smp extends eventemitter3_1.default {
         else if (SMP.MASTER_IDENT === code) {
             this.handleMasterIdent(data);
         }
+        else if (SMP.SMP_SECURITY_REQUEST === code) {
+            this.handleSecurityRequest(data);
+        }
+        else {
+            throw new Error();
+        }
     }
     onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
         this._aclStream.removeListener("end", this.onAclStreamEndBinded);
         this.emit("end");
     }
-    handlePairingResponse(data) {
+    async handlePairingResponse(data) {
         this._pres = data;
-        this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+        if (this.isPasskeyMode()) {
+            let passkeyNumber = 0;
+            try {
+                passkeyNumber = await this._options.passkeyCallback();
+            }
+            catch (_a) { }
+            const passkey = new Array(16);
+            for (let i = 0; i < 3; i++) {
+                passkey[i] = (passkeyNumber >> (i * 8)) & 0xff;
+            }
+            this._tk = Buffer.from(passkey);
+        }
+        else {
+            this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+        }
         this._r = crypto_1.default.r();
         this.write(Buffer.concat([
             Buffer.from([SMP.PAIRING_CONFIRM]),
@@ -133,6 +171,15 @@ class Smp extends eventemitter3_1.default {
     }
     write(data) {
         this._aclStream.write(SMP.CID, data);
+    }
+    handleSecurityRequest(data) {
+        this.sendPairingRequest();
+    }
+    isPasskeyMode() {
+        if (this._options && this._options.passkey === true && this._options.passkeyCallback) {
+            return true;
+        }
+        return false;
     }
 }
 exports.default = Smp;

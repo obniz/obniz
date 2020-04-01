@@ -166,10 +166,10 @@ class Gatt extends eventemitter3_1.default {
             }
         }
     }
-    encrypt(callback, keys) {
+    encrypt(callback, options) {
         this._commandQueue.push({
             type: "encrypt",
-            keys,
+            options,
             callback,
         });
         this._runQueueCommand();
@@ -683,7 +683,7 @@ class Gatt extends eventemitter3_1.default {
             while (this._commandQueue.length) {
                 this._currentCommand = this._commandQueue.shift();
                 if (this._currentCommand.type === "encrypt") {
-                    this._aclStream.encrypt(this._currentCommand.keys);
+                    this._aclStream.encrypt(this._currentCommand.options);
                 }
                 else {
                     this.writeAtt(this._currentCommand.buffer);

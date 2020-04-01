@@ -366,9 +366,10 @@ class NobleBindings extends eventemitter3_1.default {
         await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
         // this.onLeConnUpdateComplete(); is nop
     }
-    pairing(peripheralUuid, keys, callback) {
+    pairing(peripheralUuid, options, callback) {
+        options = options || {};
         const gatt = this.getGatt(peripheralUuid);
-        gatt.encrypt(callback, keys);
+        gatt.encrypt(callback, options);
     }
     getGatt(peripheralUuid) {
         const handle = this._handles[peripheralUuid];
