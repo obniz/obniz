@@ -106,9 +106,6 @@ type HciEventTypes =
 
   // common
   | "stateChange"
-  | "rssiRead" // mode:central is not use
-  | "readLocalVersion"
-  | "addressChange"
   | "leConnUpdateComplete"
   | "leConnComplete"
   | "disconnComplete"
@@ -236,7 +233,6 @@ class Hci extends EventEmitter<HciEventTypes> {
       this.emit("stateChange", "poweredOn");
     }
 
-    this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
     return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
   }
 
@@ -263,7 +259,6 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     debug("address = " + this.address);
 
-    this.emit("addressChange", this.address);
     return this.address;
   }
 
@@ -505,7 +500,6 @@ class Hci extends EventEmitter<HciEventTypes> {
     debug("\t\t\thandle = " + handle);
     debug("\t\t\trssi = " + rssi);
 
-    this.emit("rssiRead", handle, rssi);
     return rssi;
   }
 

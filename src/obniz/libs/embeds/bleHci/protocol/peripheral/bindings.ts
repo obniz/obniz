@@ -18,17 +18,7 @@ import AclStream from "./acl-stream";
 import Gap from "./gap";
 import Gatt from "./gatt";
 
-type BlenoBindingsEventType =
-  | "servicesSet"
-  | "rssiUpdate"
-  | "platform"
-  | "stateChange"
-  | "mtuChange"
-  | "accept"
-  | "disconnect"
-  | "advertisingStop"
-  | "addressChange"
-  | "advertisingStart";
+type BlenoBindingsEventType = "stateChange" | "mtuChange" | "accept" | "disconnect";
 
 /**
  * @ignore
@@ -82,10 +72,8 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     await this._gap.stopAdvertisingWait();
   }
 
-  public setServices(services: any) {
+  public async setServices(services: any) {
     this._gatt.setServices(services);
-
-    this.emit("servicesSet");
   }
 
   public disconnect() {
@@ -99,31 +87,22 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   public async updateRssiWait(): Promise<number | null> {
     if (this._handle) {
       const rssi = await this._hci.readRssiWait(this._handle);
-      this.emit("rssiUpdate", rssi);
       return rssi;
     }
     return null;
   }
 
   public init() {
-    this._gap.on("advertisingStart", this.onAdvertisingStart.bind(this));
-    this._gap.on("advertisingStop", this.onAdvertisingStop.bind(this));
-
     this._gatt.on("mtuChange", this.onMtuChange.bind(this));
 
     this._hci.on("stateChange", this.onStateChange.bind(this));
-    this._hci.on("addressChange", this.onAddressChange.bind(this));
-    this._hci.on("readLocalVersion", this.onReadLocalVersion.bind(this));
-
     this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
     this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-    this._hci.on("rssiRead", this.onRssiRead.bind(this));
+
     this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
     this._hci.on("encryptChange", this.onEncryptChange.bind(this));
     this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
     this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
-
-    this.emit("platform", os.platform());
   }
 
   public onStateChange(state: any) {
@@ -143,20 +122,6 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     }
 
     this.emit("stateChange", state);
-  }
-
-  public onAddressChange(address: any) {
-    this.emit("addressChange", address);
-  }
-
-  public onReadLocalVersion(hciVer: any, hciRev?: any, lmpVer?: any, manufacturer?: any, lmpSubVer?: any) {}
-
-  public onAdvertisingStart(error: any) {
-    this.emit("advertisingStart", error);
-  }
-
-  public onAdvertisingStop() {
-    this.emit("advertisingStop");
   }
 
   public onLeConnComplete(
@@ -224,10 +189,6 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
 
   public onMtuChange(mtu: any) {
     this.emit("mtuChange", mtu);
-  }
-
-  public onRssiRead(handle: any, rssi?: any) {
-    this.emit("rssiUpdate", rssi);
   }
 
   public onAclDataPkt(handle: Handle, cid?: any, data?: any) {

@@ -69,10 +69,6 @@ class NobleBindings extends eventemitter3_1.default {
         this._gap.on("scanStop", this.onScanStop.bind(this));
         this._gap.on("discover", this.onDiscover.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("addressChange", this.onAddressChange.bind(this));
-        // this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        // this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        // this._hci.on("rssiRead", this.onRssiRead.bind(this));
         this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
@@ -93,9 +89,6 @@ class NobleBindings extends eventemitter3_1.default {
             console.log("               [sudo] NOBLE_HCI_DEVICE_ID=x node ...");
         }
         this.emit("stateChange", state);
-    }
-    onAddressChange(address) {
-        this.emit("addressChange", address);
     }
     onScanStart(filterDuplicates) {
         this.emit("scanStart", filterDuplicates);

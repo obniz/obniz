@@ -12,7 +12,7 @@ const debug: any = () => {};
 import EventEmitter from "eventemitter3";
 import Hci from "../hci";
 
-type GapEventTypes = "advertisingStart" | "advertisingStop";
+type GapEventTypes = "";
 
 /**
  * @ignore
@@ -164,30 +164,23 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     this._advertiseState = "starting";
 
-    const p1 = this._hci.setScanResponseDataWait(scanData); // background
-    const p2 = this._hci.setAdvertisingDataWait(advertisementData); // background
+    const p1 = this._hci.setScanResponseDataWait(scanData);
+    const p2 = this._hci.setAdvertisingDataWait(advertisementData);
     await Promise.all([p1, p2]);
-    const p3 = this._hci.setAdvertiseEnableWait(true); // background
-    const p4 = this._hci.setScanResponseDataWait(scanData); // background
-    const p5 = this._hci.setAdvertisingDataWait(advertisementData); // background
+    const p3 = this._hci.setAdvertiseEnableWait(true);
+    const p4 = this._hci.setScanResponseDataWait(scanData);
+    const p5 = this._hci.setAdvertisingDataWait(advertisementData);
     await Promise.all([p3, p4, p5]);
 
     const status = await p3;
 
     if (this._advertiseState === "starting") {
       this._advertiseState = "started";
-
-      let error: any = null;
-
       if (status) {
-        error = new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+        throw new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
       }
-
-      this.emit("advertisingStart", error);
     } else if (this._advertiseState === "stopping") {
       this._advertiseState = "stopped";
-
-      this.emit("advertisingStop");
     }
   }
 

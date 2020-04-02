@@ -192,7 +192,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return null;
     }
-    onAddressChange() { }
     onScanStart() { }
     onScanStop() {
         this.scan.notifyFromServer("onfinish", null);
@@ -335,21 +334,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     onPeripheralStateChange(state) {
         // console.error("onPeripheralStateChange")
     }
-    onPeripheralAddressChange(address) {
-        // console.error("onPeripheralAddressChange")
-    }
-    onPeripheralPlatform(platform) {
-        // console.error("onPeripheralPlatform")
-    }
-    onPeripheralAdvertisingStart(error) {
-        // console.error("onPeripheralAdvertisingStart")
-    }
-    onPeripheralAdvertisingStop() {
-        // console.error("onPeripheralAdvertisingStop")
-    }
-    onPeripheralServicesSet(error) {
-        // console.error("onPeripheralServicesSet")
-    }
     onPeripheralAccept(clientAddress) {
         this.peripheral.currentConnectedDeviceAddress = clientAddress;
         if (this.peripheral.onconnectionupdates) {
@@ -371,12 +355,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             });
         }
     }
-    onPeripheralRssiUpdate(rssi) {
-        // console.error("onPeripheralRssiUpdate")
-    }
     _bind() {
         this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-        this.centralBindings.on("addressChange", this.onAddressChange.bind(this));
         this.centralBindings.on("scanStart", this.onScanStart.bind(this));
         this.centralBindings.on("scanStop", this.onScanStop.bind(this));
         this.centralBindings.on("discover", this.onDiscover.bind(this));
@@ -393,15 +373,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.centralBindings.on("valueRead", this.onValueRead.bind(this));
         this.centralBindings.on("valueWrite", this.onValueWrite.bind(this));
         this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
-        this.peripheralBindings.on("addressChange", this.onPeripheralAddressChange.bind(this));
-        this.peripheralBindings.on("platform", this.onPeripheralPlatform.bind(this));
-        this.peripheralBindings.on("advertisingStart", this.onPeripheralAdvertisingStart.bind(this));
-        this.peripheralBindings.on("advertisingStop", this.onPeripheralAdvertisingStop.bind(this));
-        this.peripheralBindings.on("servicesSet", this.onPeripheralServicesSet.bind(this));
         this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
         this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
         this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
-        this.peripheralBindings.on("rssiUpdate", this.onPeripheralRssiUpdate.bind(this));
     }
 }
 exports.default = ObnizBLE;

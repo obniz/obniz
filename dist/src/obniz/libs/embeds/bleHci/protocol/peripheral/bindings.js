@@ -14,7 +14,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const debug = () => { };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
-const os_1 = __importDefault(require("os"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
 const gap_1 = __importDefault(require("./gap"));
 const gatt_1 = __importDefault(require("./gatt"));
@@ -49,9 +48,8 @@ class BlenoBindings extends eventemitter3_1.default {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
     }
-    setServices(services) {
+    async setServices(services) {
         this._gatt.setServices(services);
-        this.emit("servicesSet");
     }
     disconnect() {
         if (this._handle) {
@@ -62,26 +60,19 @@ class BlenoBindings extends eventemitter3_1.default {
     async updateRssiWait() {
         if (this._handle) {
             const rssi = await this._hci.readRssiWait(this._handle);
-            this.emit("rssiUpdate", rssi);
             return rssi;
         }
         return null;
     }
     init() {
-        this._gap.on("advertisingStart", this.onAdvertisingStart.bind(this));
-        this._gap.on("advertisingStop", this.onAdvertisingStop.bind(this));
         this._gatt.on("mtuChange", this.onMtuChange.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("addressChange", this.onAddressChange.bind(this));
-        this._hci.on("readLocalVersion", this.onReadLocalVersion.bind(this));
         this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
         this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("rssiRead", this.onRssiRead.bind(this));
         this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
-        this.emit("platform", os_1.default.platform());
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -99,16 +90,6 @@ class BlenoBindings extends eventemitter3_1.default {
             console.log("               [sudo] BLENO_HCI_DEVICE_ID=x node ...");
         }
         this.emit("stateChange", state);
-    }
-    onAddressChange(address) {
-        this.emit("addressChange", address);
-    }
-    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) { }
-    onAdvertisingStart(error) {
-        this.emit("advertisingStart", error);
-    }
-    onAdvertisingStop() {
-        this.emit("advertisingStop");
     }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 1) {
@@ -154,9 +135,6 @@ class BlenoBindings extends eventemitter3_1.default {
     }
     onMtuChange(mtu) {
         this.emit("mtuChange", mtu);
-    }
-    onRssiRead(handle, rssi) {
-        this.emit("rssiUpdate", rssi);
     }
     onAclDataPkt(handle, cid, data) {
         if (this._handle === handle && this._aclStream) {

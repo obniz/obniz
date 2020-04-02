@@ -6452,7 +6452,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return null;
     }
-    onAddressChange() { }
     onScanStart() { }
     onScanStop() {
         this.scan.notifyFromServer("onfinish", null);
@@ -6595,21 +6594,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     onPeripheralStateChange(state) {
         // console.error("onPeripheralStateChange")
     }
-    onPeripheralAddressChange(address) {
-        // console.error("onPeripheralAddressChange")
-    }
-    onPeripheralPlatform(platform) {
-        // console.error("onPeripheralPlatform")
-    }
-    onPeripheralAdvertisingStart(error) {
-        // console.error("onPeripheralAdvertisingStart")
-    }
-    onPeripheralAdvertisingStop() {
-        // console.error("onPeripheralAdvertisingStop")
-    }
-    onPeripheralServicesSet(error) {
-        // console.error("onPeripheralServicesSet")
-    }
     onPeripheralAccept(clientAddress) {
         this.peripheral.currentConnectedDeviceAddress = clientAddress;
         if (this.peripheral.onconnectionupdates) {
@@ -6631,12 +6615,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             });
         }
     }
-    onPeripheralRssiUpdate(rssi) {
-        // console.error("onPeripheralRssiUpdate")
-    }
     _bind() {
         this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-        this.centralBindings.on("addressChange", this.onAddressChange.bind(this));
         this.centralBindings.on("scanStart", this.onScanStart.bind(this));
         this.centralBindings.on("scanStop", this.onScanStop.bind(this));
         this.centralBindings.on("discover", this.onDiscover.bind(this));
@@ -6653,15 +6633,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.centralBindings.on("valueRead", this.onValueRead.bind(this));
         this.centralBindings.on("valueWrite", this.onValueWrite.bind(this));
         this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
-        this.peripheralBindings.on("addressChange", this.onPeripheralAddressChange.bind(this));
-        this.peripheralBindings.on("platform", this.onPeripheralPlatform.bind(this));
-        this.peripheralBindings.on("advertisingStart", this.onPeripheralAdvertisingStart.bind(this));
-        this.peripheralBindings.on("advertisingStop", this.onPeripheralAdvertisingStop.bind(this));
-        this.peripheralBindings.on("servicesSet", this.onPeripheralServicesSet.bind(this));
         this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
         this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
         this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
-        this.peripheralBindings.on("rssiUpdate", this.onPeripheralRssiUpdate.bind(this));
     }
 }
 exports.default = ObnizBLE;
@@ -7824,9 +7798,9 @@ class BlePeripheral {
      * @ignore
      * @private
      */
-    _updateServices() {
+    async _updateServices() {
         const bufData = this._services.map((e) => e.toBufferObj());
-        this.obnizBle.peripheralBindings.setServices(bufData);
+        await this.obnizBle.peripheralBindings.setServices(bufData);
     }
     /**
      * This starts a service as peripheral.
@@ -10416,10 +10390,6 @@ class NobleBindings extends eventemitter3_1.default {
         this._gap.on("scanStop", this.onScanStop.bind(this));
         this._gap.on("discover", this.onDiscover.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("addressChange", this.onAddressChange.bind(this));
-        // this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        // this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        // this._hci.on("rssiRead", this.onRssiRead.bind(this));
         this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
@@ -10440,9 +10410,6 @@ class NobleBindings extends eventemitter3_1.default {
             console.log("               [sudo] NOBLE_HCI_DEVICE_ID=x node ...");
         }
         this.emit("stateChange", state);
-    }
-    onAddressChange(address) {
-        this.emit("addressChange", address);
     }
     onScanStart(filterDuplicates) {
         this.emit("scanStart", filterDuplicates);
@@ -12261,7 +12228,6 @@ class Hci extends eventemitter3_1.default {
             await this.setScanParametersWait(false);
             this.emit("stateChange", "poweredOn");
         }
-        this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
         return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
     }
     async readBdAddrWait() {
@@ -12281,7 +12247,6 @@ class Hci extends eventemitter3_1.default {
             .reverse()
             .join(":");
         debug("address = " + this.address);
-        this.emit("addressChange", this.address);
         return this.address;
     }
     setLeEventMask() {
@@ -12455,7 +12420,6 @@ class Hci extends eventemitter3_1.default {
         const rssi = data.result.readInt8(2);
         debug("\t\t\thandle = " + handle);
         debug("\t\t\trssi = " + rssi);
-        this.emit("rssiRead", handle, rssi);
         return rssi;
     }
     async setAdvertisingParametersWait() {
@@ -13002,7 +12966,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const debug = () => { };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-const os_1 = __importDefault(__webpack_require__("./node_modules/os-browserify/browser.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js"));
 const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gap.js"));
 const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js"));
@@ -13037,9 +13000,8 @@ class BlenoBindings extends eventemitter3_1.default {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
     }
-    setServices(services) {
+    async setServices(services) {
         this._gatt.setServices(services);
-        this.emit("servicesSet");
     }
     disconnect() {
         if (this._handle) {
@@ -13050,26 +13012,19 @@ class BlenoBindings extends eventemitter3_1.default {
     async updateRssiWait() {
         if (this._handle) {
             const rssi = await this._hci.readRssiWait(this._handle);
-            this.emit("rssiUpdate", rssi);
             return rssi;
         }
         return null;
     }
     init() {
-        this._gap.on("advertisingStart", this.onAdvertisingStart.bind(this));
-        this._gap.on("advertisingStop", this.onAdvertisingStop.bind(this));
         this._gatt.on("mtuChange", this.onMtuChange.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("addressChange", this.onAddressChange.bind(this));
-        this._hci.on("readLocalVersion", this.onReadLocalVersion.bind(this));
         this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
         this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("rssiRead", this.onRssiRead.bind(this));
         this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
-        this.emit("platform", os_1.default.platform());
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -13087,16 +13042,6 @@ class BlenoBindings extends eventemitter3_1.default {
             console.log("               [sudo] BLENO_HCI_DEVICE_ID=x node ...");
         }
         this.emit("stateChange", state);
-    }
-    onAddressChange(address) {
-        this.emit("addressChange", address);
-    }
-    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) { }
-    onAdvertisingStart(error) {
-        this.emit("advertisingStart", error);
-    }
-    onAdvertisingStop() {
-        this.emit("advertisingStop");
     }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 1) {
@@ -13142,9 +13087,6 @@ class BlenoBindings extends eventemitter3_1.default {
     }
     onMtuChange(mtu) {
         this.emit("mtuChange", mtu);
-    }
-    onRssiRead(handle, rssi) {
-        this.emit("rssiUpdate", rssi);
     }
     onAclDataPkt(handle, cid, data) {
         if (this._handle === handle && this._aclStream) {
@@ -13360,25 +13302,22 @@ class Gap extends eventemitter3_1.default {
             throw new Error("Scan data is over maximum limit of 31 bytes");
         }
         this._advertiseState = "starting";
-        const p1 = this._hci.setScanResponseDataWait(scanData); // background
-        const p2 = this._hci.setAdvertisingDataWait(advertisementData); // background
+        const p1 = this._hci.setScanResponseDataWait(scanData);
+        const p2 = this._hci.setAdvertisingDataWait(advertisementData);
         await Promise.all([p1, p2]);
-        const p3 = this._hci.setAdvertiseEnableWait(true); // background
-        const p4 = this._hci.setScanResponseDataWait(scanData); // background
-        const p5 = this._hci.setAdvertisingDataWait(advertisementData); // background
+        const p3 = this._hci.setAdvertiseEnableWait(true);
+        const p4 = this._hci.setScanResponseDataWait(scanData);
+        const p5 = this._hci.setAdvertisingDataWait(advertisementData);
         await Promise.all([p3, p4, p5]);
         const status = await p3;
         if (this._advertiseState === "starting") {
             this._advertiseState = "started";
-            let error = null;
             if (status) {
-                error = new Error(hci_1.default.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+                throw new Error(hci_1.default.STATUS_MAPPER[status] || "Unknown (" + status + ")");
             }
-            this.emit("advertisingStart", error);
         }
         else if (this._advertiseState === "stopping") {
             this._advertiseState = "stopped";
-            this.emit("advertisingStop");
         }
     }
     async restartAdvertisingWait() {
@@ -13492,39 +13431,7 @@ class Gatt extends eventemitter3_1.default {
     setServices(services) {
         // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
         // base services and characteristics
-        const allServices = [
-        // {
-        //   uuid: '1800',
-        //   characteristics: [
-        //     {
-        //       uuid: '2a00',
-        //       properties: ['read'],
-        //       secure: [],
-        //       value: Buffer.from(deviceName),
-        //       descriptors: []
-        //     },
-        //     {
-        //       uuid: '2a01',
-        //       properties: ['read'],
-        //       secure: [],
-        //       value: Buffer.from([0x80, 0x00]),
-        //       descriptors: []
-        //     }
-        //   ]
-        // },
-        // {
-        //   uuid: '1801',
-        //   characteristics: [
-        //     {
-        //       uuid: '2a05',
-        //       properties: ['indicate'],
-        //       secure: [],
-        //       value: Buffer.from([0x00, 0x00, 0x00, 0x00]),
-        //       descriptors: []
-        //     }
-        //   ]
-        // }
-        ].concat(services);
+        const allServices = [].concat(services);
         this._handles = [];
         let handle = 0;
         let i;
@@ -64441,62 +64348,6 @@ exports.default = global.fetch.bind(global);
 exports.Headers = global.Headers;
 exports.Request = global.Request;
 exports.Response = global.Response;
-
-/***/ }),
-
-/***/ "./node_modules/os-browserify/browser.js":
-/***/ (function(module, exports) {
-
-exports.endianness = function () { return 'LE' };
-
-exports.hostname = function () {
-    if (typeof location !== 'undefined') {
-        return location.hostname
-    }
-    else return '';
-};
-
-exports.loadavg = function () { return [] };
-
-exports.uptime = function () { return 0 };
-
-exports.freemem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.totalmem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.cpus = function () { return [] };
-
-exports.type = function () { return 'Browser' };
-
-exports.release = function () {
-    if (typeof navigator !== 'undefined') {
-        return navigator.appVersion;
-    }
-    return '';
-};
-
-exports.networkInterfaces
-= exports.getNetworkInterfaces
-= function () { return {} };
-
-exports.arch = function () { return 'javascript' };
-
-exports.platform = function () { return 'browser' };
-
-exports.tmpdir = exports.tmpDir = function () {
-    return '/tmp';
-};
-
-exports.EOL = '\n';
-
-exports.homedir = function () {
-	return '/'
-};
-
 
 /***/ }),
 

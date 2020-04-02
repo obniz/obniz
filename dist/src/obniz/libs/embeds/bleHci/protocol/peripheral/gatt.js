@@ -87,39 +87,7 @@ class Gatt extends eventemitter3_1.default {
     setServices(services) {
         // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
         // base services and characteristics
-        const allServices = [
-        // {
-        //   uuid: '1800',
-        //   characteristics: [
-        //     {
-        //       uuid: '2a00',
-        //       properties: ['read'],
-        //       secure: [],
-        //       value: Buffer.from(deviceName),
-        //       descriptors: []
-        //     },
-        //     {
-        //       uuid: '2a01',
-        //       properties: ['read'],
-        //       secure: [],
-        //       value: Buffer.from([0x80, 0x00]),
-        //       descriptors: []
-        //     }
-        //   ]
-        // },
-        // {
-        //   uuid: '1801',
-        //   characteristics: [
-        //     {
-        //       uuid: '2a05',
-        //       properties: ['indicate'],
-        //       secure: [],
-        //       value: Buffer.from([0x00, 0x00, 0x00, 0x00]),
-        //       descriptors: []
-        //     }
-        //   ]
-        // }
-        ].concat(services);
+        const allServices = [].concat(services);
         this._handles = [];
         let handle = 0;
         let i;

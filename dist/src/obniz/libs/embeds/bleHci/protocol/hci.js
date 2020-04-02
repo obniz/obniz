@@ -168,7 +168,6 @@ class Hci extends eventemitter3_1.default {
             await this.setScanParametersWait(false);
             this.emit("stateChange", "poweredOn");
         }
-        this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
         return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
     }
     async readBdAddrWait() {
@@ -188,7 +187,6 @@ class Hci extends eventemitter3_1.default {
             .reverse()
             .join(":");
         debug("address = " + this.address);
-        this.emit("addressChange", this.address);
         return this.address;
     }
     setLeEventMask() {
@@ -362,7 +360,6 @@ class Hci extends eventemitter3_1.default {
         const rssi = data.result.readInt8(2);
         debug("\t\t\thandle = " + handle);
         debug("\t\t\trssi = " + rssi);
-        this.emit("rssiRead", handle, rssi);
         return rssi;
     }
     async setAdvertisingParametersWait() {
