@@ -8,7 +8,7 @@ import EventEmitter from "eventemitter3";
 import Hci from "../hci";
 import Smp from "./smp";
 
-type AclStreamEventTypes = "data" | "end" | "encryptChange" | "ltkNegReply";
+type AclStreamEventTypes = "data" | "end" | "encryptChange";
 /**
  * @ignore
  */
@@ -51,10 +51,6 @@ class AclStream extends EventEmitter<AclStreamEventTypes> {
     this.encrypted = encrypt ? true : false;
 
     this.emit("encryptChange", this.encrypted);
-  }
-
-  public pushLtkNegReply() {
-    this.emit("ltkNegReply");
   }
 }
 

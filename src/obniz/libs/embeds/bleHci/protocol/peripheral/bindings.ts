@@ -101,7 +101,6 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
 
     this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
     this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-    this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
     this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
   }
 
@@ -178,12 +177,6 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   public onEncryptChange(handle: any, encrypt?: any) {
     if (this._handle === handle && this._aclStream) {
       this._aclStream.pushEncrypt(encrypt);
-    }
-  }
-
-  public onLeLtkNegReply(handle: any) {
-    if (this._handle === handle && this._aclStream) {
-      this._aclStream.pushLtkNegReply();
     }
   }
 

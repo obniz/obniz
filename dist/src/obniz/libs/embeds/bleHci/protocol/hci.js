@@ -90,11 +90,10 @@ class Hci extends eventemitter3_1.default {
         super();
         this.aclStreamObservers = {};
         this._obnizHci = obnizHci;
-        this._state = null;
+        this._state = "poweredOff";
         this.resetBuffers();
-        this.on("stateChange", this.onStateChange.bind(this));
         this._obnizHci.Obniz.on("disconnect", () => {
-            this.emit("stateChange", "poweredOff");
+            this.stateChange("poweredOff");
         });
         this._socket = {
             write: (data) => {
@@ -138,6 +137,12 @@ class Hci extends eventemitter3_1.default {
         const p3 = this.readLeHostSupportedWait();
         const p4 = this.leReadBufferSizeWait();
         await Promise.all([p1, p2, p3, p4]);
+        if (this._state !== "poweredOn") {
+            const p5 = await this.setScanEnabledWait(false, true);
+            const p6 = this.setScanParametersWait(false);
+            await Promise.all([p5, p6]);
+            this.stateChange("poweredOn");
+        }
     }
     resetBuffers() {
         this._handleAclsInProgress = {};
@@ -161,12 +166,7 @@ class Hci extends eventemitter3_1.default {
         const lmpSubVer = data.result.readUInt16LE(6);
         // TODO: stateChange emitter should be in initWait()
         if (hciVer < 0x06) {
-            this.emit("stateChange", "unsupported");
-        }
-        else if (this._state !== "poweredOn") {
-            this.setScanEnabledWait(false, true);
-            await this.setScanParametersWait(false);
-            this.emit("stateChange", "poweredOn");
+            throw new Error("unsupported hci version");
         }
         return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
     }
@@ -382,7 +382,7 @@ class Hci extends eventemitter3_1.default {
         debug("set advertisement parameters - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
-        this.emit("stateChange", "poweredOn"); // TODO : really need?
+        // this.emit("stateChange", "poweredOn"); // TODO : really need?
         return data.status;
     }
     async setAdvertisingDataWait(data) {
@@ -570,15 +570,7 @@ class Hci extends eventemitter3_1.default {
                 this.emit("encryptChange", handle, encrypt);
             }
             else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
-                const ncmd = data.readUInt8(3);
-                const cmd = data.readUInt16LE(4);
-                const status = data.readUInt8(6);
-                const result = data.slice(7);
-                debug("\t\tncmd = 0x" + ncmd.toString(16));
-                debug("\t\tcmd = 0x" + cmd.toString(16));
-                debug("\t\tstatus = 0x" + status.toString(16));
-                debug("\t\tresult = 0x" + result.toString("hex"));
-                this.processCmdCompleteEvent(cmd, status, result);
+                // command complete event are handle each command send functions;
             }
             else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
                 const status = data.readUInt8(3);
@@ -660,22 +652,17 @@ class Hci extends eventemitter3_1.default {
             }
         }
     }
-    onSocketError(error) {
-        debug("onSocketError: " + error.message);
-        if (error.message === "Operation not permitted") {
-            this.emit("stateChange", "unauthorized");
-        }
-        else if (error.message === "Network is down") {
-            // no-op
-        }
-    }
-    processCmdCompleteEvent(cmd, status, result) {
-        if (cmd === COMMANDS.LE_LTK_NEG_REPLY_CMD) {
-            // TODO : send this command code is none.
-            const handle = result.readUInt16LE(0);
-            debug("\t\t\thandle = " + handle);
-            this.emit("leLtkNegReply", handle);
-        }
+    async longTermKeyRequestNegativeReply(handle) {
+        throw new Error("TODO: no checked");
+        const cmd = Buffer.alloc(5);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
+        // length
+        cmd.writeUInt16LE(handle, 3);
+        this._socket.write(cmd);
+        const data = await this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
+        return data.status;
     }
     processLeMetaEvent(eventType, status, data) {
         if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
@@ -780,8 +767,9 @@ class Hci extends eventemitter3_1.default {
             this._aclMaxInProgress = aclMaxInProgress;
         }
     }
-    onStateChange(state) {
+    stateChange(state) {
         this._state = state;
+        this.emit("stateChange", state);
     }
     async readAclStreamWait(handle, cid) {
         return new Promise((resolve) => {

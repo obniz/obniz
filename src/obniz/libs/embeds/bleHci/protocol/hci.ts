@@ -103,17 +103,17 @@ type HciEventTypes =
   | "leAdvertisingReport"
 
   // peripheral
+  | "leConnComplete" // central also use, but slave only emit
 
   // common
   | "stateChange"
   | "leConnUpdateComplete"
-  | "leConnComplete"
   | "disconnComplete"
   | "encryptChange"
   | "aclDataPkt"
-  | "leLtkNegReply"
-  | "leScanParametersSet"
   | "error";
+
+type HciState = "poweredOn" | "poweredOff";
 
 /**
  * @ignore
@@ -121,7 +121,6 @@ type HciEventTypes =
 class Hci extends EventEmitter<HciEventTypes> {
   public static STATUS_MAPPER: any;
   public _obnizHci: ObnizBLEHci;
-  public _state: any;
   public _handleBuffers: any;
   public _socket: any;
   public _handleAclsInProgress: any;
@@ -130,18 +129,18 @@ class Hci extends EventEmitter<HciEventTypes> {
   public _aclMaxInProgress: any;
   public addressType: any;
   public address: any;
+  private _state: HciState;
   private aclStreamObservers: { [key: string]: any[] } = {};
 
   constructor(obnizHci: any) {
     super();
     this._obnizHci = obnizHci;
-    this._state = null;
+    this._state = "poweredOff";
 
     this.resetBuffers();
 
-    this.on("stateChange", this.onStateChange.bind(this));
     this._obnizHci.Obniz.on("disconnect", () => {
-      this.emit("stateChange", "poweredOff");
+      this.stateChange("poweredOff");
     });
 
     this._socket = {
@@ -197,6 +196,13 @@ class Hci extends EventEmitter<HciEventTypes> {
     const p3 = this.readLeHostSupportedWait();
     const p4 = this.leReadBufferSizeWait();
     await Promise.all([p1, p2, p3, p4]);
+
+    if (this._state !== "poweredOn") {
+      const p5 = await this.setScanEnabledWait(false, true);
+      const p6 = this.setScanParametersWait(false);
+      await Promise.all([p5, p6]);
+      this.stateChange("poweredOn");
+    }
   }
 
   public resetBuffers() {
@@ -226,11 +232,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     // TODO: stateChange emitter should be in initWait()
     if (hciVer < 0x06) {
-      this.emit("stateChange", "unsupported");
-    } else if (this._state !== "poweredOn") {
-      this.setScanEnabledWait(false, true);
-      await this.setScanParametersWait(false);
-      this.emit("stateChange", "poweredOn");
+      throw new Error("unsupported hci version");
     }
 
     return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
@@ -532,7 +534,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
 
-    this.emit("stateChange", "poweredOn"); // TODO : really need?
+    // this.emit("stateChange", "poweredOn"); // TODO : really need?
     return data.status;
   }
 
@@ -769,17 +771,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
         this.emit("encryptChange", handle, encrypt);
       } else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
-        const ncmd: any = data.readUInt8(3);
-        const cmd: any = data.readUInt16LE(4);
-        const status: any = data.readUInt8(6);
-        const result: any = data.slice(7);
-
-        debug("\t\tncmd = 0x" + ncmd.toString(16));
-        debug("\t\tcmd = 0x" + cmd.toString(16));
-        debug("\t\tstatus = 0x" + status.toString(16));
-        debug("\t\tresult = 0x" + result.toString("hex"));
-
-        this.processCmdCompleteEvent(cmd, status, result);
+        // command complete event are handle each command send functions;
       } else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
         const status: any = data.readUInt8(3);
         const cmd: any = data.readUInt16LE(5);
@@ -866,24 +858,21 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
   }
 
-  public onSocketError(error: any) {
-    debug("onSocketError: " + error.message);
+  public async longTermKeyRequestNegativeReply(handle: Handle) {
+    throw new Error("TODO: no checked");
 
-    if (error.message === "Operation not permitted") {
-      this.emit("stateChange", "unauthorized");
-    } else if (error.message === "Network is down") {
-      // no-op
-    }
-  }
+    const cmd: any = Buffer.alloc(5);
 
-  public processCmdCompleteEvent(cmd: any, status: any, result: any) {
-    if (cmd === COMMANDS.LE_LTK_NEG_REPLY_CMD) {
-      // TODO : send this command code is none.
-      const handle: Handle = result.readUInt16LE(0);
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
 
-      debug("\t\t\thandle = " + handle);
-      this.emit("leLtkNegReply", handle);
-    }
+    // length
+    cmd.writeUInt16LE(handle, 3);
+
+    this._socket.write(cmd);
+    const data = await this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
+    return data.status;
   }
 
   public processLeMetaEvent(eventType: any, status: any, data: any) {
@@ -1014,8 +1003,9 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
   }
 
-  public onStateChange(state: any) {
+  public stateChange(state: HciState) {
     this._state = state;
+    this.emit("stateChange", state);
   }
 
   public async readAclStreamWait(handle: Handle, cid: number) {

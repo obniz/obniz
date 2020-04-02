@@ -36,9 +36,6 @@ class AclStream extends eventemitter3_1.default {
         this.encrypted = encrypt ? true : false;
         this.emit("encryptChange", this.encrypted);
     }
-    pushLtkNegReply() {
-        this.emit("ltkNegReply");
-    }
 }
 exports.default = AclStream;
 
