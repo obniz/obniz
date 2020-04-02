@@ -639,10 +639,8 @@ export default class BleRemotePeripheral {
       return flattend;
     };
     const services: any = await this.discoverAllServicesWait();
-    console.warn("discoverAllCharacteristicsWait");
     const charsNest: any = await Promise.all(services.map((s: any) => s.discoverAllCharacteristicsWait()));
     const chars: any = ArrayFlat(charsNest);
-    console.warn("discoverAllDescriptorsWait");
     const descriptorsNest: any = await Promise.all(chars.map((c: any) => c.discoverAllDescriptorsWait()));
 
     // eslint-disable-next-line no-unused-vars

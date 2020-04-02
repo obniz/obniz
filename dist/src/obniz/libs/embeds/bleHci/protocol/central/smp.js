@@ -81,7 +81,7 @@ class Smp extends eventemitter3_1.default {
             return;
         }
         const code = data.readUInt8(0);
-        console.warn("pairing " + code);
+        // console.warn("pairing " + code);
         if (SMP.PAIRING_RESPONSE === code) {
             this.handlePairingResponse(data);
         }

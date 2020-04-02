@@ -9031,10 +9031,8 @@ class BleRemotePeripheral {
             return flattend;
         };
         const services = await this.discoverAllServicesWait();
-        console.warn("discoverAllCharacteristicsWait");
         const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
         const chars = ArrayFlat(charsNest);
-        console.warn("discoverAllDescriptorsWait");
         const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
         // eslint-disable-next-line no-unused-vars
         const descriptors = ArrayFlat(descriptorsNest);
@@ -11968,7 +11966,7 @@ class Smp extends eventemitter3_1.default {
             return;
         }
         const code = data.readUInt8(0);
-        console.warn("pairing " + code);
+        // console.warn("pairing " + code);
         if (SMP.PAIRING_RESPONSE === code) {
             this.handlePairingResponse(data);
         }
