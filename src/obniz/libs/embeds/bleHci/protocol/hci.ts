@@ -7,7 +7,7 @@ import ObnizBLEHci from "../hci";
 
 // let debug = require('debug')('hci');
 const debug: any = (...params: any[]) => {
-  console.log(...params);
+  // console.log(...params);
 };
 
 import { Handle } from "../bleTypes";

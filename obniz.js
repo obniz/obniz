@@ -3016,6 +3016,85 @@ class ObnizBleOpError extends ObnizError {
     }
 }
 exports.ObnizBleOpError = ObnizBleOpError;
+class ObnizBleHciStateError extends ObnizError {
+    constructor(state) {
+        super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+        this.state = state;
+    }
+}
+exports.ObnizBleHciStateError = ObnizBleHciStateError;
+ObnizBleHciStateError.Errors = {
+    0x00: "Success",
+    0x01: "Unknown HCI Command",
+    0x02: "Unknown Connection Identifier ",
+    0x03: "Hardware Failure ",
+    0x04: "Page Timeout ",
+    0x05: "Authentication Failure ",
+    0x06: "PIN or Key Missing ",
+    0x07: "Memory Capacity Exceeded ",
+    0x08: "Connection Timeout ",
+    0x09: "Connection Limit Exceeded ",
+    0x0a: "Synchronous Connection Limit To A Device Exceeded ",
+    0x0b: "Connection Already Exists ",
+    0x0c: "Command Disallowed ",
+    0x0d: "Connection Rejected due to Limited Resources ",
+    0x0e: "Connection Rejected Due To Security Reasons ",
+    0x0f: "Connection Rejected due to Unacceptable BD_ADDR ",
+    0x10: "Connection Accept Timeout Exceeded ",
+    0x11: "Unsupported Feature or Parameter Value ",
+    0x12: "Invalid HCI Command Parameters ",
+    0x13: "Remote User Terminated Connection ",
+    0x14: "Remote Device Terminated Connection due to Low Resources ",
+    0x15: "Remote Device Terminated Connection due to Power Off ",
+    0x16: "Connection Terminated By Local Host ",
+    0x17: "Repeated Attempts ",
+    0x18: "Pairing Not Allowed ",
+    0x19: "Unknown LMP PDU ",
+    0x1a: "Unsupported Remote Feature / Unsupported LMP Feature ",
+    0x1b: "SCO Offset Rejected ",
+    0x1c: "SCO Interval Rejected ",
+    0x1d: "SCO Air Mode Rejected ",
+    0x1e: "Invalid LMP Parameters / Invalid LL Parameters ",
+    0x1f: "Unspecified Error ",
+    0x20: "Unsupported LMP Parameter Value / Unsupported LL Parameter Value ",
+    0x21: "Role Change Not Allowed ",
+    0x22: "LMP Response Timeout / LL Response Timeout ",
+    0x23: "LMP Error Transaction Collision / LL Procedure Collision ",
+    0x24: "LMP PDU Not Allowed ",
+    0x25: "Encryption Mode Not Acceptable ",
+    0x26: "Link Key cannot be Changed ",
+    0x27: "Requested QoS Not Supported ",
+    0x28: "Instant Passed ",
+    0x29: "Pairing With Unit Key Not Supported ",
+    0x2a: "Different Transaction Collision ",
+    0x2b: "Reserved for future use ",
+    0x2c: "QoS Unacceptable Parameter ",
+    0x2d: "QoS Rejected ",
+    0x2e: "Channel Classification Not Supported ",
+    0x2f: "Insufficient Security ",
+    0x30: "Parameter Out Of Mandatory Range ",
+    0x31: "Reserved for future use ",
+    0x32: "Role Switch Pending ",
+    0x33: "Reserved for future use ",
+    0x34: "Reserved Slot Violation ",
+    0x35: "Role Switch Failed ",
+    0x36: "Extended Inquiry Response Too Large ",
+    0x37: "Secure Simple Pairing Not Supported By Host ",
+    0x38: "Host Busy - Pairing ",
+    0x39: "Connection Rejected due to No Suitable Channel Found ",
+    0x3a: "Controller Busy ",
+    0x3b: "Unacceptable Connection Parameters ",
+    0x3c: "Advertising Timeout ",
+    0x3d: "Connection Terminated due to MIC Failure ",
+    0x3e: "Connection Failed to be Established / Synchronization Timeout ",
+    0x3f: "MAC Connection Failed ",
+    0x40: "Coarse Clock Adjustment Rejected but Will Try to Adjust Using Clock Dragging ",
+    0x41: "Type0 Submap Not Defined ",
+    0x42: "Unknown Advertising Identifier ",
+    0x43: "Limit Reached ",
+    0x44: "Operation Cancelled by Host ",
+    0x45: "Packet Too Long ",
+};
 
 //# sourceMappingURL=ObnizError.js.map
 
@@ -6480,9 +6559,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             status: error ? "disconnected" : "connected",
         });
     }
-    onDisconnect(peripheralUuid) {
+    onDisconnect(peripheralUuid, reason) {
         const peripheral = this.findPeripheral(peripheralUuid);
-        peripheral.notifyFromServer("statusupdate", { status: "disconnected" });
+        peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
     }
     onServicesDiscover(peripheralUuid, serviceUuids) {
         const peripheral = this.findPeripheral(peripheralUuid);
@@ -8756,7 +8835,9 @@ class BleRemotePeripheral {
      * obniz.ble.scan.start();
      * ```
      */
-    connect(setting) { }
+    connect(setting) {
+        this.connectWait(); // background
+    }
     /**
      * This connects obniz to the peripheral.
      * If ble scannning is undergoing, scan will be terminated immidiately.
@@ -8792,8 +8873,9 @@ class BleRemotePeripheral {
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         this.obnizBle.scan.end();
         const p1 = this.obnizBle.centralBindings.connectWait(this.address);
-        const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", () => {
-            reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+        const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", (reason) => {
+            reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
+                ` Error code:${reason.state}, ${reason.message}`));
         }));
         await Promise.race([p1, p2]);
         if (this._connectSetting.autoDiscovery) {
@@ -9037,7 +9119,7 @@ class BleRemotePeripheral {
                     if (this.ondisconnect) {
                         this.ondisconnect();
                     }
-                    this.emitter.emit("disconnect");
+                    this.emitter.emit("disconnect", params.reason);
                 }
                 break;
             }
@@ -10315,7 +10397,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
-const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js"));
 const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js"));
 const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gatt.js"));
@@ -10427,43 +10508,38 @@ class NobleBindings extends eventemitter3_1.default {
         }
         let uuid = null;
         const error = null;
-        if (status === 0) {
-            uuid = address
-                .split(":")
-                .join("")
-                .toLowerCase();
-            const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
-            const gatt = new gatt_1.default(address, aclStream);
-            const signaling = new signaling_1.default(handle, aclStream);
-            this._gatts[uuid] = this._gatts[handle] = gatt;
-            this._signalings[uuid] = this._signalings[handle] = signaling;
-            this._aclStreams[handle] = aclStream;
-            this._handles[uuid] = handle;
-            this._handles[handle] = uuid;
-            this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
-            this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
-            this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
-            this._gatts[handle].on("read", this.onRead.bind(this));
-            this._gatts[handle].on("write", this.onWrite.bind(this));
-            this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
-            this._gatts[handle].on("notify", this.onNotify.bind(this));
-            this._gatts[handle].on("notification", this.onNotification.bind(this));
-            this._gatts[handle].on("descriptorsDiscover", this.onDescriptorsDiscovered.bind(this));
-            this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
-            this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
-            this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
-            this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
-            this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
-            this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
-            await this._gatts[handle].exchangeMtuWait(256);
-            // public onMtu(address: any, mtu?: any) {}
+        if (status !== 0) {
+            throw new ObnizError_1.ObnizBleHciStateError(status);
         }
-        else {
-            let statusMessage = hci_1.default.STATUS_MAPPER[status] || "HCI Error: Unknown";
-            const errorCode = " (0x" + status.toString(16) + ")";
-            statusMessage = statusMessage + errorCode;
-            throw new Error(statusMessage);
-        }
+        uuid = address
+            .split(":")
+            .join("")
+            .toLowerCase();
+        const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        const gatt = new gatt_1.default(address, aclStream);
+        const signaling = new signaling_1.default(handle, aclStream);
+        this._gatts[uuid] = this._gatts[handle] = gatt;
+        this._signalings[uuid] = this._signalings[handle] = signaling;
+        this._aclStreams[handle] = aclStream;
+        this._handles[uuid] = handle;
+        this._handles[handle] = uuid;
+        this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
+        this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
+        this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
+        this._gatts[handle].on("read", this.onRead.bind(this));
+        this._gatts[handle].on("write", this.onWrite.bind(this));
+        this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
+        this._gatts[handle].on("notify", this.onNotify.bind(this));
+        this._gatts[handle].on("notification", this.onNotification.bind(this));
+        this._gatts[handle].on("descriptorsDiscover", this.onDescriptorsDiscovered.bind(this));
+        this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
+        this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
+        this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
+        this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
+        this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
+        this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
+        await this._gatts[handle].exchangeMtuWait(256);
+        // public onMtu(address: any, mtu?: any) {}
         this.emit("connect", uuid, error);
     }
     onDisconnComplete(handle, reason) {
@@ -10478,7 +10554,8 @@ class NobleBindings extends eventemitter3_1.default {
             delete this._aclStreams[handle];
             delete this._handles[uuid];
             delete this._handles[handle];
-            this.emit("disconnect", uuid); // TODO: handle reason?
+            const error = new ObnizError_1.ObnizBleHciStateError(reason);
+            this.emit("disconnect", uuid, error); // TODO: handle reason?
         }
         else {
             // maybe disconnect as peripheral
@@ -12041,7 +12118,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 // let debug = require('debug')('hci');
 const debug = (...params) => {
-    console.log(...params);
+    // console.log(...params);
 };
 var COMMANDS;
 (function (COMMANDS) {

@@ -11,6 +11,7 @@ import PeripheralBindings from "./protocol/peripheral/bindings";
 
 import semver from "semver";
 import Obniz from "../../../index";
+import { ObnizBleHciStateError } from "../../../ObnizError";
 import { ComponentAbstract } from "../../ComponentAbstact";
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
@@ -280,9 +281,9 @@ export default class ObnizBLE extends ComponentAbstract {
     });
   }
 
-  protected onDisconnect(peripheralUuid: any) {
+  protected onDisconnect(peripheralUuid: any, reason: ObnizBleHciStateError) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
-    peripheral.notifyFromServer("statusupdate", { status: "disconnected" });
+    peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
   }
 
   protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {

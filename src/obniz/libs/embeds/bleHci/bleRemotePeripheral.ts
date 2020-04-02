@@ -4,6 +4,7 @@
  */
 
 import EventEmitter from "eventemitter3";
+import { ObnizBleHciStateError } from "../../../ObnizError";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
@@ -370,7 +371,9 @@ export default class BleRemotePeripheral {
    * obniz.ble.scan.start();
    * ```
    */
-  public connect(setting?: BleConnectSetting) {}
+  public connect(setting?: BleConnectSetting) {
+    this.connectWait(); // background
+  }
 
   /**
    * This connects obniz to the peripheral.
@@ -408,9 +411,12 @@ export default class BleRemotePeripheral {
     this.obnizBle.scan.end();
     const p1 = this.obnizBle.centralBindings.connectWait(this.address);
     const p2 = new Promise((resolve, reject) =>
-      this.emitter.once("disconnect", () => {
+      this.emitter.once("disconnect", (reason: ObnizBleHciStateError) => {
         reject(
-          new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`),
+          new Error(
+            `connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
+              ` Error code:${reason.state}, ${reason.message}`,
+          ),
         );
       }),
     );
@@ -668,7 +674,7 @@ export default class BleRemotePeripheral {
           if (this.ondisconnect) {
             this.ondisconnect();
           }
-          this.emitter.emit("disconnect");
+          this.emitter.emit("disconnect", params.reason);
         }
         break;
       }

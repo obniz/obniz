@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 // let debug = require('debug')('hci');
 const debug = (...params) => {
-    console.log(...params);
+    // console.log(...params);
 };
 var COMMANDS;
 (function (COMMANDS) {

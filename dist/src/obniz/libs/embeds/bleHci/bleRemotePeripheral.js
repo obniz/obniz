@@ -115,7 +115,9 @@ class BleRemotePeripheral {
      * obniz.ble.scan.start();
      * ```
      */
-    connect(setting) { }
+    connect(setting) {
+        this.connectWait(); // background
+    }
     /**
      * This connects obniz to the peripheral.
      * If ble scannning is undergoing, scan will be terminated immidiately.
@@ -151,8 +153,9 @@ class BleRemotePeripheral {
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         this.obnizBle.scan.end();
         const p1 = this.obnizBle.centralBindings.connectWait(this.address);
-        const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", () => {
-            reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+        const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", (reason) => {
+            reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
+                ` Error code:${reason.state}, ${reason.message}`));
         }));
         await Promise.race([p1, p2]);
         if (this._connectSetting.autoDiscovery) {
@@ -396,7 +399,7 @@ class BleRemotePeripheral {
                     if (this.ondisconnect) {
                         this.ondisconnect();
                     }
-                    this.emitter.emit("disconnect");
+                    this.emitter.emit("disconnect", params.reason);
                 }
                 break;
             }

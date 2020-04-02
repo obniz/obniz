@@ -11,7 +11,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
-const hci_1 = __importDefault(require("../hci"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
 const gap_1 = __importDefault(require("./gap"));
 const gatt_1 = __importDefault(require("./gatt"));
@@ -123,43 +122,38 @@ class NobleBindings extends eventemitter3_1.default {
         }
         let uuid = null;
         const error = null;
-        if (status === 0) {
-            uuid = address
-                .split(":")
-                .join("")
-                .toLowerCase();
-            const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
-            const gatt = new gatt_1.default(address, aclStream);
-            const signaling = new signaling_1.default(handle, aclStream);
-            this._gatts[uuid] = this._gatts[handle] = gatt;
-            this._signalings[uuid] = this._signalings[handle] = signaling;
-            this._aclStreams[handle] = aclStream;
-            this._handles[uuid] = handle;
-            this._handles[handle] = uuid;
-            this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
-            this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
-            this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
-            this._gatts[handle].on("read", this.onRead.bind(this));
-            this._gatts[handle].on("write", this.onWrite.bind(this));
-            this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
-            this._gatts[handle].on("notify", this.onNotify.bind(this));
-            this._gatts[handle].on("notification", this.onNotification.bind(this));
-            this._gatts[handle].on("descriptorsDiscover", this.onDescriptorsDiscovered.bind(this));
-            this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
-            this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
-            this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
-            this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
-            this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
-            this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
-            await this._gatts[handle].exchangeMtuWait(256);
-            // public onMtu(address: any, mtu?: any) {}
+        if (status !== 0) {
+            throw new ObnizError_1.ObnizBleHciStateError(status);
         }
-        else {
-            let statusMessage = hci_1.default.STATUS_MAPPER[status] || "HCI Error: Unknown";
-            const errorCode = " (0x" + status.toString(16) + ")";
-            statusMessage = statusMessage + errorCode;
-            throw new Error(statusMessage);
-        }
+        uuid = address
+            .split(":")
+            .join("")
+            .toLowerCase();
+        const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        const gatt = new gatt_1.default(address, aclStream);
+        const signaling = new signaling_1.default(handle, aclStream);
+        this._gatts[uuid] = this._gatts[handle] = gatt;
+        this._signalings[uuid] = this._signalings[handle] = signaling;
+        this._aclStreams[handle] = aclStream;
+        this._handles[uuid] = handle;
+        this._handles[handle] = uuid;
+        this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
+        this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
+        this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
+        this._gatts[handle].on("read", this.onRead.bind(this));
+        this._gatts[handle].on("write", this.onWrite.bind(this));
+        this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
+        this._gatts[handle].on("notify", this.onNotify.bind(this));
+        this._gatts[handle].on("notification", this.onNotification.bind(this));
+        this._gatts[handle].on("descriptorsDiscover", this.onDescriptorsDiscovered.bind(this));
+        this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
+        this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
+        this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
+        this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
+        this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
+        this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
+        await this._gatts[handle].exchangeMtuWait(256);
+        // public onMtu(address: any, mtu?: any) {}
         this.emit("connect", uuid, error);
     }
     onDisconnComplete(handle, reason) {
@@ -174,7 +168,8 @@ class NobleBindings extends eventemitter3_1.default {
             delete this._aclStreams[handle];
             delete this._handles[uuid];
             delete this._handles[handle];
-            this.emit("disconnect", uuid); // TODO: handle reason?
+            const error = new ObnizError_1.ObnizBleHciStateError(reason);
+            this.emit("disconnect", uuid, error); // TODO: handle reason?
         }
         else {
             // maybe disconnect as peripheral

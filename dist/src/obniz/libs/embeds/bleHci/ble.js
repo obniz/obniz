@@ -220,9 +220,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             status: error ? "disconnected" : "connected",
         });
     }
-    onDisconnect(peripheralUuid) {
+    onDisconnect(peripheralUuid, reason) {
         const peripheral = this.findPeripheral(peripheralUuid);
-        peripheral.notifyFromServer("statusupdate", { status: "disconnected" });
+        peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
     }
     onServicesDiscover(peripheralUuid, serviceUuids) {
         const peripheral = this.findPeripheral(peripheralUuid);
