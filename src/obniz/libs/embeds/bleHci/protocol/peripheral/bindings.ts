@@ -37,10 +37,10 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   public _state: any;
   public _advertising: any;
   public _hci: Hci;
-  public _gap: any;
-  public _gatt: any;
+  public _gap: Gap;
+  public _gatt: Gatt;
   public _address: any;
-  public _handle: any;
+  public _handle: Handle | null;
   private _aclStream: AclStream | null;
 
   constructor(hciProtocol: any) {
@@ -58,28 +58,28 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     this._aclStream = null;
   }
 
-  public startAdvertising(name: any, serviceUuids: any) {
+  public async startAdvertisingWait(name: any, serviceUuids: any) {
     this._advertising = true;
 
-    this._gap.startAdvertising(name, serviceUuids);
+    await this._gap.startAdvertisingWait(name, serviceUuids);
   }
 
-  public startAdvertisingIBeacon(data: any) {
+  public async startAdvertisingIBeaconWait(data: any) {
     this._advertising = true;
 
-    this._gap.startAdvertisingIBeacon(data);
+    await this._gap.startAdvertisingIBeaconWait(data);
   }
 
-  public startAdvertisingWithEIRData(advertisementData: any, scanData: any) {
+  public async startAdvertisingWithEIRDataWait(advertisementData: any, scanData: any) {
     this._advertising = true;
 
-    this._gap.startAdvertisingWithEIRData(advertisementData, scanData);
+    await this._gap.startAdvertisingWithEIRDataWait(advertisementData, scanData);
   }
 
-  public stopAdvertising() {
+  public async stopAdvertisingWait() {
     this._advertising = false;
 
-    this._gap.stopAdvertising();
+    await this._gap.stopAdvertisingWait();
   }
 
   public setServices(services: any) {
@@ -118,7 +118,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
     this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
     this._hci.on("rssiRead", this.onRssiRead.bind(this));
-    this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+    this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
     this._hci.on("encryptChange", this.onEncryptChange.bind(this));
     this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
     this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
@@ -187,7 +187,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     // no-op
   }
 
-  public onDisconnComplete(handle: any, reason?: any) {
+  public async onDisconnCompleteWait(handle: any, reason?: any) {
     if (this._handle !== handle) {
       return; // not peripheral
     }
@@ -206,7 +206,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     }
 
     if (this._advertising) {
-      this._gap.restartAdvertising();
+      await this._gap.restartAdvertisingWait();
     }
   }
 

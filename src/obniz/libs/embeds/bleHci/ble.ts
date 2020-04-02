@@ -72,18 +72,18 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    */
   public peripheralBindings: PeripheralBindings;
+  public service: typeof BleService;
+  public characteristic: typeof BleCharacteristic;
+  public descriptor: typeof BleDescriptor;
 
   /**
    * @ignore
    */
-  protected advertisement: any;
+  public advertisement: BleAdvertisement;
   protected hciProtocol: HciProtocol;
   protected _initialized: boolean;
   protected _initializeWarning: boolean;
   protected remotePeripherals: BleRemotePeripheral[];
-  protected service: typeof BleService;
-  protected characteristic: typeof BleCharacteristic;
-  protected descriptor: typeof BleDescriptor;
 
   constructor(obniz: Obniz) {
     super(obniz);

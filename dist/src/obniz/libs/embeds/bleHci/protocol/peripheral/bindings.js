@@ -33,21 +33,21 @@ class BlenoBindings extends eventemitter3_1.default {
         this._handle = null;
         this._aclStream = null;
     }
-    startAdvertising(name, serviceUuids) {
+    async startAdvertisingWait(name, serviceUuids) {
         this._advertising = true;
-        this._gap.startAdvertising(name, serviceUuids);
+        await this._gap.startAdvertisingWait(name, serviceUuids);
     }
-    startAdvertisingIBeacon(data) {
+    async startAdvertisingIBeaconWait(data) {
         this._advertising = true;
-        this._gap.startAdvertisingIBeacon(data);
+        await this._gap.startAdvertisingIBeaconWait(data);
     }
-    startAdvertisingWithEIRData(advertisementData, scanData) {
+    async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         this._advertising = true;
-        this._gap.startAdvertisingWithEIRData(advertisementData, scanData);
+        await this._gap.startAdvertisingWithEIRDataWait(advertisementData, scanData);
     }
-    stopAdvertising() {
+    async stopAdvertisingWait() {
         this._advertising = false;
-        this._gap.stopAdvertising();
+        await this._gap.stopAdvertisingWait();
     }
     setServices(services) {
         this._gatt.setServices(services);
@@ -77,7 +77,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
         this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
         this._hci.on("rssiRead", this.onRssiRead.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
@@ -124,7 +124,7 @@ class BlenoBindings extends eventemitter3_1.default {
     onLeConnUpdateComplete(handle, interval, latency, supervisionTimeout) {
         // no-op
     }
-    onDisconnComplete(handle, reason) {
+    async onDisconnCompleteWait(handle, reason) {
         if (this._handle !== handle) {
             return; // not peripheral
         }
@@ -139,7 +139,7 @@ class BlenoBindings extends eventemitter3_1.default {
             this.emit("disconnect", address); // TODO: use reason
         }
         if (this._advertising) {
-            this._gap.restartAdvertising();
+            await this._gap.restartAdvertisingWait();
         }
     }
     onEncryptChange(handle, encrypt) {

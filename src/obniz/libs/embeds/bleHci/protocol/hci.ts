@@ -7,7 +7,7 @@ import ObnizBLEHci from "../hci";
 
 // let debug = require('debug')('hci');
 const debug: any = (...params: any[]) => {
-  // console.log(...params);
+  console.log(...params);
 };
 
 import { Handle } from "../bleTypes";
@@ -103,10 +103,6 @@ type HciEventTypes =
   | "leAdvertisingReport"
 
   // peripheral
-  | "leAdvertisingParametersSet"
-  | "leAdvertisingDataSet"
-  | "leScanResponseDataSet"
-  | "leAdvertiseEnableSet"
 
   // common
   | "stateChange"
@@ -543,7 +539,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
 
     this.emit("stateChange", "poweredOn"); // TODO : really need?
-    this.emit("leAdvertisingParametersSet", data.status);
+    return data.status;
   }
 
   public async setAdvertisingDataWait(data: any) {
@@ -566,7 +562,6 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._socket.write(cmd);
     const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
 
-    this.emit("leAdvertisingDataSet", result.status);
     return result.status;
   }
 
@@ -590,7 +585,6 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._socket.write(cmd);
     const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
 
-    this.emit("leScanResponseDataSet", result.status);
     return result.status;
   }
 
@@ -610,7 +604,6 @@ class Hci extends EventEmitter<HciEventTypes> {
     debug("set advertise enable - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
     const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
-    this.emit("leAdvertiseEnableSet", data.status);
     return data.status;
   }
 
@@ -902,6 +895,8 @@ class Hci extends EventEmitter<HciEventTypes> {
   public processLeMetaEvent(eventType: any, status: any, data: any) {
     if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
       this.processLeAdvertisingReport(status, data);
+    } else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
+      this.processLeConnComplete(status, data);
     }
   }
 
@@ -931,18 +926,23 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     this._handleAclsInProgress[handle] = 0;
 
-    this.emit(
-      "leConnComplete",
-      status,
-      handle,
-      role,
-      addressType,
-      address,
-      interval,
-      latency,
-      supervisionTimeout,
-      masterClockAccuracy,
-    );
+    if (role === 1) {
+      // only slave, emit
+
+      this.emit(
+        "leConnComplete",
+        status,
+        handle,
+        role,
+        addressType,
+        address,
+        interval,
+        latency,
+        supervisionTimeout,
+        masterClockAccuracy,
+      );
+    }
+
     return {
       status,
       handle,

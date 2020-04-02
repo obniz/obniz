@@ -21,9 +21,6 @@ class Gap extends eventemitter3_1.default {
         this._discoveries = {};
         this._hci.on("error", this.onHciError.bind(this));
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
-        this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
-        this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
-        this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
     }
     async startScanningWait(allowDuplicates, activeScan) {
         this._scanState = "starting";
@@ -231,9 +228,6 @@ class Gap extends eventemitter3_1.default {
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     onHciError(error) { }
-    onHciLeAdvertisingParametersSet(status) { }
-    onHciLeAdvertisingDataSet(status) { }
-    onHciLeScanResponseDataSet(status) { }
     async setScanEnabledWait(enabled, filterDuplicates) {
         const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
         // Check the status we got from the command complete function.

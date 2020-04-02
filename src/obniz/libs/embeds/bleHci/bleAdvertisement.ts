@@ -38,12 +38,21 @@ export default class BleAdvertisement {
    * obniz.ble.advertisement.start();
    * ```
    */
-  public start() {
+  public async startWait() {
     this.obnizBle.warningIfNotInitialize();
-    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(
+    await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(
       Buffer.from(this.adv_data),
       Buffer.from(this.scan_resp),
     );
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public start() {
+    this.obnizBle.warningIfNotInitialize();
+    this.startWait(); // background
   }
 
   /**
@@ -57,10 +66,13 @@ export default class BleAdvertisement {
    * ```
    *
    */
-  public end() {
-    this.obnizBle.peripheralBindings.stopAdvertising();
+  public async endWait() {
+    await this.obnizBle.peripheralBindings.stopAdvertisingWait();
   }
 
+  public end() {
+    this.endWait(); // background
+  }
   /**
    * This sets advertise data from data array.
    *

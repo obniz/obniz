@@ -3,11 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- *
- * @ignore
- */
 // var debug = require('debug')('gatt');
 const debug = () => { };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
@@ -272,6 +267,9 @@ class Gatt extends eventemitter3_1.default {
     }
     send(data) {
         debug("send: " + data.toString("hex"));
+        if (!this._aclStream) {
+            throw new Error("_aclStream is not found");
+        }
         this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
@@ -610,7 +608,7 @@ class Gatt extends eventemitter3_1.default {
                     break;
                 }
             }
-            if (secure && !this._aclStream.encrypted) {
+            if (secure && !(this._aclStream && this._aclStream.encrypted)) {
                 response = this.errorResponse(ATT.OP_READ_BY_TYPE_REQ, startHandle, ATT.ECODE_AUTHENTICATION);
             }
             else if (valueHandle) {
@@ -710,7 +708,7 @@ class Gatt extends eventemitter3_1.default {
                     handleAttribute = this._handles[valueHandle - 1].attribute;
                 }
                 if (handleProperties & 0x02) {
-                    if (handleSecure & 0x02 && !this._aclStream.encrypted) {
+                    if (handleSecure & 0x02 && !(this._aclStream && this._aclStream.encrypted)) {
                         result = ATT.ECODE_AUTHENTICATION;
                     }
                     else {
@@ -778,7 +776,7 @@ class Gatt extends eventemitter3_1.default {
                         }
                     };
                 })(requestType, valueHandle, withoutResponse);
-                if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !this._aclStream.encrypted) {
+                if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !(this._aclStream && this._aclStream.encrypted)) {
                     response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                 }
                 else if (handle.type === "descriptor" || handle.uuid === "2902") {
@@ -858,7 +856,7 @@ class Gatt extends eventemitter3_1.default {
                 const handleProperties = handle.properties;
                 const handleSecure = handle.secure;
                 if (handleProperties && handleProperties & 0x08) {
-                    if (handleSecure & 0x08 && !this._aclStream.encrypted) {
+                    if (handleSecure & 0x08 && !(this._aclStream && this._aclStream.encrypted)) {
                         response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                     }
                     else if (this._preparedWriteRequest) {

@@ -6707,9 +6707,17 @@ class BleAdvertisement {
      * obniz.ble.advertisement.start();
      * ```
      */
+    async startWait() {
+        this.obnizBle.warningIfNotInitialize();
+        await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
+    }
+    /**
+     * @ignore
+     * @private
+     */
     start() {
         this.obnizBle.warningIfNotInitialize();
-        this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
+        this.startWait(); // background
     }
     /**
      * This stops advertisement of BLE.
@@ -6722,8 +6730,11 @@ class BleAdvertisement {
      * ```
      *
      */
+    async endWait() {
+        await this.obnizBle.peripheralBindings.stopAdvertisingWait();
+    }
     end() {
-        this.obnizBle.peripheralBindings.stopAdvertising();
+        this.endWait(); // background
     }
     /**
      * This sets advertise data from data array.
@@ -10820,9 +10831,6 @@ class Gap extends eventemitter3_1.default {
         this._discoveries = {};
         this._hci.on("error", this.onHciError.bind(this));
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
-        this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
-        this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
-        this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
     }
     async startScanningWait(allowDuplicates, activeScan) {
         this._scanState = "starting";
@@ -11030,9 +11038,6 @@ class Gap extends eventemitter3_1.default {
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     onHciError(error) { }
-    onHciLeAdvertisingParametersSet(status) { }
-    onHciLeAdvertisingDataSet(status) { }
-    onHciLeScanResponseDataSet(status) { }
     async setScanEnabledWait(enabled, filterDuplicates) {
         const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
         // Check the status we got from the command complete function.
@@ -12098,7 +12103,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 // let debug = require('debug')('hci');
 const debug = (...params) => {
-    // console.log(...params);
+    console.log(...params);
 };
 var COMMANDS;
 (function (COMMANDS) {
@@ -12474,7 +12479,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
         const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
         this.emit("stateChange", "poweredOn"); // TODO : really need?
-        this.emit("leAdvertisingParametersSet", data.status);
+        return data.status;
     }
     async setAdvertisingDataWait(data) {
         const cmd = Buffer.alloc(36);
@@ -12490,7 +12495,6 @@ class Hci extends eventemitter3_1.default {
         debug("set advertisement data - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
-        this.emit("leAdvertisingDataSet", result.status);
         return result.status;
     }
     async setScanResponseDataWait(data) {
@@ -12507,7 +12511,6 @@ class Hci extends eventemitter3_1.default {
         debug("set scan response data - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
-        this.emit("leScanResponseDataSet", result.status);
         return result.status;
     }
     async setAdvertiseEnableWait(enabled) {
@@ -12522,7 +12525,6 @@ class Hci extends eventemitter3_1.default {
         debug("set advertise enable - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
-        this.emit("leAdvertiseEnableSet", data.status);
         return data.status;
     }
     async leReadBufferSizeWait() {
@@ -12775,6 +12777,9 @@ class Hci extends eventemitter3_1.default {
         if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
             this.processLeAdvertisingReport(status, data);
         }
+        else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
+            this.processLeConnComplete(status, data);
+        }
     }
     processLeConnComplete(status, data) {
         const handle = data.readUInt16LE(0);
@@ -12799,7 +12804,10 @@ class Hci extends eventemitter3_1.default {
         debug("\t\t\tsupervision timeout = " + supervisionTimeout);
         debug("\t\t\tmaster clock accuracy = " + masterClockAccuracy);
         this._handleAclsInProgress[handle] = 0;
-        this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+        if (role === 1) {
+            // only slave, emit
+            this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+        }
         return {
             status,
             handle,
@@ -13013,21 +13021,21 @@ class BlenoBindings extends eventemitter3_1.default {
         this._handle = null;
         this._aclStream = null;
     }
-    startAdvertising(name, serviceUuids) {
+    async startAdvertisingWait(name, serviceUuids) {
         this._advertising = true;
-        this._gap.startAdvertising(name, serviceUuids);
+        await this._gap.startAdvertisingWait(name, serviceUuids);
     }
-    startAdvertisingIBeacon(data) {
+    async startAdvertisingIBeaconWait(data) {
         this._advertising = true;
-        this._gap.startAdvertisingIBeacon(data);
+        await this._gap.startAdvertisingIBeaconWait(data);
     }
-    startAdvertisingWithEIRData(advertisementData, scanData) {
+    async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         this._advertising = true;
-        this._gap.startAdvertisingWithEIRData(advertisementData, scanData);
+        await this._gap.startAdvertisingWithEIRDataWait(advertisementData, scanData);
     }
-    stopAdvertising() {
+    async stopAdvertisingWait() {
         this._advertising = false;
-        this._gap.stopAdvertising();
+        await this._gap.stopAdvertisingWait();
     }
     setServices(services) {
         this._gatt.setServices(services);
@@ -13057,7 +13065,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
         this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
         this._hci.on("rssiRead", this.onRssiRead.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
@@ -13104,7 +13112,7 @@ class BlenoBindings extends eventemitter3_1.default {
     onLeConnUpdateComplete(handle, interval, latency, supervisionTimeout) {
         // no-op
     }
-    onDisconnComplete(handle, reason) {
+    async onDisconnCompleteWait(handle, reason) {
         if (this._handle !== handle) {
             return; // not peripheral
         }
@@ -13119,7 +13127,7 @@ class BlenoBindings extends eventemitter3_1.default {
             this.emit("disconnect", address); // TODO: use reason
         }
         if (this._advertising) {
-            this._gap.restartAdvertising();
+            await this._gap.restartAdvertisingWait();
         }
     }
     onEncryptChange(handle, encrypt) {
@@ -13251,12 +13259,8 @@ class Gap extends eventemitter3_1.default {
         this._hci = hci;
         this._advertiseState = null;
         this._hci.on("error", this.onHciError.bind(this));
-        this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
-        this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
-        this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
-        this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
     }
-    startAdvertising(name, serviceUuids) {
+    async startAdvertisingWait(name, serviceUuids) {
         debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;
         let scanDataLength = 0;
@@ -13320,9 +13324,9 @@ class Gap extends eventemitter3_1.default {
             scanData.writeUInt8(0x08, 1);
             nameBuffer.copy(scanData, 2);
         }
-        this.startAdvertisingWithEIRData(advertisementData, scanData);
+        await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
     }
-    startAdvertisingIBeacon(data) {
+    async startAdvertisingIBeaconWait(data) {
         debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
         const dataLength = data.length;
         const manufacturerDataLength = 4 + dataLength;
@@ -13340,47 +13344,30 @@ class Gap extends eventemitter3_1.default {
         advertisementData.writeUInt8(0x02, 7); // type, 2 => iBeacon
         advertisementData.writeUInt8(dataLength, 8);
         data.copy(advertisementData, 9);
-        this.startAdvertisingWithEIRData(advertisementData, scanData);
+        await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
     }
-    startAdvertisingWithEIRData(advertisementData, scanData) {
+    async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         advertisementData = advertisementData || Buffer.alloc(0);
         scanData = scanData || Buffer.alloc(0);
         debug("startAdvertisingWithEIRData: advertisement data = " +
             advertisementData.toString("hex") +
             ", scan data = " +
             scanData.toString("hex"));
-        let error = null;
         if (advertisementData.length > 31) {
-            error = new Error("Advertisement data is over maximum limit of 31 bytes");
+            throw new Error("Advertisement data is over maximum limit of 31 bytes");
         }
         else if (scanData.length > 31) {
-            error = new Error("Scan data is over maximum limit of 31 bytes");
+            throw new Error("Scan data is over maximum limit of 31 bytes");
         }
-        if (error) {
-            this.emit("advertisingStart", error);
-        }
-        else {
-            this._advertiseState = "starting";
-            this._hci.setScanResponseDataWait(scanData); // background
-            this._hci.setAdvertisingDataWait(advertisementData); // background
-            this._hci.setAdvertiseEnableWait(true); // background
-            this._hci.setScanResponseDataWait(scanData); // background
-            this._hci.setAdvertisingDataWait(advertisementData); // background
-        }
-    }
-    restartAdvertising() {
-        this._advertiseState = "restarting";
-        this._hci.setAdvertiseEnableWait(true); // background
-    }
-    stopAdvertising() {
-        this._advertiseState = "stopping";
-        this._hci.setAdvertiseEnableWait(false); // background
-    }
-    onHciError(error) { }
-    onHciLeAdvertisingParametersSet(status) { }
-    onHciLeAdvertisingDataSet(status) { }
-    onHciLeScanResponseDataSet(status) { }
-    onHciLeAdvertiseEnableSet(status) {
+        this._advertiseState = "starting";
+        const p1 = this._hci.setScanResponseDataWait(scanData); // background
+        const p2 = this._hci.setAdvertisingDataWait(advertisementData); // background
+        await Promise.all([p1, p2]);
+        const p3 = this._hci.setAdvertiseEnableWait(true); // background
+        const p4 = this._hci.setScanResponseDataWait(scanData); // background
+        const p5 = this._hci.setAdvertisingDataWait(advertisementData); // background
+        await Promise.all([p3, p4, p5]);
+        const status = await p3;
         if (this._advertiseState === "starting") {
             this._advertiseState = "started";
             let error = null;
@@ -13394,6 +13381,15 @@ class Gap extends eventemitter3_1.default {
             this.emit("advertisingStop");
         }
     }
+    async restartAdvertisingWait() {
+        this._advertiseState = "restarting";
+        await this._hci.setAdvertiseEnableWait(true);
+    }
+    async stopAdvertisingWait() {
+        this._advertiseState = "stopping";
+        await this._hci.setAdvertiseEnableWait(false);
+    }
+    onHciError(error) { }
 }
 exports.default = Gap;
 
@@ -13412,11 +13408,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- *
- * @ignore
- */
 // var debug = require('debug')('gatt');
 const debug = () => { };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
@@ -13681,6 +13672,9 @@ class Gatt extends eventemitter3_1.default {
     }
     send(data) {
         debug("send: " + data.toString("hex"));
+        if (!this._aclStream) {
+            throw new Error("_aclStream is not found");
+        }
         this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
@@ -14019,7 +14013,7 @@ class Gatt extends eventemitter3_1.default {
                     break;
                 }
             }
-            if (secure && !this._aclStream.encrypted) {
+            if (secure && !(this._aclStream && this._aclStream.encrypted)) {
                 response = this.errorResponse(ATT.OP_READ_BY_TYPE_REQ, startHandle, ATT.ECODE_AUTHENTICATION);
             }
             else if (valueHandle) {
@@ -14119,7 +14113,7 @@ class Gatt extends eventemitter3_1.default {
                     handleAttribute = this._handles[valueHandle - 1].attribute;
                 }
                 if (handleProperties & 0x02) {
-                    if (handleSecure & 0x02 && !this._aclStream.encrypted) {
+                    if (handleSecure & 0x02 && !(this._aclStream && this._aclStream.encrypted)) {
                         result = ATT.ECODE_AUTHENTICATION;
                     }
                     else {
@@ -14187,7 +14181,7 @@ class Gatt extends eventemitter3_1.default {
                         }
                     };
                 })(requestType, valueHandle, withoutResponse);
-                if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !this._aclStream.encrypted) {
+                if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !(this._aclStream && this._aclStream.encrypted)) {
                     response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                 }
                 else if (handle.type === "descriptor" || handle.uuid === "2902") {
@@ -14267,7 +14261,7 @@ class Gatt extends eventemitter3_1.default {
                 const handleProperties = handle.properties;
                 const handleSecure = handle.secure;
                 if (handleProperties && handleProperties & 0x08) {
-                    if (handleSecure & 0x08 && !this._aclStream.encrypted) {
+                    if (handleSecure & 0x08 && !(this._aclStream && this._aclStream.encrypted)) {
                         response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                     }
                     else if (this._preparedWriteRequest) {

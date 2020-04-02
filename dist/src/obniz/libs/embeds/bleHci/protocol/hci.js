@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 // let debug = require('debug')('hci');
 const debug = (...params) => {
-    // console.log(...params);
+    console.log(...params);
 };
 var COMMANDS;
 (function (COMMANDS) {
@@ -386,7 +386,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
         const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
         this.emit("stateChange", "poweredOn"); // TODO : really need?
-        this.emit("leAdvertisingParametersSet", data.status);
+        return data.status;
     }
     async setAdvertisingDataWait(data) {
         const cmd = Buffer.alloc(36);
@@ -402,7 +402,6 @@ class Hci extends eventemitter3_1.default {
         debug("set advertisement data - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
-        this.emit("leAdvertisingDataSet", result.status);
         return result.status;
     }
     async setScanResponseDataWait(data) {
@@ -419,7 +418,6 @@ class Hci extends eventemitter3_1.default {
         debug("set scan response data - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
-        this.emit("leScanResponseDataSet", result.status);
         return result.status;
     }
     async setAdvertiseEnableWait(enabled) {
@@ -434,7 +432,6 @@ class Hci extends eventemitter3_1.default {
         debug("set advertise enable - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
-        this.emit("leAdvertiseEnableSet", data.status);
         return data.status;
     }
     async leReadBufferSizeWait() {
@@ -687,6 +684,9 @@ class Hci extends eventemitter3_1.default {
         if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
             this.processLeAdvertisingReport(status, data);
         }
+        else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
+            this.processLeConnComplete(status, data);
+        }
     }
     processLeConnComplete(status, data) {
         const handle = data.readUInt16LE(0);
@@ -711,7 +711,10 @@ class Hci extends eventemitter3_1.default {
         debug("\t\t\tsupervision timeout = " + supervisionTimeout);
         debug("\t\t\tmaster clock accuracy = " + masterClockAccuracy);
         this._handleAclsInProgress[handle] = 0;
-        this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+        if (role === 1) {
+            // only slave, emit
+            this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+        }
         return {
             status,
             handle,

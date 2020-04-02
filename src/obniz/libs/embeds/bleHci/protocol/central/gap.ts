@@ -36,10 +36,6 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     this._hci.on("error", this.onHciError.bind(this));
     this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
-
-    this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
-    this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
-    this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
   }
 
   public async startScanningWait(allowDuplicates: boolean, activeScan: boolean) {
@@ -276,12 +272,6 @@ class Gap extends EventEmitter<GapEventTypes> {
   }
 
   public onHciError(error: any) {}
-
-  public onHciLeAdvertisingParametersSet(status: any) {}
-
-  public onHciLeAdvertisingDataSet(status: any) {}
-
-  public onHciLeScanResponseDataSet(status: any) {}
 
   private async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
     const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
