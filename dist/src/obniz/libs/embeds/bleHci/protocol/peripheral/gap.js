@@ -23,7 +23,6 @@ class Gap extends eventemitter3_1.default {
         super();
         this._hci = hci;
         this._advertiseState = null;
-        this._hci.on("error", this.onHciError.bind(this));
     }
     async startAdvertisingWait(name, serviceUuids) {
         debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
@@ -151,7 +150,6 @@ class Gap extends eventemitter3_1.default {
         this._advertiseState = "stopping";
         await this._hci.setAdvertiseEnableWait(false);
     }
-    onHciError(error) { }
 }
 exports.default = Gap;
 

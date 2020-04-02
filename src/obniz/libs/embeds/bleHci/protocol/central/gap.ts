@@ -15,7 +15,7 @@ import EventEmitter from "eventemitter3";
 import { ObnizBleOpError } from "../../../../../ObnizError";
 import Hci from "../hci";
 
-type GapEventTypes = "scanStop" | "scanStart" | "discover";
+type GapEventTypes = "scanStop" | "discover";
 
 /**
  * @ignore
@@ -34,7 +34,6 @@ class Gap extends EventEmitter<GapEventTypes> {
     this._scanFilterDuplicates = null;
     this._discoveries = {};
 
-    this._hci.on("error", this.onHciError.bind(this));
     this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
   }
 
@@ -271,8 +270,6 @@ class Gap extends EventEmitter<GapEventTypes> {
     this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
   }
 
-  public onHciError(error: any) {}
-
   private async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
     const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
 
@@ -284,12 +281,8 @@ class Gap extends EventEmitter<GapEventTypes> {
     } else {
       if (this._scanState === "starting") {
         this._scanState = "started";
-
-        this.emit("scanStart", this._scanFilterDuplicates);
       } else if (this._scanState === "stopping") {
         this._scanState = "stopped";
-
-        this.emit("scanStop");
       }
     }
   }

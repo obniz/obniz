@@ -26,8 +26,6 @@ class Gap extends EventEmitter<GapEventTypes> {
     this._hci = hci;
 
     this._advertiseState = null;
-
-    this._hci.on("error", this.onHciError.bind(this));
   }
 
   public async startAdvertisingWait(name: any, serviceUuids: any) {
@@ -195,8 +193,6 @@ class Gap extends EventEmitter<GapEventTypes> {
 
     await this._hci.setAdvertiseEnableWait(false);
   }
-
-  public onHciError(error: any) {}
 }
 
 export default Gap;

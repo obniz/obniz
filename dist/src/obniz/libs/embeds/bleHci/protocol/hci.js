@@ -164,7 +164,6 @@ class Hci extends eventemitter3_1.default {
         const lmpVer = data.result.readInt8(3);
         const manufacturer = data.result.readUInt16LE(4);
         const lmpSubVer = data.result.readUInt16LE(6);
-        // TODO: stateChange emitter should be in initWait()
         if (hciVer < 0x06) {
             throw new Error("unsupported hci version");
         }
@@ -312,6 +311,18 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
         const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
         return this.processLeConnUpdateComplete(status, data);
+    }
+    // this function is use by connUpdateLeWait / processLeMetaEvent.
+    processLeConnUpdateComplete(status, data) {
+        const handle = data.readUInt16LE(0);
+        const interval = data.readUInt16LE(2) * 1.25;
+        const latency = data.readUInt16LE(4); // TODO: multiplier?
+        const supervisionTimeout = data.readUInt16LE(6) * 10;
+        debug("\t\t\thandle = " + handle);
+        debug("\t\t\tinterval = " + interval);
+        debug("\t\t\tlatency = " + latency);
+        debug("\t\t\tsupervision timeout = " + supervisionTimeout);
+        return { status, handle, interval, latency, supervisionTimeout };
     }
     startLeEncryption(handle, random, diversifier, key) {
         const cmd = Buffer.alloc(32);
@@ -531,127 +542,6 @@ class Hci extends eventemitter3_1.default {
         debug("write acl data pkt - writing: " + pkt.toString("hex"));
         this._socket.write(pkt);
     }
-    onSocketData(array) {
-        const data = Buffer.from(array);
-        debug("onSocketData: " + data.toString("hex"));
-        const eventType = data.readUInt8(0);
-        debug("\tevent type = 0x" + eventType.toString(16));
-        if (COMMANDS.HCI_EVENT_PKT === eventType) {
-            const subEventType = data.readUInt8(1);
-            debug("\tsub event type = 0x" + subEventType.toString(16));
-            if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
-                const handle = data.readUInt16LE(4);
-                const reason = data.readUInt8(6);
-                debug("\t\thandle = " + handle);
-                debug("\t\treason = " + reason);
-                delete this._handleAclsInProgress[handle];
-                const aclOutQueue = [];
-                let discarded = 0;
-                for (const i in this._aclOutQueue) {
-                    if (this._aclOutQueue[i].handle !== handle) {
-                        aclOutQueue.push(this._aclOutQueue[i]);
-                    }
-                    else {
-                        discarded++;
-                    }
-                }
-                if (discarded) {
-                    debug("\t\tacls discarded = " + discarded);
-                }
-                this._aclOutQueue = aclOutQueue;
-                this.pushAclOutQueue();
-                this.emit("disconnComplete", handle, reason);
-            }
-            else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
-                const handle = data.readUInt16LE(4);
-                const encrypt = data.readUInt8(6);
-                debug("\t\thandle = " + handle);
-                debug("\t\tencrypt = " + encrypt);
-                this.emit("encryptChange", handle, encrypt);
-            }
-            else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
-                // command complete event are handle each command send functions;
-            }
-            else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
-                const status = data.readUInt8(3);
-                const cmd = data.readUInt16LE(5);
-                debug("\t\tstatus = " + status);
-                debug("\t\tcmd = " + cmd);
-                this.processCmdStatusEvent(cmd, status);
-            }
-            else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
-                const leMetaEventType = data.readUInt8(3);
-                const leMetaEventStatus = data.readUInt8(4);
-                const leMetaEventData = data.slice(5);
-                debug("\t\tLE meta event type = " + leMetaEventType);
-                debug("\t\tLE meta event status = " + leMetaEventStatus);
-                debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
-                this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
-            }
-            else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
-                const handles = data.readUInt8(3);
-                for (let i = 0; i < handles; i++) {
-                    const handle = data.readUInt16LE(4 + i * 4);
-                    const pkts = data.readUInt16LE(6 + i * 4);
-                    debug("\thandle = " + handle);
-                    debug("\t\tcompleted = " + pkts);
-                    if (this._handleAclsInProgress[handle] === undefined) {
-                        debug("\t\talready closed");
-                        continue;
-                    }
-                    if (pkts > this._handleAclsInProgress[handle]) {
-                        // Linux kernel may send acl packets by itself, so be ready for underflow
-                        this._handleAclsInProgress[handle] = 0;
-                    }
-                    else {
-                        this._handleAclsInProgress[handle] -= pkts;
-                    }
-                    debug("\t\tin progress = " + this._handleAclsInProgress[handle]);
-                }
-                this.pushAclOutQueue();
-            }
-        }
-        else if (COMMANDS.HCI_ACLDATA_PKT === eventType) {
-            const flags = data.readUInt16LE(1) >> 12;
-            const handle = data.readUInt16LE(1) & 0x0fff;
-            if (COMMANDS.ACL_START === flags) {
-                const cid = data.readUInt16LE(7);
-                const length = data.readUInt16LE(5);
-                const pktData = data.slice(9);
-                debug("\t\tcid = " + cid);
-                if (length === pktData.length) {
-                    debug("\t\thandle = " + handle);
-                    debug("\t\tdata = " + pktData.toString("hex"));
-                    this.emit("aclDataPkt", handle, cid, pktData);
-                    if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][cid]) {
-                        const resolve = this.aclStreamObservers[handle][cid].shift();
-                        resolve(pktData);
-                    }
-                }
-                else {
-                    this._handleBuffers[handle] = {
-                        length,
-                        cid,
-                        data: pktData,
-                    };
-                }
-            }
-            else if (COMMANDS.ACL_CONT === flags) {
-                if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
-                    return;
-                }
-                this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
-                if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
-                    this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
-                    if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
-                        const resolve = this.aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
-                        resolve(this._handleBuffers[handle].data);
-                    }
-                    delete this._handleBuffers[handle];
-                }
-            }
-        }
-    }
     async longTermKeyRequestNegativeReply(handle) {
         throw new Error("TODO: no checked");
         const cmd = Buffer.alloc(5);
@@ -670,6 +560,10 @@ class Hci extends eventemitter3_1.default {
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
             this.processLeConnComplete(status, data);
+        }
+        else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
+            const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
+            this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
         }
     }
     processLeConnComplete(status, data) {
@@ -732,18 +626,6 @@ class Hci extends eventemitter3_1.default {
             this.emit("leAdvertisingReport", 0, type, address, addressType, eir, rssi);
             data = data.slice(eirLength + 10);
         }
-    }
-    processLeConnUpdateComplete(status, data) {
-        const handle = data.readUInt16LE(0);
-        const interval = data.readUInt16LE(2) * 1.25;
-        const latency = data.readUInt16LE(4); // TODO: multiplier?
-        const supervisionTimeout = data.readUInt16LE(6) * 10;
-        debug("\t\t\thandle = " + handle);
-        debug("\t\t\tinterval = " + interval);
-        debug("\t\t\tlatency = " + latency);
-        debug("\t\t\tsupervision timeout = " + supervisionTimeout);
-        this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
-        return { status, handle, interval, latency, supervisionTimeout };
     }
     processCmdStatusEvent(cmd, status) {
         if (cmd === COMMANDS.LE_CREATE_CONN_CMD) {
@@ -810,6 +692,133 @@ class Hci extends eventemitter3_1.default {
     }
     createCmdCompleteEventFilter(cmd) {
         return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_CMD_COMPLETE, -1, -1, (cmd >> 0) & 0xff, (cmd >> 8) & 0xff];
+    }
+    onHciAclData(data) {
+        const flags = data.readUInt16LE(1) >> 12;
+        const handle = data.readUInt16LE(1) & 0x0fff;
+        if (COMMANDS.ACL_START === flags) {
+            const cid = data.readUInt16LE(7);
+            const length = data.readUInt16LE(5);
+            const pktData = data.slice(9);
+            debug("\t\tcid = " + cid);
+            if (length === pktData.length) {
+                debug("\t\thandle = " + handle);
+                debug("\t\tdata = " + pktData.toString("hex"));
+                this.emit("aclDataPkt", handle, cid, pktData);
+                if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][cid]) {
+                    const resolve = this.aclStreamObservers[handle][cid].shift();
+                    resolve(pktData);
+                }
+            }
+            else {
+                this._handleBuffers[handle] = {
+                    length,
+                    cid,
+                    data: pktData,
+                };
+            }
+        }
+        else if (COMMANDS.ACL_CONT === flags) {
+            if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
+                return;
+            }
+            this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
+            if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
+                this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
+                if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
+                    const resolve = this.aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
+                    resolve(this._handleBuffers[handle].data);
+                }
+                delete this._handleBuffers[handle];
+            }
+        }
+    }
+    onHciEventData(data) {
+        const subEventType = data.readUInt8(1);
+        debug("\tsub event type = 0x" + subEventType.toString(16));
+        if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
+            const handle = data.readUInt16LE(4);
+            const reason = data.readUInt8(6);
+            debug("\t\thandle = " + handle);
+            debug("\t\treason = " + reason);
+            delete this._handleAclsInProgress[handle];
+            const aclOutQueue = [];
+            let discarded = 0;
+            for (const i in this._aclOutQueue) {
+                if (this._aclOutQueue[i].handle !== handle) {
+                    aclOutQueue.push(this._aclOutQueue[i]);
+                }
+                else {
+                    discarded++;
+                }
+            }
+            if (discarded) {
+                debug("\t\tacls discarded = " + discarded);
+            }
+            this._aclOutQueue = aclOutQueue;
+            this.pushAclOutQueue();
+            this.emit("disconnComplete", handle, reason);
+        }
+        else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
+            const handle = data.readUInt16LE(4);
+            const encrypt = data.readUInt8(6);
+            debug("\t\thandle = " + handle);
+            debug("\t\tencrypt = " + encrypt);
+            this.emit("encryptChange", handle, encrypt);
+        }
+        else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
+            // command complete event are handle each command send functions;
+        }
+        else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
+            const status = data.readUInt8(3);
+            const cmd = data.readUInt16LE(5);
+            debug("\t\tstatus = " + status);
+            debug("\t\tcmd = " + cmd);
+            this.processCmdStatusEvent(cmd, status);
+        }
+        else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
+            const leMetaEventType = data.readUInt8(3);
+            const leMetaEventStatus = data.readUInt8(4);
+            const leMetaEventData = data.slice(5);
+            debug("\t\tLE meta event type = " + leMetaEventType);
+            debug("\t\tLE meta event status = " + leMetaEventStatus);
+            debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
+            this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
+        }
+        else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
+            const handles = data.readUInt8(3);
+            for (let i = 0; i < handles; i++) {
+                const handle = data.readUInt16LE(4 + i * 4);
+                const pkts = data.readUInt16LE(6 + i * 4);
+                debug("\thandle = " + handle);
+                debug("\t\tcompleted = " + pkts);
+                if (this._handleAclsInProgress[handle] === undefined) {
+                    debug("\t\talready closed");
+                    continue;
+                }
+                if (pkts > this._handleAclsInProgress[handle]) {
+                    // Linux kernel may send acl packets by itself, so be ready for underflow
+                    this._handleAclsInProgress[handle] = 0;
+                }
+                else {
+                    this._handleAclsInProgress[handle] -= pkts;
+                }
+                debug("\t\tin progress = " + this._handleAclsInProgress[handle]);
+            }
+            this.pushAclOutQueue();
+        }
+    }
+    onSocketData(array) {
+        const data = Buffer.from(array);
+        debug("onSocketData: " + data.toString("hex"));
+        const eventType = data.readUInt8(0);
+        debug("\tevent type = 0x" + eventType.toString(16));
+        if (COMMANDS.HCI_EVENT_PKT === eventType) {
+            this.onHciEventData(data);
+        }
+        else if (COMMANDS.HCI_ACLDATA_PKT === eventType) {
+            this.onHciAclData(data);
+        }
     }
 }
 Hci.STATUS_MAPPER = STATUS_MAPPER;

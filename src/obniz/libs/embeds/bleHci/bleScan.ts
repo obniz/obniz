@@ -155,7 +155,7 @@ export default class BleScan {
   protected scanTarget: BleScanTarget;
   protected scanSettings: BleScanSetting;
   protected obnizBle: ObnizBLE;
-  protected emitter: EventEmitter;
+  protected emitter: EventEmitter<"onfind" | "onfinish">;
   protected scanedPeripherals: BleRemotePeripheral[];
   private _timeoutTimer?: NodeJS.Timeout;
   private _delayNotifyTimers: Array<{
@@ -266,23 +266,15 @@ export default class BleScan {
    * @param settings
    */
   public startOneWait(target: BleScanTarget, settings: BleScanSetting): Promise<BlePeripheral> {
-    let state: any = 0;
-
     return this.startWait(target, settings).then(() => {
       return new Promise((resolve: any) => {
         this.emitter.once("onfind", (param: any) => {
-          if (state === 0) {
-            state = 1;
-            this.end();
-            resolve(param);
-          }
+          resolve(param);
+          this.end();
         });
 
         this.emitter.once("onfinish", () => {
-          if (state === 0) {
-            state = 1;
-            resolve(null);
-          }
+          resolve(null);
         });
       });
     });
@@ -345,7 +337,7 @@ export default class BleScan {
   public async endWait() {
     this.clearTimeoutTimer();
     await this.obnizBle.centralBindings.stopScanningWait();
-    // this.finish() will be called by emitter.
+    this.finish();
   }
 
   /**
@@ -379,10 +371,6 @@ export default class BleScan {
           }, 10000);
           this._delayNotifyTimers.push({ timer, peripheral });
         }
-        break;
-      }
-      case "onfinish": {
-        this.finish();
         break;
       }
     }

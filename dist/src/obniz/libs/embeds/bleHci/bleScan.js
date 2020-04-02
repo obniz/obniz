@@ -113,21 +113,14 @@ class BleScan {
      * @param settings
      */
     startOneWait(target, settings) {
-        let state = 0;
         return this.startWait(target, settings).then(() => {
             return new Promise((resolve) => {
                 this.emitter.once("onfind", (param) => {
-                    if (state === 0) {
-                        state = 1;
-                        this.end();
-                        resolve(param);
-                    }
+                    resolve(param);
+                    this.end();
                 });
                 this.emitter.once("onfinish", () => {
-                    if (state === 0) {
-                        state = 1;
-                        resolve(null);
-                    }
+                    resolve(null);
                 });
             });
         });
@@ -186,7 +179,7 @@ class BleScan {
     async endWait() {
         this.clearTimeoutTimer();
         await this.obnizBle.centralBindings.stopScanningWait();
-        // this.finish() will be called by emitter.
+        this.finish();
     }
     /**
      * @ignore
@@ -216,10 +209,6 @@ class BleScan {
                     }, 10000);
                     this._delayNotifyTimers.push({ timer, peripheral });
                 }
-                break;
-            }
-            case "onfinish": {
-                this.finish();
                 break;
             }
         }

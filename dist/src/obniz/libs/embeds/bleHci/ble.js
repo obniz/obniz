@@ -192,10 +192,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return null;
     }
-    onScanStart() { }
-    onScanStop() {
-        this.scan.notifyFromServer("onfinish", null);
-    }
     onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
         let val = this.findPeripheral(uuid);
         if (!val) {
@@ -357,8 +353,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     _bind() {
         this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-        this.centralBindings.on("scanStart", this.onScanStart.bind(this));
-        this.centralBindings.on("scanStop", this.onScanStop.bind(this));
         this.centralBindings.on("discover", this.onDiscover.bind(this));
         this.centralBindings.on("connect", this.onConnect.bind(this));
         this.centralBindings.on("disconnect", this.onDisconnect.bind(this));

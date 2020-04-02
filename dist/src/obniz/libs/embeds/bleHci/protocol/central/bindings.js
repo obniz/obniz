@@ -65,8 +65,6 @@ class NobleBindings extends eventemitter3_1.default {
         return rssi;
     }
     init() {
-        this._gap.on("scanStart", this.onScanStart.bind(this));
-        this._gap.on("scanStop", this.onScanStop.bind(this));
         this._gap.on("discover", this.onDiscover.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
         this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
@@ -89,12 +87,6 @@ class NobleBindings extends eventemitter3_1.default {
             console.log("               [sudo] NOBLE_HCI_DEVICE_ID=x node ...");
         }
         this.emit("stateChange", state);
-    }
-    onScanStart(filterDuplicates) {
-        this.emit("scanStart", filterDuplicates);
-    }
-    onScanStop() {
-        this.emit("scanStop");
     }
     onDiscover(status, address, addressType, connectable, advertisement, rssi) {
         if (this._scanServiceUuids === undefined) {

@@ -17,8 +17,6 @@ import Signaling from "./signaling";
 
 type NobleBindingsEventType =
   // response of command
-  | "scanStart"
-  | "scanStop"
   | "discover"
   | "connect"
   | "servicesDiscover"
@@ -123,8 +121,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public init() {
-    this._gap.on("scanStart", this.onScanStart.bind(this));
-    this._gap.on("scanStop", this.onScanStop.bind(this));
     this._gap.on("discover", this.onDiscover.bind(this));
 
     this._hci.on("stateChange", this.onStateChange.bind(this));
@@ -150,14 +146,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     }
 
     this.emit("stateChange", state);
-  }
-
-  public onScanStart(filterDuplicates: any) {
-    this.emit("scanStart", filterDuplicates);
-  }
-
-  public onScanStop() {
-    this.emit("scanStop");
   }
 
   public onDiscover(status: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any) {

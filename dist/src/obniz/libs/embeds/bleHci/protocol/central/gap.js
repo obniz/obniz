@@ -19,7 +19,6 @@ class Gap extends eventemitter3_1.default {
         this._scanState = null;
         this._scanFilterDuplicates = null;
         this._discoveries = {};
-        this._hci.on("error", this.onHciError.bind(this));
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
     }
     async startScanningWait(allowDuplicates, activeScan) {
@@ -227,7 +226,6 @@ class Gap extends eventemitter3_1.default {
         };
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
-    onHciError(error) { }
     async setScanEnabledWait(enabled, filterDuplicates) {
         const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
         // Check the status we got from the command complete function.
@@ -239,11 +237,9 @@ class Gap extends eventemitter3_1.default {
         else {
             if (this._scanState === "starting") {
                 this._scanState = "started";
-                this.emit("scanStart", this._scanFilterDuplicates);
             }
             else if (this._scanState === "stopping") {
                 this._scanState = "stopped";
-                this.emit("scanStop");
             }
         }
     }
