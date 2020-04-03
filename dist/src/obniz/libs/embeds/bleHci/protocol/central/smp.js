@@ -62,25 +62,18 @@ class Smp extends eventemitter3_1.default {
                 0x00,
                 0x01,
             ]);
+            this.write(this._preq);
         }
         else {
-            this._preq = Buffer.from([
-                SMP.PAIRING_REQUEST,
-                0x03,
-                0x00,
-                0x01,
-                0x10,
-                0x00,
-                0x01,
-            ]);
+            this.pairingWithJustInWorksWait();
         }
-        this.write(this._preq);
     }
     onAclStreamData(cid, data) {
         if (cid !== SMP.CID) {
             return;
         }
         const code = data.readUInt8(0);
+        console.warn("SMP: " + code);
         // console.warn("pairing " + code);
         if (SMP.PAIRING_RESPONSE === code) {
             this.handlePairingResponse(data);
@@ -174,6 +167,24 @@ class Smp extends eventemitter3_1.default {
     }
     handleSecurityRequest(data) {
         this.sendPairingRequest();
+    }
+    async pairingWithJustInWorksWait() {
+        this._preq = Buffer.from([
+            SMP.PAIRING_REQUEST,
+            0x03,
+            0x00,
+            0x01,
+            0x10,
+            0x00,
+            0x01,
+        ]);
+        this.write(this._preq);
+        // const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
+        // this.handlePairingResponse(pairingResponse);
+        // const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM);
+        // this.handlePairingConfirm(confirm);
+        // const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
+        // this.handlePairingRandom(random);
     }
     isPasskeyMode() {
         if (this._options && this._options.passkey === true && this._options.passkeyCallback) {

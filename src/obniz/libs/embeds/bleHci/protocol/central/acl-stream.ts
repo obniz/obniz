@@ -68,12 +68,21 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._hci.writeAclDataPkt(this._handle, cid, data);
   }
 
-  public push(cid: any, data: any) {
+  public async readWait(cid: any, flag: number) {
+    const data = await this._hci.readAclStreamWait(this._handle, cid, flag);
+    return data;
+  }
+
+  public push(cid: number, data: Buffer) {
     if (data) {
       this.emit("data", cid, data);
     } else {
       this.emit("end");
     }
+  }
+
+  public end() {
+    this.emit("end");
   }
 
   public pushEncrypt(encrypt: any) {

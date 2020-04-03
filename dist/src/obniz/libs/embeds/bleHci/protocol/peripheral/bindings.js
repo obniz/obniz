@@ -109,7 +109,7 @@ class BlenoBindings extends eventemitter3_1.default {
             return; // not peripheral
         }
         if (this._aclStream) {
-            this._aclStream.push(null, null);
+            this._aclStream.end();
         }
         const address = this._address;
         this._address = null;

@@ -156,7 +156,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
       return; // not peripheral
     }
     if (this._aclStream) {
-      this._aclStream.push(null, null);
+      this._aclStream.end();
     }
 
     const address: any = this._address;

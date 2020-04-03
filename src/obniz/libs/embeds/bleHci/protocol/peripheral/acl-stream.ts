@@ -35,16 +35,17 @@ class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress, this._hci);
   }
 
-  public write(cid: any, data: any) {
+  public write(cid: number, data: Buffer) {
     this._hci.queueAclDataPkt(this._handle, cid, data);
   }
 
-  public push(cid: any, data: any) {
+  public push(cid: number, data: Buffer) {
     if (data) {
       this.emit("data", cid, data);
-    } else {
-      this.emit("end");
     }
+  }
+  public end() {
+    this.emit("end");
   }
 
   public pushEncrypt(encrypt: any) {

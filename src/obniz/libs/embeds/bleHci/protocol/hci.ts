@@ -129,7 +129,7 @@ class Hci extends EventEmitter<HciEventTypes> {
   public addressType: any;
   public address: any;
   private _state: HciState;
-  private aclStreamObservers: { [key: string]: any[] } = {};
+  private _aclStreamObservers: { [key: string]: any[] } = {};
 
   constructor(obnizHci: any) {
     super();
@@ -728,8 +728,8 @@ class Hci extends EventEmitter<HciEventTypes> {
     // header
     pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
     pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
-    pkt.writeUInt16LE(data.length + 4, 3); // data length 1
-    pkt.writeUInt16LE(data.length, 5); // data length 2
+    pkt.writeUInt16LE(data.length + 4, 3); // data length 1  for acl data on HCI
+    pkt.writeUInt16LE(data.length, 5); // data length 2  for l2cap
     pkt.writeUInt16LE(cid, 7);
 
     data.copy(pkt, 9);
@@ -876,11 +876,12 @@ class Hci extends EventEmitter<HciEventTypes> {
     this.emit("stateChange", state);
   }
 
-  public async readAclStreamWait(handle: Handle, cid: number) {
+  public async readAclStreamWait(handle: Handle, cid: number, firstData: number) {
     return new Promise((resolve) => {
-      this.aclStreamObservers[handle] = this.aclStreamObservers[handle] || [];
-      this.aclStreamObservers[handle][cid] = this.aclStreamObservers[handle][cid] || [];
-      this.aclStreamObservers[handle][cid].push(resolve);
+      const key = (cid << 8) + firstData;
+      this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
+      this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
+      this._aclStreamObservers[handle][key].push(resolve);
     });
   }
 
@@ -935,7 +936,7 @@ class Hci extends EventEmitter<HciEventTypes> {
       const cid: any = data.readUInt16LE(7);
 
       const length: any = data.readUInt16LE(5);
-      const pktData: any = data.slice(9);
+      const pktData: Buffer = data.slice(9);
 
       debug("\t\tcid = " + cid);
 
@@ -944,8 +945,13 @@ class Hci extends EventEmitter<HciEventTypes> {
         debug("\t\tdata = " + pktData.toString("hex"));
 
         this.emit("aclDataPkt", handle, cid, pktData);
-        if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][cid]) {
-          const resolve = this.aclStreamObservers[handle][cid].shift();
+        const key = (cid << 8) + pktData.readUInt8(0);
+        if (
+          this._aclStreamObservers[handle] &&
+          this._aclStreamObservers[handle][key] &&
+          this._aclStreamObservers[handle][key].length > 0
+        ) {
+          const resolve = this._aclStreamObservers[handle][key].shift();
           resolve(pktData);
         }
       } else {
@@ -964,8 +970,8 @@ class Hci extends EventEmitter<HciEventTypes> {
 
       if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
         this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
-        if (this.aclStreamObservers[handle] && this.aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
-          const resolve = this.aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
+        if (this._aclStreamObservers[handle] && this._aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
+          const resolve = this._aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
           resolve(this._handleBuffers[handle].data);
         }
         delete this._handleBuffers[handle];

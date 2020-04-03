@@ -45,6 +45,10 @@ class AclStream extends eventemitter3_1.default {
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
     }
+    async readWait(cid, flag) {
+        const data = await this._hci.readAclStreamWait(this._handle, cid, flag);
+        return data;
+    }
     push(cid, data) {
         if (data) {
             this.emit("data", cid, data);
@@ -52,6 +56,9 @@ class AclStream extends eventemitter3_1.default {
         else {
             this.emit("end");
         }
+    }
+    end() {
+        this.emit("end");
     }
     pushEncrypt(encrypt) {
         this.emit("encrypt", encrypt);
