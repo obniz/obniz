@@ -16,36 +16,37 @@ import crypto from "./crypto";
  * @ignore
  */
 namespace SMP {
-  export const CID: any = 0x0006;
-  export const PAIRING_REQUEST: any = 0x01;
-  export const PAIRING_RESPONSE: any = 0x02;
-  export const PAIRING_CONFIRM: any = 0x03;
-  export const PAIRING_RANDOM: any = 0x04;
-  export const PAIRING_FAILED: any = 0x05;
-  export const ENCRYPT_INFO: any = 0x06;
-  export const MASTER_IDENT: any = 0x07;
-  export const SMP_SECURITY_REQUEST: any = 0x0b;
+  export const CID = 0x0006;
+  export const PAIRING_REQUEST = 0x01;
+  export const PAIRING_RESPONSE = 0x02;
+  export const PAIRING_CONFIRM = 0x03;
+  export const PAIRING_RANDOM = 0x04;
+  export const PAIRING_FAILED = 0x05;
+  export const ENCRYPT_INFO = 0x06;
+  export const MASTER_IDENT = 0x07;
+  export const SMP_SECURITY_REQUEST = 0x0b;
 }
 
-type SmpEventTypes = "masterIdent" | "ltk" | "fail" | "stk" | "end";
+type SmpEventTypes = "masterIdent" | "ltk" | "fail" | "end";
 
 /**
  * @ignore
  */
 class Smp extends EventEmitter<SmpEventTypes> {
-  public _aclStream: AclStream;
-  public _iat: any;
-  public _ia: any;
-  public _rat: any;
-  public _ra: any;
-  public onAclStreamDataBinded: any;
-  public onAclStreamEndBinded: any;
-  public _preq: any;
-  public _pres: any;
-  public _tk: any;
-  public _r: any;
-  public _pcnf: any;
-  public _stk: any = null;
+  private _aclStream: AclStream;
+  private _iat: any;
+  private _ia: any;
+  private _rat: any;
+  private _ra: any;
+  private onAclStreamDataBinded: any;
+  private onAclStreamEndBinded: any;
+  private _preq: any;
+  private _pres: any;
+  private _tk: any;
+  private _r: any;
+  private _pcnf: any;
+  private _stk: any = null;
+  private _ltk: any = null;
   private _options: any = null;
 
   constructor(
@@ -82,23 +83,32 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this._aclStream.on("end", this.onAclStreamEndBinded);
   }
 
-  public sendPairingRequest(options?: any) {
+  public async pairingWithKeyWait(key: string) {
+    this.setKeys(key);
+    const encResult = await this._aclStream.onSmpStkWait(this._stk);
+    return;
+  }
+
+  public async pairingWait(options?: any) {
     this._options = options;
 
-    if (this.isPasskeyMode()) {
-      this._preq = Buffer.from([
-        SMP.PAIRING_REQUEST,
-        0x02, // IO capability: Keyboard
-        0x00, // OOB data: Authentication data not present
-        0x05, // Authentication requirement: Bonding - MITM
-        0x10, // Max encryption key size
-        0x00, // Initiator key distribution: <none>
-        0x01, // Responder key distribution: EncKey
-      ]);
-      this.write(this._preq);
-    } else {
-      this.pairingWithJustInWorksWait();
-    }
+    await this.sendPairingRequestWait();
+    const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
+    this.handlePairingResponse(pairingResponse);
+    const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM);
+    this.handlePairingConfirm(confirm);
+    const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
+    const encResult = this.handlePairingRandomWait(random);
+
+    const encInfoPromise = this._aclStream.readWait(SMP.CID, SMP.ENCRYPT_INFO);
+    const masterIdentPromise = this._aclStream.readWait(SMP.CID, SMP.MASTER_IDENT);
+    await Promise.all([encInfoPromise, masterIdentPromise]);
+    const encInfo = await encInfoPromise;
+    const masterIdent = await masterIdentPromise;
+    this.handleEncryptInfo(encInfo);
+    this.handleMasterIdent(masterIdent);
+
+    return encResult;
   }
 
   public onAclStreamData(cid: any, data?: any) {
@@ -109,13 +119,14 @@ class Smp extends EventEmitter<SmpEventTypes> {
     const code: any = data.readUInt8(0);
 
     console.warn("SMP: " + code);
+    return;
     // console.warn("pairing " + code);
     if (SMP.PAIRING_RESPONSE === code) {
       this.handlePairingResponse(data);
     } else if (SMP.PAIRING_CONFIRM === code) {
       this.handlePairingConfirm(data);
     } else if (SMP.PAIRING_RANDOM === code) {
-      this.handlePairingRandom(data);
+      this.handlePairingRandomWait(data);
     } else if (SMP.PAIRING_FAILED === code) {
       this.handlePairingFailed(data);
     } else if (SMP.ENCRYPT_INFO === code) {
@@ -170,9 +181,9 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
   }
 
-  public handlePairingRandom(data: any) {
+  public async handlePairingRandomWait(data: any) {
     const r: any = data.slice(1);
-
+    let encResult = null;
     const pcnf: any = Buffer.concat([
       Buffer.from([SMP.PAIRING_CONFIRM]),
       crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
@@ -184,12 +195,15 @@ class Smp extends EventEmitter<SmpEventTypes> {
       }
       this._stk = crypto.s1(this._tk, r, this._r);
 
-      this.emit("stk", this._stk);
+      // this.emit("stk", this._stk);
+      encResult = await this._aclStream.onSmpStkWait(this._stk);
     } else {
       this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
 
       this.emit("fail");
+      throw new Error("Encryption pcnf error");
     }
+    return encResult;
   }
 
   public handlePairingFailed(data: any) {
@@ -197,9 +211,8 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public handleEncryptInfo(data: any) {
-    const ltk: any = data.slice(1);
-
-    this.emit("ltk", ltk);
+    this._ltk = data.slice(1);
+    this.emit("ltk", this._ltk);
   }
 
   public handleMasterIdent(data: any) {
@@ -214,26 +227,56 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public handleSecurityRequest(data: any) {
-    this.sendPairingRequest();
+    this.pairingWait();
   }
 
-  private async pairingWithJustInWorksWait() {
-    this._preq = Buffer.from([
-      SMP.PAIRING_REQUEST,
-      0x03, // IO capability: NoInputNoOutput
-      0x00, // OOB data: Authentication data not present
-      0x01, // Authentication requirement: Bonding - No MITM
-      0x10, // Max encryption key size
-      0x00, // Initiator key distribution: <none>
-      0x01, // Responder key distribution: EncKey
-    ]);
+  public setKeys(keyString: string) {
+    const keys = JSON.parse(keyString);
+    this._stk = Buffer.from(keys.stk);
+    this._preq = Buffer.from(keys.preq);
+    this._pres = Buffer.from(keys.pres);
+    this._tk = Buffer.from(keys.tk);
+    this._r = Buffer.from(keys.r);
+    this._pcnf = Buffer.from(keys.pcnf);
+    this._ltk = Buffer.from(keys.ltk);
+  }
+
+  public getKeys() {
+    const keys = {
+      stk: Array.from(this._stk),
+      preq: Array.from(this._preq),
+      pres: Array.from(this._pres),
+      tk: Array.from(this._tk),
+      r: Array.from(this._r),
+      pcnf: Array.from(this._pcnf),
+      ltk: Array.from(this._ltk),
+    };
+    return JSON.stringify(keys);
+  }
+
+  private async sendPairingRequestWait() {
+    if (this.isPasskeyMode()) {
+      this._preq = Buffer.from([
+        SMP.PAIRING_REQUEST,
+        0x02, // IO capability: Keyboard
+        0x00, // OOB data: Authentication data not present
+        0x05, // Authentication requirement: Bonding - MITM
+        0x10, // Max encryption key size
+        0x00, // Initiator key distribution: <none>
+        0x01, // Responder key distribution: EncKey
+      ]);
+    } else {
+      this._preq = Buffer.from([
+        SMP.PAIRING_REQUEST,
+        0x03, // IO capability: NoInputNoOutput
+        0x00, // OOB data: Authentication data not present
+        0x01, // Authentication requirement: Bonding - No MITM
+        0x10, // Max encryption key size
+        0x00, // Initiator key distribution: <none>
+        0x01, // Responder key distribution: EncKey
+      ]);
+    }
     this.write(this._preq);
-    // const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
-    // this.handlePairingResponse(pairingResponse);
-    // const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM);
-    // this.handlePairingConfirm(confirm);
-    // const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
-    // this.handlePairingRandom(random);
   }
 
   private isPasskeyMode() {

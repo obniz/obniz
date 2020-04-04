@@ -10,6 +10,7 @@ const debug: any = (...params: any[]) => {
   // console.log(...params);
 };
 
+import { ObnizBleHciStateError } from "../../../../ObnizError";
 import { Handle } from "../bleTypes";
 
 namespace COMMANDS {
@@ -26,6 +27,7 @@ namespace COMMANDS {
   export const EVT_CMD_COMPLETE: any = 0x0e;
   export const EVT_CMD_STATUS: any = 0x0f;
   export const EVT_NUMBER_OF_COMPLETED_PACKETS: any = 0x13;
+  export const EVT_ENCRYPTION_KEY_REFRESH_COMPLETE: any = 0x30;
   export const EVT_LE_META_EVENT: any = 0x3e;
 
   export const EVT_LE_CONN_COMPLETE: any = 0x01;
@@ -450,7 +452,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     return { status, handle, interval, latency, supervisionTimeout };
   }
 
-  public startLeEncryption(handle: Handle, random: Buffer, diversifier: Buffer, key: Buffer) {
+  public async startLeEncryptionWait(handle: Handle, random: Buffer, diversifier: Buffer, key: Buffer) {
     const cmd: any = Buffer.alloc(32);
 
     // header
@@ -468,6 +470,24 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     debug("start le encryption - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+
+    console.log("start le encryption - writing: " + cmd.toString("hex"));
+    const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE]);
+    const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE]);
+    const data = await Promise.race([p1, p2]);
+    // const data = await p1;
+    console.log("start le encryption - data: " + data.toString("hex"));
+    if (data.readUInt16LE(1) === COMMANDS.EVT_ENCRYPT_CHANGE) {
+      const encHandle: Handle = data.readUInt16LE(4);
+      const encrypt: any = data.readUInt8(6);
+
+      debug("\t\thandle = " + encHandle);
+      debug("\t\tencrypt = " + encrypt);
+
+      this.emit("encryptChange", encHandle, encrypt);
+      return encrypt;
+    }
+    return "refresh";
   }
 
   public disconnect(handle: Handle, reason?: number) {

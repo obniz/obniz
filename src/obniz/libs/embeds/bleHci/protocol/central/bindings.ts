@@ -125,7 +125,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
     this._hci.on("stateChange", this.onStateChange.bind(this));
     this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-    this._hci.on("encryptChange", this.onEncryptChange.bind(this));
     this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
   }
 
@@ -275,14 +274,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       // console.warn(
       //   'noble warning: unknown handle ' + handle + ' disconnected!'
       // );
-    }
-  }
-
-  public onEncryptChange(handle: any, encrypt?: any) {
-    const aclStream: any = this._aclStreams[handle];
-
-    if (aclStream) {
-      aclStream.pushEncrypt(encrypt);
     }
   }
 

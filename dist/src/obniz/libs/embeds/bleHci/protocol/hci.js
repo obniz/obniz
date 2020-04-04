@@ -25,6 +25,7 @@ var COMMANDS;
     COMMANDS.EVT_CMD_COMPLETE = 0x0e;
     COMMANDS.EVT_CMD_STATUS = 0x0f;
     COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS = 0x13;
+    COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE = 0x30;
     COMMANDS.EVT_LE_META_EVENT = 0x3e;
     COMMANDS.EVT_LE_CONN_COMPLETE = 0x01;
     COMMANDS.EVT_LE_ADVERTISING_REPORT = 0x02;
@@ -324,7 +325,7 @@ class Hci extends eventemitter3_1.default {
         debug("\t\t\tsupervision timeout = " + supervisionTimeout);
         return { status, handle, interval, latency, supervisionTimeout };
     }
-    startLeEncryption(handle, random, diversifier, key) {
+    async startLeEncryptionWait(handle, random, diversifier, key) {
         const cmd = Buffer.alloc(32);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -338,6 +339,21 @@ class Hci extends eventemitter3_1.default {
         key.copy(cmd, 16);
         debug("start le encryption - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
+        console.log("start le encryption - writing: " + cmd.toString("hex"));
+        const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE]);
+        const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE]);
+        const data = await Promise.race([p1, p2]);
+        // const data = await p1;
+        console.log("start le encryption - data: " + data.toString("hex"));
+        if (data.readUInt16LE(1) === COMMANDS.EVT_ENCRYPT_CHANGE) {
+            const encHandle = data.readUInt16LE(4);
+            const encrypt = data.readUInt8(6);
+            debug("\t\thandle = " + encHandle);
+            debug("\t\tencrypt = " + encrypt);
+            this.emit("encryptChange", encHandle, encrypt);
+            return encrypt;
+        }
+        return "refresh";
     }
     disconnect(handle, reason) {
         const cmd = Buffer.alloc(7);

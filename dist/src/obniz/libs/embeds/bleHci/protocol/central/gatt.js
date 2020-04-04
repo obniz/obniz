@@ -84,12 +84,8 @@ class Gatt extends eventemitter3_1.default {
         this._mtu = 23;
         this._security = "low";
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-        this.onAclStreamEncryptBinded = this.onAclStreamEncrypt.bind(this);
-        this.onAclStreamEncryptFailBinded = this.onAclStreamEncryptFail.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
         this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("encrypt", this.onAclStreamEncryptBinded);
-        this._aclStream.on("encryptFail", this.onAclStreamEncryptFailBinded);
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
@@ -135,35 +131,16 @@ class Gatt extends eventemitter3_1.default {
                     data[4] === ATT.ECODE_AUTHORIZATION ||
                     data[4] === ATT.ECODE_INSUFF_ENC) &&
                 this._security !== "medium") {
-                this._aclStream.encrypt();
+                // retry after encrpyt
+                this._aclStream.encryptWait().then(() => {
+                    this.writeAtt(this._currentCommand.buffer);
+                });
                 return;
             }
             debug(this._address + ": read: " + data.toString("hex"));
             this._currentCommand.callback(data);
             this._currentCommand = null;
             this._runQueueCommand();
-        }
-    }
-    onAclStreamEncrypt(encrypt) {
-        if (encrypt) {
-            this._security = "medium";
-            if (this._currentCommand.type === "encrypt") {
-                if (this._currentCommand.callback) {
-                    this._currentCommand.callback({
-                        stk: this._aclStream._smp._stk,
-                        preq: this._aclStream._smp._preq,
-                        pres: this._aclStream._smp._pres,
-                        tk: this._aclStream._smp._tk,
-                        r: this._aclStream._smp._r,
-                        pcnf: this._aclStream._smp._pcnf,
-                    });
-                }
-                this._currentCommand = null;
-                this._runQueueCommand();
-            }
-            else {
-                this.writeAtt(this._currentCommand.buffer);
-            }
         }
     }
     encrypt(callback, options) {
@@ -174,11 +151,8 @@ class Gatt extends eventemitter3_1.default {
         });
         this._runQueueCommand();
     }
-    onAclStreamEncryptFail() { }
     onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-        this._aclStream.removeListener("encrypt", this.onAclStreamEncryptBinded);
-        this._aclStream.removeListener("encryptFail", this.onAclStreamEncryptFailBinded);
         this._aclStream.removeListener("end", this.onAclStreamEndBinded);
     }
     writeAtt(data) {
@@ -683,7 +657,19 @@ class Gatt extends eventemitter3_1.default {
             while (this._commandQueue.length) {
                 this._currentCommand = this._commandQueue.shift();
                 if (this._currentCommand.type === "encrypt") {
-                    this._aclStream.encrypt(this._currentCommand.options);
+                    this._aclStream.encryptWait(this._currentCommand.options).then((encrypt) => {
+                        if (encrypt === 0) {
+                            throw new Error("Encript failed");
+                        }
+                        this._security = "medium";
+                        if (this._currentCommand.type === "encrypt") {
+                            if (this._currentCommand.callback) {
+                                this._currentCommand.callback(this._aclStream._smp.getKeys());
+                            }
+                            this._currentCommand = null;
+                            this._runQueueCommand();
+                        }
+                    }); // background
                 }
                 else {
                     this.writeAtt(this._currentCommand.buffer);

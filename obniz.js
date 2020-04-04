@@ -10322,26 +10322,23 @@ class AclStream extends eventemitter3_1.default {
         this._hci = hci;
         this._handle = handle;
         this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
-        this.onSmpStkBinded = this.onSmpStk.bind(this);
         this.onSmpFailBinded = this.onSmpFail.bind(this);
         this.onSmpEndBinded = this.onSmpEnd.bind(this);
-        this._smp.on("stk", this.onSmpStkBinded);
         this._smp.on("fail", this.onSmpFailBinded);
         this._smp.on("end", this.onSmpEndBinded);
     }
-    encrypt(options) {
-        if (options && options.keys && options.keys.stk) {
+    async encryptWait(options) {
+        let encrpytResult = null;
+        if (options && options.keys) {
             console.error("skip pairing");
-            this._smp._preq = options.keys.preq;
-            this._smp._pres = options.keys.pres;
-            this._smp._tk = options.keys.tk;
-            this._smp._r = options.keys.r;
-            this._smp._pcnf = options.keys.pcnf;
-            this.onSmpStk(options.keys.stk);
+            encrpytResult = await this._smp.pairingWithKeyWait(options.keys);
         }
         else {
-            this._smp.sendPairingRequest(options);
+            encrpytResult = await this._smp.pairingWait(options);
+            // const keys = this._smp.getKeys();
+            // encrpytResult = await this.onSmpStkWait(keys.ltk);
         }
+        return encrpytResult;
     }
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
@@ -10361,19 +10358,17 @@ class AclStream extends eventemitter3_1.default {
     end() {
         this.emit("end");
     }
-    pushEncrypt(encrypt) {
-        this.emit("encrypt", encrypt);
-    }
-    onSmpStk(stk) {
+    async onSmpStkWait(stk) {
         const random = Buffer.from("0000000000000000", "hex");
         const diversifier = Buffer.from("0000", "hex");
-        this._hci.startLeEncryption(this._handle, random, diversifier, stk);
+        const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, stk);
+        this.emit("encrypt", result);
+        return result;
     }
     onSmpFail() {
         this.emit("encryptFail");
     }
     onSmpEnd() {
-        this._smp.removeListener("stk", this.onSmpStkBinded);
         this._smp.removeListener("fail", this.onSmpFailBinded);
         this._smp.removeListener("end", this.onSmpEndBinded);
     }
@@ -10460,7 +10455,6 @@ class NobleBindings extends eventemitter3_1.default {
         this._gap.on("discover", this.onDiscover.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
         this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
     }
     onStateChange(state) {
@@ -10569,12 +10563,6 @@ class NobleBindings extends eventemitter3_1.default {
             // console.warn(
             //   'noble warning: unknown handle ' + handle + ' disconnected!'
             // );
-        }
-    }
-    onEncryptChange(handle, encrypt) {
-        const aclStream = this._aclStreams[handle];
-        if (aclStream) {
-            aclStream.pushEncrypt(encrypt);
         }
     }
     onAclDataPkt(handle, cid, data) {
@@ -11177,12 +11165,8 @@ class Gatt extends eventemitter3_1.default {
         this._mtu = 23;
         this._security = "low";
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-        this.onAclStreamEncryptBinded = this.onAclStreamEncrypt.bind(this);
-        this.onAclStreamEncryptFailBinded = this.onAclStreamEncryptFail.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
         this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("encrypt", this.onAclStreamEncryptBinded);
-        this._aclStream.on("encryptFail", this.onAclStreamEncryptFailBinded);
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
     onAclStreamData(cid, data) {
@@ -11228,35 +11212,16 @@ class Gatt extends eventemitter3_1.default {
                     data[4] === ATT.ECODE_AUTHORIZATION ||
                     data[4] === ATT.ECODE_INSUFF_ENC) &&
                 this._security !== "medium") {
-                this._aclStream.encrypt();
+                // retry after encrpyt
+                this._aclStream.encryptWait().then(() => {
+                    this.writeAtt(this._currentCommand.buffer);
+                });
                 return;
             }
             debug(this._address + ": read: " + data.toString("hex"));
             this._currentCommand.callback(data);
             this._currentCommand = null;
             this._runQueueCommand();
-        }
-    }
-    onAclStreamEncrypt(encrypt) {
-        if (encrypt) {
-            this._security = "medium";
-            if (this._currentCommand.type === "encrypt") {
-                if (this._currentCommand.callback) {
-                    this._currentCommand.callback({
-                        stk: this._aclStream._smp._stk,
-                        preq: this._aclStream._smp._preq,
-                        pres: this._aclStream._smp._pres,
-                        tk: this._aclStream._smp._tk,
-                        r: this._aclStream._smp._r,
-                        pcnf: this._aclStream._smp._pcnf,
-                    });
-                }
-                this._currentCommand = null;
-                this._runQueueCommand();
-            }
-            else {
-                this.writeAtt(this._currentCommand.buffer);
-            }
         }
     }
     encrypt(callback, options) {
@@ -11267,11 +11232,8 @@ class Gatt extends eventemitter3_1.default {
         });
         this._runQueueCommand();
     }
-    onAclStreamEncryptFail() { }
     onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-        this._aclStream.removeListener("encrypt", this.onAclStreamEncryptBinded);
-        this._aclStream.removeListener("encryptFail", this.onAclStreamEncryptFailBinded);
         this._aclStream.removeListener("end", this.onAclStreamEndBinded);
     }
     writeAtt(data) {
@@ -11776,7 +11738,19 @@ class Gatt extends eventemitter3_1.default {
             while (this._commandQueue.length) {
                 this._currentCommand = this._commandQueue.shift();
                 if (this._currentCommand.type === "encrypt") {
-                    this._aclStream.encrypt(this._currentCommand.options);
+                    this._aclStream.encryptWait(this._currentCommand.options).then((encrypt) => {
+                        if (encrypt === 0) {
+                            throw new Error("Encript failed");
+                        }
+                        this._security = "medium";
+                        if (this._currentCommand.type === "encrypt") {
+                            if (this._currentCommand.callback) {
+                                this._currentCommand.callback(this._aclStream._smp.getKeys());
+                            }
+                            this._currentCommand = null;
+                            this._runQueueCommand();
+                        }
+                    }); // background
                 }
                 else {
                     this.writeAtt(this._currentCommand.buffer);
@@ -11945,6 +11919,7 @@ class Smp extends eventemitter3_1.default {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._stk = null;
+        this._ltk = null;
         this._options = null;
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
@@ -11962,23 +11937,28 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.on("data", this.onAclStreamDataBinded);
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
-    sendPairingRequest(options) {
+    async pairingWithKeyWait(key) {
+        this.setKeys(key);
+        const encResult = await this._aclStream.onSmpStkWait(this._stk);
+        return;
+    }
+    async pairingWait(options) {
         this._options = options;
-        if (this.isPasskeyMode()) {
-            this._preq = Buffer.from([
-                SMP.PAIRING_REQUEST,
-                0x02,
-                0x00,
-                0x05,
-                0x10,
-                0x00,
-                0x01,
-            ]);
-            this.write(this._preq);
-        }
-        else {
-            this.pairingWithJustInWorksWait();
-        }
+        await this.sendPairingRequestWait();
+        const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
+        this.handlePairingResponse(pairingResponse);
+        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM);
+        this.handlePairingConfirm(confirm);
+        const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
+        const encResult = this.handlePairingRandomWait(random);
+        const encInfoPromise = this._aclStream.readWait(SMP.CID, SMP.ENCRYPT_INFO);
+        const masterIdentPromise = this._aclStream.readWait(SMP.CID, SMP.MASTER_IDENT);
+        await Promise.all([encInfoPromise, masterIdentPromise]);
+        const encInfo = await encInfoPromise;
+        const masterIdent = await masterIdentPromise;
+        this.handleEncryptInfo(encInfo);
+        this.handleMasterIdent(masterIdent);
+        return encResult;
     }
     onAclStreamData(cid, data) {
         if (cid !== SMP.CID) {
@@ -11986,6 +11966,7 @@ class Smp extends eventemitter3_1.default {
         }
         const code = data.readUInt8(0);
         console.warn("SMP: " + code);
+        return;
         // console.warn("pairing " + code);
         if (SMP.PAIRING_RESPONSE === code) {
             this.handlePairingResponse(data);
@@ -11994,7 +11975,7 @@ class Smp extends eventemitter3_1.default {
             this.handlePairingConfirm(data);
         }
         else if (SMP.PAIRING_RANDOM === code) {
-            this.handlePairingRandom(data);
+            this.handlePairingRandomWait(data);
         }
         else if (SMP.PAIRING_FAILED === code) {
             this.handlePairingFailed(data);
@@ -12044,8 +12025,9 @@ class Smp extends eventemitter3_1.default {
         this._pcnf = data;
         this.write(Buffer.concat([Buffer.from([SMP.PAIRING_RANDOM]), this._r]));
     }
-    handlePairingRandom(data) {
+    async handlePairingRandomWait(data) {
         const r = data.slice(1);
+        let encResult = null;
         const pcnf = Buffer.concat([
             Buffer.from([SMP.PAIRING_CONFIRM]),
             crypto_1.default.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra),
@@ -12055,19 +12037,22 @@ class Smp extends eventemitter3_1.default {
                 console.error("second stk");
             }
             this._stk = crypto_1.default.s1(this._tk, r, this._r);
-            this.emit("stk", this._stk);
+            // this.emit("stk", this._stk);
+            encResult = await this._aclStream.onSmpStkWait(this._stk);
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
             this.emit("fail");
+            throw new Error("Encryption pcnf error");
         }
+        return encResult;
     }
     handlePairingFailed(data) {
         this.emit("fail");
     }
     handleEncryptInfo(data) {
-        const ltk = data.slice(1);
-        this.emit("ltk", ltk);
+        this._ltk = data.slice(1);
+        this.emit("ltk", this._ltk);
     }
     handleMasterIdent(data) {
         const ediv = data.slice(1, 3);
@@ -12078,25 +12063,54 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.write(SMP.CID, data);
     }
     handleSecurityRequest(data) {
-        this.sendPairingRequest();
+        this.pairingWait();
     }
-    async pairingWithJustInWorksWait() {
-        this._preq = Buffer.from([
-            SMP.PAIRING_REQUEST,
-            0x03,
-            0x00,
-            0x01,
-            0x10,
-            0x00,
-            0x01,
-        ]);
+    setKeys(keyString) {
+        const keys = JSON.parse(keyString);
+        this._stk = Buffer.from(keys.stk);
+        this._preq = Buffer.from(keys.preq);
+        this._pres = Buffer.from(keys.pres);
+        this._tk = Buffer.from(keys.tk);
+        this._r = Buffer.from(keys.r);
+        this._pcnf = Buffer.from(keys.pcnf);
+        this._ltk = Buffer.from(keys.ltk);
+    }
+    getKeys() {
+        const keys = {
+            stk: Array.from(this._stk),
+            preq: Array.from(this._preq),
+            pres: Array.from(this._pres),
+            tk: Array.from(this._tk),
+            r: Array.from(this._r),
+            pcnf: Array.from(this._pcnf),
+            ltk: Array.from(this._ltk),
+        };
+        return JSON.stringify(keys);
+    }
+    async sendPairingRequestWait() {
+        if (this.isPasskeyMode()) {
+            this._preq = Buffer.from([
+                SMP.PAIRING_REQUEST,
+                0x02,
+                0x00,
+                0x05,
+                0x10,
+                0x00,
+                0x01,
+            ]);
+        }
+        else {
+            this._preq = Buffer.from([
+                SMP.PAIRING_REQUEST,
+                0x03,
+                0x00,
+                0x01,
+                0x10,
+                0x00,
+                0x01,
+            ]);
+        }
         this.write(this._preq);
-        // const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
-        // this.handlePairingResponse(pairingResponse);
-        // const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM);
-        // this.handlePairingConfirm(confirm);
-        // const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
-        // this.handlePairingRandom(random);
     }
     isPasskeyMode() {
         if (this._options && this._options.passkey === true && this._options.passkeyCallback) {
@@ -12151,6 +12165,7 @@ var COMMANDS;
     COMMANDS.EVT_CMD_COMPLETE = 0x0e;
     COMMANDS.EVT_CMD_STATUS = 0x0f;
     COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS = 0x13;
+    COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE = 0x30;
     COMMANDS.EVT_LE_META_EVENT = 0x3e;
     COMMANDS.EVT_LE_CONN_COMPLETE = 0x01;
     COMMANDS.EVT_LE_ADVERTISING_REPORT = 0x02;
@@ -12450,7 +12465,7 @@ class Hci extends eventemitter3_1.default {
         debug("\t\t\tsupervision timeout = " + supervisionTimeout);
         return { status, handle, interval, latency, supervisionTimeout };
     }
-    startLeEncryption(handle, random, diversifier, key) {
+    async startLeEncryptionWait(handle, random, diversifier, key) {
         const cmd = Buffer.alloc(32);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -12464,6 +12479,21 @@ class Hci extends eventemitter3_1.default {
         key.copy(cmd, 16);
         debug("start le encryption - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
+        console.log("start le encryption - writing: " + cmd.toString("hex"));
+        const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE]);
+        const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE]);
+        const data = await Promise.race([p1, p2]);
+        // const data = await p1;
+        console.log("start le encryption - data: " + data.toString("hex"));
+        if (data.readUInt16LE(1) === COMMANDS.EVT_ENCRYPT_CHANGE) {
+            const encHandle = data.readUInt16LE(4);
+            const encrypt = data.readUInt8(6);
+            debug("\t\thandle = " + encHandle);
+            debug("\t\tencrypt = " + encrypt);
+            this.emit("encryptChange", encHandle, encrypt);
+            return encrypt;
+        }
+        return "refresh";
     }
     disconnect(handle, reason) {
         const cmd = Buffer.alloc(7);

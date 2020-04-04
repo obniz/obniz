@@ -21,26 +21,23 @@ class AclStream extends eventemitter3_1.default {
         this._hci = hci;
         this._handle = handle;
         this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
-        this.onSmpStkBinded = this.onSmpStk.bind(this);
         this.onSmpFailBinded = this.onSmpFail.bind(this);
         this.onSmpEndBinded = this.onSmpEnd.bind(this);
-        this._smp.on("stk", this.onSmpStkBinded);
         this._smp.on("fail", this.onSmpFailBinded);
         this._smp.on("end", this.onSmpEndBinded);
     }
-    encrypt(options) {
-        if (options && options.keys && options.keys.stk) {
+    async encryptWait(options) {
+        let encrpytResult = null;
+        if (options && options.keys) {
             console.error("skip pairing");
-            this._smp._preq = options.keys.preq;
-            this._smp._pres = options.keys.pres;
-            this._smp._tk = options.keys.tk;
-            this._smp._r = options.keys.r;
-            this._smp._pcnf = options.keys.pcnf;
-            this.onSmpStk(options.keys.stk);
+            encrpytResult = await this._smp.pairingWithKeyWait(options.keys);
         }
         else {
-            this._smp.sendPairingRequest(options);
+            encrpytResult = await this._smp.pairingWait(options);
+            // const keys = this._smp.getKeys();
+            // encrpytResult = await this.onSmpStkWait(keys.ltk);
         }
+        return encrpytResult;
     }
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
@@ -60,19 +57,17 @@ class AclStream extends eventemitter3_1.default {
     end() {
         this.emit("end");
     }
-    pushEncrypt(encrypt) {
-        this.emit("encrypt", encrypt);
-    }
-    onSmpStk(stk) {
+    async onSmpStkWait(stk) {
         const random = Buffer.from("0000000000000000", "hex");
         const diversifier = Buffer.from("0000", "hex");
-        this._hci.startLeEncryption(this._handle, random, diversifier, stk);
+        const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, stk);
+        this.emit("encrypt", result);
+        return result;
     }
     onSmpFail() {
         this.emit("encryptFail");
     }
     onSmpEnd() {
-        this._smp.removeListener("stk", this.onSmpStkBinded);
         this._smp.removeListener("fail", this.onSmpFailBinded);
         this._smp.removeListener("end", this.onSmpEndBinded);
     }
