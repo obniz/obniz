@@ -745,8 +745,11 @@ class Hci extends eventemitter3_1.default {
             this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
             if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
                 this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
-                if (this._aclStreamObservers[handle] && this._aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
-                    const resolve = this._aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
+                const key = (this._handleBuffers[handle].cid << 8) + this._handleBuffers[handle].data.readUInt8(0);
+                if (this._aclStreamObservers[handle] &&
+                    this._aclStreamObservers[handle][key] &&
+                    this._aclStreamObservers[handle][key].length > 0) {
+                    const resolve = this._aclStreamObservers[handle][key].shift();
                     resolve(this._handleBuffers[handle].data);
                 }
                 delete this._handleBuffers[handle];

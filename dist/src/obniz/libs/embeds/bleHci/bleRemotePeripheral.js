@@ -418,10 +418,9 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
         return results;
     }
-    pairingWait(options) {
-        return new Promise((resolve) => {
-            this.obnizBle.centralBindings.pairing(this.address, options, resolve);
-        });
+    async pairingWait(options) {
+        const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
+        return result;
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {

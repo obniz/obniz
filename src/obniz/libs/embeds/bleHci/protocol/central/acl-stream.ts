@@ -63,7 +63,7 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._hci.writeAclDataPkt(this._handle, cid, data);
   }
 
-  public async readWait(cid: any, flag: number) {
+  public async readWait(cid: any, flag: number): Promise<Buffer> {
     const data = await this._hci.readAclStreamWait(this._handle, cid, flag);
     return data;
   }

@@ -41,33 +41,4 @@ export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> exte
    * @param children
    */
   public ondiscoverfinished(children: any) {}
-
-  /**
-   * @ignore
-   * @param notifyName
-   * @param params
-   */
-  public notifyFromServer(notifyName: any, params: any) {
-    super.notifyFromServer(notifyName, params);
-    switch (notifyName) {
-      case "discover": {
-        const uuid: any = params[this.wsChildUuidName!];
-        let child: any = this.getChild(uuid);
-        if (!child) {
-          child = this.addChild({ uuid });
-        }
-        child.discoverdOnRemote = true;
-        child.properties = params.properties || [];
-        this.ondiscover(child);
-        break;
-      }
-      case "discoverfinished": {
-        const children: any = this.children.filter((elm: any) => {
-          return elm.discoverdOnRemote;
-        });
-        this.ondiscoverfinished(children);
-        break;
-      }
-    }
-  }
 }

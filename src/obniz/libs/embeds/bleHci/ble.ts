@@ -285,29 +285,29 @@ export default class ObnizBLE extends ComponentAbstract {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
   }
+  //
+  // protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
+  //   const peripheral: any = this.findPeripheral(peripheralUuid);
+  //   for (const serviceUuid of serviceUuids) {
+  //     peripheral.notifyFromServer("discover", { service_uuid: serviceUuid });
+  //   }
+  //   peripheral.notifyFromServer("discoverfinished", {});
+  // }
 
-  protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    for (const serviceUuid of serviceUuids) {
-      peripheral.notifyFromServer("discover", { service_uuid: serviceUuid });
-    }
-    peripheral.notifyFromServer("discoverfinished", {});
-  }
+  // protected onIncludedServicesDiscover(peripheralUuid: any, serviceUuid?: any, includedServiceUuids?: any) {}
 
-  protected onIncludedServicesDiscover(peripheralUuid: any, serviceUuid?: any, includedServiceUuids?: any) {}
-
-  protected onCharacteristicsDiscover(peripheralUuid: any, serviceUuid?: any, characteristics?: any) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    const service: any = peripheral.findService({ service_uuid: serviceUuid });
-    for (const char of characteristics) {
-      const obj: any = {
-        properties: char.properties.map((e: any) => BleHelper.toSnakeCase(e)),
-        characteristic_uuid: char.uuid,
-      };
-      service.notifyFromServer("discover", obj);
-    }
-    service.notifyFromServer("discoverfinished", {});
-  }
+  // protected onCharacteristicsDiscover(peripheralUuid: any, serviceUuid?: any, characteristics?: any) {
+  //   const peripheral: any = this.findPeripheral(peripheralUuid);
+  //   const service: any = peripheral.findService({ service_uuid: serviceUuid });
+  //   for (const char of characteristics) {
+  //     const obj: any = {
+  //       properties: char.properties.map((e: any) => BleHelper.toSnakeCase(e)),
+  //       characteristic_uuid: char.uuid,
+  //     };
+  //     service.notifyFromServer("discover", obj);
+  //   }
+  //   service.notifyFromServer("discoverfinished", {});
+  // }
 
   protected onRead(
     peripheralUuid: any,
@@ -362,21 +362,6 @@ export default class ObnizBLE extends ComponentAbstract {
     } else {
       char.notifyFromServer("onunregisternotify", {});
     }
-  }
-
-  protected onDescriptorsDiscover(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, descriptors?: any) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    const char: any = peripheral.findCharacteristic({
-      service_uuid: serviceUuid,
-      characteristic_uuid: characteristicUuid,
-    });
-    for (const descr of descriptors) {
-      const obj: any = {
-        descriptor_uuid: descr,
-      };
-      char.notifyFromServer("discover", obj);
-    }
-    char.notifyFromServer("discoverfinished", {});
   }
 
   protected onValueRead(
@@ -455,15 +440,11 @@ export default class ObnizBLE extends ComponentAbstract {
     this.centralBindings.on("discover", this.onDiscover.bind(this));
     this.centralBindings.on("connect", this.onConnect.bind(this));
     this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-    this.centralBindings.on("servicesDiscover", this.onServicesDiscover.bind(this));
-    this.centralBindings.on("includedServicesDiscover", this.onIncludedServicesDiscover.bind(this));
-    this.centralBindings.on("characteristicsDiscover", this.onCharacteristicsDiscover.bind(this));
 
     this.centralBindings.on("read", this.onRead.bind(this));
     this.centralBindings.on("write", this.onWrite.bind(this));
     this.centralBindings.on("broadcast", this.onBroadcast.bind(this));
     this.centralBindings.on("notify", this.onNotify.bind(this));
-    this.centralBindings.on("descriptorsDiscover", this.onDescriptorsDiscover.bind(this));
     this.centralBindings.on("valueRead", this.onValueRead.bind(this));
     this.centralBindings.on("valueWrite", this.onValueWrite.bind(this));
 

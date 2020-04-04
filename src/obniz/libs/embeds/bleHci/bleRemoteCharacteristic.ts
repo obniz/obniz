@@ -456,11 +456,22 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * ```
    */
   public async discoverAllDescriptorsWait(): Promise<BleRemoteDescriptor[]> {
-    await this.service.peripheral.obnizBle.centralBindings.discoverDescriptorsWait(
+    const descriptors = await this.service.peripheral.obnizBle.centralBindings.discoverDescriptorsWait(
       this.service.peripheral.address,
       this.service.uuid,
       this.uuid,
     );
+
+    for (const descr of descriptors) {
+      const uuid: any = descr;
+      let child: any = this.getChild(uuid);
+      if (!child) {
+        child = this.addChild({ uuid });
+      }
+      child.discoverdOnRemote = true;
+      this.ondiscover(child);
+    }
+
     return this.descriptors.filter((elm: any) => {
       return elm.discoverdOnRemote;
     });

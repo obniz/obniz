@@ -165,5 +165,14 @@ ObnizBleHciStateError.Errors = {
     0x44: "Operation Cancelled by Host ",
     0x45: "Packet Too Long ",
 };
+// todo error code to message
+class ObnizBleAttError extends ObnizError {
+    constructor(state) {
+        super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+        this.state = state;
+    }
+}
+exports.ObnizBleAttError = ObnizBleAttError;
+ObnizBleAttError.Errors = {};
 
 //# sourceMappingURL=ObnizError.js.map

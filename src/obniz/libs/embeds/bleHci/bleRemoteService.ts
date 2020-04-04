@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+import BleHelper from "./bleHelper";
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
 import BleRemotePeripheral from "./bleRemotePeripheral";
@@ -148,8 +149,25 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * ```
    */
   public async discoverAllCharacteristicsWait(): Promise<BleRemoteCharacteristic[]> {
-    await this.parent!.obnizBle.centralBindings.discoverCharacteristicsWait(this.peripheral.address, this.uuid);
-    return this.characteristics;
+    const chars = await this.parent!.obnizBle.centralBindings.discoverCharacteristicsWait(
+      this.peripheral.address,
+      this.uuid,
+    );
+
+    for (const char of chars) {
+      const uuid = char.uuid;
+      const properties = char.properties.map((e: any) => BleHelper.toSnakeCase(e));
+      let child: any = this.getChild(uuid);
+      if (!child) {
+        child = this.addChild({ uuid });
+      }
+      child.discoverdOnRemote = true;
+      child.properties = properties || [];
+      this.ondiscover(child);
+    }
+    return this.characteristics.filter((elm: any) => {
+      return elm.discoverdOnRemote;
+    });
   }
 
   /**

@@ -136,15 +136,11 @@ class NobleBindings extends eventemitter3_1.default {
         this._aclStreams[handle] = aclStream;
         this._handles[uuid] = handle;
         this._handles[handle] = uuid;
-        this._gatts[handle].on("servicesDiscover", this.onServicesDiscovered.bind(this));
-        this._gatts[handle].on("includedServicesDiscover", this.onIncludedServicesDiscovered.bind(this));
-        this._gatts[handle].on("characteristicsDiscover", this.onCharacteristicsDiscovered.bind(this));
         this._gatts[handle].on("read", this.onRead.bind(this));
         this._gatts[handle].on("write", this.onWrite.bind(this));
         this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
         this._gatts[handle].on("notify", this.onNotify.bind(this));
         this._gatts[handle].on("notification", this.onNotification.bind(this));
-        this._gatts[handle].on("descriptorsDiscover", this.onDescriptorsDiscovered.bind(this));
         this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
         this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
         this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
@@ -188,36 +184,15 @@ class NobleBindings extends eventemitter3_1.default {
         const services = await gatt.discoverServicesWait(uuids || []);
         return services;
     }
-    onServicesDiscovered(address, serviceUuids) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("servicesDiscover", uuid, serviceUuids);
-    }
     async discoverIncludedServicesWait(peripheralUuid, serviceUuid, serviceUuids) {
         const gatt = this.getGatt(peripheralUuid);
         const services = gatt.discoverIncludedServicesWait(serviceUuid, serviceUuids || []);
         return services;
     }
-    onIncludedServicesDiscovered(address, serviceUuid, includedServiceUuids) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("includedServicesDiscover", uuid, serviceUuid, includedServiceUuids);
-    }
     async discoverCharacteristicsWait(peripheralUuid, serviceUuid, characteristicUuids) {
         const gatt = this.getGatt(peripheralUuid);
-        const uuids = await gatt.discoverCharacteristicsWait(serviceUuid, characteristicUuids || []);
-        return uuids;
-    }
-    onCharacteristicsDiscovered(address, serviceUuid, characteristics) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("characteristicsDiscover", uuid, serviceUuid, characteristics);
+        const chars = await gatt.discoverCharacteristicsWait(serviceUuid, characteristicUuids || []);
+        return chars;
     }
     async readWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
@@ -273,15 +248,8 @@ class NobleBindings extends eventemitter3_1.default {
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const uuids = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
-        return uuids;
-    }
-    onDescriptorsDiscovered(address, serviceUuid, characteristicUuid, descriptorUuids) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("descriptorsDiscover", uuid, serviceUuid, characteristicUuid, descriptorUuids);
+        const descriptors = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
+        return descriptors;
     }
     async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
         const gatt = this.getGatt(peripheralUuid);
@@ -339,10 +307,11 @@ class NobleBindings extends eventemitter3_1.default {
         await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
         // this.onLeConnUpdateComplete(); is nop
     }
-    pairing(peripheralUuid, options, callback) {
+    async pairingWait(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
-        gatt.encrypt(callback, options);
+        const result = await gatt.encryptWait(options);
+        return result;
     }
     getGatt(peripheralUuid) {
         const handle = this._handles[peripheralUuid];

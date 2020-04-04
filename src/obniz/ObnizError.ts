@@ -163,3 +163,12 @@ export class ObnizBleHciStateError extends ObnizError {
     super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
   }
 }
+
+// todo error code to message
+export class ObnizBleAttError extends ObnizError {
+  public static Errors: { [key: number]: string } = {};
+
+  constructor(public state: number) {
+    super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+  }
+}

@@ -896,7 +896,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     this.emit("stateChange", state);
   }
 
-  public async readAclStreamWait(handle: Handle, cid: number, firstData: number) {
+  public async readAclStreamWait(handle: Handle, cid: number, firstData: number): Promise<Buffer> {
     return new Promise((resolve) => {
       const key = (cid << 8) + firstData;
       this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
@@ -990,8 +990,13 @@ class Hci extends EventEmitter<HciEventTypes> {
 
       if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
         this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
-        if (this._aclStreamObservers[handle] && this._aclStreamObservers[handle][this._handleBuffers[handle].cid]) {
-          const resolve = this._aclStreamObservers[handle][this._handleBuffers[handle].cid].shift();
+        const key = (this._handleBuffers[handle].cid << 8) + this._handleBuffers[handle].data.readUInt8(0);
+        if (
+          this._aclStreamObservers[handle] &&
+          this._aclStreamObservers[handle][key] &&
+          this._aclStreamObservers[handle][key].length > 0
+        ) {
+          const resolve = this._aclStreamObservers[handle][key].shift();
           resolve(this._handleBuffers[handle].data);
         }
         delete this._handleBuffers[handle];
