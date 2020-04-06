@@ -7,7 +7,7 @@ import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
 import { BleDeviceAddress, UUID } from "./bleTypes";
 
-export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
+export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
@@ -150,57 +150,39 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public read() {}
+  public abstract readWait(): Promise<number[]>;
 
   /**
    * @ignore
    */
-  public write(data: number[], needResponse?: boolean) {}
-
-  /**
-   * @ignore
-   */
-  public writeNumber(val: number, needResponse?: boolean) {
-    this.write([val], needResponse);
-  }
+  public abstract writeWait(data: number[], needResponse?: boolean): Promise<boolean>;
 
   /**
    * @ignore
    */
   public writeText(str: string, needResponse?: boolean) {
-    this.write(ObnizUtil.string2dataArray(str), needResponse);
+    this.writeTextWait(str, needResponse); // background
   }
 
   /**
    * @ignore
    */
-  public writeTextWait(data: string, needResponse?: boolean): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeTextWait failed"));
-        }
-      });
-      this.writeText(data, needResponse);
-    });
+  public async writeTextWait(str: string, needResponse?: boolean): Promise<boolean> {
+    return await this.writeWait(ObnizUtil.string2dataArray(str), needResponse);
   }
 
   /**
    * @ignore
    */
-  public writeNumberWait(data: number, needResponse?: boolean): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeNumberWait failed"));
-        }
-      });
-      this.writeNumber(data, needResponse);
-    });
+  public writeNumber(val: number, needResponse?: boolean) {
+    this.writeNumberWait(val, needResponse); // background
+  }
+
+  /**
+   * @ignore
+   */
+  public async writeNumberWait(val: number, needResponse?: boolean): Promise<boolean> {
+    return await this.writeWait([val], needResponse);
   }
 
   /**

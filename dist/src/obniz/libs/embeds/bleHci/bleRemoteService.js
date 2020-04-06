@@ -178,6 +178,18 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @param characteristics
      */
     ondiscovercharacteristicfinished(characteristics) { }
+    /**
+     * @ignore
+     */
+    async readWait() {
+        throw new Error("cannot read service");
+    }
+    /**
+     * @ignore
+     */
+    async writeWait() {
+        throw new Error("cannot write service");
+    }
 }
 exports.default = BleRemoteService;
 

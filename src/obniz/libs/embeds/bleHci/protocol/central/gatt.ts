@@ -778,6 +778,9 @@ class Gatt extends EventEmitter<GattEventTypes> {
       .then(() => {
         return func();
       })
+      .catch((reason) => {
+        throw reason;
+      })
       .finally(() => {
         this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
       });
@@ -819,6 +822,8 @@ class Gatt extends EventEmitter<GattEventTypes> {
         }
         return data;
       }
+    }).catch((reason) => {
+      throw reason;
     });
   }
 

@@ -136,6 +136,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         if (this.onwrite) {
             this.onwrite("success"); // if fail, throw error.
         }
+        return true;
     }
 }
 exports.default = BleRemoteDescriptor;

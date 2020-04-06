@@ -7,10 +7,10 @@ import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 /**
  * @category Use as Central
  */
-export default class BleRemoteValueAttributeAbstract<ParentClass, ChildrenClass> extends BleRemoteAttributeAbstract<
+export default abstract class BleRemoteValueAttributeAbstract<
   ParentClass,
   ChildrenClass
-> {
+> extends BleRemoteAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * Callback function when write value finished.
    */
@@ -48,7 +48,7 @@ export default class BleRemoteValueAttributeAbstract<ParentClass, ChildrenClass>
    * It throws an error when failed.
    * @param str
    */
-  public writeTextWait(str: string, needResponse?: boolean): Promise<void> {
+  public writeTextWait(str: string, needResponse?: boolean): Promise<boolean> {
     return super.writeTextWait(str, needResponse);
   }
 
@@ -60,7 +60,7 @@ export default class BleRemoteValueAttributeAbstract<ParentClass, ChildrenClass>
    *
    * @param val
    */
-  public writeNumberWait(val: number, needResponse?: boolean): Promise<void> {
+  public writeNumberWait(val: number, needResponse?: boolean): Promise<boolean> {
     return super.writeNumberWait(val, needResponse);
   }
 }

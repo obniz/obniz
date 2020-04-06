@@ -16,15 +16,14 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      * @param dataArray
      */
     write(dataArray) {
-        this.data = dataArray;
-        this.notifyFromServer("onwrite", { result: "success" });
+        this.writeWait(dataArray); // background
     }
     /**
      * @ignore
      * @param dataArray
      */
     read() {
-        this.notifyFromServer("onread", { data: this.data });
+        this.readWait(); // background
     }
     /**
      * This writes dataArray.
@@ -38,18 +37,10 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      *
      * @param data
      */
-    writeWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data);
-        });
+    async writeWait(data) {
+        this.data = data;
+        this.notifyFromServer("onwrite", { result: "success" });
+        return true;
     }
     /**
      * It reads data.
@@ -63,18 +54,9 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      *  console.log("data: " , data );
      * ```
      */
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
+    async readWait() {
+        this.notifyFromServer("onread", { data: this.data });
+        return this.data;
     }
     /**
      * @ignore

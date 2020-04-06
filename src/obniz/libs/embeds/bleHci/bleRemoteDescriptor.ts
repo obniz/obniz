@@ -146,7 +146,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    *
    * @param data
    */
-  public async writeWait(data: number[]): Promise<void> {
+  public async writeWait(data: number[]): Promise<boolean> {
     await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(
       this.characteristic.service.peripheral.address,
       this.characteristic.service.uuid,
@@ -158,5 +158,6 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
     if (this.onwrite) {
       this.onwrite("success"); // if fail, throw error.
     }
+    return true;
   }
 }

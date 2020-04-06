@@ -588,6 +588,9 @@ class Gatt extends eventemitter3_1.default {
             .then(() => {
             return func();
         })
+            .catch((reason) => {
+            throw reason;
+        })
             .finally(() => {
             this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
         });
@@ -626,6 +629,8 @@ class Gatt extends eventemitter3_1.default {
                 }
                 return data;
             }
+        }).catch((reason) => {
+            throw reason;
         });
     }
     _execNoRespCommandWait(buffer) {

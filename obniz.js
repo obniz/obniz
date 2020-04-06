@@ -7053,59 +7053,28 @@ class BleAttributeAbstract {
         return obj;
     }
     /**
-     * WS COMMANDS
+     * @ignore
      */
+    writeText(str, needResponse) {
+        this.writeTextWait(str, needResponse); // background
+    }
     /**
      * @ignore
      */
-    read() { }
-    /**
-     * @ignore
-     */
-    write(data, needResponse) { }
+    async writeTextWait(str, needResponse) {
+        return await this.writeWait(util_1.default.string2dataArray(str), needResponse);
+    }
     /**
      * @ignore
      */
     writeNumber(val, needResponse) {
-        this.write([val], needResponse);
+        this.writeNumberWait(val, needResponse); // background
     }
     /**
      * @ignore
      */
-    writeText(str, needResponse) {
-        this.write(util_1.default.string2dataArray(str), needResponse);
-    }
-    /**
-     * @ignore
-     */
-    writeTextWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeTextWait failed"));
-                }
-            });
-            this.writeText(data, needResponse);
-        });
-    }
-    /**
-     * @ignore
-     */
-    writeNumberWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeNumberWait failed"));
-                }
-            });
-            this.writeNumber(data, needResponse);
-        });
+    async writeNumberWait(val, needResponse) {
+        return await this.writeWait([val], needResponse);
     }
     /**
      * @ignore
@@ -7633,16 +7602,18 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
      * @ignore
      * @param dataArray
      */
-    write(dataArray) {
+    async writeWait(dataArray) {
         this.data = dataArray;
         this.notifyFromServer("onwrite", { result: "success" });
+        return true;
     }
     /**
      * @ignore
      * @param dataArray
      */
-    read() {
+    async readWait() {
         this.notifyFromServer("onread", { data: this.data });
+        return this.data;
     }
 }
 exports.default = BleLocalAttributeAbstract;
@@ -7675,15 +7646,14 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      * @param dataArray
      */
     write(dataArray) {
-        this.data = dataArray;
-        this.notifyFromServer("onwrite", { result: "success" });
+        this.writeWait(dataArray); // background
     }
     /**
      * @ignore
      * @param dataArray
      */
     read() {
-        this.notifyFromServer("onread", { data: this.data });
+        this.readWait(); // background
     }
     /**
      * This writes dataArray.
@@ -7697,18 +7667,10 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      *
      * @param data
      */
-    writeWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data);
-        });
+    async writeWait(data) {
+        this.data = data;
+        this.notifyFromServer("onwrite", { result: "success" });
+        return true;
     }
     /**
      * It reads data.
@@ -7722,18 +7684,9 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      *  console.log("data: " , data );
      * ```
      */
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
+    async readWait() {
+        this.notifyFromServer("onread", { data: this.data });
+        return this.data;
     }
     /**
      * @ignore
@@ -8306,6 +8259,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         if (this.onwrite) {
             this.onwrite("success"); // if fail, throw error.
         }
+        return true;
     }
     /**
      * It reads data from the characteristic.
@@ -8612,6 +8566,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         if (this.onwrite) {
             this.onwrite("success"); // if fail, throw error.
         }
+        return true;
     }
 }
 exports.default = BleRemoteDescriptor;
@@ -9329,6 +9284,18 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @param characteristics
      */
     ondiscovercharacteristicfinished(characteristics) { }
+    /**
+     * @ignore
+     */
+    async readWait() {
+        throw new Error("cannot read service");
+    }
+    /**
+     * @ignore
+     */
+    async writeWait() {
+        throw new Error("cannot write service");
+    }
 }
 exports.default = BleRemoteService;
 
@@ -11494,6 +11461,9 @@ class Gatt extends eventemitter3_1.default {
             .then(() => {
             return func();
         })
+            .catch((reason) => {
+            throw reason;
+        })
             .finally(() => {
             this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
         });
@@ -11532,6 +11502,8 @@ class Gatt extends eventemitter3_1.default {
                 }
                 return data;
             }
+        }).catch((reason) => {
+            throw reason;
         });
     }
     _execNoRespCommandWait(buffer) {

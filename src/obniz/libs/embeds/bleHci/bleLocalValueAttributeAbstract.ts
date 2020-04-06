@@ -23,8 +23,7 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    * @param dataArray
    */
   public write(dataArray: number[]) {
-    this.data = dataArray;
-    this.notifyFromServer("onwrite", { result: "success" });
+    this.writeWait(dataArray); // background
   }
 
   /**
@@ -32,7 +31,7 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    * @param dataArray
    */
   public read() {
-    this.notifyFromServer("onread", { data: this.data });
+    this.readWait(); // background
   }
 
   /**
@@ -47,17 +46,10 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    *
    * @param data
    */
-  public writeWait(data: any): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeWait failed"));
-        }
-      });
-      this.write(data);
-    });
+  public async writeWait(data: any): Promise<boolean> {
+    this.data = data;
+    this.notifyFromServer("onwrite", { result: "success" });
+    return true;
   }
 
   /**
@@ -72,17 +64,9 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    *  console.log("data: " , data );
    * ```
    */
-  public readWait(): Promise<number[]> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onread", (params: any) => {
-        if (params.result === "success") {
-          resolve(params.data);
-        } else {
-          reject(new Error("readWait failed"));
-        }
-      });
-      this.read();
-    });
+  public async readWait(): Promise<number[]> {
+    this.notifyFromServer("onread", { data: this.data });
+    return this.data;
   }
 
   /**

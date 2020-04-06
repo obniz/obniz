@@ -388,7 +388,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param data
    * @param needResponse
    */
-  public async writeWait(data: any, needResponse?: any): Promise<void> {
+  public async writeWait(data: any, needResponse?: any): Promise<boolean> {
     if (needResponse === undefined) {
       needResponse = true;
     }
@@ -402,6 +402,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     if (this.onwrite) {
       this.onwrite("success"); // if fail, throw error.
     }
+    return true;
   }
 
   /**

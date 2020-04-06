@@ -7,7 +7,7 @@ import BleAttributeAbstract from "./bleAttributeAbstract";
 /**
  * @category Use as Central
  */
-export default class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<
+export default abstract class BleRemoteAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<
   ParentClass,
   ChildrenClass
 > {

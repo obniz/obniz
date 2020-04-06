@@ -19,7 +19,7 @@ if (json.name === 'ESP32 Dev Kit') {
 } else if (json.name === 'M5STICK C') {
   checkBoard_ID = '88801217';
 } else if (json.name === 'obniz board') {
-  checkBoard_ID = '50662155';
+  checkBoard_ID = '16438366';
 } else if (json.name === 'obniz 1Y') {
   checkBoard_ID = '54371148';
 } else if (json.name === 'ESP32 Pico Kit v4') {
@@ -47,17 +47,17 @@ function waitForConenct(done) {
 }
 
 function reboot(done) {
-  if (obnizA !== undefined) {
+  if (obnizA !== undefined && obnizA.connectionState === 'connected') {
     obnizA.reboot();
     obnizA.close();
   }
 
-  if (obnizB !== undefined) {
+  if (obnizB !== undefined && obnizB.connectionState === 'connected') {
     obnizB.reboot();
     obnizB.close();
   }
 
-  if (checkBoard !== undefined) {
+  if (checkBoard !== undefined && checkBoard.connectionState === 'connected') {
     checkBoard.reboot();
     checkBoard.close();
   }

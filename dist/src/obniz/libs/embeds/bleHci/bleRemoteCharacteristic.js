@@ -319,6 +319,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         if (this.onwrite) {
             this.onwrite("success"); // if fail, throw error.
         }
+        return true;
     }
     /**
      * It reads data from the characteristic.
