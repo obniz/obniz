@@ -190,30 +190,6 @@ class BleAttributeAbstract {
                 this.onerror(params);
                 break;
             }
-            case "onwrite": {
-                if (this.onwrite) {
-                    this.onwrite(params.result);
-                }
-                break;
-            }
-            case "onread": {
-                if (this.onread) {
-                    this.onread(params.data);
-                }
-                break;
-            }
-            case "onwritefromremote": {
-                if (this.onwritefromremote) {
-                    this.onwritefromremote(params.address, params.data);
-                }
-                break;
-            }
-            case "onreadfromremote": {
-                if (this.onreadfromremote) {
-                    this.onreadfromremote(params.address);
-                }
-                break;
-            }
         }
     }
     setFunctions() {

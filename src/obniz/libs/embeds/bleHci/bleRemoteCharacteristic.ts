@@ -227,6 +227,9 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       this.uuid,
       true,
     );
+    if (this.onregisternotify) {
+      this.onregisternotify();
+    }
   }
 
   /**
@@ -295,6 +298,9 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       this.uuid,
       false,
     );
+    if (this.onunregisternotify) {
+      this.onunregisternotify();
+    }
   }
 
   /**
@@ -393,6 +399,9 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       Buffer.from(data),
       !needResponse,
     );
+    if (this.onwrite) {
+      this.onwrite("success"); // if fail, throw error.
+    }
   }
 
   /**
@@ -425,7 +434,12 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       this.service.uuid,
       this.uuid,
     );
-    return Array.from(buf);
+    const data = Array.from(buf);
+
+    if (this.onread) {
+      this.onread(data);
+    }
+    return data;
   }
 
   /**
@@ -559,18 +573,6 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   public notifyFromServer(notifyName: any, params: any) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case "onregisternotify": {
-        if (this.onregisternotify) {
-          this.onregisternotify();
-        }
-        break;
-      }
-      case "onunregisternotify": {
-        if (this.onunregisternotify) {
-          this.onunregisternotify();
-        }
-        break;
-      }
       case "onnotify": {
         if (this.onnotify) {
           this.onnotify(params.data || undefined);

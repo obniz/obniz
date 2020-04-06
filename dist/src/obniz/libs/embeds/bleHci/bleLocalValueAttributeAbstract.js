@@ -76,6 +76,29 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
             this.read();
         });
     }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        super.notifyFromServer(notifyName, params);
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "onwritefromremote": {
+                if (this.onwritefromremote) {
+                    this.onwritefromremote(params.address, params.data);
+                }
+                break;
+            }
+            case "onreadfromremote": {
+                if (this.onreadfromremote) {
+                    this.onreadfromremote(params.address);
+                }
+                break;
+            }
+        }
+    }
 }
 exports.default = BleLocalValueAttributeAbstract;
 

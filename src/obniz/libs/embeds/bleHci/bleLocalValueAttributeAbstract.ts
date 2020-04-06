@@ -84,4 +84,28 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
       this.read();
     });
   }
+
+  /**
+   * @ignore
+   * @param notifyName
+   * @param params
+   */
+  public notifyFromServer(notifyName: any, params: any) {
+    super.notifyFromServer(notifyName, params);
+    this.emitter.emit(notifyName, params);
+    switch (notifyName) {
+      case "onwritefromremote": {
+        if (this.onwritefromremote) {
+          this.onwritefromremote(params.address, params.data);
+        }
+        break;
+      }
+      case "onreadfromremote": {
+        if (this.onreadfromremote) {
+          this.onreadfromremote(params.address);
+        }
+        break;
+      }
+    }
+  }
 }

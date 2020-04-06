@@ -84,18 +84,7 @@ namespace GATT {
 
 /* eslint-enable no-unused-vars */
 
-type GattEventTypes =
-  | "notification"
-  | "write"
-  | "read"
-  | "broadcast"
-  | "valueRead"
-  | "valueWrite"
-  | "handleWrite"
-  | "handleRead"
-  | "handleConfirmation"
-  | "handleNotify"
-  | "notify";
+type GattEventTypes = "notification" | "handleConfirmation" | "handleNotify";
 
 /**
  * @ignore
@@ -368,7 +357,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     }
   }
 
-  public async readWait(serviceUuid: any, characteristicUuid: any) {
+  public async readWait(serviceUuid: any, characteristicUuid: any): Promise<Buffer> {
     const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
 
     let readData: any = Buffer.alloc(0);
@@ -389,25 +378,21 @@ class Gatt extends EventEmitter<GattEventTypes> {
       if (data.length === this._mtu) {
         continue;
       } else {
-        this.emit("read", this._address, serviceUuid, characteristicUuid, readData, true);
         return readData;
       }
     }
+    return readData;
   }
 
-  public async writeWait(serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any) {
+  public async writeWait(serviceUuid: any, characteristicUuid: any, data: any, withoutResponse: any): Promise<void> {
     const characteristic: any = this.getCharacteristic(serviceUuid, characteristicUuid);
     if (withoutResponse) {
       await this._execNoRespCommandWait(this.writeRequest(characteristic.valueHandle, data, true));
     } else if (data.length + 3 > this._mtu) {
       await this.longWriteWait(serviceUuid, characteristicUuid, data, withoutResponse);
     } else {
-      const _data = await this._execCommandWait(
-        this.writeRequest(characteristic.valueHandle, data, false),
-        ATT.OP_WRITE_RESP,
-      );
+      await this._execCommandWait(this.writeRequest(characteristic.valueHandle, data, false), ATT.OP_WRITE_RESP);
     }
-    this.emit("write", this._address, serviceUuid, characteristicUuid);
   }
 
   public async broadcastWait(serviceUuid: any, characteristicUuid: any, broadcast: any) {
@@ -433,12 +418,9 @@ class Gatt extends EventEmitter<GattEventTypes> {
     valueBuffer.writeUInt16LE(value, 0);
 
     const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
-    const _opcode: any = _data[0];
-
-    this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
   }
 
-  public async notifyWait(serviceUuid: any, characteristicUuid: any, notify: any) {
+  public async notifyWait(serviceUuid: any, characteristicUuid: any, notify: any): Promise<void> {
     const characteristic: any = this.getCharacteristic(serviceUuid, characteristicUuid);
 
     const data = await this._execCommandWait(
@@ -474,7 +456,6 @@ class Gatt extends EventEmitter<GattEventTypes> {
     const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
     const _opcode: any = _data[0];
     debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
-    this.emit("notify", this._address, serviceUuid, characteristicUuid, notify);
   }
 
   public async discoverDescriptorsWait(serviceUuid: any, characteristicUuid: any) {
@@ -517,54 +498,35 @@ class Gatt extends EventEmitter<GattEventTypes> {
     }
   }
 
-  public async readValueWait(serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
+  public async readValueWait(serviceUuid: any, characteristicUuid: any, descriptorUuid: any): Promise<Buffer> {
     const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
 
     const data = await this._execCommandWait(this.readRequest(descriptor.handle), ATT.OP_READ_RESP);
-    const opcode: any = data[0];
 
-    this.emit(
-      "valueRead",
-      this._address,
-      serviceUuid,
-      characteristicUuid,
-      descriptorUuid,
-      data.slice(1),
-      opcode === ATT.OP_READ_RESP,
-    );
     return data.slice(1);
   }
 
-  public async writeValueWait(serviceUuid: any, characteristicUuid: any, descriptorUuid: any, data: any) {
+  public async writeValueWait(
+    serviceUuid: any,
+    characteristicUuid: any,
+    descriptorUuid: any,
+    data: any,
+  ): Promise<void> {
     const descriptor: any = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
 
-    const _data = await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
-    const opcode: any = _data[0];
-
-    this.emit(
-      "valueWrite",
-      this._address,
-      serviceUuid,
-      characteristicUuid,
-      descriptorUuid,
-      opcode === ATT.OP_WRITE_RESP,
-    );
+    await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
   }
 
-  public async readHandle(handle: any) {
+  public async readHandleWait(handle: any): Promise<Buffer> {
     const data = await this._execCommandWait(this.readRequest(handle), ATT.OP_READ_RESP);
-
-    this.emit("handleRead", this._address, handle, data.slice(1));
     return data.slice(1);
   }
 
   public async writeHandleWait(handle: any, data: any, withoutResponse: any) {
     if (withoutResponse) {
       await this._execNoRespCommandWait(this.writeRequest(handle, data, true));
-      this.emit("handleWrite", this._address, handle);
     } else {
       await this._execCommandWait(this.writeRequest(handle, data, false), ATT.OP_WRITE_RESP);
-      this.emit("handleWrite", this._address, handle);
     }
   }
 

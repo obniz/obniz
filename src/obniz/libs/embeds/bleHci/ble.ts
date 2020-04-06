@@ -271,16 +271,6 @@ export default class ObnizBLE extends ComponentAbstract {
     this.scan.notifyFromServer("onfind", val);
   }
 
-  protected async onConnect(peripheralUuid: any, error?: any) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    // if (!error && peripheral._connectSetting.autoDiscovery) {
-    //   await peripheral.discoverAllHandlesWait();
-    // }
-    peripheral.notifyFromServer("statusupdate", {
-      status: error ? "disconnected" : "connected",
-    });
-  }
-
   protected onDisconnect(peripheralUuid: any, reason: ObnizBleHciStateError) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
@@ -309,7 +299,7 @@ export default class ObnizBLE extends ComponentAbstract {
   //   service.notifyFromServer("discoverfinished", {});
   // }
 
-  protected onRead(
+  protected onNotification(
     peripheralUuid: any,
     serviceUuid?: any,
     characteristicUuid?: any,
@@ -328,82 +318,7 @@ export default class ObnizBLE extends ComponentAbstract {
         data: Array.from(data),
       };
       characteristic.notifyFromServer("onnotify", obj);
-    } else {
-      const obj: any = {
-        result: isSuccess ? "success" : "failed",
-        data: Array.from(data),
-      };
-      characteristic.notifyFromServer("onread", obj);
     }
-  }
-
-  protected onWrite(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, isSuccess?: any) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    const characteristic: any = peripheral.findCharacteristic({
-      service_uuid: serviceUuid,
-      characteristic_uuid: characteristicUuid,
-    });
-    characteristic.notifyFromServer("onwrite", {
-      result: isSuccess ? "success" : "failed",
-    });
-  }
-
-  protected onBroadcast(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {}
-
-  protected onNotify(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    const char: any = peripheral.findCharacteristic({
-      service_uuid: serviceUuid,
-      characteristic_uuid: characteristicUuid,
-    });
-
-    if (state) {
-      char.notifyFromServer("onregisternotify", {});
-    } else {
-      char.notifyFromServer("onunregisternotify", {});
-    }
-  }
-
-  protected onValueRead(
-    peripheralUuid: any,
-    serviceUuid?: any,
-    characteristicUuid?: any,
-    descriptorUuid?: any,
-    data?: any,
-    isSuccess?: any,
-  ) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    const descriptor: any = peripheral.findDescriptor({
-      service_uuid: serviceUuid,
-      characteristic_uuid: characteristicUuid,
-      descriptor_uuid: descriptorUuid,
-    });
-
-    const obj: any = {
-      result: isSuccess ? "success" : "failed",
-      data: Array.from(data),
-    };
-    descriptor.notifyFromServer("onread", obj);
-  }
-
-  protected onValueWrite(
-    peripheralUuid: any,
-    serviceUuid?: any,
-    characteristicUuid?: any,
-    descriptorUuid?: any,
-    isSuccess?: any,
-  ) {
-    const peripheral: any = this.findPeripheral(peripheralUuid);
-    const descriptor: any = peripheral.findDescriptor({
-      service_uuid: serviceUuid,
-      characteristic_uuid: characteristicUuid,
-      descriptor_uuid: descriptorUuid,
-    });
-
-    const obj: any = {
-      result: isSuccess ? "success" : "failed",
-    };
-    descriptor.notifyFromServer("onwrite", obj);
   }
 
   protected onPeripheralStateChange(state: any) {
@@ -438,15 +353,8 @@ export default class ObnizBLE extends ComponentAbstract {
     this.centralBindings.on("stateChange", this.onStateChange.bind(this));
 
     this.centralBindings.on("discover", this.onDiscover.bind(this));
-    this.centralBindings.on("connect", this.onConnect.bind(this));
     this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-
-    this.centralBindings.on("read", this.onRead.bind(this));
-    this.centralBindings.on("write", this.onWrite.bind(this));
-    this.centralBindings.on("broadcast", this.onBroadcast.bind(this));
-    this.centralBindings.on("notify", this.onNotify.bind(this));
-    this.centralBindings.on("valueRead", this.onValueRead.bind(this));
-    this.centralBindings.on("valueWrite", this.onValueWrite.bind(this));
+    this.centralBindings.on("notification", this.onNotification.bind(this));
 
     this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
     this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));

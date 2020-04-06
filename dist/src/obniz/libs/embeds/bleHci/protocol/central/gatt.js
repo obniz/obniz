@@ -285,10 +285,10 @@ class Gatt extends eventemitter3_1.default {
                 continue;
             }
             else {
-                this.emit("read", this._address, serviceUuid, characteristicUuid, readData, true);
                 return readData;
             }
         }
+        return readData;
     }
     async writeWait(serviceUuid, characteristicUuid, data, withoutResponse) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -299,9 +299,8 @@ class Gatt extends eventemitter3_1.default {
             await this.longWriteWait(serviceUuid, characteristicUuid, data, withoutResponse);
         }
         else {
-            const _data = await this._execCommandWait(this.writeRequest(characteristic.valueHandle, data, false), ATT.OP_WRITE_RESP);
+            await this._execCommandWait(this.writeRequest(characteristic.valueHandle, data, false), ATT.OP_WRITE_RESP);
         }
-        this.emit("write", this._address, serviceUuid, characteristicUuid);
     }
     async broadcastWait(serviceUuid, characteristicUuid, broadcast) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -319,8 +318,6 @@ class Gatt extends eventemitter3_1.default {
         const valueBuffer = Buffer.alloc(2);
         valueBuffer.writeUInt16LE(value, 0);
         const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
-        const _opcode = _data[0];
-        this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -352,7 +349,6 @@ class Gatt extends eventemitter3_1.default {
         const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
         const _opcode = _data[0];
         debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
-        this.emit("notify", this._address, serviceUuid, characteristicUuid, notify);
     }
     async discoverDescriptorsWait(serviceUuid, characteristicUuid) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -389,29 +385,22 @@ class Gatt extends eventemitter3_1.default {
     async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
         const data = await this._execCommandWait(this.readRequest(descriptor.handle), ATT.OP_READ_RESP);
-        const opcode = data[0];
-        this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1), opcode === ATT.OP_READ_RESP);
         return data.slice(1);
     }
     async writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
-        const _data = await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
-        const opcode = _data[0];
-        this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, opcode === ATT.OP_WRITE_RESP);
+        await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
     }
-    async readHandle(handle) {
+    async readHandleWait(handle) {
         const data = await this._execCommandWait(this.readRequest(handle), ATT.OP_READ_RESP);
-        this.emit("handleRead", this._address, handle, data.slice(1));
         return data.slice(1);
     }
     async writeHandleWait(handle, data, withoutResponse) {
         if (withoutResponse) {
             await this._execNoRespCommandWait(this.writeRequest(handle, data, true));
-            this.emit("handleWrite", this._address, handle);
         }
         else {
             await this._execCommandWait(this.writeRequest(handle, data, false), ATT.OP_WRITE_RESP);
-            this.emit("handleWrite", this._address, handle);
         }
     }
     onAclStreamData(cid, data) {

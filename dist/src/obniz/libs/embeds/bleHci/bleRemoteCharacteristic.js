@@ -161,6 +161,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async registerNotifyWait(callback) {
         this.onnotify = callback;
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, true);
+        if (this.onregisternotify) {
+            this.onregisternotify();
+        }
     }
     /**
      * unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
@@ -221,6 +224,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async unregisterNotifyWait() {
         this.onnotify = () => { };
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
+        if (this.onunregisternotify) {
+            this.onunregisternotify();
+        }
     }
     /**
      * It reads data from the characteristic.
@@ -310,6 +316,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
+        if (this.onwrite) {
+            this.onwrite("success"); // if fail, throw error.
+        }
     }
     /**
      * It reads data from the characteristic.
@@ -337,7 +346,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      */
     async readWait() {
         const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
-        return Array.from(buf);
+        const data = Array.from(buf);
+        if (this.onread) {
+            this.onread(data);
+        }
+        return data;
     }
     /**
      * Discover services.
@@ -453,18 +466,6 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
-            case "onregisternotify": {
-                if (this.onregisternotify) {
-                    this.onregisternotify();
-                }
-                break;
-            }
-            case "onunregisternotify": {
-                if (this.onunregisternotify) {
-                    this.onunregisternotify();
-                }
-                break;
-            }
             case "onnotify": {
                 if (this.onnotify) {
                     this.onnotify(params.data || undefined);

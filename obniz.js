@@ -6558,15 +6558,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         val._adv_data_filtered = advertisement;
         this.scan.notifyFromServer("onfind", val);
     }
-    async onConnect(peripheralUuid, error) {
-        const peripheral = this.findPeripheral(peripheralUuid);
-        // if (!error && peripheral._connectSetting.autoDiscovery) {
-        //   await peripheral.discoverAllHandlesWait();
-        // }
-        peripheral.notifyFromServer("statusupdate", {
-            status: error ? "disconnected" : "connected",
-        });
-    }
     onDisconnect(peripheralUuid, reason) {
         const peripheral = this.findPeripheral(peripheralUuid);
         peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
@@ -6592,7 +6583,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     //   }
     //   service.notifyFromServer("discoverfinished", {});
     // }
-    onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
+    onNotification(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
         const peripheral = this.findPeripheral(peripheralUuid);
         const characteristic = peripheral.findCharacteristic({
             service_uuid: serviceUuid,
@@ -6604,62 +6595,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             };
             characteristic.notifyFromServer("onnotify", obj);
         }
-        else {
-            const obj = {
-                result: isSuccess ? "success" : "failed",
-                data: Array.from(data),
-            };
-            characteristic.notifyFromServer("onread", obj);
-        }
-    }
-    onWrite(peripheralUuid, serviceUuid, characteristicUuid, isSuccess) {
-        const peripheral = this.findPeripheral(peripheralUuid);
-        const characteristic = peripheral.findCharacteristic({
-            service_uuid: serviceUuid,
-            characteristic_uuid: characteristicUuid,
-        });
-        characteristic.notifyFromServer("onwrite", {
-            result: isSuccess ? "success" : "failed",
-        });
-    }
-    onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) { }
-    onNotify(peripheralUuid, serviceUuid, characteristicUuid, state) {
-        const peripheral = this.findPeripheral(peripheralUuid);
-        const char = peripheral.findCharacteristic({
-            service_uuid: serviceUuid,
-            characteristic_uuid: characteristicUuid,
-        });
-        if (state) {
-            char.notifyFromServer("onregisternotify", {});
-        }
-        else {
-            char.notifyFromServer("onunregisternotify", {});
-        }
-    }
-    onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess) {
-        const peripheral = this.findPeripheral(peripheralUuid);
-        const descriptor = peripheral.findDescriptor({
-            service_uuid: serviceUuid,
-            characteristic_uuid: characteristicUuid,
-            descriptor_uuid: descriptorUuid,
-        });
-        const obj = {
-            result: isSuccess ? "success" : "failed",
-            data: Array.from(data),
-        };
-        descriptor.notifyFromServer("onread", obj);
-    }
-    onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
-        const peripheral = this.findPeripheral(peripheralUuid);
-        const descriptor = peripheral.findDescriptor({
-            service_uuid: serviceUuid,
-            characteristic_uuid: characteristicUuid,
-            descriptor_uuid: descriptorUuid,
-        });
-        const obj = {
-            result: isSuccess ? "success" : "failed",
-        };
-        descriptor.notifyFromServer("onwrite", obj);
     }
     onPeripheralStateChange(state) {
         // console.error("onPeripheralStateChange")
@@ -6688,14 +6623,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     _bind() {
         this.centralBindings.on("stateChange", this.onStateChange.bind(this));
         this.centralBindings.on("discover", this.onDiscover.bind(this));
-        this.centralBindings.on("connect", this.onConnect.bind(this));
         this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-        this.centralBindings.on("read", this.onRead.bind(this));
-        this.centralBindings.on("write", this.onWrite.bind(this));
-        this.centralBindings.on("broadcast", this.onBroadcast.bind(this));
-        this.centralBindings.on("notify", this.onNotify.bind(this));
-        this.centralBindings.on("valueRead", this.onValueRead.bind(this));
-        this.centralBindings.on("valueWrite", this.onValueWrite.bind(this));
+        this.centralBindings.on("notification", this.onNotification.bind(this));
         this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
         this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
         this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
@@ -7215,30 +7144,6 @@ class BleAttributeAbstract {
         switch (notifyName) {
             case "onerror": {
                 this.onerror(params);
-                break;
-            }
-            case "onwrite": {
-                if (this.onwrite) {
-                    this.onwrite(params.result);
-                }
-                break;
-            }
-            case "onread": {
-                if (this.onread) {
-                    this.onread(params.data);
-                }
-                break;
-            }
-            case "onwritefromremote": {
-                if (this.onwritefromremote) {
-                    this.onwritefromremote(params.address, params.data);
-                }
-                break;
-            }
-            case "onreadfromremote": {
-                if (this.onreadfromremote) {
-                    this.onreadfromremote(params.address);
-                }
                 break;
             }
         }
@@ -7830,6 +7735,29 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
             this.read();
         });
     }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        super.notifyFromServer(notifyName, params);
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "onwritefromremote": {
+                if (this.onwritefromremote) {
+                    this.onwritefromremote(params.address, params.data);
+                }
+                break;
+            }
+            case "onreadfromremote": {
+                if (this.onreadfromremote) {
+                    this.onreadfromremote(params.address);
+                }
+                break;
+            }
+        }
+    }
 }
 exports.default = BleLocalValueAttributeAbstract;
 
@@ -8220,6 +8148,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async registerNotifyWait(callback) {
         this.onnotify = callback;
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, true);
+        if (this.onregisternotify) {
+            this.onregisternotify();
+        }
     }
     /**
      * unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
@@ -8280,6 +8211,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async unregisterNotifyWait() {
         this.onnotify = () => { };
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
+        if (this.onunregisternotify) {
+            this.onunregisternotify();
+        }
     }
     /**
      * It reads data from the characteristic.
@@ -8369,6 +8303,9 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
+        if (this.onwrite) {
+            this.onwrite("success"); // if fail, throw error.
+        }
     }
     /**
      * It reads data from the characteristic.
@@ -8396,7 +8333,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      */
     async readWait() {
         const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
-        return Array.from(buf);
+        const data = Array.from(buf);
+        if (this.onread) {
+            this.onread(data);
+        }
+        return data;
     }
     /**
      * Discover services.
@@ -8512,18 +8453,6 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
-            case "onregisternotify": {
-                if (this.onregisternotify) {
-                    this.onregisternotify();
-                }
-                break;
-            }
-            case "onunregisternotify": {
-                if (this.onunregisternotify) {
-                    this.onunregisternotify();
-                }
-                break;
-            }
             case "onnotify": {
                 if (this.onnotify) {
                     this.onnotify(params.data || undefined);
@@ -8620,8 +8549,12 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      *
      */
     async readWait() {
-        const data = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
-        return Array.from(data);
+        const buf = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
+        const data = Array.from(buf);
+        if (this.onread) {
+            this.onread(data);
+        }
+        return data;
     }
     /**
      * This writes dataArray to descriptor.
@@ -8676,6 +8609,9 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      */
     async writeWait(data) {
         await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
+        if (this.onwrite) {
+            this.onwrite("success"); // if fail, throw error.
+        }
     }
 }
 exports.default = BleRemoteDescriptor;
@@ -10493,7 +10429,6 @@ class NobleBindings extends eventemitter3_1.default {
             return;
         }
         let uuid = null;
-        const error = null;
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
@@ -10509,20 +10444,11 @@ class NobleBindings extends eventemitter3_1.default {
         this._aclStreams[handle] = aclStream;
         this._handles[uuid] = handle;
         this._handles[handle] = uuid;
-        this._gatts[handle].on("read", this.onRead.bind(this));
-        this._gatts[handle].on("write", this.onWrite.bind(this));
-        this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
-        this._gatts[handle].on("notify", this.onNotify.bind(this));
         this._gatts[handle].on("notification", this.onNotification.bind(this));
-        this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
-        this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
-        this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
-        this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
         this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
         this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
         await this._gatts[handle].exchangeMtuWait(256);
         // public onMtu(address: any, mtu?: any) {}
-        this.emit("connect", uuid, error);
     }
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
@@ -10572,52 +10498,24 @@ class NobleBindings extends eventemitter3_1.default {
         const data = await gatt.readWait(serviceUuid, characteristicUuid);
         return data;
     }
-    onRead(address, serviceUuid, characteristicUuid, data, isSuccess) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("read", uuid, serviceUuid, characteristicUuid, data, false, isSuccess);
-    }
     async writeWait(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
         const gatt = this.getGatt(peripheralUuid);
-        const resp = await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
-    }
-    onWrite(address, serviceUuid, characteristicUuid, isSuccess) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("write", uuid, serviceUuid, characteristicUuid, isSuccess);
+        await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
     }
     async broadcastWait(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
         const gatt = this.getGatt(peripheralUuid);
         await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
     }
-    onBroadcast(address, serviceUuid, characteristicUuid, state) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("broadcast", uuid, serviceUuid, characteristicUuid, state);
-    }
     async notifyWait(peripheralUuid, serviceUuid, characteristicUuid, notify) {
         const gatt = this.getGatt(peripheralUuid);
         await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
-    }
-    onNotify(address, serviceUuid, characteristicUuid, state) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("notify", uuid, serviceUuid, characteristicUuid, state);
     }
     onNotification(address, serviceUuid, characteristicUuid, data) {
         const uuid = address
             .split(":")
             .join("")
             .toLowerCase();
-        this.emit("read", uuid, serviceUuid, characteristicUuid, data, true, true);
+        this.emit("notification", uuid, serviceUuid, characteristicUuid, data, true, true);
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
@@ -10629,45 +10527,18 @@ class NobleBindings extends eventemitter3_1.default {
         const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
         return resp;
     }
-    onValueRead(address, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("valueRead", uuid, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess);
-    }
     async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);
         await gatt.writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data);
     }
-    onValueWrite(address, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("valueWrite", uuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess);
-    }
-    readHandle(peripheralUuid, attHandle) {
+    async readHandleWait(peripheralUuid, attHandle) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.readHandle(attHandle);
+        const data = await gatt.readHandleWait(attHandle);
+        return data;
     }
-    onHandleRead(address, handle, data) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("handleRead", uuid, handle, data);
-    }
-    async writeHandle(peripheralUuid, attHandle, data, withoutResponse) {
+    async writeHandleWait(peripheralUuid, attHandle, data, withoutResponse) {
         const gatt = this.getGatt(peripheralUuid);
         await gatt.writeHandleWait(attHandle, data, withoutResponse);
-    }
-    onHandleWrite(address, handle) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("handleWrite", uuid, handle);
     }
     onHandleNotify(address, handle, data) {
         const uuid = address
@@ -11320,10 +11191,10 @@ class Gatt extends eventemitter3_1.default {
                 continue;
             }
             else {
-                this.emit("read", this._address, serviceUuid, characteristicUuid, readData, true);
                 return readData;
             }
         }
+        return readData;
     }
     async writeWait(serviceUuid, characteristicUuid, data, withoutResponse) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -11334,9 +11205,8 @@ class Gatt extends eventemitter3_1.default {
             await this.longWriteWait(serviceUuid, characteristicUuid, data, withoutResponse);
         }
         else {
-            const _data = await this._execCommandWait(this.writeRequest(characteristic.valueHandle, data, false), ATT.OP_WRITE_RESP);
+            await this._execCommandWait(this.writeRequest(characteristic.valueHandle, data, false), ATT.OP_WRITE_RESP);
         }
-        this.emit("write", this._address, serviceUuid, characteristicUuid);
     }
     async broadcastWait(serviceUuid, characteristicUuid, broadcast) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -11354,8 +11224,6 @@ class Gatt extends eventemitter3_1.default {
         const valueBuffer = Buffer.alloc(2);
         valueBuffer.writeUInt16LE(value, 0);
         const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
-        const _opcode = _data[0];
-        this.emit("broadcast", this._address, serviceUuid, characteristicUuid, broadcast);
     }
     async notifyWait(serviceUuid, characteristicUuid, notify) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -11387,7 +11255,6 @@ class Gatt extends eventemitter3_1.default {
         const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
         const _opcode = _data[0];
         debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
-        this.emit("notify", this._address, serviceUuid, characteristicUuid, notify);
     }
     async discoverDescriptorsWait(serviceUuid, characteristicUuid) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -11424,29 +11291,22 @@ class Gatt extends eventemitter3_1.default {
     async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
         const data = await this._execCommandWait(this.readRequest(descriptor.handle), ATT.OP_READ_RESP);
-        const opcode = data[0];
-        this.emit("valueRead", this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1), opcode === ATT.OP_READ_RESP);
         return data.slice(1);
     }
     async writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
-        const _data = await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
-        const opcode = _data[0];
-        this.emit("valueWrite", this._address, serviceUuid, characteristicUuid, descriptorUuid, opcode === ATT.OP_WRITE_RESP);
+        await this._execCommandWait(this.writeRequest(descriptor.handle, data, false), ATT.OP_WRITE_RESP);
     }
-    async readHandle(handle) {
+    async readHandleWait(handle) {
         const data = await this._execCommandWait(this.readRequest(handle), ATT.OP_READ_RESP);
-        this.emit("handleRead", this._address, handle, data.slice(1));
         return data.slice(1);
     }
     async writeHandleWait(handle, data, withoutResponse) {
         if (withoutResponse) {
             await this._execNoRespCommandWait(this.writeRequest(handle, data, true));
-            this.emit("handleWrite", this._address, handle);
         }
         else {
             await this._execCommandWait(this.writeRequest(handle, data, false), ATT.OP_WRITE_RESP);
-            this.emit("handleWrite", this._address, handle);
         }
     }
     onAclStreamData(cid, data) {

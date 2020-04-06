@@ -16,21 +16,11 @@ import Gatt from "./gatt";
 import Signaling from "./signaling";
 
 type NobleBindingsEventType =
-  // response of command
-  | "discover"
-  | "connect"
-  | "broadcast"
-  | "write"
-  | "read"
-  | "valueWrite"
-  | "valueRead"
-  | "handleWrite"
-  | "handleRead"
-
   // notify from peripheral
+  | "discover" // for onfind
   | "disconnect"
   | "stateChange"
-  | "notify"
+  | "notification"
   | "handleNotify";
 
 /**
@@ -198,8 +188,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
     let uuid: any = null;
 
-    const error: any = null;
-
     if (status !== 0) {
       throw new ObnizBleHciStateError(status);
     }
@@ -225,23 +213,13 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._handles[uuid] = handle;
     this._handles[handle] = uuid;
 
-    this._gatts[handle].on("read", this.onRead.bind(this));
-    this._gatts[handle].on("write", this.onWrite.bind(this));
-    this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
-    this._gatts[handle].on("notify", this.onNotify.bind(this));
     this._gatts[handle].on("notification", this.onNotification.bind(this));
-    this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
-    this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
-    this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
-    this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
     this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
 
     this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
 
     await this._gatts[handle].exchangeMtuWait(256);
     // public onMtu(address: any, mtu?: any) {}
-
-    this.emit("connect", uuid, error);
   }
 
   public onDisconnComplete(handle: any, reason: number) {
@@ -297,19 +275,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return chars;
   }
 
-  public async readWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any) {
+  public async readWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     const data = await gatt.readWait(serviceUuid, characteristicUuid);
     return data;
-  }
-
-  public onRead(address: any, serviceUuid?: any, characteristicUuid?: any, data?: any, isSuccess?: any) {
-    const uuid = address
-      .split(":")
-      .join("")
-      .toLowerCase();
-
-    this.emit("read", uuid, serviceUuid, characteristicUuid, data, false, isSuccess);
   }
 
   public async writeWait(
@@ -318,46 +287,24 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     characteristicUuid: any,
     data: any,
     withoutResponse: any,
-  ) {
+  ): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    const resp = await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
+    await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
   }
 
-  public onWrite(address: any, serviceUuid?: any, characteristicUuid?: any, isSuccess?: any) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
-
-    this.emit("write", uuid, serviceUuid, characteristicUuid, isSuccess);
-  }
-
-  public async broadcastWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, broadcast: any) {
+  public async broadcastWait(
+    peripheralUuid: any,
+    serviceUuid: any,
+    characteristicUuid: any,
+    broadcast: any,
+  ): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
-  }
-
-  public onBroadcast(address: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
-
-    this.emit("broadcast", uuid, serviceUuid, characteristicUuid, state);
   }
 
   public async notifyWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, notify: any) {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
-  }
-
-  public onNotify(address: any, serviceUuid?: any, characteristicUuid?: any, state?: any) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
-
-    this.emit("notify", uuid, serviceUuid, characteristicUuid, state);
   }
 
   public onNotification(address: any, serviceUuid?: any, characteristicUuid?: any, data?: any) {
@@ -366,7 +313,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       .join("")
       .toLowerCase();
 
-    this.emit("read", uuid, serviceUuid, characteristicUuid, data, true, true);
+    this.emit("notification", uuid, serviceUuid, characteristicUuid, data, true, true);
   }
 
   public async discoverDescriptorsWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any) {
@@ -381,22 +328,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return resp;
   }
 
-  public onValueRead(
-    address: any,
-    serviceUuid?: any,
-    characteristicUuid?: any,
-    descriptorUuid?: any,
-    data?: any,
-    isSuccess?: any,
-  ) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
-
-    this.emit("valueRead", uuid, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess);
-  }
-
   public async writeValueWait(
     peripheralUuid: any,
     serviceUuid: any,
@@ -408,47 +339,15 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     await gatt.writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data);
   }
 
-  public onValueWrite(
-    address: any,
-    serviceUuid?: any,
-    characteristicUuid?: any,
-    descriptorUuid?: any,
-    isSuccess?: any,
-  ) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
-
-    this.emit("valueWrite", uuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess);
-  }
-
-  public readHandle(peripheralUuid: any, attHandle: any) {
+  public async readHandleWait(peripheralUuid: any, attHandle: any): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    gatt.readHandle(attHandle);
+    const data = await gatt.readHandleWait(attHandle);
+    return data;
   }
 
-  public onHandleRead(address: any, handle?: any, data?: any) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
-
-    this.emit("handleRead", uuid, handle, data);
-  }
-
-  public async writeHandle(peripheralUuid: any, attHandle: any, data: any, withoutResponse: any) {
+  public async writeHandleWait(peripheralUuid: any, attHandle: any, data: any, withoutResponse: any): Promise<void> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
     await gatt.writeHandleWait(attHandle, data, withoutResponse);
-  }
-
-  public onHandleWrite(address: any, handle?: any) {
-    const uuid: any = address
-      .split(":")
-      .join("")
-      .toLowerCase();
-
-    this.emit("handleWrite", uuid, handle);
   }
 
   public onHandleNotify(address: any, handle?: any, data?: any) {

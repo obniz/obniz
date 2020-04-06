@@ -120,7 +120,6 @@ class NobleBindings extends eventemitter3_1.default {
             return;
         }
         let uuid = null;
-        const error = null;
         if (status !== 0) {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
@@ -136,20 +135,11 @@ class NobleBindings extends eventemitter3_1.default {
         this._aclStreams[handle] = aclStream;
         this._handles[uuid] = handle;
         this._handles[handle] = uuid;
-        this._gatts[handle].on("read", this.onRead.bind(this));
-        this._gatts[handle].on("write", this.onWrite.bind(this));
-        this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
-        this._gatts[handle].on("notify", this.onNotify.bind(this));
         this._gatts[handle].on("notification", this.onNotification.bind(this));
-        this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
-        this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
-        this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
-        this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
         this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
         this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
         await this._gatts[handle].exchangeMtuWait(256);
         // public onMtu(address: any, mtu?: any) {}
-        this.emit("connect", uuid, error);
     }
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
@@ -199,52 +189,24 @@ class NobleBindings extends eventemitter3_1.default {
         const data = await gatt.readWait(serviceUuid, characteristicUuid);
         return data;
     }
-    onRead(address, serviceUuid, characteristicUuid, data, isSuccess) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("read", uuid, serviceUuid, characteristicUuid, data, false, isSuccess);
-    }
     async writeWait(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
         const gatt = this.getGatt(peripheralUuid);
-        const resp = await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
-    }
-    onWrite(address, serviceUuid, characteristicUuid, isSuccess) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("write", uuid, serviceUuid, characteristicUuid, isSuccess);
+        await gatt.writeWait(serviceUuid, characteristicUuid, data, withoutResponse);
     }
     async broadcastWait(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
         const gatt = this.getGatt(peripheralUuid);
         await gatt.broadcastWait(serviceUuid, characteristicUuid, broadcast);
     }
-    onBroadcast(address, serviceUuid, characteristicUuid, state) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("broadcast", uuid, serviceUuid, characteristicUuid, state);
-    }
     async notifyWait(peripheralUuid, serviceUuid, characteristicUuid, notify) {
         const gatt = this.getGatt(peripheralUuid);
         await gatt.notifyWait(serviceUuid, characteristicUuid, notify);
-    }
-    onNotify(address, serviceUuid, characteristicUuid, state) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("notify", uuid, serviceUuid, characteristicUuid, state);
     }
     onNotification(address, serviceUuid, characteristicUuid, data) {
         const uuid = address
             .split(":")
             .join("")
             .toLowerCase();
-        this.emit("read", uuid, serviceUuid, characteristicUuid, data, true, true);
+        this.emit("notification", uuid, serviceUuid, characteristicUuid, data, true, true);
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
@@ -256,45 +218,18 @@ class NobleBindings extends eventemitter3_1.default {
         const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
         return resp;
     }
-    onValueRead(address, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("valueRead", uuid, serviceUuid, characteristicUuid, descriptorUuid, data, isSuccess);
-    }
     async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);
         await gatt.writeValueWait(serviceUuid, characteristicUuid, descriptorUuid, data);
     }
-    onValueWrite(address, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("valueWrite", uuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess);
-    }
-    readHandle(peripheralUuid, attHandle) {
+    async readHandleWait(peripheralUuid, attHandle) {
         const gatt = this.getGatt(peripheralUuid);
-        gatt.readHandle(attHandle);
+        const data = await gatt.readHandleWait(attHandle);
+        return data;
     }
-    onHandleRead(address, handle, data) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("handleRead", uuid, handle, data);
-    }
-    async writeHandle(peripheralUuid, attHandle, data, withoutResponse) {
+    async writeHandleWait(peripheralUuid, attHandle, data, withoutResponse) {
         const gatt = this.getGatt(peripheralUuid);
         await gatt.writeHandleWait(attHandle, data, withoutResponse);
-    }
-    onHandleWrite(address, handle) {
-        const uuid = address
-            .split(":")
-            .join("")
-            .toLowerCase();
-        this.emit("handleWrite", uuid, handle);
     }
     onHandleNotify(address, handle, data) {
         const uuid = address

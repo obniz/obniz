@@ -80,13 +80,18 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    *
    */
   public async readWait(): Promise<number[]> {
-    const data = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(
+    const buf = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(
       this.characteristic.service.peripheral.address,
       this.characteristic.service.uuid,
       this.characteristic.uuid,
       this.uuid,
     );
-    return Array.from(data);
+    const data = Array.from(buf);
+
+    if (this.onread) {
+      this.onread(data);
+    }
+    return data;
   }
 
   /**
@@ -149,5 +154,9 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
       this.uuid,
       Buffer.from(data),
     );
+
+    if (this.onwrite) {
+      this.onwrite("success"); // if fail, throw error.
+    }
   }
 }
