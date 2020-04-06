@@ -34,7 +34,7 @@ class Smp extends eventemitter3_1.default {
         super();
         this._stk = null;
         this._ltk = null;
-        this._options = null;
+        this._options = undefined;
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(localAddress
@@ -54,10 +54,14 @@ class Smp extends eventemitter3_1.default {
     async pairingWithKeyWait(key) {
         this.setKeys(key);
         const encResult = await this._aclStream.onSmpStkWait(this._stk);
-        return;
+        return encResult;
     }
     async pairingWait(options) {
         this._options = options;
+        if (this._options && this._options.keys) {
+            // console.warn("skip pairing");
+            return await this.pairingWithKeyWait(this._options.keys);
+        }
         await this.sendPairingRequestWait();
         const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
@@ -227,7 +231,7 @@ class Smp extends eventemitter3_1.default {
         this.write(this._preq);
     }
     isPasskeyMode() {
-        if (this._options && this._options.passkey === true && this._options.passkeyCallback) {
+        if (this._options && this._options.passkeyCallback) {
             return true;
         }
         return false;

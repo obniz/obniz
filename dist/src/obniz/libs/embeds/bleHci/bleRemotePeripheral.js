@@ -418,6 +418,52 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
         return results;
     }
+    /**
+     * Start pairing.
+     * This function return `keys` which you can use next time pairing with same device.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          const keys = await peripheral.pairingWait();
+     *
+     *          // Please store `keys` if you want to bond.
+     *      }
+     *      await peripheral.connectWait();
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
+     *
+     *
+     *
+     * If you have already keys, please use options.keys
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * const keys = "xxxxx";
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.pairingWait({keys});  // pairing with stored keys.
+     *
+     *      }
+     *      await peripheral.connectWait();
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
+     *
+     * Go to [[BlePairingOptions]] to see more option.
+     * @param options BlePairingOptions
+     */
     async pairingWait(options) {
         const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
         return result;

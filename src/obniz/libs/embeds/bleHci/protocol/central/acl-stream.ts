@@ -47,15 +47,7 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
 
   public async encryptWait(options?: any) {
     let encrpytResult = null;
-    if (options && options.keys) {
-      console.error("skip pairing");
-
-      encrpytResult = await this._smp.pairingWithKeyWait(options.keys);
-    } else {
-      encrpytResult = await this._smp.pairingWait(options);
-      // const keys = this._smp.getKeys();
-      // encrpytResult = await this.onSmpStkWait(keys.ltk);
-    }
+    encrpytResult = await this._smp.pairingWait(options);
     return encrpytResult;
   }
 

@@ -27,7 +27,25 @@ namespace SMP {
   export const SMP_SECURITY_REQUEST = 0x0b;
 }
 
+/**
+ * @ignore
+ */
 type SmpEventTypes = "masterIdent" | "ltk" | "fail" | "end";
+
+/**
+ * @ignore
+ */
+export interface SmpEncryptOptions {
+  /**
+   * Stored pairing keys
+   */
+  keys?: string;
+
+  /**
+   * Callback function that call on pairing passkey required.
+   */
+  passkeyCallback?: () => Promise<number>;
+}
 
 /**
  * @ignore
@@ -47,7 +65,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
   private _pcnf: any;
   private _stk: any = null;
   private _ltk: any = null;
-  private _options: any = null;
+  private _options?: SmpEncryptOptions = undefined;
 
   constructor(
     aclStream: AclStream,
@@ -86,11 +104,15 @@ class Smp extends EventEmitter<SmpEventTypes> {
   public async pairingWithKeyWait(key: string) {
     this.setKeys(key);
     const encResult = await this._aclStream.onSmpStkWait(this._stk);
-    return;
+    return encResult;
   }
 
-  public async pairingWait(options?: any) {
+  public async pairingWait(options?: SmpEncryptOptions) {
     this._options = options;
+    if (this._options && this._options.keys) {
+      // console.warn("skip pairing");
+      return await this.pairingWithKeyWait(this._options.keys);
+    }
 
     await this.sendPairingRequestWait();
     const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
@@ -153,7 +175,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
     if (this.isPasskeyMode()) {
       let passkeyNumber = 0;
       try {
-        passkeyNumber = await this._options.passkeyCallback();
+        passkeyNumber = await this._options!.passkeyCallback!();
       } catch {}
       const passkey = new Array(16);
       for (let i = 0; i < 3; i++) {
@@ -280,7 +302,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   private isPasskeyMode() {
-    if (this._options && this._options.passkey === true && this._options.passkeyCallback) {
+    if (this._options && this._options.passkeyCallback) {
       return true;
     }
     return false;

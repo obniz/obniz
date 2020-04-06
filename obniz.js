@@ -9000,6 +9000,52 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
         return results;
     }
+    /**
+     * Start pairing.
+     * This function return `keys` which you can use next time pairing with same device.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          const keys = await peripheral.pairingWait();
+     *
+     *          // Please store `keys` if you want to bond.
+     *      }
+     *      await peripheral.connectWait();
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
+     *
+     *
+     *
+     * If you have already keys, please use options.keys
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * const keys = "xxxxx";
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.pairingWait({keys});  // pairing with stored keys.
+     *
+     *      }
+     *      await peripheral.connectWait();
+     *     }
+     * }
+     * obniz.ble.scan.start();
+     * ```
+     *
+     * Go to [[BlePairingOptions]] to see more option.
+     * @param options BlePairingOptions
+     */
     async pairingWait(options) {
         const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
         return result;
@@ -10216,15 +10262,7 @@ class AclStream extends eventemitter3_1.default {
     }
     async encryptWait(options) {
         let encrpytResult = null;
-        if (options && options.keys) {
-            console.error("skip pairing");
-            encrpytResult = await this._smp.pairingWithKeyWait(options.keys);
-        }
-        else {
-            encrpytResult = await this._smp.pairingWait(options);
-            // const keys = this._smp.getKeys();
-            // encrpytResult = await this.onSmpStkWait(keys.ltk);
-        }
+        encrpytResult = await this._smp.pairingWait(options);
         return encrpytResult;
     }
     write(cid, data) {
@@ -11647,7 +11685,7 @@ class Smp extends eventemitter3_1.default {
         super();
         this._stk = null;
         this._ltk = null;
-        this._options = null;
+        this._options = undefined;
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(localAddress
@@ -11667,10 +11705,14 @@ class Smp extends eventemitter3_1.default {
     async pairingWithKeyWait(key) {
         this.setKeys(key);
         const encResult = await this._aclStream.onSmpStkWait(this._stk);
-        return;
+        return encResult;
     }
     async pairingWait(options) {
         this._options = options;
+        if (this._options && this._options.keys) {
+            // console.warn("skip pairing");
+            return await this.pairingWithKeyWait(this._options.keys);
+        }
         await this.sendPairingRequestWait();
         const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
@@ -11840,7 +11882,7 @@ class Smp extends eventemitter3_1.default {
         this.write(this._preq);
     }
     isPasskeyMode() {
-        if (this._options && this._options.passkey === true && this._options.passkeyCallback) {
+        if (this._options && this._options.passkeyCallback) {
             return true;
         }
         return false;
