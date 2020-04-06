@@ -1,4 +1,4 @@
-# S-CBTGAAAC
+# SCBTGAAAC
 
 ABLIC社製の漏水センサーです。 
 
@@ -9,7 +9,7 @@ ABLIC社製の漏水センサーです。
 
 ```javascript
 // Javascript Example
-const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
+const DEVICE = Obniz.getPartsClass('SCBTGAAAC');
 ```
 
 ## isDevice(BleRemotePeripheral)
@@ -18,7 +18,7 @@ const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
 
 ```javascript
 // Javascript Example
-const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
+const DEVICE = Obniz.getPartsClass('SCBTGAAAC');
 await obniz.ble.initWait();
 obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
@@ -35,7 +35,7 @@ obniz.ble.scan.onfind = (p) => {
 
 ```javascript
 // Javascript Example
-const DEVICE = Obniz.getPartsClass('S-CBTGAAAC');
+const DEVICE = Obniz.getPartsClass('SCBTGAAAC');
 await obniz.ble.initWait();
 obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
