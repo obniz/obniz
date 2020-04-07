@@ -3649,11 +3649,18 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         const next = ObnizUIs._promptQueue.shift();
         if (next) {
-            this._promptOne(next.filled, next.callback);
+            ObnizUIs._promptWaiting = true;
+            if (document.readyState !== "loading") {
+                this._promptOne(next.filled, next.callback);
+            }
+            else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    this._promptOne(next.filled, next.callback);
+                });
+            }
         }
     }
     _promptOne(filled, callback) {
-        ObnizUIs._promptWaiting = true;
         ObnizUIs._promptCount++;
         let result = "";
         new Promise((resolve) => {
