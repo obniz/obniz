@@ -11,7 +11,7 @@ import PeripheralBindings from "./protocol/peripheral/bindings";
 
 import semver from "semver";
 import Obniz from "../../../index";
-import { ObnizBleHciStateError } from "../../../ObnizError";
+import { ObnizBleHciStateError, ObnizOfflineError } from "../../../ObnizError";
 import { ComponentAbstract } from "../../ComponentAbstact";
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
@@ -134,6 +134,26 @@ export default class ObnizBLE extends ComponentAbstract {
    * @private
    */
   public _reset() {
+    if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
+      const address = this.peripheral.currentConnectedDeviceAddress;
+      this.peripheral.currentConnectedDeviceAddress = null;
+      if (this.peripheral.onconnectionupdates) {
+        this.peripheral.onconnectionupdates({
+          address,
+          status: "disconnected",
+          reason: new ObnizOfflineError(),
+        });
+      }
+    }
+
+    if (this.remotePeripherals) {
+      for (const p of this.remotePeripherals) {
+        if (p.connected) {
+          p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizOfflineError() });
+        }
+      }
+    }
+
     this.hciProtocol = new HciProtocol(this.hci);
     this.centralBindings = new CentralBindings(this.hciProtocol);
     this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
@@ -275,6 +295,7 @@ export default class ObnizBLE extends ComponentAbstract {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     peripheral.notifyFromServer("statusupdate", { status: "disconnected", reason });
   }
+
   //
   // protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
   //   const peripheral: any = this.findPeripheral(peripheralUuid);
@@ -339,12 +360,13 @@ export default class ObnizBLE extends ComponentAbstract {
     // console.error("onPeripheralMtuChange")
   }
 
-  protected onPeripheralDisconnect(clientAddress: any) {
+  protected onPeripheralDisconnect(clientAddress: any, reason: any) {
     this.peripheral.currentConnectedDeviceAddress = null;
     if (this.peripheral.onconnectionupdates) {
       this.peripheral.onconnectionupdates({
         address: clientAddress,
         status: "disconnected",
+        reason,
       });
     }
   }

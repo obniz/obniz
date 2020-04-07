@@ -6359,6 +6359,7 @@ const bindings_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/em
 const hci_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
 const bindings_2 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js"));
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleAdvertisement.js"));
 const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleCharacteristic.js"));
@@ -6444,6 +6445,24 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     _reset() {
+        if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
+            const address = this.peripheral.currentConnectedDeviceAddress;
+            this.peripheral.currentConnectedDeviceAddress = null;
+            if (this.peripheral.onconnectionupdates) {
+                this.peripheral.onconnectionupdates({
+                    address,
+                    status: "disconnected",
+                    reason: new ObnizError_1.ObnizOfflineError(),
+                });
+            }
+        }
+        if (this.remotePeripherals) {
+            for (const p of this.remotePeripherals) {
+                if (p.connected) {
+                    p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
+                }
+            }
+        }
         this.hciProtocol = new hci_2.default(this.hci);
         this.centralBindings = new bindings_1.default(this.hciProtocol);
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
@@ -6611,12 +6630,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     onPeripheralMtuChange(mtu) {
         // console.error("onPeripheralMtuChange")
     }
-    onPeripheralDisconnect(clientAddress) {
+    onPeripheralDisconnect(clientAddress, reason) {
         this.peripheral.currentConnectedDeviceAddress = null;
         if (this.peripheral.onconnectionupdates) {
             this.peripheral.onconnectionupdates({
                 address: clientAddress,
                 status: "disconnected",
+                reason,
             });
         }
     }
@@ -12849,7 +12869,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._handle = null;
         this._aclStream = null;
         if (address) {
-            this.emit("disconnect", address); // TODO: use reason
+            this.emit("disconnect", address, reason); // TODO: use reason
         }
         if (this._advertising) {
             await this._gap.restartAdvertisingWait();

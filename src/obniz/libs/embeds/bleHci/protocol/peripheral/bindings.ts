@@ -166,7 +166,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     this._aclStream = null;
 
     if (address) {
-      this.emit("disconnect", address); // TODO: use reason
+      this.emit("disconnect", address, reason); // TODO: use reason
     }
 
     if (this._advertising) {

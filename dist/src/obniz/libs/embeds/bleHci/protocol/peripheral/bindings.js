@@ -116,7 +116,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._handle = null;
         this._aclStream = null;
         if (address) {
-            this.emit("disconnect", address); // TODO: use reason
+            this.emit("disconnect", address, reason); // TODO: use reason
         }
         if (this._advertising) {
             await this._gap.restartAdvertisingWait();
