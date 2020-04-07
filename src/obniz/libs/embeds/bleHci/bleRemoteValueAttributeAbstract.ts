@@ -22,20 +22,14 @@ export default abstract class BleRemoteValueAttributeAbstract<
   public onread?: (data: any) => void;
 
   /**
-   * Wrapper for [[write]] with data converting from number.
-   * @param val
-   * @param needResponse
+   * @deprecated
    */
   public writeNumber(val: number, needResponse?: boolean) {
     return super.writeNumber(val, needResponse);
   }
 
   /**
-   * Wrapper for [[write]] with data converting from text.
-   * It convert string to UTF-8 and write binary array.
-   *
-   * @param str
-   * @param needResponse
+   *  @deprecated
    */
   public writeText(str: string, needResponse?: boolean) {
     return super.writeText(str, needResponse);

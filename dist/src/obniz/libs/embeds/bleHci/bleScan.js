@@ -25,6 +25,14 @@ class BleScan {
         this._timeoutTimer = undefined;
     }
     /**
+     * @deprecated
+     */
+    async start(target = {}, settings = {}) {
+        this.startWait(target, settings).catch((reason) => {
+            this.finish(reason);
+        });
+    }
+    /**
      * This starts scanning BLE.
      *
      * You can filter uuids or localName using the target param.
@@ -41,7 +49,7 @@ class BleScan {
      * }
      *
      * await obniz.ble.initWait();
-     * obniz.ble.scan.start(target, setting);
+     * await obniz.ble.scan.startWait(target, setting);
      * ```
      *
      * This is also possible without params being valid.
@@ -54,11 +62,6 @@ class BleScan {
      * @param target
      * @param settings
      */
-    async start(target = {}, settings = {}) {
-        this.startWait(target, settings).catch((reason) => {
-            this.finish(reason);
-        });
-    }
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
         const timeout = settings.duration === undefined ? 30 : settings.duration;
@@ -112,16 +115,15 @@ class BleScan {
      * @param target
      * @param settings
      */
-    startOneWait(target, settings) {
-        return this.startWait(target, settings).then(() => {
-            return new Promise((resolve) => {
-                this.emitter.once("onfind", (param) => {
-                    resolve(param);
-                    this.end();
-                });
-                this.emitter.once("onfinish", () => {
-                    resolve(null);
-                });
+    async startOneWait(target, settings) {
+        await this.startWait(target, settings);
+        return new Promise((resolve) => {
+            this.emitter.once("onfind", async (param) => {
+                resolve(param);
+                await this.endWait();
+            });
+            this.emitter.once("onfinish", () => {
+                resolve(null);
             });
         });
     }
@@ -152,12 +154,20 @@ class BleScan {
      * @param target
      * @param settings
      */
-    startAllWait(target, settings) {
+    async startAllWait(target, settings) {
+        await this.startWait(target, settings);
         return new Promise((resolve) => {
             this.emitter.once("onfinish", () => {
                 resolve(this.scanedPeripherals);
             });
-            this.start(target, settings);
+        });
+    }
+    /**
+     * @deprecated
+     */
+    end() {
+        this.endWait().catch((reason) => {
+            this.finish(reason);
         });
     }
     /**
@@ -168,14 +178,9 @@ class BleScan {
      * await obniz.ble.initWait();
      * obniz.ble.scan.start();
      * await obniz.wait(5000);
-     * obniz.ble.scan.end();
+     * await obniz.ble.scan.endWait();
      * ```
      */
-    end() {
-        this.endWait().catch((reason) => {
-            this.finish(reason);
-        });
-    }
     async endWait() {
         this.clearTimeoutTimer();
         await this.obnizBle.centralBindings.stopScanningWait();
@@ -211,15 +216,6 @@ class BleScan {
                 }
                 break;
             }
-        }
-    }
-    finish(error) {
-        this.clearTimeoutTimer();
-        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
-        this._clearDelayNotifyTimer();
-        this.emitter.emit("onfinish", this.scanedPeripherals, error);
-        if (this.onfinish) {
-            this.onfinish(this.scanedPeripherals, error);
         }
     }
     /**
@@ -381,6 +377,15 @@ class BleScan {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
             this._timeoutTimer = undefined;
+        }
+    }
+    finish(error) {
+        this.clearTimeoutTimer();
+        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+        this._clearDelayNotifyTimer();
+        this.emitter.emit("onfinish", this.scanedPeripherals, error);
+        if (this.onfinish) {
+            this.onfinish(this.scanedPeripherals, error);
         }
     }
     _notifyOnFind(peripheral) {

@@ -19,16 +19,15 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
   }
 
   /**
-   * @ignore
-   * @param dataArray
+   *  @deprecated
    */
   public write(dataArray: number[]) {
     this.writeWait(dataArray); // background
   }
 
   /**
-   * @ignore
-   * @param dataArray
+   * @deprecated
+   *
    */
   public read() {
     this.readWait(); // background

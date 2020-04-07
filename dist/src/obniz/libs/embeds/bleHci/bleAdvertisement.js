@@ -35,8 +35,7 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
     /**
-     * @ignore
-     * @private
+     * @deprecated
      */
     start() {
         this.obnizBle.warningIfNotInitialize();
@@ -56,6 +55,9 @@ class BleAdvertisement {
     async endWait() {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
+    /**
+     *  @deprecated
+     */
     end() {
         this.endWait(); // background
     }

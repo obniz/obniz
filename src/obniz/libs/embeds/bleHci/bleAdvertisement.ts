@@ -47,8 +47,7 @@ export default class BleAdvertisement {
   }
 
   /**
-   * @ignore
-   * @private
+   * @deprecated
    */
   public start() {
     this.obnizBle.warningIfNotInitialize();
@@ -70,9 +69,13 @@ export default class BleAdvertisement {
     await this.obnizBle.peripheralBindings.stopAdvertisingWait();
   }
 
+  /**
+   *  @deprecated
+   */
   public end() {
     this.endWait(); // background
   }
+
   /**
    * This sets advertise data from data array.
    *

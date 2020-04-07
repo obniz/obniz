@@ -13,19 +13,13 @@ const bleRemoteAttributeAbstract_1 = __importDefault(require("./bleRemoteAttribu
  */
 class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
     /**
-     * Wrapper for [[write]] with data converting from number.
-     * @param val
-     * @param needResponse
+     * @deprecated
      */
     writeNumber(val, needResponse) {
         return super.writeNumber(val, needResponse);
     }
     /**
-     * Wrapper for [[write]] with data converting from text.
-     * It convert string to UTF-8 and write binary array.
-     *
-     * @param str
-     * @param needResponse
+     *  @deprecated
      */
     writeText(str, needResponse) {
         return super.writeText(str, needResponse);

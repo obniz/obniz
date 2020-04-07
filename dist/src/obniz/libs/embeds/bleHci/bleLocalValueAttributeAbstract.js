@@ -12,15 +12,14 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super(params);
     }
     /**
-     * @ignore
-     * @param dataArray
+     *  @deprecated
      */
     write(dataArray) {
         this.writeWait(dataArray); // background
     }
     /**
-     * @ignore
-     * @param dataArray
+     * @deprecated
+     *
      */
     read() {
         this.readWait(); // background
