@@ -128,6 +128,7 @@ export interface BlePairingOptions extends SmpEncryptOptions {
    */
   passkeyCallback?: () => Promise<number>;
 }
+
 /**
  * @category Use as Central
  */
@@ -462,6 +463,12 @@ export default class BleRemotePeripheral {
     if (this._connectSetting.autoDiscovery) {
       await this.discoverAllHandlesWait();
     }
+
+    this.connected = true;
+    if (this.onconnect) {
+      this.onconnect();
+    }
+    this.emitter.emit("connect");
   }
 
   /**
@@ -678,13 +685,6 @@ export default class BleRemotePeripheral {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
       case "statusupdate": {
-        if (params.status === "connected") {
-          this.connected = true;
-          if (this.onconnect) {
-            this.onconnect();
-          }
-          this.emitter.emit("connect");
-        }
         if (params.status === "disconnected") {
           this.connected = false;
           if (this.ondisconnect) {
