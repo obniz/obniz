@@ -138,9 +138,8 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
     const code: any = data.readUInt8(0);
 
-    console.warn("SMP: " + code);
+    // console.warn("SMP: " + code);
     return;
-    // console.warn("pairing " + code);
     if (SMP.PAIRING_RESPONSE === code) {
       this.handlePairingResponse(data);
     } else if (SMP.PAIRING_CONFIRM === code) {

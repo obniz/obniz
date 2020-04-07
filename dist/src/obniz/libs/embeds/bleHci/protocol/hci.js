@@ -339,12 +339,12 @@ class Hci extends eventemitter3_1.default {
         key.copy(cmd, 16);
         debug("start le encryption - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        console.log("start le encryption - writing: " + cmd.toString("hex"));
+        // console.log("start le encryption - writing: " + cmd.toString("hex"));
         const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE]);
         const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE]);
         const data = await Promise.race([p1, p2]);
         // const data = await p1;
-        console.log("start le encryption - data: " + data.toString("hex"));
+        // console.log("start le encryption - data: " + data.toString("hex"));
         if (data.readUInt16LE(1) === COMMANDS.EVT_ENCRYPT_CHANGE) {
             const encHandle = data.readUInt16LE(4);
             const encrypt = data.readUInt8(6);
