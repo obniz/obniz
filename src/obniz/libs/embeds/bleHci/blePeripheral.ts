@@ -12,6 +12,7 @@ export type BleConnectionState = "connected" | "disconnected";
 export interface BleConnectionUpdateParam {
   address: BleDeviceAddress;
   status: BleConnectionState;
+  reason?: string | Error;
 }
 
 /**

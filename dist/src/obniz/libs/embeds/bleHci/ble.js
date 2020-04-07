@@ -12,6 +12,7 @@ const bindings_1 = __importDefault(require("./protocol/central/bindings"));
 const hci_2 = __importDefault(require("./protocol/hci"));
 const bindings_2 = __importDefault(require("./protocol/peripheral/bindings"));
 const semver_1 = __importDefault(require("semver"));
+const ObnizError_1 = require("../../../ObnizError");
 const ComponentAbstact_1 = require("../../ComponentAbstact");
 const bleAdvertisement_1 = __importDefault(require("./bleAdvertisement"));
 const bleCharacteristic_1 = __importDefault(require("./bleCharacteristic"));
@@ -29,30 +30,17 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
         this.hci = new hci_1.default(obniz);
-        this.hciProtocol = new hci_2.default(this.hci);
-        this.centralBindings = new bindings_1.default(this.hciProtocol);
-        this.peripheralBindings = new bindings_2.default(this.hciProtocol);
-        // let dummy = {write : ()=>{}, on:()=>{}}
-        // this.centralBindings = new CentralBindings( dummy );
-        // this.peripheralBindings = new PeripheralBindings( dummy );
-        this.centralBindings.init();
-        this.peripheralBindings.init();
-        this._initialized = false;
-        this._initializeWarning = true;
-        this.remotePeripherals = [];
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
-        this.peripheral = new blePeripheral_1.default(this);
-        this.advertisement = new bleAdvertisement_1.default(this);
-        this.scan = new bleScan_1.default(this);
-        this.security = new bleSecurity_1.default(this);
         this.on("/response/ble/hci/read", (obj) => {
             if (obj.hci) {
                 this.hci.notified(obj.hci);
             }
         });
-        this._bind();
+        obniz.on("close", () => {
+            this._reset();
+        });
         this._reset();
     }
     /**
@@ -109,7 +97,39 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @ignore
      * @private
      */
-    _reset() { }
+    _reset() {
+        if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
+            const address = this.peripheral.currentConnectedDeviceAddress;
+            this.peripheral.currentConnectedDeviceAddress = null;
+            if (this.peripheral.onconnectionupdates) {
+                this.peripheral.onconnectionupdates({
+                    address,
+                    status: "disconnected",
+                    reason: new ObnizError_1.ObnizOfflineError(),
+                });
+            }
+        }
+        if (this.remotePeripherals) {
+            for (const p of this.remotePeripherals) {
+                if (p.connected) {
+                    p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
+                }
+            }
+        }
+        this.hciProtocol = new hci_2.default(this.hci);
+        this.centralBindings = new bindings_1.default(this.hciProtocol);
+        this.peripheralBindings = new bindings_2.default(this.hciProtocol);
+        this.centralBindings.init();
+        this.peripheralBindings.init();
+        this._initialized = false;
+        this._initializeWarning = true;
+        this.remotePeripherals = [];
+        this.peripheral = new blePeripheral_1.default(this);
+        this.advertisement = new bleAdvertisement_1.default(this);
+        this.scan = new bleScan_1.default(this);
+        this.security = new bleSecurity_1.default(this);
+        this._bind();
+    }
     /**
      * Connect to peripheral without scanning.
      * Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
@@ -263,12 +283,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     onPeripheralMtuChange(mtu) {
         // console.error("onPeripheralMtuChange")
     }
-    onPeripheralDisconnect(clientAddress) {
+    onPeripheralDisconnect(clientAddress, reason) {
         this.peripheral.currentConnectedDeviceAddress = null;
         if (this.peripheral.onconnectionupdates) {
             this.peripheral.onconnectionupdates({
                 address: clientAddress,
                 status: "disconnected",
+                reason,
             });
         }
     }
