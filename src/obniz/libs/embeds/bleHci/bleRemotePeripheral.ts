@@ -318,8 +318,8 @@ export default class BleRemotePeripheral {
    *       peripheral.onconnect = function(){
    *           console.log("success");
    *       }
-   *       peripheral.ondisconnect = function(){
-   *           console.log("closed");
+   *       peripheral.ondisconnect = function(reason){
+   *           console.log("closed", reason);
    *       }
    *       peripheral.connect();
    *   }
@@ -327,7 +327,7 @@ export default class BleRemotePeripheral {
    * obniz.ble.scan.start();
    * ```
    */
-  public ondisconnect?: () => void;
+  public ondisconnect?: (reason?: any) => void;
 
   /**
    * @ignore
@@ -730,7 +730,7 @@ export default class BleRemotePeripheral {
         if (params.status === "disconnected") {
           this.connected = false;
           if (this.ondisconnect) {
-            this.ondisconnect();
+            this.ondisconnect(params.reason);
           }
           this.emitter.emit("disconnect", params.reason);
         }

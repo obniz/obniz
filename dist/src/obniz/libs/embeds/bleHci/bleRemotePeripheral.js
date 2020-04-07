@@ -397,7 +397,7 @@ class BleRemotePeripheral {
                 if (params.status === "disconnected") {
                     this.connected = false;
                     if (this.ondisconnect) {
-                        this.ondisconnect();
+                        this.ondisconnect(params.reason);
                     }
                     this.emitter.emit("disconnect", params.reason);
                 }
