@@ -6678,8 +6678,7 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
     /**
-     * @ignore
-     * @private
+     * @deprecated
      */
     start() {
         this.obnizBle.warningIfNotInitialize();
@@ -6699,6 +6698,9 @@ class BleAdvertisement {
     async endWait() {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
+    /**
+     *  @deprecated
+     */
     end() {
         this.endWait(); // background
     }
@@ -7641,15 +7643,14 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super(params);
     }
     /**
-     * @ignore
-     * @param dataArray
+     *  @deprecated
      */
     write(dataArray) {
         this.writeWait(dataArray); // background
     }
     /**
-     * @ignore
-     * @param dataArray
+     * @deprecated
+     *
      */
     read() {
         this.readWait(); // background
@@ -8447,30 +8448,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         return "characteristic";
     }
     /**
-     * Read data from descriptor.
-     *
-     * The return value appears in the callback function [[onread]].
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(peripheral){
-     *   await peripheral.connectWait();
-     *   console.log("connected");
-     *   await obniz.wait(1000);
-     *
-     *   peripheral.getService("FF00").getCharacteristic("FF01").read();
-     *
-     *   peripheral.getService("FF00").getCharacteristic("FF01").onread = (dataArray)=>{
-     *   console.log(dataArray);
-     *
-     *   }
-     * }
-     * ```
+     * @deprecated
      *
      */
     read() {
@@ -8510,27 +8488,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         return data;
     }
     /**
-     * This writes dataArray to descriptor.
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(peripheral){
-     *   await peripheral.connectWait();
-     *   console.log("connected");
-     *   await obniz.wait(1000);
-     *
-     *   var dataArray = [0x02, 0xFF];
-     *   peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write(dataArray);
-     * }
-     * ```
-     *
-     * @param data
+     *  @deprecated
      */
     write(data) {
         this.writeWait(data); // background
@@ -8675,34 +8633,14 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     * This function will try to connect a peripheral.
-     * [[onconnect]] will be caled when connected or [[ondisconnect]] will be called when failed.
-     *
-     * If ble scanning is undergoing, scan will be terminated immediately.
-     *
-     * when connection established, all service/characteristics/descriptors will be discovered automatically.
-     * [[onconnect]] will be called after all discovery done.
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.initWait();
-     * obniz.ble.scan.onfind = function(peripheral){
-     * if(peripheral.localName == "my peripheral"){
-     *      peripheral.onconnect = function(){
-     *          console.log("success");
-     *      }
-     *      peripheral.connect();
-     *     }
-     * }
-     * obniz.ble.scan.start();
-     * ```
+     *  @deprecated
      */
     connect(setting) {
         this.connectWait(); // background
     }
     /**
      * This connects obniz to the peripheral.
-     * If ble scannning is undergoing, scan will be terminated immidiately.
+     * If ble scanning is undergoing, scan will be terminated immidiately.
      *
      * It throws when connection establish failed.
      *
@@ -8745,32 +8683,10 @@ class BleRemotePeripheral {
         }
     }
     /**
-     * This disconnects obniz from peripheral.
-     *
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *  uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(!peripheral) {
-     *   console.log('no such peripheral')
-     *   return;
-     * }
-     *
-     * peripheral.connect();
-     * peripheral.onconnect = ()=>{
-     *   console.log("connected");
-     *   peripheral.disconnect();
-     * }
-     *
-     * ```
+     *  @deprecated
      */
     disconnect() {
-        this.obnizBle.centralBindings.disconnect(this.address);
+        this.disconnectWait(); // background
     }
     /**
      * This disconnects obniz from peripheral.
@@ -8813,7 +8729,7 @@ class BleRemotePeripheral {
                     reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
                 }
             });
-            this.disconnect();
+            this.obnizBle.centralBindings.disconnect(this.address);
         });
     }
     /**
@@ -9368,19 +9284,13 @@ const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist
  */
 class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
     /**
-     * Wrapper for [[write]] with data converting from number.
-     * @param val
-     * @param needResponse
+     * @deprecated
      */
     writeNumber(val, needResponse) {
         return super.writeNumber(val, needResponse);
     }
     /**
-     * Wrapper for [[write]] with data converting from text.
-     * It convert string to UTF-8 and write binary array.
-     *
-     * @param str
-     * @param needResponse
+     *  @deprecated
      */
     writeText(str, needResponse) {
         return super.writeText(str, needResponse);
@@ -9445,6 +9355,14 @@ class BleScan {
         this._timeoutTimer = undefined;
     }
     /**
+     * @deprecated
+     */
+    async start(target = {}, settings = {}) {
+        this.startWait(target, settings).catch((reason) => {
+            this.finish(reason);
+        });
+    }
+    /**
      * This starts scanning BLE.
      *
      * You can filter uuids or localName using the target param.
@@ -9461,7 +9379,7 @@ class BleScan {
      * }
      *
      * await obniz.ble.initWait();
-     * obniz.ble.scan.start(target, setting);
+     * await obniz.ble.scan.startWait(target, setting);
      * ```
      *
      * This is also possible without params being valid.
@@ -9474,11 +9392,6 @@ class BleScan {
      * @param target
      * @param settings
      */
-    async start(target = {}, settings = {}) {
-        this.startWait(target, settings).catch((reason) => {
-            this.finish(reason);
-        });
-    }
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
         const timeout = settings.duration === undefined ? 30 : settings.duration;
@@ -9532,16 +9445,15 @@ class BleScan {
      * @param target
      * @param settings
      */
-    startOneWait(target, settings) {
-        return this.startWait(target, settings).then(() => {
-            return new Promise((resolve) => {
-                this.emitter.once("onfind", (param) => {
-                    resolve(param);
-                    this.end();
-                });
-                this.emitter.once("onfinish", () => {
-                    resolve(null);
-                });
+    async startOneWait(target, settings) {
+        await this.startWait(target, settings);
+        return new Promise((resolve) => {
+            this.emitter.once("onfind", async (param) => {
+                resolve(param);
+                await this.endWait();
+            });
+            this.emitter.once("onfinish", () => {
+                resolve(null);
             });
         });
     }
@@ -9572,12 +9484,20 @@ class BleScan {
      * @param target
      * @param settings
      */
-    startAllWait(target, settings) {
+    async startAllWait(target, settings) {
+        await this.startWait(target, settings);
         return new Promise((resolve) => {
             this.emitter.once("onfinish", () => {
                 resolve(this.scanedPeripherals);
             });
-            this.start(target, settings);
+        });
+    }
+    /**
+     * @deprecated
+     */
+    end() {
+        this.endWait().catch((reason) => {
+            this.finish(reason);
         });
     }
     /**
@@ -9588,14 +9508,9 @@ class BleScan {
      * await obniz.ble.initWait();
      * obniz.ble.scan.start();
      * await obniz.wait(5000);
-     * obniz.ble.scan.end();
+     * await obniz.ble.scan.endWait();
      * ```
      */
-    end() {
-        this.endWait().catch((reason) => {
-            this.finish(reason);
-        });
-    }
     async endWait() {
         this.clearTimeoutTimer();
         await this.obnizBle.centralBindings.stopScanningWait();
@@ -9631,15 +9546,6 @@ class BleScan {
                 }
                 break;
             }
-        }
-    }
-    finish(error) {
-        this.clearTimeoutTimer();
-        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
-        this._clearDelayNotifyTimer();
-        this.emitter.emit("onfinish", this.scanedPeripherals, error);
-        if (this.onfinish) {
-            this.onfinish(this.scanedPeripherals, error);
         }
     }
     /**
@@ -9801,6 +9707,15 @@ class BleScan {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
             this._timeoutTimer = undefined;
+        }
+    }
+    finish(error) {
+        this.clearTimeoutTimer();
+        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+        this._clearDelayNotifyTimer();
+        this.emitter.emit("onfinish", this.scanedPeripherals, error);
+        if (this.onfinish) {
+            this.onfinish(this.scanedPeripherals, error);
         }
     }
     _notifyOnFind(peripheral) {

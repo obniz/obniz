@@ -24,30 +24,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
   }
 
   /**
-   * Read data from descriptor.
-   *
-   * The return value appears in the callback function [[onread]].
-   *
-   * ```javascript
-   * // Javascript Example
-   * await obniz.ble.initWait();
-   * var target = {
-   *   uuids: ["fff0"],
-   * };
-   * var peripheral = await obniz.ble.scan.startOneWait(target);
-   * if(peripheral){
-   *   await peripheral.connectWait();
-   *   console.log("connected");
-   *   await obniz.wait(1000);
-   *
-   *   peripheral.getService("FF00").getCharacteristic("FF01").read();
-   *
-   *   peripheral.getService("FF00").getCharacteristic("FF01").onread = (dataArray)=>{
-   *   console.log(dataArray);
-   *
-   *   }
-   * }
-   * ```
+   * @deprecated
    *
    */
   public read() {
@@ -95,27 +72,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
   }
 
   /**
-   * This writes dataArray to descriptor.
-   *
-   * ```javascript
-   * // Javascript Example
-   *
-   * await obniz.ble.initWait();
-   * var target = {
-   *   uuids: ["fff0"],
-   * };
-   * var peripheral = await obniz.ble.scan.startOneWait(target);
-   * if(peripheral){
-   *   await peripheral.connectWait();
-   *   console.log("connected");
-   *   await obniz.wait(1000);
-   *
-   *   var dataArray = [0x02, 0xFF];
-   *   peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write(dataArray);
-   * }
-   * ```
-   *
-   * @param data
+   *  @deprecated
    */
   public write(data: number[]) {
     this.writeWait(data); // background

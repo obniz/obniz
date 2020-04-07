@@ -93,34 +93,14 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     * This function will try to connect a peripheral.
-     * [[onconnect]] will be caled when connected or [[ondisconnect]] will be called when failed.
-     *
-     * If ble scanning is undergoing, scan will be terminated immediately.
-     *
-     * when connection established, all service/characteristics/descriptors will be discovered automatically.
-     * [[onconnect]] will be called after all discovery done.
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.initWait();
-     * obniz.ble.scan.onfind = function(peripheral){
-     * if(peripheral.localName == "my peripheral"){
-     *      peripheral.onconnect = function(){
-     *          console.log("success");
-     *      }
-     *      peripheral.connect();
-     *     }
-     * }
-     * obniz.ble.scan.start();
-     * ```
+     *  @deprecated
      */
     connect(setting) {
         this.connectWait(); // background
     }
     /**
      * This connects obniz to the peripheral.
-     * If ble scannning is undergoing, scan will be terminated immidiately.
+     * If ble scanning is undergoing, scan will be terminated immidiately.
      *
      * It throws when connection establish failed.
      *
@@ -163,32 +143,10 @@ class BleRemotePeripheral {
         }
     }
     /**
-     * This disconnects obniz from peripheral.
-     *
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *  uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(!peripheral) {
-     *   console.log('no such peripheral')
-     *   return;
-     * }
-     *
-     * peripheral.connect();
-     * peripheral.onconnect = ()=>{
-     *   console.log("connected");
-     *   peripheral.disconnect();
-     * }
-     *
-     * ```
+     *  @deprecated
      */
     disconnect() {
-        this.obnizBle.centralBindings.disconnect(this.address);
+        this.disconnectWait(); // background
     }
     /**
      * This disconnects obniz from peripheral.
@@ -231,7 +189,7 @@ class BleRemotePeripheral {
                     reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
                 }
             });
-            this.disconnect();
+            this.obnizBle.centralBindings.disconnect(this.address);
         });
     }
     /**
