@@ -60,19 +60,19 @@ export default class ObnizBLE extends ComponentAbstract {
   }
 
   public hci: ObnizBLEHci;
-  public peripheral: BlePeripheral;
-  public scan: BleScan;
-  public security: BleSecurity;
+  public peripheral!: BlePeripheral;
+  public scan!: BleScan;
+  public security!: BleSecurity;
 
   /**
    * @ignore
    */
-  public centralBindings: CentralBindings;
+  public centralBindings!: CentralBindings;
 
   /**
    * @ignore
    */
-  public peripheralBindings: PeripheralBindings;
+  public peripheralBindings!: PeripheralBindings;
   public service: typeof BleService;
   public characteristic: typeof BleCharacteristic;
   public descriptor: typeof BleDescriptor;
@@ -80,40 +80,18 @@ export default class ObnizBLE extends ComponentAbstract {
   /**
    * @ignore
    */
-  public advertisement: BleAdvertisement;
-  protected hciProtocol: HciProtocol;
-  protected _initialized: boolean;
-  protected _initializeWarning: boolean;
-  protected remotePeripherals: BleRemotePeripheral[];
+  public advertisement!: BleAdvertisement;
+  protected hciProtocol!: HciProtocol;
+  protected _initialized!: boolean;
+  protected _initializeWarning!: boolean;
+  protected remotePeripherals!: BleRemotePeripheral[];
 
   constructor(obniz: Obniz) {
     super(obniz);
     this.hci = new ObnizBLEHci(obniz);
-    this.hciProtocol = new HciProtocol(this.hci);
-
-    this.centralBindings = new CentralBindings(this.hciProtocol);
-    this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
-
-    // let dummy = {write : ()=>{}, on:()=>{}}
-    // this.centralBindings = new CentralBindings( dummy );
-    // this.peripheralBindings = new PeripheralBindings( dummy );
-
-    this.centralBindings.init();
-    this.peripheralBindings.init();
-
-    this._initialized = false;
-    this._initializeWarning = true;
-
-    this.remotePeripherals = [];
-
     this.service = BleService;
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
-    this.peripheral = new BlePeripheral(this);
-
-    this.advertisement = new BleAdvertisement(this);
-    this.scan = new BleScan(this);
-    this.security = new BleSecurity(this);
 
     this.on("/response/ble/hci/read", (obj) => {
       if (obj.hci) {
@@ -121,7 +99,10 @@ export default class ObnizBLE extends ComponentAbstract {
       }
     });
 
-    this._bind();
+    obniz.on("close", () => {
+      this._reset();
+    });
+
     this._reset();
   }
 
@@ -152,7 +133,26 @@ export default class ObnizBLE extends ComponentAbstract {
    * @ignore
    * @private
    */
-  public _reset() {}
+  public _reset() {
+    this.hciProtocol = new HciProtocol(this.hci);
+    this.centralBindings = new CentralBindings(this.hciProtocol);
+    this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
+    this.centralBindings.init();
+    this.peripheralBindings.init();
+
+    this._initialized = false;
+    this._initializeWarning = true;
+
+    this.remotePeripherals = [];
+
+    this.peripheral = new BlePeripheral(this);
+
+    this.advertisement = new BleAdvertisement(this);
+    this.scan = new BleScan(this);
+    this.security = new BleSecurity(this);
+
+    this._bind();
+  }
 
   /**
    * Connect to peripheral without scanning.
