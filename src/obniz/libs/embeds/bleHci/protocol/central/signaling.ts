@@ -6,7 +6,7 @@
 // let debug = require('debug')('signaling');
 const debug: any = () => {};
 
-import events from "events";
+import EventEmitter from "eventemitter3";
 
 /**
  * @ignore
@@ -23,10 +23,11 @@ const CONNECTION_PARAMETER_UPDATE_RESPONSE: any = 0x13;
  */
 const SIGNALING_CID: any = 0x0005;
 
+type SignalingEventTypes = "connectionParameterUpdateRequest";
 /**
  * @ignore
  */
-class Signaling extends events.EventEmitter {
+class Signaling extends EventEmitter<SignalingEventTypes> {
   public _handle: any;
   public _aclStream: any;
   public onAclStreamDataBinded: any;

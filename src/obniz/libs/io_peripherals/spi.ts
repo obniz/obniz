@@ -5,6 +5,7 @@
 
 import semver from "semver";
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 import ObnizUtil from "../utils/util";
 import { DriveType, PullType } from "./common";
 
@@ -50,19 +51,17 @@ interface PeripheralSPIOptions {
  * It is General Purpose SPI
  * @category Peripherals
  */
-export default class PeripheralSPI {
+export default class PeripheralSPI extends ComponentAbstract {
   /**
    * @ignore
    */
   public used!: boolean;
-  private Obniz: Obniz;
   private id: number;
-  private observers!: any[];
 
   private params!: PeripheralSPIOptions | null;
 
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
+    super(obniz);
     this.id = id;
     this._reset();
   }
@@ -196,7 +195,7 @@ export default class PeripheralSPI {
    * @param data Max length is 1024 bytes.
    * @return received data
    */
-  public writeWait(data: number[]): Promise<number[]> {
+  public async writeWait(data: number[]): Promise<number[]> {
     if (!this.used) {
       throw new Error(`spi${this.id} is not started`);
     }
@@ -206,16 +205,13 @@ export default class PeripheralSPI {
       );
     }
 
-    const self: any = this;
-    return new Promise((resolve: any, reject: any) => {
-      self.addObserver(resolve);
-      const obj: any = {};
-      obj["spi" + self.id] = {
-        data,
-        read: true,
-      };
-      self.Obniz.send(obj);
-    });
+    const obj: any = {};
+    obj["spi" + this.id] = {
+      data,
+      read: true,
+    };
+    const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/spi/read");
+    return receiveData.data;
   }
 
   /**
@@ -250,18 +246,6 @@ export default class PeripheralSPI {
 
   /**
    * @ignore
-   * @param obj
-   */
-  public notified(obj: any) {
-    // TODO: we should compare byte length from sent
-    const callback: any = this.observers.shift();
-    if (callback) {
-      callback(obj.data);
-    }
-  }
-
-  /**
-   * @ignore
    */
   public isUsed() {
     return this.used;
@@ -292,15 +276,20 @@ export default class PeripheralSPI {
     }
   }
 
-  private _reset() {
-    this.observers = [];
-    this.used = false;
-    this.params = null;
+  /**
+   * @ignore
+   * @private
+   */
+  public schemaBasePath(): string {
+    return "spi" + this.id;
   }
 
-  private addObserver(callback: any) {
-    if (callback) {
-      this.observers.push(callback);
-    }
+  /**
+   * @ignore
+   * @private
+   */
+  protected _reset() {
+    this.used = false;
+    this.params = null;
   }
 }

@@ -38,12 +38,20 @@ export default class BleAdvertisement {
    * obniz.ble.advertisement.start();
    * ```
    */
-  public start() {
+  public async startWait() {
     this.obnizBle.warningIfNotInitialize();
-    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(
+    await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(
       Buffer.from(this.adv_data),
       Buffer.from(this.scan_resp),
     );
+  }
+
+  /**
+   * @deprecated
+   */
+  public start() {
+    this.obnizBle.warningIfNotInitialize();
+    this.startWait(); // background
   }
 
   /**
@@ -57,8 +65,15 @@ export default class BleAdvertisement {
    * ```
    *
    */
+  public async endWait() {
+    await this.obnizBle.peripheralBindings.stopAdvertisingWait();
+  }
+
+  /**
+   *  @deprecated
+   */
   public end() {
-    this.obnizBle.peripheralBindings.stopAdvertising();
+    this.endWait(); // background
   }
 
   /**

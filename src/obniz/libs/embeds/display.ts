@@ -4,13 +4,14 @@
  */
 
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 
 /**
  * Here we will show letters and pictures on display on obniz Board.
  * ![](media://obniz_display_sphere.gif)
  * @category Embeds
  */
-export default class Display {
+export default class Display extends ComponentAbstract {
   /**
    * display width size
    * @readonly
@@ -25,7 +26,6 @@ export default class Display {
 
   private autoFlush: boolean = true;
   private fontSize: number = 16;
-  private Obniz: Obniz;
   private _canvas?: HTMLCanvasElement;
   private _pos = { x: 0, y: 0 };
   private _colorDepthCapabilities: [number] = [1];
@@ -35,7 +35,7 @@ export default class Display {
   private _raw_alternate = false;
 
   constructor(obniz: any, info: any) {
-    this.Obniz = obniz;
+    super(obniz);
     this.width = info.width;
     this.height = info.height;
     this._colorDepthCapabilities = info.color_depth;
@@ -512,6 +512,20 @@ export default class Display {
     }
   }
 
+  public schemaBasePath(): string {
+    return "display";
+  }
+
+  protected _reset() {
+    this.autoFlush = true;
+    // reset to default
+    this._pos = { x: 0, y: 0 };
+    this._color = this._paper_white ? "#000" : "#FFF";
+    this.fontSize = this.height > 200 ? 32 : 16;
+    this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
+    this._reset_canvas();
+  }
+
   private warnCanvasAvailability() {
     if (this.Obniz.isNode) {
       throw new Error("obniz.js require node-canvas to draw rich contents. see more detail on docs");
@@ -530,16 +544,6 @@ export default class Display {
       ctx.strokeStyle = this._color;
       ctx.font = `${this.fontSize}px Arial`;
     }
-  }
-
-  private _reset() {
-    this.autoFlush = true;
-    // reset to default
-    this._pos = { x: 0, y: 0 };
-    this._color = this._paper_white ? "#000" : "#FFF";
-    this.fontSize = this.height > 200 ? 32 : 16;
-    this._colorDepth = this._colorDepthCapabilities[this._colorDepthCapabilities.length - 1];
-    this._reset_canvas();
   }
 
   private _preparedCanvas() {

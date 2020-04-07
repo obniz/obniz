@@ -12,8 +12,10 @@ const ws_1 = __importDefault(require("ws"));
 // @ts-ignore
 const package_1 = __importDefault(require("../../package")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(require("./libs/wscommand"));
-class ObnizConnection {
+const ObnizError_1 = require("./ObnizError");
+class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
+        super();
         this.isNode = typeof window === "undefined";
         this.id = id;
         this.socket = null;
@@ -26,7 +28,6 @@ class ObnizConnection {
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
         this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-        this.emitter = new eventemitter3_1.default();
         this._connectionRetryCount = 0;
         if (!options) {
             options = {};
@@ -124,11 +125,11 @@ class ObnizConnection {
                 resolve(true);
                 return;
             }
-            this.emitter.once("connected", () => {
+            this.once("connect", () => {
                 resolve(true);
             });
             if (!this.options.auto_connect) {
-                this.emitter.once("closed", () => {
+                this.once("close", () => {
                     resolve(false);
                 });
             }
@@ -180,6 +181,12 @@ class ObnizConnection {
      * @param options.local_connect If false, send data via gloval internet.
      */
     send(obj, options) {
+        options = options || {};
+        options.local_connect = options.local_connect !== false;
+        options.connect_check = options.connect_check !== false;
+        if (options.connect_check && this.connectionState !== "connected") {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
         try {
             if (!obj || typeof obj !== "object") {
                 console.log("obnizjs. didnt send ", obj);
@@ -200,7 +207,7 @@ class ObnizConnection {
                 this.print_debug("send: " + sendData);
             }
             /* compress */
-            if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
+            if (this.wscommand && options.local_connect) {
                 let compressed;
                 try {
                     compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
@@ -281,10 +288,10 @@ class ObnizConnection {
     wsOnClose(event) {
         this.print_debug("closed");
         this.close();
-        this.emitter.emit("closed");
         if (typeof this.onclose === "function" && this.onConnectCalled === true) {
             this.onclose(this);
         }
+        this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();
     }
@@ -467,7 +474,6 @@ class ObnizConnection {
                 /* local_connect is not used */
             }
         }
-        this.emitter.emit("connected");
         if (canChangeToConnected) {
             this.connectionState = "connected";
             if (typeof this.onconnect === "function") {
@@ -478,6 +484,7 @@ class ObnizConnection {
                     });
                 }
             }
+            this.emit("connect", this);
             this.onConnectCalled = true;
         }
     }

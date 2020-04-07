@@ -12,19 +12,17 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super(params);
     }
     /**
-     * @ignore
-     * @param dataArray
+     *  @deprecated
      */
     write(dataArray) {
-        this.data = dataArray;
-        this.notifyFromServer("onwrite", { result: "success" });
+        this.writeWait(dataArray); // background
     }
     /**
-     * @ignore
-     * @param dataArray
+     * @deprecated
+     *
      */
     read() {
-        this.notifyFromServer("onread", { data: this.data });
+        this.readWait(); // background
     }
     /**
      * This writes dataArray.
@@ -38,8 +36,10 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      *
      * @param data
      */
-    writeWait(data) {
-        return super.writeWait(data);
+    async writeWait(data) {
+        this.data = data;
+        this.notifyFromServer("onwrite", { result: "success" });
+        return true;
     }
     /**
      * It reads data.
@@ -53,8 +53,32 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
      *  console.log("data: " , data );
      * ```
      */
-    readWait() {
-        return super.readWait();
+    async readWait() {
+        this.notifyFromServer("onread", { data: this.data });
+        return this.data;
+    }
+    /**
+     * @ignore
+     * @param notifyName
+     * @param params
+     */
+    notifyFromServer(notifyName, params) {
+        super.notifyFromServer(notifyName, params);
+        this.emitter.emit(notifyName, params);
+        switch (notifyName) {
+            case "onwritefromremote": {
+                if (this.onwritefromremote) {
+                    this.onwritefromremote(params.address, params.data);
+                }
+                break;
+            }
+            case "onreadfromremote": {
+                if (this.onreadfromremote) {
+                    this.onreadfromremote(params.address);
+                }
+                break;
+            }
+        }
     }
 }
 exports.default = BleLocalValueAttributeAbstract;

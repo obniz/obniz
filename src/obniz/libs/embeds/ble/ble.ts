@@ -3,6 +3,7 @@
  * @module ObnizCore.Components.Ble.old
  */
 
+import { ComponentAbstract } from "../../ComponentAbstact";
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
 import BleDescriptor from "./bleDescriptor";
@@ -16,7 +17,7 @@ import BleService from "./bleService";
  * Deprecated class.
  * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
  */
-export default class ObnizBLE {
+export default class ObnizBLE extends ComponentAbstract {
   public static _dataArray2uuidHex(data: any, reverse: any) {
     let uuid: any = [];
     for (let i = 0; i < data.length; i++) {
@@ -41,7 +42,6 @@ export default class ObnizBLE {
     return str;
   }
 
-  public Obniz: any;
   public remotePeripherals: any;
   public service: any;
   public characteristic: any;
@@ -52,20 +52,26 @@ export default class ObnizBLE {
   public scan: any;
   public security: any;
 
-  constructor(Obniz: any) {
-    this.Obniz = Obniz;
+  constructor(obniz: any) {
+    super(obniz);
     this.remotePeripherals = [];
 
     this.service = BleService;
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
-    this.peripheral = new BlePeripheral(Obniz);
+    this.peripheral = new BlePeripheral(obniz);
 
     this.scanTarget = null;
 
-    this.advertisement = new BleAdvertisement(Obniz);
-    this.scan = new BleScan(Obniz);
-    this.security = new BleSecurity(Obniz);
+    this.advertisement = new BleAdvertisement(obniz);
+    this.scan = new BleScan(obniz);
+    this.security = new BleSecurity(obniz);
+
+    this._scanCallbackBind();
+    this._centralCallbackBind();
+    this._peripheralCallbackBind();
+
+    this._errorCallbackBind();
     this._reset();
   }
 
@@ -91,8 +97,12 @@ export default class ObnizBLE {
     return null;
   }
 
-  public notified(obj: any) {
-    if (obj.scan_result) {
+  public schemaBasePath(): string {
+    return "ble";
+  }
+
+  private _scanCallbackBind() {
+    this.on("/response/ble/central/scan", (obj) => {
       let val: any = this.findPeripheral(obj.scan_result.address);
       if (!val) {
         val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
@@ -102,151 +112,185 @@ export default class ObnizBLE {
       val.setParams(obj.scan_result);
 
       this.scan.notifyFromServer("onfind", val);
-    }
+    });
 
-    if (obj.scan_result_finish) {
+    this.on("/response/ble/central/scan_finish", (obj) => {
       this.scan.notifyFromServer("onfinish");
-    }
+    });
+  }
 
-    const remotePeripheralCallbackFunc: any = (val: any, func: any, type: any) => {
-      let target: any = null;
-      if (val === undefined) {
-        return;
-      }
-      const p: any = this.findPeripheral(val.address);
-      if (!p) {
-        return;
-      }
-      if (type === "peripheral") {
-        target = p;
-      } else if (type === "service") {
-        target = p.findService(val);
-      } else if (type === "characteristic") {
-        target = p.findCharacteristic(val);
-      } else if (type === "descriptor") {
-        target = p.findDescriptor(val);
-      }
-      if (!target) {
-        return;
-      }
-      func(val, target);
-    };
-
-    const paramList: any = {
-      status_update: { name: "statusupdate", obj: "peripheral" },
-      get_service_result: { name: "discover", obj: "peripheral" },
-      get_service_result_finish: {
-        name: "discoverfinished",
-        obj: "peripheral",
-      },
-      get_characteristic_result: { name: "discover", obj: "service" },
-      get_characteristic_result_finish: {
-        name: "discoverfinished",
-        obj: "service",
-      },
-      write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-      read_characteristic_result: { name: "onread", obj: "characteristic" },
-      register_notify_characteristic_result: {
-        name: "onregisternotify",
-        obj: "characteristic",
-      },
-      // for typo
-      register_nofity_characteristic_result: {
-        name: "onregisternotify",
-        obj: "characteristic",
-      },
-      unregister_notify_characteristic_result: {
-        name: "onunregisternotify",
-        obj: "characteristic",
-      },
-      // for typo
-      unregister_nofity_characteristic_result: {
-        name: "onunregisternotify",
-        obj: "characteristic",
-      },
-      notify_characteristic: { name: "onnotify", obj: "characteristic" },
-      // for typo
-      nofity_characteristic: { name: "onnotify", obj: "characteristic" },
-      get_descriptor_result: { name: "discover", obj: "characteristic" },
-      get_descriptor_result_finish: {
-        name: "discoverfinished",
-        obj: "characteristic",
-      },
-      write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-      read_descriptor_result: { name: "onread", obj: "descriptor" },
-    };
-
-    for (const paramListKey in paramList) {
-      remotePeripheralCallbackFunc(
-        obj[paramListKey],
-        (val: any, bleobj: any) => {
-          bleobj.notifyFromServer(paramList[paramListKey].name, val);
-        },
-        paramList[paramListKey].obj,
-      );
-    }
-
-    const callbackFunc: any = (val: any, func: any, type: any) => {
-      let target: any = null;
-      if (val === undefined) {
-        return;
-      }
-      if (type === "peripheral") {
-        target = this.peripheral;
-      } else if (type === "service") {
-        target = this.peripheral.getService(val);
-      } else if (type === "characteristic") {
-        target = this.peripheral.findCharacteristic(val);
-      } else if (type === "descriptor") {
-        target = this.peripheral.findDescriptor(val);
-      }
-      if (!target) {
-        return;
-      }
-      func(val, target);
-    };
-
-    if (obj.peripheral) {
-      callbackFunc(
-        obj.peripheral.connection_status,
-        (val: any) => {
-          this.peripheral.onconnectionupdates(val);
-        },
-        "peripheral",
-      );
-
-      const centralParamList: any = {
-        read_characteristic_result: { name: "onread", obj: "characteristic" },
-        write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-        notify_read_characteristic: {
-          name: "onreadfromremote",
-          obj: "characteristic",
-        },
-        notify_write_characteristic: {
-          name: "onwritefromremote",
-          obj: "characteristic",
-        },
-        read_descriptor_result: { name: "onread", obj: "descriptor" },
-        write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-        notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
-        notify_write_descriptor: {
-          name: "onwritefromremote",
-          obj: "descriptor",
-        },
+  private _centralCallbackBind() {
+    const callback = (obj: any) => {
+      const remotePeripheralCallbackFunc: any = (val: any, func: any, type: any) => {
+        let target: any = null;
+        if (val === undefined) {
+          return;
+        }
+        const p: any = this.findPeripheral(val.address);
+        if (!p) {
+          return;
+        }
+        if (type === "peripheral") {
+          target = p;
+        } else if (type === "service") {
+          target = p.findService(val);
+        } else if (type === "characteristic") {
+          target = p.findCharacteristic(val);
+        } else if (type === "descriptor") {
+          target = p.findDescriptor(val);
+        }
+        if (!target) {
+          return;
+        }
+        func(val, target);
       };
 
-      for (const key in centralParamList) {
-        callbackFunc(
-          obj.peripheral[key],
+      const paramList: any = {
+        status_update: { name: "statusupdate", obj: "peripheral" },
+        get_service_result: { name: "discover", obj: "peripheral" },
+        get_service_result_finish: {
+          name: "discoverfinished",
+          obj: "peripheral",
+        },
+        get_characteristic_result: { name: "discover", obj: "service" },
+        get_characteristic_result_finish: {
+          name: "discoverfinished",
+          obj: "service",
+        },
+        write_characteristic_result: { name: "onwrite", obj: "characteristic" },
+        read_characteristic_result: { name: "onread", obj: "characteristic" },
+        register_notify_characteristic_result: {
+          name: "onregisternotify",
+          obj: "characteristic",
+        },
+        // for typo
+        register_nofity_characteristic_result: {
+          name: "onregisternotify",
+          obj: "characteristic",
+        },
+        unregister_notify_characteristic_result: {
+          name: "onunregisternotify",
+          obj: "characteristic",
+        },
+        // for typo
+        unregister_nofity_characteristic_result: {
+          name: "onunregisternotify",
+          obj: "characteristic",
+        },
+        notify_characteristic: { name: "onnotify", obj: "characteristic" },
+        // for typo
+        nofity_characteristic: { name: "onnotify", obj: "characteristic" },
+        get_descriptor_result: { name: "discover", obj: "characteristic" },
+        get_descriptor_result_finish: {
+          name: "discoverfinished",
+          obj: "characteristic",
+        },
+        write_descriptor_result: { name: "onwrite", obj: "descriptor" },
+        read_descriptor_result: { name: "onread", obj: "descriptor" },
+      };
+
+      for (const paramListKey in paramList) {
+        remotePeripheralCallbackFunc(
+          obj[paramListKey],
           (val: any, bleobj: any) => {
-            bleobj.notifyFromServer(centralParamList[key].name, val);
+            bleobj.notifyFromServer(paramList[paramListKey].name, val);
           },
-          centralParamList[key].obj,
+          paramList[paramListKey].obj,
         );
       }
-    }
+    };
+    this.on("/response/ble/central/status_update", callback);
+    this.on("/response/ble/central/service_get", callback);
+    this.on("/response/ble/central/service_get_finish", callback);
+    this.on("/response/ble/central/characteristic_get", callback);
+    this.on("/response/ble/central/characteristic_get_finish", callback);
+    this.on("/response/ble/central/characteristic_write", callback);
+    this.on("/response/ble/central/characteristic_read", callback);
+    this.on("/response/ble/central/characteristic_register_notify", callback);
+    this.on("/response/ble/central/characteristic_notify", callback);
+    this.on("/response/ble/central/characteristic_notify", callback);
+    this.on("/response/ble/central/descriptor_get", callback);
+    this.on("/response/ble/central/descriptor_get_finish", callback);
+    this.on("/response/ble/central/descriptor_write", callback);
+    this.on("/response/ble/central/descriptor_read", callback);
+  }
 
-    if (obj.error) {
+  private _peripheralCallbackBind() {
+    const callback = (obj: any) => {
+      const callbackFunc: any = (val: any, func: any, type: any) => {
+        let target: any = null;
+        if (val === undefined) {
+          return;
+        }
+        if (type === "peripheral") {
+          target = this.peripheral;
+        } else if (type === "service") {
+          target = this.peripheral.getService(val);
+        } else if (type === "characteristic") {
+          target = this.peripheral.findCharacteristic(val);
+        } else if (type === "descriptor") {
+          target = this.peripheral.findDescriptor(val);
+        }
+        if (!target) {
+          return;
+        }
+        func(val, target);
+      };
+
+      if (obj.peripheral) {
+        callbackFunc(
+          obj.peripheral.connection_status,
+          (val: any) => {
+            this.peripheral.onconnectionupdates(val);
+          },
+          "peripheral",
+        );
+
+        const centralParamList: any = {
+          read_characteristic_result: { name: "onread", obj: "characteristic" },
+          write_characteristic_result: { name: "onwrite", obj: "characteristic" },
+          notify_read_characteristic: {
+            name: "onreadfromremote",
+            obj: "characteristic",
+          },
+          notify_write_characteristic: {
+            name: "onwritefromremote",
+            obj: "characteristic",
+          },
+          read_descriptor_result: { name: "onread", obj: "descriptor" },
+          write_descriptor_result: { name: "onwrite", obj: "descriptor" },
+          notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
+          notify_write_descriptor: {
+            name: "onwritefromremote",
+            obj: "descriptor",
+          },
+        };
+
+        for (const key in centralParamList) {
+          callbackFunc(
+            obj.peripheral[key],
+            (val: any, bleobj: any) => {
+              bleobj.notifyFromServer(centralParamList[key].name, val);
+            },
+            centralParamList[key].obj,
+          );
+        }
+      }
+    };
+
+    this.on("/response/ble/peripheral/status", callback);
+    this.on("/response/ble/peripheral/characteristic_read", callback);
+    this.on("/response/ble/peripheral/characteristic_write", callback);
+    this.on("/response/ble/peripheral/characteristic_notify_read", callback);
+    this.on("/response/ble/peripheral/characteristic_notify_write", callback);
+    this.on("/response/ble/peripheral/descriptor_read", callback);
+    this.on("/response/ble/peripheral/descriptor_write", callback);
+    this.on("/response/ble/peripheral/descriptor_notify_read", callback);
+    this.on("/response/ble/peripheral/descriptor_notify_write", callback);
+  }
+
+  private _errorCallbackBind() {
+    this.on("/response/ble/error", (obj) => {
       const params: any = obj.error;
       let handled: any = false;
       let peripheral: any;
@@ -283,6 +327,6 @@ export default class ObnizBLE {
           `ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`,
         );
       }
-    }
+    });
   }
 }

@@ -104,16 +104,18 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
      * @ignore
      * @param dataArray
      */
-    write(dataArray) {
+    async writeWait(dataArray) {
         this.data = dataArray;
         this.notifyFromServer("onwrite", { result: "success" });
+        return true;
     }
     /**
      * @ignore
      * @param dataArray
      */
-    read() {
+    async readWait() {
         this.notifyFromServer("onread", { data: this.data });
+        return this.data;
     }
 }
 exports.default = BleLocalAttributeAbstract;

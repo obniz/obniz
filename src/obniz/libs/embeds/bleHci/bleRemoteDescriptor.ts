@@ -24,39 +24,11 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
   }
 
   /**
-   * Read data from descriptor.
-   *
-   * The return value appears in the callback function [[onread]].
-   *
-   * ```javascript
-   * // Javascript Example
-   * await obniz.ble.initWait();
-   * var target = {
-   *   uuids: ["fff0"],
-   * };
-   * var peripheral = await obniz.ble.scan.startOneWait(target);
-   * if(peripheral){
-   *   await peripheral.connectWait();
-   *   console.log("connected");
-   *   await obniz.wait(1000);
-   *
-   *   peripheral.getService("FF00").getCharacteristic("FF01").read();
-   *
-   *   peripheral.getService("FF00").getCharacteristic("FF01").onread = (dataArray)=>{
-   *   console.log(dataArray);
-   *
-   *   }
-   * }
-   * ```
+   * @deprecated
    *
    */
   public read() {
-    this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(
-      this.characteristic.service.peripheral.address,
-      this.characteristic.service.uuid,
-      this.characteristic.uuid,
-      this.uuid,
-    );
+    this.readWait(); // background
   }
 
   /**
@@ -84,41 +56,26 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    * ```
    *
    */
-  public readWait(): Promise<number[]> {
-    return super.readWait();
-  }
-
-  /**
-   * This writes dataArray to descriptor.
-   *
-   * ```javascript
-   * // Javascript Example
-   *
-   * await obniz.ble.initWait();
-   * var target = {
-   *   uuids: ["fff0"],
-   * };
-   * var peripheral = await obniz.ble.scan.startOneWait(target);
-   * if(peripheral){
-   *   await peripheral.connectWait();
-   *   console.log("connected");
-   *   await obniz.wait(1000);
-   *
-   *   var dataArray = [0x02, 0xFF];
-   *   peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write(dataArray);
-   * }
-   * ```
-   *
-   * @param data
-   */
-  public write(data: number[]) {
-    this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(
+  public async readWait(): Promise<number[]> {
+    const buf = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(
       this.characteristic.service.peripheral.address,
       this.characteristic.service.uuid,
       this.characteristic.uuid,
       this.uuid,
-      Buffer.from(data),
     );
+    const data = Array.from(buf);
+
+    if (this.onread) {
+      this.onread(data);
+    }
+    return data;
+  }
+
+  /**
+   *  @deprecated
+   */
+  public write(data: number[]) {
+    this.writeWait(data); // background
   }
 
   /**
@@ -145,9 +102,19 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
    * ```
    *
    * @param data
-   * @param needResponse
    */
-  public writeWait(data: number[], needResponse: boolean): Promise<void> {
-    return super.writeWait(data, needResponse);
+  public async writeWait(data: number[]): Promise<boolean> {
+    await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(
+      this.characteristic.service.peripheral.address,
+      this.characteristic.service.uuid,
+      this.characteristic.uuid,
+      this.uuid,
+      Buffer.from(data),
+    );
+
+    if (this.onwrite) {
+      this.onwrite("success"); // if fail, throw error.
+    }
+    return true;
   }
 }

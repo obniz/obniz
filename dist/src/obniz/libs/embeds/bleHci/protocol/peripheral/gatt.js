@@ -3,14 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- *
- * @ignore
- */
 // var debug = require('debug')('gatt');
 const debug = () => { };
-const events_1 = __importDefault(require("events"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 /* eslint-disable no-unused-vars */
 /**
  * @ignore
@@ -76,11 +71,10 @@ var GATT;
     GATT.CLIENT_CHARAC_CFG_UUID = 0x2902;
     GATT.SERVER_CHARAC_CFG_UUID = 0x2903;
 })(GATT || (GATT = {}));
-/* eslint-enable no-unused-vars */
 /**
  * @ignore
  */
-class Gatt extends events_1.default.EventEmitter {
+class Gatt extends eventemitter3_1.default {
     constructor() {
         super();
         this.maxMtu = 256;
@@ -93,39 +87,7 @@ class Gatt extends events_1.default.EventEmitter {
     setServices(services) {
         // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
         // base services and characteristics
-        const allServices = [
-        // {
-        //   uuid: '1800',
-        //   characteristics: [
-        //     {
-        //       uuid: '2a00',
-        //       properties: ['read'],
-        //       secure: [],
-        //       value: Buffer.from(deviceName),
-        //       descriptors: []
-        //     },
-        //     {
-        //       uuid: '2a01',
-        //       properties: ['read'],
-        //       secure: [],
-        //       value: Buffer.from([0x80, 0x00]),
-        //       descriptors: []
-        //     }
-        //   ]
-        // },
-        // {
-        //   uuid: '1801',
-        //   characteristics: [
-        //     {
-        //       uuid: '2a05',
-        //       properties: ['indicate'],
-        //       secure: [],
-        //       value: Buffer.from([0x00, 0x00, 0x00, 0x00]),
-        //       descriptors: []
-        //     }
-        //   ]
-        // }
-        ].concat(services);
+        const allServices = [].concat(services);
         this._handles = [];
         let handle = 0;
         let i;
@@ -273,6 +235,9 @@ class Gatt extends events_1.default.EventEmitter {
     }
     send(data) {
         debug("send: " + data.toString("hex"));
+        if (!this._aclStream) {
+            throw new Error("_aclStream is not found");
+        }
         this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
@@ -611,7 +576,7 @@ class Gatt extends events_1.default.EventEmitter {
                     break;
                 }
             }
-            if (secure && !this._aclStream.encrypted) {
+            if (secure && !(this._aclStream && this._aclStream.encrypted)) {
                 response = this.errorResponse(ATT.OP_READ_BY_TYPE_REQ, startHandle, ATT.ECODE_AUTHENTICATION);
             }
             else if (valueHandle) {
@@ -711,7 +676,7 @@ class Gatt extends events_1.default.EventEmitter {
                     handleAttribute = this._handles[valueHandle - 1].attribute;
                 }
                 if (handleProperties & 0x02) {
-                    if (handleSecure & 0x02 && !this._aclStream.encrypted) {
+                    if (handleSecure & 0x02 && !(this._aclStream && this._aclStream.encrypted)) {
                         result = ATT.ECODE_AUTHENTICATION;
                     }
                     else {
@@ -779,7 +744,7 @@ class Gatt extends events_1.default.EventEmitter {
                         }
                     };
                 })(requestType, valueHandle, withoutResponse);
-                if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !this._aclStream.encrypted) {
+                if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !(this._aclStream && this._aclStream.encrypted)) {
                     response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                 }
                 else if (handle.type === "descriptor" || handle.uuid === "2902") {
@@ -859,7 +824,7 @@ class Gatt extends events_1.default.EventEmitter {
                 const handleProperties = handle.properties;
                 const handleSecure = handle.secure;
                 if (handleProperties && handleProperties & 0x08) {
-                    if (handleSecure & 0x08 && !this._aclStream.encrypted) {
+                    if (handleSecure & 0x08 && !(this._aclStream && this._aclStream.encrypted)) {
                         response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
                     }
                     else if (this._preparedWriteRequest) {

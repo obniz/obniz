@@ -4,13 +4,20 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * The embedded switch on obniz Board.
  * @category Embeds
  */
-class ObnizSwitch {
-    constructor(Obniz, info) {
-        this.Obniz = Obniz;
+class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
+    constructor(obniz, info) {
+        super(obniz);
+        this.on("/response/switch/change", (obj) => {
+            this.state = obj.state;
+            if (this.onchange) {
+                this.onchange(this.state);
+            }
+        });
         this._reset();
     }
     /**
@@ -26,14 +33,11 @@ class ObnizSwitch {
      * ```
      *
      */
-    getWait() {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            const obj = {};
-            obj.switch = "get";
-            self.Obniz.send(obj);
-            self.addObserver(resolve);
-        });
+    async getWait() {
+        const obj = {};
+        obj.switch = "get";
+        const data = await this.sendAndReceiveJsonWait(obj, "/response/switch/change");
+        return data.state;
     }
     /**
      * With this you wait until the switch status changes to state.
@@ -55,41 +59,19 @@ class ObnizSwitch {
      *
      * @param state state for wait
      */
-    stateWait(state) {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.onChangeForStateWait = (pressed) => {
-                if (state === pressed) {
-                    self.onChangeForStateWait = () => { };
-                    resolve();
-                }
-            };
-        });
+    async stateWait(state) {
+        while (1) {
+            const data = await this.receiveJsonWait("/response/switch/change");
+            if (state === data.state) {
+                return;
+            }
+        }
     }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        this.state = obj.state;
-        if (this.onchange) {
-            this.onchange(this.state);
-        }
-        this.onChangeForStateWait(this.state);
-        const callback = this.observers.shift();
-        if (callback) {
-            callback(this.state);
-        }
+    schemaBasePath() {
+        return "switch";
     }
     _reset() {
         this.state = "none";
-        this.observers = [];
-        this.onChangeForStateWait = () => { };
-    }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
     }
 }
 exports.default = ObnizSwitch;

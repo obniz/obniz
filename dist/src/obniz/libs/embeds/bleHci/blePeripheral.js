@@ -18,9 +18,9 @@ class BlePeripheral {
      * @ignore
      * @private
      */
-    _updateServices() {
+    async _updateServices() {
         const bufData = this._services.map((e) => e.toBufferObj());
-        this.obnizBle.peripheralBindings.setServices(bufData);
+        await this.obnizBle.peripheralBindings.setServices(bufData);
     }
     /**
      * This starts a service as peripheral.

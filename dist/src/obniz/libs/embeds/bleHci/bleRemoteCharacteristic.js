@@ -135,8 +135,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param callback
      */
     registerNotify(callback) {
-        this.onnotify = callback;
-        this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, true);
+        this.registerNotifyWait(callback); // background
     }
     /**
      * This sets a notify callback function and wait to finish register.
@@ -159,13 +158,12 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param callback
      *
      */
-    registerNotifyWait(callback) {
-        return new Promise((resolve) => {
-            this.emitter.once("onregisternotify", () => {
-                resolve();
-            });
-            this.registerNotify(callback);
-        });
+    async registerNotifyWait(callback) {
+        this.onnotify = callback;
+        await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, true);
+        if (this.onregisternotify) {
+            this.onregisternotify();
+        }
     }
     /**
      * unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
@@ -197,8 +195,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      */
     unregisterNotify() {
-        this.onnotify = () => { };
-        this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, false);
+        this.unregisterNotifyWait(); // background
     }
     /**
      * Unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
@@ -224,13 +221,12 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      *
      */
-    unregisterNotifyWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onunregisternotify", () => {
-                resolve();
-            });
-            this.unregisterNotify();
-        });
+    async unregisterNotifyWait() {
+        this.onnotify = () => { };
+        await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
+        if (this.onunregisternotify) {
+            this.onunregisternotify();
+        }
     }
     /**
      * It reads data from the characteristic.
@@ -260,7 +256,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *
      */
     read() {
-        this.service.peripheral.obnizBle.centralBindings.read(this.service.peripheral.address, this.service.uuid, this.uuid);
+        this.readWait(); // background
     }
     /**
      * This writes dataArray to the characteristic.
@@ -287,10 +283,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param needResponse
      */
     write(array, needResponse) {
-        if (needResponse === undefined) {
-            needResponse = true;
-        }
-        this.service.peripheral.obnizBle.centralBindings.write(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(array), !needResponse);
+        this.writeWait(array, needResponse); // background
     }
     /**
      * This writes dataArray to the characteristic.
@@ -318,8 +311,15 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param data
      * @param needResponse
      */
-    writeWait(data, needResponse) {
-        return super.writeWait(data, needResponse);
+    async writeWait(data, needResponse) {
+        if (needResponse === undefined) {
+            needResponse = true;
+        }
+        await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
+        if (this.onwrite) {
+            this.onwrite("success"); // if fail, throw error.
+        }
+        return true;
     }
     /**
      * It reads data from the characteristic.
@@ -345,20 +345,13 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * }
      * ```
      */
-    readWait() {
-        return super.readWait();
-    }
-    /**
-     * @ignore
-     */
-    discoverChildren() {
-        this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(this.service.peripheral.address, this.service.uuid, this.uuid);
-    }
-    /**
-     * @ignore
-     */
-    discoverAllDescriptors() {
-        return this.discoverChildren();
+    async readWait() {
+        const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
+        const data = Array.from(buf);
+        if (this.onread) {
+            this.onread(data);
+        }
+        return data;
     }
     /**
      * Discover services.
@@ -387,8 +380,20 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * obniz.ble.scan.start();
      * ```
      */
-    discoverAllDescriptorsWait() {
-        return this.discoverChildrenWait();
+    async discoverAllDescriptorsWait() {
+        const descriptors = await this.service.peripheral.obnizBle.centralBindings.discoverDescriptorsWait(this.service.peripheral.address, this.service.uuid, this.uuid);
+        for (const descr of descriptors) {
+            const uuid = descr;
+            let child = this.getChild(uuid);
+            if (!child) {
+                child = this.addChild({ uuid });
+            }
+            child.discoverdOnRemote = true;
+            this.ondiscover(child);
+        }
+        return this.descriptors.filter((elm) => {
+            return elm.discoverdOnRemote;
+        });
     }
     /**
      * @ignore
@@ -462,18 +467,6 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
-            case "onregisternotify": {
-                if (this.onregisternotify) {
-                    this.onregisternotify();
-                }
-                break;
-            }
-            case "onunregisternotify": {
-                if (this.onunregisternotify) {
-                    this.onunregisternotify();
-                }
-                break;
-            }
             case "onnotify": {
                 if (this.onnotify) {
                     this.onnotify(params.data || undefined);

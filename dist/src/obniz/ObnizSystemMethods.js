@@ -120,7 +120,7 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
      * @param reset
      */
     resetOnDisconnect(reset) {
-        this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
+        this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }, { connect_check: false });
     }
     /**
      * Action only with obniz Board 1Y.

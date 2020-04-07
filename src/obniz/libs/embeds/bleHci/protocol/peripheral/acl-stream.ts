@@ -3,15 +3,17 @@
  *
  * @ignore
  */
-import events from "events";
+import EventEmitter from "eventemitter3";
 
+import Hci from "../hci";
 import Smp from "./smp";
 
+type AclStreamEventTypes = "data" | "end" | "encryptChange";
 /**
  * @ignore
  */
-class AclStream extends events.EventEmitter {
-  public _hci: any;
+class AclStream extends EventEmitter<AclStreamEventTypes> {
+  public _hci: Hci;
   public _handle: any;
   public encypted: any;
   public _smp: any;
@@ -33,26 +35,23 @@ class AclStream extends events.EventEmitter {
     this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress, this._hci);
   }
 
-  public write(cid: any, data: any) {
+  public write(cid: number, data: Buffer) {
     this._hci.queueAclDataPkt(this._handle, cid, data);
   }
 
-  public push(cid: any, data: any) {
+  public push(cid: number, data: Buffer) {
     if (data) {
       this.emit("data", cid, data);
-    } else {
-      this.emit("end");
     }
+  }
+  public end() {
+    this.emit("end");
   }
 
   public pushEncrypt(encrypt: any) {
     this.encrypted = encrypt ? true : false;
 
     this.emit("encryptChange", this.encrypted);
-  }
-
-  public pushLtkNegReply() {
-    this.emit("ltkNegReply");
   }
 }
 

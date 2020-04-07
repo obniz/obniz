@@ -3,7 +3,7 @@
  *
  * @ignore
  */
-const events: any = require("events");
+import EventEmitter from "eventemitter3";
 
 import crypto from "./crypto";
 import Mgmt from "./mgmt";
@@ -21,10 +21,13 @@ namespace SMP {
 
   export const UNSPECIFIED: any = 0x08;
 }
+
+type SmpEventTypes = "fail";
+
 /**
  * @ignore
  */
-export default class Smp extends events.EventEmitter {
+export default class Smp extends EventEmitter<SmpEventTypes> {
   public _aclStream: any;
   public _mgmt: any;
   public _iat: any;
@@ -39,6 +42,10 @@ export default class Smp extends events.EventEmitter {
   public _pcnf: any;
   public _tk: any;
   public _r: any;
+  private onAclStreamDataBinded: any;
+  private onAclStreamEncryptChangeBinded: any;
+  private onAclStreamLtkNegReplyBinded: any;
+  private onAclStreamEndBinded: any;
 
   constructor(
     aclStream: any,

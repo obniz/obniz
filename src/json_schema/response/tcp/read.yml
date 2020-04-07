@@ -11,7 +11,4 @@ properties:
     type: object
     required: [data]
     properties:
-      data:
-        $ref: "/dataArray"
-        description: "TCP data"
-
+      data: { $ref: "/dataArray"}

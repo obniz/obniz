@@ -9,9 +9,12 @@ import wsClient from "ws";
 // @ts-ignore
 import packageJson from "../../package"; // pakcage.js will be created from package.json on build.
 import WSCommand from "./libs/wscommand";
+import { ObnizOfflineError } from "./ObnizError";
 import { ObnizOptions } from "./ObnizOptions";
 
-export default class ObnizConnection {
+export type ObnizConnectionEventNames = "connect" | "close" | "notify";
+
+export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNames> {
   /**
    * obniz.js version
    */
@@ -148,7 +151,6 @@ export default class ObnizConnection {
   protected debugs: any;
   protected onConnectCalled: boolean;
   protected bufferdAmoundWarnBytes: number;
-  protected emitter: any;
   protected options: any;
   protected wscommand: any;
   protected wscommands: any;
@@ -159,6 +161,7 @@ export default class ObnizConnection {
   protected sendPool: any;
 
   constructor(id: string, options?: ObnizOptions) {
+    super();
     this.isNode = typeof window === "undefined";
     this.id = id;
     this.socket = null;
@@ -171,7 +174,6 @@ export default class ObnizConnection {
     this.firmware_ver = undefined;
     this.connectionState = "closed"; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-    this.emitter = new EventEmitter();
 
     this._connectionRetryCount = 0;
 
@@ -262,11 +264,11 @@ export default class ObnizConnection {
         resolve(true);
         return;
       }
-      this.emitter.once("connected", () => {
+      this.once("connect", () => {
         resolve(true);
       });
       if (!this.options.auto_connect) {
-        this.emitter.once("closed", () => {
+        this.once("close", () => {
           resolve(false);
         });
       }
@@ -320,7 +322,14 @@ export default class ObnizConnection {
    * @param options send option
    * @param options.local_connect If false, send data via gloval internet.
    */
-  public send(obj: object | object[], options?: { local_connect?: boolean }) {
+  public send(obj: object | object[], options?: { local_connect?: boolean; connect_check?: boolean }) {
+    options = options || {};
+    options.local_connect = options.local_connect !== false;
+    options.connect_check = options.connect_check !== false;
+
+    if (options.connect_check && this.connectionState !== "connected") {
+      throw new ObnizOfflineError();
+    }
     try {
       if (!obj || typeof obj !== "object") {
         console.log("obnizjs. didnt send ", obj);
@@ -343,7 +352,7 @@ export default class ObnizConnection {
       }
 
       /* compress */
-      if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
+      if (this.wscommand && options.local_connect) {
         let compressed: any;
         try {
           compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
@@ -425,10 +434,10 @@ export default class ObnizConnection {
   protected wsOnClose(event: any) {
     this.print_debug("closed");
     this.close();
-    this.emitter.emit("closed");
     if (typeof this.onclose === "function" && this.onConnectCalled === true) {
       this.onclose(this);
     }
+    this.emit("close", this);
     this.onConnectCalled = false;
 
     this._reconnect();
@@ -622,8 +631,6 @@ export default class ObnizConnection {
       }
     }
 
-    this.emitter.emit("connected");
-
     if (canChangeToConnected) {
       this.connectionState = "connected";
       if (typeof this.onconnect === "function") {
@@ -634,6 +641,7 @@ export default class ObnizConnection {
           });
         }
       }
+      this.emit("connect", this);
       this.onConnectCalled = true;
     }
   }

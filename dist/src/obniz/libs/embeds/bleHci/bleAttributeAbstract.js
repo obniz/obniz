@@ -97,91 +97,28 @@ class BleAttributeAbstract {
         return obj;
     }
     /**
-     * WS COMMANDS
+     * @ignore
      */
+    writeText(str, needResponse) {
+        this.writeTextWait(str, needResponse); // background
+    }
     /**
      * @ignore
      */
-    read() { }
-    /**
-     * @ignore
-     */
-    write(data, needResponse) { }
+    async writeTextWait(str, needResponse) {
+        return await this.writeWait(util_1.default.string2dataArray(str), needResponse);
+    }
     /**
      * @ignore
      */
     writeNumber(val, needResponse) {
-        this.write([val], needResponse);
+        this.writeNumberWait(val, needResponse); // background
     }
     /**
      * @ignore
      */
-    writeText(str, needResponse) {
-        this.write(util_1.default.string2dataArray(str), needResponse);
-    }
-    /**
-     * @ignore
-     */
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
-    }
-    /**
-     * @ignore
-     */
-    writeWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data, needResponse);
-        });
-    }
-    /**
-     * @ignore
-     */
-    writeTextWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeTextWait failed"));
-                }
-            });
-            this.writeText(data, needResponse);
-        });
-    }
-    /**
-     * @ignore
-     */
-    writeNumberWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeNumberWait failed"));
-                }
-            });
-            this.writeNumber(data, needResponse);
-        });
+    async writeNumberWait(val, needResponse) {
+        return await this.writeWait([val], needResponse);
     }
     /**
      * @ignore
@@ -220,30 +157,6 @@ class BleAttributeAbstract {
         switch (notifyName) {
             case "onerror": {
                 this.onerror(params);
-                break;
-            }
-            case "onwrite": {
-                if (this.onwrite) {
-                    this.onwrite(params.result);
-                }
-                break;
-            }
-            case "onread": {
-                if (this.onread) {
-                    this.onread(params.data);
-                }
-                break;
-            }
-            case "onwritefromremote": {
-                if (this.onwritefromremote) {
-                    this.onwritefromremote(params.address, params.data);
-                }
-                break;
-            }
-            case "onreadfromremote": {
-                if (this.onreadfromremote) {
-                    this.onreadfromremote(params.address);
-                }
                 break;
             }
         }

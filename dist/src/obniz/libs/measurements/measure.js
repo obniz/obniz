@@ -7,14 +7,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * The measure module provides hardware level measurement.
  * @category Measurement
  */
-class ObnizMeasure {
+class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
-        this.obniz = obniz;
+        super(obniz);
         this._reset();
     }
     /**
@@ -54,7 +55,7 @@ class ObnizMeasure {
         if (err) {
             throw new Error("Measure start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
+        params = util_1.default._keyFilter(params, [
             "io_pulse",
             "pulse",
             "pulse_width",
@@ -64,32 +65,27 @@ class ObnizMeasure {
             "callback",
         ]);
         const echo = {};
-        echo.io_pulse = this.params.io_pulse;
-        echo.pulse = this.params.pulse;
-        echo.pulse_width = this.params.pulse_width;
-        echo.io_echo = this.params.io_echo;
-        echo.measure_edges = this.params.measure_edges;
-        if (typeof this.params.timeout === "number") {
-            echo.timeout = this.params.timeout;
+        echo.io_pulse = params.io_pulse;
+        echo.pulse = params.pulse;
+        echo.pulse_width = params.pulse_width;
+        echo.io_echo = params.io_echo;
+        echo.measure_edges = params.measure_edges;
+        if (typeof params.timeout === "number") {
+            echo.timeout = params.timeout;
         }
-        this.obniz.send({
+        this.Obniz.send({
             measure: {
                 echo,
             },
         });
-        if (this.params.callback) {
-            this.observers.push(this.params.callback);
+        if (params.callback) {
+            this.onceQueue("/response/measure/echo", (obj) => {
+                params.callback(obj.echo);
+            });
         }
     }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        const callback = this.observers.shift();
-        if (callback) {
-            callback(obj.echo);
-        }
+    schemaBasePath() {
+        return "measure";
     }
 }
 exports.default = ObnizMeasure;

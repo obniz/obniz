@@ -216,6 +216,7 @@ describe('ble-hci-central', function() {
       },
     ];
     testUtil.receiveJson(obniz, results);
+    await wait(1);
     let secondCommands = [
       [0x01, 0x01, 0x0c, 0x08, 0xff, 0xff, 0xfb, 0xff, 0x07, 0xf8, 0xbf, 0x3d], //setEventMask
       [0x01, 0x01, 0x20, 0x08, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], //setLeEventMask
@@ -260,6 +261,7 @@ describe('ble-hci-central', function() {
       },
     ]);
 
+    await wait(1);
     expect(obniz).send([
       { ble: { hci: { write: [1, 11, 32, 7, 1, 16, 0, 16, 0, 0, 0] } } },
     ]);

@@ -7,24 +7,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * Uart module
  * @category Peripherals
  */
-class PeripheralUART {
+class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
+        this.on("/response/uart/receive", (obj) => {
+            if (this.onreceive) {
+                const string = this.tryConvertString(obj.data);
+                this.onreceive(obj.data, string);
+            }
+            else {
+                if (!this.received) {
+                    this.received = [];
+                }
+                this.received.push.apply(this.received, obj.data);
+            }
+        });
         this._reset();
-    }
-    /**
-     * @ignore
-     * @private
-     */
-    _reset() {
-        this.received = new Uint8Array([]);
-        this.used = false;
     }
     /**
      * It starts uart on io tx, rx.
@@ -252,22 +257,6 @@ class PeripheralUART {
     }
     /**
      * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (this.onreceive) {
-            const string = this.tryConvertString(obj.data);
-            this.onreceive(obj.data, string);
-        }
-        else {
-            if (!this.received) {
-                this.received = [];
-            }
-            this.received.push.apply(this.received, obj.data);
-        }
-    }
-    /**
-     * @ignore
      */
     isUsed() {
         return this.used;
@@ -298,6 +287,21 @@ class PeripheralUART {
      */
     tryConvertString(data) {
         return util_1.default.dataArray2string(data);
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return "uart" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.received = new Uint8Array([]);
+        this.used = false;
     }
 }
 exports.default = PeripheralUART;

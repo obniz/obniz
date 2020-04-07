@@ -8,14 +8,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(require("semver"));
+const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * It is General Purpose SPI
  * @category Peripherals
  */
-class PeripheralSPI {
+class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
         this._reset();
     }
@@ -144,23 +145,20 @@ class PeripheralSPI {
      * @param data Max length is 1024 bytes.
      * @return received data
      */
-    writeWait(data) {
+    async writeWait(data) {
         if (!this.used) {
             throw new Error(`spi${this.id} is not started`);
         }
         if (semver_1.default.lte(this.Obniz.firmware_ver, "1.0.2") && data.length > 32) {
             throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
         }
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.addObserver(resolve);
-            const obj = {};
-            obj["spi" + self.id] = {
-                data,
-                read: true,
-            };
-            self.Obniz.send(obj);
-        });
+        const obj = {};
+        obj["spi" + this.id] = {
+            data,
+            read: true,
+        };
+        const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/spi/read");
+        return receiveData.data;
     }
     /**
      * It only sends data to spi and does not receive it.
@@ -187,17 +185,6 @@ class PeripheralSPI {
             read: false,
         };
         self.Obniz.send(obj);
-    }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        // TODO: we should compare byte length from sent
-        const callback = this.observers.shift();
-        if (callback) {
-            callback(obj.data);
-        }
     }
     /**
      * @ignore
@@ -229,15 +216,20 @@ class PeripheralSPI {
             this.used = false;
         }
     }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return "spi" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
     _reset() {
-        this.observers = [];
         this.used = false;
         this.params = null;
-    }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
     }
 }
 exports.default = PeripheralSPI;
