@@ -6,8 +6,6 @@
 
 import EventEmitter from "eventemitter3";
 
-const readline = require("readline");
-import { networkInterfaces } from "os";
 import { BleDeviceAddress, BleDeviceAddressType } from "../../bleTypes";
 import AclStream from "./acl-stream";
 import crypto from "./crypto";

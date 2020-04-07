@@ -11660,7 +11660,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-const readline = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'readline'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
 /**
  * @ignore
