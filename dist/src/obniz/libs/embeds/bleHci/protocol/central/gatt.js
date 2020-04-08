@@ -591,8 +591,12 @@ class Gatt extends eventemitter3_1.default {
             .catch((reason) => {
             throw reason;
         })
-            .finally(() => {
+            .then((result) => {
             this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+            return Promise.resolve(result);
+        }, (error) => {
+            this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+            return Promise.reject(error);
         });
         this._commandPromises.push(doPromise);
         return doPromise;
