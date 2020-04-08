@@ -8919,9 +8919,12 @@ class BleRemotePeripheral {
         switch (notifyName) {
             case "statusupdate": {
                 if (params.status === "disconnected") {
+                    const pre = this.connected;
                     this.connected = false;
-                    if (this.ondisconnect) {
-                        this.ondisconnect(params.reason);
+                    if (pre) {
+                        if (this.ondisconnect) {
+                            this.ondisconnect(params.reason);
+                        }
                     }
                     this.emitter.emit("disconnect", params.reason);
                 }
@@ -11987,7 +11990,7 @@ class Hci extends eventemitter3_1.default {
         const p4 = this.leReadBufferSizeWait();
         await Promise.all([p1, p2, p3, p4]);
         if (this._state !== "poweredOn") {
-            const p5 = await this.setScanEnabledWait(false, true);
+            const p5 = this.setScanEnabledWait(false, true);
             const p6 = this.setScanParametersWait(false);
             await Promise.all([p5, p6]);
             this.stateChange("poweredOn");

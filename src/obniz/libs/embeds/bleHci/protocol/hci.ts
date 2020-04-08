@@ -199,7 +199,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     await Promise.all([p1, p2, p3, p4]);
 
     if (this._state !== "poweredOn") {
-      const p5 = await this.setScanEnabledWait(false, true);
+      const p5 = this.setScanEnabledWait(false, true);
       const p6 = this.setScanParametersWait(false);
       await Promise.all([p5, p6]);
       this.stateChange("poweredOn");

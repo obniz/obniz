@@ -351,9 +351,12 @@ class BleRemotePeripheral {
         switch (notifyName) {
             case "statusupdate": {
                 if (params.status === "disconnected") {
+                    const pre = this.connected;
                     this.connected = false;
-                    if (this.ondisconnect) {
-                        this.ondisconnect(params.reason);
+                    if (pre) {
+                        if (this.ondisconnect) {
+                            this.ondisconnect(params.reason);
+                        }
                     }
                     this.emitter.emit("disconnect", params.reason);
                 }
