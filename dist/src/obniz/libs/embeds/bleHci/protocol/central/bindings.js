@@ -50,8 +50,12 @@ class NobleBindings extends eventemitter3_1.default {
             .then((result) => {
             return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
         })
-            .finally(() => {
+            .then((result) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.resolve(result);
+        }, (error) => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.reject(error);
         });
         this._connectPromises.push(doPromise);
         return doPromise;

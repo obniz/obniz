@@ -90,9 +90,16 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
           result.masterClockAccuracy,
         );
       })
-      .finally(() => {
-        this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-      });
+      .then(
+        (result) => {
+          this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+          return Promise.resolve(result);
+        },
+        (error) => {
+          this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+          return Promise.reject(error);
+        },
+      );
     this._connectPromises.push(doPromise);
     return doPromise;
   }
