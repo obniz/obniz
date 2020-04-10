@@ -130,10 +130,8 @@ export default class ObnizBLE extends ComponentAbstract {
       } catch (e) {
         if (e instanceof ObnizBleUnsupportedHciError) {
           this.Obniz.reboot();
-          return;
-        } else {
-          throw e;
         }
+        throw e;
       }
     }
   }

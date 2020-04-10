@@ -6465,11 +6465,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             catch (e) {
                 if (e instanceof ObnizError_1.ObnizBleUnsupportedHciError) {
                     this.Obniz.reboot();
-                    return;
                 }
-                else {
-                    throw e;
-                }
+                throw e;
             }
         }
     }
