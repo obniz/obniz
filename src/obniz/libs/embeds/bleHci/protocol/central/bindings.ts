@@ -27,18 +27,18 @@ type NobleBindingsEventType =
  * @ignore
  */
 class NobleBindings extends EventEmitter<NobleBindingsEventType> {
-  public _state: any;
-  public _addresses: { [uuid: string]: BleDeviceAddress };
-  public _addresseTypes: { [uuid: string]: BleDeviceAddressType };
   public _connectable: any;
-  public _connectPromises: Array<Promise<any>>;
-  public _handles: any;
-  public _gatts: { [handle: string]: Gatt };
-  public _aclStreams: { [key: string]: AclStream };
-  public _signalings: any;
-  public _hci: Hci;
-  public _gap: Gap;
-  public _scanServiceUuids: any;
+  private _state: any;
+  private _addresses: { [uuid: string]: BleDeviceAddress };
+  private _addresseTypes: { [uuid: string]: BleDeviceAddressType };
+  private _connectPromises: Array<Promise<any>>;
+  private _handles: any;
+  private _gatts: { [handle: string]: Gatt };
+  private _aclStreams: { [key: string]: AclStream };
+  private _signalings: any;
+  private _hci: Hci;
+  private _gap: Gap;
+  private _scanServiceUuids: any;
 
   constructor(hciProtocol: any) {
     super();
@@ -59,6 +59,15 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._gap = new Gap(this._hci);
   }
 
+  public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
+    if (!this._addresses[uuid]) {
+      const address: any = uuid.match(/.{1,2}/g)!.join(":");
+      this._addresses[uuid] = address;
+      this._addresseTypes[uuid] = addressType;
+      this._connectable[uuid] = true;
+    }
+  }
+
   public async startScanningWait(serviceUuids: any, allowDuplicates: any, activeScan: boolean) {
     this._scanServiceUuids = serviceUuids || [];
 
@@ -74,6 +83,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     const addressType: any = this._addresseTypes[peripheralUuid];
 
     const doPromise = Promise.all(this._connectPromises)
+      .catch((error) => {
+        // nothing
+      })
       .then(() => {
         return this._hci.createLeConnWait(address, addressType);
       })
@@ -233,6 +245,8 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     const uuid: any = this._handles[handle];
 
     if (uuid) {
+      const error = new ObnizBleHciStateError(reason, { peripheralAddress: uuid });
+      this._gatts[handle].onEnd(error);
       this._gatts[handle].removeAllListeners();
       this._signalings[handle].removeAllListeners();
 
@@ -244,7 +258,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       delete this._handles[uuid];
       delete this._handles[handle];
 
-      const error = new ObnizBleHciStateError(reason);
       this.emit("disconnect", uuid, error); // TODO: handle reason?
     } else {
       // maybe disconnect as peripheral

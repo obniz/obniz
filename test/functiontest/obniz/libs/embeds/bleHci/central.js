@@ -302,7 +302,7 @@ describe('ble-hci-central', function() {
   }
 
   async function _scanStartTestWait(obniz, target = {}) {
-    obniz.ble.scan.start(target);
+    const p =  obniz.ble.scan.startWait(target);
     // expect(obniz).send([{ ble: { hci: { advertisement_filter: [] } } }]);  //os ver >= 3.2.0
 
     expect(obniz).send([
@@ -336,6 +336,7 @@ describe('ble-hci-central', function() {
         ble: {hci: {read: {data: [4, 14, 4, 5, 12, 32, 0]}}},
       },
     ]);
+    await p;
   }
 
   async function _receiveAdvertisementTest(obniz, detect, hci) {

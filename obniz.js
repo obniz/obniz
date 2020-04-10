@@ -219,6 +219,7 @@ module.exports = {
     "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
+    "log4js": "^6.1.2",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
     "semver": "^5.7.0",
@@ -238,7 +239,8 @@ module.exports = {
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
   }
-};
+}
+;
 
 /***/ }),
 
@@ -3016,8 +3018,9 @@ class ObnizBleOpError extends ObnizError {
 }
 exports.ObnizBleOpError = ObnizBleOpError;
 class ObnizBleHciStateError extends ObnizError {
-    constructor(state) {
-        super(10, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+    constructor(state, params) {
+        super(10, (ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error") +
+            (params ? ` ${JSON.stringify(params)}` : ""));
         this.state = state;
     }
 }
@@ -6044,6 +6047,9 @@ class BleScan {
         this.scanedPeripherals = [];
         this.Obniz.send(obj);
     }
+    async startWait(target, settings) {
+        return this.start(target, settings);
+    }
     startOneWait(target, settings) {
         let state = 0;
         return new Promise((resolve) => {
@@ -6076,6 +6082,9 @@ class BleScan {
         obj.ble = {};
         obj.ble.scan = null;
         this.Obniz.send(obj);
+    }
+    endWait() {
+        this.end();
     }
     isTarget(peripheral) {
         if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {
@@ -6533,12 +6542,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             peripheral = new bleRemotePeripheral_1.default(this, uuid);
             this.remotePeripherals.push(peripheral);
         }
-        if (!this.centralBindings._addresses[uuid]) {
-            const address = uuid.match(/.{1,2}/g).join(":");
-            this.centralBindings._addresses[uuid] = address;
-            this.centralBindings._addresseTypes[uuid] = addressType;
-            this.centralBindings._connectable[uuid] = true;
-        }
+        this.centralBindings.addPeripheralData(uuid, addressType);
         peripheral.connect();
         return peripheral;
     }
@@ -8661,12 +8665,18 @@ class BleRemotePeripheral {
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
-        const p1 = this.obnizBle.centralBindings.connectWait(this.address);
-        const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", (reason) => {
-            reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
-                ` Error code:${reason.state}, ${reason.message}`));
-        }));
-        await Promise.race([p1, p2]);
+        await this.obnizBle.centralBindings.connectWait(this.address);
+        // const p2 = new Promise((resolve, reject) =>
+        //   this.emitter.once("disconnect", (reason: ObnizBleHciStateError) => {
+        //     reject(
+        //       new Error(
+        //         `connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
+        //           ` Error code:${reason.state}, ${reason.message}`,
+        //       ),
+        //     );
+        //   }),
+        // );
+        // await Promise.race([p1, p2]);
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
@@ -10286,6 +10296,14 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
     }
+    addPeripheralData(uuid, addressType) {
+        if (!this._addresses[uuid]) {
+            const address = uuid.match(/.{1,2}/g).join(":");
+            this._addresses[uuid] = address;
+            this._addresseTypes[uuid] = addressType;
+            this._connectable[uuid] = true;
+        }
+    }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = serviceUuids || [];
         await this._gap.startScanningWait(allowDuplicates, activeScan);
@@ -10297,6 +10315,9 @@ class NobleBindings extends eventemitter3_1.default {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         const doPromise = Promise.all(this._connectPromises)
+            .catch((error) => {
+            // nothing
+        })
             .then(() => {
             return this._hci.createLeConnWait(address, addressType);
         })
@@ -10401,6 +10422,8 @@ class NobleBindings extends eventemitter3_1.default {
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
         if (uuid) {
+            const error = new ObnizError_1.ObnizBleHciStateError(reason, { peripheralAddress: uuid });
+            this._gatts[handle].onEnd(error);
             this._gatts[handle].removeAllListeners();
             this._signalings[handle].removeAllListeners();
             delete this._gatts[uuid];
@@ -10410,7 +10433,6 @@ class NobleBindings extends eventemitter3_1.default {
             delete this._aclStreams[handle];
             delete this._handles[uuid];
             delete this._handles[handle];
-            const error = new ObnizError_1.ObnizBleHciStateError(reason);
             this.emit("disconnect", uuid, error); // TODO: handle reason?
         }
         else {
@@ -10953,6 +10975,9 @@ class Gatt extends eventemitter3_1.default {
         });
         return result;
     }
+    onEnd(reason) {
+        this.emit("end", reason);
+    }
     async exchangeMtuWait(mtu) {
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
@@ -11438,7 +11463,17 @@ class Gatt extends eventemitter3_1.default {
         }
     }
     _serialPromiseQueueWait(func) {
+        const onfinish = () => {
+            this._commandPromises = this._commandPromises.filter((e) => e !== resultPromise);
+            if (disconnectReject) {
+                this.off("end", disconnectReject);
+            }
+        };
+        let disconnectReject = null;
         const doPromise = Promise.all(this._commandPromises)
+            .catch((error) => {
+            // nothing
+        })
             .then(() => {
             return func();
         })
@@ -11446,14 +11481,22 @@ class Gatt extends eventemitter3_1.default {
             throw reason;
         })
             .then((result) => {
-            this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+            onfinish();
             return Promise.resolve(result);
         }, (error) => {
-            this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+            onfinish();
             return Promise.reject(error);
         });
-        this._commandPromises.push(doPromise);
-        return doPromise;
+        const disconnectPromise = new Promise((resolve, reject) => {
+            disconnectReject = (reason) => {
+                onfinish();
+                reject(reason);
+            };
+            this.on("end", disconnectReject);
+        });
+        const resultPromise = Promise.race([doPromise, disconnectPromise]);
+        this._commandPromises.push(resultPromise);
+        return resultPromise;
     }
     _execCommandWait(buffer, waitOpcode) {
         const waitOpcodes = Array.isArray(waitOpcode) ? waitOpcode : [waitOpcode];
@@ -24252,7 +24295,7 @@ class RS_BTIREX2 {
         };
         await this._peripheral.connectWait();
         console.error("encrypt start");
-        const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
+        // const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
         // this._peripheral.obnizBle.centralBindings._aclStreams[handle].encrypt();
         this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
         this._txCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.txChar);

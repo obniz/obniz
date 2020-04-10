@@ -206,12 +206,7 @@ export default class ObnizBLE extends ComponentAbstract {
       peripheral = new BleRemotePeripheral(this, uuid);
       this.remotePeripherals.push(peripheral);
     }
-    if (!this.centralBindings._addresses[uuid]) {
-      const address: any = uuid.match(/.{1,2}/g)!.join(":");
-      this.centralBindings._addresses[uuid] = address;
-      this.centralBindings._addresseTypes[uuid] = addressType;
-      this.centralBindings._connectable[uuid] = true;
-    }
+    this.centralBindings.addPeripheralData(uuid, addressType);
     peripheral.connect();
     return peripheral;
   }

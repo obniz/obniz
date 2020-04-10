@@ -99,6 +99,9 @@ class Gatt extends eventemitter3_1.default {
         });
         return result;
     }
+    onEnd(reason) {
+        this.emit("end", reason);
+    }
     async exchangeMtuWait(mtu) {
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
@@ -584,7 +587,17 @@ class Gatt extends eventemitter3_1.default {
         }
     }
     _serialPromiseQueueWait(func) {
+        const onfinish = () => {
+            this._commandPromises = this._commandPromises.filter((e) => e !== resultPromise);
+            if (disconnectReject) {
+                this.off("end", disconnectReject);
+            }
+        };
+        let disconnectReject = null;
         const doPromise = Promise.all(this._commandPromises)
+            .catch((error) => {
+            // nothing
+        })
             .then(() => {
             return func();
         })
@@ -592,14 +605,22 @@ class Gatt extends eventemitter3_1.default {
             throw reason;
         })
             .then((result) => {
-            this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+            onfinish();
             return Promise.resolve(result);
         }, (error) => {
-            this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+            onfinish();
             return Promise.reject(error);
         });
-        this._commandPromises.push(doPromise);
-        return doPromise;
+        const disconnectPromise = new Promise((resolve, reject) => {
+            disconnectReject = (reason) => {
+                onfinish();
+                reject(reason);
+            };
+            this.on("end", disconnectReject);
+        });
+        const resultPromise = Promise.race([doPromise, disconnectPromise]);
+        this._commandPromises.push(resultPromise);
+        return resultPromise;
     }
     _execCommandWait(buffer, waitOpcode) {
         const waitOpcodes = Array.isArray(waitOpcode) ? waitOpcode : [waitOpcode];

@@ -45,6 +45,10 @@ export default class BleScan {
     this.Obniz.send(obj);
   }
 
+  public async startWait(target: any, settings: any) {
+    return this.start(target, settings);
+  }
+
   public startOneWait(target: any, settings: any) {
     let state: any = 0;
 
@@ -83,6 +87,10 @@ export default class BleScan {
     obj.ble = {};
     obj.ble.scan = null;
     this.Obniz.send(obj);
+  }
+
+  public endWait() {
+    this.end();
   }
 
   public isTarget(peripheral: any) {

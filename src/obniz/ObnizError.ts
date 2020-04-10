@@ -161,8 +161,12 @@ export class ObnizBleHciStateError extends ObnizError {
     0x45: "Packet Too Long ",
   };
 
-  constructor(public state: number) {
-    super(10, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+  constructor(public state: number, params?: any) {
+    super(
+      10,
+      (ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error") +
+        (params ? ` ${JSON.stringify(params)}` : ""),
+    );
   }
 }
 

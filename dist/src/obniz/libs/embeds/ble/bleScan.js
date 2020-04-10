@@ -41,6 +41,9 @@ class BleScan {
         this.scanedPeripherals = [];
         this.Obniz.send(obj);
     }
+    async startWait(target, settings) {
+        return this.start(target, settings);
+    }
     startOneWait(target, settings) {
         let state = 0;
         return new Promise((resolve) => {
@@ -73,6 +76,9 @@ class BleScan {
         obj.ble = {};
         obj.ble.scan = null;
         this.Obniz.send(obj);
+    }
+    endWait() {
+        this.end();
     }
     isTarget(peripheral) {
         if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {

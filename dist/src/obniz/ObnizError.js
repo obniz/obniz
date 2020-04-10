@@ -87,8 +87,9 @@ class ObnizBleOpError extends ObnizError {
 }
 exports.ObnizBleOpError = ObnizBleOpError;
 class ObnizBleHciStateError extends ObnizError {
-    constructor(state) {
-        super(10, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+    constructor(state, params) {
+        super(10, (ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error") +
+            (params ? ` ${JSON.stringify(params)}` : ""));
         this.state = state;
     }
 }
