@@ -1,5 +1,7 @@
 // tslint:disable:max-classes-per-file
 
+import { deprecate } from "util";
+
 export class ObnizError extends Error {
   constructor(public code: number, e?: string) {
     super(e);
@@ -40,14 +42,14 @@ export class ObnizBleUnknownPeripheralError extends ObnizError {
 
 export class ObnizBleUnknownServiceError extends ObnizError {
   constructor(public peripheralUuid: string, public serviceUuid: string) {
-    super(5, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+    super(6, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
   }
 }
 
 export class ObnizBleUnknownCharacteristicError extends ObnizError {
   constructor(public peripheralUuid: string, public serviceUuid: string, public characteristicUuid: string) {
     super(
-      5,
+      7,
       "unknown characteristic.  peripheral :" +
         peripheralUuid +
         " service :" +
@@ -66,7 +68,7 @@ export class ObnizBleUnknownDescriptorError extends ObnizError {
     public descriptorUuid: string,
   ) {
     super(
-      5,
+      8,
       "unknown descriptor.  peripheral :" +
         peripheralUuid +
         " service :" +
@@ -81,7 +83,7 @@ export class ObnizBleUnknownDescriptorError extends ObnizError {
 
 export class ObnizBleOpError extends ObnizError {
   constructor() {
-    super(5, "BLE operation error");
+    super(9, "BLE operation error");
   }
 }
 
@@ -160,7 +162,7 @@ export class ObnizBleHciStateError extends ObnizError {
   };
 
   constructor(public state: number) {
-    super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+    super(10, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
   }
 }
 
@@ -169,6 +171,18 @@ export class ObnizBleAttError extends ObnizError {
   public static Errors: { [key: number]: string } = {};
 
   constructor(public state: number) {
-    super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+    super(11, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+  }
+}
+
+export class ObnizDeprecatedFunctionError extends ObnizError {
+  constructor(public deprecateFunctionName: string, replaceFunction: string) {
+    super(12, `${deprecateFunctionName} is deprecated function, please use ${replaceFunction}`);
+  }
+}
+
+export class ObnizBleUnsupportedHciError extends ObnizError {
+  constructor(public needVer: number, public currentVer: number) {
+    super(13, `Unsupported hci version, need version : ${needVer}, current version ${currentVer}`);
   }
 }

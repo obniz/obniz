@@ -12,6 +12,7 @@ const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const debug = (...params) => {
     // console.log(...params);
 };
+const ObnizError_1 = require("../../../../ObnizError");
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -166,7 +167,7 @@ class Hci extends eventemitter3_1.default {
         const manufacturer = data.result.readUInt16LE(4);
         const lmpSubVer = data.result.readUInt16LE(6);
         if (hciVer < 0x06) {
-            throw new Error("unsupported hci version");
+            throw new ObnizError_1.ObnizBleUnsupportedHciError(0x06, hciVer);
         }
         return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
     }
@@ -290,7 +291,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0006, 27); // max ce length
         debug("create le conn - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, { timeout: 30 * 1000 });
         return this.processLeConnComplete(status, data);
     }
     async connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
@@ -670,16 +671,16 @@ class Hci extends eventemitter3_1.default {
         this.emit("stateChange", state);
     }
     async readAclStreamWait(handle, cid, firstData) {
-        return new Promise((resolve) => {
+        return this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
             this._aclStreamObservers[handle][key].push(resolve);
-        });
+        }));
     }
-    async readLeMetaEventWait(eventType) {
+    async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
-        const data = await this._obnizHci.readWait(filter);
+        const data = await this._obnizHci.readWait(filter, options);
         const type = data.readUInt8(3);
         const status = data.readUInt8(4);
         const _data = data.slice(5);

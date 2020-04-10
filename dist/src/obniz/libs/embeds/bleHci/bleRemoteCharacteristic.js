@@ -3,6 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const ObnizError_1 = require("../../../ObnizError");
 const bleRemoteDescriptor_1 = __importDefault(require("./bleRemoteDescriptor"));
 const bleRemoteValueAttributeAbstract_1 = __importDefault(require("./bleRemoteValueAttributeAbstract"));
 /**
@@ -229,61 +234,16 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         }
     }
     /**
-     * It reads data from the characteristic.
-     *
-     * Even you wrote string or number, it returns binary array.
-     * The returned value appears in the callback function [[onread]].
-     *
-     * ```javascript
-     * // Javascript Example
-     * obniz.ble.scan.onfind = function(peripheral){
-     *   if(peripheral.localName == "my peripheral"){
-     *
-     *     peripheral.onconnect = function(){
-     *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
-     *       characteristic.read();
-     *       characteristic.onread = function(dataArray){
-     *         console.log("value : " + dataArray);
-     *       }
-     *     }
-     *
-     *     peripheral.connect();
-     *   }
-     * }
-     * obniz.ble.startScan({duration : 10});
-     * ```
-     *
-     *
+     * @deprecated
      */
     read() {
-        this.readWait(); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
-     * This writes dataArray to the characteristic.
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(peripheral){
-     *    await peripheral.connectWait();
-     *    console.log("connected");
-     *    await obniz.wait(1000);
-     *
-     *    var dataArray = [0x02, 0xFF];
-     *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
-     * }
-     * ```
-     *
-     * @param array
-     * @param needResponse
+     * @deprecated
      */
     write(array, needResponse) {
-        this.writeWait(array, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
      * This writes dataArray to the characteristic.

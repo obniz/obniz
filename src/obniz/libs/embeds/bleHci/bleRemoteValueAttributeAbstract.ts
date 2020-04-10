@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 
 /**
@@ -20,20 +21,6 @@ export default abstract class BleRemoteValueAttributeAbstract<
    * Callback function when read value.
    */
   public onread?: (data: any) => void;
-
-  /**
-   * @deprecated
-   */
-  public writeNumber(val: number, needResponse?: boolean) {
-    return super.writeNumber(val, needResponse);
-  }
-
-  /**
-   *  @deprecated
-   */
-  public writeText(str: string, needResponse?: boolean) {
-    return super.writeText(str, needResponse);
-  }
 
   /**
    * Wrapper for [[writeWait]] with data converting from text.

@@ -62,7 +62,7 @@ class ComponentAbstract extends eventemitter3_1.default {
         option.errors = option.errors || {};
         return new Promise((resolve, reject) => {
             if (this.Obniz.connectionState !== "connected") {
-                reject();
+                reject(new ObnizError_1.ObnizOfflineError());
             }
             const clearListeners = () => {
                 this.Obniz.off("close", onObnizClosed);

@@ -19,21 +19,6 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
   }
 
   /**
-   *  @deprecated
-   */
-  public write(dataArray: number[]) {
-    this.writeWait(dataArray); // background
-  }
-
-  /**
-   * @deprecated
-   *
-   */
-  public read() {
-    this.readWait(); // background
-  }
-
-  /**
    * This writes dataArray.
    * It throws an error when failed.
    *

@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
 import BleRemoteService from "./bleRemoteService";
@@ -304,62 +305,17 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   }
 
   /**
-   * It reads data from the characteristic.
-   *
-   * Even you wrote string or number, it returns binary array.
-   * The returned value appears in the callback function [[onread]].
-   *
-   * ```javascript
-   * // Javascript Example
-   * obniz.ble.scan.onfind = function(peripheral){
-   *   if(peripheral.localName == "my peripheral"){
-   *
-   *     peripheral.onconnect = function(){
-   *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
-   *       characteristic.read();
-   *       characteristic.onread = function(dataArray){
-   *         console.log("value : " + dataArray);
-   *       }
-   *     }
-   *
-   *     peripheral.connect();
-   *   }
-   * }
-   * obniz.ble.startScan({duration : 10});
-   * ```
-   *
-   *
+   * @deprecated
    */
   public read() {
-    this.readWait(); // background
+    throw new ObnizDeprecatedFunctionError("read", "readWait");
   }
 
   /**
-   * This writes dataArray to the characteristic.
-   *
-   * ```javascript
-   * // Javascript Example
-   *
-   * await obniz.ble.initWait();
-   * var target = {
-   *   uuids: ["fff0"],
-   * };
-   * var peripheral = await obniz.ble.scan.startOneWait(target);
-   * if(peripheral){
-   *    await peripheral.connectWait();
-   *    console.log("connected");
-   *    await obniz.wait(1000);
-   *
-   *    var dataArray = [0x02, 0xFF];
-   *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
-   * }
-   * ```
-   *
-   * @param array
-   * @param needResponse
+   * @deprecated
    */
   public write(array: number[], needResponse?: boolean) {
-    this.writeWait(array, needResponse); // background
+    throw new ObnizDeprecatedFunctionError("read", "readWait");
   }
 
   /**

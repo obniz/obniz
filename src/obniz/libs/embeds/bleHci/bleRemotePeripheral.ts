@@ -4,7 +4,7 @@
  */
 
 import EventEmitter from "eventemitter3";
-import { ObnizBleHciStateError } from "../../../ObnizError";
+import { ObnizBleHciStateError, ObnizOfflineError } from "../../../ObnizError";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
@@ -447,7 +447,7 @@ export default class BleRemotePeripheral {
   public async connectWait(setting?: BleConnectSetting): Promise<void> {
     this._connectSetting = setting || {};
     this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
-    this.obnizBle.scan.end();
+    await this.obnizBle.scan.endWait();
     const p1 = this.obnizBle.centralBindings.connectWait(this.address);
     const p2 = new Promise((resolve, reject) =>
       this.emitter.once("disconnect", (reason: ObnizBleHciStateError) => {

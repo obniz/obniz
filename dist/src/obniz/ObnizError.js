@@ -43,7 +43,7 @@ class ObnizBleUnknownPeripheralError extends ObnizError {
 exports.ObnizBleUnknownPeripheralError = ObnizBleUnknownPeripheralError;
 class ObnizBleUnknownServiceError extends ObnizError {
     constructor(peripheralUuid, serviceUuid) {
-        super(5, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+        super(6, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
         this.peripheralUuid = peripheralUuid;
         this.serviceUuid = serviceUuid;
     }
@@ -51,7 +51,7 @@ class ObnizBleUnknownServiceError extends ObnizError {
 exports.ObnizBleUnknownServiceError = ObnizBleUnknownServiceError;
 class ObnizBleUnknownCharacteristicError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid) {
-        super(5, "unknown characteristic.  peripheral :" +
+        super(7, "unknown characteristic.  peripheral :" +
             peripheralUuid +
             " service :" +
             serviceUuid +
@@ -65,7 +65,7 @@ class ObnizBleUnknownCharacteristicError extends ObnizError {
 exports.ObnizBleUnknownCharacteristicError = ObnizBleUnknownCharacteristicError;
 class ObnizBleUnknownDescriptorError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
-        super(5, "unknown descriptor.  peripheral :" +
+        super(8, "unknown descriptor.  peripheral :" +
             peripheralUuid +
             " service :" +
             serviceUuid +
@@ -82,13 +82,13 @@ class ObnizBleUnknownDescriptorError extends ObnizError {
 exports.ObnizBleUnknownDescriptorError = ObnizBleUnknownDescriptorError;
 class ObnizBleOpError extends ObnizError {
     constructor() {
-        super(5, "BLE operation error");
+        super(9, "BLE operation error");
     }
 }
 exports.ObnizBleOpError = ObnizBleOpError;
 class ObnizBleHciStateError extends ObnizError {
     constructor(state) {
-        super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+        super(10, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
         this.state = state;
     }
 }
@@ -168,11 +168,26 @@ ObnizBleHciStateError.Errors = {
 // todo error code to message
 class ObnizBleAttError extends ObnizError {
     constructor(state) {
-        super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+        super(11, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
         this.state = state;
     }
 }
 exports.ObnizBleAttError = ObnizBleAttError;
 ObnizBleAttError.Errors = {};
+class ObnizDeprecatedFunctionError extends ObnizError {
+    constructor(deprecateFunctionName, replaceFunction) {
+        super(12, `${deprecateFunctionName} is deprecated function, please use ${replaceFunction}`);
+        this.deprecateFunctionName = deprecateFunctionName;
+    }
+}
+exports.ObnizDeprecatedFunctionError = ObnizDeprecatedFunctionError;
+class ObnizBleUnsupportedHciError extends ObnizError {
+    constructor(needVer, currentVer) {
+        super(13, `Unsupported hci version, need version : ${needVer}, current version ${currentVer}`);
+        this.needVer = needVer;
+        this.currentVer = currentVer;
+    }
+}
+exports.ObnizBleUnsupportedHciError = ObnizBleUnsupportedHciError;
 
 //# sourceMappingURL=ObnizError.js.map

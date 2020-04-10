@@ -3,6 +3,7 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import EventEmitter from "eventemitter3";
+import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
 import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
 import { BleDeviceAddress, UUID } from "./bleTypes";
@@ -161,7 +162,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
    * @ignore
    */
   public writeText(str: string, needResponse?: boolean) {
-    this.writeTextWait(str, needResponse); // background
+    throw new ObnizDeprecatedFunctionError("writeText", "writeTextWait");
   }
 
   /**
@@ -175,7 +176,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
    * @ignore
    */
   public writeNumber(val: number, needResponse?: boolean) {
-    this.writeNumberWait(val, needResponse); // background
+    throw new ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
   }
 
   /**

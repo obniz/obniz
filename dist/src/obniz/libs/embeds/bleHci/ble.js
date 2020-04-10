@@ -90,7 +90,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 this.hci.end(); // disable once
                 this.hci.init();
             }
-            await this.hciProtocol.initWait();
+            try {
+                await this.hciProtocol.initWait();
+            }
+            catch (e) {
+                if (e instanceof ObnizError_1.ObnizBleUnsupportedHciError) {
+                    this.Obniz.reboot();
+                    return;
+                }
+                else {
+                    throw e;
+                }
+            }
         }
     }
     /**
@@ -115,6 +126,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                     p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
                 }
             }
+        }
+        if (this.scan && this.scan.state !== "stopped") {
+            this.scan.notifyFromServer("obnizClose", {});
         }
         this.hciProtocol = new hci_2.default(this.hci);
         this.centralBindings = new bindings_1.default(this.hciProtocol);

@@ -131,7 +131,7 @@ class BleRemotePeripheral {
     async connectWait(setting) {
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
-        this.obnizBle.scan.end();
+        await this.obnizBle.scan.endWait();
         const p1 = this.obnizBle.centralBindings.connectWait(this.address);
         const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", (reason) => {
             reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +

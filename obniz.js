@@ -2972,7 +2972,7 @@ class ObnizBleUnknownPeripheralError extends ObnizError {
 exports.ObnizBleUnknownPeripheralError = ObnizBleUnknownPeripheralError;
 class ObnizBleUnknownServiceError extends ObnizError {
     constructor(peripheralUuid, serviceUuid) {
-        super(5, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+        super(6, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
         this.peripheralUuid = peripheralUuid;
         this.serviceUuid = serviceUuid;
     }
@@ -2980,7 +2980,7 @@ class ObnizBleUnknownServiceError extends ObnizError {
 exports.ObnizBleUnknownServiceError = ObnizBleUnknownServiceError;
 class ObnizBleUnknownCharacteristicError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid) {
-        super(5, "unknown characteristic.  peripheral :" +
+        super(7, "unknown characteristic.  peripheral :" +
             peripheralUuid +
             " service :" +
             serviceUuid +
@@ -2994,7 +2994,7 @@ class ObnizBleUnknownCharacteristicError extends ObnizError {
 exports.ObnizBleUnknownCharacteristicError = ObnizBleUnknownCharacteristicError;
 class ObnizBleUnknownDescriptorError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
-        super(5, "unknown descriptor.  peripheral :" +
+        super(8, "unknown descriptor.  peripheral :" +
             peripheralUuid +
             " service :" +
             serviceUuid +
@@ -3011,13 +3011,13 @@ class ObnizBleUnknownDescriptorError extends ObnizError {
 exports.ObnizBleUnknownDescriptorError = ObnizBleUnknownDescriptorError;
 class ObnizBleOpError extends ObnizError {
     constructor() {
-        super(5, "BLE operation error");
+        super(9, "BLE operation error");
     }
 }
 exports.ObnizBleOpError = ObnizBleOpError;
 class ObnizBleHciStateError extends ObnizError {
     constructor(state) {
-        super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+        super(10, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
         this.state = state;
     }
 }
@@ -3097,12 +3097,27 @@ ObnizBleHciStateError.Errors = {
 // todo error code to message
 class ObnizBleAttError extends ObnizError {
     constructor(state) {
-        super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+        super(11, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
         this.state = state;
     }
 }
 exports.ObnizBleAttError = ObnizBleAttError;
 ObnizBleAttError.Errors = {};
+class ObnizDeprecatedFunctionError extends ObnizError {
+    constructor(deprecateFunctionName, replaceFunction) {
+        super(12, `${deprecateFunctionName} is deprecated function, please use ${replaceFunction}`);
+        this.deprecateFunctionName = deprecateFunctionName;
+    }
+}
+exports.ObnizDeprecatedFunctionError = ObnizDeprecatedFunctionError;
+class ObnizBleUnsupportedHciError extends ObnizError {
+    constructor(needVer, currentVer) {
+        super(13, `Unsupported hci version, need version : ${needVer}, current version ${currentVer}`);
+        this.needVer = needVer;
+        this.currentVer = currentVer;
+    }
+}
+exports.ObnizBleUnsupportedHciError = ObnizBleUnsupportedHciError;
 
 //# sourceMappingURL=ObnizError.js.map
 
@@ -4051,7 +4066,7 @@ class ComponentAbstract extends eventemitter3_1.default {
         option.errors = option.errors || {};
         return new Promise((resolve, reject) => {
             if (this.Obniz.connectionState !== "connected") {
-                reject();
+                reject(new ObnizError_1.ObnizOfflineError());
             }
             const clearListeners = () => {
                 this.Obniz.off("close", onObnizClosed);
@@ -6444,7 +6459,18 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 this.hci.end(); // disable once
                 this.hci.init();
             }
-            await this.hciProtocol.initWait();
+            try {
+                await this.hciProtocol.initWait();
+            }
+            catch (e) {
+                if (e instanceof ObnizError_1.ObnizBleUnsupportedHciError) {
+                    this.Obniz.reboot();
+                    return;
+                }
+                else {
+                    throw e;
+                }
+            }
         }
     }
     /**
@@ -6469,6 +6495,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                     p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
                 }
             }
+        }
+        if (this.scan && this.scan.state !== "stopped") {
+            this.scan.notifyFromServer("obnizClose", {});
         }
         this.hciProtocol = new hci_2.default(this.hci);
         this.centralBindings = new bindings_1.default(this.hciProtocol);
@@ -6993,6 +7022,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 class BleAttributeAbstract {
@@ -7085,7 +7115,7 @@ class BleAttributeAbstract {
      * @ignore
      */
     writeText(str, needResponse) {
-        this.writeTextWait(str, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeText", "writeTextWait");
     }
     /**
      * @ignore
@@ -7097,7 +7127,7 @@ class BleAttributeAbstract {
      * @ignore
      */
     writeNumber(val, needResponse) {
-        this.writeNumberWait(val, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
     }
     /**
      * @ignore
@@ -7671,19 +7701,6 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super(params);
     }
     /**
-     *  @deprecated
-     */
-    write(dataArray) {
-        this.writeWait(dataArray); // background
-    }
-    /**
-     * @deprecated
-     *
-     */
-    read() {
-        this.readWait(); // background
-    }
-    /**
      * This writes dataArray.
      * It throws an error when failed.
      *
@@ -7971,6 +7988,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js"));
 const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
 /**
@@ -8197,61 +8219,16 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         }
     }
     /**
-     * It reads data from the characteristic.
-     *
-     * Even you wrote string or number, it returns binary array.
-     * The returned value appears in the callback function [[onread]].
-     *
-     * ```javascript
-     * // Javascript Example
-     * obniz.ble.scan.onfind = function(peripheral){
-     *   if(peripheral.localName == "my peripheral"){
-     *
-     *     peripheral.onconnect = function(){
-     *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
-     *       characteristic.read();
-     *       characteristic.onread = function(dataArray){
-     *         console.log("value : " + dataArray);
-     *       }
-     *     }
-     *
-     *     peripheral.connect();
-     *   }
-     * }
-     * obniz.ble.startScan({duration : 10});
-     * ```
-     *
-     *
+     * @deprecated
      */
     read() {
-        this.readWait(); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
-     * This writes dataArray to the characteristic.
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(peripheral){
-     *    await peripheral.connectWait();
-     *    console.log("connected");
-     *    await obniz.wait(1000);
-     *
-     *    var dataArray = [0x02, 0xFF];
-     *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
-     * }
-     * ```
-     *
-     * @param array
-     * @param needResponse
+     * @deprecated
      */
     write(array, needResponse) {
-        this.writeWait(array, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
      * This writes dataArray to the characteristic.
@@ -8476,13 +8453,6 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         return "characteristic";
     }
     /**
-     * @deprecated
-     *
-     */
-    read() {
-        this.readWait(); // background
-    }
-    /**
      * Read data from descriptor.
      *
      * The return value appears in the callback function [[onread]].
@@ -8514,12 +8484,6 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
             this.onread(data);
         }
         return data;
-    }
-    /**
-     *  @deprecated
-     */
-    write(data) {
-        this.writeWait(data); // background
     }
     /**
      * This writes dataArray to descriptor.
@@ -8699,7 +8663,7 @@ class BleRemotePeripheral {
     async connectWait(setting) {
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
-        this.obnizBle.scan.end();
+        await this.obnizBle.scan.endWait();
         const p1 = this.obnizBle.centralBindings.connectWait(this.address);
         const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", (reason) => {
             reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
@@ -9303,27 +9267,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
 /**
  * @category Use as Central
  */
 class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
-    /**
-     * @deprecated
-     */
-    writeNumber(val, needResponse) {
-        return super.writeNumber(val, needResponse);
-    }
-    /**
-     *  @deprecated
-     */
-    writeText(str, needResponse) {
-        return super.writeText(str, needResponse);
-    }
     /**
      * Wrapper for [[writeWait]] with data converting from text.
      * It convert string to UTF-8 and write binary array.
@@ -9368,6 +9316,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
@@ -9375,6 +9324,7 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  */
 class BleScan {
     constructor(obnizBle) {
+        this.state = "stopping";
         this._delayNotifyTimers = [];
         this.scanTarget = {};
         this.scanSettings = {};
@@ -9387,9 +9337,7 @@ class BleScan {
      * @deprecated
      */
     async start(target = {}, settings = {}) {
-        this.startWait(target, settings).catch((reason) => {
-            this.finish(reason);
-        });
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("start", "startWait");
     }
     /**
      * This starts scanning BLE.
@@ -9415,7 +9363,7 @@ class BleScan {
      *
      * ```javascript
      * // Javascript Example
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      * @param target
@@ -9423,6 +9371,7 @@ class BleScan {
      */
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
+        this.state = "starting";
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
         settings.filterOnDevice = !!settings.filterOnDevice;
@@ -9452,9 +9401,10 @@ class BleScan {
         if (timeout !== null) {
             this._timeoutTimer = setTimeout(() => {
                 this._timeoutTimer = undefined;
-                this.end();
+                this.endWait();
             }, timeout * 1000);
         }
+        this.state = "started";
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -9525,9 +9475,7 @@ class BleScan {
      * @deprecated
      */
     end() {
-        this.endWait().catch((reason) => {
-            this.finish(reason);
-        });
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("end", "endWait");
     }
     /**
      * This stops scanning BLE.
@@ -9535,15 +9483,18 @@ class BleScan {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * await obniz.wait(5000);
      * await obniz.ble.scan.endWait();
      * ```
      */
     async endWait() {
-        this.clearTimeoutTimer();
-        await this.obnizBle.centralBindings.stopScanningWait();
-        this.finish();
+        if (this.state === "started" || this.state === "starting") {
+            this.state = "stopping";
+            this.clearTimeoutTimer();
+            await this.obnizBle.centralBindings.stopScanningWait();
+            this.finish();
+        }
     }
     /**
      * @ignore
@@ -9552,6 +9503,10 @@ class BleScan {
      */
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
+            case "obnizClose": {
+                this.finish(new ObnizError_1.ObnizOfflineError());
+                break;
+            }
             case "onfind": {
                 const peripheral = params;
                 const alreadyGotCompleteAdveData = peripheral.adv_data &&
@@ -9739,12 +9694,15 @@ class BleScan {
         }
     }
     finish(error) {
-        this.clearTimeoutTimer();
-        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
-        this._clearDelayNotifyTimer();
-        this.emitter.emit("onfinish", this.scanedPeripherals, error);
-        if (this.onfinish) {
-            this.onfinish(this.scanedPeripherals, error);
+        if (this.state !== "stopped") {
+            this.clearTimeoutTimer();
+            this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+            this._clearDelayNotifyTimer();
+            this.emitter.emit("onfinish", this.scanedPeripherals, error);
+            if (this.onfinish) {
+                this.onfinish(this.scanedPeripherals, error);
+            }
+            this.state = "stopped";
         }
     }
     _notifyOnFind(peripheral) {
@@ -10056,13 +10014,11 @@ exports.default = BleService;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
     constructor(Obniz) {
+        this.timeout = 10 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
     }
@@ -10130,10 +10086,53 @@ class ObnizBLEHci {
      * @param data
      */
     onread(data) { }
-    readWait(binaryFilter) {
-        return new Promise((resolve) => {
-            this.onceQueue(binaryFilter, resolve);
+    /**
+     * @ignore
+     * @private
+     * @param promise
+     * @param option
+     */
+    timeoutPromiseWrapper(promise, option) {
+        option = option || {};
+        option.timeout = option.timeout || this.timeout;
+        let onObnizClosed = null;
+        let timeoutHandler = null;
+        const clearListeners = () => {
+            this.Obniz.off("close", onObnizClosed);
+            if (timeoutHandler) {
+                clearTimeout(timeoutHandler);
+            }
+        };
+        const successPromise = promise.then((result) => {
+            clearListeners();
+            return result;
+        }, (reason) => {
+            clearListeners();
+            throw reason;
         });
+        const errorPromise = new Promise((resolve, reject) => {
+            if (this.Obniz.connectionState !== "connected") {
+                reject(new ObnizError_1.ObnizOfflineError());
+            }
+            onObnizClosed = () => {
+                clearListeners();
+                const error = new ObnizError_1.ObnizOfflineError();
+                reject(error);
+            };
+            this.Obniz.on("close", onObnizClosed);
+            const onTimeout = () => {
+                clearListeners();
+                const error = new ObnizError_1.ObnizTimeoutError();
+                reject(error);
+            };
+            timeoutHandler = setTimeout(onTimeout, option.timeout);
+        });
+        return Promise.race([successPromise, errorPromise]);
+    }
+    readWait(binaryFilter, option) {
+        return this.timeoutPromiseWrapper(new Promise((resolve) => {
+            this.onceQueue(binaryFilter, resolve);
+        }), option);
     }
     onceQueue(binaryFilter, func) {
         const eventName = this.encodeBinaryFilter(binaryFilter);
@@ -11871,6 +11870,7 @@ const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/even
 const debug = (...params) => {
     // console.log(...params);
 };
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -12025,7 +12025,7 @@ class Hci extends eventemitter3_1.default {
         const manufacturer = data.result.readUInt16LE(4);
         const lmpSubVer = data.result.readUInt16LE(6);
         if (hciVer < 0x06) {
-            throw new Error("unsupported hci version");
+            throw new ObnizError_1.ObnizBleUnsupportedHciError(0x06, hciVer);
         }
         return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
     }
@@ -12149,7 +12149,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0006, 27); // max ce length
         debug("create le conn - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, { timeout: 30 * 1000 });
         return this.processLeConnComplete(status, data);
     }
     async connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
@@ -12529,16 +12529,16 @@ class Hci extends eventemitter3_1.default {
         this.emit("stateChange", state);
     }
     async readAclStreamWait(handle, cid, firstData) {
-        return new Promise((resolve) => {
+        return this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
             this._aclStreamObservers[handle][key].push(resolve);
-        });
+        }));
     }
-    async readLeMetaEventWait(eventType) {
+    async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
-        const data = await this._obnizHci.readWait(filter);
+        const data = await this._obnizHci.readWait(filter, options);
         const type = data.readUInt8(3);
         const status = data.readUInt8(4);
         const _data = data.slice(5);

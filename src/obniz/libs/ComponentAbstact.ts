@@ -80,7 +80,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
 
     return new Promise((resolve, reject) => {
       if (this.Obniz.connectionState !== "connected") {
-        reject();
+        reject(new ObnizOfflineError());
       }
       const clearListeners = () => {
         this.Obniz.off("close", onObnizClosed);

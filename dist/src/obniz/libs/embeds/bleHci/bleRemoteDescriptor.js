@@ -18,13 +18,6 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         return "characteristic";
     }
     /**
-     * @deprecated
-     *
-     */
-    read() {
-        this.readWait(); // background
-    }
-    /**
      * Read data from descriptor.
      *
      * The return value appears in the callback function [[onread]].
@@ -56,12 +49,6 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
             this.onread(data);
         }
         return data;
-    }
-    /**
-     *  @deprecated
-     */
-    write(data) {
-        this.writeWait(data); // background
     }
     /**
      * This writes dataArray to descriptor.

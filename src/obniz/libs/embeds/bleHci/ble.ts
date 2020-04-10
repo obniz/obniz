@@ -11,7 +11,7 @@ import PeripheralBindings from "./protocol/peripheral/bindings";
 
 import semver from "semver";
 import Obniz from "../../../index";
-import { ObnizBleHciStateError, ObnizOfflineError } from "../../../ObnizError";
+import { ObnizBleHciStateError, ObnizBleUnsupportedHciError, ObnizOfflineError } from "../../../ObnizError";
 import { ComponentAbstract } from "../../ComponentAbstact";
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
@@ -125,7 +125,16 @@ export default class ObnizBLE extends ComponentAbstract {
         this.hci.init();
       }
 
-      await this.hciProtocol.initWait();
+      try {
+        await this.hciProtocol.initWait();
+      } catch (e) {
+        if (e instanceof ObnizBleUnsupportedHciError) {
+          this.Obniz.reboot();
+          return;
+        } else {
+          throw e;
+        }
+      }
     }
   }
 
@@ -153,7 +162,9 @@ export default class ObnizBLE extends ComponentAbstract {
         }
       }
     }
-
+    if (this.scan && this.scan.state !== "stopped") {
+      this.scan.notifyFromServer("obnizClose", {});
+    }
     this.hciProtocol = new HciProtocol(this.hci);
     this.centralBindings = new CentralBindings(this.hciProtocol);
     this.peripheralBindings = new PeripheralBindings(this.hciProtocol);

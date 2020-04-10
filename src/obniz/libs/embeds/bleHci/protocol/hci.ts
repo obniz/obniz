@@ -10,7 +10,7 @@ const debug: any = (...params: any[]) => {
   // console.log(...params);
 };
 
-import { ObnizBleHciStateError } from "../../../../ObnizError";
+import { ObnizBleHciStateError, ObnizBleUnsupportedHciError } from "../../../../ObnizError";
 import { Handle } from "../bleTypes";
 
 namespace COMMANDS {
@@ -131,7 +131,7 @@ class Hci extends EventEmitter<HciEventTypes> {
   public addressType: any;
   public address: any;
   private _state: HciState;
-  private _aclStreamObservers: { [key: string]: any[] } = {};
+  private _aclStreamObservers: { [handle: string]: { [key: string]: Array<(arg0: Buffer) => any> } } = {};
 
   constructor(obnizHci: any) {
     super();
@@ -232,7 +232,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     const lmpSubVer: any = data.result.readUInt16LE(6);
 
     if (hciVer < 0x06) {
-      throw new Error("unsupported hci version");
+      throw new ObnizBleUnsupportedHciError(0x06, hciVer);
     }
 
     return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
@@ -401,7 +401,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     debug("create le conn - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+    const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, { timeout: 30 * 1000 });
     return this.processLeConnComplete(status, data);
   }
 
@@ -897,17 +897,19 @@ class Hci extends EventEmitter<HciEventTypes> {
   }
 
   public async readAclStreamWait(handle: Handle, cid: number, firstData: number): Promise<Buffer> {
-    return new Promise((resolve) => {
-      const key = (cid << 8) + firstData;
-      this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
-      this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
-      this._aclStreamObservers[handle][key].push(resolve);
-    });
+    return this._obnizHci.timeoutPromiseWrapper(
+      new Promise((resolve) => {
+        const key = (cid << 8) + firstData;
+        this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
+        this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
+        this._aclStreamObservers[handle][key].push(resolve);
+      }),
+    );
   }
 
-  protected async readLeMetaEventWait(eventType: number) {
+  protected async readLeMetaEventWait(eventType: number, options?: any) {
     const filter = this.createLeMetaEventFilter(eventType);
-    const data = await this._obnizHci.readWait(filter);
+    const data = await this._obnizHci.readWait(filter, options);
 
     const type: any = data.readUInt8(3);
     const status: any = data.readUInt8(4);
@@ -971,7 +973,7 @@ class Hci extends EventEmitter<HciEventTypes> {
           this._aclStreamObservers[handle][key] &&
           this._aclStreamObservers[handle][key].length > 0
         ) {
-          const resolve = this._aclStreamObservers[handle][key].shift();
+          const resolve = this._aclStreamObservers[handle][key].shift()!;
           resolve(pktData);
         }
       } else {
@@ -996,7 +998,7 @@ class Hci extends EventEmitter<HciEventTypes> {
           this._aclStreamObservers[handle][key] &&
           this._aclStreamObservers[handle][key].length > 0
         ) {
-          const resolve = this._aclStreamObservers[handle][key].shift();
+          const resolve = this._aclStreamObservers[handle][key].shift()!;
           resolve(this._handleBuffers[handle].data);
         }
         delete this._handleBuffers[handle];

@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
+const ObnizError_1 = require("../../../ObnizError");
 const util_1 = __importDefault(require("../../utils/util"));
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 class BleAttributeAbstract {
@@ -100,7 +101,7 @@ class BleAttributeAbstract {
      * @ignore
      */
     writeText(str, needResponse) {
-        this.writeTextWait(str, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeText", "writeTextWait");
     }
     /**
      * @ignore
@@ -112,7 +113,7 @@ class BleAttributeAbstract {
      * @ignore
      */
     writeNumber(val, needResponse) {
-        this.writeNumberWait(val, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
     }
     /**
      * @ignore

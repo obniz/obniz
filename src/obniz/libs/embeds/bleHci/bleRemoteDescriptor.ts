@@ -24,14 +24,6 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
   }
 
   /**
-   * @deprecated
-   *
-   */
-  public read() {
-    this.readWait(); // background
-  }
-
-  /**
    * Read data from descriptor.
    *
    * The return value appears in the callback function [[onread]].
@@ -69,13 +61,6 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
       this.onread(data);
     }
     return data;
-  }
-
-  /**
-   *  @deprecated
-   */
-  public write(data: number[]) {
-    this.writeWait(data); // background
   }
 
   /**

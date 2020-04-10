@@ -12,19 +12,6 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super(params);
     }
     /**
-     *  @deprecated
-     */
-    write(dataArray) {
-        this.writeWait(dataArray); // background
-    }
-    /**
-     * @deprecated
-     *
-     */
-    read() {
-        this.readWait(); // background
-    }
-    /**
      * This writes dataArray.
      * It throws an error when failed.
      *

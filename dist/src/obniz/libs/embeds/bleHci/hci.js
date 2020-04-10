@@ -1,11 +1,9 @@
 "use strict";
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizError_1 = require("../../../ObnizError");
 class ObnizBLEHci {
     constructor(Obniz) {
+        this.timeout = 10 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
     }
@@ -73,10 +71,53 @@ class ObnizBLEHci {
      * @param data
      */
     onread(data) { }
-    readWait(binaryFilter) {
-        return new Promise((resolve) => {
-            this.onceQueue(binaryFilter, resolve);
+    /**
+     * @ignore
+     * @private
+     * @param promise
+     * @param option
+     */
+    timeoutPromiseWrapper(promise, option) {
+        option = option || {};
+        option.timeout = option.timeout || this.timeout;
+        let onObnizClosed = null;
+        let timeoutHandler = null;
+        const clearListeners = () => {
+            this.Obniz.off("close", onObnizClosed);
+            if (timeoutHandler) {
+                clearTimeout(timeoutHandler);
+            }
+        };
+        const successPromise = promise.then((result) => {
+            clearListeners();
+            return result;
+        }, (reason) => {
+            clearListeners();
+            throw reason;
         });
+        const errorPromise = new Promise((resolve, reject) => {
+            if (this.Obniz.connectionState !== "connected") {
+                reject(new ObnizError_1.ObnizOfflineError());
+            }
+            onObnizClosed = () => {
+                clearListeners();
+                const error = new ObnizError_1.ObnizOfflineError();
+                reject(error);
+            };
+            this.Obniz.on("close", onObnizClosed);
+            const onTimeout = () => {
+                clearListeners();
+                const error = new ObnizError_1.ObnizTimeoutError();
+                reject(error);
+            };
+            timeoutHandler = setTimeout(onTimeout, option.timeout);
+        });
+        return Promise.race([successPromise, errorPromise]);
+    }
+    readWait(binaryFilter, option) {
+        return this.timeoutPromiseWrapper(new Promise((resolve) => {
+            this.onceQueue(binaryFilter, resolve);
+        }), option);
     }
     onceQueue(binaryFilter, func) {
         const eventName = this.encodeBinaryFilter(binaryFilter);

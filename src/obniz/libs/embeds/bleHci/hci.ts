@@ -1,3 +1,5 @@
+import { ObnizOfflineError, ObnizTimeoutError } from "../../../ObnizError";
+
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -7,6 +9,7 @@ export type EventHandler = (...args: any) => any;
 
 export default class ObnizBLEHci {
   public Obniz: any;
+  public timeout: number = 10 * 1000;
 
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
@@ -85,13 +88,71 @@ export default class ObnizBLEHci {
    */
   public onread(data: any) {}
 
-  public readWait(binaryFilter: number[]): Promise<Buffer> {
-    return new Promise((resolve) => {
-      this.onceQueue(binaryFilter, resolve);
+  /**
+   * @ignore
+   * @private
+   * @param promise
+   * @param option
+   */
+  public timeoutPromiseWrapper(promise: Promise<any>, option?: any) {
+    option = option || {};
+    option.timeout = option.timeout || this.timeout;
+
+    let onObnizClosed: null | (() => void) = null;
+    let timeoutHandler: null | NodeJS.Timeout = null;
+
+    const clearListeners = () => {
+      this.Obniz.off("close", onObnizClosed);
+      if (timeoutHandler) {
+        clearTimeout(timeoutHandler);
+      }
+    };
+
+    const successPromise = promise.then(
+      (result: any) => {
+        clearListeners();
+        return result;
+      },
+      (reason: any) => {
+        clearListeners();
+        throw reason;
+      },
+    );
+
+    const errorPromise = new Promise((resolve, reject) => {
+      if (this.Obniz.connectionState !== "connected") {
+        reject(new ObnizOfflineError());
+      }
+
+      onObnizClosed = () => {
+        clearListeners();
+        const error = new ObnizOfflineError();
+        reject(error);
+      };
+      this.Obniz.on("close", onObnizClosed);
+
+      const onTimeout = () => {
+        clearListeners();
+
+        const error = new ObnizTimeoutError();
+        reject(error);
+      };
+      timeoutHandler = setTimeout(onTimeout, option!.timeout);
     });
+
+    return Promise.race([successPromise, errorPromise]);
   }
 
-  public onceQueue(binaryFilter: number[], func: EventHandler) {
+  public readWait(binaryFilter: number[], option?: any): Promise<Buffer> {
+    return this.timeoutPromiseWrapper(
+      new Promise((resolve) => {
+        this.onceQueue(binaryFilter, resolve);
+      }),
+      option,
+    );
+  }
+
+  protected onceQueue(binaryFilter: number[], func: EventHandler) {
     const eventName = this.encodeBinaryFilter(binaryFilter);
     this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
     if (typeof func === "function") {
