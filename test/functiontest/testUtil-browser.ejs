@@ -83,7 +83,36 @@ var testUtil = {
     
     done();
   },
-  
+
+  closeAndReconnectObnizWait: function(obj) {
+    const options = obj.obnizOptions;
+    return new Promise(resolve => {
+      serverDataCount = obj.obniz.socket.send.callCount;
+
+      const socet = obj.obniz.socket; // stub
+      obj.obniz.close();
+      obj.obniz.socket = socet; // stub
+      obj.obniz.wsOnOpen();
+      obj.obniz.wsOnMessage(
+      JSON.stringify([
+        {
+          ws: {
+            ready: true,
+              obniz: {
+                firmware: options.__firmware_ver || '2.1.0',
+              },
+            },
+          },
+        ])
+      );
+
+      expect(obj.obniz).send([
+        { ws: { reset_obniz_on_ws_disconnection: true } },
+      ]);
+      expect(obj.obniz).to.be.finished;
+      resolve();
+    });
+  },
   waitForWebsocketCall : function(obj, n){
     return new Promise(function(resolve, reject){
       var count = 100;
