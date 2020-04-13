@@ -2,7 +2,7 @@ import Obniz from "../dist/src/obniz/index";
 import BleRemotePeripheral from "../src/obniz/libs/embeds/bleHci/bleRemotePeripheral";
 
 const obniz = new Obniz("54371148");
-obniz.debugprint =true;
+obniz.debugprint = true;
 let rebooted = false;
 
 obniz.onconnect = async () => {

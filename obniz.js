@@ -8667,17 +8667,6 @@ class BleRemotePeripheral {
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
         await this.obnizBle.centralBindings.connectWait(this.address);
-        // const p2 = new Promise((resolve, reject) =>
-        //   this.emitter.once("disconnect", (reason: ObnizBleHciStateError) => {
-        //     reject(
-        //       new Error(
-        //         `connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
-        //           ` Error code:${reason.state}, ${reason.message}`,
-        //       ),
-        //     );
-        //   }),
-        // );
-        // await Promise.race([p1, p2]);
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
@@ -8827,7 +8816,7 @@ class BleRemotePeripheral {
      *          await peripheral.discoverAllServicesWait(); //manually discover
      *          let service = peripheral.getService("1800");
      *      }
-     *      peripheral.connect({autoDiscovery:false});
+     *      peripheral.connectWait({autoDiscovery:false});
      *     }
      * }
      * obniz.ble.scan.start();

@@ -175,7 +175,7 @@ describe('ble-hci-central', function() {
 
     // scan stop
     sendHciCommands(this.obniz, [1, 12, 32, 2, 0, 1]);
-
+    await receiveHciCommandsWait(this.obniz, [4,14,4,5,12,32,12]);
     // connect req
     sendHciCommands(this.obniz, [1, 13, 32, 25, 96, 0, 48, 0, 0, 1, 130, 168, 133, 213, 252, 115, 0, 6, 0, 12, 0, 0, 0, 200, 0, 4, 0, 6, 0]);
 

@@ -4,7 +4,7 @@
  */
 
 import EventEmitter from "eventemitter3";
-import { ObnizBleHciStateError, ObnizOfflineError } from "../../../ObnizError";
+import { ObnizBleHciStateError, ObnizDeprecatedFunctionError, ObnizOfflineError } from "../../../ObnizError";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
@@ -55,14 +55,13 @@ export interface BleConnectSetting {
    * // Javascript Example
    * await obniz.ble.initWait({});
    * obniz.ble.scan.onfind = function(peripheral){
-   * if(peripheral.localName == "my peripheral"){
-   *      peripheral.onconnect = async function(){
-   *          console.log("success");
-   *          await peripheral.discoverAllServicesWait(); //manually discover
-   *          let service = peripheral.getService("1800");
-   *      }
-   *      peripheral.connect({autoDiscovery:false});
-   *     }
+   *   if(peripheral.localName == "my peripheral"){
+   *      await peripheral.connectWait({autoDiscovery:false});
+   *      console.log("success");
+   *      await peripheral.discoverAllServicesWait(); //manually discover
+   *      let service = peripheral.getService("1800");
+   *
+   *   }
    * }
    * obniz.ble.scan.start();
    * ```
@@ -299,7 +298,7 @@ export default class BleRemotePeripheral {
    *     peripheral.onconnect = function(){
    *       console.log("success");
    *     }
-   *      peripheral.connect();
+   *      await peripheral.connectWait();
    *    }
    * }
    * obniz.ble.scan.start();
@@ -449,17 +448,6 @@ export default class BleRemotePeripheral {
     this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
     await this.obnizBle.scan.endWait();
     await this.obnizBle.centralBindings.connectWait(this.address);
-    // const p2 = new Promise((resolve, reject) =>
-    //   this.emitter.once("disconnect", (reason: ObnizBleHciStateError) => {
-    //     reject(
-    //       new Error(
-    //         `connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
-    //           ` Error code:${reason.state}, ${reason.message}`,
-    //       ),
-    //     );
-    //   }),
-    // );
-    // await Promise.race([p1, p2]);
     if (this._connectSetting.autoDiscovery) {
       await this.discoverAllHandlesWait();
     }
@@ -618,7 +606,7 @@ export default class BleRemotePeripheral {
    *          await peripheral.discoverAllServicesWait(); //manually discover
    *          let service = peripheral.getService("1800");
    *      }
-   *      peripheral.connect({autoDiscovery:false});
+   *      peripheral.connectWait({autoDiscovery:false});
    *     }
    * }
    * obniz.ble.scan.start();
