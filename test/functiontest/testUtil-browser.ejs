@@ -56,6 +56,7 @@ var testUtil = {
     stub.readyState = 1;
 
     sinon.stub(Obniz.prototype, 'wsconnect');
+    obj.obnizOptions = options;
     obj.obniz = this.createObniz(100, '12345678', options);
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
