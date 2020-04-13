@@ -83,7 +83,7 @@ class ComponentAbstract extends eventemitter3_1.default {
             };
             const onTimeout = () => {
                 clearListeners();
-                const error = new ObnizError_1.ObnizTimeoutError();
+                const error = new ObnizError_1.ObnizTimeoutError(schemaPath);
                 reject(error);
             };
             const onErrorFuncs = [];

@@ -98,6 +98,7 @@ let testUtil = {
     stub.readyState = 1;
 
     sinon.stub(Obniz.prototype, 'wsconnect');
+    obj.obnizOptions = options;
     obj.obniz = this.createObniz(100, '12345678', options);
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
@@ -117,6 +118,7 @@ let testUtil = {
     serverDataCount = 0;
 
     expect(obj.obniz).send([{ ws: { reset_obniz_on_ws_disconnection: true } }]);
+    expect(obj.obniz).to.be.finished;
 
     done();
   },
@@ -127,6 +129,36 @@ let testUtil = {
     Obniz.prototype.wsconnect.restore();
 
     done();
+  },
+
+  closeAndReconnectObnizWait: function(obj) {
+    const options = obj.obnizOptions;
+    return new Promise(resolve => {
+      serverDataCount = obj.obniz.socket.send.callCount;
+
+      const socet = obj.obniz.socket; // stub
+      obj.obniz.close();
+      obj.obniz.socket = socet; // stub
+      obj.obniz.wsOnOpen();
+      obj.obniz.wsOnMessage(
+        JSON.stringify([
+          {
+            ws: {
+              ready: true,
+              obniz: {
+                firmware: options.__firmware_ver || '2.1.0',
+              },
+            },
+          },
+        ])
+      );
+
+      expect(obj.obniz).send([
+        { ws: { reset_obniz_on_ws_disconnection: true } },
+      ]);
+      expect(obj.obniz).to.be.finished;
+      resolve();
+    });
   },
 
   waitForWebsocketCall: function(obj, n) {

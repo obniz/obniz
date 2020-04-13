@@ -18,6 +18,14 @@ export default class ObnizBLEHci {
   }
 
   /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this._eventHandlerQueue = {};
+  }
+
+  /**
    * Initialize BLE HCI module
    */
   public init() {
@@ -97,6 +105,7 @@ export default class ObnizBLEHci {
   public timeoutPromiseWrapper(promise: Promise<any>, option?: any) {
     option = option || {};
     option.timeout = option.timeout || this.timeout;
+    option.waitingFor = option.waitingFor || undefined;
 
     let onObnizClosed: null | (() => void) = null;
     let timeoutHandler: null | NodeJS.Timeout = null;
@@ -134,7 +143,7 @@ export default class ObnizBLEHci {
       const onTimeout = () => {
         clearListeners();
 
-        const error = new ObnizTimeoutError();
+        const error = new ObnizTimeoutError(option.waitingFor);
         reject(error);
       };
       timeoutHandler = setTimeout(onTimeout, option!.timeout);

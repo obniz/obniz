@@ -163,6 +163,7 @@ export default class ObnizBLE extends ComponentAbstract {
     if (this.scan && this.scan.state !== "stopped") {
       this.scan.notifyFromServer("obnizClose", {});
     }
+    this.hci._reset();
     this.hciProtocol = new HciProtocol(this.hci);
     this.centralBindings = new CentralBindings(this.hciProtocol);
     this.peripheralBindings = new PeripheralBindings(this.hciProtocol);

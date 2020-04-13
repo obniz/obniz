@@ -760,7 +760,7 @@ export default class BleRemotePeripheral {
    * Go to [[BlePairingOptions]] to see more option.
    * @param options BlePairingOptions
    */
-  public async pairingWait(options?: BlePairingOptions) {
+  public async pairingWait(options?: BlePairingOptions): Promise<string> {
     const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
     return result;
   }

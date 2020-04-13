@@ -103,7 +103,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
       const onTimeout = () => {
         clearListeners();
 
-        const error = new ObnizTimeoutError();
+        const error = new ObnizTimeoutError(schemaPath);
         reject(error);
       };
       const onErrorFuncs: any[] = [];

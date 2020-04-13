@@ -390,7 +390,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     // this.onLeConnUpdateComplete(); is nop
   }
 
-  public async pairingWait(peripheralUuid: any, options?: any) {
+  public async pairingWait(peripheralUuid: any, options?: any): Promise<string> {
     options = options || {};
     const gatt: Gatt = this.getGatt(peripheralUuid);
     const result = await gatt.encryptWait(options);

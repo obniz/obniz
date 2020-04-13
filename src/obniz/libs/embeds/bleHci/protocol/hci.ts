@@ -184,10 +184,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt8(0x00, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
     debug("reset - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
 
-    const resetResult = await this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
+    const resetResult = await p;
     this.resetBuffers();
     this.setEventMask();
     this.setLeEventMask();
@@ -222,9 +223,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt8(0x0, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
     debug("read local version - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    const data = await this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
+    const data = await p;
     const hciVer: any = data.result.readUInt8(0);
     const hciRev: any = data.result.readUInt16LE(1);
     const lmpVer: any = data.result.readInt8(3);
@@ -248,10 +250,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt8(0x0, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
     debug("read bd addr - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
 
-    const data = await this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
+    const data = await p;
     this.addressType = "public";
     this.address = data.result
       .toString("hex")
@@ -291,9 +294,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt8(0x00, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
     debug("read LE host supported - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    const data = await this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
+    const data = await p;
 
     if (data.status === 0) {
       const le: any = data.result.readUInt8(0);
@@ -340,9 +344,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
     cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
     debug("set scan parameters - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
+    const data = await p;
     return data.status;
   }
 
@@ -361,8 +366,9 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // duplicates: 0 -> duplicates, 0 -> duplicates
 
     debug("set scan enabled - writing: " + cmd.toString("hex"));
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
     this._socket.write(cmd);
-    const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
+    const data = await p;
     return data.status;
   }
 
@@ -400,8 +406,9 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt16LE(0x0006, 27); // max ce length
 
     debug("create le conn - writing: " + cmd.toString("hex"));
+    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, { timeout: 30 * 1000 });
     this._socket.write(cmd);
-    const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, { timeout: 30 * 1000 });
+    const { status, data } = await p;
     return this.processLeConnComplete(status, data);
   }
 
@@ -431,9 +438,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt16LE(0x0000, 16); // max ce length
 
     debug("conn update le - writing: " + cmd.toString("hex"));
+    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
     this._socket.write(cmd);
 
-    const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
+    const { status, data } = await p;
     return this.processLeConnUpdateComplete(status, data);
   }
 
@@ -468,12 +476,17 @@ class Hci extends EventEmitter<HciEventTypes> {
     diversifier.copy(cmd, 14);
     key.copy(cmd, 16);
 
+    // console.log("start le encryption - writing: " + cmd.toString("hex"));
+    const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE], {
+      waitingFor: "EVT_ENCRYPT_CHANGE",
+    });
+    const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE], {
+      waitingFor: "EVT_ENCRYPTION_KEY_REFRESH_COMPLETE",
+    });
+
     debug("start le encryption - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
 
-    // console.log("start le encryption - writing: " + cmd.toString("hex"));
-    const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE]);
-    const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE]);
     const data = await Promise.race([p1, p2]);
     // const data = await p1;
     // console.log("start le encryption - data: " + data.toString("hex"));
@@ -523,10 +536,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     // data
     cmd.writeUInt16LE(handle, 4); // handle
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [handle & 0xff, (handle >> 8) & 0xff]);
     debug("read rssi - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
 
-    const data = await this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [handle & 0xff, (handle >> 8) & 0xff]);
+    const data = await p;
     if (handle !== data.result.readUInt16LE(0)) {
       throw new Error("handle is different");
     }
@@ -562,10 +576,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt8(0x07, 17);
     cmd.writeUInt8(0x00, 18);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
     debug("set advertisement parameters - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
 
-    const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
+    const data = await p;
 
     // this.emit("stateChange", "poweredOn"); // TODO : really need?
     return data.status;
@@ -587,9 +602,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt8(data.length, 4);
     data.copy(cmd, 5);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
+
     debug("set advertisement data - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
+    const result = await p;
 
     return result.status;
   }
@@ -610,9 +627,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt8(data.length, 4);
     data.copy(cmd, 5);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
     debug("set scan response data - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
+    const result = await p;
 
     return result.status;
   }
@@ -630,9 +648,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     // data
     cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
     debug("set advertise enable - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
+    const data = await p;
     return data.status;
   }
 
@@ -646,10 +665,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt8(0x0, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
     debug("le read buffer size - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
 
-    const data = await this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
+    const data = await p;
     if (!data.status) {
       await this.processLeReadBufferSizeWait(data.result);
     }
@@ -665,9 +685,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt8(0x0, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
     debug("read buffer size - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
-    const data = await this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
+    const data = await p;
     if (!data.status) {
       const aclMtu: any = data.result.readUInt16LE(0);
       const aclMaxInProgress: any = data.result.readUInt16LE(3);
@@ -770,8 +791,9 @@ class Hci extends EventEmitter<HciEventTypes> {
     // length
     cmd.writeUInt16LE(handle, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
     this._socket.write(cmd);
-    const data = await this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
+    const data = await p;
     return data.status;
   }
 
@@ -909,6 +931,8 @@ class Hci extends EventEmitter<HciEventTypes> {
 
   protected async readLeMetaEventWait(eventType: number, options?: any) {
     const filter = this.createLeMetaEventFilter(eventType);
+    options = options || {};
+    options.waitingFor = "LeMetaEvent " + JSON.stringify(filter);
     const data = await this._obnizHci.readWait(filter, options);
 
     const type: any = data.readUInt8(3);
@@ -934,7 +958,9 @@ class Hci extends EventEmitter<HciEventTypes> {
         ...additionalResultFilter,
       ];
     }
-    const data = await this._obnizHci.readWait(filter);
+    const options: any = {};
+    options.waitingFor = "CmdCompleteEvent " + JSON.stringify(filter);
+    const data = await this._obnizHci.readWait(filter, options);
 
     const eventType: any = data.readUInt8(0);
     const subEventType: any = data.readUInt8(1);

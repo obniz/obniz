@@ -17,8 +17,8 @@ export class ObnizOfflineError extends ObnizError {
 }
 
 export class ObnizTimeoutError extends ObnizError {
-  constructor() {
-    super(2, "Receive data timeout.");
+  constructor(public waitingFor?: string) {
+    super(2, "Receive data timeout." + (waitingFor ? " Waiting for " + waitingFor : ""));
   }
 }
 

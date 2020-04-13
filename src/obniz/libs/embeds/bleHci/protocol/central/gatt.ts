@@ -126,7 +126,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     this._aclStream.on("end", this.onAclStreamEndBinded);
   }
 
-  public async encryptWait(options: any) {
+  public async encryptWait(options: any): Promise<string> {
     const result = await this._serialPromiseQueueWait(async () => {
       const encrypt = await this._aclStream.encryptWait(options);
       if (encrypt === 0) {

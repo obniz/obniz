@@ -127,6 +127,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.scan && this.scan.state !== "stopped") {
             this.scan.notifyFromServer("obnizClose", {});
         }
+        this.hci._reset();
         this.hciProtocol = new hci_2.default(this.hci);
         this.centralBindings = new bindings_1.default(this.hciProtocol);
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
