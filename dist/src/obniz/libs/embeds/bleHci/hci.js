@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = require("../../../ObnizError");
 class ObnizBLEHci {
     constructor(Obniz) {
-        this.timeout = 10 * 1000;
+        this.timeout = 30 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
     }

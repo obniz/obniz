@@ -64,7 +64,7 @@ class Smp extends eventemitter3_1.default {
         await this.sendPairingRequestWait();
         const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
-        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 30 * 1000); // 30sec timeout
+        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
         const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
         const encResult = this.handlePairingRandomWait(random);

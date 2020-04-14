@@ -189,7 +189,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         try {
             if (!obj || typeof obj !== "object") {
-                console.log("obnizjs. didnt send ", obj);
+                this.log("obnizjs. didnt send ", obj);
                 return;
             }
             if (Array.isArray(obj)) {
@@ -214,7 +214,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
+                            this.log("binalized: " + new Uint8Array(compressed).toString());
                         }
                     }
                 }
@@ -240,7 +240,7 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }
         catch (e) {
-            console.log(e);
+            this.log(e);
         }
     }
     /**
@@ -248,14 +248,20 @@ class ObnizConnection extends eventemitter3_1.default {
      * @param msg
      */
     warning(msg) {
-        console.log("warning:" + msg);
+        this.log("warning:" + msg);
     }
     /**
      * @ignore
      * @param msg
      */
     error(msg) {
-        console.error("error:" + msg);
+        console.error(`[obniz ${this.id}] error:${msg}`);
+    }
+    /**
+     * @ignore
+     */
+    log(...args) {
+        console.log(`[obniz ${this.id}]`, ...args);
     }
     wsOnOpen() {
         this.print_debug("ws connected");
@@ -272,7 +278,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         else if (this.wscommands) {
             if (this.debugprintBinary) {
-                console.log("Obniz: binalized: " + new Uint8Array(data).toString());
+                this.log("binalized: " + new Uint8Array(data).toString());
             }
             json = this.binary2Json(data);
         }
@@ -385,7 +391,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.wsOnMessage(data);
             });
             ws.on("close", (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             });
             ws.on("error", (err) => {
@@ -393,7 +399,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this._disconnectLocal();
             });
             ws.on("unexpected-response", (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             });
         }
@@ -409,11 +415,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.wsOnMessage(event.data);
             };
             ws.onclose = (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             };
             ws.onerror = (err) => {
-                console.log("local websocket error.", err);
+                this.log("local websocket error.", err);
                 this._disconnectLocal();
             };
         }
@@ -490,7 +496,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     print_debug(str) {
         if (this.debugprint) {
-            console.log("Obniz: " + str);
+            this.log(str);
         }
     }
     _sendRouted(data) {

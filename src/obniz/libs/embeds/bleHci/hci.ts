@@ -9,7 +9,7 @@ export type EventHandler = (...args: any) => any;
 
 export default class ObnizBLEHci {
   public Obniz: any;
-  public timeout: number = 10 * 1000;
+  public timeout: number = 30 * 1000;
 
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 

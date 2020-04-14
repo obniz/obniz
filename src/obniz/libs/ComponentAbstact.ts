@@ -14,7 +14,7 @@ export interface ReceiveJsonOptions {
 
 export abstract class ComponentAbstract<EventTypes extends string = string> extends EventEmitter<EventTypes> {
   public Obniz: Obniz;
-  public timeout: number = 10 * 1000;
+  public timeout: number = 30 * 1000;
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
   constructor(obniz: Obniz) {

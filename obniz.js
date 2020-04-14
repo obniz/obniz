@@ -2269,7 +2269,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         try {
             if (!obj || typeof obj !== "object") {
-                console.log("obnizjs. didnt send ", obj);
+                this.log("obnizjs. didnt send ", obj);
                 return;
             }
             if (Array.isArray(obj)) {
@@ -2294,7 +2294,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
+                            this.log("binalized: " + new Uint8Array(compressed).toString());
                         }
                     }
                 }
@@ -2320,7 +2320,7 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }
         catch (e) {
-            console.log(e);
+            this.log(e);
         }
     }
     /**
@@ -2328,14 +2328,20 @@ class ObnizConnection extends eventemitter3_1.default {
      * @param msg
      */
     warning(msg) {
-        console.log("warning:" + msg);
+        this.log("warning:" + msg);
     }
     /**
      * @ignore
      * @param msg
      */
     error(msg) {
-        console.error("error:" + msg);
+        console.error(`[obniz ${this.id}] error:${msg}`);
+    }
+    /**
+     * @ignore
+     */
+    log(...args) {
+        console.log(`[obniz ${this.id}]`, ...args);
     }
     wsOnOpen() {
         this.print_debug("ws connected");
@@ -2352,7 +2358,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         else if (this.wscommands) {
             if (this.debugprintBinary) {
-                console.log("Obniz: binalized: " + new Uint8Array(data).toString());
+                this.log("binalized: " + new Uint8Array(data).toString());
             }
             json = this.binary2Json(data);
         }
@@ -2465,7 +2471,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.wsOnMessage(data);
             });
             ws.on("close", (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             });
             ws.on("error", (err) => {
@@ -2473,7 +2479,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this._disconnectLocal();
             });
             ws.on("unexpected-response", (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             });
         }
@@ -2489,11 +2495,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.wsOnMessage(event.data);
             };
             ws.onclose = (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             };
             ws.onerror = (err) => {
-                console.log("local websocket error.", err);
+                this.log("local websocket error.", err);
                 this._disconnectLocal();
             };
         }
@@ -2570,7 +2576,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     print_debug(str) {
         if (this.debugprint) {
-            console.log("Obniz: " + str);
+            this.log(str);
         }
     }
     _sendRouted(data) {
@@ -2814,7 +2820,7 @@ class ObnizDevice extends ObnizUIs_1.default {
             if (typeof showObnizDebugError === "function") {
                 showObnizDebugError(new Error(msg));
             }
-            console.log(`Warning: ${msg}`);
+            this.log(`warning: ${msg}`);
         }
     }
     /**
@@ -4017,7 +4023,7 @@ const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/ws
 class ComponentAbstract extends eventemitter3_1.default {
     constructor(obniz) {
         super();
-        this.timeout = 10 * 1000;
+        this.timeout = 30 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = obniz;
     }
@@ -10056,7 +10062,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
     constructor(Obniz) {
-        this.timeout = 10 * 1000;
+        this.timeout = 30 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
     }
@@ -11745,7 +11751,7 @@ class Smp extends eventemitter3_1.default {
         await this.sendPairingRequestWait();
         const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
-        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 30 * 1000); // 30sec timeout
+        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
         const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
         const encResult = this.handlePairingRandomWait(random);

@@ -9,7 +9,7 @@ const WSSchema_1 = __importDefault(require("./wscommand/WSSchema"));
 class ComponentAbstract extends eventemitter3_1.default {
     constructor(obniz) {
         super();
-        this.timeout = 10 * 1000;
+        this.timeout = 30 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = obniz;
     }
