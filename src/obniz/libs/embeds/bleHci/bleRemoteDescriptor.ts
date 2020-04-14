@@ -57,9 +57,11 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
     );
     const data = Array.from(buf);
 
-    if (this.onread) {
-      this.onread(data);
-    }
+    setTimeout(() => {
+      if (this.onread) {
+        this.onread(data);
+      }
+    }, 0);
     return data;
   }
 
@@ -97,9 +99,22 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
       Buffer.from(data),
     );
 
-    if (this.onwrite) {
-      this.onwrite("success"); // if fail, throw error.
-    }
+    setTimeout(() => {
+      if (this.onwrite) {
+        this.onwrite("success"); // if fail, throw error.
+      }
+    }, 0);
     return true;
   }
+
+  /**
+   * @ignore
+   */
+  public ondiscover(child: any): void {}
+
+  /**
+   * @ignore
+   * @param children
+   */
+  public ondiscoverfinished(children: any): void {}
 }

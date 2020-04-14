@@ -137,10 +137,12 @@ class BleRemotePeripheral {
             await this.discoverAllHandlesWait();
         }
         this.connected = true;
-        if (this.onconnect) {
-            this.onconnect();
-        }
-        this.emitter.emit("connect");
+        setTimeout(() => {
+            if (this.onconnect) {
+                this.onconnect();
+            }
+            this.emitter.emit("connect");
+        }, 0);
     }
     /**
      *  @deprecated
@@ -299,16 +301,20 @@ class BleRemotePeripheral {
                 child = newService;
             }
             child.discoverdOnRemote = true;
-            if (this.ondiscoverservice) {
-                this.ondiscoverservice(child);
-            }
+            setTimeout(() => {
+                if (this.ondiscoverservice) {
+                    this.ondiscoverservice(child);
+                }
+            }, 0);
         }
         const children = this._services.filter((elm) => {
             return elm.discoverdOnRemote;
         });
-        if (this.ondiscoverservicefinished) {
-            this.ondiscoverservicefinished(children);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverservicefinished) {
+                this.ondiscoverservicefinished(children);
+            }
+        }, 1);
         return children;
     }
     /**
@@ -349,11 +355,13 @@ class BleRemotePeripheral {
                     const pre = this.connected;
                     this.connected = false;
                     if (pre) {
-                        if (this.ondisconnect) {
-                            this.ondisconnect(params.reason);
-                        }
+                        setTimeout(() => {
+                            if (this.ondisconnect) {
+                                this.ondisconnect(params.reason);
+                            }
+                            this.emitter.emit("disconnect", params.reason);
+                        }, 0);
                     }
-                    this.emitter.emit("disconnect", params.reason);
                 }
                 break;
             }

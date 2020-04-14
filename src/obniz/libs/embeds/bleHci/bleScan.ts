@@ -246,9 +246,13 @@ export default class BleScan {
 
     this.clearTimeoutTimer();
     if (timeout !== null) {
-      this._timeoutTimer = setTimeout(() => {
+      this._timeoutTimer = setTimeout(async () => {
         this._timeoutTimer = undefined;
-        this.endWait();
+        try {
+          await this.endWait();
+        } catch (e) {
+          this.finish(e);
+        }
       }, timeout * 1000);
     }
 
@@ -574,11 +578,13 @@ export default class BleScan {
       this.clearTimeoutTimer();
       this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
       this._clearDelayNotifyTimer();
-      this.emitter.emit("onfinish", this.scanedPeripherals, error);
-      if (this.onfinish) {
-        this.onfinish(this.scanedPeripherals, error);
-      }
       this.state = "stopped";
+      setTimeout(() => {
+        this.emitter.emit("onfinish", this.scanedPeripherals, error);
+        if (this.onfinish) {
+          this.onfinish(this.scanedPeripherals, error);
+        }
+      }, 0);
     }
   }
 
@@ -591,10 +597,12 @@ export default class BleScan {
     }
     if (this.isTarget(peripheral)) {
       this.scanedPeripherals.push(peripheral);
-      this.emitter.emit("onfind", peripheral);
-      if (this.onfind) {
-        this.onfind(peripheral);
-      }
+      setTimeout(() => {
+        this.emitter.emit("onfind", peripheral);
+        if (this.onfind) {
+          this.onfind(peripheral);
+        }
+      }, 0);
     }
   }
 

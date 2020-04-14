@@ -63,15 +63,19 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
       case "onwritefromremote": {
-        if (this.onwritefromremote) {
-          this.onwritefromremote(params.address, params.data);
-        }
+        setTimeout(() => {
+          if (this.onwritefromremote) {
+            this.onwritefromremote(params.address, params.data);
+          }
+        }, 0);
         break;
       }
       case "onreadfromremote": {
-        if (this.onreadfromremote) {
-          this.onreadfromremote(params.address);
-        }
+        setTimeout(() => {
+          if (this.onreadfromremote) {
+            this.onreadfromremote(params.address);
+          }
+        }, 0);
         break;
       }
     }

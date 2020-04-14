@@ -6488,13 +6488,15 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
             const address = this.peripheral.currentConnectedDeviceAddress;
             this.peripheral.currentConnectedDeviceAddress = null;
-            if (this.peripheral.onconnectionupdates) {
-                this.peripheral.onconnectionupdates({
-                    address,
-                    status: "disconnected",
-                    reason: new ObnizError_1.ObnizOfflineError(),
-                });
-            }
+            setTimeout(() => {
+                if (this.peripheral.onconnectionupdates) {
+                    this.peripheral.onconnectionupdates({
+                        address,
+                        status: "disconnected",
+                        reason: new ObnizError_1.ObnizOfflineError(),
+                    });
+                }
+            }, 0);
         }
         if (this.remotePeripherals) {
             for (const p of this.remotePeripherals) {
@@ -7746,15 +7748,19 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "onwritefromremote": {
-                if (this.onwritefromremote) {
-                    this.onwritefromremote(params.address, params.data);
-                }
+                setTimeout(() => {
+                    if (this.onwritefromremote) {
+                        this.onwritefromremote(params.address, params.data);
+                    }
+                }, 0);
                 break;
             }
             case "onreadfromremote": {
-                if (this.onreadfromremote) {
-                    this.onreadfromremote(params.address);
-                }
+                setTimeout(() => {
+                    if (this.onreadfromremote) {
+                        this.onreadfromremote(params.address);
+                    }
+                }, 0);
                 break;
             }
         }
@@ -7964,16 +7970,6 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
-    /**
-     * @ignore
-     * @param child
-     */
-    ondiscover(child) { }
-    /**
-     * @ignore
-     * @param children
-     */
-    ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteAttributeAbstract;
 
@@ -8264,9 +8260,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
-        if (this.onwrite) {
-            this.onwrite("success"); // if fail, throw error.
-        }
+        setTimeout(() => {
+            if (this.onwrite) {
+                this.onwrite("success"); // if fail, throw error.
+            }
+        }, 0);
         return true;
     }
     /**
@@ -8296,9 +8294,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async readWait() {
         const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
         const data = Array.from(buf);
-        if (this.onread) {
-            this.onread(data);
-        }
+        setTimeout(() => {
+            if (this.onread) {
+                this.onread(data);
+            }
+        }, 0);
         return data;
     }
     /**
@@ -8394,18 +8394,22 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param descriptor
      */
     ondiscover(descriptor) {
-        if (this.ondiscoverdescriptor) {
-            this.ondiscoverdescriptor(descriptor);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverdescriptor) {
+                this.ondiscoverdescriptor(descriptor);
+            }
+        }, 0);
     }
     /**
      * @ignore
      * @param descriptors
      */
     ondiscoverfinished(descriptors) {
-        if (this.ondiscoverdescriptorfinished) {
-            this.ondiscoverdescriptorfinished(descriptors);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverdescriptorfinished) {
+                this.ondiscoverdescriptorfinished(descriptors);
+            }
+        }, 0);
     }
     /**
      * @ignore
@@ -8416,9 +8420,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
             case "onnotify": {
-                if (this.onnotify) {
-                    this.onnotify(params.data || undefined);
-                }
+                setTimeout(() => {
+                    if (this.onnotify) {
+                        this.onnotify(params.data || undefined);
+                    }
+                }, 0);
                 break;
             }
         }
@@ -8483,9 +8489,11 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     async readWait() {
         const buf = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
         const data = Array.from(buf);
-        if (this.onread) {
-            this.onread(data);
-        }
+        setTimeout(() => {
+            if (this.onread) {
+                this.onread(data);
+            }
+        }, 0);
         return data;
     }
     /**
@@ -8515,11 +8523,22 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      */
     async writeWait(data) {
         await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
-        if (this.onwrite) {
-            this.onwrite("success"); // if fail, throw error.
-        }
+        setTimeout(() => {
+            if (this.onwrite) {
+                this.onwrite("success"); // if fail, throw error.
+            }
+        }, 0);
         return true;
     }
+    /**
+     * @ignore
+     */
+    ondiscover(child) { }
+    /**
+     * @ignore
+     * @param children
+     */
+    ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteDescriptor;
 
@@ -8672,10 +8691,12 @@ class BleRemotePeripheral {
             await this.discoverAllHandlesWait();
         }
         this.connected = true;
-        if (this.onconnect) {
-            this.onconnect();
-        }
-        this.emitter.emit("connect");
+        setTimeout(() => {
+            if (this.onconnect) {
+                this.onconnect();
+            }
+            this.emitter.emit("connect");
+        }, 0);
     }
     /**
      *  @deprecated
@@ -8834,16 +8855,20 @@ class BleRemotePeripheral {
                 child = newService;
             }
             child.discoverdOnRemote = true;
-            if (this.ondiscoverservice) {
-                this.ondiscoverservice(child);
-            }
+            setTimeout(() => {
+                if (this.ondiscoverservice) {
+                    this.ondiscoverservice(child);
+                }
+            }, 0);
         }
         const children = this._services.filter((elm) => {
             return elm.discoverdOnRemote;
         });
-        if (this.ondiscoverservicefinished) {
-            this.ondiscoverservicefinished(children);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverservicefinished) {
+                this.ondiscoverservicefinished(children);
+            }
+        }, 1);
         return children;
     }
     /**
@@ -8884,11 +8909,13 @@ class BleRemotePeripheral {
                     const pre = this.connected;
                     this.connected = false;
                     if (pre) {
-                        if (this.ondisconnect) {
-                            this.ondisconnect(params.reason);
-                        }
+                        setTimeout(() => {
+                            if (this.ondisconnect) {
+                                this.ondisconnect(params.reason);
+                            }
+                            this.emitter.emit("disconnect", params.reason);
+                        }, 0);
                     }
-                    this.emitter.emit("disconnect", params.reason);
                 }
                 break;
             }
@@ -9217,14 +9244,18 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @param characteristic
      */
     ondiscover(characteristic) {
-        this.ondiscovercharacteristic(characteristic);
+        setTimeout(() => {
+            this.ondiscovercharacteristic(characteristic);
+        }, 0);
     }
     /**
      * @ignore
      * @param characteristics
      */
     ondiscoverfinished(characteristics) {
-        this.ondiscovercharacteristicfinished(characteristics);
+        setTimeout(() => {
+            this.ondiscovercharacteristicfinished(characteristics);
+        }, 0);
     }
     /**
      * @ignore
@@ -9397,9 +9428,14 @@ class BleScan {
         await this.obnizBle.centralBindings.startScanningWait(null, false, settings.activeScan);
         this.clearTimeoutTimer();
         if (timeout !== null) {
-            this._timeoutTimer = setTimeout(() => {
+            this._timeoutTimer = setTimeout(async () => {
                 this._timeoutTimer = undefined;
-                this.endWait();
+                try {
+                    await this.endWait();
+                }
+                catch (e) {
+                    this.finish(e);
+                }
             }, timeout * 1000);
         }
         this.state = "started";
@@ -9696,11 +9732,13 @@ class BleScan {
             this.clearTimeoutTimer();
             this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
             this._clearDelayNotifyTimer();
-            this.emitter.emit("onfinish", this.scanedPeripherals, error);
-            if (this.onfinish) {
-                this.onfinish(this.scanedPeripherals, error);
-            }
             this.state = "stopped";
+            setTimeout(() => {
+                this.emitter.emit("onfinish", this.scanedPeripherals, error);
+                if (this.onfinish) {
+                    this.onfinish(this.scanedPeripherals, error);
+                }
+            }, 0);
         }
     }
     _notifyOnFind(peripheral) {
@@ -9712,10 +9750,12 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            this.emitter.emit("onfind", peripheral);
-            if (this.onfind) {
-                this.onfind(peripheral);
-            }
+            setTimeout(() => {
+                this.emitter.emit("onfind", peripheral);
+                if (this.onfind) {
+                    this.onfind(peripheral);
+                }
+            }, 0);
         }
     }
     isLocalNameTarget(peripheral) {

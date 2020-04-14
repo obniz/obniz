@@ -355,9 +355,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       Buffer.from(data),
       !needResponse,
     );
-    if (this.onwrite) {
-      this.onwrite("success"); // if fail, throw error.
-    }
+    setTimeout(() => {
+      if (this.onwrite) {
+        this.onwrite("success"); // if fail, throw error.
+      }
+    }, 0);
     return true;
   }
 
@@ -393,9 +395,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     );
     const data = Array.from(buf);
 
-    if (this.onread) {
-      this.onread(data);
-    }
+    setTimeout(() => {
+      if (this.onread) {
+        this.onread(data);
+      }
+    }, 0);
     return data;
   }
 
@@ -507,9 +511,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param descriptor
    */
   public ondiscover(descriptor: any) {
-    if (this.ondiscoverdescriptor) {
-      this.ondiscoverdescriptor(descriptor);
-    }
+    setTimeout(() => {
+      if (this.ondiscoverdescriptor) {
+        this.ondiscoverdescriptor(descriptor);
+      }
+    }, 0);
   }
 
   /**
@@ -517,9 +523,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param descriptors
    */
   public ondiscoverfinished(descriptors: any) {
-    if (this.ondiscoverdescriptorfinished) {
-      this.ondiscoverdescriptorfinished(descriptors);
-    }
+    setTimeout(() => {
+      if (this.ondiscoverdescriptorfinished) {
+        this.ondiscoverdescriptorfinished(descriptors);
+      }
+    }, 0);
   }
 
   /**
@@ -531,9 +539,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case "onnotify": {
-        if (this.onnotify) {
-          this.onnotify(params.data || undefined);
-        }
+        setTimeout(() => {
+          if (this.onnotify) {
+            this.onnotify(params.data || undefined);
+          }
+        }, 0);
 
         break;
       }

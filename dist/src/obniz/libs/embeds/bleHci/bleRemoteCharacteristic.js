@@ -276,9 +276,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
-        if (this.onwrite) {
-            this.onwrite("success"); // if fail, throw error.
-        }
+        setTimeout(() => {
+            if (this.onwrite) {
+                this.onwrite("success"); // if fail, throw error.
+            }
+        }, 0);
         return true;
     }
     /**
@@ -308,9 +310,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async readWait() {
         const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
         const data = Array.from(buf);
-        if (this.onread) {
-            this.onread(data);
-        }
+        setTimeout(() => {
+            if (this.onread) {
+                this.onread(data);
+            }
+        }, 0);
         return data;
     }
     /**
@@ -406,18 +410,22 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param descriptor
      */
     ondiscover(descriptor) {
-        if (this.ondiscoverdescriptor) {
-            this.ondiscoverdescriptor(descriptor);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverdescriptor) {
+                this.ondiscoverdescriptor(descriptor);
+            }
+        }, 0);
     }
     /**
      * @ignore
      * @param descriptors
      */
     ondiscoverfinished(descriptors) {
-        if (this.ondiscoverdescriptorfinished) {
-            this.ondiscoverdescriptorfinished(descriptors);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverdescriptorfinished) {
+                this.ondiscoverdescriptorfinished(descriptors);
+            }
+        }, 0);
     }
     /**
      * @ignore
@@ -428,9 +436,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
             case "onnotify": {
-                if (this.onnotify) {
-                    this.onnotify(params.data || undefined);
-                }
+                setTimeout(() => {
+                    if (this.onnotify) {
+                        this.onnotify(params.data || undefined);
+                    }
+                }, 0);
                 break;
             }
         }

@@ -45,9 +45,11 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     async readWait() {
         const buf = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
         const data = Array.from(buf);
-        if (this.onread) {
-            this.onread(data);
-        }
+        setTimeout(() => {
+            if (this.onread) {
+                this.onread(data);
+            }
+        }, 0);
         return data;
     }
     /**
@@ -77,11 +79,22 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      */
     async writeWait(data) {
         await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
-        if (this.onwrite) {
-            this.onwrite("success"); // if fail, throw error.
-        }
+        setTimeout(() => {
+            if (this.onwrite) {
+                this.onwrite("success"); // if fail, throw error.
+            }
+        }, 0);
         return true;
     }
+    /**
+     * @ignore
+     */
+    ondiscover(child) { }
+    /**
+     * @ignore
+     * @param children
+     */
+    ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteDescriptor;
 
