@@ -195,12 +195,15 @@ describe('ble-hci-central', function() {
 
     await p;
 
+    await wait(1);
+
     sinon.assert.callCount(connectStub, 1);
     sinon.assert.callCount(disconnectStub, 0);
 
     //disconnect
     await receiveHciCommandsWait(this.obniz, [4, 5, 4, 0, 0, 0, 19]);
 
+    await wait(1);
     sinon.assert.callCount(connectStub, 1);
     sinon.assert.callCount(disconnectStub, 1);
 
@@ -388,6 +391,7 @@ describe('ble-hci-central', function() {
         ble: {hci: {read: {data: hci}}},
       },
     ]);
+    await wait(1);
 
     if (!detect) {
       sinon.assert.callCount(stub, 0);
