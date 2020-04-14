@@ -115,7 +115,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
     await this.sendPairingRequestWait();
     const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
     this.handlePairingResponse(pairingResponse);
-    const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM);
+    const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 30 * 1000); // 30sec timeout
     this.handlePairingConfirm(confirm);
     const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
     const encResult = this.handlePairingRandomWait(random);
@@ -249,7 +249,8 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this.pairingWait();
   }
 
-  public setKeys(keyString: string) {
+  public setKeys(keyStringBase64: string) {
+    const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
     const keys = JSON.parse(keyString);
     this._stk = Buffer.from(keys.stk);
     this._preq = Buffer.from(keys.preq);
@@ -262,15 +263,17 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   public getKeys() {
     const keys = {
-      stk: Array.from(this._stk),
-      preq: Array.from(this._preq),
-      pres: Array.from(this._pres),
-      tk: Array.from(this._tk),
-      r: Array.from(this._r),
-      pcnf: Array.from(this._pcnf),
-      ltk: Array.from(this._ltk),
+      stk: this._stk.toString("hex"),
+      preq: this._preq.toString("hex"),
+      pres: this._pres.toString("hex"),
+      tk: this._tk.toString("hex"),
+      r: this._r.toString("hex"),
+      pcnf: this._pcnf.toString("hex"),
+      ltk: this._ltk.toString("hex"),
     };
-    return JSON.stringify(keys);
+    const jsonString = JSON.stringify(keys);
+    const keyString = Buffer.from(jsonString, "ascii").toString("base64");
+    return keyString;
   }
 
   private async sendPairingRequestWait() {

@@ -219,6 +219,7 @@ module.exports = {
     "@types/ws": "^6.0.4",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
+    "log4js": "^6.1.2",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
     "semver": "^5.7.0",
@@ -10216,8 +10217,8 @@ class AclStream extends eventemitter3_1.default {
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
     }
-    async readWait(cid, flag) {
-        const data = await this._hci.readAclStreamWait(this._handle, cid, flag);
+    async readWait(cid, flag, timeout) {
+        const data = await this._hci.readAclStreamWait(this._handle, cid, flag, timeout);
         return data;
     }
     push(cid, data) {
@@ -11704,7 +11705,7 @@ class Smp extends eventemitter3_1.default {
         await this.sendPairingRequestWait();
         const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
-        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM);
+        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 30 * 1000); // 30sec timeout
         this.handlePairingConfirm(confirm);
         const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
         const encResult = this.handlePairingRandomWait(random);
@@ -11821,7 +11822,8 @@ class Smp extends eventemitter3_1.default {
     handleSecurityRequest(data) {
         this.pairingWait();
     }
-    setKeys(keyString) {
+    setKeys(keyStringBase64) {
+        const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
         const keys = JSON.parse(keyString);
         this._stk = Buffer.from(keys.stk);
         this._preq = Buffer.from(keys.preq);
@@ -11833,15 +11835,17 @@ class Smp extends eventemitter3_1.default {
     }
     getKeys() {
         const keys = {
-            stk: Array.from(this._stk),
-            preq: Array.from(this._preq),
-            pres: Array.from(this._pres),
-            tk: Array.from(this._tk),
-            r: Array.from(this._r),
-            pcnf: Array.from(this._pcnf),
-            ltk: Array.from(this._ltk),
+            stk: this._stk.toString("hex"),
+            preq: this._preq.toString("hex"),
+            pres: this._pres.toString("hex"),
+            tk: this._tk.toString("hex"),
+            r: this._r.toString("hex"),
+            pcnf: this._pcnf.toString("hex"),
+            ltk: this._ltk.toString("hex"),
         };
-        return JSON.stringify(keys);
+        const jsonString = JSON.stringify(keys);
+        const keyString = Buffer.from(jsonString, "ascii").toString("base64");
+        return keyString;
     }
     async sendPairingRequestWait() {
         if (this.isPasskeyMode()) {
@@ -12586,13 +12590,13 @@ class Hci extends eventemitter3_1.default {
         this._state = state;
         this.emit("stateChange", state);
     }
-    async readAclStreamWait(handle, cid, firstData) {
+    async readAclStreamWait(handle, cid, firstData, timeout) {
         return this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
             this._aclStreamObservers[handle][key].push(resolve);
-        }));
+        }), { timeout, waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}` });
     }
     async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);

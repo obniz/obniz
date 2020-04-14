@@ -690,13 +690,13 @@ class Hci extends eventemitter3_1.default {
         this._state = state;
         this.emit("stateChange", state);
     }
-    async readAclStreamWait(handle, cid, firstData) {
+    async readAclStreamWait(handle, cid, firstData, timeout) {
         return this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
             this._aclStreamObservers[handle][key].push(resolve);
-        }));
+        }), { timeout, waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}` });
     }
     async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
