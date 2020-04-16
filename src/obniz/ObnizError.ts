@@ -190,3 +190,9 @@ export class ObnizBleUnsupportedHciError extends ObnizError {
     super(13, `Unsupported hci version, need version : ${needVer}, current version ${currentVer}`);
   }
 }
+
+export class ObnizParameterError extends ObnizError {
+  constructor(public parameter: string, public should: string) {
+    super(14, `Parameter ${parameter} should satisfy ${should}`);
+  }
+}

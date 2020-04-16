@@ -1,4 +1,4 @@
-import { ObnizOfflineError, ObnizTimeoutError } from "../../../ObnizError";
+import { ObnizOfflineError, ObnizParameterError, ObnizTimeoutError } from "../../../ObnizError";
 
 /**
  * @packageDocumentation
@@ -9,7 +9,12 @@ export type EventHandler = (...args: any) => any;
 
 export default class ObnizBLEHci {
   public Obniz: any;
-  public timeout: number = 30 * 1000;
+
+  /*
+   * HCI level timeout should never occure. Response must be sent from a device.
+   * This timeout is for just in case for a device nerver send response.
+   */
+  public timeout: number = 5 * 60 * 1000;
 
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
@@ -100,11 +105,19 @@ export default class ObnizBLEHci {
    * @ignore
    * @private
    * @param promise
-   * @param option
+   * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
+   * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
    */
   public timeoutPromiseWrapper(promise: Promise<any>, option?: any) {
     option = option || {};
-    option.timeout = option.timeout || this.timeout;
+    if (option.timeout === null) {
+      option.timeout = null;
+    } else {
+      option.timeout = option.timeout || this.timeout;
+      if (option.timeout < 0) {
+        throw new ObnizParameterError(`option.timeout`, `0 or greater`);
+      }
+    }
     option.waitingFor = option.waitingFor || undefined;
 
     let onObnizClosed: null | (() => void) = null;
@@ -114,6 +127,7 @@ export default class ObnizBLEHci {
       this.Obniz.off("close", onObnizClosed);
       if (timeoutHandler) {
         clearTimeout(timeoutHandler);
+        timeoutHandler = null;
       }
     };
 
@@ -131,6 +145,7 @@ export default class ObnizBLEHci {
     const errorPromise = new Promise((resolve, reject) => {
       if (this.Obniz.connectionState !== "connected") {
         reject(new ObnizOfflineError());
+        return;
       }
 
       onObnizClosed = () => {
@@ -149,7 +164,10 @@ export default class ObnizBLEHci {
       timeoutHandler = setTimeout(onTimeout, option!.timeout);
     });
 
-    return Promise.race([successPromise, errorPromise]);
+    if (option.timeout !== null) {
+      return Promise.race([successPromise, errorPromise]);
+    }
+    return successPromise;
   }
 
   public readWait(binaryFilter: number[], option?: any): Promise<Buffer> {
