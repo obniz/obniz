@@ -153,17 +153,17 @@ export default class ObnizMeasure extends ComponentAbstract {
       echo.timeout = params.timeout;
     }
 
+    if (typeof params.callback === "function") {
+      this.onceQueue("/response/measure/echo", (obj) => {
+        params!.callback!(obj.echo);
+      });
+    }
+
     this.Obniz.send({
       measure: {
         echo,
       },
     });
-
-    if (params.callback) {
-      this.onceQueue("/response/measure/echo", (obj) => {
-        params!.callback!(obj.echo);
-      });
-    }
   }
 
   public schemaBasePath(): string {
