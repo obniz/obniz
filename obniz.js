@@ -3127,6 +3127,14 @@ class ObnizBleUnsupportedHciError extends ObnizError {
     }
 }
 exports.ObnizBleUnsupportedHciError = ObnizBleUnsupportedHciError;
+class ObnizParameterError extends ObnizError {
+    constructor(parameter, should) {
+        super(14, `Parameter ${parameter} should satisfy ${should}`);
+        this.parameter = parameter;
+        this.should = should;
+    }
+}
+exports.ObnizParameterError = ObnizParameterError;
 
 //# sourceMappingURL=ObnizError.js.map
 
@@ -8652,7 +8660,7 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     *  @deprecated
+     *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
         this.connectWait(); // background
@@ -10061,7 +10069,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
     constructor(Obniz) {
-        this.timeout = 30 * 1000;
+        /*
+         * HCI level timeout should never occure. Response must be sent from a device.
+         * This timeout is for just in case for a device nerver send response.
+         */
+        this.timeout = 5 * 60 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
     }
@@ -10140,11 +10152,20 @@ class ObnizBLEHci {
      * @ignore
      * @private
      * @param promise
-     * @param option
+     * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
+     * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
     timeoutPromiseWrapper(promise, option) {
         option = option || {};
-        option.timeout = option.timeout || this.timeout;
+        if (option.timeout === null) {
+            option.timeout = null;
+        }
+        else {
+            option.timeout = option.timeout || this.timeout;
+            if (option.timeout < 0) {
+                throw new ObnizError_1.ObnizParameterError(`option.timeout`, `0 or greater`);
+            }
+        }
         option.waitingFor = option.waitingFor || undefined;
         let onObnizClosed = null;
         let timeoutHandler = null;
@@ -10152,6 +10173,7 @@ class ObnizBLEHci {
             this.Obniz.off("close", onObnizClosed);
             if (timeoutHandler) {
                 clearTimeout(timeoutHandler);
+                timeoutHandler = null;
             }
         };
         const successPromise = promise.then((result) => {
@@ -10164,6 +10186,7 @@ class ObnizBLEHci {
         const errorPromise = new Promise((resolve, reject) => {
             if (this.Obniz.connectionState !== "connected") {
                 reject(new ObnizError_1.ObnizOfflineError());
+                return;
             }
             onObnizClosed = () => {
                 clearListeners();
@@ -10178,7 +10201,10 @@ class ObnizBLEHci {
             };
             timeoutHandler = setTimeout(onTimeout, option.timeout);
         });
-        return Promise.race([successPromise, errorPromise]);
+        if (option.timeout !== null) {
+            return Promise.race([successPromise, errorPromise]);
+        }
+        return successPromise;
     }
     readWait(binaryFilter, option) {
         return this.timeoutPromiseWrapper(new Promise((resolve) => {
@@ -17282,16 +17308,16 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         if (typeof params.timeout === "number") {
             echo.timeout = params.timeout;
         }
+        if (typeof params.callback === "function") {
+            this.onceQueue("/response/measure/echo", (obj) => {
+                params.callback(obj.echo);
+            });
+        }
         this.Obniz.send({
             measure: {
                 echo,
             },
         });
-        if (params.callback) {
-            this.onceQueue("/response/measure/echo", (obj) => {
-                params.callback(obj.echo);
-            });
-        }
     }
     schemaBasePath() {
         return "measure";

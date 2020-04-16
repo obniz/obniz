@@ -407,7 +407,7 @@ export default class BleRemotePeripheral {
   }
 
   /**
-   *  @deprecated
+   *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
    */
   public connect(setting?: BleConnectSetting) {
     this.connectWait(); // background

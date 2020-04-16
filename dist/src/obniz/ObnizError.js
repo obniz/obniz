@@ -191,5 +191,13 @@ class ObnizBleUnsupportedHciError extends ObnizError {
     }
 }
 exports.ObnizBleUnsupportedHciError = ObnizBleUnsupportedHciError;
+class ObnizParameterError extends ObnizError {
+    constructor(parameter, should) {
+        super(14, `Parameter ${parameter} should satisfy ${should}`);
+        this.parameter = parameter;
+        this.should = should;
+    }
+}
+exports.ObnizParameterError = ObnizParameterError;
 
 //# sourceMappingURL=ObnizError.js.map

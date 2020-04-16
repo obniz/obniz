@@ -93,7 +93,7 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     *  @deprecated
+     *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
         this.connectWait(); // background
