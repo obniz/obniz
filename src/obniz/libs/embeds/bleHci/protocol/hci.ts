@@ -406,7 +406,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt16LE(0x0006, 27); // max ce length
 
     debug("create le conn - writing: " + cmd.toString("hex"));
-    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, { timeout: 30 * 1000 });
+    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
     this._socket.write(cmd);
     const { status, data } = await p;
     return this.processLeConnComplete(status, data);
