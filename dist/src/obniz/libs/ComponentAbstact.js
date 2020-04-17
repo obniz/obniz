@@ -19,7 +19,6 @@ class ComponentAbstract extends eventemitter3_1.default {
                 continue;
             }
             const errors = this.validate(eventName, json);
-            console.log(`evnt ${eventName} valid ${errors.valid} json ${json}`);
             if (errors.valid) {
                 this.emit(eventName, json);
             }
@@ -28,12 +27,10 @@ class ComponentAbstract extends eventemitter3_1.default {
             if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
                 continue;
             }
-            console.log(`q evnt ${eventName}`);
             if (this._eventHandlerQueue[eventName].length === 0) {
                 continue;
             }
             const errors = this.validate(eventName, json);
-            console.log(`evnt ${eventName} valid ${errors.valid} json ${json}`);
             if (errors.valid) {
                 const func = this._eventHandlerQueue[eventName].shift();
                 if (func) {

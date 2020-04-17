@@ -123,7 +123,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
           const error = new (option!.errors![path] as any)();
           reject(error);
         };
-        this.on(path as any, onDataReceived);
+        this.on(path as any, onError);
         onErrorFuncs.push({ onError, path });
       }
       let timeoutHandler: number | undefined = setTimeout(onTimeout, option!.timeout);
