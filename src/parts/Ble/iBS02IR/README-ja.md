@@ -24,13 +24,13 @@ const IBS02 = Obniz.getPartsClass('iBS02IR');
 // Javascript Example
 const IBS02 = Obniz.getPartsClass('iBS02IR');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS02.isDevice(p)) {
         let data = IBS02.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## getData(BleRemotePeripheral)
@@ -44,13 +44,13 @@ obniz.ble.scan.onfind = (p) => {
 // Javascript Example
 const IBS02 = Obniz.getPartsClass('iBS02IR');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS02.isDevice(p)) {
         let data = IBS02.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 

@@ -15,7 +15,6 @@ import IO from "../../../obniz/libs/io_peripherals/io";
 import MPU6886 from "../../../parts/MovementSensor/MPU6886";
 import SH200Q from "../../../parts/MovementSensor/SH200Q";
 import AXP192 from "../../../parts/Power/AXP192";
-import ObnizBLE from "../embeds/ble/ble";
 import ObnizBLEHci from "../embeds/bleHci/ble";
 import Display from "../embeds/display";
 import PeripheralAD from "../io_peripherals/ad";
@@ -304,10 +303,10 @@ export class M5StickC extends ObnizDevice {
 
   /**
    * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
-   * and obnizOS ver < 3.0.0 load [[ObnizCore.Components.Ble.old.ObnizBLE|ObnizOldBLE]],
+   * and obnizOS ver < 3.0.0 throw unsupported error,
    * @category Embeds
    */
-  public ble!: ObnizBLE | ObnizBLEHci;
+  public ble!: ObnizBLEHci;
 
   // protected io13!: IO; // LCD
   // protected io15?: IO; // LCD

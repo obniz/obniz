@@ -11,12 +11,12 @@ BLEで受信したアドバタイズ情報をもとに、RS_SEEK3かどうかを
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral)) {
     console.log("device find");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -28,13 +28,13 @@ BLEで受信したアドバタイズ情報をもとに、インスタンスを�
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral) ) {
     console.log("device find");
     const device = new RS_Seek3(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -47,7 +47,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral)) {
     console.log("find");
@@ -60,6 +59,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(await device.getTempHumidWait());
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -71,7 +71,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral) ) {
     console.log("find");
@@ -82,6 +81,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -94,7 +94,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral)) {
     console.log("find");
@@ -107,6 +106,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(await device.getTempHumidWait());
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -118,7 +118,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral) && isFirst) {
     console.log("find");
@@ -128,6 +127,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(await device.getTempHumidWait());
   }
 };
+await obniz.ble.scan.startWait();
 
 
 ```

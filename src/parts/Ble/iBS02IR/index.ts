@@ -3,7 +3,7 @@
  * @module Parts.iBS02IR
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface IBS02IROptions {}

@@ -42,7 +42,7 @@ describe('7-ble', function() {
         found = true;
       }
     };
-    obnizA.ble.scan.start(null, { duration: 30 });
+    await obnizA.ble.scan.startWait(null, { duration: 30 });
 
     while (!found) {
       await wait(1);
@@ -77,7 +77,7 @@ describe('7-ble', function() {
         found = true;
       }
     };
-    obnizA.ble.scan.start(null, { duration: 30 });
+    await obnizA.ble.scan.startWait(null, { duration: 30 });
 
     while (!found) {
       await wait(1);

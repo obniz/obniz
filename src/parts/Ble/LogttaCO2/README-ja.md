@@ -23,12 +23,12 @@ const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (LOGTTA_CO2.isDevice(p)) {
         console.log("find");
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## new Logtta_CO2(peripheral)
@@ -40,13 +40,13 @@ BLEが受信した広告情報に基づいてインスタンスを作成しま�
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral) ) {
     console.log("device find");
     const device = new LOGTTA_CO2(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -60,7 +60,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
@@ -69,6 +68,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("connected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -81,7 +81,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral) ) {
     console.log("find");
@@ -92,6 +91,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -106,7 +106,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
@@ -119,6 +118,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 ## startNotifyWait()
@@ -129,7 +129,6 @@ Notifyを開始します。
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
@@ -142,6 +141,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -153,7 +153,6 @@ CO2濃度を取得できます。
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
@@ -165,4 +164,5 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`CO2 ${co2}ppm`);
   }
 };
+await obniz.ble.scan.startWait();
 ```

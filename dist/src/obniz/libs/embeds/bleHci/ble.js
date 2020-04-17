@@ -1,5 +1,8 @@
 "use strict";
 /**
+ * Obniz BLE are switches automatically. <br/>
+ * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
+ * obnizOS ver < 3.0.0   : Not Supported <br/>
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
@@ -75,6 +78,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     /**
      * Initialize BLE module. You need call this first everything before.
+     * This throws if device is not supported device.
      *
      * ```javascript
      * // Javascript Example
@@ -83,6 +87,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     async initWait() {
         if (!this._initialized) {
+            const MinHCIAvailableOS = "3.0.0";
+            if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
+                throw new ObnizError_1.ObnizBleUnSupportedOSVersionError(this.Obniz.firmware_ver, MinHCIAvailableOS);
+            }
             this._initialized = true;
             // force initialize on obnizOS < 3.2.0
             if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
@@ -236,7 +244,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             scan_resp: advertisement.scanResponseRaw,
         };
         val.setParams(peripheralData);
-        val._adv_data_filtered = advertisement;
         this.scan.notifyFromServer("onfind", val);
     }
     onDisconnect(peripheralUuid, reason) {

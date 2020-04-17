@@ -4,8 +4,8 @@
  */
 
 import Obniz from "../../../obniz";
-import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
+import bleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
+import bleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface OMRON_2JCIEOptions {}
@@ -103,9 +103,9 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
   public async getLatestData(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
-    const c: bleRemoteCharacteristic = this.periperal!.getService(this.omron_uuid("3000")).getCharacteristic(
+    const c: bleRemoteCharacteristic = this.periperal!.getService(this.omron_uuid("3000"))!.getCharacteristic(
       this.omron_uuid("3001"),
-    );
+    )!;
     const data: number[] = await c.readWait();
     const json: any = {
       row_number: data[0],

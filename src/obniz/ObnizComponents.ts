@@ -4,7 +4,7 @@
  */
 
 import semver from "semver";
-import { ObnizHciBLE, ObnizOldBLE } from "./libs/embeds/ble";
+import ObnizHciBLE from "./libs/embeds/bleHci/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";
 
@@ -233,10 +233,10 @@ export default class ObnizComponents extends ObnizParts {
 
   /**
    * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
-   * and obnizOS ver < 3.0.0 load [[ObnizCore.Components.Ble.old.ObnizBLE|ObnizOldBLE]],
+   * and obnizOS ver < 3.0.0 throw unsupported Error,
    * @category Embeds
    */
-  public ble?: ObnizOldBLE.default | ObnizHciBLE.default;
+  public ble?: ObnizHciBLE;
 
   protected _hwDefinition: any;
 
@@ -415,12 +415,7 @@ export default class ObnizComponents extends ObnizParts {
       grove: PeripheralGrove,
     };
 
-    let ble: any = ObnizHciBLE.default;
-
-    // < 3.0.0-beta
-    if (semver.lt(this.firmware_ver!, "3.0.0-beta")) {
-      ble = ObnizOldBLE.default;
-    }
+    const ble: any = ObnizHciBLE;
 
     const embeds_map: any = {
       display: Display,

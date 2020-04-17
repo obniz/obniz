@@ -2,17 +2,15 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+import { rejects } from "assert";
 import EventEmitter from "eventemitter3";
 import semver from "semver";
 import { ObnizDeprecatedFunctionError, ObnizOfflineError } from "../../../ObnizError";
 import Util from "../../utils/util";
-import { ObnizOldBLE } from "../ble";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
-import BlePeripheral from "./blePeripheral";
 import BleRemotePeripheral from "./bleRemotePeripheral";
 import { BleDeviceAddress, UUID } from "./bleTypes";
-import ObnizBLEHci from "./hci";
 
 export type BleScanMode = "passive" | "active";
 export type BleBinary = number[];
@@ -277,16 +275,24 @@ export default class BleScan {
    * @param target
    * @param settings
    */
-  public async startOneWait(target: BleScanTarget, settings: BleScanSetting): Promise<BlePeripheral> {
+  public async startOneWait(target: BleScanTarget, settings: BleScanSetting = {}): Promise<BleRemotePeripheral | null> {
     await this.startWait(target, settings);
 
-    return new Promise((resolve: any) => {
-      this.emitter.once("onfind", async (param: any) => {
-        resolve(param);
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onfind", async (peripheral: BleRemotePeripheral, error: any) => {
+        if (error) {
+          rejects(error);
+          return;
+        }
+        resolve(peripheral);
         await this.endWait();
       });
 
-      this.emitter.once("onfinish", () => {
+      this.emitter.once("onfinish", (peripherals: BleRemotePeripheral[], error: any) => {
+        if (error) {
+          rejects(error);
+          return;
+        }
         resolve(null);
       });
     });
@@ -319,10 +325,14 @@ export default class BleScan {
    * @param target
    * @param settings
    */
-  public async startAllWait(target: BleScanTarget, settings: BleScanSetting): Promise<BlePeripheral[]> {
+  public async startAllWait(target: BleScanTarget, settings: BleScanSetting): Promise<BleRemotePeripheral[]> {
     await this.startWait(target, settings);
-    return new Promise((resolve: any) => {
-      this.emitter.once("onfinish", () => {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onfinish", (peripherals: BleRemotePeripheral, error: any) => {
+        if (error) {
+          reject(error);
+          return;
+        }
         resolve(this.scanedPeripherals);
       });
     });

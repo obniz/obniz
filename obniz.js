@@ -1779,8 +1779,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
-const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/ble.js");
+const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
 const display_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/display.js"));
 const switch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/switch.js"));
 const ad_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/ad.js"));
@@ -1948,11 +1947,7 @@ class ObnizComponents extends ObnizParts_1.default {
             pwm: pwm_1.default,
             grove: grove_1.default,
         };
-        let ble = ble_1.ObnizHciBLE.default;
-        // < 3.0.0-beta
-        if (semver_1.default.lt(this.firmware_ver, "3.0.0-beta")) {
-            ble = ble_1.ObnizOldBLE.default;
-        }
+        const ble = ble_1.default;
         const embeds_map = {
             display: display_1.default,
             switch: switch_1.default,
@@ -3135,6 +3130,14 @@ class ObnizParameterError extends ObnizError {
     }
 }
 exports.ObnizParameterError = ObnizParameterError;
+class ObnizBleUnSupportedOSVersionError extends ObnizError {
+    constructor(deviceOS, atLeast) {
+        super(13, `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`);
+        this.deviceOS = deviceOS;
+        this.atLeast = atLeast;
+    }
+}
+exports.ObnizBleUnSupportedOSVersionError = ObnizBleUnSupportedOSVersionError;
 
 //# sourceMappingURL=ObnizError.js.map
 
@@ -4135,7 +4138,7 @@ exports.ComponentAbstract = ComponentAbstract;
 
 /***/ }),
 
-/***/ "./dist/src/obniz/libs/embeds/ble.js":
+/***/ "./dist/src/obniz/libs/embeds/bleHci/ble.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4143,2255 +4146,7 @@ exports.ComponentAbstract = ComponentAbstract;
 /**
  * Obniz BLE are switches automatically. <br/>
  * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
- * obnizOS ver < 3.0.0   : [[ObnizCore.Components.Ble.old | old]] <br/>
- * @packageDocumentation
- * @module ObnizCore.Components.Ble
- */
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizOldBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
-exports.ObnizOldBLE = ObnizOldBLE;
-const ObnizHciBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
-exports.ObnizHciBLE = ObnizHciBLE;
-
-//# sourceMappingURL=ble.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/ble.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisement.js"));
-const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
-const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
-const blePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/blePeripheral.js"));
-const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemotePeripheral.js"));
-const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleScan.js"));
-const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleSecurity.js"));
-const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- */
-class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
-    constructor(obniz) {
-        super(obniz);
-        this.remotePeripherals = [];
-        this.service = bleService_1.default;
-        this.characteristic = bleCharacteristic_1.default;
-        this.descriptor = bleDescriptor_1.default;
-        this.peripheral = new blePeripheral_1.default(obniz);
-        this.scanTarget = null;
-        this.advertisement = new bleAdvertisement_1.default(obniz);
-        this.scan = new bleScan_1.default(obniz);
-        this.security = new bleSecurity_1.default(obniz);
-        this._scanCallbackBind();
-        this._centralCallbackBind();
-        this._peripheralCallbackBind();
-        this._errorCallbackBind();
-        this._reset();
-    }
-    static _dataArray2uuidHex(data, reverse) {
-        let uuid = [];
-        for (let i = 0; i < data.length; i++) {
-            uuid.push(("00" + data[i].toString(16).toLowerCase()).slice(-2));
-        }
-        if (reverse) {
-            uuid = uuid.reverse();
-        }
-        let str = uuid.join("");
-        if (uuid.length >= 16) {
-            str =
-                str.slice(0, 8) +
-                    "-" +
-                    str.slice(8, 12) +
-                    "-" +
-                    str.slice(12, 16) +
-                    "-" +
-                    str.slice(16, 20) +
-                    "-" +
-                    str.slice(20);
-        }
-        return str;
-    }
-    // dummy
-    async initWait() { }
-    _reset() { }
-    directConnect(uuid, addressType) {
-        throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
-    }
-    async directConnectWait(uuid, addressType) {
-        throw new Error("directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS");
-    }
-    findPeripheral(address) {
-        for (const key in this.remotePeripherals) {
-            if (this.remotePeripherals[key].address === address) {
-                return this.remotePeripherals[key];
-            }
-        }
-        return null;
-    }
-    schemaBasePath() {
-        return "ble";
-    }
-    _scanCallbackBind() {
-        this.on("/response/ble/central/scan", (obj) => {
-            let val = this.findPeripheral(obj.scan_result.address);
-            if (!val) {
-                val = new bleRemotePeripheral_1.default(this.Obniz, obj.scan_result.address);
-                this.remotePeripherals.push(val);
-            }
-            val.discoverdOnRemote = true;
-            val.setParams(obj.scan_result);
-            this.scan.notifyFromServer("onfind", val);
-        });
-        this.on("/response/ble/central/scan_finish", (obj) => {
-            this.scan.notifyFromServer("onfinish");
-        });
-    }
-    _centralCallbackBind() {
-        const callback = (obj) => {
-            const remotePeripheralCallbackFunc = (val, func, type) => {
-                let target = null;
-                if (val === undefined) {
-                    return;
-                }
-                const p = this.findPeripheral(val.address);
-                if (!p) {
-                    return;
-                }
-                if (type === "peripheral") {
-                    target = p;
-                }
-                else if (type === "service") {
-                    target = p.findService(val);
-                }
-                else if (type === "characteristic") {
-                    target = p.findCharacteristic(val);
-                }
-                else if (type === "descriptor") {
-                    target = p.findDescriptor(val);
-                }
-                if (!target) {
-                    return;
-                }
-                func(val, target);
-            };
-            const paramList = {
-                status_update: { name: "statusupdate", obj: "peripheral" },
-                get_service_result: { name: "discover", obj: "peripheral" },
-                get_service_result_finish: {
-                    name: "discoverfinished",
-                    obj: "peripheral",
-                },
-                get_characteristic_result: { name: "discover", obj: "service" },
-                get_characteristic_result_finish: {
-                    name: "discoverfinished",
-                    obj: "service",
-                },
-                write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-                read_characteristic_result: { name: "onread", obj: "characteristic" },
-                register_notify_characteristic_result: {
-                    name: "onregisternotify",
-                    obj: "characteristic",
-                },
-                // for typo
-                register_nofity_characteristic_result: {
-                    name: "onregisternotify",
-                    obj: "characteristic",
-                },
-                unregister_notify_characteristic_result: {
-                    name: "onunregisternotify",
-                    obj: "characteristic",
-                },
-                // for typo
-                unregister_nofity_characteristic_result: {
-                    name: "onunregisternotify",
-                    obj: "characteristic",
-                },
-                notify_characteristic: { name: "onnotify", obj: "characteristic" },
-                // for typo
-                nofity_characteristic: { name: "onnotify", obj: "characteristic" },
-                get_descriptor_result: { name: "discover", obj: "characteristic" },
-                get_descriptor_result_finish: {
-                    name: "discoverfinished",
-                    obj: "characteristic",
-                },
-                write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-                read_descriptor_result: { name: "onread", obj: "descriptor" },
-            };
-            for (const paramListKey in paramList) {
-                remotePeripheralCallbackFunc(obj[paramListKey], (val, bleobj) => {
-                    bleobj.notifyFromServer(paramList[paramListKey].name, val);
-                }, paramList[paramListKey].obj);
-            }
-        };
-        this.on("/response/ble/central/status_update", callback);
-        this.on("/response/ble/central/service_get", callback);
-        this.on("/response/ble/central/service_get_finish", callback);
-        this.on("/response/ble/central/characteristic_get", callback);
-        this.on("/response/ble/central/characteristic_get_finish", callback);
-        this.on("/response/ble/central/characteristic_write", callback);
-        this.on("/response/ble/central/characteristic_read", callback);
-        this.on("/response/ble/central/characteristic_register_notify", callback);
-        this.on("/response/ble/central/characteristic_notify", callback);
-        this.on("/response/ble/central/characteristic_notify", callback);
-        this.on("/response/ble/central/descriptor_get", callback);
-        this.on("/response/ble/central/descriptor_get_finish", callback);
-        this.on("/response/ble/central/descriptor_write", callback);
-        this.on("/response/ble/central/descriptor_read", callback);
-    }
-    _peripheralCallbackBind() {
-        const callback = (obj) => {
-            const callbackFunc = (val, func, type) => {
-                let target = null;
-                if (val === undefined) {
-                    return;
-                }
-                if (type === "peripheral") {
-                    target = this.peripheral;
-                }
-                else if (type === "service") {
-                    target = this.peripheral.getService(val);
-                }
-                else if (type === "characteristic") {
-                    target = this.peripheral.findCharacteristic(val);
-                }
-                else if (type === "descriptor") {
-                    target = this.peripheral.findDescriptor(val);
-                }
-                if (!target) {
-                    return;
-                }
-                func(val, target);
-            };
-            if (obj.peripheral) {
-                callbackFunc(obj.peripheral.connection_status, (val) => {
-                    this.peripheral.onconnectionupdates(val);
-                }, "peripheral");
-                const centralParamList = {
-                    read_characteristic_result: { name: "onread", obj: "characteristic" },
-                    write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-                    notify_read_characteristic: {
-                        name: "onreadfromremote",
-                        obj: "characteristic",
-                    },
-                    notify_write_characteristic: {
-                        name: "onwritefromremote",
-                        obj: "characteristic",
-                    },
-                    read_descriptor_result: { name: "onread", obj: "descriptor" },
-                    write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-                    notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
-                    notify_write_descriptor: {
-                        name: "onwritefromremote",
-                        obj: "descriptor",
-                    },
-                };
-                for (const key in centralParamList) {
-                    callbackFunc(obj.peripheral[key], (val, bleobj) => {
-                        bleobj.notifyFromServer(centralParamList[key].name, val);
-                    }, centralParamList[key].obj);
-                }
-            }
-        };
-        this.on("/response/ble/peripheral/status", callback);
-        this.on("/response/ble/peripheral/characteristic_read", callback);
-        this.on("/response/ble/peripheral/characteristic_write", callback);
-        this.on("/response/ble/peripheral/characteristic_notify_read", callback);
-        this.on("/response/ble/peripheral/characteristic_notify_write", callback);
-        this.on("/response/ble/peripheral/descriptor_read", callback);
-        this.on("/response/ble/peripheral/descriptor_write", callback);
-        this.on("/response/ble/peripheral/descriptor_notify_read", callback);
-        this.on("/response/ble/peripheral/descriptor_notify_write", callback);
-    }
-    _errorCallbackBind() {
-        this.on("/response/ble/error", (obj) => {
-            const params = obj.error;
-            let handled = false;
-            let peripheral;
-            let target;
-            if (!params.address) {
-                peripheral = this.peripheral;
-            }
-            else {
-                peripheral = this.findPeripheral(params.address);
-            }
-            if (peripheral) {
-                if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
-                    target = peripheral.findDescriptor(params);
-                }
-                else if (params.service_uuid && params.characteristic_uuid) {
-                    target = peripheral.findCharacteristic(params);
-                }
-                else if (params.service_uuid) {
-                    target = peripheral.findService(params);
-                }
-                if (target) {
-                    target.notifyFromServer("onerror", params);
-                    handled = true;
-                }
-                else {
-                    peripheral.onerror(params);
-                    handled = true;
-                }
-            }
-            if ([35, 36, 37, 38, 39].includes(params.function_code)) {
-                this.security.onerror(params);
-                handled = true;
-            }
-            if (!handled) {
-                this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
-            }
-        });
-    }
-}
-exports.default = ObnizBLE;
-
-//# sourceMappingURL=ble.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleAdvertisement.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisementBuilder.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleAdvertisement {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.adv_data = [];
-        this.scan_resp = [];
-    }
-    start() {
-        const obj = {};
-        obj.ble = {};
-        obj.ble.advertisement = {
-            adv_data: this.adv_data,
-        };
-        if (this.scan_resp.length > 0) {
-            obj.ble.advertisement.scan_resp = this.scan_resp;
-        }
-        this.Obniz.send(obj);
-    }
-    end() {
-        const obj = {};
-        obj.ble = {};
-        obj.ble.advertisement = null;
-        this.Obniz.send(obj);
-    }
-    setAdvDataRaw(adv_data) {
-        this.adv_data = adv_data;
-    }
-    setAdvData(json) {
-        const builder = this.advDataBulider(json);
-        this.setAdvDataRaw(builder.build());
-    }
-    advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, jsonVal);
-    }
-    scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, json);
-    }
-    setScanRespDataRaw(scan_resp) {
-        this.scan_resp = scan_resp;
-    }
-    setScanRespData(json) {
-        this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
-    }
-}
-exports.default = BleAdvertisement;
-
-//# sourceMappingURL=bleAdvertisement.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleAdvertisementBuilder.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleAdvertisementBuilder {
-    constructor(Obniz, json) {
-        this.Obniz = Obniz;
-        this.rows = {};
-        if (json) {
-            if (json.localName) {
-                this.setCompleteLocalName(json.localName);
-            }
-            if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
-                this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
-            }
-            if (json.serviceUuids) {
-                for (const uuid of json.serviceUuids) {
-                    this.setUuid(uuid);
-                }
-            }
-        }
-        if (typeof this.extendEvalJson === "function") {
-            this.extendEvalJson(json);
-        }
-    }
-    setRow(type, data) {
-        this.rows[type] = data;
-    }
-    getRow(type) {
-        return this.rows[type] || [];
-    }
-    build() {
-        const data = [];
-        for (const key in this.rows) {
-            if (this.rows[key].length === 0) {
-                continue;
-            }
-            data.push(this.rows[key].length + 1);
-            data.push(parseInt(key));
-            Array.prototype.push.apply(data, this.rows[key]);
-        }
-        if (data.length > 31) {
-            this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
-        }
-        return data;
-    }
-    setStringData(type, string) {
-        const data = [];
-        for (let i = 0; i < string.length; i++) {
-            data.push(string.charCodeAt(i));
-        }
-        this.setRow(type, data);
-    }
-    setShortenedLocalName(name) {
-        this.setStringData(0x08, name);
-    }
-    setCompleteLocalName(name) {
-        this.setStringData(0x09, name);
-    }
-    setManufacturerSpecificData(companyCode, data) {
-        const row = [];
-        row.push(companyCode & 0xff);
-        row.push((companyCode >> 8) & 0xff);
-        Array.prototype.push.apply(row, data);
-        this.setRow(0xff, row);
-    }
-    setUuid(uuid) {
-        const uuidData = this.convertUuid(uuid);
-        let type;
-        if (uuidData.length === 16) {
-            type = 0x06;
-        }
-        else if (uuidData.length === 4) {
-            type = 0x04;
-        }
-        else if (uuidData.length === 2) {
-            type = 0x02;
-        }
-        this.setRow(type, uuidData);
-    }
-    convertUuid(uuid) {
-        const uuidNumeric = bleHelper_1.default.uuidFilter(uuid);
-        if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
-            this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
-        }
-        const data = [];
-        for (let i = uuidNumeric.length; i > 1; i -= 2) {
-            data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
-        }
-        return data;
-    }
-    setIbeaconData(uuid, major, minor, txPower) {
-        const data = [];
-        data.push(0x02, 0x15); // fixed data
-        const uuidData = this.convertUuid(uuid);
-        Array.prototype.push.apply(data, uuidData);
-        data.push((major >> 8) & 0xff);
-        data.push((major >> 0) & 0xff);
-        data.push((minor >> 8) & 0xff);
-        data.push((minor >> 0) & 0xff);
-        data.push((txPower >> 0) & 0xff);
-        this.setManufacturerSpecificData(0x004c, data);
-        return;
-    }
-    extendEvalJson(json) {
-        if (json) {
-            if (json.flags) {
-                if (json.flags.includes("limited_discoverable_mode")) {
-                    this.setLeLimitedDiscoverableModeFlag();
-                }
-                if (json.flags.includes("general_discoverable_mode")) {
-                    this.setLeGeneralDiscoverableModeFlag();
-                }
-                if (json.flags.includes("br_edr_not_supported")) {
-                    this.setBrEdrNotSupportedFlag();
-                }
-                if (json.flags.includes("le_br_edr_controller")) {
-                    this.setLeBrEdrControllerFlag();
-                }
-                if (json.flags.includes("le_br_edr_host")) {
-                    this.setLeBrEdrHostFlag();
-                }
-            }
-        }
-    }
-    setFlags(flag) {
-        const data = this.getRow(0x01);
-        data[0] = (data[0] || 0) | flag;
-        this.setRow(0x01, data);
-    }
-    setLeLimitedDiscoverableModeFlag() {
-        this.setFlags(0x01);
-    }
-    setLeGeneralDiscoverableModeFlag() {
-        this.setFlags(0x02);
-    }
-    setBrEdrNotSupportedFlag() {
-        this.setFlags(0x04);
-    }
-    setLeBrEdrControllerFlag() {
-        this.setFlags(0x08);
-    }
-    setLeBrEdrHostFlag() {
-        this.setFlags(0x10);
-    }
-}
-exports.default = BleAdvertisementBuilder;
-
-//# sourceMappingURL=bleAdvertisementBuilder.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- */
-class BleAttributeAbstract {
-    constructor(params) {
-        this.uuid = bleHelper_1.default.uuidFilter(params.uuid);
-        this.parent = null;
-        this.children = [];
-        this.isRemote = false;
-        this.discoverdOnRemote = false;
-        this.data = params.data || null;
-        if (!this.data && params.text) {
-            this.data = util_1.default.string2dataArray(params.text);
-        }
-        if (!this.data && params.value) {
-            this.data = [params.value];
-        }
-        if (params[this.childrenName]) {
-            for (const child of params[this.childrenName]) {
-                this.addChild(child);
-            }
-        }
-        this.setFunctions();
-        this.emitter = new emitter();
-    }
-    setFunctions() {
-        let childrenName = this.childrenName;
-        if (childrenName) {
-            childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
-            const childName = childrenName.slice(0, -1);
-            let funcName = "add" + childName;
-            this[funcName] = this.addChild;
-            funcName = "get" + childName;
-            this[funcName] = this.getChild;
-        }
-        const parentName = this.parentName;
-        if (parentName) {
-            Object.defineProperty(this, parentName, {
-                get() {
-                    return this.parent;
-                },
-                set(newValue) {
-                    this.parent = newValue;
-                },
-            });
-        }
-    }
-    get childrenClass() {
-        return Object;
-    }
-    get childrenName() {
-        return null;
-    }
-    get parentName() {
-        return null;
-    }
-    addChild(child) {
-        if (!(child instanceof this.childrenClass)) {
-            const childrenClass = this.childrenClass;
-            child = new childrenClass(child);
-        }
-        child.parent = this;
-        this.children.push(child);
-        return child;
-    }
-    getChild(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this.children
-            .filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
-        })
-            .shift();
-    }
-    toJSON() {
-        const obj = {
-            uuid: bleHelper_1.default.uuidFilter(this.uuid),
-        };
-        if (this.children.length > 0) {
-            const key = this.childrenName;
-            obj[key] = this.children;
-        }
-        if (this.data) {
-            obj.data = this.data;
-        }
-        return obj;
-    }
-    /**
-     * WS COMMANDS
-     */
-    read() { }
-    write(val, needResponse) { }
-    writeNumber(val, needResponse) {
-        this.write([val], needResponse);
-    }
-    writeText(str, needResponse) {
-        this.write(util_1.default.string2dataArray(str), needResponse);
-    }
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
-    }
-    writeWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data, needResponse);
-        });
-    }
-    writeTextWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeTextWait failed"));
-                }
-            });
-            this.writeText(data);
-        });
-    }
-    writeNumberWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeNumberWait failed"));
-                }
-            });
-            this.writeNumber(data);
-        });
-    }
-    readFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", () => {
-                resolve();
-            });
-        });
-    }
-    writeFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", (params) => {
-                resolve(params.data);
-            });
-        });
-    }
-    /**
-     * CALLBACKS
-     */
-    onwrite(result) { }
-    onread(data) { }
-    onwritefromremote(address, data) { }
-    onreadfromremote(address) { }
-    onerror(err) {
-        console.error(err.message);
-    }
-    notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "onerror": {
-                this.onerror(params);
-                break;
-            }
-            case "onwrite": {
-                this.onwrite(params.result);
-                break;
-            }
-            case "onread": {
-                this.onread(params.data);
-                break;
-            }
-            case "onwritefromremote": {
-                this.onwritefromremote(params.address, params.data);
-                break;
-            }
-            case "onreadfromremote": {
-                this.onreadfromremote(params.address);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleAttributeAbstract;
-
-//# sourceMappingURL=bleAttributeAbstract.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
-const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Peripheral
- */
-class BleCharacteristic extends bleAttributeAbstract_1.default {
-    constructor(obj) {
-        super(obj);
-        this.addDescriptor = this.addChild;
-        this.getDescriptor = this.getChild;
-        this.properties = obj.properties || [];
-        if (!Array.isArray(this.properties)) {
-            this.properties = [this.properties];
-        }
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
-        }
-    }
-    get parentName() {
-        return "service";
-    }
-    get childrenClass() {
-        return bleDescriptor_1.default;
-    }
-    get childrenName() {
-        return "descriptors";
-    }
-    get descriptors() {
-        return this.children;
-    }
-    toJSON() {
-        const obj = super.toJSON();
-        if (this.properties.length > 0) {
-            obj.properties = this.properties;
-        }
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
-        return obj;
-    }
-    addProperty(param) {
-        if (!this.properties.includes(param)) {
-            this.properties.push(param);
-        }
-    }
-    removeProperty(param) {
-        this.properties = this.properties.filter((elm) => {
-            return elm !== param;
-        });
-    }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
-    write(data) {
-        this.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    write_characteristic: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                        data,
-                    },
-                },
-            },
-        });
-    }
-    read() {
-        this.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    read_characteristic: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    },
-                },
-            },
-        });
-    }
-    notify() {
-        this.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    notify_characteristic: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    },
-                },
-            },
-        });
-    }
-}
-exports.default = BleCharacteristic;
-
-//# sourceMappingURL=bleCharacteristic.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleDescriptor.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Peripheral
- */
-class BleDescriptor extends bleAttributeAbstract_1.default {
-    constructor(obj) {
-        super(obj);
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
-        }
-    }
-    get parentName() {
-        return "characteristic";
-    }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
-    toJSON() {
-        const obj = super.toJSON();
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
-        return obj;
-    }
-    write(dataArray) {
-        this.characteristic.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    write_descriptor: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.characteristic.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.characteristic.uuid),
-                        descriptor_uuid: this.uuid,
-                        data: dataArray,
-                    },
-                },
-            },
-        });
-    }
-    read() {
-        this.characteristic.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    read_descriptor: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.characteristic.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.characteristic.uuid),
-                        descriptor_uuid: this.uuid,
-                    },
-                },
-            },
-        });
-    }
-}
-exports.default = BleDescriptor;
-
-//# sourceMappingURL=bleDescriptor.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleHelper.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @ignore
- */
-const BleHelper = {
-    uuidFilter(uuid) {
-        return uuid.toLowerCase().replace(/[^0-9abcdef]/g, "");
-    },
-};
-exports.default = BleHelper;
-
-//# sourceMappingURL=bleHelper.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/blePeripheral.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Peripheral
- */
-class BlePeripheral {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this._services = [];
-    }
-    get services() {
-        return this._services;
-    }
-    addService(obj) {
-        if (!(obj instanceof bleService_1.default)) {
-            obj = new bleService_1.default(obj);
-        }
-        this._services.push(obj);
-        obj.peripheral = this;
-        this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
-    }
-    setJson(json) {
-        if (json.services) {
-            for (const service of json.services) {
-                this.addService(service);
-            }
-        }
-    }
-    getService(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this._services
-            .filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
-        })
-            .shift();
-    }
-    removeService(uuid) {
-        this._services = this._services.filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) !== uuid;
-        });
-    }
-    stopAllService() {
-        this.Obniz.send({
-            ble: {
-                peripheral: null,
-            },
-        });
-        this._services = [];
-    }
-    toJSON() {
-        return {
-            services: this._services,
-        };
-    }
-    findCharacteristic(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
-        const s = this.getService(serviceUuid);
-        if (s) {
-            return s.getCharacteristic(characteristicUuid);
-        }
-        return null;
-    }
-    findDescriptor(param) {
-        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
-        const c = this.findCharacteristic(param);
-        if (c) {
-            return c.getDescriptor(descriptorUuid);
-        }
-        return null;
-    }
-    end() {
-        this.Obniz.send({ ble: { peripheral: null } });
-    }
-    onconnectionupdates() { }
-    onerror() { }
-}
-exports.default = BlePeripheral;
-
-//# sourceMappingURL=blePeripheral.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
-    constructor(params) {
-        super(params);
-        this.isRemote = false;
-        this.discoverdOnRemote = false;
-    }
-    get wsChildUuidName() {
-        const childrenName = this.childrenName;
-        if (!childrenName) {
-            return null;
-        }
-        const childName = childrenName.slice(0, -1);
-        return childName + "_uuid";
-    }
-    discoverChildren() { }
-    discoverChildrenWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this.children.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverChildren();
-        });
-    }
-    /**
-     * CALLBACKS
-     */
-    ondiscover(child) { }
-    ondiscoverfinished(children) { }
-    notifyFromServer(notifyName, params) {
-        super.notifyFromServer(notifyName, params);
-        switch (notifyName) {
-            case "discover": {
-                const uuid = params[this.wsChildUuidName];
-                let child = this.getChild(uuid);
-                if (!child) {
-                    child = this.addChild({ uuid });
-                }
-                child.discoverdOnRemote = true;
-                child.properties = params.properties || [];
-                this.ondiscover(child);
-                break;
-            }
-            case "discoverfinished": {
-                const children = this.children.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                this.ondiscoverfinished(children);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleRemoteAttributeAbstract;
-
-//# sourceMappingURL=bleRemoteAttributeAbstract.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemoteCharacteristic.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
-const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteDescriptor.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
-    constructor(params) {
-        super(params);
-        this.properties = params.properties || [];
-        if (!Array.isArray(this.properties)) {
-            this.properties = [this.properties];
-        }
-    }
-    get parentName() {
-        return "service";
-    }
-    get childrenClass() {
-        return bleRemoteDescriptor_1.default;
-    }
-    get childrenName() {
-        return "descriptors";
-    }
-    get descriptors() {
-        return this.children;
-    }
-    addDescriptor(params) {
-        return this.addChild(params);
-    }
-    //
-    // getCharacteristic(params) {
-    //   return this.getChild(params)
-    // }
-    getDescriptor(uuid) {
-        return this.getChild(uuid);
-    }
-    async registerNotify(callback) {
-        this.onnotify = callback;
-        const cccd = this.getDescriptor("2902");
-        await cccd.writeWait([0x01, 0x00]);
-        const obj = {
-            ble: {
-                register_notify_characteristic: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    registerNotifyWait(callback) {
-        return new Promise((resolve) => {
-            this.emitter.once("onregisternotify", () => {
-                resolve();
-            });
-            this.registerNotify(callback);
-        });
-    }
-    unregisterNotify() {
-        this.onnotify = () => { };
-        const obj = {
-            ble: {
-                unregister_notify_characteristic: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    unregisterNotifyWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onunregisternotify", () => {
-                resolve();
-            });
-            this.unregisterNotify();
-        });
-    }
-    read() {
-        const obj = {
-            ble: {
-                read_characteristic: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    write(array, needResponse) {
-        if (needResponse === undefined) {
-            needResponse = true;
-        }
-        const obj = {
-            ble: {
-                write_characteristic: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    data: array,
-                    needResponse,
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    discoverChildren() {
-        const obj = {
-            ble: {
-                get_descriptors: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    discoverAllDescriptors() {
-        return this.discoverChildren();
-    }
-    discoverAllDescriptorsWait() {
-        return this.discoverChildrenWait();
-    }
-    toJSON() {
-        const obj = super.toJSON();
-        if (this.properties.length > 0) {
-            obj.properties = this.properties;
-        }
-        return obj;
-    }
-    canBroadcast() {
-        return this.properties.includes("broadcast");
-    }
-    canNotify() {
-        return this.properties.includes("notify");
-    }
-    canRead() {
-        return this.properties.includes("read");
-    }
-    canWrite() {
-        return this.properties.includes("write");
-    }
-    canWriteWithoutResponse() {
-        return this.properties.includes("write_without_response");
-    }
-    canIndicate() {
-        return this.properties.includes("indicate");
-    }
-    ondiscover(descriptor) {
-        this.ondiscoverdescriptor(descriptor);
-    }
-    ondiscoverfinished(descriptors) {
-        this.ondiscoverdescriptorfinished(descriptors);
-    }
-    ondiscoverdescriptor(descriptors) { }
-    ondiscoverdescriptorfinished(descriptors) { }
-    onregisternotify() { }
-    onunregisternotify() { }
-    onnotify(data) { }
-    notifyFromServer(notifyName, params) {
-        super.notifyFromServer(notifyName, params);
-        switch (notifyName) {
-            case "onregisternotify": {
-                this.onregisternotify();
-                break;
-            }
-            case "onunregisternotify": {
-                this.onunregisternotify();
-                break;
-            }
-            case "onnotify": {
-                this.onnotify(params.data || undefined);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleRemoteCharacteristic;
-
-//# sourceMappingURL=bleRemoteCharacteristic.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemoteDescriptor.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
-    constructor(params) {
-        super(params);
-    }
-    get parentName() {
-        return "characteristic";
-    }
-    read() {
-        const obj = {
-            ble: {
-                read_descriptor: {
-                    address: this.characteristic.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.characteristic.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.characteristic.uuid),
-                    descriptor_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.characteristic.service.peripheral.Obniz.send(obj);
-    }
-    write(array, needResponse) {
-        if (needResponse === undefined) {
-            needResponse = true;
-        }
-        const obj = {
-            ble: {
-                write_descriptor: {
-                    address: this.characteristic.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.characteristic.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.characteristic.uuid),
-                    descriptor_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    data: array,
-                    needResponse,
-                },
-            },
-        };
-        this.characteristic.service.peripheral.Obniz.send(obj);
-    }
-}
-exports.default = BleRemoteDescriptor;
-
-//# sourceMappingURL=bleRemoteDescriptor.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemotePeripheral.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteService.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemotePeripheral {
-    constructor(Obniz, address) {
-        this.Obniz = Obniz;
-        this.address = address;
-        this.connected = false;
-        this.device_type = null;
-        this.address_type = null;
-        this.ble_event_type = null;
-        this.rssi = null;
-        this.adv_data = null;
-        this.scan_resp = null;
-        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
-        this._services = [];
-        this.emitter = new emitter();
-    }
-    get services() {
-        return this._services;
-    }
-    /**
-     *
-     * @return {String} json value
-     */
-    toString() {
-        return JSON.stringify({
-            address: this.address,
-            addressType: this.address_type,
-            advertisement: this.adv_data,
-            scanResponse: this.scan_resp,
-            rssi: this.rssi,
-        });
-    }
-    setParams(dic) {
-        this.advertise_data_rows = null;
-        for (const key in dic) {
-            if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
-                this[key] = dic[key];
-            }
-        }
-        this.analyseAdvertisement();
-    }
-    analyseAdvertisement() {
-        if (!this.advertise_data_rows) {
-            this.advertise_data_rows = [];
-            if (this.adv_data) {
-                for (let i = 0; i < this.adv_data.length; i++) {
-                    const length = this.adv_data[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.adv_data[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
-                }
-            }
-            if (this.scan_resp) {
-                for (let i = 0; i < this.scan_resp.length; i++) {
-                    const length = this.scan_resp[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.scan_resp[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
-                }
-            }
-            this.setLocalName();
-            this.setIBeacon();
-        }
-    }
-    searchTypeVal(type) {
-        this.analyseAdvertisement();
-        for (let i = 0; i < this.advertise_data_rows.length; i++) {
-            if (this.advertise_data_rows[i][0] === type) {
-                const results = [].concat(this.advertise_data_rows[i]);
-                results.shift();
-                return results;
-            }
-        }
-        return undefined;
-    }
-    setLocalName() {
-        let data = this.searchTypeVal(0x09);
-        if (!data) {
-            data = this.searchTypeVal(0x08);
-        }
-        if (!data) {
-            this.localName = null;
-        }
-        else {
-            this.localName = String.fromCharCode.apply(null, data);
-        }
-    }
-    setIBeacon() {
-        const data = this.searchTypeVal(0xff);
-        if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
-            this.iBeacon = null;
-            return;
-        }
-        const uuidData = data.slice(4, 20);
-        let uuid = "";
-        for (let i = 0; i < uuidData.length; i++) {
-            uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
-                uuid += "-";
-            }
-        }
-        const major = (data[20] << 8) + data[21];
-        const minor = (data[22] << 8) + data[23];
-        const power = data[24];
-        this.iBeacon = {
-            uuid,
-            major,
-            minor,
-            power,
-            rssi: this.rssi,
-        };
-    }
-    _addServiceUuids(results, data, bit) {
-        if (!data) {
-            return;
-        }
-        const uuidLength = bit / 4;
-        for (let i = 0; i < data.length; i = i + uuidLength) {
-            const one = data.slice(i, i + uuidLength);
-            results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
-        }
-    }
-    advertisementServiceUuids() {
-        const results = [];
-        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
-        return results;
-    }
-    connect() {
-        this.Obniz.ble.scan.end();
-        const obj = {
-            ble: {
-                connect: {
-                    address: this.address,
-                },
-            },
-        };
-        this.Obniz.send(obj);
-    }
-    connectWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "connected") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("connection not established"));
-                }
-            });
-            this.connect();
-        });
-    }
-    disconnect() {
-        const obj = {
-            ble: {
-                disconnect: {
-                    address: this.address,
-                },
-            },
-        };
-        this.Obniz.send(obj);
-    }
-    disconnectWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "disconnected") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("disconnectWait failed"));
-                }
-            });
-            this.disconnect();
-        });
-    }
-    getService(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        for (const key in this._services) {
-            if (this._services[key].uuid === uuid) {
-                return this._services[key];
-            }
-        }
-        return undefined;
-    }
-    findService(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        return this.getService(serviceUuid);
-    }
-    findCharacteristic(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
-        const s = this.getService(serviceUuid);
-        if (s) {
-            return s.getCharacteristic(characteristicUuid);
-        }
-        return null;
-    }
-    findDescriptor(param) {
-        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
-        const c = this.findCharacteristic(param);
-        if (c) {
-            return c.getDescriptor(descriptorUuid);
-        }
-        return null;
-    }
-    discoverAllServices() {
-        const obj = {
-            ble: {
-                get_services: {
-                    address: this.address,
-                },
-            },
-        };
-        this.Obniz.send(obj);
-    }
-    discoverAllServicesWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverAllServices();
-        });
-    }
-    async discoverAllHandlesWait() {
-        const ArrayFlat = (array, depth) => {
-            const flattend = [];
-            const flat = (_array, _depth) => {
-                for (const el of _array) {
-                    if (Array.isArray(el) && _depth > 0) {
-                        flat(el, _depth - 1);
-                    }
-                    else {
-                        flattend.push(el);
-                    }
-                }
-            };
-            flat(array, Math.floor(depth) || 1);
-            return flattend;
-        };
-        const services = await this.discoverAllServicesWait();
-        const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-        const chars = ArrayFlat(charsNest);
-        const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-        // eslint-disable-next-line no-unused-vars
-        const descriptors = ArrayFlat(descriptorsNest);
-    }
-    onconnect() { }
-    ondisconnect() { }
-    ondiscoverservice(child) { }
-    ondiscoverservicefinished(children) { }
-    ondiscover() { }
-    ondiscoverfinished() { }
-    async notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "statusupdate": {
-                if (params.status === "connected") {
-                    this.connected = true;
-                    await this.discoverAllHandlesWait();
-                    this.onconnect();
-                }
-                if (params.status === "disconnected") {
-                    this.connected = false;
-                    this.ondisconnect();
-                }
-                break;
-            }
-            case "discover": {
-                const uuid = params.service_uuid;
-                let child = this.getService(uuid);
-                if (!child) {
-                    const newService = new bleRemoteService_1.default({ uuid });
-                    newService.parent = this;
-                    this._services.push(newService);
-                    child = newService;
-                }
-                child.discoverdOnRemote = true;
-                this.ondiscoverservice(child);
-                break;
-            }
-            case "discoverfinished": {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                this.ondiscoverservicefinished(children);
-                break;
-            }
-        }
-    }
-    onerror() { }
-}
-exports.default = BleRemotePeripheral;
-
-//# sourceMappingURL=bleRemotePeripheral.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemoteService.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
-const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteCharacteristic.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
-    constructor(obj) {
-        super(obj);
-    }
-    get parentName() {
-        return "peripheral";
-    }
-    get childrenClass() {
-        return bleRemoteCharacteristic_1.default;
-    }
-    get childrenName() {
-        return "characteristics";
-    }
-    get characteristics() {
-        return this.children;
-    }
-    addCharacteristic(params) {
-        return this.addChild(params);
-    }
-    getCharacteristic(params) {
-        return this.getChild(params);
-    }
-    discoverAllCharacteristics() {
-        return this.discoverChildren();
-    }
-    discoverAllCharacteristicsWait() {
-        return this.discoverChildrenWait();
-    }
-    discoverChildren() {
-        const obj = {
-            ble: {
-                get_characteristics: {
-                    address: this.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.parent.Obniz.send(obj);
-    }
-    ondiscover(characteristic) {
-        this.ondiscovercharacteristic(characteristic);
-    }
-    ondiscoverfinished(characteristics) {
-        this.ondiscovercharacteristicfinished(characteristics);
-    }
-    ondiscovercharacteristic(characteristic) { }
-    ondiscovercharacteristicfinished(characteristics) { }
-}
-exports.default = BleRemoteService;
-
-//# sourceMappingURL=bleRemoteService.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleScan.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleScan {
-    constructor(Obniz) {
-        this.scanTarget = null;
-        this.Obniz = Obniz;
-        this.emitter = new emitter();
-        this.scanedPeripherals = [];
-    }
-    start(target, settings) {
-        const obj = {};
-        obj.ble = {};
-        obj.ble.scan = {
-            //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-            //    "interval" : settings && settings.interval ? settings.interval : 30,
-            duration: settings && settings.duration ? settings.duration : 30,
-        };
-        if (settings && settings.duplicate) {
-            throw new Error(`duplicate property can only be used with obnizOS3 or later`);
-        }
-        this.scanTarget = target;
-        if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
-            this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
-                return bleHelper_1.default.uuidFilter(elm);
-            });
-        }
-        this.scanedPeripherals = [];
-        this.Obniz.send(obj);
-    }
-    async startWait(target, settings) {
-        return this.start(target, settings);
-    }
-    startOneWait(target, settings) {
-        let state = 0;
-        return new Promise((resolve) => {
-            this.emitter.once("onfind", (param) => {
-                if (state === 0) {
-                    state = 1;
-                    this.end();
-                    resolve(param);
-                }
-            });
-            this.emitter.once("onfinish", () => {
-                if (state === 0) {
-                    state = 1;
-                    resolve(null);
-                }
-            });
-            this.start(target, settings);
-        });
-    }
-    startAllWait(target, settings) {
-        return new Promise((resolve) => {
-            this.emitter.once("onfinish", () => {
-                resolve(this.scanedPeripherals);
-            });
-            this.start(target, settings);
-        });
-    }
-    end() {
-        const obj = {};
-        obj.ble = {};
-        obj.ble.scan = null;
-        this.Obniz.send(obj);
-    }
-    endWait() {
-        this.end();
-    }
-    isTarget(peripheral) {
-        if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {
-            return false;
-        }
-        if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
-                return bleHelper_1.default.uuidFilter(e);
-            });
-            for (const uuid of this.scanTarget.uuids) {
-                if (!uuids.includes(uuid)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    onfinish(scanedPeripherals) { } // dummy
-    onfind(params) { } // dummy
-    setAdvertisementFilter() {
-        throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
-    }
-    setScanMode(mode) {
-        throw new Error("setScanMode is not support obnizOS < 3.2.0");
-    }
-    notifyFromServer(notifyName, params) {
-        switch (notifyName) {
-            case "onfind": {
-                if (this.isTarget(params)) {
-                    this.scanedPeripherals.push(params);
-                    this.emitter.emit(notifyName, params);
-                    this.onfind(params);
-                }
-                break;
-            }
-            case "onfinish": {
-                this.emitter.emit(notifyName, this.scanedPeripherals);
-                this.onfinish(this.scanedPeripherals);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleScan;
-
-//# sourceMappingURL=bleScan.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleSecurity.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const semver = __webpack_require__("./node_modules/semver/semver.js");
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- */
-class BleSecurity {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.emitter = new emitter();
-    }
-    setModeLevel(mode, level) {
-        let auth;
-        let keys;
-        let indicateSecurityLevel;
-        if (mode === 1) {
-            if (level === 1) {
-                auth = [];
-                indicateSecurityLevel = 0; // no pairing request
-                keys = ["LTK", "IRK"];
-            }
-            else if (level === 2) {
-                auth = ["bonding"];
-                indicateSecurityLevel = 2;
-                keys = ["LTK", "IRK"];
-            }
-            else if (level === 3) {
-                // TODO
-                // auth = ['bonding','mitm'];
-                // indicateSecurityLevel = 3;
-                // keys = ['LTK', 'IRK'];
-            }
-        }
-        else if (mode === 2) {
-            if (level === 1) {
-                // TODO
-                // auth = [];
-                // keys = ['LTK', 'IRK','CSRK'];
-            }
-            else if (level === 2) {
-                // TODO
-                // auth = ['bonding'];
-                // keys = ['LTK', 'IRK','CSRK'];
-            }
-        }
-        if (auth !== undefined && indicateSecurityLevel !== undefined && keys !== undefined) {
-            this.setAuth(auth);
-            this.setIndicateSecurityLevel(indicateSecurityLevel);
-            this.setEnableKeyTypes(keys);
-        }
-        else {
-            const msg = `BLE security mode${mode}, level${level} is not available.`;
-            this.Obniz.error(msg);
-            throw new Error(msg);
-        }
-    }
-    checkIntroducedFirmware(introducedVersion, functionName) {
-        const results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
-        if (results) {
-            const msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${this.Obniz.firmware_ver})`;
-            this.Obniz.error(msg);
-            throw new Error(msg);
-        }
-    }
-    setAuth(authTypes) {
-        this.checkIntroducedFirmware("1.1.0", "setAuth");
-        if (!Array.isArray(authTypes)) {
-            authTypes = [authTypes];
-        }
-        const sendTypes = authTypes
-            .map((elm) => {
-            return elm.toLowerCase();
-        })
-            .filter((elm) => {
-            return ["mitm", "secure_connection", "bonding"].includes(elm);
-        });
-        if (sendTypes.length !== authTypes.length) {
-            throw new Error("unknown auth type");
-        }
-        this.Obniz.send({
-            ble: {
-                security: {
-                    auth: authTypes,
-                },
-            },
-        });
-    }
-    setIndicateSecurityLevel(level) {
-        this.checkIntroducedFirmware("1.1.0", "setIndicateSecurityLevel");
-        if (typeof level !== "number") {
-            throw new Error("unknown secrity level : " + level);
-        }
-        this.Obniz.send({
-            ble: {
-                security: {
-                    indicate_security_level: level,
-                },
-            },
-        });
-    }
-    setEnableKeyTypes(keyTypes) {
-        this.checkIntroducedFirmware("1.1.0", "setEnableKeyTypes");
-        if (!Array.isArray(keyTypes)) {
-            keyTypes = [keyTypes];
-        }
-        const sendTypes = keyTypes
-            .map((elm) => {
-            return elm.toLowerCase();
-        })
-            .filter((elm) => {
-            return ["ltk", "csrk", "irk"].includes(elm);
-        });
-        if (sendTypes.length !== keyTypes.length) {
-            throw new Error("unknown key type");
-        }
-        this.Obniz.send({
-            ble: {
-                security: {
-                    key: { type: sendTypes },
-                },
-            },
-        });
-    }
-    setKeyMaxSize(size) {
-        this.checkIntroducedFirmware("1.1.0", "setKeyMaxSize");
-        if (typeof size !== "number") {
-            throw new Error("please provide key size in number");
-        }
-        this.Obniz.send({
-            ble: {
-                security: {
-                    key: { max_size: size },
-                },
-            },
-        });
-    }
-    clearBondingDevicesList() {
-        this.Obniz.send({
-            ble: {
-                security: {
-                    devices: { clear: true },
-                },
-            },
-        });
-    }
-    onerror(params) { } // dummy
-    notifyFromServer(notifyName, params) {
-        switch (notifyName) {
-            case "onerror": {
-                this.onerror(params);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleSecurity;
-
-//# sourceMappingURL=bleSecurity.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleService.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
-const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Peripheral
- */
-class BleService extends bleAttributeAbstract_1.default {
-    constructor(obj) {
-        super(obj);
-        this.addCharacteristic = this.addChild;
-        this.getCharacteristic = this.getChild;
-    }
-    get parentName() {
-        return "peripheral";
-    }
-    get childrenName() {
-        return "characteristics";
-    }
-    get childrenClass() {
-        return bleCharacteristic_1.default;
-    }
-    get advData() {
-        return {
-            flags: ["general_discoverable_mode", "br_edr_not_supported"],
-            serviceUuids: [this.uuid],
-        };
-    }
-    end() {
-        this.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    stop_service: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    },
-                },
-            },
-        });
-        this.peripheral.removeService(this.uuid);
-    }
-    notify(notifyName, params) {
-        // nothing
-    }
-}
-exports.default = BleService;
-
-//# sourceMappingURL=bleService.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/bleHci/ble.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
+ * obnizOS ver < 3.0.0   : Not Supported <br/>
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
@@ -6467,6 +4222,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     /**
      * Initialize BLE module. You need call this first everything before.
+     * This throws if device is not supported device.
      *
      * ```javascript
      * // Javascript Example
@@ -6475,6 +4231,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     async initWait() {
         if (!this._initialized) {
+            const MinHCIAvailableOS = "3.0.0";
+            if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
+                throw new ObnizError_1.ObnizBleUnSupportedOSVersionError(this.Obniz.firmware_ver, MinHCIAvailableOS);
+            }
             this._initialized = true;
             // force initialize on obnizOS < 3.2.0
             if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
@@ -6628,7 +4388,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             scan_resp: advertisement.scanResponseRaw,
         };
         val.setParams(peripheralData);
-        val._adv_data_filtered = advertisement;
         this.scan.notifyFromServer("onfind", val);
     }
     onDisconnect(peripheralUuid, reason) {
@@ -8338,7 +6097,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *      peripheral.connect({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllDescriptorsWait() {
@@ -8587,6 +6346,11 @@ class BleRemotePeripheral {
          * @ignore
          */
         this._connectSetting = {};
+        /**
+         * Indicating this peripheral is found by scan or set from software.
+         * @ignore
+         */
+        this.discoverdOnRemote = undefined;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -8594,7 +6358,7 @@ class BleRemotePeripheral {
         this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
-        this.adv_data = null;
+        // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
@@ -8854,7 +6618,7 @@ class BleRemotePeripheral {
      *      peripheral.connectWait({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllServicesWait() {
@@ -8965,7 +6729,7 @@ class BleRemotePeripheral {
      *      await peripheral.connectWait();
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      *
@@ -8987,7 +6751,7 @@ class BleRemotePeripheral {
      *      await peripheral.connectWait();
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      * Go to [[BlePairingOptions]] to see more option.
@@ -9232,7 +6996,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      *      peripheral.connect({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllCharacteristicsWait() {
@@ -9356,6 +7120,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+const assert_1 = __webpack_require__("./node_modules/assert/assert.js");
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
@@ -9471,14 +7236,22 @@ class BleScan {
      * @param target
      * @param settings
      */
-    async startOneWait(target, settings) {
+    async startOneWait(target, settings = {}) {
         await this.startWait(target, settings);
-        return new Promise((resolve) => {
-            this.emitter.once("onfind", async (param) => {
-                resolve(param);
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onfind", async (peripheral, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
+                resolve(peripheral);
                 await this.endWait();
             });
-            this.emitter.once("onfinish", () => {
+            this.emitter.once("onfinish", (peripherals, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
                 resolve(null);
             });
         });
@@ -9512,8 +7285,12 @@ class BleScan {
      */
     async startAllWait(target, settings) {
         await this.startWait(target, settings);
-        return new Promise((resolve) => {
-            this.emitter.once("onfinish", () => {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onfinish", (peripherals, error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
                 resolve(this.scanedPeripherals);
             });
         });
@@ -25481,7 +23258,7 @@ class Linking {
                 id_filter = p.idFilter;
             }
         }
-        this.obniz.ble.scan.onfind = function (peripheral) {
+        this.obniz.ble.scan.onfind = (peripheral) => {
             if (!peripheral.localName) {
                 return;
             }
@@ -25492,7 +23269,7 @@ class Linking {
             // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
             //   return;
             // }
-            if (this.onadvertisement && typeof this.onadvertisement === "function") {
+            if (typeof this.onadvertisement === "function") {
                 const parsed = advertising_1.default.parse(peripheral);
                 if (parsed) {
                     this.onadvertisement(parsed);
@@ -26281,7 +24058,7 @@ class LinkingDevice {
         }
     }
     _initServices() {
-        const device_name = this._peripheral.localName;
+        const device_name = this._peripheral.localName || "";
         // Device Name
         if (this._generic_access_service.device_name.char) {
             this.services.deviceName = {
@@ -47921,6 +45698,521 @@ PEMEncoder.prototype.encode = function encode(data, options) {
 
 /***/ }),
 
+/***/ "./node_modules/assert/assert.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var objectAssign = __webpack_require__("./node_modules/object-assign/index.js");
+
+// compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
+// original notice:
+
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+function compare(a, b) {
+  if (a === b) {
+    return 0;
+  }
+
+  var x = a.length;
+  var y = b.length;
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i];
+      y = b[i];
+      break;
+    }
+  }
+
+  if (x < y) {
+    return -1;
+  }
+  if (y < x) {
+    return 1;
+  }
+  return 0;
+}
+function isBuffer(b) {
+  if (global.Buffer && typeof global.Buffer.isBuffer === 'function') {
+    return global.Buffer.isBuffer(b);
+  }
+  return !!(b != null && b._isBuffer);
+}
+
+// based on node assert, original notice:
+// NB: The URL to the CommonJS spec is kept just for tradition.
+//     node-assert has evolved a lot since then, both in API and behavior.
+
+// http://wiki.commonjs.org/wiki/Unit_Testing/1.0
+//
+// THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
+//
+// Originally from narwhal.js (http://narwhaljs.org)
+// Copyright (c) 2009 Thomas Robinson <280north.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the 'Software'), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+var hasOwn = Object.prototype.hasOwnProperty;
+var pSlice = Array.prototype.slice;
+var functionsHaveNames = (function () {
+  return function foo() {}.name === 'foo';
+}());
+function pToString (obj) {
+  return Object.prototype.toString.call(obj);
+}
+function isView(arrbuf) {
+  if (isBuffer(arrbuf)) {
+    return false;
+  }
+  if (typeof global.ArrayBuffer !== 'function') {
+    return false;
+  }
+  if (typeof ArrayBuffer.isView === 'function') {
+    return ArrayBuffer.isView(arrbuf);
+  }
+  if (!arrbuf) {
+    return false;
+  }
+  if (arrbuf instanceof DataView) {
+    return true;
+  }
+  if (arrbuf.buffer && arrbuf.buffer instanceof ArrayBuffer) {
+    return true;
+  }
+  return false;
+}
+// 1. The assert module provides functions that throw
+// AssertionError's when particular conditions are not met. The
+// assert module must conform to the following interface.
+
+var assert = module.exports = ok;
+
+// 2. The AssertionError is defined in assert.
+// new assert.AssertionError({ message: message,
+//                             actual: actual,
+//                             expected: expected })
+
+var regex = /\s*function\s+([^\(\s]*)\s*/;
+// based on https://github.com/ljharb/function.prototype.name/blob/adeeeec8bfcc6068b187d7d9fb3d5bb1d3a30899/implementation.js
+function getName(func) {
+  if (!util.isFunction(func)) {
+    return;
+  }
+  if (functionsHaveNames) {
+    return func.name;
+  }
+  var str = func.toString();
+  var match = str.match(regex);
+  return match && match[1];
+}
+assert.AssertionError = function AssertionError(options) {
+  this.name = 'AssertionError';
+  this.actual = options.actual;
+  this.expected = options.expected;
+  this.operator = options.operator;
+  if (options.message) {
+    this.message = options.message;
+    this.generatedMessage = false;
+  } else {
+    this.message = getMessage(this);
+    this.generatedMessage = true;
+  }
+  var stackStartFunction = options.stackStartFunction || fail;
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, stackStartFunction);
+  } else {
+    // non v8 browsers so we can have a stacktrace
+    var err = new Error();
+    if (err.stack) {
+      var out = err.stack;
+
+      // try to strip useless frames
+      var fn_name = getName(stackStartFunction);
+      var idx = out.indexOf('\n' + fn_name);
+      if (idx >= 0) {
+        // once we have located the function frame
+        // we need to strip out everything before it (and its line)
+        var next_line = out.indexOf('\n', idx + 1);
+        out = out.substring(next_line + 1);
+      }
+
+      this.stack = out;
+    }
+  }
+};
+
+// assert.AssertionError instanceof Error
+util.inherits(assert.AssertionError, Error);
+
+function truncate(s, n) {
+  if (typeof s === 'string') {
+    return s.length < n ? s : s.slice(0, n);
+  } else {
+    return s;
+  }
+}
+function inspect(something) {
+  if (functionsHaveNames || !util.isFunction(something)) {
+    return util.inspect(something);
+  }
+  var rawname = getName(something);
+  var name = rawname ? ': ' + rawname : '';
+  return '[Function' +  name + ']';
+}
+function getMessage(self) {
+  return truncate(inspect(self.actual), 128) + ' ' +
+         self.operator + ' ' +
+         truncate(inspect(self.expected), 128);
+}
+
+// At present only the three keys mentioned above are used and
+// understood by the spec. Implementations or sub modules can pass
+// other keys to the AssertionError's constructor - they will be
+// ignored.
+
+// 3. All of the following functions must throw an AssertionError
+// when a corresponding condition is not met, with a message that
+// may be undefined if not provided.  All assertion methods provide
+// both the actual and expected values to the assertion error for
+// display purposes.
+
+function fail(actual, expected, message, operator, stackStartFunction) {
+  throw new assert.AssertionError({
+    message: message,
+    actual: actual,
+    expected: expected,
+    operator: operator,
+    stackStartFunction: stackStartFunction
+  });
+}
+
+// EXTENSION! allows for well behaved errors defined elsewhere.
+assert.fail = fail;
+
+// 4. Pure assertion tests whether a value is truthy, as determined
+// by !!guard.
+// assert.ok(guard, message_opt);
+// This statement is equivalent to assert.equal(true, !!guard,
+// message_opt);. To test strictly for the value true, use
+// assert.strictEqual(true, guard, message_opt);.
+
+function ok(value, message) {
+  if (!value) fail(value, true, message, '==', assert.ok);
+}
+assert.ok = ok;
+
+// 5. The equality assertion tests shallow, coercive equality with
+// ==.
+// assert.equal(actual, expected, message_opt);
+
+assert.equal = function equal(actual, expected, message) {
+  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
+};
+
+// 6. The non-equality assertion tests for whether two objects are not equal
+// with != assert.notEqual(actual, expected, message_opt);
+
+assert.notEqual = function notEqual(actual, expected, message) {
+  if (actual == expected) {
+    fail(actual, expected, message, '!=', assert.notEqual);
+  }
+};
+
+// 7. The equivalence assertion tests a deep equality relation.
+// assert.deepEqual(actual, expected, message_opt);
+
+assert.deepEqual = function deepEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected, false)) {
+    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
+  }
+};
+
+assert.deepStrictEqual = function deepStrictEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected, true)) {
+    fail(actual, expected, message, 'deepStrictEqual', assert.deepStrictEqual);
+  }
+};
+
+function _deepEqual(actual, expected, strict, memos) {
+  // 7.1. All identical values are equivalent, as determined by ===.
+  if (actual === expected) {
+    return true;
+  } else if (isBuffer(actual) && isBuffer(expected)) {
+    return compare(actual, expected) === 0;
+
+  // 7.2. If the expected value is a Date object, the actual value is
+  // equivalent if it is also a Date object that refers to the same time.
+  } else if (util.isDate(actual) && util.isDate(expected)) {
+    return actual.getTime() === expected.getTime();
+
+  // 7.3 If the expected value is a RegExp object, the actual value is
+  // equivalent if it is also a RegExp object with the same source and
+  // properties (`global`, `multiline`, `lastIndex`, `ignoreCase`).
+  } else if (util.isRegExp(actual) && util.isRegExp(expected)) {
+    return actual.source === expected.source &&
+           actual.global === expected.global &&
+           actual.multiline === expected.multiline &&
+           actual.lastIndex === expected.lastIndex &&
+           actual.ignoreCase === expected.ignoreCase;
+
+  // 7.4. Other pairs that do not both pass typeof value == 'object',
+  // equivalence is determined by ==.
+  } else if ((actual === null || typeof actual !== 'object') &&
+             (expected === null || typeof expected !== 'object')) {
+    return strict ? actual === expected : actual == expected;
+
+  // If both values are instances of typed arrays, wrap their underlying
+  // ArrayBuffers in a Buffer each to increase performance
+  // This optimization requires the arrays to have the same type as checked by
+  // Object.prototype.toString (aka pToString). Never perform binary
+  // comparisons for Float*Arrays, though, since e.g. +0 === -0 but their
+  // bit patterns are not identical.
+  } else if (isView(actual) && isView(expected) &&
+             pToString(actual) === pToString(expected) &&
+             !(actual instanceof Float32Array ||
+               actual instanceof Float64Array)) {
+    return compare(new Uint8Array(actual.buffer),
+                   new Uint8Array(expected.buffer)) === 0;
+
+  // 7.5 For all other Object pairs, including Array objects, equivalence is
+  // determined by having the same number of owned properties (as verified
+  // with Object.prototype.hasOwnProperty.call), the same set of keys
+  // (although not necessarily the same order), equivalent values for every
+  // corresponding key, and an identical 'prototype' property. Note: this
+  // accounts for both named and indexed properties on Arrays.
+  } else if (isBuffer(actual) !== isBuffer(expected)) {
+    return false;
+  } else {
+    memos = memos || {actual: [], expected: []};
+
+    var actualIndex = memos.actual.indexOf(actual);
+    if (actualIndex !== -1) {
+      if (actualIndex === memos.expected.indexOf(expected)) {
+        return true;
+      }
+    }
+
+    memos.actual.push(actual);
+    memos.expected.push(expected);
+
+    return objEquiv(actual, expected, strict, memos);
+  }
+}
+
+function isArguments(object) {
+  return Object.prototype.toString.call(object) == '[object Arguments]';
+}
+
+function objEquiv(a, b, strict, actualVisitedObjects) {
+  if (a === null || a === undefined || b === null || b === undefined)
+    return false;
+  // if one is a primitive, the other must be same
+  if (util.isPrimitive(a) || util.isPrimitive(b))
+    return a === b;
+  if (strict && Object.getPrototypeOf(a) !== Object.getPrototypeOf(b))
+    return false;
+  var aIsArgs = isArguments(a);
+  var bIsArgs = isArguments(b);
+  if ((aIsArgs && !bIsArgs) || (!aIsArgs && bIsArgs))
+    return false;
+  if (aIsArgs) {
+    a = pSlice.call(a);
+    b = pSlice.call(b);
+    return _deepEqual(a, b, strict);
+  }
+  var ka = objectKeys(a);
+  var kb = objectKeys(b);
+  var key, i;
+  // having the same number of owned properties (keys incorporates
+  // hasOwnProperty)
+  if (ka.length !== kb.length)
+    return false;
+  //the same set of keys (although not necessarily the same order),
+  ka.sort();
+  kb.sort();
+  //~~~cheap key test
+  for (i = ka.length - 1; i >= 0; i--) {
+    if (ka[i] !== kb[i])
+      return false;
+  }
+  //equivalent values for every corresponding key, and
+  //~~~possibly expensive deep test
+  for (i = ka.length - 1; i >= 0; i--) {
+    key = ka[i];
+    if (!_deepEqual(a[key], b[key], strict, actualVisitedObjects))
+      return false;
+  }
+  return true;
+}
+
+// 8. The non-equivalence assertion tests for any deep inequality.
+// assert.notDeepEqual(actual, expected, message_opt);
+
+assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected, false)) {
+    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
+  }
+};
+
+assert.notDeepStrictEqual = notDeepStrictEqual;
+function notDeepStrictEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected, true)) {
+    fail(actual, expected, message, 'notDeepStrictEqual', notDeepStrictEqual);
+  }
+}
+
+
+// 9. The strict equality assertion tests strict equality, as determined by ===.
+// assert.strictEqual(actual, expected, message_opt);
+
+assert.strictEqual = function strictEqual(actual, expected, message) {
+  if (actual !== expected) {
+    fail(actual, expected, message, '===', assert.strictEqual);
+  }
+};
+
+// 10. The strict non-equality assertion tests for strict inequality, as
+// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
+
+assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
+  if (actual === expected) {
+    fail(actual, expected, message, '!==', assert.notStrictEqual);
+  }
+};
+
+function expectedException(actual, expected) {
+  if (!actual || !expected) {
+    return false;
+  }
+
+  if (Object.prototype.toString.call(expected) == '[object RegExp]') {
+    return expected.test(actual);
+  }
+
+  try {
+    if (actual instanceof expected) {
+      return true;
+    }
+  } catch (e) {
+    // Ignore.  The instanceof check doesn't work for arrow functions.
+  }
+
+  if (Error.isPrototypeOf(expected)) {
+    return false;
+  }
+
+  return expected.call({}, actual) === true;
+}
+
+function _tryBlock(block) {
+  var error;
+  try {
+    block();
+  } catch (e) {
+    error = e;
+  }
+  return error;
+}
+
+function _throws(shouldThrow, block, expected, message) {
+  var actual;
+
+  if (typeof block !== 'function') {
+    throw new TypeError('"block" argument must be a function');
+  }
+
+  if (typeof expected === 'string') {
+    message = expected;
+    expected = null;
+  }
+
+  actual = _tryBlock(block);
+
+  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
+            (message ? ' ' + message : '.');
+
+  if (shouldThrow && !actual) {
+    fail(actual, expected, 'Missing expected exception' + message);
+  }
+
+  var userProvidedMessage = typeof message === 'string';
+  var isUnwantedException = !shouldThrow && util.isError(actual);
+  var isUnexpectedException = !shouldThrow && actual && !expected;
+
+  if ((isUnwantedException &&
+      userProvidedMessage &&
+      expectedException(actual, expected)) ||
+      isUnexpectedException) {
+    fail(actual, expected, 'Got unwanted exception' + message);
+  }
+
+  if ((shouldThrow && actual && expected &&
+      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
+    throw actual;
+  }
+}
+
+// 11. Expected to throw an error:
+// assert.throws(block, Error_opt, message_opt);
+
+assert.throws = function(block, /*optional*/error, /*optional*/message) {
+  _throws(true, block, error, message);
+};
+
+// EXTENSION! This is annoying to write outside this module.
+assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
+  _throws(false, block, error, message);
+};
+
+assert.ifError = function(err) { if (err) throw err; };
+
+// Expose a strict only variant of assert
+function strict(value, message) {
+  if (!value) fail(value, true, message, '==', strict);
+}
+assert.strict = objectAssign(strict, assert, {
+  equal: assert.strictEqual,
+  deepEqual: assert.deepStrictEqual,
+  notEqual: assert.notStrictEqual,
+  notDeepEqual: assert.notDeepStrictEqual
+});
+assert.strict.strict = assert.strict;
+
+var objectKeys = Object.keys || function (obj) {
+  var keys = [];
+  for (var key in obj) {
+    if (hasOwn.call(obj, key)) keys.push(key);
+  }
+  return keys;
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
 /***/ "./node_modules/base64-js/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -64293,6 +62585,857 @@ exports.default = global.fetch.bind(global);
 exports.Headers = global.Headers;
 exports.Request = global.Request;
 exports.Response = global.Response;
+
+/***/ }),
+
+/***/ "./node_modules/node-libs-browser/node_modules/inherits/inherits_browser.js":
+/***/ (function(module, exports) {
+
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/node-libs-browser/node_modules/util/support/isBufferBrowser.js":
+/***/ (function(module, exports) {
+
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+
+/***/ }),
+
+/***/ "./node_modules/node-libs-browser/node_modules/util/util.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
+  function getOwnPropertyDescriptors(obj) {
+    var keys = Object.keys(obj);
+    var descriptors = {};
+    for (var i = 0; i < keys.length; i++) {
+      descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
+    }
+    return descriptors;
+  };
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+};
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  if (typeof process !== 'undefined' && process.noDeprecation === true) {
+    return fn;
+  }
+
+  // Allow for deprecating things in the process of starting up.
+  if (typeof process === 'undefined') {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    exports._extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+exports.inspect = inspect;
+
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== exports.inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/support/isBufferBrowser.js");
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+exports.log = function() {
+  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+};
+
+
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+exports.inherits = __webpack_require__("./node_modules/node-libs-browser/node_modules/inherits/inherits_browser.js");
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+var kCustomPromisifiedSymbol = typeof Symbol !== 'undefined' ? Symbol('util.promisify.custom') : undefined;
+
+exports.promisify = function promisify(original) {
+  if (typeof original !== 'function')
+    throw new TypeError('The "original" argument must be of type Function');
+
+  if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
+    var fn = original[kCustomPromisifiedSymbol];
+    if (typeof fn !== 'function') {
+      throw new TypeError('The "util.promisify.custom" argument must be of type Function');
+    }
+    Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+      value: fn, enumerable: false, writable: false, configurable: true
+    });
+    return fn;
+  }
+
+  function fn() {
+    var promiseResolve, promiseReject;
+    var promise = new Promise(function (resolve, reject) {
+      promiseResolve = resolve;
+      promiseReject = reject;
+    });
+
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+    args.push(function (err, value) {
+      if (err) {
+        promiseReject(err);
+      } else {
+        promiseResolve(value);
+      }
+    });
+
+    try {
+      original.apply(this, args);
+    } catch (err) {
+      promiseReject(err);
+    }
+
+    return promise;
+  }
+
+  Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
+
+  if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+    value: fn, enumerable: false, writable: false, configurable: true
+  });
+  return Object.defineProperties(
+    fn,
+    getOwnPropertyDescriptors(original)
+  );
+}
+
+exports.promisify.custom = kCustomPromisifiedSymbol
+
+function callbackifyOnRejected(reason, cb) {
+  // `!reason` guard inspired by bluebird (Ref: https://goo.gl/t5IS6M).
+  // Because `null` is a special error value in callbacks which means "no error
+  // occurred", we error-wrap so the callback consumer can distinguish between
+  // "the promise rejected with null" or "the promise fulfilled with undefined".
+  if (!reason) {
+    var newReason = new Error('Promise was rejected with a falsy value');
+    newReason.reason = reason;
+    reason = newReason;
+  }
+  return cb(reason);
+}
+
+function callbackify(original) {
+  if (typeof original !== 'function') {
+    throw new TypeError('The "original" argument must be of type Function');
+  }
+
+  // We DO NOT return the promise as it gives the user a false sense that
+  // the promise is actually somehow related to the callback's execution
+  // and that the callback throwing will reject the promise.
+  function callbackified() {
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+
+    var maybeCb = args.pop();
+    if (typeof maybeCb !== 'function') {
+      throw new TypeError('The last argument must be of type Function');
+    }
+    var self = this;
+    var cb = function() {
+      return maybeCb.apply(self, arguments);
+    };
+    // In true node style we process the callback on `nextTick` with all the
+    // implications (stack, `uncaughtException`, `async_hooks`)
+    original.apply(this, args)
+      .then(function(ret) { process.nextTick(cb, null, ret) },
+            function(rej) { process.nextTick(callbackifyOnRejected, rej, cb) });
+  }
+
+  Object.setPrototypeOf(callbackified, Object.getPrototypeOf(original));
+  Object.defineProperties(callbackified,
+                          getOwnPropertyDescriptors(original));
+  return callbackified;
+}
+exports.callbackify = callbackify;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
+
+/***/ }),
+
+/***/ "./node_modules/object-assign/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
 
 /***/ }),
 

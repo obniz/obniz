@@ -24,13 +24,13 @@ Returns true if a device was found.
 // Javascript Example
 const IBS02 = Obniz.getPartsClass('iBS02IR');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS02.isDevice(p)) {
         let data = IBS02.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## getData(BleRemotePeripheral)
@@ -44,11 +44,11 @@ Returns device information if found. Returns Null if not found.
 // Javascript Example
 const IBS02 = Obniz.getPartsClass('iBS02IR');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS02.isDevice(p)) {
         let data = IBS02.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

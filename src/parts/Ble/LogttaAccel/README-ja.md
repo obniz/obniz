@@ -24,13 +24,13 @@ const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
 // Javascript Example
 const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (LOGTTA.isDevice(p)) {
         let data = LOGTTA.getScanData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## getScanData(BleRemotePeripheral)
@@ -56,13 +56,13 @@ obniz.ble.scan.onfind = (p) => {
 // Javascript Example
 const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (LOGTTA.isDevice(p)) {
         let data = LOGTTA.getScanData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## getAccelData(BleRemotePeripheral)
@@ -76,11 +76,11 @@ obniz.ble.scan.onfind = (p) => {
 // Javascript Example
 const LOGTTA = Obniz.getPartsClass('Logtta_Accel');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (LOGTTA.isDevice(p)) {
         let data = LOGTTA.getAccelData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

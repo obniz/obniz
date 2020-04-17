@@ -20,12 +20,12 @@ Returns true if a device was found.
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (LOGTTA_CO2.isDevice(p)) {
         console.log("find");
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## new Logtta_CO2(peripheral)
@@ -36,13 +36,13 @@ Create an instance based on the advertisement information received by BLE.
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral) ) {
     console.log("device find");
     const device = new LOGTTA_CO2(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -55,7 +55,6 @@ Connect to the device.
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
@@ -64,6 +63,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("connected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -76,7 +76,6 @@ Disonnect to the device.
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral) ) {
     console.log("find");
@@ -87,6 +86,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -101,7 +101,6 @@ Called every time data comes from the device after starting `` startNotifyWait (
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
@@ -114,6 +113,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 ## startNotifyWait()
@@ -124,7 +124,6 @@ Instructs to start sending sensor data.
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
@@ -137,6 +136,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -147,7 +147,6 @@ Get Data from device.
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
@@ -159,4 +158,5 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`CO2 ${co2}ppm`);
   }
 };
+await obniz.ble.scan.startWait();
 ```

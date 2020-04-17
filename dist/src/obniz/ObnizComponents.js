@@ -7,8 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver_1 = __importDefault(require("semver"));
-const ble_1 = require("./libs/embeds/ble");
+const ble_1 = __importDefault(require("./libs/embeds/bleHci/ble"));
 const display_1 = __importDefault(require("./libs/embeds/display"));
 const switch_1 = __importDefault(require("./libs/embeds/switch"));
 const ad_1 = __importDefault(require("./libs/io_peripherals/ad"));
@@ -176,11 +175,7 @@ class ObnizComponents extends ObnizParts_1.default {
             pwm: pwm_1.default,
             grove: grove_1.default,
         };
-        let ble = ble_1.ObnizHciBLE.default;
-        // < 3.0.0-beta
-        if (semver_1.default.lt(this.firmware_ver, "3.0.0-beta")) {
-            ble = ble_1.ObnizOldBLE.default;
-        }
+        const ble = ble_1.default;
         const embeds_map = {
             display: display_1.default,
             switch: switch_1.default,

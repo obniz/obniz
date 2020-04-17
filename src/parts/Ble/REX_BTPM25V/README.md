@@ -12,12 +12,12 @@ Check whether it is REX_BTPM25V based on the advertisement information
 // Javascript Example
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -30,13 +30,13 @@ Create an instance based on the advertisement information.
 
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
     const device = new REX_BTPM25V(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -51,7 +51,6 @@ Connect to device.
 
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
@@ -60,6 +59,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("connected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -71,7 +71,6 @@ Disconnect from device.
 // Javascript Example
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
@@ -82,6 +81,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -94,7 +94,6 @@ Callback when the button is pressed.
 // Javascript Example
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
@@ -106,6 +105,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     };
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -118,7 +118,6 @@ Measure air quality.
 // Javascript Example
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
@@ -129,6 +128,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(data);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 

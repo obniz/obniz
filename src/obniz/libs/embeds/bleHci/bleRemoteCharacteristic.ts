@@ -427,7 +427,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    *      peripheral.connect({autoDiscovery:false});
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    */
   public async discoverAllDescriptorsWait(): Promise<BleRemoteDescriptor[]> {

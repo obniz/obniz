@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+const assert_1 = require("assert");
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const semver_1 = __importDefault(require("semver"));
 const ObnizError_1 = require("../../../ObnizError");
@@ -122,14 +123,22 @@ class BleScan {
      * @param target
      * @param settings
      */
-    async startOneWait(target, settings) {
+    async startOneWait(target, settings = {}) {
         await this.startWait(target, settings);
-        return new Promise((resolve) => {
-            this.emitter.once("onfind", async (param) => {
-                resolve(param);
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onfind", async (peripheral, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
+                resolve(peripheral);
                 await this.endWait();
             });
-            this.emitter.once("onfinish", () => {
+            this.emitter.once("onfinish", (peripherals, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
                 resolve(null);
             });
         });
@@ -163,8 +172,12 @@ class BleScan {
      */
     async startAllWait(target, settings) {
         await this.startWait(target, settings);
-        return new Promise((resolve) => {
-            this.emitter.once("onfinish", () => {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onfinish", (peripherals, error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
                 resolve(this.scanedPeripherals);
             });
         });

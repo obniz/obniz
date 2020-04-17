@@ -1,5 +1,5 @@
 import Obniz from "../../../obniz";
-import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizUtil from "../../../obniz/libs/utils/util";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 

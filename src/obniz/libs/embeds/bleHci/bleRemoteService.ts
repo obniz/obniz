@@ -145,7 +145,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    *      peripheral.connect({autoDiscovery:false});
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    */
   public async discoverAllCharacteristicsWait(): Promise<BleRemoteCharacteristic[]> {

@@ -4,12 +4,9 @@
  */
 
 import EventEmitter from "eventemitter3";
-import { ObnizBleHciStateError, ObnizDeprecatedFunctionError, ObnizOfflineError } from "../../../ObnizError";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
-import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
 import BleRemoteService from "./bleRemoteService";
-import { BleBinary } from "./bleScan";
 import { BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID } from "./bleTypes";
 import { SmpEncryptOptions } from "./protocol/central/smp";
 
@@ -63,7 +60,7 @@ export interface BleConnectSetting {
    *
    *   }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    *
    */
@@ -93,7 +90,7 @@ export interface BlePairingOptions extends SmpEncryptOptions {
    *      await peripheral.connectWait();
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    */
   keys?: string;
@@ -121,7 +118,7 @@ export interface BlePairingOptions extends SmpEncryptOptions {
    *      await peripheral.connectWait();
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    *
    */
@@ -212,7 +209,7 @@ export default class BleRemotePeripheral {
    *  console.log(peripheral.localName, peripheral.rssi); // null, -80
    * };
    *
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    */
   public rssi: number | null;
@@ -233,7 +230,7 @@ export default class BleRemotePeripheral {
    * ```
    *
    */
-  public adv_data: number[] | null;
+  public adv_data!: number[];
 
   /**
    * This returns raw scan response data.
@@ -301,7 +298,7 @@ export default class BleRemotePeripheral {
    *      await peripheral.connectWait();
    *    }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    *
    * ```
    */
@@ -324,10 +321,16 @@ export default class BleRemotePeripheral {
    *       peripheral.connect();
    *   }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    */
   public ondisconnect?: (reason?: any) => void;
+
+  /**
+   * Raw data of advertisement
+   *
+   */
+  public advertise_data_rows!: any;
 
   /**
    * @ignore
@@ -343,6 +346,7 @@ export default class BleRemotePeripheral {
    * This gets called with an error message when some kind of error occurs.
    */
   public onerror?: (err: any) => void;
+
   /**
    * @ignore
    */
@@ -353,8 +357,13 @@ export default class BleRemotePeripheral {
    */
   public _connectSetting: BleConnectSetting = {};
 
+  /**
+   * Indicating this peripheral is found by scan or set from software.
+   * @ignore
+   */
+  public discoverdOnRemote: boolean | undefined = undefined;
+
   protected keys: any;
-  protected advertise_data_rows: any;
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
 
@@ -367,7 +376,7 @@ export default class BleRemotePeripheral {
     this.address_type = null;
     this.ble_event_type = null;
     this.rssi = null;
-    this.adv_data = null;
+    // this.adv_data = null;
     this.scan_resp = null;
     this.localName = null;
     this.iBeacon = null;
@@ -611,7 +620,7 @@ export default class BleRemotePeripheral {
    *      peripheral.connectWait({autoDiscovery:false});
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    */
   public async discoverAllServicesWait(): Promise<BleRemoteService[]> {
@@ -729,7 +738,7 @@ export default class BleRemotePeripheral {
    *      await peripheral.connectWait();
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    *
    *
@@ -751,7 +760,7 @@ export default class BleRemotePeripheral {
    *      await peripheral.connectWait();
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    *
    * Go to [[BlePairingOptions]] to see more option.
@@ -767,8 +776,8 @@ export default class BleRemotePeripheral {
       this.advertise_data_rows = [];
       if (this.adv_data) {
         for (let i = 0; i < this.adv_data.length; i++) {
-          const length: any = this.adv_data[i];
-          const arr: any = new Array(length);
+          const length = this.adv_data[i];
+          const arr = new Array(length);
           for (let j = 0; j < length; j++) {
             arr[j] = this.adv_data[i + j + 1];
           }
@@ -778,8 +787,8 @@ export default class BleRemotePeripheral {
       }
       if (this.scan_resp) {
         for (let i = 0; i < this.scan_resp.length; i++) {
-          const length: any = this.scan_resp[i];
-          const arr: any = new Array(length);
+          const length = this.scan_resp[i];
+          const arr = new Array(length);
           for (let j = 0; j < length; j++) {
             arr[j] = this.scan_resp[i + j + 1];
           }

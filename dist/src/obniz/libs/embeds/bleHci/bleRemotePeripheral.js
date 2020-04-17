@@ -20,6 +20,11 @@ class BleRemotePeripheral {
          * @ignore
          */
         this._connectSetting = {};
+        /**
+         * Indicating this peripheral is found by scan or set from software.
+         * @ignore
+         */
+        this.discoverdOnRemote = undefined;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -27,7 +32,7 @@ class BleRemotePeripheral {
         this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
-        this.adv_data = null;
+        // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
@@ -287,7 +292,7 @@ class BleRemotePeripheral {
      *      peripheral.connectWait({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllServicesWait() {
@@ -398,7 +403,7 @@ class BleRemotePeripheral {
      *      await peripheral.connectWait();
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      *
@@ -420,7 +425,7 @@ class BleRemotePeripheral {
      *      await peripheral.connectWait();
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      * Go to [[BlePairingOptions]] to see more option.

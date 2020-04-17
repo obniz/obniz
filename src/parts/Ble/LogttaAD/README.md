@@ -20,13 +20,13 @@ Returns true if a device was found.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (LOGTTA_AD.isDevice(p)) {
         let data = LOGTTA_AD.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## new LOGTTA_AD(peripheral)
@@ -37,13 +37,13 @@ Create an instance based on the advertisement information received by BLE.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral) ) {
     console.log("device find");
     const device = new LOGTTA_AD(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -56,7 +56,6 @@ Connect to the device.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -65,6 +64,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("connected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -77,7 +77,6 @@ Disonnect to the device.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral) ) {
     console.log("find");
@@ -88,6 +87,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -102,7 +102,6 @@ Called every time data comes from the device after starting `` startNotifyWait (
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -115,6 +114,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 ## startNotifyWait()
@@ -125,7 +125,6 @@ Instructs to start sending sensor data.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -138,6 +137,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -148,7 +148,6 @@ Get All Data from device.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -160,6 +159,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`AD get volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -180,7 +180,6 @@ Get Ampere Data from device.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -192,6 +191,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`AD data ${data}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -202,7 +202,6 @@ Get Volt Data from device.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -214,6 +213,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`AD data ${data}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -224,7 +224,6 @@ Get count Data from device.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -236,4 +235,5 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`AD data ${data}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```

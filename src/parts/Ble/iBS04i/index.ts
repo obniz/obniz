@@ -3,7 +3,7 @@
  * @module Parts.iBS04i
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface IBS04IOptions {}
@@ -38,11 +38,11 @@ export default class IBS04I implements ObnizPartsBleInterface {
     const data: IBS04I_Data = {
       battery: (adv[5] + adv[6] * 256) * 0.01,
       button: Boolean(adv[7]),
-      uuid: peripheral.iBeacon.uuid,
-      major: peripheral.iBeacon.major,
-      minor: peripheral.iBeacon.minor,
-      power: peripheral.iBeacon.power,
-      rssi: peripheral.iBeacon.rssi,
+      uuid: peripheral.iBeacon!.uuid,
+      major: peripheral.iBeacon!.major,
+      minor: peripheral.iBeacon!.minor,
+      power: peripheral.iBeacon!.power,
+      rssi: peripheral.iBeacon!.rssi,
       address: peripheral.address,
     };
     return data;
