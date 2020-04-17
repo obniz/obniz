@@ -7156,6 +7156,7 @@ class BleScan {
         this._timeoutTimer = undefined;
     }
     /**
+     * Use startWait() instead
      * @deprecated
      */
     async start(target = {}, settings = {}) {
@@ -7311,6 +7312,7 @@ class BleScan {
         });
     }
     /**
+     * Use endWait() instead
      * @deprecated
      */
     end() {

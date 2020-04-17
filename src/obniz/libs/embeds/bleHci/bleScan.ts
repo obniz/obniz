@@ -176,6 +176,7 @@ export default class BleScan {
   }
 
   /**
+   * Use startWait() instead
    * @deprecated
    */
   public async start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
@@ -339,6 +340,7 @@ export default class BleScan {
   }
 
   /**
+   * Use endWait() instead
    * @deprecated
    */
   public end() {
