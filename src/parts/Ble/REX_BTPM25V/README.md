@@ -1,8 +1,7 @@
 # REX_BTPM25V
 Air quality monitor made by  RATOC Systems,Inc
 
-For BLE devices, use `isDevice` instead of` wired`
-
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -55,6 +54,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
     const device = new REX_BTPM25V(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }

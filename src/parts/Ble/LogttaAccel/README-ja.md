@@ -1,5 +1,7 @@
 # Logtta Accel
 
+加速度センサーの値をBLEのadvertisingで発信するデバイスです。
+
 http://www.uni-elec.co.jp/logtta_accel_3_0_torisetsu.pdf
 
 本ライブラリは、上記のドキュメントを参考にビーコンモード時に動作するものです。

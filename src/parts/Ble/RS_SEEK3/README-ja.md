@@ -1,7 +1,7 @@
 # RS_SEEK3
-ラトックシステムズ社製の紛失防止タグです
+ラトックシステムズ社製の紛失防止タグです。電池駆動でビーコンを発信します。また、接続することで内部の温度センサーとボタンもBLE経由で利用できます。
 
-BLEデバイスのため、`wired`は使わずに`isDevice`を使います
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -51,6 +51,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral)) {
     console.log("find");
     const device = new RS_Seek3(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
     device.onpressed = () => {

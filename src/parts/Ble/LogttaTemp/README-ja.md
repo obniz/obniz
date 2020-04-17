@@ -1,8 +1,10 @@
 # Logtta TH
 
-Logtta TH からデータを取得します。
+BLE経由で利用できる温度センサーです。フレキシブルケーブルで冷蔵庫の庫内温度などを計測できます。
 
 ![](image.jpg)
+
+![](image2.jpg)
 
 
 
@@ -60,6 +62,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
     const device = new Logtta_TH(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }

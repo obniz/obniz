@@ -1,16 +1,11 @@
 # Logtta AD
-Logtta AD を検索し、データを取得します。
+
+BLE経由で利用できるAD変換器です。
 
 ![](image.jpg)
 
 
 
-## getPartsClass(name)
-
-```javascript
-// Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
-```
 
 ## isDevice(BleRemotePeripheral)
 
@@ -61,6 +56,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
     const device = new LOGTTA_AD(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }

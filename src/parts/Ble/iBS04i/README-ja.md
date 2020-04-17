@@ -1,7 +1,5 @@
 # iBS04i
-beacon made by INGICS.
-
-Support device
+BLEを利用しビーコンを発信するデバイスです。
 
 - iBS04i
 

@@ -1,6 +1,6 @@
 # iBS02IR
 
-INGICS社製の近接センサーです。
+INGICS社製の近接センサーです。赤外線を利用し物体が近くにあるかどうかを検知します。
 
 Support device
 

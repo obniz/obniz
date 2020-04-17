@@ -1,7 +1,12 @@
 # ENERTALK_TOUCH
 BLE Multi sensor made by Encoard Techonologies Inc.
 
-For BLE devices, use `isDevice` instead of` wired`
+- Temperature
+- Humidity
+- Lux
+- Acceleration (3 dim)
+
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -55,6 +60,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (ENERTALK_TOUCH.isDevice(peripheral)) {
     console.log("find");
     const device = new ENERTALK_TOUCH(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }

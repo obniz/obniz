@@ -64,6 +64,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_CO2.isDevice(peripheral)) {
     console.log("find");
     const device = new LOGTTA_CO2(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }

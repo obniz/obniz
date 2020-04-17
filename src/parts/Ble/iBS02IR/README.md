@@ -1,6 +1,6 @@
 # iBS02IR
 
-iBS02IR by INGICS.
+iBS02IR by INGICS. Using infrared, It detect obstacles.
 
 Support device
 

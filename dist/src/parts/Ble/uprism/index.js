@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 class uPRISM {
     constructor(peripheral) {
+        this._peripheral = null;
         this.readIndex = -1;
         this.accelRange = 1024;
         this._uuids = {
@@ -23,7 +24,7 @@ class uPRISM {
         if (peripheral && !uPRISM.isDevice(peripheral)) {
             throw new Error("peripheral is not uPRISM");
         }
-        this.periperal = peripheral;
+        this._peripheral = peripheral;
     }
     static info() {
         return {
@@ -35,16 +36,21 @@ class uPRISM {
         return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("uPrism_")) === 0;
     }
     async connectWait() {
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("peripheral is not uPRISM");
         }
-        if (!this.periperal.connected) {
-            await this.periperal.connectWait();
+        if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
+            await this._peripheral.connectWait();
         }
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            await this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     setAccelRange(range) {
@@ -64,12 +70,12 @@ class uPRISM {
         }
     }
     async startNotifyWait() {
-        if (!this.periperal || !this.periperal.connected) {
+        if (!this._peripheral || !this._peripheral.connected) {
             throw new Error("peripheral not connected uPRISM");
         }
-        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        const rc = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x01]);
-        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        const c = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
         await c.registerNotifyWait((data) => {
             if (data[1] !== 0x14) {
                 return;
@@ -129,12 +135,12 @@ class uPRISM {
         });
     }
     async stopNotifyWait() {
-        if (!(this.periperal && this.periperal.connected)) {
+        if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        const rc = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x00]);
-        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        const c = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
         await c.unregisterNotifyWait();
     }
 }

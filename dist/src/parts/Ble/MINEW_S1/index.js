@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(require("../../../obniz/libs/utils/util"));
 class MINEW_S1 {
     constructor() {
+        this._peripheral = null;
         // non-wired device
         this.keys = [];
         this.requiredKeys = [];

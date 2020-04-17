@@ -4,7 +4,7 @@ MINEW社製の温湿度ビーコンです。
 
 SLOTはHT Sensor / Infoのみ対応しています。
 
-BLEデバイスのため、`wired`は使わずに`isDevice`を使います
+![](./image.jpg)
 
 
 ## isDevice(peripheral)

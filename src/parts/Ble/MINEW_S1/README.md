@@ -4,7 +4,8 @@ It is necessary to set the inkjet output in advance using the dedicated applicat
 
 It only supports HT sensor / information　SLOT.
 
-For BLE devices, use `isDevice` instead of` wired`
+
+![](./image.jpg)
 
 
 ## isDevice(peripheral)

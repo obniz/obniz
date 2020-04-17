@@ -3,8 +3,8 @@ INGICS BLE tag.
 
 Support device
 
-- iBS01H
-- iBS01G
+- iBS01H: Door open/close sensor using hall sensor
+- iBS01G: Moving and falling detection sensor
 
 ![](image.jpg)
 
@@ -38,10 +38,9 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- button : True when button is pressed
-- moving : True when moving
-- hall_sensor : True when the magnet approaches
-- fall : True when falling
+- hall_sensor : True when the magnet approaches(iBS01H)
+- moving : True when moving(iBS01G)
+- fall : True when falling(iBS01G)
 
 
 ```javascript

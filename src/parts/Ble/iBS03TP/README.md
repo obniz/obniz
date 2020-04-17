@@ -37,11 +37,7 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 Returns device information if found. Returns Null if not found.
 
 - battery : Battery voltage
-- button : True when button is pressed
-- moving : True when moving
-- hall_sensor : True when the magnet approaches
 - temperature : temperature(℃)
-- probe_temperature : probe temperature(℃)
 
 
 ```javascript

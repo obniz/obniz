@@ -1,7 +1,7 @@
 # RS_SEEK3
 Loss prevention tag made by RATOC Systems,Inc
 
-For BLE devices, use `isDevice` instead of` wired`
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -53,6 +53,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral)) {
     console.log("find");
     const device = new RS_Seek3(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
     device.onpressed = () => {

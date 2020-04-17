@@ -1,5 +1,7 @@
 # Logtta Accel
 
+This device advertise acceleration sensor values.
+
 http://www.uni-elec.co.jp/logtta_accel_3_0_torisetsu.pdf
 
 This library operates in the beacon mode referring to the above document.

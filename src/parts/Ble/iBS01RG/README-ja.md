@@ -1,6 +1,6 @@
 # iBS01RG
 
-INGICS社製の加速度センサーです。
+INGICS社製の3軸加速度センサーです。
 
 Support device
 

@@ -1,7 +1,14 @@
 # ENERTALK_TOUCH
 エンコアード社製のマルチセンサです
 
-BLEデバイスのため、`wired`は使わずに`isDevice`を使います
+- 温度
+- 湿度
+- 照度
+- 加速度(3軸)
+
+を計測できます。
+
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -52,6 +59,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (ENERTALK_TOUCH.isDevice(peripheral)) {
     console.log("find");
     const device = new ENERTALK_TOUCH(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }
@@ -132,7 +142,7 @@ await obniz.ble.scan.startWait();
 
 
 ## getIlluminationWait()
-湿度を計測します。
+照度を計測します。
 
 ```javascript
 

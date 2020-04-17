@@ -1,7 +1,7 @@
 # REX_BTPM25V
 ラトックシステムズ社製のエアクオリティモニタです
 
-BLEデバイスのため、`wired`は使わずに`isDevice`を使います
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -53,6 +53,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
     const device = new REX_BTPM25V(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }

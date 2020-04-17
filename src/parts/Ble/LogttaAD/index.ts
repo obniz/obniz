@@ -32,6 +32,7 @@ export default class Logtta_AD implements ObnizPartsBleInterface {
 
   public onNotify?: (data: Logtta_AD_Data) => void;
   public _peripheral: null | BleRemotePeripheral;
+  public ondisconnect?: (reason: any) => void;
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !Logtta_AD.isDevice(peripheral)) {
@@ -45,6 +46,11 @@ export default class Logtta_AD implements ObnizPartsBleInterface {
       throw new Error("Logtta AD not found");
     }
     if (!this._peripheral.connected) {
+      this._peripheral.ondisconnect = (reason: any) => {
+        if (typeof this.ondisconnect === "function") {
+          this.ondisconnect(reason);
+        }
+      };
       await this._peripheral.connectWait();
     }
   }

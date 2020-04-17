@@ -5,6 +5,9 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class SCBTGAAAC {
+    constructor() {
+        this._peripheral = null;
+    }
     static info() {
         return {
             name: "SCBTGAAAC",
@@ -44,7 +47,6 @@ class SCBTGAAAC {
         }
         return undefined;
     }
-    constructor() { }
 }
 exports.default = SCBTGAAAC;
 

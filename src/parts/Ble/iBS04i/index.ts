@@ -99,5 +99,7 @@ export default class IBS04I implements ObnizPartsBleInterface {
     return advertise[0];
   }
 
+  public _peripheral: BleRemotePeripheral | null = null;
+
   constructor() {}
 }

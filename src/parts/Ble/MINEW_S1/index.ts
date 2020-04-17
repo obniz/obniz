@@ -1,6 +1,7 @@
 import Obniz from "../../../obniz";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizUtil from "../../../obniz/libs/utils/util";
+import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface MINEW_S1_HTData {
@@ -22,7 +23,7 @@ export interface MINEW_S1_InfoData {
 
 export interface MINEW_S1Options {}
 
-export default class MINEW_S1 implements ObnizPartsInterface {
+export default class MINEW_S1 implements ObnizPartsBleInterface {
   public static info() {
     return { name: "MINEW_S1" };
   }
@@ -140,6 +141,8 @@ export default class MINEW_S1 implements ObnizPartsInterface {
     }
     return true;
   }
+
+  public _peripheral: null | BleRemotePeripheral = null;
 
   // non-wired device
   public keys: string[] = [];

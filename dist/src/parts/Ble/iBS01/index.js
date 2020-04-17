@@ -6,6 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS01 {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {

@@ -88,5 +88,7 @@ export default class IBS03T implements ObnizPartsBleInterface {
     -1, // reserved
   ];
 
+  public _peripheral: BleRemotePeripheral | null = null;
+
   constructor() {}
 }

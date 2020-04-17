@@ -2,11 +2,12 @@ import Obniz from "../../../obniz";
 import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import BleRemoteService from "../../../obniz/libs/embeds/bleHci/bleRemoteService";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
+import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface ENERTALK_TOUCHOptions {}
 
-export default class ENERTALK_TOUCH implements ObnizPartsInterface {
+export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: "ENERTALK_TOUCH",
@@ -25,6 +26,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsInterface {
   public params: any;
   public onbuttonpressed: ((pressed: boolean) => void) | null = null;
   public _peripheral: BleRemotePeripheral | null = null;
+  public ondisconnect?: (reason: any) => void;
 
   private _uuids = {
     service: "3526797e-448b-4bbb-9145-c5083e0e09dc",
@@ -46,15 +48,14 @@ export default class ENERTALK_TOUCH implements ObnizPartsInterface {
     this._peripheral = peripheral;
   }
 
-  // @ts-ignore
-  public wired(obniz: Obniz): void {}
-
   public async connectWait() {
     if (!this._peripheral) {
       throw new Error("RS_BTIREX2 is not find.");
     }
-    this._peripheral.ondisconnect = () => {
-      console.log("disconnect");
+    this._peripheral.ondisconnect = (reason: any) => {
+      if (typeof this.ondisconnect === "function") {
+        this.ondisconnect(reason);
+      }
     };
     await this._peripheral.connectWait();
     this._service = this._peripheral.getService(this._uuids.service)!;

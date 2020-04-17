@@ -37,9 +37,6 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : 電池電圧
-- button : ボタンを押すとtrue
-- moving : 動くとtrue
-- hall_sensor : 磁石が近づくとtrue
 - temperature : 温度センサの値
 
 ```javascript

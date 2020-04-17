@@ -3295,6 +3295,15 @@ exports.default = ObnizParts;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class ObnizPartsBleInterface {
+    constructor() {
+        /**
+         * Internally Used function for connection required devices
+         */
+        this._peripheral = null;
+    }
+    /**
+     * Utility function for reading 2 byte to signed number.
+     */
     static signed16FromBinary(high, low) {
         let val = (high << 8) | low;
         if ((val & 0x8000) !== 0) {
@@ -21266,17 +21275,44 @@ exports.default = Puls08M5stickcS;
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class OMRON_2JCIE {
-    constructor() {
-        this.keys = [];
-        this.requiredKeys = [];
-        this.periperal = null;
+    constructor(peripheral) {
+        this._peripheral = null;
+        if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_BTIREX2");
+        }
+        this._peripheral = peripheral;
     }
     static info() {
         return {
             name: "2JCIE",
         };
+    }
+    static isDevice(peripheral) {
+        return ((peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0));
+    }
+    /**
+     * Get a datas from advertisement mode of OMRON 2JCIE
+     */
+    static getData(peripheral) {
+        if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
+            const adv_data = peripheral.adv_data;
+            return {
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
+                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[18]) * 0.01,
+            };
+        }
+        return null;
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -21286,26 +21322,31 @@ class OMRON_2JCIE {
             localName: "Env",
         };
         await this.obniz.ble.initWait();
-        this.periperal = await this.obniz.ble.scan.startOneWait(target);
-        return this.periperal;
+        this._peripheral = await this.obniz.ble.scan.startOneWait(target);
+        return this._peripheral;
     }
     omron_uuid(uuid) {
         return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
     }
     async connectWait() {
-        if (!this.periperal) {
+        if (!this._peripheral) {
             await this.findWait();
         }
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("2JCIE not found");
         }
-        if (!this.periperal.connected) {
-            await this.periperal.connectWait();
+        if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
+            await this._peripheral.connectWait();
         }
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     signedNumberFromBinary(data) {
@@ -21329,7 +21370,7 @@ class OMRON_2JCIE {
     }
     async getLatestData() {
         await this.connectWait();
-        const c = this.periperal.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
+        const c = this._peripheral.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
         const data = await c.readWait();
         const json = {
             row_number: data[0],
@@ -21393,14 +21434,14 @@ class ENERTALK_TOUCH {
         }
         return false;
     }
-    // @ts-ignore
-    wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
             throw new Error("RS_BTIREX2 is not find.");
         }
-        this._peripheral.ondisconnect = () => {
-            console.log("disconnect");
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
         };
         await this._peripheral.connectWait();
         this._service = this._peripheral.getService(this._uuids.service);
@@ -21492,6 +21533,11 @@ class Logtta_AD {
             throw new Error("Logtta AD not found");
         }
         if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
             await this._peripheral.connectWait();
         }
     }
@@ -21556,6 +21602,7 @@ exports.default = Logtta_AD;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_Accel {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -21705,6 +21752,11 @@ class Logtta_CO2 {
             throw new Error("Logtta CO2 not found");
         }
         if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
             await this._peripheral.connectWait();
         }
     }
@@ -21773,6 +21825,11 @@ class Logtta_TH {
             throw new Error("Logtta TH not found");
         }
         if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
             await this._peripheral.connectWait();
         }
     }
@@ -21832,6 +21889,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 class MINEW_S1 {
     constructor() {
+        this._peripheral = null;
         // non-wired device
         this.keys = [];
         this.requiredKeys = [];
@@ -21964,6 +22022,7 @@ class REX_BTPM25V {
         this.keys = [];
         this.requiredKeys = [];
         this.onbuttonpressed = null;
+        this._peripheral = null;
         this._uuids = {
             service: "00001523-1212-EFDE-1523-785FEABCD123",
             buttonChar: "000000A1-1212-EFDE-1523-785FEABCD123",
@@ -21971,7 +22030,6 @@ class REX_BTPM25V {
             oneShotMeasurementChar: "000000A8-1212-EFDE-1523-785FEABCD123",
             ledChar: "000000A9-1212-EFDE-1523-785FEABCD123",
         };
-        this._peripheral = null;
         this._oneShotMeasurementCharacteristic = null;
         this._continuousMeasurementCharacteristic = null;
         this._ledCharacteristic = null;
@@ -21998,6 +22056,11 @@ class REX_BTPM25V {
         if (!this._peripheral) {
             throw new Error("RS_Seek3 is not find.");
         }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
         await this._peripheral.connectWait();
         this._oneShotMeasurementCharacteristic = this._peripheral
             .getService(this._uuids.service)
@@ -22265,6 +22328,11 @@ class RS_Seek3 {
         if (!this._peripheral) {
             throw new Error("RS_Seek3 is not find.");
         }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
         await this._peripheral.connectWait();
         this._buttonCharacteristic = this._peripheral
             .getService(this._uuids.service)
@@ -22311,6 +22379,7 @@ exports.default = RS_Seek3;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS01 {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -22443,6 +22512,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS01RG {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -22527,6 +22597,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS01T {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -22618,6 +22689,7 @@ IBS01T.deviceAdv = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS02IR {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -22692,6 +22764,7 @@ IBS02IR.deviceAdv = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS02PIR {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -22770,6 +22843,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS03T {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -22861,6 +22935,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS03TP {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -22949,6 +23024,7 @@ IBS03TP.deviceAdv = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS03 {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -23035,6 +23111,7 @@ IBS03.deviceAdv = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS04I {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -27327,6 +27404,9 @@ exports.default = LinkingService;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class SCBTGAAAC {
+    constructor() {
+        this._peripheral = null;
+    }
     static info() {
         return {
             name: "SCBTGAAAC",
@@ -27366,7 +27446,6 @@ class SCBTGAAAC {
         }
         return undefined;
     }
-    constructor() { }
 }
 exports.default = SCBTGAAAC;
 
@@ -27391,6 +27470,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class uPRISM {
     constructor(peripheral) {
+        this._peripheral = null;
         this.readIndex = -1;
         this.accelRange = 1024;
         this._uuids = {
@@ -27404,7 +27484,7 @@ class uPRISM {
         if (peripheral && !uPRISM.isDevice(peripheral)) {
             throw new Error("peripheral is not uPRISM");
         }
-        this.periperal = peripheral;
+        this._peripheral = peripheral;
     }
     static info() {
         return {
@@ -27416,16 +27496,21 @@ class uPRISM {
         return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("uPrism_")) === 0;
     }
     async connectWait() {
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("peripheral is not uPRISM");
         }
-        if (!this.periperal.connected) {
-            await this.periperal.connectWait();
+        if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
+            await this._peripheral.connectWait();
         }
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            await this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     setAccelRange(range) {
@@ -27445,12 +27530,12 @@ class uPRISM {
         }
     }
     async startNotifyWait() {
-        if (!this.periperal || !this.periperal.connected) {
+        if (!this._peripheral || !this._peripheral.connected) {
             throw new Error("peripheral not connected uPRISM");
         }
-        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        const rc = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x01]);
-        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        const c = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
         await c.registerNotifyWait((data) => {
             if (data[1] !== 0x14) {
                 return;
@@ -27510,12 +27595,12 @@ class uPRISM {
         });
     }
     async stopNotifyWait() {
-        if (!(this.periperal && this.periperal.connected)) {
+        if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        const rc = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x00]);
-        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        const c = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
         await c.unregisterNotifyWait();
     }
 }

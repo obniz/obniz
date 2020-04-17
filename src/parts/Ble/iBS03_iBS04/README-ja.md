@@ -1,10 +1,10 @@
 # iBS03 iBS04
 INGICS社製のBLEタグです。
 
-サポートデバイス
+以下の２つの製品を扱うことができます。
 
-- iBS03(H) : Button, Magnet Event
-- iBS04 : Button Event
+- iBS03(H) : ボタン・磁気センサー
+- iBS04 : ボタン
 
 ![](image.jpg)
 

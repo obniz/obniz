@@ -1,7 +1,17 @@
 # μPRISM
 エレックス工業株式会社製の極小IoTセンサーモジュールです
 
-BLEデバイスのため、`wired`は使わずに`isDevice`を使います
+- 温度
+- 湿度
+- 気圧
+- 加速度
+- 地磁気
+- 紫外線
+- 照度
+
+が取得できます。
+
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -52,6 +62,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (U_PRISM.isDevice(peripheral)) {
     console.log("find");
     const device = new U_PRISM(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
     device.onNotify = (r) => {

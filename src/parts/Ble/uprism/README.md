@@ -2,7 +2,16 @@
 
 This is a very small IoT sensor module manufactured by Elex Industrial Co., Ltd.
 
-Because it is a BLE device, use `isDevice` instead of` wired`.
+
+- Temperature
+- Humidity
+- Air Pressure
+- Acceleration
+- Compass
+- UV
+- Brightness
+
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -52,6 +61,9 @@ obniz.ble.scan.onfind = async (peripheral) => {
   if (U_PRISM.isDevice(peripheral)) {
     console.log("find");
     const device = new U_PRISM(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
     device.onNotify = (r) => {

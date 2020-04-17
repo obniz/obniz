@@ -25,6 +25,7 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
 
   public onNotify?: (co2: number) => void;
   public _peripheral: BleRemotePeripheral | null;
+  public ondisconnect?: (reason: any) => void;
 
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
@@ -38,6 +39,11 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
       throw new Error("Logtta CO2 not found");
     }
     if (!this._peripheral.connected) {
+      this._peripheral.ondisconnect = (reason: any) => {
+        if (typeof this.ondisconnect === "function") {
+          this.ondisconnect(reason);
+        }
+      };
       await this._peripheral.connectWait();
     }
   }

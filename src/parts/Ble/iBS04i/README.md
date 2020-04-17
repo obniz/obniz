@@ -1,5 +1,5 @@
 # iBS04i
-beacon made by INGICS.
+beacon advertising device made by INGICS.
 
 Support device
 
