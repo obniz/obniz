@@ -154,7 +154,7 @@ class Linking {
                 id_filter = p.idFilter;
             }
         }
-        this.obniz.ble.scan.onfind = function (peripheral) {
+        this.obniz.ble.scan.onfind = (peripheral) => {
             if (!peripheral.localName) {
                 return;
             }
@@ -165,7 +165,7 @@ class Linking {
             // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
             //   return;
             // }
-            if (this.onadvertisement && typeof this.onadvertisement === "function") {
+            if (typeof this.onadvertisement === "function") {
                 const parsed = advertising_1.default.parse(peripheral);
                 if (parsed) {
                     this.onadvertisement(parsed);

@@ -27,6 +27,11 @@ class Logtta_CO2 {
             throw new Error("Logtta CO2 not found");
         }
         if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
             await this._peripheral.connectWait();
         }
     }

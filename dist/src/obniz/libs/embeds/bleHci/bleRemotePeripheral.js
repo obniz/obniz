@@ -20,6 +20,11 @@ class BleRemotePeripheral {
          * @ignore
          */
         this._connectSetting = {};
+        /**
+         * Indicating this peripheral is found by scan or set from software.
+         * @ignore
+         */
+        this.discoverdOnRemote = undefined;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -27,7 +32,7 @@ class BleRemotePeripheral {
         this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
-        this.adv_data = null;
+        // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
@@ -93,37 +98,14 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     * This function will try to connect a peripheral.
-     * [[onconnect]] will be caled when connected or [[ondisconnect]] will be called when failed.
-     *
-     * If ble scanning is undergoing, scan will be terminated immediately.
-     *
-     * when connection established, all service/characteristics/descriptors will be discovered automatically.
-     * [[onconnect]] will be called after all discovery done.
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.initWait();
-     * obniz.ble.scan.onfind = function(peripheral){
-     * if(peripheral.localName == "my peripheral"){
-     *      peripheral.onconnect = function(){
-     *          console.log("success");
-     *      }
-     *      peripheral.connect();
-     *     }
-     * }
-     * obniz.ble.scan.start();
-     * ```
+     *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
-        this._connectSetting = setting || {};
-        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
-        this.obnizBle.scan.end();
-        this.obnizBle.centralBindings.connect(this.address);
+        this.connectWait(); // background
     }
     /**
      * This connects obniz to the peripheral.
-     * If ble scannning is undergoing, scan will be terminated immidiately.
+     * If ble scanning is undergoing, scan will be terminated immidiately.
      *
      * It throws when connection establish failed.
      *
@@ -151,50 +133,27 @@ class BleRemotePeripheral {
      * ```
      *
      */
-    connectWait(setting) {
-        return new Promise((resolve, reject) => {
-            // if (this.connected) {
-            //   resolve();
-            //   return;
-            // }
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "connected") {
-                    resolve(true); // for compatibility
-                }
-                else {
-                    reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
-                }
-            });
-            this.connect(setting);
-        });
+    async connectWait(setting) {
+        this._connectSetting = setting || {};
+        this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
+        await this.obnizBle.scan.endWait();
+        await this.obnizBle.centralBindings.connectWait(this.address);
+        if (this._connectSetting.autoDiscovery) {
+            await this.discoverAllHandlesWait();
+        }
+        this.connected = true;
+        setTimeout(() => {
+            if (this.onconnect) {
+                this.onconnect();
+            }
+            this.emitter.emit("connect");
+        }, 0);
     }
     /**
-     * This disconnects obniz from peripheral.
-     *
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *  uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(!peripheral) {
-     *   console.log('no such peripheral')
-     *   return;
-     * }
-     *
-     * peripheral.connect();
-     * peripheral.onconnect = ()=>{
-     *   console.log("connected");
-     *   peripheral.disconnect();
-     * }
-     *
-     * ```
+     *  @deprecated
      */
     disconnect() {
-        this.obnizBle.centralBindings.disconnect(this.address);
+        this.disconnectWait(); // background
     }
     /**
      * This disconnects obniz from peripheral.
@@ -237,7 +196,7 @@ class BleRemotePeripheral {
                     reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
                 }
             });
-            this.disconnect();
+            this.obnizBle.centralBindings.disconnect(this.address);
         });
     }
     /**
@@ -314,13 +273,6 @@ class BleRemotePeripheral {
         return null;
     }
     /**
-     * @ignore
-     *
-     */
-    discoverAllServices() {
-        this.obnizBle.centralBindings.discoverServices(this.address);
-    }
-    /**
      * Discover services.
      *
      * If connect setting param 'autoDiscovery' is true(default),
@@ -337,22 +289,38 @@ class BleRemotePeripheral {
      *          await peripheral.discoverAllServicesWait(); //manually discover
      *          let service = peripheral.getService("1800");
      *      }
-     *      peripheral.connect({autoDiscovery:false});
+     *      peripheral.connectWait({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
-    discoverAllServicesWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverAllServices();
+    async discoverAllServicesWait() {
+        const serviceUuids = await this.obnizBle.centralBindings.discoverServicesWait(this.address);
+        for (const uuid of serviceUuids) {
+            let child = this.getService(uuid);
+            if (!child) {
+                const newService = new bleRemoteService_1.default({ uuid });
+                newService.parent = this;
+                this._services.push(newService);
+                child = newService;
+            }
+            child.discoverdOnRemote = true;
+            setTimeout(() => {
+                if (this.ondiscoverservice) {
+                    this.ondiscoverservice(child);
+                }
+            }, 0);
+        }
+        const children = this._services.filter((elm) => {
+            return elm.discoverdOnRemote;
         });
+        setTimeout(() => {
+            if (this.ondiscoverservicefinished) {
+                this.ondiscoverservicefinished(children);
+            }
+        }, 1);
+        return children;
     }
     /**
      * @ignore
@@ -388,41 +356,17 @@ class BleRemotePeripheral {
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "statusupdate": {
-                if (params.status === "connected") {
-                    this.connected = true;
-                    if (this.onconnect) {
-                        this.onconnect();
-                    }
-                }
                 if (params.status === "disconnected") {
+                    const pre = this.connected;
                     this.connected = false;
-                    if (this.ondisconnect) {
-                        this.ondisconnect();
+                    if (pre) {
+                        setTimeout(() => {
+                            if (this.ondisconnect) {
+                                this.ondisconnect(params.reason);
+                            }
+                            this.emitter.emit("disconnect", params.reason);
+                        }, 0);
                     }
-                }
-                break;
-            }
-            case "discover": {
-                const uuid = params.service_uuid;
-                let child = this.getService(uuid);
-                if (!child) {
-                    const newService = new bleRemoteService_1.default({ uuid });
-                    newService.parent = this;
-                    this._services.push(newService);
-                    child = newService;
-                }
-                child.discoverdOnRemote = true;
-                if (this.ondiscoverservice) {
-                    this.ondiscoverservice(child);
-                }
-                break;
-            }
-            case "discoverfinished": {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                if (this.ondiscoverservicefinished) {
-                    this.ondiscoverservicefinished(children);
                 }
                 break;
             }
@@ -440,6 +384,56 @@ class BleRemotePeripheral {
         this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
         this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
         return results;
+    }
+    /**
+     * Start pairing.
+     * This function return `keys` which you can use next time pairing with same device.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          const keys = await peripheral.pairingWait();
+     *
+     *          // Please store `keys` if you want to bond.
+     *      }
+     *      await peripheral.connectWait();
+     *     }
+     * }
+     * await obniz.ble.scan.startWait();
+     * ```
+     *
+     *
+     *
+     * If you have already keys, please use options.keys
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * const keys = "xxxxx";
+     * await obniz.ble.initWait({});
+     * obniz.ble.scan.onfind = function(peripheral){
+     * if(peripheral.localName == "my peripheral"){
+     *      peripheral.onconnect = async function(){
+     *          console.log("success");
+     *          await peripheral.pairingWait({keys});  // pairing with stored keys.
+     *
+     *      }
+     *      await peripheral.connectWait();
+     *     }
+     * }
+     * await obniz.ble.scan.startWait();
+     * ```
+     *
+     * Go to [[BlePairingOptions]] to see more option.
+     * @param options BlePairingOptions
+     */
+    async pairingWait(options) {
+        const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
+        return result;
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {

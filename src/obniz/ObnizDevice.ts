@@ -147,7 +147,7 @@ export default class ObnizDevice extends ObnizUIs {
       if (typeof showObnizDebugError === "function") {
         showObnizDebugError(new Error(msg));
       }
-      console.log(`Warning: ${msg}`);
+      this.log(`warning: ${msg}`);
     }
   }
 

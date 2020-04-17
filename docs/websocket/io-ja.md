@@ -198,6 +198,56 @@ Related item
 ```
 
 
+##  response: <a name="-response-io-warning">warning</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ioX.warning.message` |  string  | <ul><li>required</li></ul> | io warning&nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "io0": {
+            "warning": {
+                "message": "Heavy output"
+            }
+        }
+    }
+]
+```
+
+
+##  response: <a name="-response-io-error">error</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ioX.error.message` |  string  | <ul><li>required</li></ul> | io warning&nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "io0": {
+            "error": {
+                "message": "Heavy output"
+            }
+        }
+    }
+]
+```
+
+
 
 
 

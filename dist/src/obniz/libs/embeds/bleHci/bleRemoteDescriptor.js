@@ -21,36 +21,6 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * Read data from descriptor.
      *
      * The return value appears in the callback function [[onread]].
-     *
-     * ```javascript
-     * // Javascript Example
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(peripheral){
-     *   await peripheral.connectWait();
-     *   console.log("connected");
-     *   await obniz.wait(1000);
-     *
-     *   peripheral.getService("FF00").getCharacteristic("FF01").read();
-     *
-     *   peripheral.getService("FF00").getCharacteristic("FF01").onread = (dataArray)=>{
-     *   console.log(dataArray);
-     *
-     *   }
-     * }
-     * ```
-     *
-     */
-    read() {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
-    }
-    /**
-     * Read data from descriptor.
-     *
-     * The return value appears in the callback function [[onread]].
      * If reading succeeds an Array with data will be returned.
      * It throws an error when failed.
      *
@@ -72,34 +42,15 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * ```
      *
      */
-    readWait() {
-        return super.readWait();
-    }
-    /**
-     * This writes dataArray to descriptor.
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(peripheral){
-     *   await peripheral.connectWait();
-     *   console.log("connected");
-     *   await obniz.wait(1000);
-     *
-     *   var dataArray = [0x02, 0xFF];
-     *   peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write(dataArray);
-     * }
-     * ```
-     *
-     * @param data
-     */
-    write(data) {
-        this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
+    async readWait() {
+        const buf = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
+        const data = Array.from(buf);
+        setTimeout(() => {
+            if (this.onread) {
+                this.onread(data);
+            }
+        }, 0);
+        return data;
     }
     /**
      * This writes dataArray to descriptor.
@@ -125,11 +76,25 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      * ```
      *
      * @param data
-     * @param needResponse
      */
-    writeWait(data, needResponse) {
-        return super.writeWait(data, needResponse);
+    async writeWait(data) {
+        await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
+        setTimeout(() => {
+            if (this.onwrite) {
+                this.onwrite("success"); // if fail, throw error.
+            }
+        }, 0);
+        return true;
     }
+    /**
+     * @ignore
+     */
+    ondiscover(child) { }
+    /**
+     * @ignore
+     * @param children
+     */
+    ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteDescriptor;
 

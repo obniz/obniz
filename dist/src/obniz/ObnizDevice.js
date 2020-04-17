@@ -103,7 +103,7 @@ class ObnizDevice extends ObnizUIs_1.default {
             if (typeof showObnizDebugError === "function") {
                 showObnizDebugError(new Error(msg));
             }
-            console.log(`Warning: ${msg}`);
+            this.log(`warning: ${msg}`);
         }
     }
     /**

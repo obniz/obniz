@@ -35,6 +35,11 @@ class RS_Seek3 {
         if (!this._peripheral) {
             throw new Error("RS_Seek3 is not find.");
         }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
         await this._peripheral.connectWait();
         this._buttonCharacteristic = this._peripheral
             .getService(this._uuids.service)

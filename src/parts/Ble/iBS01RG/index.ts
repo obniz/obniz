@@ -43,7 +43,7 @@
  * @module Parts.iBS01RG
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface IBS01RGOptions {}
@@ -124,6 +124,8 @@ export default class IBS01RG implements ObnizPartsBleInterface {
     -1, // z
     -1, // z
   ];
+
+  public _peripheral: BleRemotePeripheral | null = null;
 
   constructor() {}
 }

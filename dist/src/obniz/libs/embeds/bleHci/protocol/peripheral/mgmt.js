@@ -1,12 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * @packageDocumentation
- *
- * @ignore
- */
-// let debug = require('debug')('mgmt');
-/**
  * @ignore
  */
 const debug = () => { };

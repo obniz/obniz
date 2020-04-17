@@ -7,8 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver_1 = __importDefault(require("semver"));
-const ble_1 = require("./libs/embeds/ble");
+const ble_1 = __importDefault(require("./libs/embeds/bleHci/ble"));
 const display_1 = __importDefault(require("./libs/embeds/display"));
 const switch_1 = __importDefault(require("./libs/embeds/switch"));
 const ad_1 = __importDefault(require("./libs/io_peripherals/ad"));
@@ -22,6 +21,7 @@ const logicanalyzer_1 = __importDefault(require("./libs/measurements/logicanalyz
 const measure_1 = __importDefault(require("./libs/measurements/measure"));
 const tcp_1 = __importDefault(require("./libs/protocol/tcp"));
 const ObnizParts_1 = __importDefault(require("./ObnizParts"));
+const ComponentAbstact_1 = require("./libs/ComponentAbstact");
 const hw_1 = __importDefault(require("./libs/hw"));
 const grove_1 = __importDefault(require("./libs/io_peripherals/grove"));
 class ObnizComponents extends ObnizParts_1.default {
@@ -175,11 +175,7 @@ class ObnizComponents extends ObnizParts_1.default {
             pwm: pwm_1.default,
             grove: grove_1.default,
         };
-        let ble = ble_1.ObnizHciBLE.default;
-        // < 3.0.0-beta
-        if (semver_1.default.lt(this.firmware_ver, "3.0.0-beta")) {
-            ble = ble_1.ObnizOldBLE.default;
-        }
+        const ble = ble_1.default;
         const embeds_map = {
             display: display_1.default,
             switch: switch_1.default,
@@ -238,15 +234,24 @@ class ObnizComponents extends ObnizParts_1.default {
     notifyToModule(obj) {
         super.notifyToModule(obj);
         for (const key of this._allComponentKeys) {
-            if (key === "logicAnalyzer") {
-                if (obj.hasOwnProperty("logic_analyzer")) {
-                    this.logicAnalyzer.notified(obj.logic_analyzer);
+            const targetComponent = this[key];
+            if (targetComponent instanceof ComponentAbstact_1.ComponentAbstract) {
+                const basePath = targetComponent.schemaBasePath();
+                if (basePath && obj.hasOwnProperty(basePath)) {
+                    targetComponent.notifyFromObniz(obj[basePath]);
                 }
-                continue;
             }
-            if (obj.hasOwnProperty(key)) {
-                /* because of nullable */
-                this[key].notified(obj[key]);
+            else {
+                if (key === "logicAnalyzer") {
+                    if (obj.hasOwnProperty("logic_analyzer")) {
+                        this.logicAnalyzer.notified(obj.logic_analyzer);
+                    }
+                    continue;
+                }
+                if (obj.hasOwnProperty(key)) {
+                    /* because of nullable */
+                    targetComponent.notified(obj[key]);
+                }
             }
         }
     }

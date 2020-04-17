@@ -3,7 +3,7 @@
  * @module Parts.iBS03T
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface IBS03TOptions {}
@@ -87,6 +87,8 @@ export default class IBS03T implements ObnizPartsBleInterface {
     -1, // reserved
     -1, // reserved
   ];
+
+  public _peripheral: BleRemotePeripheral | null = null;
 
   constructor() {}
 }

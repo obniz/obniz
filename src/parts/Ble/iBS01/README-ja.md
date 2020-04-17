@@ -1,10 +1,10 @@
 # iBS01
 INGICS社製のBLEタグです。
 
-サポートデバイス
+このライブラリにより以下の２機種について検知できます。
 
-- iBS01H
-- iBS01G
+- iBS01H: ホールセンサーを利用したドアの開閉検知センサー
+- iBS01G: 動作や落下を検知するセンサー
 
 ![](image.jpg)
 
@@ -24,13 +24,13 @@ const IBS01 = Obniz.getPartsClass('iBS01');
 // Javascript Example
 let IBS01 = Obniz.getPartsClass('iBS01');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS01.isDevice(p)) {
         let data = IBS01.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## getData(BleRemotePeripheral)
@@ -38,20 +38,19 @@ obniz.ble.scan.onfind = (p) => {
 発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
 
 - battery : 電池電圧
-- button : ボタンを押すとtrue
-- moving : 動くとtrue
-- hall_sensor : 磁石が近づくとtrue
-- fall : 落下するとtrue
+- hall_sensor : 磁石が近づくとtrue(iBS01H)
+- moving : 動くとtrue(iBS01G)
+- fall : 落下するとtrue(iBS01G)
 
 ```javascript
 // Javascript Example
 let IBS01 = Obniz.getPartsClass('iBS01');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS01.isDevice(p)) {
         let data = IBS01.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

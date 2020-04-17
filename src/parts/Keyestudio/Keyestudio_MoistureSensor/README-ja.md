@@ -1,6 +1,6 @@
 # Keyestudio_MoistureSensor
 
-![]()
+![](image.jpg)
 
 Keyestudio社製土壌湿度センサです。土壌の湿度を取得できます。
 返される値は0~4.2の範囲で、湿度の目安は以下の通りです。

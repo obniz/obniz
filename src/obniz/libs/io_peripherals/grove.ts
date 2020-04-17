@@ -4,6 +4,7 @@
  */
 
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 import PeripheralAD from "./ad";
 import { DriveType } from "./common";
 import PeripheralI2C from "./i2c";
@@ -22,8 +23,7 @@ export type PeripheralGroveType = "digital" | "analog" | "analog-digital" | "i2c
 /**
  * @category Peripherals
  */
-export default class PeripheralGrove {
-  public Obniz: Obniz;
+export default class PeripheralGrove extends ComponentAbstract {
   public no: number;
   public used: boolean = false;
   private _params: PeripheralGroveParams;
@@ -35,7 +35,7 @@ export default class PeripheralGrove {
   } = {};
 
   constructor(obniz: Obniz, no: number, params: PeripheralGroveParams) {
-    this.Obniz = obniz;
+    super(obniz);
     this.no = no;
     this._params = params;
     this._reset();
@@ -124,6 +124,10 @@ export default class PeripheralGrove {
    */
   public notified(obj: number) {
     // nothing
+  }
+
+  public schemaBasePath(): null {
+    return null;
   }
 
   private useWithType(type: PeripheralGroveType, drive: DriveType) {

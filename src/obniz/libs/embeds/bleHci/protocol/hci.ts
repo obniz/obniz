@@ -2,13 +2,16 @@
  * @packageDocumentation
  * @ignore
  */
+import EventEmitter from "eventemitter3";
+import ObnizBLEHci from "../hci";
 
 // let debug = require('debug')('hci');
 const debug: any = (...params: any[]) => {
   // console.log(...params);
 };
 
-import events = require("events");
+import { ObnizBleHciStateError, ObnizBleUnsupportedHciError } from "../../../../ObnizError";
+import { Handle } from "../bleTypes";
 
 namespace COMMANDS {
   export const HCI_COMMAND_PKT: any = 0x01;
@@ -24,6 +27,7 @@ namespace COMMANDS {
   export const EVT_CMD_COMPLETE: any = 0x0e;
   export const EVT_CMD_STATUS: any = 0x0f;
   export const EVT_NUMBER_OF_COMPLETED_PACKETS: any = 0x13;
+  export const EVT_ENCRYPTION_KEY_REFRESH_COMPLETE: any = 0x30;
   export const EVT_LE_META_EVENT: any = 0x3e;
 
   export const EVT_LE_CONN_COMPLETE: any = 0x01;
@@ -96,32 +100,49 @@ namespace COMMANDS {
  */
 const STATUS_MAPPER: any = require("./hci-status");
 
+type HciEventTypes =
+  // central
+  | "leAdvertisingReport"
+
+  // peripheral
+  | "leConnComplete" // central also use, but slave only emit
+
+  // common
+  | "stateChange"
+  | "leConnUpdateComplete" // update interval, latency, timeout are complete
+  | "disconnComplete"
+  | "encryptChange"
+  | "aclDataPkt";
+
+type HciState = "poweredOn" | "poweredOff";
+
 /**
  * @ignore
  */
-class Hci extends events.EventEmitter {
+class Hci extends EventEmitter<HciEventTypes> {
   public static STATUS_MAPPER: any;
-  public _obnizHci: any;
-  public _state: any;
+  public _obnizHci: ObnizBLEHci;
   public _handleBuffers: any;
-  public on: any;
   public _socket: any;
-  public once: any;
   public _handleAclsInProgress: any;
   public _aclOutQueue: any;
   public _aclMtu: any;
   public _aclMaxInProgress: any;
   public addressType: any;
   public address: any;
+  private _state: HciState;
+  private _aclStreamObservers: { [handle: string]: { [key: string]: Array<(arg0: Buffer) => any> } } = {};
 
   constructor(obnizHci: any) {
     super();
     this._obnizHci = obnizHci;
-    this._state = null;
+    this._state = "poweredOff";
 
     this.resetBuffers();
 
-    this.on("stateChange", this.onStateChange.bind(this));
+    this._obnizHci.Obniz.on("disconnect", () => {
+      this.stateChange("poweredOff");
+    });
 
     this._socket = {
       write: (data: any) => {
@@ -133,20 +154,7 @@ class Hci extends events.EventEmitter {
   }
 
   public async initWait() {
-    this.reset();
-    // this.setEventMask();
-    // this.setLeEventMask();
-    // this.readLocalVersion();
-    // this.writeLeHostSupported();
-    // this.readLeHostSupported();
-    // this.readBdAddr();
-
-    return new Promise((resolve: any) => {
-      this.once("stateChange", () => {
-        // console.log('te');
-        resolve();
-      });
-    });
+    await this.resetWait();
   }
 
   public setEventMask() {
@@ -166,7 +174,7 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public reset() {
+  public async resetWait(): Promise<void> {
     const cmd: any = Buffer.alloc(4);
 
     // header
@@ -176,8 +184,27 @@ class Hci extends events.EventEmitter {
     // length
     cmd.writeUInt8(0x00, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
     debug("reset - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+
+    const resetResult = await p;
+    this.resetBuffers();
+    this.setEventMask();
+    this.setLeEventMask();
+    const p1 = this.readLocalVersionWait();
+    const p2 = this.readBdAddrWait();
+    this.writeLeHostSupported();
+    const p3 = this.readLeHostSupportedWait();
+    const p4 = this.leReadBufferSizeWait();
+    await Promise.all([p1, p2, p3, p4]);
+
+    if (this._state !== "poweredOn") {
+      const p5 = this.setScanEnabledWait(false, true);
+      const p6 = this.setScanParametersWait(false);
+      await Promise.all([p5, p6]);
+      this.stateChange("poweredOn");
+    }
   }
 
   public resetBuffers() {
@@ -186,7 +213,7 @@ class Hci extends events.EventEmitter {
     this._aclOutQueue = [];
   }
 
-  public readLocalVersion() {
+  public async readLocalVersionWait() {
     const cmd: any = Buffer.alloc(4);
 
     // header
@@ -196,11 +223,24 @@ class Hci extends events.EventEmitter {
     // length
     cmd.writeUInt8(0x0, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
     debug("read local version - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+    const data = await p;
+    const hciVer: any = data.result.readUInt8(0);
+    const hciRev: any = data.result.readUInt16LE(1);
+    const lmpVer: any = data.result.readInt8(3);
+    const manufacturer: any = data.result.readUInt16LE(4);
+    const lmpSubVer: any = data.result.readUInt16LE(6);
+
+    if (hciVer < 0x06) {
+      throw new ObnizBleUnsupportedHciError(0x06, hciVer);
+    }
+
+    return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
   }
 
-  public readBdAddr() {
+  public async readBdAddrWait() {
     const cmd: any = Buffer.alloc(4);
 
     // header
@@ -210,8 +250,21 @@ class Hci extends events.EventEmitter {
     // length
     cmd.writeUInt8(0x0, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
     debug("read bd addr - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+
+    const data = await p;
+    this.addressType = "public";
+    this.address = data.result
+      .toString("hex")
+      .match(/.{1,2}/g)!
+      .reverse()
+      .join(":");
+
+    debug("address = " + this.address);
+
+    return this.address;
   }
 
   public setLeEventMask() {
@@ -231,7 +284,7 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public readLeHostSupported() {
+  public async readLeHostSupportedWait() {
     const cmd: any = Buffer.alloc(4);
 
     // header
@@ -241,8 +294,19 @@ class Hci extends events.EventEmitter {
     // length
     cmd.writeUInt8(0x00, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
     debug("read LE host supported - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+    const data = await p;
+
+    if (data.status === 0) {
+      const le: any = data.result.readUInt8(0);
+      const simul: any = data.result.readUInt8(1);
+
+      debug("\t\t\tle = " + le);
+      debug("\t\t\tsimul = " + simul);
+    }
+    return data;
   }
 
   public writeLeHostSupported() {
@@ -263,7 +327,7 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public setScanParameters(isActiveScan: boolean) {
+  public async setScanParametersWait(isActiveScan: boolean) {
     const cmd: any = Buffer.alloc(11);
 
     // header
@@ -280,11 +344,14 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
     cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
     debug("set scan parameters - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+    const data = await p;
+    return data.status;
   }
 
-  public setScanEnabled(enabled: boolean, filterDuplicates: boolean) {
+  public async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
     const cmd: any = Buffer.alloc(6);
 
     // header
@@ -299,10 +366,13 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // duplicates: 0 -> duplicates, 0 -> duplicates
 
     debug("set scan enabled - writing: " + cmd.toString("hex"));
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
     this._socket.write(cmd);
+    const data = await p;
+    return data.status;
   }
 
-  public createLeConn(address: any, addressType: any) {
+  public async createLeConnWait(address: any, addressType: any) {
     const cmd: any = Buffer.alloc(29);
 
     // header
@@ -336,10 +406,19 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt16LE(0x0006, 27); // max ce length
 
     debug("create le conn - writing: " + cmd.toString("hex"));
+    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
     this._socket.write(cmd);
+    const { status, data } = await p;
+    return this.processLeConnComplete(status, data);
   }
 
-  public connUpdateLe(handle: any, minInterval: any, maxInterval: any, latency: any, supervisionTimeout: any) {
+  public async connUpdateLeWait(
+    handle: Handle,
+    minInterval: number,
+    maxInterval: number,
+    latency: number,
+    supervisionTimeout: number,
+  ) {
     const cmd: any = Buffer.alloc(18);
 
     // header
@@ -359,10 +438,29 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt16LE(0x0000, 16); // max ce length
 
     debug("conn update le - writing: " + cmd.toString("hex"));
+    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
     this._socket.write(cmd);
+
+    const { status, data } = await p;
+    return this.processLeConnUpdateComplete(status, data);
   }
 
-  public startLeEncryption(handle: any, random: any, diversifier: any, key: any) {
+  // this function is use by connUpdateLeWait / processLeMetaEvent.
+  public processLeConnUpdateComplete(status: any, data: any) {
+    const handle: Handle = data.readUInt16LE(0);
+    const interval: any = data.readUInt16LE(2) * 1.25;
+    const latency: any = data.readUInt16LE(4); // TODO: multiplier?
+    const supervisionTimeout: any = data.readUInt16LE(6) * 10;
+
+    debug("\t\t\thandle = " + handle);
+    debug("\t\t\tinterval = " + interval);
+    debug("\t\t\tlatency = " + latency);
+    debug("\t\t\tsupervision timeout = " + supervisionTimeout);
+
+    return { status, handle, interval, latency, supervisionTimeout };
+  }
+
+  public async startLeEncryptionWait(handle: Handle, random: Buffer, diversifier: Buffer, key: Buffer) {
     const cmd: any = Buffer.alloc(32);
 
     // header
@@ -378,11 +476,34 @@ class Hci extends events.EventEmitter {
     diversifier.copy(cmd, 14);
     key.copy(cmd, 16);
 
+    // console.log("start le encryption - writing: " + cmd.toString("hex"));
+    const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE], {
+      waitingFor: "EVT_ENCRYPT_CHANGE",
+    });
+    const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE], {
+      waitingFor: "EVT_ENCRYPTION_KEY_REFRESH_COMPLETE",
+    });
+
     debug("start le encryption - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+
+    const data = await Promise.race([p1, p2]);
+    // const data = await p1;
+    // console.log("start le encryption - data: " + data.toString("hex"));
+    if (data.readUInt16LE(1) === COMMANDS.EVT_ENCRYPT_CHANGE) {
+      const encHandle: Handle = data.readUInt16LE(4);
+      const encrypt: any = data.readUInt8(6);
+
+      debug("\t\thandle = " + encHandle);
+      debug("\t\tencrypt = " + encrypt);
+
+      this.emit("encryptChange", encHandle, encrypt);
+      return encrypt;
+    }
+    return "refresh";
   }
 
-  public disconnect(handle: any, reason: any) {
+  public disconnect(handle: Handle, reason?: number) {
     const cmd: any = Buffer.alloc(7);
 
     reason = reason || COMMANDS.HCI_OE_USER_ENDED_CONNECTION;
@@ -402,7 +523,7 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public readRssi(handle: any) {
+  public async readRssiWait(handle: Handle) {
     const cmd: any = Buffer.alloc(6);
 
     // header
@@ -415,27 +536,23 @@ class Hci extends events.EventEmitter {
     // data
     cmd.writeUInt16LE(handle, 4); // handle
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [handle & 0xff, (handle >> 8) & 0xff]);
     debug("read rssi - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+
+    const data = await p;
+    if (handle !== data.result.readUInt16LE(0)) {
+      throw new Error("handle is different");
+    }
+    const rssi: any = data.result.readInt8(2);
+
+    debug("\t\t\thandle = " + handle);
+    debug("\t\t\trssi = " + rssi);
+
+    return rssi;
   }
 
-  public writeAclDataPkt(handle: any, cid: any, data: any) {
-    const pkt: any = Buffer.alloc(9 + data.length);
-
-    // header
-    pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
-    pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
-    pkt.writeUInt16LE(data.length + 4, 3); // data length 1
-    pkt.writeUInt16LE(data.length, 5); // data length 2
-    pkt.writeUInt16LE(cid, 7);
-
-    data.copy(pkt, 9);
-
-    debug("write acl data pkt - writing: " + pkt.toString("hex"));
-    this._socket.write(pkt);
-  }
-
-  public setAdvertisingParameters() {
+  public async setAdvertisingParametersWait() {
     const cmd: any = Buffer.alloc(19);
 
     // header
@@ -459,11 +576,17 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt8(0x07, 17);
     cmd.writeUInt8(0x00, 18);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
     debug("set advertisement parameters - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+
+    const data = await p;
+
+    // this.emit("stateChange", "poweredOn"); // TODO : really need?
+    return data.status;
   }
 
-  public setAdvertisingData(data: any) {
+  public async setAdvertisingDataWait(data: any) {
     const cmd: any = Buffer.alloc(36);
 
     cmd.fill(0x00);
@@ -479,11 +602,16 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt8(data.length, 4);
     data.copy(cmd, 5);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
+
     debug("set advertisement data - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+    const result = await p;
+
+    return result.status;
   }
 
-  public setScanResponseData(data: any) {
+  public async setScanResponseDataWait(data: any) {
     const cmd: any = Buffer.alloc(36);
 
     cmd.fill(0x00);
@@ -499,11 +627,15 @@ class Hci extends events.EventEmitter {
     cmd.writeUInt8(data.length, 4);
     data.copy(cmd, 5);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
     debug("set scan response data - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+    const result = await p;
+
+    return result.status;
   }
 
-  public setAdvertiseEnable(enabled: any) {
+  public async setAdvertiseEnableWait(enabled: any) {
     const cmd: any = Buffer.alloc(5);
 
     // header
@@ -516,11 +648,14 @@ class Hci extends events.EventEmitter {
     // data
     cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
     debug("set advertise enable - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+    const data = await p;
+    return data.status;
   }
 
-  public leReadBufferSize() {
+  public async leReadBufferSizeWait() {
     const cmd: any = Buffer.alloc(4);
 
     // header
@@ -530,11 +665,17 @@ class Hci extends events.EventEmitter {
     // length
     cmd.writeUInt8(0x0, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
     debug("le read buffer size - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+
+    const data = await p;
+    if (!data.status) {
+      await this.processLeReadBufferSizeWait(data.result);
+    }
   }
 
-  public readBufferSize() {
+  public async readBufferSizeWait() {
     const cmd: any = Buffer.alloc(4);
 
     // header
@@ -544,11 +685,26 @@ class Hci extends events.EventEmitter {
     // length
     cmd.writeUInt8(0x0, 3);
 
+    const p = this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
     debug("read buffer size - writing: " + cmd.toString("hex"));
     this._socket.write(cmd);
+    const data = await p;
+    if (!data.status) {
+      const aclMtu: any = data.result.readUInt16LE(0);
+      const aclMaxInProgress: any = data.result.readUInt16LE(3);
+      // sanity
+      if (aclMtu && aclMaxInProgress) {
+        debug("br/edr acl mtu = " + aclMtu);
+        debug("br/edr acl max pkts = " + aclMaxInProgress);
+        this._aclMtu = aclMtu;
+        this._aclMaxInProgress = aclMaxInProgress;
+        return { aclMtu, aclMaxInProgress };
+      }
+    }
+    return null;
   }
 
-  public queueAclDataPkt(handle: any, cid: any, data: any) {
+  public queueAclDataPkt(handle: Handle, cid: any, data: any) {
     let hf: any = handle | (COMMANDS.ACL_START_NO_FLUSH << 12);
     // l2cap pdu may be fragmented on hci level
     let l2capPdu: any = Buffer.alloc(4 + data.length);
@@ -607,273 +763,53 @@ class Hci extends events.EventEmitter {
     this._socket.write(pkt.pkt);
   }
 
-  public onSocketData(array: any) {
-    const data: any = Buffer.from(array);
-    debug("onSocketData: " + data.toString("hex"));
+  public writeAclDataPkt(handle: Handle, cid: any, data: any) {
+    const pkt: any = Buffer.alloc(9 + data.length);
 
-    const eventType: any = data.readUInt8(0);
+    // header
+    pkt.writeUInt8(COMMANDS.HCI_ACLDATA_PKT, 0);
+    pkt.writeUInt16LE(handle | (COMMANDS.ACL_START_NO_FLUSH << 12), 1);
+    pkt.writeUInt16LE(data.length + 4, 3); // data length 1  for acl data on HCI
+    pkt.writeUInt16LE(data.length, 5); // data length 2  for l2cap
+    pkt.writeUInt16LE(cid, 7);
 
-    debug("\tevent type = 0x" + eventType.toString(16));
+    data.copy(pkt, 9);
 
-    if (COMMANDS.HCI_EVENT_PKT === eventType) {
-      const subEventType: any = data.readUInt8(1);
-
-      debug("\tsub event type = 0x" + subEventType.toString(16));
-
-      if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
-        const handle: any = data.readUInt16LE(4);
-        const reason: any = data.readUInt8(6);
-
-        debug("\t\thandle = " + handle);
-        debug("\t\treason = " + reason);
-
-        delete this._handleAclsInProgress[handle];
-        const aclOutQueue: any = [];
-        let discarded: any = 0;
-        for (const i in this._aclOutQueue) {
-          if (this._aclOutQueue[i].handle !== handle) {
-            aclOutQueue.push(this._aclOutQueue[i]);
-          } else {
-            discarded++;
-          }
-        }
-        if (discarded) {
-          debug("\t\tacls discarded = " + discarded);
-        }
-        this._aclOutQueue = aclOutQueue;
-        this.pushAclOutQueue();
-
-        this.emit("disconnComplete", handle, reason);
-      } else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
-        const handle: any = data.readUInt16LE(4);
-        const encrypt: any = data.readUInt8(6);
-
-        debug("\t\thandle = " + handle);
-        debug("\t\tencrypt = " + encrypt);
-
-        this.emit("encryptChange", handle, encrypt);
-      } else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
-        const ncmd: any = data.readUInt8(3);
-        const cmd: any = data.readUInt16LE(4);
-        const status: any = data.readUInt8(6);
-        const result: any = data.slice(7);
-
-        debug("\t\tncmd = 0x" + ncmd.toString(16));
-        debug("\t\tcmd = 0x" + cmd.toString(16));
-        debug("\t\tstatus = 0x" + status.toString(16));
-        debug("\t\tresult = 0x" + result.toString("hex"));
-
-        this.processCmdCompleteEvent(cmd, status, result);
-      } else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
-        const status: any = data.readUInt8(3);
-        const cmd: any = data.readUInt16LE(5);
-
-        debug("\t\tstatus = " + status);
-        debug("\t\tcmd = " + cmd);
-
-        this.processCmdStatusEvent(cmd, status);
-      } else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
-        const leMetaEventType: any = data.readUInt8(3);
-        const leMetaEventStatus: any = data.readUInt8(4);
-        const leMetaEventData: any = data.slice(5);
-
-        debug("\t\tLE meta event type = " + leMetaEventType);
-        debug("\t\tLE meta event status = " + leMetaEventStatus);
-        debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
-
-        this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
-      } else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
-        const handles: any = data.readUInt8(3);
-        for (let i = 0; i < handles; i++) {
-          const handle: any = data.readUInt16LE(4 + i * 4);
-          const pkts: any = data.readUInt16LE(6 + i * 4);
-          debug("\thandle = " + handle);
-          debug("\t\tcompleted = " + pkts);
-          if (this._handleAclsInProgress[handle] === undefined) {
-            debug("\t\talready closed");
-            continue;
-          }
-          if (pkts > this._handleAclsInProgress[handle]) {
-            // Linux kernel may send acl packets by itself, so be ready for underflow
-            this._handleAclsInProgress[handle] = 0;
-          } else {
-            this._handleAclsInProgress[handle] -= pkts;
-          }
-          debug("\t\tin progress = " + this._handleAclsInProgress[handle]);
-        }
-        this.pushAclOutQueue();
-      }
-    } else if (COMMANDS.HCI_ACLDATA_PKT === eventType) {
-      const flags: any = data.readUInt16LE(1) >> 12;
-      const handle: any = data.readUInt16LE(1) & 0x0fff;
-
-      if (COMMANDS.ACL_START === flags) {
-        const cid: any = data.readUInt16LE(7);
-
-        const length: any = data.readUInt16LE(5);
-        const pktData: any = data.slice(9);
-
-        debug("\t\tcid = " + cid);
-
-        if (length === pktData.length) {
-          debug("\t\thandle = " + handle);
-          debug("\t\tdata = " + pktData.toString("hex"));
-
-          this.emit("aclDataPkt", handle, cid, pktData);
-        } else {
-          this._handleBuffers[handle] = {
-            length,
-            cid,
-            data: pktData,
-          };
-        }
-      } else if (COMMANDS.ACL_CONT === flags) {
-        if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
-          return;
-        }
-
-        this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
-
-        if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
-          this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
-
-          delete this._handleBuffers[handle];
-        }
-      }
-    } else if (COMMANDS.HCI_COMMAND_PKT === eventType) {
-      const cmd: any = data.readUInt16LE(1);
-      const len: any = data.readUInt8(3);
-
-      debug("\t\tcmd = " + cmd);
-      debug("\t\tdata len = " + len);
-
-      if (cmd === COMMANDS.LE_SET_SCAN_ENABLE_CMD) {
-        const enable: any = data.readUInt8(4) === 0x1;
-        const filterDuplicates: any = data.readUInt8(5) === 0x1;
-
-        debug("\t\t\tLE enable scan command");
-        debug("\t\t\tenable scanning = " + enable);
-        debug("\t\t\tfilter duplicates = " + filterDuplicates);
-
-        this.emit("leScanEnableSetCmd", enable, filterDuplicates);
-      }
-    }
+    debug("write acl data pkt - writing: " + pkt.toString("hex"));
+    this._socket.write(pkt);
   }
 
-  public onSocketError(error: any) {
-    debug("onSocketError: " + error.message);
+  public async longTermKeyRequestNegativeReply(handle: Handle) {
+    throw new Error("TODO: no checked");
 
-    if (error.message === "Operation not permitted") {
-      this.emit("stateChange", "unauthorized");
-    } else if (error.message === "Network is down") {
-      // no-op
-    }
-  }
+    const cmd: any = Buffer.alloc(5);
 
-  public processCmdCompleteEvent(cmd: any, status: any, result: any) {
-    if (cmd === COMMANDS.RESET_CMD) {
-      this.resetBuffers();
-      this.setEventMask();
-      this.setLeEventMask();
-      this.readLocalVersion();
-      this.readBdAddr();
-      this.writeLeHostSupported();
-      this.readLeHostSupported();
-      this.leReadBufferSize();
-    } else if (cmd === COMMANDS.READ_LE_HOST_SUPPORTED_CMD) {
-      if (status === 0) {
-        const le: any = result.readUInt8(0);
-        const simul: any = result.readUInt8(1);
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
 
-        debug("\t\t\tle = " + le);
-        debug("\t\t\tsimul = " + simul);
-      }
-    } else if (cmd === COMMANDS.READ_LOCAL_VERSION_CMD) {
-      const hciVer: any = result.readUInt8(0);
-      const hciRev: any = result.readUInt16LE(1);
-      const lmpVer: any = result.readInt8(3);
-      const manufacturer: any = result.readUInt16LE(4);
-      const lmpSubVer: any = result.readUInt16LE(6);
+    // length
+    cmd.writeUInt16LE(handle, 3);
 
-      if (hciVer < 0x06) {
-        this.emit("stateChange", "unsupported");
-      } else if (this._state !== "poweredOn") {
-        this.setScanEnabled(false, true);
-        this.setScanParameters(false);
-      }
-
-      this.emit("readLocalVersion", hciVer, hciRev, lmpVer, manufacturer, lmpSubVer);
-    } else if (cmd === COMMANDS.READ_BD_ADDR_CMD) {
-      this.addressType = "public";
-      this.address = result
-        .toString("hex")
-        .match(/.{1,2}/g)
-        .reverse()
-        .join(":");
-
-      debug("address = " + this.address);
-
-      this.emit("addressChange", this.address);
-    } else if (cmd === COMMANDS.LE_SET_SCAN_PARAMETERS_CMD) {
-      this.emit("stateChange", "poweredOn");
-
-      this.emit("leScanParametersSet", status);
-    } else if (cmd === COMMANDS.LE_SET_SCAN_ENABLE_CMD) {
-      this.emit("leScanEnableSet", status);
-    } else if (cmd === COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD) {
-      this.emit("stateChange", "poweredOn");
-
-      this.emit("leAdvertisingParametersSet", status);
-    } else if (cmd === COMMANDS.LE_SET_ADVERTISING_DATA_CMD) {
-      this.emit("leAdvertisingDataSet", status);
-    } else if (cmd === COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD) {
-      this.emit("leScanResponseDataSet", status);
-    } else if (cmd === COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD) {
-      this.emit("leAdvertiseEnableSet", status);
-    } else if (cmd === COMMANDS.READ_RSSI_CMD) {
-      const handle: any = result.readUInt16LE(0);
-      const rssi: any = result.readInt8(2);
-
-      debug("\t\t\thandle = " + handle);
-      debug("\t\t\trssi = " + rssi);
-
-      this.emit("rssiRead", handle, rssi);
-    } else if (cmd === COMMANDS.LE_LTK_NEG_REPLY_CMD) {
-      const handle: any = result.readUInt16LE(0);
-
-      debug("\t\t\thandle = " + handle);
-      this.emit("leLtkNegReply", handle);
-    } else if (cmd === COMMANDS.LE_READ_BUFFER_SIZE_CMD) {
-      if (!status) {
-        this.processLeReadBufferSize(result);
-      }
-    } else if (cmd === COMMANDS.READ_BUFFER_SIZE_CMD) {
-      if (!status) {
-        const aclMtu: any = result.readUInt16LE(0);
-        const aclMaxInProgress: any = result.readUInt16LE(3);
-        // sanity
-        if (aclMtu && aclMaxInProgress) {
-          debug("br/edr acl mtu = " + aclMtu);
-          debug("br/edr acl max pkts = " + aclMaxInProgress);
-          this._aclMtu = aclMtu;
-          this._aclMaxInProgress = aclMaxInProgress;
-        }
-      }
-    }
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
+    this._socket.write(cmd);
+    const data = await p;
+    return data.status;
   }
 
   public processLeMetaEvent(eventType: any, status: any, data: any) {
-    if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-      this.processLeConnComplete(status, data);
-    } else if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
+    if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
       this.processLeAdvertisingReport(status, data);
+    } else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
+      this.processLeConnComplete(status, data);
     } else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
-      this.processLeConnUpdateComplete(status, data);
+      const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
+      this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
     }
   }
 
   public processLeConnComplete(status: any, data: any) {
-    const handle: any = data.readUInt16LE(0);
+    const handle: Handle = data.readUInt16LE(0);
     const role: any = data.readUInt8(2);
     const addressType: any = data.readUInt8(3) === 0x01 ? "random" : "public";
     const address: any = data
@@ -898,8 +834,24 @@ class Hci extends events.EventEmitter {
 
     this._handleAclsInProgress[handle] = 0;
 
-    this.emit(
-      "leConnComplete",
+    if (role === 1) {
+      // only slave, emit
+
+      this.emit(
+        "leConnComplete",
+        status,
+        handle,
+        role,
+        addressType,
+        address,
+        interval,
+        latency,
+        supervisionTimeout,
+        masterClockAccuracy,
+      );
+    }
+
+    return {
       status,
       handle,
       role,
@@ -909,7 +861,7 @@ class Hci extends events.EventEmitter {
       latency,
       supervisionTimeout,
       masterClockAccuracy,
-    );
+    };
   }
 
   public processLeAdvertisingReport(count: any, data: any) {
@@ -938,20 +890,6 @@ class Hci extends events.EventEmitter {
     }
   }
 
-  public processLeConnUpdateComplete(status: any, data: any) {
-    const handle: any = data.readUInt16LE(0);
-    const interval: any = data.readUInt16LE(2) * 1.25;
-    const latency: any = data.readUInt16LE(4); // TODO: multiplier?
-    const supervisionTimeout: any = data.readUInt16LE(6) * 10;
-
-    debug("\t\t\thandle = " + handle);
-    debug("\t\t\tinterval = " + interval);
-    debug("\t\t\tlatency = " + latency);
-    debug("\t\t\tsupervision timeout = " + supervisionTimeout);
-
-    this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
-  }
-
   public processCmdStatusEvent(cmd: any, status: any) {
     if (cmd === COMMANDS.LE_CREATE_CONN_CMD) {
       if (status !== 0) {
@@ -960,13 +898,13 @@ class Hci extends events.EventEmitter {
     }
   }
 
-  public processLeReadBufferSize(result: any) {
+  public async processLeReadBufferSizeWait(result: any) {
     const aclMtu: any = result.readUInt16LE(0);
     const aclMaxInProgress: any = result.readUInt8(2);
     if (!aclMtu) {
       // as per Bluetooth specs
       debug("falling back to br/edr buffer size");
-      this.readBufferSize();
+      await this.readBufferSizeWait();
     } else {
       debug("le acl mtu = " + aclMtu);
       debug("le acl max in progress = " + aclMaxInProgress);
@@ -975,8 +913,219 @@ class Hci extends events.EventEmitter {
     }
   }
 
-  public onStateChange(state: any) {
+  public stateChange(state: HciState) {
     this._state = state;
+    this.emit("stateChange", state);
+  }
+
+  public async readAclStreamWait(handle: Handle, cid: number, firstData: number, timeout?: number): Promise<Buffer> {
+    return this._obnizHci.timeoutPromiseWrapper(
+      new Promise((resolve) => {
+        const key = (cid << 8) + firstData;
+        this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
+        this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
+        this._aclStreamObservers[handle][key].push(resolve);
+      }),
+      { timeout, waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}` },
+    );
+  }
+
+  protected async readLeMetaEventWait(eventType: number, options?: any) {
+    const filter = this.createLeMetaEventFilter(eventType);
+    options = options || {};
+    options.waitingFor = "LeMetaEvent " + JSON.stringify(filter);
+    const data = await this._obnizHci.readWait(filter, options);
+
+    const type: any = data.readUInt8(3);
+    const status: any = data.readUInt8(4);
+    const _data: any = data.slice(5);
+    return { type, status, data: _data };
+  }
+
+  protected createLeMetaEventFilter(eventType: number): number[] {
+    return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_LE_META_EVENT, -1, eventType];
+  }
+
+  protected async readCmdCompleteEventWait(
+    requestCmd: number,
+    additionalResultFilter?: number[],
+  ): Promise<{ eventType: number; subEventType: number; ncmd: number; cmd: number; status: number; result: Buffer }> {
+    additionalResultFilter = additionalResultFilter || [];
+    let filter = this.createCmdCompleteEventFilter(requestCmd);
+    if (additionalResultFilter.length > 0) {
+      filter = [
+        ...filter,
+        -1, // status
+        ...additionalResultFilter,
+      ];
+    }
+    const options: any = {};
+    options.waitingFor = "CmdCompleteEvent " + JSON.stringify(filter);
+    const data = await this._obnizHci.readWait(filter, options);
+
+    const eventType: any = data.readUInt8(0);
+    const subEventType: any = data.readUInt8(1);
+    const ncmd: any = data.readUInt8(3);
+    const cmd: any = data.readUInt16LE(4);
+    const status: any = data.readUInt8(6);
+    const result: any = data.slice(7);
+
+    return { eventType, subEventType, ncmd, cmd, status, result };
+  }
+
+  protected createCmdCompleteEventFilter(cmd: number): number[] {
+    return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_CMD_COMPLETE, -1, -1, (cmd >> 0) & 0xff, (cmd >> 8) & 0xff];
+  }
+
+  private onHciAclData(data: Buffer) {
+    const flags: any = data.readUInt16LE(1) >> 12;
+    const handle: Handle = data.readUInt16LE(1) & 0x0fff;
+
+    if (COMMANDS.ACL_START === flags) {
+      const cid: any = data.readUInt16LE(7);
+
+      const length: any = data.readUInt16LE(5);
+      const pktData: Buffer = data.slice(9);
+
+      debug("\t\tcid = " + cid);
+
+      if (length === pktData.length) {
+        debug("\t\thandle = " + handle);
+        debug("\t\tdata = " + pktData.toString("hex"));
+
+        this.emit("aclDataPkt", handle, cid, pktData);
+        const key = (cid << 8) + pktData.readUInt8(0);
+        if (
+          this._aclStreamObservers[handle] &&
+          this._aclStreamObservers[handle][key] &&
+          this._aclStreamObservers[handle][key].length > 0
+        ) {
+          const resolve = this._aclStreamObservers[handle][key].shift()!;
+          resolve(pktData);
+        }
+      } else {
+        this._handleBuffers[handle] = {
+          length,
+          cid,
+          data: pktData,
+        };
+      }
+    } else if (COMMANDS.ACL_CONT === flags) {
+      if (!this._handleBuffers[handle] || !this._handleBuffers[handle].data) {
+        return;
+      }
+
+      this._handleBuffers[handle].data = Buffer.concat([this._handleBuffers[handle].data, data.slice(5)]);
+
+      if (this._handleBuffers[handle].data.length === this._handleBuffers[handle].length) {
+        this.emit("aclDataPkt", handle, this._handleBuffers[handle].cid, this._handleBuffers[handle].data);
+        const key = (this._handleBuffers[handle].cid << 8) + this._handleBuffers[handle].data.readUInt8(0);
+        if (
+          this._aclStreamObservers[handle] &&
+          this._aclStreamObservers[handle][key] &&
+          this._aclStreamObservers[handle][key].length > 0
+        ) {
+          const resolve = this._aclStreamObservers[handle][key].shift()!;
+          resolve(this._handleBuffers[handle].data);
+        }
+        delete this._handleBuffers[handle];
+      }
+    }
+  }
+
+  private onHciEventData(data: Buffer) {
+    const subEventType: any = data.readUInt8(1);
+
+    debug("\tsub event type = 0x" + subEventType.toString(16));
+
+    if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
+      const handle: Handle = data.readUInt16LE(4);
+      const reason: any = data.readUInt8(6);
+
+      debug("\t\thandle = " + handle);
+      debug("\t\treason = " + reason);
+
+      delete this._handleAclsInProgress[handle];
+      const aclOutQueue: any = [];
+      let discarded: any = 0;
+      for (const i in this._aclOutQueue) {
+        if (this._aclOutQueue[i].handle !== handle) {
+          aclOutQueue.push(this._aclOutQueue[i]);
+        } else {
+          discarded++;
+        }
+      }
+      if (discarded) {
+        debug("\t\tacls discarded = " + discarded);
+      }
+      this._aclOutQueue = aclOutQueue;
+      this.pushAclOutQueue();
+
+      this.emit("disconnComplete", handle, reason);
+    } else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
+      const handle: Handle = data.readUInt16LE(4);
+      const encrypt: any = data.readUInt8(6);
+
+      debug("\t\thandle = " + handle);
+      debug("\t\tencrypt = " + encrypt);
+
+      this.emit("encryptChange", handle, encrypt);
+    } else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
+      // command complete event are handle each command send functions;
+    } else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
+      const status: any = data.readUInt8(3);
+      const cmd: any = data.readUInt16LE(5);
+
+      debug("\t\tstatus = " + status);
+      debug("\t\tcmd = " + cmd);
+
+      this.processCmdStatusEvent(cmd, status);
+    } else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
+      const leMetaEventType: any = data.readUInt8(3);
+      const leMetaEventStatus: any = data.readUInt8(4);
+      const leMetaEventData: any = data.slice(5);
+
+      debug("\t\tLE meta event type = " + leMetaEventType);
+      debug("\t\tLE meta event status = " + leMetaEventStatus);
+      debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
+
+      this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
+    } else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
+      const handles: any = data.readUInt8(3);
+      for (let i = 0; i < handles; i++) {
+        const handle: Handle = data.readUInt16LE(4 + i * 4);
+        const pkts: any = data.readUInt16LE(6 + i * 4);
+        debug("\thandle = " + handle);
+        debug("\t\tcompleted = " + pkts);
+        if (this._handleAclsInProgress[handle] === undefined) {
+          debug("\t\talready closed");
+          continue;
+        }
+        if (pkts > this._handleAclsInProgress[handle]) {
+          // Linux kernel may send acl packets by itself, so be ready for underflow
+          this._handleAclsInProgress[handle] = 0;
+        } else {
+          this._handleAclsInProgress[handle] -= pkts;
+        }
+        debug("\t\tin progress = " + this._handleAclsInProgress[handle]);
+      }
+      this.pushAclOutQueue();
+    }
+  }
+
+  private onSocketData(array: any) {
+    const data: any = Buffer.from(array);
+    debug("onSocketData: " + data.toString("hex"));
+
+    const eventType: any = data.readUInt8(0);
+
+    debug("\tevent type = 0x" + eventType.toString(16));
+
+    if (COMMANDS.HCI_EVENT_PKT === eventType) {
+      this.onHciEventData(data);
+    } else if (COMMANDS.HCI_ACLDATA_PKT === eventType) {
+      this.onHciAclData(data);
+    }
   }
 }
 

@@ -1,11 +1,12 @@
 import Obniz from "../../../obniz";
 import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
+import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface RS_Seek3Options {}
 
-export default class RS_Seek3 implements ObnizPartsInterface {
+export default class RS_Seek3 implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: "RS_Seek3",
@@ -24,6 +25,7 @@ export default class RS_Seek3 implements ObnizPartsInterface {
   public params: any;
   public onpressed: (() => void) | null = null;
   public _peripheral: BleRemotePeripheral | null = null;
+  public ondisconnect?: (reason: any) => void;
 
   private _uuids = {
     service: "0EE71523-981A-46B8-BA64-019261C88478",
@@ -47,6 +49,11 @@ export default class RS_Seek3 implements ObnizPartsInterface {
     if (!this._peripheral) {
       throw new Error("RS_Seek3 is not find.");
     }
+    this._peripheral.ondisconnect = (reason: any) => {
+      if (typeof this.ondisconnect === "function") {
+        this.ondisconnect(reason);
+      }
+    };
     await this._peripheral.connectWait();
     this._buttonCharacteristic = this._peripheral
       .getService(this._uuids.service)!

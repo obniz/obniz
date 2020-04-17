@@ -4,12 +4,12 @@
  */
 
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 
 /**
  * @category Peripherals
  */
-export default class PeripheralAD {
-  public Obniz: Obniz;
+export default class PeripheralAD extends ComponentAbstract {
   public id: number;
 
   /**
@@ -34,20 +34,19 @@ export default class PeripheralAD {
    * ```
    */
   public value!: number;
-  private observers!: Array<(value: number) => void>;
 
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
+    super(obniz);
     this.id = id;
-    this._reset();
-  }
 
-  /**
-   * @ignore
-   */
-  public _reset() {
-    this.value = 0.0;
-    this.observers = [];
+    this.on("/response/ad/get", (obj) => {
+      this.value = obj;
+      if (this.onchange) {
+        this.onchange(obj);
+      }
+    });
+
+    this._reset();
   }
 
   /**
@@ -84,16 +83,13 @@ export default class PeripheralAD {
    * @return measured voltage
    *
    */
-  public getWait(): Promise<number> {
-    const self: any = this;
-    return new Promise((resolve: any, reject: any) => {
-      self.addObserver(resolve);
-      const obj: any = {};
-      obj["ad" + self.id] = {
-        stream: false,
-      };
-      self.Obniz.send(obj);
-    });
+  public async getWait(): Promise<number> {
+    const obj: any = {};
+    obj["ad" + this.id] = {
+      stream: false,
+    };
+    const data = await this.sendAndReceiveJsonWait(obj, "/response/ad/get");
+    return data;
   }
 
   /**
@@ -113,22 +109,17 @@ export default class PeripheralAD {
 
   /**
    * @ignore
-   * @param obj
+   * @private
    */
-  public notified(obj: number) {
-    this.value = obj;
-    if (this.onchange) {
-      this.onchange(obj);
-    }
-    const callback: any = this.observers.shift();
-    if (callback) {
-      callback(obj);
-    }
+  public schemaBasePath(): string {
+    return "ad" + this.id;
   }
 
-  private addObserver(callback: (value: number) => void) {
-    if (callback) {
-      this.observers.push(callback);
-    }
+  /**
+   * @ignore
+   * @private
+   */
+  protected _reset() {
+    this.value = 0.0;
   }
 }

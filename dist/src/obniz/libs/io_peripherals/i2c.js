@@ -7,6 +7,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizError_1 = require("../../ObnizError");
+const ComponentAbstact_1 = require("../ComponentAbstact");
 const util_1 = __importDefault(require("../utils/util"));
 /**
  * i2c can be used.
@@ -14,21 +16,35 @@ const util_1 = __importDefault(require("../utils/util"));
  *  But slave mode only works with "written" events. You can't set data to be read.
  * @category Peripherals
  */
-class PeripheralI2C {
+class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
-        this._reset();
         this.onerror = undefined;
-    }
-    /**
-     * @ignore
-     * @private
-     */
-    _reset() {
-        this.observers = [];
-        this.used = false;
-        this.onwritten = undefined;
+        this.on("/response/i2c/slave", (obj) => {
+            if (typeof this.onwritten === "function") {
+                this.onwritten(obj.data, obj.address);
+            }
+        });
+        this.on("/response/i2c/error", (obj) => {
+            const message = `i2c${this.id}: ${obj.error.message}`;
+            if (typeof this.onerror === "function") {
+                this.onerror(new Error(message));
+            }
+            else {
+                this.Obniz.error({
+                    alert: "error",
+                    message,
+                });
+            }
+        });
+        this.on("/response/i2c/warning", (obj) => {
+            this.Obniz.warning({
+                alert: "warning",
+                message: `i2c${this.id}: ${obj.warning.message}`,
+            });
+        });
+        this._reset();
     }
     /**
      * It starts i2c on given io sda, scl.
@@ -194,7 +210,7 @@ class PeripheralI2C {
      * @param address
      * @param length Max is 1024;
      */
-    readWait(address, length) {
+    async readWait(address, length) {
         if (!this.used) {
             throw new Error(`i2c${this.id} is not started`);
         }
@@ -213,53 +229,17 @@ class PeripheralI2C {
             throw new Error("i2c: data length should be under 1024 bytes");
         }
         const self = this;
-        return new Promise((resolve, reject) => {
-            self.addObserver(resolve);
-            const obj = {};
-            obj["i2c" + self.id] = {
-                address,
-                read: length,
-            };
-            self.Obniz.send(obj);
-        });
-    }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (obj && typeof obj === "object") {
-            if (obj.data) {
-                if (obj.mode === "slave" && typeof this.onwritten === "function") {
-                    this.onwritten(obj.data, obj.address);
-                }
-                else {
-                    // TODO: we should compare byte length from sent
-                    const callback = this.observers.shift();
-                    if (callback) {
-                        callback(obj.data);
-                    }
-                }
-            }
-            if (obj.warning) {
-                this.Obniz.warning({
-                    alert: "warning",
-                    message: `i2c${this.id}: ${obj.warning.message}`,
-                });
-            }
-            if (obj.error) {
-                const message = `i2c${this.id}: ${obj.error.message}`;
-                if (typeof this.onerror === "function") {
-                    this.onerror(new Error(message));
-                }
-                else {
-                    this.Obniz.error({
-                        alert: "error",
-                        message,
-                    });
-                }
-            }
-        }
+        const obj = {};
+        obj["i2c" + self.id] = {
+            address,
+            read: length,
+        };
+        const errors = {
+            "/response/i2c/error": ObnizError_1.ObnizI2cError,
+            "/response/i2c/warning": ObnizError_1.ObnizI2cWarning,
+        };
+        const receiveData = await this.sendAndReceiveJsonWait(obj, "/response/i2c/master", { errors });
+        return receiveData.data;
     }
     /**
      * @ignore
@@ -282,10 +262,20 @@ class PeripheralI2C {
         this.Obniz.send(obj);
         this.used = false;
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return "i2c" + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.used = false;
+        this.onwritten = undefined;
     }
 }
 exports.default = PeripheralI2C;

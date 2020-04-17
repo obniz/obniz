@@ -12,9 +12,8 @@
  * ---------------------------------------------------------------- */
 
 import Obniz from "../../../obniz";
-import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
-import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import bleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
+import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 import LinkingAdvertising from "./modules/advertising";
 import LinkingDevice from "./modules/device";
@@ -192,7 +191,7 @@ export default class Linking {
       }
     }
 
-    this.obniz.ble!.scan.onfind = function(peripheral: bleRemotePeripheral) {
+    this.obniz.ble!.scan.onfind = (peripheral: bleRemotePeripheral) => {
       if (!peripheral.localName) {
         return;
       }
@@ -203,7 +202,7 @@ export default class Linking {
       // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
       //   return;
       // }
-      if (this.onadvertisement && typeof this.onadvertisement === "function") {
+      if (typeof this.onadvertisement === "function") {
         const parsed = LinkingAdvertising.parse(peripheral);
         if (parsed) {
           this.onadvertisement(parsed);

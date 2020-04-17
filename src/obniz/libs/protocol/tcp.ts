@@ -5,6 +5,7 @@
 
 import semver from "semver";
 import Obniz from "../../index";
+import { ComponentAbstract } from "../ComponentAbstact";
 
 /**
  * @param TCPReceiveCallbackFunction.data
@@ -31,7 +32,7 @@ type TCPErrorCallbackFunction = (error: any) => void;
  *
  * @category Protocol
  */
-export default class Tcp {
+export default class Tcp extends ComponentAbstract {
   /**
    * Callback function is called when there is a change in TCP connection status.
    *
@@ -77,15 +78,47 @@ export default class Tcp {
    * ```
    */
   public onerror?: TCPErrorCallbackFunction;
-  private Obniz: Obniz;
   private id: number;
   private connectObservers: any;
   private readObservers!: TCPReceiveCallbackFunction[];
   private used!: boolean;
 
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
+    super(obniz);
     this.id = id;
+
+    this.on("/response/tcp/connection", (obj) => {
+      /* Connectino state update. response of connect(), close from destination, response from */
+      if (this.onconnection) {
+        this.onconnection(obj.connection.connected);
+      }
+      if (!obj.connection.connected) {
+        this._reset();
+      }
+    });
+    this.on("/response/tcp/read", (obj) => {
+      if (this.onreceive) {
+        this.onreceive(obj.read.data);
+      }
+      const callback: any = this.readObservers.shift();
+      if (callback) {
+        callback(obj.read.data);
+      }
+    });
+    this.on("/response/tcp/connect", (obj) => {
+      /* response of connect() */
+      /* `this.connection` will called before this function */
+      if (obj.connect.code !== 0) {
+        if (this.onerror) {
+          this.onerror(obj.connect);
+        }
+      }
+      const callback: any = this.connectObservers.shift();
+      if (callback) {
+        callback(obj.connect.code);
+      }
+    });
+
     this._reset();
   }
 
@@ -216,45 +249,23 @@ export default class Tcp {
 
   /**
    * @ignore
-   * @param obj
    */
-  public notified(obj: any) {
-    if (obj.connection) {
-      /* Connectino state update. response of connect(), close from destination, response from */
-      if (this.onconnection) {
-        this.onconnection(obj.connection.connected);
-      }
-      if (!obj.connection.connected) {
-        this._reset();
-      }
-    } else if (obj.read) {
-      if (this.onreceive) {
-        this.onreceive(obj.read.data);
-      }
-      const callback: any = this.readObservers.shift();
-      if (callback) {
-        callback(obj.read.data);
-      }
-    } else if (obj.connect) {
-      /* response of connect() */
-      /* `this.connection` will called before this function */
-      if (obj.connect.code !== 0) {
-        if (this.onerror) {
-          this.onerror(obj.connect);
-        }
-      }
-      const callback: any = this.connectObservers.shift();
-      if (callback) {
-        callback(obj.connect.code);
-      }
-    }
+  public isUsed() {
+    return this.used;
+  }
+
+  public schemaBasePath(): string {
+    return "tcp" + this.id;
   }
 
   /**
    * @ignore
+   * @private
    */
-  public isUsed() {
-    return this.used;
+  protected _reset() {
+    this.connectObservers = [];
+    this.readObservers = [];
+    this.used = false;
   }
 
   private close() {
@@ -266,12 +277,6 @@ export default class Tcp {
       disconnect: true,
     };
     this.Obniz.send(obj);
-  }
-
-  private _reset() {
-    this.connectObservers = [];
-    this.readObservers = [];
-    this.used = false;
   }
 
   private _addConnectObserver(callback: any) {

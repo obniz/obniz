@@ -27,6 +27,11 @@ class Logtta_TH {
             throw new Error("Logtta TH not found");
         }
         if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
             await this._peripheral.connectWait();
         }
     }

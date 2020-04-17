@@ -1,7 +1,5 @@
 # iBS04i
-beacon made by INGICS.
-
-Support device
+BLEを利用しビーコンを発信するデバイスです。
 
 - iBS04i
 
@@ -23,13 +21,13 @@ const IBS04I = Obniz.getPartsClass('iBS04i');
 // Javascript Example
 const IBS04I = Obniz.getPartsClass('iBS04i');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS04I.isDevice(p)) {
         let data = IBS04I.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## getData(BleRemotePeripheral)
@@ -48,11 +46,11 @@ obniz.ble.scan.onfind = (p) => {
 // Javascript Example
 const IBS04I = Obniz.getPartsClass('iBS04i');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS04I.isDevice(p)) {
         let data = IBS04I.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

@@ -1,7 +1,7 @@
 # RS_SEEK3
 Loss prevention tag made by RATOC Systems,Inc
 
-For BLE devices, use `isDevice` instead of` wired`
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -12,12 +12,12 @@ Check whether it is RS_SEEK3 based on the advertisement information
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral)) {
     console.log("device find");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -29,13 +29,13 @@ Create an instance based on the advertisement information.
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral) ) {
     console.log("device find");
     const device = new RS_Seek3(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -49,11 +49,13 @@ Connect to device.
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral)) {
     console.log("find");
     const device = new RS_Seek3(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
     device.onpressed = () => {
@@ -62,6 +64,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(await device.getTempHumidWait());
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -74,7 +77,6 @@ Disconnect from device.
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral) ) {
     console.log("find");
@@ -85,6 +87,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -98,7 +101,6 @@ Does not support when released.
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral)) {
     console.log("find");
@@ -111,6 +113,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(await device.getTempHumidWait());
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -122,7 +125,6 @@ Get temperature and humidity value built into the device.
 // Javascript Example
 await obniz.ble.initWait();
 const RS_Seek3 = Obniz.getPartsClass("RS_Seek3");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (RS_Seek3.isDevice(peripheral) && isFirst) {
     console.log("find");
@@ -132,6 +134,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(await device.getTempHumidWait());
   }
 };
+await obniz.ble.scan.startWait();
 
 
 ```

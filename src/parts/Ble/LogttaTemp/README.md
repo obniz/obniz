@@ -1,7 +1,10 @@
 # Logtta TH
-Look for Logtta TH and get the data.
+
+BLE Connectable Temperaterue Sensor
 
 ![](image.jpg)
+
+![](image2.jpg)
 
 
 
@@ -20,12 +23,12 @@ Returns true if a device was found.
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (Logtta_TH.isDevice(p)) {
         console.log("find");
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## new Logtta_TH(peripheral)
@@ -36,13 +39,13 @@ Create an instance based on the advertisement information received by BLE.
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral) ) {
     console.log("device find");
     const device = new Logtta_TH(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -55,16 +58,18 @@ Connect to the device.
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
     const device = new Logtta_TH(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }
 };
-
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -76,7 +81,6 @@ Disonnect to the device.
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral) ) {
     console.log("find");
@@ -87,7 +91,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
-
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -101,7 +105,6 @@ Called every time data comes from the device after starting `` startNotifyWait (
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
@@ -114,6 +117,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 ## startNotifyWait()
@@ -124,7 +128,6 @@ Instructs to start sending sensor data.
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
@@ -137,6 +140,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -148,7 +152,6 @@ Get All Data from device.
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
@@ -160,6 +163,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 The format is below.
@@ -180,7 +184,6 @@ Get temperature Data from device.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -192,6 +195,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`temperature ${temperature}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -203,7 +207,6 @@ Get humidity Data from device.
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -215,5 +218,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`humidity ${humidity}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 

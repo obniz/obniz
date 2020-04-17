@@ -4,24 +4,35 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * General purpose IO
  * This is available on each io (for obniz Board series, it's io0 to io11)
  * @category Peripherals
  */
-class PeripheralIO {
+class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this.id = id;
+        this.on("/response/io/get", (obj) => {
+            this.value = obj;
+            if (typeof this.onchange === "function") {
+                this.onchange(obj);
+            }
+        });
+        this.on("/response/io/warning", (obj) => {
+            this.Obniz.warning({
+                alert: "warning",
+                message: `io${this.id}: ${obj.warning.message}`,
+            });
+        });
+        this.on("/response/io/error", (obj) => {
+            this.Obniz.error({
+                alert: "error",
+                message: `io${this.id}: ${obj.error.message}`,
+            });
+        });
         this._reset();
-    }
-    /**
-     * @ignore
-     * @private
-     */
-    _reset() {
-        this.value = false;
-        this.observers = [];
     }
     /**
      * Make ioX to output mode and put out 1 or 0.
@@ -155,17 +166,14 @@ class PeripheralIO {
      * console.log(value);
      * ```
      */
-    inputWait() {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.addObserver(resolve);
-            const obj = {};
-            obj["io" + self.id] = {
-                direction: "input",
-                stream: false,
-            };
-            self.Obniz.send(obj);
-        });
+    async inputWait() {
+        const obj = {};
+        obj[this.schemaBasePath()] = {
+            direction: "input",
+            stream: false,
+        };
+        const data = await this.sendAndReceiveJsonWait(obj, "/response/io/get");
+        return data;
     }
     /**
      * This ends output/input on ioX.
@@ -189,38 +197,17 @@ class PeripheralIO {
     }
     /**
      * @ignore
-     * @param obj
+     * @private
      */
-    notified(obj) {
-        if (typeof obj === "boolean") {
-            this.value = obj;
-            const callback = this.observers.shift();
-            if (callback) {
-                callback(obj);
-            }
-            if (typeof this.onchange === "function") {
-                this.onchange(obj);
-            }
-        }
-        else if (obj && typeof obj === "object") {
-            if (obj.warning) {
-                this.Obniz.warning({
-                    alert: "warning",
-                    message: `io${this.id}: ${obj.warning.message}`,
-                });
-            }
-            if (obj.error) {
-                this.Obniz.error({
-                    alert: "error",
-                    message: `io${this.id}: ${obj.error.message}`,
-                });
-            }
-        }
+    schemaBasePath() {
+        return "io" + this.id;
     }
-    addObserver(callback) {
-        if (callback) {
-            this.observers.push(callback);
-        }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.value = false;
     }
 }
 exports.default = PeripheralIO;
