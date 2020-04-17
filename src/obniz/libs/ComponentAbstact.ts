@@ -50,9 +50,8 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
   }
 
   public validate(commandUri: any, json: any): WSSchema.MultiResult {
-    const schema: any = WSSchema.getSchema(commandUri);
-    const results: any = WSSchema.validateMultiple(json, schema);
-    return results;
+    const schema = WSSchema.getSchema(commandUri);
+    return WSSchema.validateMultiple(json, schema);
   }
 
   public abstract schemaBasePath(): string | null;
@@ -68,8 +67,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
 
   protected async sendAndReceiveJsonWait(sendObj: any, schemaPath: string, option?: ReceiveJsonOptions): Promise<any> {
     this.Obniz.send(sendObj);
-    const result = await this.receiveJsonWait(schemaPath, option);
-    return result;
+    return await this.receiveJsonWait(schemaPath, option);
   }
 
   protected receiveJsonWait(schemaPath: string, option?: ReceiveJsonOptions): Promise<any> {
@@ -81,11 +79,15 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
     return new Promise((resolve, reject) => {
       if (this.Obniz.connectionState !== "connected") {
         reject(new ObnizOfflineError());
+        return;
       }
       const clearListeners = () => {
         this.Obniz.off("close", onObnizClosed);
         this.off(schemaPath as any, onDataReceived);
-        clearTimeout(timeoutHandler);
+        if (typeof timeoutHandler === "number") {
+          clearTimeout(timeoutHandler);
+          timeoutHandler = undefined;
+        }
         for (const one of onErrorFuncs) {
           this.off(one.path, one.onError);
         }
@@ -124,7 +126,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
         this.on(path as any, onDataReceived);
         onErrorFuncs.push({ onError, path });
       }
-      const timeoutHandler = setTimeout(onTimeout, option!.timeout);
+      let timeoutHandler: number | undefined = setTimeout(onTimeout, option!.timeout);
     });
   }
 }

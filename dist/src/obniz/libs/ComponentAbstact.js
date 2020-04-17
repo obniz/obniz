@@ -19,6 +19,7 @@ class ComponentAbstract extends eventemitter3_1.default {
                 continue;
             }
             const errors = this.validate(eventName, json);
+            console.log(`evnt ${eventName} valid ${errors.valid} json ${json}`);
             if (errors.valid) {
                 this.emit(eventName, json);
             }
@@ -27,10 +28,12 @@ class ComponentAbstract extends eventemitter3_1.default {
             if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
                 continue;
             }
+            console.log(`q evnt ${eventName}`);
             if (this._eventHandlerQueue[eventName].length === 0) {
                 continue;
             }
             const errors = this.validate(eventName, json);
+            console.log(`evnt ${eventName} valid ${errors.valid} json ${json}`);
             if (errors.valid) {
                 const func = this._eventHandlerQueue[eventName].shift();
                 if (func) {
@@ -41,8 +44,7 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
     validate(commandUri, json) {
         const schema = WSSchema_1.default.getSchema(commandUri);
-        const results = WSSchema_1.default.validateMultiple(json, schema);
-        return results;
+        return WSSchema_1.default.validateMultiple(json, schema);
     }
     onceQueue(eventName, func) {
         this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
@@ -52,8 +54,7 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
     async sendAndReceiveJsonWait(sendObj, schemaPath, option) {
         this.Obniz.send(sendObj);
-        const result = await this.receiveJsonWait(schemaPath, option);
-        return result;
+        return await this.receiveJsonWait(schemaPath, option);
     }
     receiveJsonWait(schemaPath, option) {
         option = option || {};
@@ -63,11 +64,15 @@ class ComponentAbstract extends eventemitter3_1.default {
         return new Promise((resolve, reject) => {
             if (this.Obniz.connectionState !== "connected") {
                 reject(new ObnizError_1.ObnizOfflineError());
+                return;
             }
             const clearListeners = () => {
                 this.Obniz.off("close", onObnizClosed);
                 this.off(schemaPath, onDataReceived);
-                clearTimeout(timeoutHandler);
+                if (typeof timeoutHandler === "number") {
+                    clearTimeout(timeoutHandler);
+                    timeoutHandler = undefined;
+                }
                 for (const one of onErrorFuncs) {
                     this.off(one.path, one.onError);
                 }
@@ -100,10 +105,10 @@ class ComponentAbstract extends eventemitter3_1.default {
                     const error = new option.errors[path]();
                     reject(error);
                 };
-                this.on(path, onDataReceived);
+                this.on(path, onError);
                 onErrorFuncs.push({ onError, path });
             }
-            const timeoutHandler = setTimeout(onTimeout, option.timeout);
+            let timeoutHandler = setTimeout(onTimeout, option.timeout);
         });
     }
 }
