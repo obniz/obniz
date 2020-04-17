@@ -156,20 +156,16 @@ export default class ObnizDevice extends ObnizUIs {
    * @param msg
    */
   public error(msg: any) {
-    if (this.isNode) {
-      console.error(msg);
-    } else {
+    if (!this.isNode) {
       if (msg && typeof msg === "object" && msg.alert) {
         this.showAlertUI(msg);
         msg = msg.message;
       }
       if (typeof showObnizDebugError === "function") {
         showObnizDebugError(new Error(msg));
-        console.error(new Error(msg));
-      } else {
-        throw new Error(msg);
       }
     }
+    console.error(new Error(msg));
   }
 
   /**
