@@ -2537,6 +2537,14 @@ class ObnizConnection extends eventemitter3_1.default {
             socket.onerror = null;
         }
     }
+    /**
+     * This function will be called before obniz.onconnect called;
+     */
+    async _beforeOnConnect() { }
+    /**
+     * This function will be called after obniz.onconnect and all emitter called;
+     */
+    async _afterOnConnect() { }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -2556,16 +2564,23 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         if (canChangeToConnected) {
             this.connectionState = "connected";
+            this._beforeOnConnect();
             if (typeof this.onconnect === "function") {
-                const promise = this.onconnect(this);
-                if (promise instanceof Promise) {
-                    promise.catch((err) => {
-                        console.error(err);
-                    });
+                try {
+                    const promise = this.onconnect(this);
+                    if (promise instanceof Promise) {
+                        promise.catch((err) => {
+                            console.error(err);
+                        });
+                    }
+                }
+                catch (err) {
+                    console.error(err);
                 }
             }
             this.emit("connect", this);
             this.onConnectCalled = true;
+            this._afterOnConnect();
         }
     }
     print_debug(str) {
@@ -13066,12 +13081,8 @@ class M5StickC extends ObnizDevice_1.default {
             return this.imu;
         });
     }
-    _prepareComponents() {
-        // @ts-ignore
-        super._prepareComponents();
-        if (this.hw !== "m5stickc") {
-            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
-        }
+    async _beforeOnConnect() {
+        super._beforeOnConnect();
         if (this.ir) {
             // already wired parts
             return;
@@ -13091,6 +13102,13 @@ class M5StickC extends ObnizDevice_1.default {
         this._m5i2c.start(i2cParams);
         this.axp = this.wired("AXP192", { i2c: this._m5i2c });
         this.led.off();
+    }
+    _prepareComponents() {
+        // @ts-ignore
+        super._prepareComponents();
+        if (this.hw !== "m5stickc") {
+            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
+        }
     }
 }
 exports.M5StickC = M5StickC;

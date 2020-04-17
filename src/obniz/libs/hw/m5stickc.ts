@@ -26,31 +26,44 @@ import ObnizMeasure from "../measurements/measure";
 
 export class M5StickC extends ObnizDevice {
   /**
+   * Embeded Primary Button on M5StickC. Big button right of display with print "M5". Also This button can be used as trigger of serverless function trigger.
    * @category Embeds
    */
   public buttonA!: Button;
 
   /**
+   * Embeded Secondary Button on M5StickC. It is on side of M5StickC.
    * @category Embeds
    */
   public buttonB!: Button;
 
   /**
+   * Embeded Infrared LED inside of M5StickC
    * @category Embeds
    */
   public ir!: InfraredLED;
 
   /**
+   * Embeded 6 axis IMU. 3 acceleration and 3 gyro.
+   *
+   * ```javascript
+   * const data = await obniz.imu.getAllDataWait();
+   * console.log('accelerometer: %o', data.accelerometer);
+   * console.log('gyroscope: %o', data.gyroscope);
+   * ```
+   *
    * @category Embeds
    */
   public imu?: MPU6886 | SH200Q;
 
   /**
+   * Power management chip in M5StickC.
    * @category Embeds
    */
   public axp!: AXP192;
 
   /**
+   * Embeded Red LED on M5StickC
    * @category Embeds
    */
   public led!: LED;
@@ -371,13 +384,8 @@ export class M5StickC extends ObnizDevice {
     });
   }
 
-  protected _prepareComponents() {
-    // @ts-ignore
-    super._prepareComponents();
-
-    if (this.hw !== "m5stickc") {
-      throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
-    }
+  protected async _beforeOnConnect() {
+    super._beforeOnConnect();
 
     if (this.ir) {
       // already wired parts
@@ -400,6 +408,15 @@ export class M5StickC extends ObnizDevice {
     this._m5i2c = this.i2c1;
     this._m5i2c.start(i2cParams as any);
     this.axp = this.wired("AXP192", { i2c: this._m5i2c });
-    this.led!.off();
+    this.led.off();
+  }
+
+  protected _prepareComponents() {
+    // @ts-ignore
+    super._prepareComponents();
+
+    if (this.hw !== "m5stickc") {
+      throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
+    }
   }
 }

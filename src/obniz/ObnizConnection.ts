@@ -622,6 +622,16 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
     }
   }
 
+  /**
+   * This function will be called before obniz.onconnect called;
+   */
+  protected async _beforeOnConnect() {}
+
+  /**
+   * This function will be called after obniz.onconnect and all emitter called;
+   */
+  protected async _afterOnConnect() {}
+
   protected _callOnConnect() {
     let canChangeToConnected: any = true;
     if (this._waitForLocalConnectReadyTimer) {
@@ -640,16 +650,22 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
 
     if (canChangeToConnected) {
       this.connectionState = "connected";
+      this._beforeOnConnect();
       if (typeof this.onconnect === "function") {
-        const promise: any = this.onconnect(this);
-        if (promise instanceof Promise) {
-          promise.catch((err: any) => {
-            console.error(err);
-          });
+        try {
+          const promise: any = this.onconnect(this);
+          if (promise instanceof Promise) {
+            promise.catch((err: any) => {
+              console.error(err);
+            });
+          }
+        } catch (err) {
+          console.error(err);
         }
       }
       this.emit("connect", this);
       this.onConnectCalled = true;
+      this._afterOnConnect();
     }
   }
 
