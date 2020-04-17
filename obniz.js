@@ -3311,6 +3311,22 @@ class ObnizPartsBleInterface {
         }
         return val;
     }
+    /**
+     * Utility function for reading 1byte fixed point number
+     */
+    static readFraction(byte) {
+        let result = 0;
+        let mask = 0b10000000;
+        let num = 0.5;
+        for (let i = 0; i < 8; i++) {
+            if (byte & mask) {
+                result += num;
+            }
+            num /= 2.0;
+            mask >>= 1;
+        }
+        return result;
+    }
 }
 exports.default = ObnizPartsBleInterface;
 
@@ -20878,6 +20894,8 @@ var map = {
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
 	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
+	"./Ble/tm530/index.js": "./dist/src/parts/Ble/tm530/index.js",
+	"./Ble/tm551/index.js": "./dist/src/parts/Ble/tm551/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
@@ -27715,6 +27733,163 @@ class SCBTGAAAC {
     }
 }
 exports.default = SCBTGAAAC;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/tm530/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.TM530
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class TM530 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: "TM530",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!TM530.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: peripheral.adv_data[13],
+            temperature: peripheral.adv_data[14] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            humidity: peripheral.adv_data[16] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+        };
+        return data;
+    }
+}
+exports.default = TM530;
+TM530.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x03,
+    0x03,
+    0xe1,
+    0xff,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x01,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/tm551/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.TM551
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class TM551 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: "TM551",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!TM551.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: peripheral.adv_data[13],
+            x: peripheral.adv_data[14] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            y: peripheral.adv_data[16] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+            z: peripheral.adv_data[18] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
+        };
+        return data;
+    }
+}
+exports.default = TM551;
+TM551.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x03,
+    0x03,
+    0xe1,
+    0xff,
+    -1,
+    -1,
+    -1,
+    -1,
+    0xa1,
+    0x03,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 

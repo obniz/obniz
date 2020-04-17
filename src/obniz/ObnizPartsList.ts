@@ -146,6 +146,8 @@ import MINEW_S1, { MINEW_S1Options } from "../parts/Ble/MINEW_S1";
 import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
 import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/scbtgaaac";
+import TM530, { TM530Options } from "../parts/Ble/tm530";
+import TM551, { TM551Options } from "../parts/Ble/tm551";
 import uPRISM, { uPRISMOptions } from "../parts/Ble/uprism";
 
 // Grove
@@ -342,6 +344,8 @@ export interface WiredNameMap {
   "REX_BTPM25V": REX_BTPM25V;
   "ENERTALK_TOUCH": ENERTALK_TOUCH;
   "cir415a": cir415a;
+  "TM530": TM530;
+  "TM551": TM551;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -516,6 +520,8 @@ export interface WiredNameOptionsMap {
   "REX_BTPM25V": REX_BTPM25VOptions;
   "ENERTALK_TOUCH": ENERTALK_TOUCHOptions;
   "cir415a": cir415aOptions;
+  "TM530": TM530Options;
+  "TM551": TM551Options;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

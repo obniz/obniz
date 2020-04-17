@@ -33,6 +33,23 @@ export default abstract class ObnizPartsBleInterface {
   }
 
   /**
+   * Utility function for reading 1byte fixed point number
+   */
+  public static readFraction(byte: number) {
+    let result = 0;
+    let mask = 0b10000000;
+    let num = 0.5;
+    for (let i = 0; i < 8; i++) {
+      if (byte & mask) {
+        result += num;
+      }
+      num /= 2.0;
+      mask >>= 1;
+    }
+    return result;
+  }
+
+  /**
    * Internally Used function for connection required devices
    */
   public _peripheral: BleRemotePeripheral | null = null;
