@@ -135,12 +135,8 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writenumber" class="tsd-kind-icon">write<wbr>Number</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writenumberwait" class="tsd-kind-icon">write<wbr>Number<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writetext" class="tsd-kind-icon">write<wbr>Text</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writetextwait" class="tsd-kind-icon">write<wbr>Text<wbr>Wait</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writewait" class="tsd-kind-icon">write<wbr>Wait</a></li>
 							</ul>
 						</section>
 					</div>
@@ -215,7 +211,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="obnizcore.components.ble.hci.bleattributeabstract.html">BleAttributeAbstract</a>.<a href="obnizcore.components.ble.hci.bleattributeabstract.html#uuid">uuid</a></p>
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts:39</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleAttributeAbstract.ts:40</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -229,74 +225,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="readwait" class="tsd-anchor"></a>
-					<h3>read<wbr>Wait</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">read<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides BleAttributeAbstract.readWait</p>
-								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:44</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="writenumber" class="tsd-anchor"></a>
-					<h3>write<wbr>Number</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Number<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides BleAttributeAbstract.writeNumber</p>
-								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:29</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Wrapper for <a href="obnizcore.components.ble.old.bleattributeabstract.html#write">write</a> with data converting from number.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>val: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> needResponse: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="writenumberwait" class="tsd-anchor"></a>
 					<h3>write<wbr>Number<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Number<wbr>Wait<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Number<wbr>Wait<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides BleAttributeAbstract.writeNumberWait</p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:71</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:43</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Wrapper for <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writewait">writeWait</a> with data converting from number.
+									<p>Wrapper for <a href="obnizcore.components.ble.hci.blelocalvalueattributeabstract.html#writewait">writeWait</a> with data converting from number.
 									It writes data as 1byte.</p>
 								</div>
 								<p>It throws an error when failed.</p>
@@ -312,42 +256,7 @@
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> needResponse: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="writetext" class="tsd-anchor"></a>
-					<h3>write<wbr>Text</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Text<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides BleAttributeAbstract.writeText</p>
-								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:40</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Wrapper for <a href="obnizcore.components.ble.old.bleattributeabstract.html#write">write</a> with data converting from text.
-									It convert string to UTF-8 and write binary array.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>str: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> needResponse: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -355,19 +264,19 @@
 					<a name="writetextwait" class="tsd-anchor"></a>
 					<h3>write<wbr>Text<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Text<wbr>Wait<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Text<wbr>Wait<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, needResponse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides BleAttributeAbstract.writeTextWait</p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:59</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:31</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Wrapper for <a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writewait">writeWait</a> with data converting from text.
+									<p>Wrapper for <a href="obnizcore.components.ble.hci.blelocalvalueattributeabstract.html#writewait">writeWait</a> with data converting from text.
 									It convert string to UTF-8 and write binary array.</p>
 								</div>
 								<p>It throws an error when failed.</p>
@@ -383,34 +292,7 @@
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> needResponse: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="writewait" class="tsd-anchor"></a>
-					<h3>write<wbr>Wait</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Wait<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, needResponse<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides BleAttributeAbstract.writeWait</p>
-								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:48</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>data: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-								<li>
-									<h5>needResponse: <span class="tsd-signature-type">boolean</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -422,49 +304,58 @@
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_obniz_obnizerror_.html">&quot;obniz/<wbr>Obniz<wbr>Error&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_obniz_libs_componentabstact_.html">&quot;obniz/libs/<wbr>Component<wbr>Abstact&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_obniz_libs_embeds_blehci_hci_.html">&quot;obniz/libs/embeds/ble<wbr>Hci/hci&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_enertalk_index_.html">&quot;parts/<wbr>Ble/ENERTALK/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_minew_s1_index_.html">&quot;parts/<wbr>Ble/MINEW_<wbr><wbr>S1/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_rex_btpm25v_index_.html">&quot;parts/<wbr>Ble/REX_<wbr>BTPM25<wbr>V/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_rs_btirex2_index_.html">&quot;parts/<wbr>Ble/RS_<wbr>BTIREX2/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_parts_ble_rs_seek3_index_.html">&quot;parts/<wbr>Ble/RS_<wbr>SEEK3/index&quot;</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
+						<ul>
+							<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+								<a href="../modules/obnizcore.components.html">Components</a>
+								<ul>
+									<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
+										<a href="../modules/obnizcore.components.ble.html">Ble</a>
+										<ul>
+											<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
+												<a href="../modules/obnizcore.components.ble.hci.html">Hci</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
+								<a href="../modules/obnizcore.hardware.html">Hardware</a>
+							</li>
+						</ul>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-not-exported">
+						<a href="../modules/parts.html">Parts</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bleadvertisement.html" class="tsd-kind-icon">Ble<wbr>Advertisement</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bleadvertisementbuilder.html" class="tsd-kind-icon">Ble<wbr>Advertisement<wbr>Builder</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="obnizcore.components.ble.hci.bleattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Attribute<wbr>Abstract</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.blecharacteristic.html" class="tsd-kind-icon">Ble<wbr>Characteristic</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bledescriptor.html" class="tsd-kind-icon">Ble<wbr>Descriptor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="obnizcore.components.ble.hci.blelocalattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Local<wbr>Attribute<wbr>Abstract</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="obnizcore.components.ble.hci.blelocalvalueattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Local<wbr>Value<wbr>Attribute<wbr>Abstract</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bleperipheral.html" class="tsd-kind-icon">Ble<wbr>Peripheral</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="obnizcore.components.ble.hci.bleremoteattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Attribute<wbr>Abstract</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bleremotecharacteristic.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Characteristic</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bleremotedescriptor.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Descriptor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Peripheral</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bleremoteservice.html" class="tsd-kind-icon">Ble<wbr>Remote<wbr>Service</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
@@ -483,105 +374,15 @@
 								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#uuid" class="tsd-kind-icon">uuid</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#readwait" class="tsd-kind-icon">read<wbr>Wait</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writenumber" class="tsd-kind-icon">write<wbr>Number</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writenumberwait" class="tsd-kind-icon">write<wbr>Number<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writetext" class="tsd-kind-icon">write<wbr>Text</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writetextwait" class="tsd-kind-icon">write<wbr>Text<wbr>Wait</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writewait" class="tsd-kind-icon">write<wbr>Wait</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.blescan.html" class="tsd-kind-icon">Ble<wbr>Scan</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.blesecurity.html" class="tsd-kind-icon">Ble<wbr>Security</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.bleservice.html" class="tsd-kind-icon">Ble<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.obnizble.html" class="tsd-kind-icon">ObnizBLE</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.components.ble.hci.obnizblehci.html" class="tsd-kind-icon">ObnizBLEHci</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.bleadvertisementdata.html" class="tsd-kind-icon">Ble<wbr>Advertisement<wbr>Data</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.blecharacteristicdefine.html" class="tsd-kind-icon">Ble<wbr>Characteristic<wbr>Define</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.bleconnectsetting.html" class="tsd-kind-icon">Ble<wbr>Connect<wbr>Setting</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.bleconnectionupdateparam.html" class="tsd-kind-icon">Ble<wbr>Connection<wbr>Update<wbr>Param</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.bledescriptordefine.html" class="tsd-kind-icon">Ble<wbr>Descriptor<wbr>Define</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.bleperipheraldefine.html" class="tsd-kind-icon">Ble<wbr>Peripheral<wbr>Define</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.blescanresponsedata.html" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Response<wbr>Data</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.blescansetting.html" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Setting</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.blescantarget.html" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Target</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.bleservicedefine.html" class="tsd-kind-icon">Ble<wbr>Service<wbr>Define</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/obnizcore.components.ble.hci.ibeacon.html" class="tsd-kind-icon">IBeacon</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#bleadvertisementflag" class="tsd-kind-icon">Ble<wbr>Advertisement<wbr>Flag</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#bleattributepropery" class="tsd-kind-icon">Ble<wbr>Attribute<wbr>Propery</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#blebinary" class="tsd-kind-icon">Ble<wbr>Binary</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#bleconnectionstate" class="tsd-kind-icon">Ble<wbr>Connection<wbr>State</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-kind-icon">Ble<wbr>Device<wbr>Address</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddresstype" class="tsd-kind-icon">Ble<wbr>Device<wbr>Address<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#bledevicetype" class="tsd-kind-icon">Ble<wbr>Device<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#bleeventtype" class="tsd-kind-icon">Ble<wbr>Event<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#blescanmode" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Mode</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-kind-icon">UUID</a>
-					</li>
 				</ul>
 			</nav>
 		</div>
