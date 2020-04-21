@@ -6,6 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_Accel {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {

@@ -1,3 +1,5 @@
+import { ObnizOfflineError, ObnizParameterError, ObnizTimeoutError } from "../../../ObnizError";
+
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -8,10 +10,24 @@ export type EventHandler = (...args: any) => any;
 export default class ObnizBLEHci {
   public Obniz: any;
 
+  /*
+   * HCI level timeout should never occure. Response must be sent from a device.
+   * This timeout is for just in case for a device nerver send response.
+   */
+  public timeout: number = 5 * 60 * 1000;
+
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
   constructor(Obniz: any) {
     this.Obniz = Obniz;
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this._eventHandlerQueue = {};
   }
 
   /**
@@ -85,13 +101,85 @@ export default class ObnizBLEHci {
    */
   public onread(data: any) {}
 
-  public readWait(binaryFilter: number[]): Promise<Buffer> {
-    return new Promise((resolve) => {
-      this.onceQueue(binaryFilter, resolve);
+  /**
+   * @ignore
+   * @private
+   * @param promise
+   * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
+   * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
+   */
+  public timeoutPromiseWrapper(promise: Promise<any>, option?: any) {
+    option = option || {};
+    if (option.timeout === null) {
+      option.timeout = null;
+    } else {
+      option.timeout = option.timeout || this.timeout;
+      if (option.timeout < 0) {
+        throw new ObnizParameterError(`option.timeout`, `0 or greater`);
+      }
+    }
+    option.waitingFor = option.waitingFor || undefined;
+
+    let onObnizClosed: null | (() => void) = null;
+    let timeoutHandler: null | NodeJS.Timeout = null;
+
+    const clearListeners = () => {
+      this.Obniz.off("close", onObnizClosed);
+      if (timeoutHandler) {
+        clearTimeout(timeoutHandler);
+        timeoutHandler = null;
+      }
+    };
+
+    const successPromise = promise.then(
+      (result: any) => {
+        clearListeners();
+        return result;
+      },
+      (reason: any) => {
+        clearListeners();
+        throw reason;
+      },
+    );
+
+    const errorPromise = new Promise((resolve, reject) => {
+      if (this.Obniz.connectionState !== "connected") {
+        reject(new ObnizOfflineError());
+        return;
+      }
+
+      onObnizClosed = () => {
+        clearListeners();
+        const error = new ObnizOfflineError();
+        reject(error);
+      };
+      this.Obniz.on("close", onObnizClosed);
+
+      const onTimeout = () => {
+        clearListeners();
+
+        const error = new ObnizTimeoutError(option.waitingFor);
+        reject(error);
+      };
+      timeoutHandler = setTimeout(onTimeout, option!.timeout);
     });
+
+    if (option.timeout !== null) {
+      return Promise.race([successPromise, errorPromise]);
+    }
+    return successPromise;
   }
 
-  public onceQueue(binaryFilter: number[], func: EventHandler) {
+  public readWait(binaryFilter: number[], option?: any): Promise<Buffer> {
+    return this.timeoutPromiseWrapper(
+      new Promise((resolve) => {
+        this.onceQueue(binaryFilter, resolve);
+      }),
+      option,
+    );
+  }
+
+  protected onceQueue(binaryFilter: number[], func: EventHandler) {
     const eventName = this.encodeBinaryFilter(binaryFilter);
     this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
     if (typeof func === "function") {

@@ -1,5 +1,7 @@
 // tslint:disable:max-classes-per-file
 
+import { deprecate } from "util";
+
 export class ObnizError extends Error {
   constructor(public code: number, e?: string) {
     super(e);
@@ -15,8 +17,8 @@ export class ObnizOfflineError extends ObnizError {
 }
 
 export class ObnizTimeoutError extends ObnizError {
-  constructor() {
-    super(2, "Receive data timeout.");
+  constructor(public waitingFor?: string) {
+    super(2, "Receive data timeout." + (waitingFor ? " Waiting for " + waitingFor : ""));
   }
 }
 
@@ -40,14 +42,14 @@ export class ObnizBleUnknownPeripheralError extends ObnizError {
 
 export class ObnizBleUnknownServiceError extends ObnizError {
   constructor(public peripheralUuid: string, public serviceUuid: string) {
-    super(5, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+    super(6, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
   }
 }
 
 export class ObnizBleUnknownCharacteristicError extends ObnizError {
   constructor(public peripheralUuid: string, public serviceUuid: string, public characteristicUuid: string) {
     super(
-      5,
+      7,
       "unknown characteristic.  peripheral :" +
         peripheralUuid +
         " service :" +
@@ -66,7 +68,7 @@ export class ObnizBleUnknownDescriptorError extends ObnizError {
     public descriptorUuid: string,
   ) {
     super(
-      5,
+      8,
       "unknown descriptor.  peripheral :" +
         peripheralUuid +
         " service :" +
@@ -81,7 +83,7 @@ export class ObnizBleUnknownDescriptorError extends ObnizError {
 
 export class ObnizBleOpError extends ObnizError {
   constructor() {
-    super(5, "BLE operation error");
+    super(9, "BLE operation error");
   }
 }
 
@@ -159,8 +161,12 @@ export class ObnizBleHciStateError extends ObnizError {
     0x45: "Packet Too Long ",
   };
 
-  constructor(public state: number) {
-    super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+  constructor(public state: number, params?: any) {
+    super(
+      10,
+      (ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error") +
+        (params ? ` ${JSON.stringify(params)}` : ""),
+    );
   }
 }
 
@@ -169,6 +175,33 @@ export class ObnizBleAttError extends ObnizError {
   public static Errors: { [key: number]: string } = {};
 
   constructor(public state: number) {
-    super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+    super(11, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+  }
+}
+
+export class ObnizDeprecatedFunctionError extends ObnizError {
+  constructor(public deprecateFunctionName: string, replaceFunction: string) {
+    super(12, `${deprecateFunctionName} is deprecated function, please use ${replaceFunction}`);
+  }
+}
+
+export class ObnizBleUnsupportedHciError extends ObnizError {
+  constructor(public needVer: number, public currentVer: number) {
+    super(13, `Unsupported hci version, need version : ${needVer}, current version ${currentVer}`);
+  }
+}
+
+export class ObnizParameterError extends ObnizError {
+  constructor(public parameter: string, public should: string) {
+    super(14, `Parameter ${parameter} should satisfy ${should}`);
+  }
+}
+
+export class ObnizBleUnSupportedOSVersionError extends ObnizError {
+  constructor(public deviceOS: string, public atLeast: string) {
+    super(
+      13,
+      `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`,
+    );
   }
 }

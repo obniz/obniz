@@ -19,6 +19,12 @@ describe('ble-hci-central', function() {
     await _initWaitTestWait(this.obniz);
   });
 
+  it('init twice', async function() {
+    await _initWaitTestWait(this.obniz);
+    testUtil.closeAndReconnectObnizWait(this);
+    await _initWaitTestWait(this.obniz);
+  });
+
   it('write', function() {
     let commands = [
       [0x01, 0x03, 0x0c, 0x0], // reset
@@ -169,7 +175,7 @@ describe('ble-hci-central', function() {
 
     // scan stop
     sendHciCommands(this.obniz, [1, 12, 32, 2, 0, 1]);
-
+    await receiveHciCommandsWait(this.obniz, [4,14,4,5,12,32,12]);
     // connect req
     sendHciCommands(this.obniz, [1, 13, 32, 25, 96, 0, 48, 0, 0, 1, 130, 168, 133, 213, 252, 115, 0, 6, 0, 12, 0, 0, 0, 200, 0, 4, 0, 6, 0]);
 
@@ -189,16 +195,46 @@ describe('ble-hci-central', function() {
 
     await p;
 
+    await wait(1);
+
     sinon.assert.callCount(connectStub, 1);
     sinon.assert.callCount(disconnectStub, 0);
 
     //disconnect
-    await receiveHciCommandsWait(this.obniz, [4,5,4,0,0,0,19]);
+    await receiveHciCommandsWait(this.obniz, [4, 5, 4, 0, 0, 0, 19]);
 
+    await wait(1);
     sinon.assert.callCount(connectStub, 1);
     sinon.assert.callCount(disconnectStub, 1);
 
   });
+
+
+  it('scan terminated', async function() {
+    await _initWaitTestWait(this.obniz);
+
+    const p = this.obniz.ble.scan.startWait();
+    // expect(obniz).send([{ ble: { hci: { advertisement_filter: [] } } }]);  //os ver >= 3.2.0
+
+    expect(this.obniz).send([
+      {
+        ble: {
+          hci: {
+            write: [1, 12, 32, 2, 0, 1],
+          },
+        },
+      },
+    ]);
+    // no response
+    testUtil.closeAndReconnectObnizWait(this);
+
+    expect(async () => {
+      await p;
+    }).to.throw;
+
+    await _initWaitTestWait(this.obniz);
+  });
+
 
   async function _initWaitTestWait(obniz) {
     const p = obniz.ble.initWait();
@@ -302,7 +338,7 @@ describe('ble-hci-central', function() {
   }
 
   async function _scanStartTestWait(obniz, target = {}) {
-    obniz.ble.scan.start(target);
+    const p = obniz.ble.scan.startWait(target);
     // expect(obniz).send([{ ble: { hci: { advertisement_filter: [] } } }]);  //os ver >= 3.2.0
 
     expect(obniz).send([
@@ -336,6 +372,7 @@ describe('ble-hci-central', function() {
         ble: {hci: {read: {data: [4, 14, 4, 5, 12, 32, 0]}}},
       },
     ]);
+    await p;
   }
 
   async function _receiveAdvertisementTest(obniz, detect, hci) {
@@ -354,6 +391,7 @@ describe('ble-hci-central', function() {
         ble: {hci: {read: {data: hci}}},
       },
     ]);
+    await wait(1);
 
     if (!detect) {
       sinon.assert.callCount(stub, 0);

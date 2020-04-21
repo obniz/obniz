@@ -3,7 +3,7 @@
  * @module Parts.SCBTGAAAC
  */
 
-import BleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
 export interface SCBTGAAACOptions {}
@@ -52,6 +52,8 @@ export default class SCBTGAAAC implements ObnizPartsBleInterface {
     }
     return undefined;
   }
+
+  public _peripheral: null | BleRemotePeripheral = null;
 
   constructor() {}
 }

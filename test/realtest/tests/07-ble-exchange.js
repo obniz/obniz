@@ -41,7 +41,7 @@ describe('7-ble-exchange', function() {
         found = true;
       }
     };
-    checkBoard.ble.scan.start(null, { duration: 30 });
+    await checkBoard.ble.scan.startWait(null, { duration: 30 });
 
     while (!found) {
       await wait(1);
@@ -75,7 +75,7 @@ describe('7-ble-exchange', function() {
       }
     };
     console.log('scan sart at 07');
-    checkBoard.ble.scan.start(null, { duration: 30 });
+    await checkBoard.ble.scan.startWait(null, { duration: 30 });
 
     while (!found) {
       await wait(1);

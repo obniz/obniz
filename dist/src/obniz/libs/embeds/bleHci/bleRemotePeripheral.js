@@ -20,6 +20,11 @@ class BleRemotePeripheral {
          * @ignore
          */
         this._connectSetting = {};
+        /**
+         * Indicating this peripheral is found by scan or set from software.
+         * @ignore
+         */
+        this.discoverdOnRemote = undefined;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -27,7 +32,7 @@ class BleRemotePeripheral {
         this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
-        this.adv_data = null;
+        // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
@@ -93,7 +98,7 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     *  @deprecated
+     *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
         this.connectWait(); // background
@@ -131,21 +136,18 @@ class BleRemotePeripheral {
     async connectWait(setting) {
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
-        this.obnizBle.scan.end();
-        const p1 = this.obnizBle.centralBindings.connectWait(this.address);
-        const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", (reason) => {
-            reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
-                ` Error code:${reason.state}, ${reason.message}`));
-        }));
-        await Promise.race([p1, p2]);
+        await this.obnizBle.scan.endWait();
+        await this.obnizBle.centralBindings.connectWait(this.address);
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
         this.connected = true;
-        if (this.onconnect) {
-            this.onconnect();
-        }
-        this.emitter.emit("connect");
+        setTimeout(() => {
+            if (this.onconnect) {
+                this.onconnect();
+            }
+            this.emitter.emit("connect");
+        }, 0);
     }
     /**
      *  @deprecated
@@ -287,10 +289,10 @@ class BleRemotePeripheral {
      *          await peripheral.discoverAllServicesWait(); //manually discover
      *          let service = peripheral.getService("1800");
      *      }
-     *      peripheral.connect({autoDiscovery:false});
+     *      peripheral.connectWait({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllServicesWait() {
@@ -304,16 +306,20 @@ class BleRemotePeripheral {
                 child = newService;
             }
             child.discoverdOnRemote = true;
-            if (this.ondiscoverservice) {
-                this.ondiscoverservice(child);
-            }
+            setTimeout(() => {
+                if (this.ondiscoverservice) {
+                    this.ondiscoverservice(child);
+                }
+            }, 0);
         }
         const children = this._services.filter((elm) => {
             return elm.discoverdOnRemote;
         });
-        if (this.ondiscoverservicefinished) {
-            this.ondiscoverservicefinished(children);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverservicefinished) {
+                this.ondiscoverservicefinished(children);
+            }
+        }, 1);
         return children;
     }
     /**
@@ -354,11 +360,13 @@ class BleRemotePeripheral {
                     const pre = this.connected;
                     this.connected = false;
                     if (pre) {
-                        if (this.ondisconnect) {
-                            this.ondisconnect(params.reason);
-                        }
+                        setTimeout(() => {
+                            if (this.ondisconnect) {
+                                this.ondisconnect(params.reason);
+                            }
+                            this.emitter.emit("disconnect", params.reason);
+                        }, 0);
                     }
-                    this.emitter.emit("disconnect", params.reason);
                 }
                 break;
             }
@@ -395,7 +403,7 @@ class BleRemotePeripheral {
      *      await peripheral.connectWait();
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      *
@@ -417,7 +425,7 @@ class BleRemotePeripheral {
      *      await peripheral.connectWait();
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      * Go to [[BlePairingOptions]] to see more option.

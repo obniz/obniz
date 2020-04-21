@@ -34,11 +34,11 @@ export default abstract class BleRemoteAttributeAbstract<ParentClass, ChildrenCl
    * @ignore
    * @param child
    */
-  public ondiscover(child: any) {}
+  public abstract ondiscover(child: any): void;
 
   /**
    * @ignore
    * @param children
    */
-  public ondiscoverfinished(children: any) {}
+  public abstract ondiscoverfinished(children: any): void;
 }

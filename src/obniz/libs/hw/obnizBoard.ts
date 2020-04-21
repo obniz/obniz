@@ -4,7 +4,6 @@
  */
 
 import ObnizDevice from "../../ObnizDevice";
-import ObnizBLE from "../embeds/ble/ble";
 import ObnizBLEHci from "../embeds/bleHci/ble";
 import Display from "../embeds/display";
 import ObnizSwitch from "../embeds/switch";
@@ -63,7 +62,7 @@ interface obnizBoard extends ObnizDevice {
   measure: ObnizMeasure;
   display: Display;
   switch: ObnizSwitch;
-  ble: ObnizBLE | ObnizBLEHci;
+  ble: ObnizBLEHci;
 }
 
 /**

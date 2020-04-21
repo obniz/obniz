@@ -12,19 +12,6 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super(params);
     }
     /**
-     *  @deprecated
-     */
-    write(dataArray) {
-        this.writeWait(dataArray); // background
-    }
-    /**
-     * @deprecated
-     *
-     */
-    read() {
-        this.readWait(); // background
-    }
-    /**
      * This writes dataArray.
      * It throws an error when failed.
      *
@@ -67,15 +54,19 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "onwritefromremote": {
-                if (this.onwritefromremote) {
-                    this.onwritefromremote(params.address, params.data);
-                }
+                setTimeout(() => {
+                    if (this.onwritefromremote) {
+                        this.onwritefromremote(params.address, params.data);
+                    }
+                }, 0);
                 break;
             }
             case "onreadfromremote": {
-                if (this.onreadfromremote) {
-                    this.onreadfromremote(params.address);
-                }
+                setTimeout(() => {
+                    if (this.onreadfromremote) {
+                        this.onreadfromremote(params.address);
+                    }
+                }, 0);
                 break;
             }
         }

@@ -34,8 +34,8 @@ class AclStream extends eventemitter3_1.default {
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
     }
-    async readWait(cid, flag) {
-        const data = await this._hci.readAclStreamWait(this._handle, cid, flag);
+    async readWait(cid, flag, timeout) {
+        const data = await this._hci.readAclStreamWait(this._handle, cid, flag, timeout);
         return data;
     }
     push(cid, data) {

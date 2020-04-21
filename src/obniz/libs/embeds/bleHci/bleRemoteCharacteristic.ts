@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
 import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
 import BleRemoteService from "./bleRemoteService";
@@ -304,62 +305,19 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   }
 
   /**
-   * It reads data from the characteristic.
-   *
-   * Even you wrote string or number, it returns binary array.
-   * The returned value appears in the callback function [[onread]].
-   *
-   * ```javascript
-   * // Javascript Example
-   * obniz.ble.scan.onfind = function(peripheral){
-   *   if(peripheral.localName == "my peripheral"){
-   *
-   *     peripheral.onconnect = function(){
-   *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
-   *       characteristic.read();
-   *       characteristic.onread = function(dataArray){
-   *         console.log("value : " + dataArray);
-   *       }
-   *     }
-   *
-   *     peripheral.connect();
-   *   }
-   * }
-   * obniz.ble.startScan({duration : 10});
-   * ```
-   *
-   *
+   * Use readWait() instead from 3.5.0
+   * @deprecated
    */
   public read() {
-    this.readWait(); // background
+    throw new ObnizDeprecatedFunctionError("read", "readWait");
   }
 
   /**
-   * This writes dataArray to the characteristic.
-   *
-   * ```javascript
-   * // Javascript Example
-   *
-   * await obniz.ble.initWait();
-   * var target = {
-   *   uuids: ["fff0"],
-   * };
-   * var peripheral = await obniz.ble.scan.startOneWait(target);
-   * if(peripheral){
-   *    await peripheral.connectWait();
-   *    console.log("connected");
-   *    await obniz.wait(1000);
-   *
-   *    var dataArray = [0x02, 0xFF];
-   *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
-   * }
-   * ```
-   *
-   * @param array
-   * @param needResponse
+   * Use writeWait() instead from 3.5.0
+   * @deprecated
    */
   public write(array: number[], needResponse?: boolean) {
-    this.writeWait(array, needResponse); // background
+    throw new ObnizDeprecatedFunctionError("read", "readWait");
   }
 
   /**
@@ -399,9 +357,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       Buffer.from(data),
       !needResponse,
     );
-    if (this.onwrite) {
-      this.onwrite("success"); // if fail, throw error.
-    }
+    setTimeout(() => {
+      if (this.onwrite) {
+        this.onwrite("success"); // if fail, throw error.
+      }
+    }, 0);
     return true;
   }
 
@@ -437,9 +397,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     );
     const data = Array.from(buf);
 
-    if (this.onread) {
-      this.onread(data);
-    }
+    setTimeout(() => {
+      if (this.onread) {
+        this.onread(data);
+      }
+    }, 0);
     return data;
   }
 
@@ -467,7 +429,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    *      peripheral.connect({autoDiscovery:false});
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    */
   public async discoverAllDescriptorsWait(): Promise<BleRemoteDescriptor[]> {
@@ -551,9 +513,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param descriptor
    */
   public ondiscover(descriptor: any) {
-    if (this.ondiscoverdescriptor) {
-      this.ondiscoverdescriptor(descriptor);
-    }
+    setTimeout(() => {
+      if (this.ondiscoverdescriptor) {
+        this.ondiscoverdescriptor(descriptor);
+      }
+    }, 0);
   }
 
   /**
@@ -561,9 +525,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param descriptors
    */
   public ondiscoverfinished(descriptors: any) {
-    if (this.ondiscoverdescriptorfinished) {
-      this.ondiscoverdescriptorfinished(descriptors);
-    }
+    setTimeout(() => {
+      if (this.ondiscoverdescriptorfinished) {
+        this.ondiscoverdescriptorfinished(descriptors);
+      }
+    }, 0);
   }
 
   /**
@@ -575,9 +541,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case "onnotify": {
-        if (this.onnotify) {
-          this.onnotify(params.data || undefined);
-        }
+        setTimeout(() => {
+          if (this.onnotify) {
+            this.onnotify(params.data || undefined);
+          }
+        }, 0);
 
         break;
       }

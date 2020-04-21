@@ -1,8 +1,10 @@
 # Logtta TH
 
-Logtta TH からデータを取得します。
+BLE経由で利用できる温度センサーです。フレキシブルケーブルで冷蔵庫の庫内温度などを計測できます。
 
 ![](image.jpg)
+
+![](image2.jpg)
 
 
 
@@ -21,12 +23,12 @@ const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (Logtta_TH.isDevice(p)) {
         console.log("find");
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## new Logtta_TH(peripheral)
@@ -37,13 +39,13 @@ obniz.ble.scan.onfind = (p) => {
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral) ) {
     console.log("device find");
     const device = new Logtta_TH(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -56,15 +58,18 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
     const device = new Logtta_TH(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -77,7 +82,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral) ) {
     console.log("find");
@@ -88,6 +92,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -102,7 +107,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
@@ -115,6 +119,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 ## startNotifyWait()
@@ -125,7 +130,6 @@ Notifyを開始します。
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
@@ -138,6 +142,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -149,7 +154,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const Logtta_TH = Obniz.getPartsClass('Logtta_TH');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (Logtta_TH.isDevice(peripheral)) {
     console.log("find");
@@ -161,6 +165,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`temperature ${data.temperature} humidity ${data.humidity}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 データフォーマットは次の通りです。
@@ -181,7 +186,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -193,6 +197,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`temperature ${temperature}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -204,7 +209,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -216,6 +220,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`humidity ${humidity}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -242,13 +247,13 @@ const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (LOGTTA_AD.isDevice(p)) {
         let data = LOGTTA_AD.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## new LOGTTA_AD(peripheral)
@@ -260,14 +265,13 @@ BLEが受信した広告情報に基づいてインスタンスを作成しま�
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral) ) {
     console.log("device find");
     const device = new LOGTTA_AD(peripheral);
   }
 };
-
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -279,7 +283,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -288,6 +291,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("connected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -300,7 +304,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral) ) {
     console.log("find");
@@ -311,6 +314,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -325,7 +329,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -338,6 +341,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 ## startNotifyWait()
@@ -348,7 +352,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -361,6 +364,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -372,7 +376,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -384,6 +387,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`AD get volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 取得できるデータフォーマットは次の通りです。
@@ -407,7 +411,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -419,6 +422,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`AD data ${data}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -432,7 +436,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -444,6 +447,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`AD data ${data}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -455,7 +459,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (LOGTTA_AD.isDevice(peripheral)) {
     console.log("find");
@@ -467,4 +470,5 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(`AD data ${data}`);
   }
 };
+await obniz.ble.scan.startWait();
 ```

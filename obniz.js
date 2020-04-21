@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.5.0-alpha.4",
+  "version": "3.5.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -238,7 +238,8 @@ module.exports = {
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
   }
-};
+}
+;
 
 /***/ }),
 
@@ -1778,8 +1779,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
-const ble_1 = __webpack_require__("./dist/src/obniz/libs/embeds/ble.js");
+const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
 const display_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/display.js"));
 const switch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/switch.js"));
 const ad_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/ad.js"));
@@ -1947,11 +1947,7 @@ class ObnizComponents extends ObnizParts_1.default {
             pwm: pwm_1.default,
             grove: grove_1.default,
         };
-        let ble = ble_1.ObnizHciBLE.default;
-        // < 3.0.0-beta
-        if (semver_1.default.lt(this.firmware_ver, "3.0.0-beta")) {
-            ble = ble_1.ObnizOldBLE.default;
-        }
+        const ble = ble_1.default;
         const embeds_map = {
             display: display_1.default,
             switch: switch_1.default,
@@ -2267,7 +2263,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         try {
             if (!obj || typeof obj !== "object") {
-                console.log("obnizjs. didnt send ", obj);
+                this.log("obnizjs. didnt send ", obj);
                 return;
             }
             if (Array.isArray(obj)) {
@@ -2292,7 +2288,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
+                            this.log("binalized: " + new Uint8Array(compressed).toString());
                         }
                     }
                 }
@@ -2318,7 +2314,7 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }
         catch (e) {
-            console.log(e);
+            this.log(e);
         }
     }
     /**
@@ -2326,14 +2322,20 @@ class ObnizConnection extends eventemitter3_1.default {
      * @param msg
      */
     warning(msg) {
-        console.log("warning:" + msg);
+        this.log("warning:" + msg);
     }
     /**
      * @ignore
      * @param msg
      */
     error(msg) {
-        console.error("error:" + msg);
+        console.error(`[obniz ${this.id}] error:${msg}`);
+    }
+    /**
+     * @ignore
+     */
+    log(...args) {
+        console.log(`[obniz ${this.id}]`, ...args);
     }
     wsOnOpen() {
         this.print_debug("ws connected");
@@ -2350,7 +2352,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         else if (this.wscommands) {
             if (this.debugprintBinary) {
-                console.log("Obniz: binalized: " + new Uint8Array(data).toString());
+                this.log("binalized: " + new Uint8Array(data).toString());
             }
             json = this.binary2Json(data);
         }
@@ -2463,7 +2465,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.wsOnMessage(data);
             });
             ws.on("close", (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             });
             ws.on("error", (err) => {
@@ -2471,7 +2473,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 this._disconnectLocal();
             });
             ws.on("unexpected-response", (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             });
         }
@@ -2487,11 +2489,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 this.wsOnMessage(event.data);
             };
             ws.onclose = (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             };
             ws.onerror = (err) => {
-                console.log("local websocket error.", err);
+                this.log("local websocket error.", err);
                 this._disconnectLocal();
             };
         }
@@ -2535,6 +2537,14 @@ class ObnizConnection extends eventemitter3_1.default {
             socket.onerror = null;
         }
     }
+    /**
+     * This function will be called before obniz.onconnect called;
+     */
+    async _beforeOnConnect() { }
+    /**
+     * This function will be called after obniz.onconnect and all emitter called;
+     */
+    async _afterOnConnect() { }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -2554,21 +2564,28 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         if (canChangeToConnected) {
             this.connectionState = "connected";
+            this._beforeOnConnect();
             if (typeof this.onconnect === "function") {
-                const promise = this.onconnect(this);
-                if (promise instanceof Promise) {
-                    promise.catch((err) => {
-                        console.error(err);
-                    });
+                try {
+                    const promise = this.onconnect(this);
+                    if (promise instanceof Promise) {
+                        promise.catch((err) => {
+                            console.error(err);
+                        });
+                    }
+                }
+                catch (err) {
+                    console.error(err);
                 }
             }
             this.emit("connect", this);
             this.onConnectCalled = true;
+            this._afterOnConnect();
         }
     }
     print_debug(str) {
         if (this.debugprint) {
-            console.log("Obniz: " + str);
+            this.log(str);
         }
     }
     _sendRouted(data) {
@@ -2812,7 +2829,7 @@ class ObnizDevice extends ObnizUIs_1.default {
             if (typeof showObnizDebugError === "function") {
                 showObnizDebugError(new Error(msg));
             }
-            console.log(`Warning: ${msg}`);
+            this.log(`Warning: ${msg}`);
         }
     }
     /**
@@ -2820,22 +2837,16 @@ class ObnizDevice extends ObnizUIs_1.default {
      * @param msg
      */
     error(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
+        if (!this.isNode) {
             if (msg && typeof msg === "object" && msg.alert) {
                 this.showAlertUI(msg);
                 msg = msg.message;
             }
             if (typeof showObnizDebugError === "function") {
                 showObnizDebugError(new Error(msg));
-                console.error(new Error(msg));
-            }
-            else {
-                throw new Error(msg);
             }
         }
+        console.error(`${msg}`);
     }
     /**
      * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
@@ -2946,8 +2957,9 @@ class ObnizOfflineError extends ObnizError {
 }
 exports.ObnizOfflineError = ObnizOfflineError;
 class ObnizTimeoutError extends ObnizError {
-    constructor() {
-        super(2, "Receive data timeout.");
+    constructor(waitingFor) {
+        super(2, "Receive data timeout." + (waitingFor ? " Waiting for " + waitingFor : ""));
+        this.waitingFor = waitingFor;
     }
 }
 exports.ObnizTimeoutError = ObnizTimeoutError;
@@ -2972,7 +2984,7 @@ class ObnizBleUnknownPeripheralError extends ObnizError {
 exports.ObnizBleUnknownPeripheralError = ObnizBleUnknownPeripheralError;
 class ObnizBleUnknownServiceError extends ObnizError {
     constructor(peripheralUuid, serviceUuid) {
-        super(5, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
+        super(6, "unknown service.  peripheral :" + peripheralUuid + " service :" + serviceUuid);
         this.peripheralUuid = peripheralUuid;
         this.serviceUuid = serviceUuid;
     }
@@ -2980,7 +2992,7 @@ class ObnizBleUnknownServiceError extends ObnizError {
 exports.ObnizBleUnknownServiceError = ObnizBleUnknownServiceError;
 class ObnizBleUnknownCharacteristicError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid) {
-        super(5, "unknown characteristic.  peripheral :" +
+        super(7, "unknown characteristic.  peripheral :" +
             peripheralUuid +
             " service :" +
             serviceUuid +
@@ -2994,7 +3006,7 @@ class ObnizBleUnknownCharacteristicError extends ObnizError {
 exports.ObnizBleUnknownCharacteristicError = ObnizBleUnknownCharacteristicError;
 class ObnizBleUnknownDescriptorError extends ObnizError {
     constructor(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
-        super(5, "unknown descriptor.  peripheral :" +
+        super(8, "unknown descriptor.  peripheral :" +
             peripheralUuid +
             " service :" +
             serviceUuid +
@@ -3011,13 +3023,14 @@ class ObnizBleUnknownDescriptorError extends ObnizError {
 exports.ObnizBleUnknownDescriptorError = ObnizBleUnknownDescriptorError;
 class ObnizBleOpError extends ObnizError {
     constructor() {
-        super(5, "BLE operation error");
+        super(9, "BLE operation error");
     }
 }
 exports.ObnizBleOpError = ObnizBleOpError;
 class ObnizBleHciStateError extends ObnizError {
-    constructor(state) {
-        super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error");
+    constructor(state, params) {
+        super(10, (ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble Hci state Error") +
+            (params ? ` ${JSON.stringify(params)}` : ""));
         this.state = state;
     }
 }
@@ -3097,12 +3110,43 @@ ObnizBleHciStateError.Errors = {
 // todo error code to message
 class ObnizBleAttError extends ObnizError {
     constructor(state) {
-        super(6, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+        super(11, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
         this.state = state;
     }
 }
 exports.ObnizBleAttError = ObnizBleAttError;
 ObnizBleAttError.Errors = {};
+class ObnizDeprecatedFunctionError extends ObnizError {
+    constructor(deprecateFunctionName, replaceFunction) {
+        super(12, `${deprecateFunctionName} is deprecated function, please use ${replaceFunction}`);
+        this.deprecateFunctionName = deprecateFunctionName;
+    }
+}
+exports.ObnizDeprecatedFunctionError = ObnizDeprecatedFunctionError;
+class ObnizBleUnsupportedHciError extends ObnizError {
+    constructor(needVer, currentVer) {
+        super(13, `Unsupported hci version, need version : ${needVer}, current version ${currentVer}`);
+        this.needVer = needVer;
+        this.currentVer = currentVer;
+    }
+}
+exports.ObnizBleUnsupportedHciError = ObnizBleUnsupportedHciError;
+class ObnizParameterError extends ObnizError {
+    constructor(parameter, should) {
+        super(14, `Parameter ${parameter} should satisfy ${should}`);
+        this.parameter = parameter;
+        this.should = should;
+    }
+}
+exports.ObnizParameterError = ObnizParameterError;
+class ObnizBleUnSupportedOSVersionError extends ObnizError {
+    constructor(deviceOS, atLeast) {
+        super(13, `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`);
+        this.deviceOS = deviceOS;
+        this.atLeast = atLeast;
+    }
+}
+exports.ObnizBleUnSupportedOSVersionError = ObnizBleUnSupportedOSVersionError;
 
 //# sourceMappingURL=ObnizError.js.map
 
@@ -3245,12 +3289,37 @@ exports.default = ObnizParts;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class ObnizPartsBleInterface {
+    constructor() {
+        /**
+         * Internally Used function for connection required devices
+         */
+        this._peripheral = null;
+    }
+    /**
+     * Utility function for reading 2 byte to signed number.
+     */
     static signed16FromBinary(high, low) {
         let val = (high << 8) | low;
         if ((val & 0x8000) !== 0) {
             val = val - 0x10000;
         }
         return val;
+    }
+    /**
+     * Utility function for reading 1byte fixed point number
+     */
+    static readFraction(byte) {
+        let result = 0;
+        let mask = 0b10000000;
+        let num = 0.5;
+        for (let i = 0; i < 8; i++) {
+            if (byte & mask) {
+                result += num;
+            }
+            num /= 2.0;
+            mask >>= 1;
+        }
+        return result;
     }
 }
 exports.default = ObnizPartsBleInterface;
@@ -3998,7 +4067,10 @@ const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/ws
 class ComponentAbstract extends eventemitter3_1.default {
     constructor(obniz) {
         super();
-        this.timeout = 10 * 1000;
+        /**
+         * Rsponse waiting timeout in milliseconds
+         */
+        this.timeout = 30 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = obniz;
     }
@@ -4030,8 +4102,7 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
     validate(commandUri, json) {
         const schema = WSSchema_1.default.getSchema(commandUri);
-        const results = WSSchema_1.default.validateMultiple(json, schema);
-        return results;
+        return WSSchema_1.default.validateMultiple(json, schema);
     }
     onceQueue(eventName, func) {
         this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
@@ -4041,8 +4112,7 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
     async sendAndReceiveJsonWait(sendObj, schemaPath, option) {
         this.Obniz.send(sendObj);
-        const result = await this.receiveJsonWait(schemaPath, option);
-        return result;
+        return await this.receiveJsonWait(schemaPath, option);
     }
     receiveJsonWait(schemaPath, option) {
         option = option || {};
@@ -4051,12 +4121,16 @@ class ComponentAbstract extends eventemitter3_1.default {
         option.errors = option.errors || {};
         return new Promise((resolve, reject) => {
             if (this.Obniz.connectionState !== "connected") {
-                reject();
+                reject(new ObnizError_1.ObnizOfflineError());
+                return;
             }
             const clearListeners = () => {
                 this.Obniz.off("close", onObnizClosed);
                 this.off(schemaPath, onDataReceived);
-                clearTimeout(timeoutHandler);
+                if (typeof timeoutHandler === "number") {
+                    clearTimeout(timeoutHandler);
+                    timeoutHandler = undefined;
+                }
                 for (const one of onErrorFuncs) {
                     this.off(one.path, one.onError);
                 }
@@ -4072,7 +4146,7 @@ class ComponentAbstract extends eventemitter3_1.default {
             };
             const onTimeout = () => {
                 clearListeners();
-                const error = new ObnizError_1.ObnizTimeoutError();
+                const error = new ObnizError_1.ObnizTimeoutError(schemaPath);
                 reject(error);
             };
             const onErrorFuncs = [];
@@ -4089,10 +4163,10 @@ class ComponentAbstract extends eventemitter3_1.default {
                     const error = new option.errors[path]();
                     reject(error);
                 };
-                this.on(path, onDataReceived);
+                this.on(path, onError);
                 onErrorFuncs.push({ onError, path });
             }
-            const timeoutHandler = setTimeout(onTimeout, option.timeout);
+            let timeoutHandler = setTimeout(onTimeout, option.timeout);
         });
     }
 }
@@ -4103,7 +4177,7 @@ exports.ComponentAbstract = ComponentAbstract;
 
 /***/ }),
 
-/***/ "./dist/src/obniz/libs/embeds/ble.js":
+/***/ "./dist/src/obniz/libs/embeds/bleHci/ble.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4111,2249 +4185,7 @@ exports.ComponentAbstract = ComponentAbstract;
 /**
  * Obniz BLE are switches automatically. <br/>
  * obnizOS ver >= 3.0.0  : [[ObnizCore.Components.Ble.Hci | Hci]] <br/>
- * obnizOS ver < 3.0.0   : [[ObnizCore.Components.Ble.old | old]] <br/>
- * @packageDocumentation
- * @module ObnizCore.Components.Ble
- */
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizOldBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/ble/ble.js"));
-exports.ObnizOldBLE = ObnizOldBLE;
-const ObnizHciBLE = __importStar(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
-exports.ObnizHciBLE = ObnizHciBLE;
-
-//# sourceMappingURL=ble.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/ble.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
-const bleAdvertisement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisement.js"));
-const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
-const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
-const blePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/blePeripheral.js"));
-const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemotePeripheral.js"));
-const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleScan.js"));
-const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleSecurity.js"));
-const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- */
-class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
-    constructor(obniz) {
-        super(obniz);
-        this.remotePeripherals = [];
-        this.service = bleService_1.default;
-        this.characteristic = bleCharacteristic_1.default;
-        this.descriptor = bleDescriptor_1.default;
-        this.peripheral = new blePeripheral_1.default(obniz);
-        this.scanTarget = null;
-        this.advertisement = new bleAdvertisement_1.default(obniz);
-        this.scan = new bleScan_1.default(obniz);
-        this.security = new bleSecurity_1.default(obniz);
-        this._scanCallbackBind();
-        this._centralCallbackBind();
-        this._peripheralCallbackBind();
-        this._errorCallbackBind();
-        this._reset();
-    }
-    static _dataArray2uuidHex(data, reverse) {
-        let uuid = [];
-        for (let i = 0; i < data.length; i++) {
-            uuid.push(("00" + data[i].toString(16).toLowerCase()).slice(-2));
-        }
-        if (reverse) {
-            uuid = uuid.reverse();
-        }
-        let str = uuid.join("");
-        if (uuid.length >= 16) {
-            str =
-                str.slice(0, 8) +
-                    "-" +
-                    str.slice(8, 12) +
-                    "-" +
-                    str.slice(12, 16) +
-                    "-" +
-                    str.slice(16, 20) +
-                    "-" +
-                    str.slice(20);
-        }
-        return str;
-    }
-    // dummy
-    async initWait() { }
-    _reset() { }
-    directConnect(uuid, addressType) {
-        throw new Error("directConnect cannot use obnizOS < 3.0.0. Please update obnizOS");
-    }
-    async directConnectWait(uuid, addressType) {
-        throw new Error("directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS");
-    }
-    findPeripheral(address) {
-        for (const key in this.remotePeripherals) {
-            if (this.remotePeripherals[key].address === address) {
-                return this.remotePeripherals[key];
-            }
-        }
-        return null;
-    }
-    schemaBasePath() {
-        return "ble";
-    }
-    _scanCallbackBind() {
-        this.on("/response/ble/central/scan", (obj) => {
-            let val = this.findPeripheral(obj.scan_result.address);
-            if (!val) {
-                val = new bleRemotePeripheral_1.default(this.Obniz, obj.scan_result.address);
-                this.remotePeripherals.push(val);
-            }
-            val.discoverdOnRemote = true;
-            val.setParams(obj.scan_result);
-            this.scan.notifyFromServer("onfind", val);
-        });
-        this.on("/response/ble/central/scan_finish", (obj) => {
-            this.scan.notifyFromServer("onfinish");
-        });
-    }
-    _centralCallbackBind() {
-        const callback = (obj) => {
-            const remotePeripheralCallbackFunc = (val, func, type) => {
-                let target = null;
-                if (val === undefined) {
-                    return;
-                }
-                const p = this.findPeripheral(val.address);
-                if (!p) {
-                    return;
-                }
-                if (type === "peripheral") {
-                    target = p;
-                }
-                else if (type === "service") {
-                    target = p.findService(val);
-                }
-                else if (type === "characteristic") {
-                    target = p.findCharacteristic(val);
-                }
-                else if (type === "descriptor") {
-                    target = p.findDescriptor(val);
-                }
-                if (!target) {
-                    return;
-                }
-                func(val, target);
-            };
-            const paramList = {
-                status_update: { name: "statusupdate", obj: "peripheral" },
-                get_service_result: { name: "discover", obj: "peripheral" },
-                get_service_result_finish: {
-                    name: "discoverfinished",
-                    obj: "peripheral",
-                },
-                get_characteristic_result: { name: "discover", obj: "service" },
-                get_characteristic_result_finish: {
-                    name: "discoverfinished",
-                    obj: "service",
-                },
-                write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-                read_characteristic_result: { name: "onread", obj: "characteristic" },
-                register_notify_characteristic_result: {
-                    name: "onregisternotify",
-                    obj: "characteristic",
-                },
-                // for typo
-                register_nofity_characteristic_result: {
-                    name: "onregisternotify",
-                    obj: "characteristic",
-                },
-                unregister_notify_characteristic_result: {
-                    name: "onunregisternotify",
-                    obj: "characteristic",
-                },
-                // for typo
-                unregister_nofity_characteristic_result: {
-                    name: "onunregisternotify",
-                    obj: "characteristic",
-                },
-                notify_characteristic: { name: "onnotify", obj: "characteristic" },
-                // for typo
-                nofity_characteristic: { name: "onnotify", obj: "characteristic" },
-                get_descriptor_result: { name: "discover", obj: "characteristic" },
-                get_descriptor_result_finish: {
-                    name: "discoverfinished",
-                    obj: "characteristic",
-                },
-                write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-                read_descriptor_result: { name: "onread", obj: "descriptor" },
-            };
-            for (const paramListKey in paramList) {
-                remotePeripheralCallbackFunc(obj[paramListKey], (val, bleobj) => {
-                    bleobj.notifyFromServer(paramList[paramListKey].name, val);
-                }, paramList[paramListKey].obj);
-            }
-        };
-        this.on("/response/ble/central/status_update", callback);
-        this.on("/response/ble/central/service_get", callback);
-        this.on("/response/ble/central/service_get_finish", callback);
-        this.on("/response/ble/central/characteristic_get", callback);
-        this.on("/response/ble/central/characteristic_get_finish", callback);
-        this.on("/response/ble/central/characteristic_write", callback);
-        this.on("/response/ble/central/characteristic_read", callback);
-        this.on("/response/ble/central/characteristic_register_notify", callback);
-        this.on("/response/ble/central/characteristic_notify", callback);
-        this.on("/response/ble/central/characteristic_notify", callback);
-        this.on("/response/ble/central/descriptor_get", callback);
-        this.on("/response/ble/central/descriptor_get_finish", callback);
-        this.on("/response/ble/central/descriptor_write", callback);
-        this.on("/response/ble/central/descriptor_read", callback);
-    }
-    _peripheralCallbackBind() {
-        const callback = (obj) => {
-            const callbackFunc = (val, func, type) => {
-                let target = null;
-                if (val === undefined) {
-                    return;
-                }
-                if (type === "peripheral") {
-                    target = this.peripheral;
-                }
-                else if (type === "service") {
-                    target = this.peripheral.getService(val);
-                }
-                else if (type === "characteristic") {
-                    target = this.peripheral.findCharacteristic(val);
-                }
-                else if (type === "descriptor") {
-                    target = this.peripheral.findDescriptor(val);
-                }
-                if (!target) {
-                    return;
-                }
-                func(val, target);
-            };
-            if (obj.peripheral) {
-                callbackFunc(obj.peripheral.connection_status, (val) => {
-                    this.peripheral.onconnectionupdates(val);
-                }, "peripheral");
-                const centralParamList = {
-                    read_characteristic_result: { name: "onread", obj: "characteristic" },
-                    write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-                    notify_read_characteristic: {
-                        name: "onreadfromremote",
-                        obj: "characteristic",
-                    },
-                    notify_write_characteristic: {
-                        name: "onwritefromremote",
-                        obj: "characteristic",
-                    },
-                    read_descriptor_result: { name: "onread", obj: "descriptor" },
-                    write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-                    notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
-                    notify_write_descriptor: {
-                        name: "onwritefromremote",
-                        obj: "descriptor",
-                    },
-                };
-                for (const key in centralParamList) {
-                    callbackFunc(obj.peripheral[key], (val, bleobj) => {
-                        bleobj.notifyFromServer(centralParamList[key].name, val);
-                    }, centralParamList[key].obj);
-                }
-            }
-        };
-        this.on("/response/ble/peripheral/status", callback);
-        this.on("/response/ble/peripheral/characteristic_read", callback);
-        this.on("/response/ble/peripheral/characteristic_write", callback);
-        this.on("/response/ble/peripheral/characteristic_notify_read", callback);
-        this.on("/response/ble/peripheral/characteristic_notify_write", callback);
-        this.on("/response/ble/peripheral/descriptor_read", callback);
-        this.on("/response/ble/peripheral/descriptor_write", callback);
-        this.on("/response/ble/peripheral/descriptor_notify_read", callback);
-        this.on("/response/ble/peripheral/descriptor_notify_write", callback);
-    }
-    _errorCallbackBind() {
-        this.on("/response/ble/error", (obj) => {
-            const params = obj.error;
-            let handled = false;
-            let peripheral;
-            let target;
-            if (!params.address) {
-                peripheral = this.peripheral;
-            }
-            else {
-                peripheral = this.findPeripheral(params.address);
-            }
-            if (peripheral) {
-                if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
-                    target = peripheral.findDescriptor(params);
-                }
-                else if (params.service_uuid && params.characteristic_uuid) {
-                    target = peripheral.findCharacteristic(params);
-                }
-                else if (params.service_uuid) {
-                    target = peripheral.findService(params);
-                }
-                if (target) {
-                    target.notifyFromServer("onerror", params);
-                    handled = true;
-                }
-                else {
-                    peripheral.onerror(params);
-                    handled = true;
-                }
-            }
-            if ([35, 36, 37, 38, 39].includes(params.function_code)) {
-                this.security.onerror(params);
-                handled = true;
-            }
-            if (!handled) {
-                this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
-            }
-        });
-    }
-}
-exports.default = ObnizBLE;
-
-//# sourceMappingURL=ble.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleAdvertisement.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAdvertisementBuilder.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleAdvertisement {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.adv_data = [];
-        this.scan_resp = [];
-    }
-    start() {
-        const obj = {};
-        obj.ble = {};
-        obj.ble.advertisement = {
-            adv_data: this.adv_data,
-        };
-        if (this.scan_resp.length > 0) {
-            obj.ble.advertisement.scan_resp = this.scan_resp;
-        }
-        this.Obniz.send(obj);
-    }
-    end() {
-        const obj = {};
-        obj.ble = {};
-        obj.ble.advertisement = null;
-        this.Obniz.send(obj);
-    }
-    setAdvDataRaw(adv_data) {
-        this.adv_data = adv_data;
-    }
-    setAdvData(json) {
-        const builder = this.advDataBulider(json);
-        this.setAdvDataRaw(builder.build());
-    }
-    advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, jsonVal);
-    }
-    scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(this.Obniz, json);
-    }
-    setScanRespDataRaw(scan_resp) {
-        this.scan_resp = scan_resp;
-    }
-    setScanRespData(json) {
-        this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
-    }
-}
-exports.default = BleAdvertisement;
-
-//# sourceMappingURL=bleAdvertisement.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleAdvertisementBuilder.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleAdvertisementBuilder {
-    constructor(Obniz, json) {
-        this.Obniz = Obniz;
-        this.rows = {};
-        if (json) {
-            if (json.localName) {
-                this.setCompleteLocalName(json.localName);
-            }
-            if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
-                this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
-            }
-            if (json.serviceUuids) {
-                for (const uuid of json.serviceUuids) {
-                    this.setUuid(uuid);
-                }
-            }
-        }
-        if (typeof this.extendEvalJson === "function") {
-            this.extendEvalJson(json);
-        }
-    }
-    setRow(type, data) {
-        this.rows[type] = data;
-    }
-    getRow(type) {
-        return this.rows[type] || [];
-    }
-    build() {
-        const data = [];
-        for (const key in this.rows) {
-            if (this.rows[key].length === 0) {
-                continue;
-            }
-            data.push(this.rows[key].length + 1);
-            data.push(parseInt(key));
-            Array.prototype.push.apply(data, this.rows[key]);
-        }
-        if (data.length > 31) {
-            this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
-        }
-        return data;
-    }
-    setStringData(type, string) {
-        const data = [];
-        for (let i = 0; i < string.length; i++) {
-            data.push(string.charCodeAt(i));
-        }
-        this.setRow(type, data);
-    }
-    setShortenedLocalName(name) {
-        this.setStringData(0x08, name);
-    }
-    setCompleteLocalName(name) {
-        this.setStringData(0x09, name);
-    }
-    setManufacturerSpecificData(companyCode, data) {
-        const row = [];
-        row.push(companyCode & 0xff);
-        row.push((companyCode >> 8) & 0xff);
-        Array.prototype.push.apply(row, data);
-        this.setRow(0xff, row);
-    }
-    setUuid(uuid) {
-        const uuidData = this.convertUuid(uuid);
-        let type;
-        if (uuidData.length === 16) {
-            type = 0x06;
-        }
-        else if (uuidData.length === 4) {
-            type = 0x04;
-        }
-        else if (uuidData.length === 2) {
-            type = 0x02;
-        }
-        this.setRow(type, uuidData);
-    }
-    convertUuid(uuid) {
-        const uuidNumeric = bleHelper_1.default.uuidFilter(uuid);
-        if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
-            this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
-        }
-        const data = [];
-        for (let i = uuidNumeric.length; i > 1; i -= 2) {
-            data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
-        }
-        return data;
-    }
-    setIbeaconData(uuid, major, minor, txPower) {
-        const data = [];
-        data.push(0x02, 0x15); // fixed data
-        const uuidData = this.convertUuid(uuid);
-        Array.prototype.push.apply(data, uuidData);
-        data.push((major >> 8) & 0xff);
-        data.push((major >> 0) & 0xff);
-        data.push((minor >> 8) & 0xff);
-        data.push((minor >> 0) & 0xff);
-        data.push((txPower >> 0) & 0xff);
-        this.setManufacturerSpecificData(0x004c, data);
-        return;
-    }
-    extendEvalJson(json) {
-        if (json) {
-            if (json.flags) {
-                if (json.flags.includes("limited_discoverable_mode")) {
-                    this.setLeLimitedDiscoverableModeFlag();
-                }
-                if (json.flags.includes("general_discoverable_mode")) {
-                    this.setLeGeneralDiscoverableModeFlag();
-                }
-                if (json.flags.includes("br_edr_not_supported")) {
-                    this.setBrEdrNotSupportedFlag();
-                }
-                if (json.flags.includes("le_br_edr_controller")) {
-                    this.setLeBrEdrControllerFlag();
-                }
-                if (json.flags.includes("le_br_edr_host")) {
-                    this.setLeBrEdrHostFlag();
-                }
-            }
-        }
-    }
-    setFlags(flag) {
-        const data = this.getRow(0x01);
-        data[0] = (data[0] || 0) | flag;
-        this.setRow(0x01, data);
-    }
-    setLeLimitedDiscoverableModeFlag() {
-        this.setFlags(0x01);
-    }
-    setLeGeneralDiscoverableModeFlag() {
-        this.setFlags(0x02);
-    }
-    setBrEdrNotSupportedFlag() {
-        this.setFlags(0x04);
-    }
-    setLeBrEdrControllerFlag() {
-        this.setFlags(0x08);
-    }
-    setLeBrEdrHostFlag() {
-        this.setFlags(0x10);
-    }
-}
-exports.default = BleAdvertisementBuilder;
-
-//# sourceMappingURL=bleAdvertisementBuilder.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- */
-class BleAttributeAbstract {
-    constructor(params) {
-        this.uuid = bleHelper_1.default.uuidFilter(params.uuid);
-        this.parent = null;
-        this.children = [];
-        this.isRemote = false;
-        this.discoverdOnRemote = false;
-        this.data = params.data || null;
-        if (!this.data && params.text) {
-            this.data = util_1.default.string2dataArray(params.text);
-        }
-        if (!this.data && params.value) {
-            this.data = [params.value];
-        }
-        if (params[this.childrenName]) {
-            for (const child of params[this.childrenName]) {
-                this.addChild(child);
-            }
-        }
-        this.setFunctions();
-        this.emitter = new emitter();
-    }
-    setFunctions() {
-        let childrenName = this.childrenName;
-        if (childrenName) {
-            childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
-            const childName = childrenName.slice(0, -1);
-            let funcName = "add" + childName;
-            this[funcName] = this.addChild;
-            funcName = "get" + childName;
-            this[funcName] = this.getChild;
-        }
-        const parentName = this.parentName;
-        if (parentName) {
-            Object.defineProperty(this, parentName, {
-                get() {
-                    return this.parent;
-                },
-                set(newValue) {
-                    this.parent = newValue;
-                },
-            });
-        }
-    }
-    get childrenClass() {
-        return Object;
-    }
-    get childrenName() {
-        return null;
-    }
-    get parentName() {
-        return null;
-    }
-    addChild(child) {
-        if (!(child instanceof this.childrenClass)) {
-            const childrenClass = this.childrenClass;
-            child = new childrenClass(child);
-        }
-        child.parent = this;
-        this.children.push(child);
-        return child;
-    }
-    getChild(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this.children
-            .filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
-        })
-            .shift();
-    }
-    toJSON() {
-        const obj = {
-            uuid: bleHelper_1.default.uuidFilter(this.uuid),
-        };
-        if (this.children.length > 0) {
-            const key = this.childrenName;
-            obj[key] = this.children;
-        }
-        if (this.data) {
-            obj.data = this.data;
-        }
-        return obj;
-    }
-    /**
-     * WS COMMANDS
-     */
-    read() { }
-    write(val, needResponse) { }
-    writeNumber(val, needResponse) {
-        this.write([val], needResponse);
-    }
-    writeText(str, needResponse) {
-        this.write(util_1.default.string2dataArray(str), needResponse);
-    }
-    readWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onread", (params) => {
-                if (params.result === "success") {
-                    resolve(params.data);
-                }
-                else {
-                    reject(new Error("readWait failed"));
-                }
-            });
-            this.read();
-        });
-    }
-    writeWait(data, needResponse) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeWait failed"));
-                }
-            });
-            this.write(data, needResponse);
-        });
-    }
-    writeTextWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeTextWait failed"));
-                }
-            });
-            this.writeText(data);
-        });
-    }
-    writeNumberWait(data) {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("onwrite", (params) => {
-                if (params.result === "success") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("writeNumberWait failed"));
-                }
-            });
-            this.writeNumber(data);
-        });
-    }
-    readFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", () => {
-                resolve();
-            });
-        });
-    }
-    writeFromRemoteWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onreadfromremote", (params) => {
-                resolve(params.data);
-            });
-        });
-    }
-    /**
-     * CALLBACKS
-     */
-    onwrite(result) { }
-    onread(data) { }
-    onwritefromremote(address, data) { }
-    onreadfromremote(address) { }
-    onerror(err) {
-        console.error(err.message);
-    }
-    notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "onerror": {
-                this.onerror(params);
-                break;
-            }
-            case "onwrite": {
-                this.onwrite(params.result);
-                break;
-            }
-            case "onread": {
-                this.onread(params.data);
-                break;
-            }
-            case "onwritefromremote": {
-                this.onwritefromremote(params.address, params.data);
-                break;
-            }
-            case "onreadfromremote": {
-                this.onreadfromremote(params.address);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleAttributeAbstract;
-
-//# sourceMappingURL=bleAttributeAbstract.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
-const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleDescriptor.js"));
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Peripheral
- */
-class BleCharacteristic extends bleAttributeAbstract_1.default {
-    constructor(obj) {
-        super(obj);
-        this.addDescriptor = this.addChild;
-        this.getDescriptor = this.getChild;
-        this.properties = obj.properties || [];
-        if (!Array.isArray(this.properties)) {
-            this.properties = [this.properties];
-        }
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
-        }
-    }
-    get parentName() {
-        return "service";
-    }
-    get childrenClass() {
-        return bleDescriptor_1.default;
-    }
-    get childrenName() {
-        return "descriptors";
-    }
-    get descriptors() {
-        return this.children;
-    }
-    toJSON() {
-        const obj = super.toJSON();
-        if (this.properties.length > 0) {
-            obj.properties = this.properties;
-        }
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
-        return obj;
-    }
-    addProperty(param) {
-        if (!this.properties.includes(param)) {
-            this.properties.push(param);
-        }
-    }
-    removeProperty(param) {
-        this.properties = this.properties.filter((elm) => {
-            return elm !== param;
-        });
-    }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
-    write(data) {
-        this.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    write_characteristic: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                        data,
-                    },
-                },
-            },
-        });
-    }
-    read() {
-        this.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    read_characteristic: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    },
-                },
-            },
-        });
-    }
-    notify() {
-        this.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    notify_characteristic: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    },
-                },
-            },
-        });
-    }
-}
-exports.default = BleCharacteristic;
-
-//# sourceMappingURL=bleCharacteristic.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleDescriptor.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Peripheral
- */
-class BleDescriptor extends bleAttributeAbstract_1.default {
-    constructor(obj) {
-        super(obj);
-        this.permissions = obj.permissions || [];
-        if (!Array.isArray(this.permissions)) {
-            this.permissions = [this.permissions];
-        }
-    }
-    get parentName() {
-        return "characteristic";
-    }
-    addPermission(param) {
-        if (!this.permissions.includes(param)) {
-            this.permissions.push(param);
-        }
-    }
-    removePermission(param) {
-        this.permissions = this.permissions.filter((elm) => {
-            return elm !== param;
-        });
-    }
-    toJSON() {
-        const obj = super.toJSON();
-        if (this.permissions.length > 0) {
-            obj.permissions = this.permissions;
-        }
-        return obj;
-    }
-    write(dataArray) {
-        this.characteristic.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    write_descriptor: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.characteristic.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.characteristic.uuid),
-                        descriptor_uuid: this.uuid,
-                        data: dataArray,
-                    },
-                },
-            },
-        });
-    }
-    read() {
-        this.characteristic.service.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    read_descriptor: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.characteristic.service.uuid),
-                        characteristic_uuid: bleHelper_1.default.uuidFilter(this.characteristic.uuid),
-                        descriptor_uuid: this.uuid,
-                    },
-                },
-            },
-        });
-    }
-}
-exports.default = BleDescriptor;
-
-//# sourceMappingURL=bleDescriptor.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleHelper.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @ignore
- */
-const BleHelper = {
-    uuidFilter(uuid) {
-        return uuid.toLowerCase().replace(/[^0-9abcdef]/g, "");
-    },
-};
-exports.default = BleHelper;
-
-//# sourceMappingURL=bleHelper.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/blePeripheral.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleService.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Peripheral
- */
-class BlePeripheral {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this._services = [];
-    }
-    get services() {
-        return this._services;
-    }
-    addService(obj) {
-        if (!(obj instanceof bleService_1.default)) {
-            obj = new bleService_1.default(obj);
-        }
-        this._services.push(obj);
-        obj.peripheral = this;
-        this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
-    }
-    setJson(json) {
-        if (json.services) {
-            for (const service of json.services) {
-                this.addService(service);
-            }
-        }
-    }
-    getService(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        return this._services
-            .filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) === uuid;
-        })
-            .shift();
-    }
-    removeService(uuid) {
-        this._services = this._services.filter((element) => {
-            return bleHelper_1.default.uuidFilter(element.uuid) !== uuid;
-        });
-    }
-    stopAllService() {
-        this.Obniz.send({
-            ble: {
-                peripheral: null,
-            },
-        });
-        this._services = [];
-    }
-    toJSON() {
-        return {
-            services: this._services,
-        };
-    }
-    findCharacteristic(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
-        const s = this.getService(serviceUuid);
-        if (s) {
-            return s.getCharacteristic(characteristicUuid);
-        }
-        return null;
-    }
-    findDescriptor(param) {
-        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
-        const c = this.findCharacteristic(param);
-        if (c) {
-            return c.getDescriptor(descriptorUuid);
-        }
-        return null;
-    }
-    end() {
-        this.Obniz.send({ ble: { peripheral: null } });
-    }
-    onconnectionupdates() { }
-    onerror() { }
-}
-exports.default = BlePeripheral;
-
-//# sourceMappingURL=blePeripheral.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
-    constructor(params) {
-        super(params);
-        this.isRemote = false;
-        this.discoverdOnRemote = false;
-    }
-    get wsChildUuidName() {
-        const childrenName = this.childrenName;
-        if (!childrenName) {
-            return null;
-        }
-        const childName = childrenName.slice(0, -1);
-        return childName + "_uuid";
-    }
-    discoverChildren() { }
-    discoverChildrenWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this.children.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverChildren();
-        });
-    }
-    /**
-     * CALLBACKS
-     */
-    ondiscover(child) { }
-    ondiscoverfinished(children) { }
-    notifyFromServer(notifyName, params) {
-        super.notifyFromServer(notifyName, params);
-        switch (notifyName) {
-            case "discover": {
-                const uuid = params[this.wsChildUuidName];
-                let child = this.getChild(uuid);
-                if (!child) {
-                    child = this.addChild({ uuid });
-                }
-                child.discoverdOnRemote = true;
-                child.properties = params.properties || [];
-                this.ondiscover(child);
-                break;
-            }
-            case "discoverfinished": {
-                const children = this.children.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                this.ondiscoverfinished(children);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleRemoteAttributeAbstract;
-
-//# sourceMappingURL=bleRemoteAttributeAbstract.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemoteCharacteristic.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
-const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteDescriptor.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemoteCharacteristic extends bleRemoteAttributeAbstract_1.default {
-    constructor(params) {
-        super(params);
-        this.properties = params.properties || [];
-        if (!Array.isArray(this.properties)) {
-            this.properties = [this.properties];
-        }
-    }
-    get parentName() {
-        return "service";
-    }
-    get childrenClass() {
-        return bleRemoteDescriptor_1.default;
-    }
-    get childrenName() {
-        return "descriptors";
-    }
-    get descriptors() {
-        return this.children;
-    }
-    addDescriptor(params) {
-        return this.addChild(params);
-    }
-    //
-    // getCharacteristic(params) {
-    //   return this.getChild(params)
-    // }
-    getDescriptor(uuid) {
-        return this.getChild(uuid);
-    }
-    async registerNotify(callback) {
-        this.onnotify = callback;
-        const cccd = this.getDescriptor("2902");
-        await cccd.writeWait([0x01, 0x00]);
-        const obj = {
-            ble: {
-                register_notify_characteristic: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    registerNotifyWait(callback) {
-        return new Promise((resolve) => {
-            this.emitter.once("onregisternotify", () => {
-                resolve();
-            });
-            this.registerNotify(callback);
-        });
-    }
-    unregisterNotify() {
-        this.onnotify = () => { };
-        const obj = {
-            ble: {
-                unregister_notify_characteristic: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    unregisterNotifyWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onunregisternotify", () => {
-                resolve();
-            });
-            this.unregisterNotify();
-        });
-    }
-    read() {
-        const obj = {
-            ble: {
-                read_characteristic: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    write(array, needResponse) {
-        if (needResponse === undefined) {
-            needResponse = true;
-        }
-        const obj = {
-            ble: {
-                write_characteristic: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    data: array,
-                    needResponse,
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    discoverChildren() {
-        const obj = {
-            ble: {
-                get_descriptors: {
-                    address: this.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.service.peripheral.Obniz.send(obj);
-    }
-    discoverAllDescriptors() {
-        return this.discoverChildren();
-    }
-    discoverAllDescriptorsWait() {
-        return this.discoverChildrenWait();
-    }
-    toJSON() {
-        const obj = super.toJSON();
-        if (this.properties.length > 0) {
-            obj.properties = this.properties;
-        }
-        return obj;
-    }
-    canBroadcast() {
-        return this.properties.includes("broadcast");
-    }
-    canNotify() {
-        return this.properties.includes("notify");
-    }
-    canRead() {
-        return this.properties.includes("read");
-    }
-    canWrite() {
-        return this.properties.includes("write");
-    }
-    canWriteWithoutResponse() {
-        return this.properties.includes("write_without_response");
-    }
-    canIndicate() {
-        return this.properties.includes("indicate");
-    }
-    ondiscover(descriptor) {
-        this.ondiscoverdescriptor(descriptor);
-    }
-    ondiscoverfinished(descriptors) {
-        this.ondiscoverdescriptorfinished(descriptors);
-    }
-    ondiscoverdescriptor(descriptors) { }
-    ondiscoverdescriptorfinished(descriptors) { }
-    onregisternotify() { }
-    onunregisternotify() { }
-    onnotify(data) { }
-    notifyFromServer(notifyName, params) {
-        super.notifyFromServer(notifyName, params);
-        switch (notifyName) {
-            case "onregisternotify": {
-                this.onregisternotify();
-                break;
-            }
-            case "onunregisternotify": {
-                this.onunregisternotify();
-                break;
-            }
-            case "onnotify": {
-                this.onnotify(params.data || undefined);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleRemoteCharacteristic;
-
-//# sourceMappingURL=bleRemoteCharacteristic.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemoteDescriptor.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemoteDescriptor extends bleRemoteAttributeAbstract_1.default {
-    constructor(params) {
-        super(params);
-    }
-    get parentName() {
-        return "characteristic";
-    }
-    read() {
-        const obj = {
-            ble: {
-                read_descriptor: {
-                    address: this.characteristic.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.characteristic.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.characteristic.uuid),
-                    descriptor_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.characteristic.service.peripheral.Obniz.send(obj);
-    }
-    write(array, needResponse) {
-        if (needResponse === undefined) {
-            needResponse = true;
-        }
-        const obj = {
-            ble: {
-                write_descriptor: {
-                    address: this.characteristic.service.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.characteristic.service.uuid),
-                    characteristic_uuid: bleHelper_1.default.uuidFilter(this.characteristic.uuid),
-                    descriptor_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    data: array,
-                    needResponse,
-                },
-            },
-        };
-        this.characteristic.service.peripheral.Obniz.send(obj);
-    }
-}
-exports.default = BleRemoteDescriptor;
-
-//# sourceMappingURL=bleRemoteDescriptor.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemotePeripheral.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteService.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemotePeripheral {
-    constructor(Obniz, address) {
-        this.Obniz = Obniz;
-        this.address = address;
-        this.connected = false;
-        this.device_type = null;
-        this.address_type = null;
-        this.ble_event_type = null;
-        this.rssi = null;
-        this.adv_data = null;
-        this.scan_resp = null;
-        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
-        this._services = [];
-        this.emitter = new emitter();
-    }
-    get services() {
-        return this._services;
-    }
-    /**
-     *
-     * @return {String} json value
-     */
-    toString() {
-        return JSON.stringify({
-            address: this.address,
-            addressType: this.address_type,
-            advertisement: this.adv_data,
-            scanResponse: this.scan_resp,
-            rssi: this.rssi,
-        });
-    }
-    setParams(dic) {
-        this.advertise_data_rows = null;
-        for (const key in dic) {
-            if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
-                this[key] = dic[key];
-            }
-        }
-        this.analyseAdvertisement();
-    }
-    analyseAdvertisement() {
-        if (!this.advertise_data_rows) {
-            this.advertise_data_rows = [];
-            if (this.adv_data) {
-                for (let i = 0; i < this.adv_data.length; i++) {
-                    const length = this.adv_data[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.adv_data[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
-                }
-            }
-            if (this.scan_resp) {
-                for (let i = 0; i < this.scan_resp.length; i++) {
-                    const length = this.scan_resp[i];
-                    const arr = new Array(length);
-                    for (let j = 0; j < length; j++) {
-                        arr[j] = this.scan_resp[i + j + 1];
-                    }
-                    this.advertise_data_rows.push(arr);
-                    i = i + length;
-                }
-            }
-            this.setLocalName();
-            this.setIBeacon();
-        }
-    }
-    searchTypeVal(type) {
-        this.analyseAdvertisement();
-        for (let i = 0; i < this.advertise_data_rows.length; i++) {
-            if (this.advertise_data_rows[i][0] === type) {
-                const results = [].concat(this.advertise_data_rows[i]);
-                results.shift();
-                return results;
-            }
-        }
-        return undefined;
-    }
-    setLocalName() {
-        let data = this.searchTypeVal(0x09);
-        if (!data) {
-            data = this.searchTypeVal(0x08);
-        }
-        if (!data) {
-            this.localName = null;
-        }
-        else {
-            this.localName = String.fromCharCode.apply(null, data);
-        }
-    }
-    setIBeacon() {
-        const data = this.searchTypeVal(0xff);
-        if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
-            this.iBeacon = null;
-            return;
-        }
-        const uuidData = data.slice(4, 20);
-        let uuid = "";
-        for (let i = 0; i < uuidData.length; i++) {
-            uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
-                uuid += "-";
-            }
-        }
-        const major = (data[20] << 8) + data[21];
-        const minor = (data[22] << 8) + data[23];
-        const power = data[24];
-        this.iBeacon = {
-            uuid,
-            major,
-            minor,
-            power,
-            rssi: this.rssi,
-        };
-    }
-    _addServiceUuids(results, data, bit) {
-        if (!data) {
-            return;
-        }
-        const uuidLength = bit / 4;
-        for (let i = 0; i < data.length; i = i + uuidLength) {
-            const one = data.slice(i, i + uuidLength);
-            results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
-        }
-    }
-    advertisementServiceUuids() {
-        const results = [];
-        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-        this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
-        return results;
-    }
-    connect() {
-        this.Obniz.ble.scan.end();
-        const obj = {
-            ble: {
-                connect: {
-                    address: this.address,
-                },
-            },
-        };
-        this.Obniz.send(obj);
-    }
-    connectWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "connected") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("connection not established"));
-                }
-            });
-            this.connect();
-        });
-    }
-    disconnect() {
-        const obj = {
-            ble: {
-                disconnect: {
-                    address: this.address,
-                },
-            },
-        };
-        this.Obniz.send(obj);
-    }
-    disconnectWait() {
-        return new Promise((resolve, reject) => {
-            this.emitter.once("statusupdate", (params) => {
-                if (params.status === "disconnected") {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error("disconnectWait failed"));
-                }
-            });
-            this.disconnect();
-        });
-    }
-    getService(uuid) {
-        uuid = bleHelper_1.default.uuidFilter(uuid);
-        for (const key in this._services) {
-            if (this._services[key].uuid === uuid) {
-                return this._services[key];
-            }
-        }
-        return undefined;
-    }
-    findService(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        return this.getService(serviceUuid);
-    }
-    findCharacteristic(param) {
-        const serviceUuid = bleHelper_1.default.uuidFilter(param.service_uuid);
-        const characteristicUuid = bleHelper_1.default.uuidFilter(param.characteristic_uuid);
-        const s = this.getService(serviceUuid);
-        if (s) {
-            return s.getCharacteristic(characteristicUuid);
-        }
-        return null;
-    }
-    findDescriptor(param) {
-        const descriptorUuid = bleHelper_1.default.uuidFilter(param.descriptor_uuid);
-        const c = this.findCharacteristic(param);
-        if (c) {
-            return c.getDescriptor(descriptorUuid);
-        }
-        return null;
-    }
-    discoverAllServices() {
-        const obj = {
-            ble: {
-                get_services: {
-                    address: this.address,
-                },
-            },
-        };
-        this.Obniz.send(obj);
-    }
-    discoverAllServicesWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("discoverfinished", () => {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                resolve(children);
-            });
-            this.discoverAllServices();
-        });
-    }
-    async discoverAllHandlesWait() {
-        const ArrayFlat = (array, depth) => {
-            const flattend = [];
-            const flat = (_array, _depth) => {
-                for (const el of _array) {
-                    if (Array.isArray(el) && _depth > 0) {
-                        flat(el, _depth - 1);
-                    }
-                    else {
-                        flattend.push(el);
-                    }
-                }
-            };
-            flat(array, Math.floor(depth) || 1);
-            return flattend;
-        };
-        const services = await this.discoverAllServicesWait();
-        const charsNest = await Promise.all(services.map((s) => s.discoverAllCharacteristicsWait()));
-        const chars = ArrayFlat(charsNest);
-        const descriptorsNest = await Promise.all(chars.map((c) => c.discoverAllDescriptorsWait()));
-        // eslint-disable-next-line no-unused-vars
-        const descriptors = ArrayFlat(descriptorsNest);
-    }
-    onconnect() { }
-    ondisconnect() { }
-    ondiscoverservice(child) { }
-    ondiscoverservicefinished(children) { }
-    ondiscover() { }
-    ondiscoverfinished() { }
-    async notifyFromServer(notifyName, params) {
-        this.emitter.emit(notifyName, params);
-        switch (notifyName) {
-            case "statusupdate": {
-                if (params.status === "connected") {
-                    this.connected = true;
-                    await this.discoverAllHandlesWait();
-                    this.onconnect();
-                }
-                if (params.status === "disconnected") {
-                    this.connected = false;
-                    this.ondisconnect();
-                }
-                break;
-            }
-            case "discover": {
-                const uuid = params.service_uuid;
-                let child = this.getService(uuid);
-                if (!child) {
-                    const newService = new bleRemoteService_1.default({ uuid });
-                    newService.parent = this;
-                    this._services.push(newService);
-                    child = newService;
-                }
-                child.discoverdOnRemote = true;
-                this.ondiscoverservice(child);
-                break;
-            }
-            case "discoverfinished": {
-                const children = this._services.filter((elm) => {
-                    return elm.discoverdOnRemote;
-                });
-                this.ondiscoverservicefinished(children);
-                break;
-            }
-        }
-    }
-    onerror() { }
-}
-exports.default = BleRemotePeripheral;
-
-//# sourceMappingURL=bleRemotePeripheral.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleRemoteService.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js"));
-const bleRemoteCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleRemoteCharacteristic.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
-    constructor(obj) {
-        super(obj);
-    }
-    get parentName() {
-        return "peripheral";
-    }
-    get childrenClass() {
-        return bleRemoteCharacteristic_1.default;
-    }
-    get childrenName() {
-        return "characteristics";
-    }
-    get characteristics() {
-        return this.children;
-    }
-    addCharacteristic(params) {
-        return this.addChild(params);
-    }
-    getCharacteristic(params) {
-        return this.getChild(params);
-    }
-    discoverAllCharacteristics() {
-        return this.discoverChildren();
-    }
-    discoverAllCharacteristicsWait() {
-        return this.discoverChildrenWait();
-    }
-    discoverChildren() {
-        const obj = {
-            ble: {
-                get_characteristics: {
-                    address: this.peripheral.address,
-                    service_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                },
-            },
-        };
-        this.parent.Obniz.send(obj);
-    }
-    ondiscover(characteristic) {
-        this.ondiscovercharacteristic(characteristic);
-    }
-    ondiscoverfinished(characteristics) {
-        this.ondiscovercharacteristicfinished(characteristics);
-    }
-    ondiscovercharacteristic(characteristic) { }
-    ondiscovercharacteristicfinished(characteristics) { }
-}
-exports.default = BleRemoteService;
-
-//# sourceMappingURL=bleRemoteService.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleScan.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Central
- */
-class BleScan {
-    constructor(Obniz) {
-        this.scanTarget = null;
-        this.Obniz = Obniz;
-        this.emitter = new emitter();
-        this.scanedPeripherals = [];
-    }
-    start(target, settings) {
-        const obj = {};
-        obj.ble = {};
-        obj.ble.scan = {
-            //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-            //    "interval" : settings && settings.interval ? settings.interval : 30,
-            duration: settings && settings.duration ? settings.duration : 30,
-        };
-        if (settings && settings.duplicate) {
-            throw new Error(`duplicate property can only be used with obnizOS3 or later`);
-        }
-        this.scanTarget = target;
-        if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
-            this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
-                return bleHelper_1.default.uuidFilter(elm);
-            });
-        }
-        this.scanedPeripherals = [];
-        this.Obniz.send(obj);
-    }
-    startOneWait(target, settings) {
-        let state = 0;
-        return new Promise((resolve) => {
-            this.emitter.once("onfind", (param) => {
-                if (state === 0) {
-                    state = 1;
-                    this.end();
-                    resolve(param);
-                }
-            });
-            this.emitter.once("onfinish", () => {
-                if (state === 0) {
-                    state = 1;
-                    resolve(null);
-                }
-            });
-            this.start(target, settings);
-        });
-    }
-    startAllWait(target, settings) {
-        return new Promise((resolve) => {
-            this.emitter.once("onfinish", () => {
-                resolve(this.scanedPeripherals);
-            });
-            this.start(target, settings);
-        });
-    }
-    end() {
-        const obj = {};
-        obj.ble = {};
-        obj.ble.scan = null;
-        this.Obniz.send(obj);
-    }
-    isTarget(peripheral) {
-        if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {
-            return false;
-        }
-        if (this.scanTarget && this.scanTarget.uuids) {
-            const uuids = peripheral.advertisementServiceUuids().map((e) => {
-                return bleHelper_1.default.uuidFilter(e);
-            });
-            for (const uuid of this.scanTarget.uuids) {
-                if (!uuids.includes(uuid)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    onfinish(scanedPeripherals) { } // dummy
-    onfind(params) { } // dummy
-    setAdvertisementFilter() {
-        throw new Error("setAdvertisementFilter is not support obnizOS < 3.2.0");
-    }
-    setScanMode(mode) {
-        throw new Error("setScanMode is not support obnizOS < 3.2.0");
-    }
-    notifyFromServer(notifyName, params) {
-        switch (notifyName) {
-            case "onfind": {
-                if (this.isTarget(params)) {
-                    this.scanedPeripherals.push(params);
-                    this.emitter.emit(notifyName, params);
-                    this.onfind(params);
-                }
-                break;
-            }
-            case "onfinish": {
-                this.emitter.emit(notifyName, this.scanedPeripherals);
-                this.onfinish(this.scanedPeripherals);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleScan;
-
-//# sourceMappingURL=bleScan.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleSecurity.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const semver = __webpack_require__("./node_modules/semver/semver.js");
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- */
-class BleSecurity {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.emitter = new emitter();
-    }
-    setModeLevel(mode, level) {
-        let auth;
-        let keys;
-        let indicateSecurityLevel;
-        if (mode === 1) {
-            if (level === 1) {
-                auth = [];
-                indicateSecurityLevel = 0; // no pairing request
-                keys = ["LTK", "IRK"];
-            }
-            else if (level === 2) {
-                auth = ["bonding"];
-                indicateSecurityLevel = 2;
-                keys = ["LTK", "IRK"];
-            }
-            else if (level === 3) {
-                // TODO
-                // auth = ['bonding','mitm'];
-                // indicateSecurityLevel = 3;
-                // keys = ['LTK', 'IRK'];
-            }
-        }
-        else if (mode === 2) {
-            if (level === 1) {
-                // TODO
-                // auth = [];
-                // keys = ['LTK', 'IRK','CSRK'];
-            }
-            else if (level === 2) {
-                // TODO
-                // auth = ['bonding'];
-                // keys = ['LTK', 'IRK','CSRK'];
-            }
-        }
-        if (auth !== undefined && indicateSecurityLevel !== undefined && keys !== undefined) {
-            this.setAuth(auth);
-            this.setIndicateSecurityLevel(indicateSecurityLevel);
-            this.setEnableKeyTypes(keys);
-        }
-        else {
-            const msg = `BLE security mode${mode}, level${level} is not available.`;
-            this.Obniz.error(msg);
-            throw new Error(msg);
-        }
-    }
-    checkIntroducedFirmware(introducedVersion, functionName) {
-        const results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
-        if (results) {
-            const msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${this.Obniz.firmware_ver})`;
-            this.Obniz.error(msg);
-            throw new Error(msg);
-        }
-    }
-    setAuth(authTypes) {
-        this.checkIntroducedFirmware("1.1.0", "setAuth");
-        if (!Array.isArray(authTypes)) {
-            authTypes = [authTypes];
-        }
-        const sendTypes = authTypes
-            .map((elm) => {
-            return elm.toLowerCase();
-        })
-            .filter((elm) => {
-            return ["mitm", "secure_connection", "bonding"].includes(elm);
-        });
-        if (sendTypes.length !== authTypes.length) {
-            throw new Error("unknown auth type");
-        }
-        this.Obniz.send({
-            ble: {
-                security: {
-                    auth: authTypes,
-                },
-            },
-        });
-    }
-    setIndicateSecurityLevel(level) {
-        this.checkIntroducedFirmware("1.1.0", "setIndicateSecurityLevel");
-        if (typeof level !== "number") {
-            throw new Error("unknown secrity level : " + level);
-        }
-        this.Obniz.send({
-            ble: {
-                security: {
-                    indicate_security_level: level,
-                },
-            },
-        });
-    }
-    setEnableKeyTypes(keyTypes) {
-        this.checkIntroducedFirmware("1.1.0", "setEnableKeyTypes");
-        if (!Array.isArray(keyTypes)) {
-            keyTypes = [keyTypes];
-        }
-        const sendTypes = keyTypes
-            .map((elm) => {
-            return elm.toLowerCase();
-        })
-            .filter((elm) => {
-            return ["ltk", "csrk", "irk"].includes(elm);
-        });
-        if (sendTypes.length !== keyTypes.length) {
-            throw new Error("unknown key type");
-        }
-        this.Obniz.send({
-            ble: {
-                security: {
-                    key: { type: sendTypes },
-                },
-            },
-        });
-    }
-    setKeyMaxSize(size) {
-        this.checkIntroducedFirmware("1.1.0", "setKeyMaxSize");
-        if (typeof size !== "number") {
-            throw new Error("please provide key size in number");
-        }
-        this.Obniz.send({
-            ble: {
-                security: {
-                    key: { max_size: size },
-                },
-            },
-        });
-    }
-    clearBondingDevicesList() {
-        this.Obniz.send({
-            ble: {
-                security: {
-                    devices: { clear: true },
-                },
-            },
-        });
-    }
-    onerror(params) { } // dummy
-    notifyFromServer(notifyName, params) {
-        switch (notifyName) {
-            case "onerror": {
-                this.onerror(params);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleSecurity;
-
-//# sourceMappingURL=bleSecurity.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/ble/bleService.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.old
- */
-const bleAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleAttributeAbstract.js"));
-const bleCharacteristic_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleCharacteristic.js"));
-const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/ble/bleHelper.js"));
-/**
- * Deprecated class.
- * Please update obnizOS >= 3.0.0 and use [[ObnizCore.Components.Ble.Hci]]
- * @category Use as Peripheral
- */
-class BleService extends bleAttributeAbstract_1.default {
-    constructor(obj) {
-        super(obj);
-        this.addCharacteristic = this.addChild;
-        this.getCharacteristic = this.getChild;
-    }
-    get parentName() {
-        return "peripheral";
-    }
-    get childrenName() {
-        return "characteristics";
-    }
-    get childrenClass() {
-        return bleCharacteristic_1.default;
-    }
-    get advData() {
-        return {
-            flags: ["general_discoverable_mode", "br_edr_not_supported"],
-            serviceUuids: [this.uuid],
-        };
-    }
-    end() {
-        this.peripheral.Obniz.send({
-            ble: {
-                peripheral: {
-                    stop_service: {
-                        service_uuid: bleHelper_1.default.uuidFilter(this.uuid),
-                    },
-                },
-            },
-        });
-        this.peripheral.removeService(this.uuid);
-    }
-    notify(notifyName, params) {
-        // nothing
-    }
-}
-exports.default = BleService;
-
-//# sourceMappingURL=bleService.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/bleHci/ble.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
+ * obnizOS ver < 3.0.0   : Not Supported <br/>
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
@@ -6429,6 +4261,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     }
     /**
      * Initialize BLE module. You need call this first everything before.
+     * This throws if device is not supported device.
      *
      * ```javascript
      * // Javascript Example
@@ -6437,6 +4270,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     async initWait() {
         if (!this._initialized) {
+            const MinHCIAvailableOS = "3.0.0";
+            if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
+                throw new ObnizError_1.ObnizBleUnSupportedOSVersionError(this.Obniz.firmware_ver, MinHCIAvailableOS);
+            }
             this._initialized = true;
             // force initialize on obnizOS < 3.2.0
             if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
@@ -6444,7 +4281,15 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 this.hci.end(); // disable once
                 this.hci.init();
             }
-            await this.hciProtocol.initWait();
+            try {
+                await this.hciProtocol.initWait();
+            }
+            catch (e) {
+                if (e instanceof ObnizError_1.ObnizBleUnsupportedHciError) {
+                    this.Obniz.reboot();
+                }
+                throw e;
+            }
         }
     }
     /**
@@ -6455,13 +4300,15 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
             const address = this.peripheral.currentConnectedDeviceAddress;
             this.peripheral.currentConnectedDeviceAddress = null;
-            if (this.peripheral.onconnectionupdates) {
-                this.peripheral.onconnectionupdates({
-                    address,
-                    status: "disconnected",
-                    reason: new ObnizError_1.ObnizOfflineError(),
-                });
-            }
+            setTimeout(() => {
+                if (this.peripheral.onconnectionupdates) {
+                    this.peripheral.onconnectionupdates({
+                        address,
+                        status: "disconnected",
+                        reason: new ObnizError_1.ObnizOfflineError(),
+                    });
+                }
+            }, 0);
         }
         if (this.remotePeripherals) {
             for (const p of this.remotePeripherals) {
@@ -6470,6 +4317,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 }
             }
         }
+        if (this.scan && this.scan.state !== "stopped") {
+            this.scan.notifyFromServer("obnizClose", {});
+        }
+        this.hci._reset();
         this.hciProtocol = new hci_2.default(this.hci);
         this.centralBindings = new bindings_1.default(this.hciProtocol);
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
@@ -6507,12 +4358,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             peripheral = new bleRemotePeripheral_1.default(this, uuid);
             this.remotePeripherals.push(peripheral);
         }
-        if (!this.centralBindings._addresses[uuid]) {
-            const address = uuid.match(/.{1,2}/g).join(":");
-            this.centralBindings._addresses[uuid] = address;
-            this.centralBindings._addresseTypes[uuid] = addressType;
-            this.centralBindings._connectable[uuid] = true;
-        }
+        this.centralBindings.addPeripheralData(uuid, addressType);
         peripheral.connect();
         return peripheral;
     }
@@ -6581,7 +4427,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             scan_resp: advertisement.scanResponseRaw,
         };
         val.setParams(peripheralData);
-        val._adv_data_filtered = advertisement;
         this.scan.notifyFromServer("onfind", val);
     }
     onDisconnect(peripheralUuid, reason) {
@@ -6993,6 +4838,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module ObnizCore.Components.Ble.Hci
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 class BleAttributeAbstract {
@@ -7082,10 +4928,12 @@ class BleAttributeAbstract {
         return obj;
     }
     /**
+     * Use writeTextWait() instead from 3.5.0
      * @ignore
+     * @deprecated
      */
     writeText(str, needResponse) {
-        this.writeTextWait(str, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeText", "writeTextWait");
     }
     /**
      * @ignore
@@ -7094,10 +4942,12 @@ class BleAttributeAbstract {
         return await this.writeWait(util_1.default.string2dataArray(str), needResponse);
     }
     /**
+     * Use writeNumberWait() instead from 3.5.0
      * @ignore
+     * @deprecated
      */
     writeNumber(val, needResponse) {
-        this.writeNumberWait(val, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
     }
     /**
      * @ignore
@@ -7671,19 +5521,6 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         super(params);
     }
     /**
-     *  @deprecated
-     */
-    write(dataArray) {
-        this.writeWait(dataArray); // background
-    }
-    /**
-     * @deprecated
-     *
-     */
-    read() {
-        this.readWait(); // background
-    }
-    /**
      * This writes dataArray.
      * It throws an error when failed.
      *
@@ -7726,15 +5563,19 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "onwritefromremote": {
-                if (this.onwritefromremote) {
-                    this.onwritefromremote(params.address, params.data);
-                }
+                setTimeout(() => {
+                    if (this.onwritefromremote) {
+                        this.onwritefromremote(params.address, params.data);
+                    }
+                }, 0);
                 break;
             }
             case "onreadfromremote": {
-                if (this.onreadfromremote) {
-                    this.onreadfromremote(params.address);
-                }
+                setTimeout(() => {
+                    if (this.onreadfromremote) {
+                        this.onreadfromremote(params.address);
+                    }
+                }, 0);
                 break;
             }
         }
@@ -7944,16 +5785,6 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
-    /**
-     * @ignore
-     * @param child
-     */
-    ondiscover(child) { }
-    /**
-     * @ignore
-     * @param children
-     */
-    ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteAttributeAbstract;
 
@@ -7971,6 +5802,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleRemoteDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js"));
 const bleRemoteValueAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.js"));
 /**
@@ -8197,61 +6033,18 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         }
     }
     /**
-     * It reads data from the characteristic.
-     *
-     * Even you wrote string or number, it returns binary array.
-     * The returned value appears in the callback function [[onread]].
-     *
-     * ```javascript
-     * // Javascript Example
-     * obniz.ble.scan.onfind = function(peripheral){
-     *   if(peripheral.localName == "my peripheral"){
-     *
-     *     peripheral.onconnect = function(){
-     *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
-     *       characteristic.read();
-     *       characteristic.onread = function(dataArray){
-     *         console.log("value : " + dataArray);
-     *       }
-     *     }
-     *
-     *     peripheral.connect();
-     *   }
-     * }
-     * obniz.ble.startScan({duration : 10});
-     * ```
-     *
-     *
+     * Use readWait() instead from 3.5.0
+     * @deprecated
      */
     read() {
-        this.readWait(); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
-     * This writes dataArray to the characteristic.
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(peripheral){
-     *    await peripheral.connectWait();
-     *    console.log("connected");
-     *    await obniz.wait(1000);
-     *
-     *    var dataArray = [0x02, 0xFF];
-     *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
-     * }
-     * ```
-     *
-     * @param array
-     * @param needResponse
+     * Use writeWait() instead from 3.5.0
+     * @deprecated
      */
     write(array, needResponse) {
-        this.writeWait(array, needResponse); // background
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
      * This writes dataArray to the characteristic.
@@ -8284,9 +6077,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
-        if (this.onwrite) {
-            this.onwrite("success"); // if fail, throw error.
-        }
+        setTimeout(() => {
+            if (this.onwrite) {
+                this.onwrite("success"); // if fail, throw error.
+            }
+        }, 0);
         return true;
     }
     /**
@@ -8316,9 +6111,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async readWait() {
         const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
         const data = Array.from(buf);
-        if (this.onread) {
-            this.onread(data);
-        }
+        setTimeout(() => {
+            if (this.onread) {
+                this.onread(data);
+            }
+        }, 0);
         return data;
     }
     /**
@@ -8345,7 +6142,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *      peripheral.connect({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllDescriptorsWait() {
@@ -8414,18 +6211,22 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param descriptor
      */
     ondiscover(descriptor) {
-        if (this.ondiscoverdescriptor) {
-            this.ondiscoverdescriptor(descriptor);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverdescriptor) {
+                this.ondiscoverdescriptor(descriptor);
+            }
+        }, 0);
     }
     /**
      * @ignore
      * @param descriptors
      */
     ondiscoverfinished(descriptors) {
-        if (this.ondiscoverdescriptorfinished) {
-            this.ondiscoverdescriptorfinished(descriptors);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverdescriptorfinished) {
+                this.ondiscoverdescriptorfinished(descriptors);
+            }
+        }, 0);
     }
     /**
      * @ignore
@@ -8436,9 +6237,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
             case "onnotify": {
-                if (this.onnotify) {
-                    this.onnotify(params.data || undefined);
-                }
+                setTimeout(() => {
+                    if (this.onnotify) {
+                        this.onnotify(params.data || undefined);
+                    }
+                }, 0);
                 break;
             }
         }
@@ -8476,13 +6279,6 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
         return "characteristic";
     }
     /**
-     * @deprecated
-     *
-     */
-    read() {
-        this.readWait(); // background
-    }
-    /**
      * Read data from descriptor.
      *
      * The return value appears in the callback function [[onread]].
@@ -8510,16 +6306,12 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     async readWait() {
         const buf = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
         const data = Array.from(buf);
-        if (this.onread) {
-            this.onread(data);
-        }
+        setTimeout(() => {
+            if (this.onread) {
+                this.onread(data);
+            }
+        }, 0);
         return data;
-    }
-    /**
-     *  @deprecated
-     */
-    write(data) {
-        this.writeWait(data); // background
     }
     /**
      * This writes dataArray to descriptor.
@@ -8548,11 +6340,22 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      */
     async writeWait(data) {
         await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
-        if (this.onwrite) {
-            this.onwrite("success"); // if fail, throw error.
-        }
+        setTimeout(() => {
+            if (this.onwrite) {
+                this.onwrite("success"); // if fail, throw error.
+            }
+        }, 0);
         return true;
     }
+    /**
+     * @ignore
+     */
+    ondiscover(child) { }
+    /**
+     * @ignore
+     * @param children
+     */
+    ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteDescriptor;
 
@@ -8588,6 +6391,11 @@ class BleRemotePeripheral {
          * @ignore
          */
         this._connectSetting = {};
+        /**
+         * Indicating this peripheral is found by scan or set from software.
+         * @ignore
+         */
+        this.discoverdOnRemote = undefined;
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -8595,7 +6403,7 @@ class BleRemotePeripheral {
         this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
-        this.adv_data = null;
+        // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
@@ -8661,7 +6469,7 @@ class BleRemotePeripheral {
         this.analyseAdvertisement();
     }
     /**
-     *  @deprecated
+     *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
         this.connectWait(); // background
@@ -8699,21 +6507,18 @@ class BleRemotePeripheral {
     async connectWait(setting) {
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
-        this.obnizBle.scan.end();
-        const p1 = this.obnizBle.centralBindings.connectWait(this.address);
-        const p2 = new Promise((resolve, reject) => this.emitter.once("disconnect", (reason) => {
-            reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established. ` +
-                ` Error code:${reason.state}, ${reason.message}`));
-        }));
-        await Promise.race([p1, p2]);
+        await this.obnizBle.scan.endWait();
+        await this.obnizBle.centralBindings.connectWait(this.address);
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
         this.connected = true;
-        if (this.onconnect) {
-            this.onconnect();
-        }
-        this.emitter.emit("connect");
+        setTimeout(() => {
+            if (this.onconnect) {
+                this.onconnect();
+            }
+            this.emitter.emit("connect");
+        }, 0);
     }
     /**
      *  @deprecated
@@ -8855,10 +6660,10 @@ class BleRemotePeripheral {
      *          await peripheral.discoverAllServicesWait(); //manually discover
      *          let service = peripheral.getService("1800");
      *      }
-     *      peripheral.connect({autoDiscovery:false});
+     *      peripheral.connectWait({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllServicesWait() {
@@ -8872,16 +6677,20 @@ class BleRemotePeripheral {
                 child = newService;
             }
             child.discoverdOnRemote = true;
-            if (this.ondiscoverservice) {
-                this.ondiscoverservice(child);
-            }
+            setTimeout(() => {
+                if (this.ondiscoverservice) {
+                    this.ondiscoverservice(child);
+                }
+            }, 0);
         }
         const children = this._services.filter((elm) => {
             return elm.discoverdOnRemote;
         });
-        if (this.ondiscoverservicefinished) {
-            this.ondiscoverservicefinished(children);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverservicefinished) {
+                this.ondiscoverservicefinished(children);
+            }
+        }, 1);
         return children;
     }
     /**
@@ -8922,11 +6731,13 @@ class BleRemotePeripheral {
                     const pre = this.connected;
                     this.connected = false;
                     if (pre) {
-                        if (this.ondisconnect) {
-                            this.ondisconnect(params.reason);
-                        }
+                        setTimeout(() => {
+                            if (this.ondisconnect) {
+                                this.ondisconnect(params.reason);
+                            }
+                            this.emitter.emit("disconnect", params.reason);
+                        }, 0);
                     }
-                    this.emitter.emit("disconnect", params.reason);
                 }
                 break;
             }
@@ -8963,7 +6774,7 @@ class BleRemotePeripheral {
      *      await peripheral.connectWait();
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      *
@@ -8985,7 +6796,7 @@ class BleRemotePeripheral {
      *      await peripheral.connectWait();
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      * Go to [[BlePairingOptions]] to see more option.
@@ -9230,7 +7041,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      *      peripheral.connect({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllCharacteristicsWait() {
@@ -9255,14 +7066,18 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @param characteristic
      */
     ondiscover(characteristic) {
-        this.ondiscovercharacteristic(characteristic);
+        setTimeout(() => {
+            this.ondiscovercharacteristic(characteristic);
+        }, 0);
     }
     /**
      * @ignore
      * @param characteristics
      */
     ondiscoverfinished(characteristics) {
-        this.ondiscovercharacteristicfinished(characteristics);
+        setTimeout(() => {
+            this.ondiscovercharacteristicfinished(characteristics);
+        }, 0);
     }
     /**
      * @ignore
@@ -9313,18 +7128,6 @@ const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist
  */
 class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
     /**
-     * @deprecated
-     */
-    writeNumber(val, needResponse) {
-        return super.writeNumber(val, needResponse);
-    }
-    /**
-     *  @deprecated
-     */
-    writeText(str, needResponse) {
-        return super.writeText(str, needResponse);
-    }
-    /**
      * Wrapper for [[writeWait]] with data converting from text.
      * It convert string to UTF-8 and write binary array.
      *
@@ -9366,8 +7169,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+const assert_1 = __webpack_require__("./node_modules/assert/assert.js");
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
@@ -9375,6 +7180,7 @@ const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
  */
 class BleScan {
     constructor(obnizBle) {
+        this.state = "stopping";
         this._delayNotifyTimers = [];
         this.scanTarget = {};
         this.scanSettings = {};
@@ -9384,11 +7190,15 @@ class BleScan {
         this._timeoutTimer = undefined;
     }
     /**
+     * Use startWait() instead.
      * @deprecated
      */
-    async start(target = {}, settings = {}) {
-        this.startWait(target, settings).catch((reason) => {
-            this.finish(reason);
+    start(target = {}, settings = {}) {
+        console.log(`start() is deprecated since 3.5.0. Use startWait() instead`);
+        this.startWait(target, settings)
+            .then(() => { })
+            .catch((e) => {
+            throw e;
         });
     }
     /**
@@ -9415,7 +7225,7 @@ class BleScan {
      *
      * ```javascript
      * // Javascript Example
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      * @param target
@@ -9423,6 +7233,7 @@ class BleScan {
      */
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
+        this.state = "starting";
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
         settings.filterOnDevice = !!settings.filterOnDevice;
@@ -9450,11 +7261,17 @@ class BleScan {
         await this.obnizBle.centralBindings.startScanningWait(null, false, settings.activeScan);
         this.clearTimeoutTimer();
         if (timeout !== null) {
-            this._timeoutTimer = setTimeout(() => {
+            this._timeoutTimer = setTimeout(async () => {
                 this._timeoutTimer = undefined;
-                this.end();
+                try {
+                    await this.endWait();
+                }
+                catch (e) {
+                    this.finish(e);
+                }
             }, timeout * 1000);
         }
+        this.state = "started";
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -9474,14 +7291,22 @@ class BleScan {
      * @param target
      * @param settings
      */
-    async startOneWait(target, settings) {
+    async startOneWait(target, settings = {}) {
         await this.startWait(target, settings);
-        return new Promise((resolve) => {
-            this.emitter.once("onfind", async (param) => {
-                resolve(param);
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onfind", async (peripheral, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
+                resolve(peripheral);
                 await this.endWait();
             });
-            this.emitter.once("onfinish", () => {
+            this.emitter.once("onfinish", (peripherals, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
                 resolve(null);
             });
         });
@@ -9515,18 +7340,26 @@ class BleScan {
      */
     async startAllWait(target, settings) {
         await this.startWait(target, settings);
-        return new Promise((resolve) => {
-            this.emitter.once("onfinish", () => {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onfinish", (peripherals, error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
                 resolve(this.scanedPeripherals);
             });
         });
     }
     /**
+     * Use endWait() instead
      * @deprecated
      */
     end() {
-        this.endWait().catch((reason) => {
-            this.finish(reason);
+        console.log(`end() is deprecated since 3.5.0. Use endWait() instead`);
+        this.endWait()
+            .then(() => { })
+            .catch((e) => {
+            throw e;
         });
     }
     /**
@@ -9535,15 +7368,18 @@ class BleScan {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * await obniz.wait(5000);
      * await obniz.ble.scan.endWait();
      * ```
      */
     async endWait() {
-        this.clearTimeoutTimer();
-        await this.obnizBle.centralBindings.stopScanningWait();
-        this.finish();
+        if (this.state === "started" || this.state === "starting") {
+            this.state = "stopping";
+            this.clearTimeoutTimer();
+            await this.obnizBle.centralBindings.stopScanningWait();
+            this.finish();
+        }
     }
     /**
      * @ignore
@@ -9552,6 +7388,10 @@ class BleScan {
      */
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
+            case "obnizClose": {
+                this.finish(new ObnizError_1.ObnizOfflineError());
+                break;
+            }
             case "onfind": {
                 const peripheral = params;
                 const alreadyGotCompleteAdveData = peripheral.adv_data &&
@@ -9739,12 +7579,17 @@ class BleScan {
         }
     }
     finish(error) {
-        this.clearTimeoutTimer();
-        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
-        this._clearDelayNotifyTimer();
-        this.emitter.emit("onfinish", this.scanedPeripherals, error);
-        if (this.onfinish) {
-            this.onfinish(this.scanedPeripherals, error);
+        if (this.state !== "stopped") {
+            this.clearTimeoutTimer();
+            this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+            this._clearDelayNotifyTimer();
+            this.state = "stopped";
+            setTimeout(() => {
+                this.emitter.emit("onfinish", this.scanedPeripherals, error);
+                if (this.onfinish) {
+                    this.onfinish(this.scanedPeripherals, error);
+                }
+            }, 0);
         }
     }
     _notifyOnFind(peripheral) {
@@ -9756,10 +7601,12 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            this.emitter.emit("onfind", peripheral);
-            if (this.onfind) {
-                this.onfind(peripheral);
-            }
+            setTimeout(() => {
+                this.emitter.emit("onfind", peripheral);
+                if (this.onfind) {
+                    this.onfind(peripheral);
+                }
+            }, 0);
         }
     }
     isLocalNameTarget(peripheral) {
@@ -10056,15 +7903,24 @@ exports.default = BleService;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
     constructor(Obniz) {
+        /*
+         * HCI level timeout should never occure. Response must be sent from a device.
+         * This timeout is for just in case for a device nerver send response.
+         */
+        this.timeout = 5 * 60 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._eventHandlerQueue = {};
     }
     /**
      * Initialize BLE HCI module
@@ -10130,10 +7986,68 @@ class ObnizBLEHci {
      * @param data
      */
     onread(data) { }
-    readWait(binaryFilter) {
-        return new Promise((resolve) => {
-            this.onceQueue(binaryFilter, resolve);
+    /**
+     * @ignore
+     * @private
+     * @param promise
+     * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
+     * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
+     */
+    timeoutPromiseWrapper(promise, option) {
+        option = option || {};
+        if (option.timeout === null) {
+            option.timeout = null;
+        }
+        else {
+            option.timeout = option.timeout || this.timeout;
+            if (option.timeout < 0) {
+                throw new ObnizError_1.ObnizParameterError(`option.timeout`, `0 or greater`);
+            }
+        }
+        option.waitingFor = option.waitingFor || undefined;
+        let onObnizClosed = null;
+        let timeoutHandler = null;
+        const clearListeners = () => {
+            this.Obniz.off("close", onObnizClosed);
+            if (timeoutHandler) {
+                clearTimeout(timeoutHandler);
+                timeoutHandler = null;
+            }
+        };
+        const successPromise = promise.then((result) => {
+            clearListeners();
+            return result;
+        }, (reason) => {
+            clearListeners();
+            throw reason;
         });
+        const errorPromise = new Promise((resolve, reject) => {
+            if (this.Obniz.connectionState !== "connected") {
+                reject(new ObnizError_1.ObnizOfflineError());
+                return;
+            }
+            onObnizClosed = () => {
+                clearListeners();
+                const error = new ObnizError_1.ObnizOfflineError();
+                reject(error);
+            };
+            this.Obniz.on("close", onObnizClosed);
+            const onTimeout = () => {
+                clearListeners();
+                const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
+                reject(error);
+            };
+            timeoutHandler = setTimeout(onTimeout, option.timeout);
+        });
+        if (option.timeout !== null) {
+            return Promise.race([successPromise, errorPromise]);
+        }
+        return successPromise;
+    }
+    readWait(binaryFilter, option) {
+        return this.timeoutPromiseWrapper(new Promise((resolve) => {
+            this.onceQueue(binaryFilter, resolve);
+        }), option);
     }
     onceQueue(binaryFilter, func) {
         const eventName = this.encodeBinaryFilter(binaryFilter);
@@ -10212,8 +8126,8 @@ class AclStream extends eventemitter3_1.default {
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
     }
-    async readWait(cid, flag) {
-        const data = await this._hci.readAclStreamWait(this._handle, cid, flag);
+    async readWait(cid, flag, timeout) {
+        const data = await this._hci.readAclStreamWait(this._handle, cid, flag, timeout);
         return data;
     }
     push(cid, data) {
@@ -10290,6 +8204,14 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
     }
+    addPeripheralData(uuid, addressType) {
+        if (!this._addresses[uuid]) {
+            const address = uuid.match(/.{1,2}/g).join(":");
+            this._addresses[uuid] = address;
+            this._addresseTypes[uuid] = addressType;
+            this._connectable[uuid] = true;
+        }
+    }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = serviceUuids || [];
         await this._gap.startScanningWait(allowDuplicates, activeScan);
@@ -10301,6 +8223,9 @@ class NobleBindings extends eventemitter3_1.default {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         const doPromise = Promise.all(this._connectPromises)
+            .catch((error) => {
+            // nothing
+        })
             .then(() => {
             return this._hci.createLeConnWait(address, addressType);
         })
@@ -10405,6 +8330,8 @@ class NobleBindings extends eventemitter3_1.default {
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
         if (uuid) {
+            const error = new ObnizError_1.ObnizBleHciStateError(reason, { peripheralAddress: uuid });
+            this._gatts[handle].onEnd(error);
             this._gatts[handle].removeAllListeners();
             this._signalings[handle].removeAllListeners();
             delete this._gatts[uuid];
@@ -10414,7 +8341,6 @@ class NobleBindings extends eventemitter3_1.default {
             delete this._aclStreams[handle];
             delete this._handles[uuid];
             delete this._handles[handle];
-            const error = new ObnizError_1.ObnizBleHciStateError(reason);
             this.emit("disconnect", uuid, error); // TODO: handle reason?
         }
         else {
@@ -10957,6 +8883,9 @@ class Gatt extends eventemitter3_1.default {
         });
         return result;
     }
+    onEnd(reason) {
+        this.emit("end", reason);
+    }
     async exchangeMtuWait(mtu) {
         const data = await this._execCommandWait(this.mtuRequest(mtu), ATT.OP_MTU_RESP);
         const opcode = data[0];
@@ -11442,7 +9371,17 @@ class Gatt extends eventemitter3_1.default {
         }
     }
     _serialPromiseQueueWait(func) {
+        const onfinish = () => {
+            this._commandPromises = this._commandPromises.filter((e) => e !== resultPromise);
+            if (disconnectReject) {
+                this.off("end", disconnectReject);
+            }
+        };
+        let disconnectReject = null;
         const doPromise = Promise.all(this._commandPromises)
+            .catch((error) => {
+            // nothing
+        })
             .then(() => {
             return func();
         })
@@ -11450,14 +9389,22 @@ class Gatt extends eventemitter3_1.default {
             throw reason;
         })
             .then((result) => {
-            this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+            onfinish();
             return Promise.resolve(result);
         }, (error) => {
-            this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+            onfinish();
             return Promise.reject(error);
         });
-        this._commandPromises.push(doPromise);
-        return doPromise;
+        const disconnectPromise = new Promise((resolve, reject) => {
+            disconnectReject = (reason) => {
+                onfinish();
+                reject(reason);
+            };
+            this.on("end", disconnectReject);
+        });
+        const resultPromise = Promise.race([doPromise, disconnectPromise]);
+        this._commandPromises.push(resultPromise);
+        return resultPromise;
     }
     _execCommandWait(buffer, waitOpcode) {
         const waitOpcodes = Array.isArray(waitOpcode) ? waitOpcode : [waitOpcode];
@@ -11667,7 +9614,7 @@ class Smp extends eventemitter3_1.default {
         await this.sendPairingRequestWait();
         const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
-        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM);
+        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
         const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
         const encResult = this.handlePairingRandomWait(random);
@@ -11784,7 +9731,8 @@ class Smp extends eventemitter3_1.default {
     handleSecurityRequest(data) {
         this.pairingWait();
     }
-    setKeys(keyString) {
+    setKeys(keyStringBase64) {
+        const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
         const keys = JSON.parse(keyString);
         this._stk = Buffer.from(keys.stk);
         this._preq = Buffer.from(keys.preq);
@@ -11796,15 +9744,17 @@ class Smp extends eventemitter3_1.default {
     }
     getKeys() {
         const keys = {
-            stk: Array.from(this._stk),
-            preq: Array.from(this._preq),
-            pres: Array.from(this._pres),
-            tk: Array.from(this._tk),
-            r: Array.from(this._r),
-            pcnf: Array.from(this._pcnf),
-            ltk: Array.from(this._ltk),
+            stk: this._stk.toString("hex"),
+            preq: this._preq.toString("hex"),
+            pres: this._pres.toString("hex"),
+            tk: this._tk.toString("hex"),
+            r: this._r.toString("hex"),
+            pcnf: this._pcnf.toString("hex"),
+            ltk: this._ltk.toString("hex"),
         };
-        return JSON.stringify(keys);
+        const jsonString = JSON.stringify(keys);
+        const keyString = Buffer.from(jsonString, "ascii").toString("base64");
+        return keyString;
     }
     async sendPairingRequestWait() {
         if (this.isPasskeyMode()) {
@@ -11871,6 +9821,7 @@ const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/even
 const debug = (...params) => {
     // console.log(...params);
 };
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -11985,9 +9936,10 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.OCF_RESET | (COMMANDS.OGF_HOST_CTL << 10), 1);
         // length
         cmd.writeUInt8(0x00, 3);
+        const p = this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
         debug("reset - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const resetResult = await this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
+        const resetResult = await p;
         this.resetBuffers();
         this.setEventMask();
         this.setLeEventMask();
@@ -12016,16 +9968,17 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.READ_LOCAL_VERSION_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
+        const p = this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
         debug("read local version - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
+        const data = await p;
         const hciVer = data.result.readUInt8(0);
         const hciRev = data.result.readUInt16LE(1);
         const lmpVer = data.result.readInt8(3);
         const manufacturer = data.result.readUInt16LE(4);
         const lmpSubVer = data.result.readUInt16LE(6);
         if (hciVer < 0x06) {
-            throw new Error("unsupported hci version");
+            throw new ObnizError_1.ObnizBleUnsupportedHciError(0x06, hciVer);
         }
         return { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer };
     }
@@ -12036,9 +9989,10 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.READ_BD_ADDR_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
+        const p = this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
         debug("read bd addr - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
+        const data = await p;
         this.addressType = "public";
         this.address = data.result
             .toString("hex")
@@ -12067,9 +10021,10 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.READ_LE_HOST_SUPPORTED_CMD, 1);
         // length
         cmd.writeUInt8(0x00, 3);
+        const p = this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
         debug("read LE host supported - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
+        const data = await p;
         if (data.status === 0) {
             const le = data.result.readUInt8(0);
             const simul = data.result.readUInt8(1);
@@ -12104,9 +10059,10 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
         cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
         cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
         debug("set scan parameters - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
+        const data = await p;
         return data.status;
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
@@ -12120,8 +10076,9 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // duplicates: 0 -> duplicates, 0 -> duplicates
         debug("set scan enabled - writing: " + cmd.toString("hex"));
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
+        const data = await p;
         return data.status;
     }
     async createLeConnWait(address, addressType) {
@@ -12148,8 +10105,9 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0004, 25); // min ce length
         cmd.writeUInt16LE(0x0006, 27); // max ce length
         debug("create le conn - writing: " + cmd.toString("hex"));
+        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
         this._socket.write(cmd);
-        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+        const { status, data } = await p;
         return this.processLeConnComplete(status, data);
     }
     async connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
@@ -12168,8 +10126,9 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0000, 14); // min ce length
         cmd.writeUInt16LE(0x0000, 16); // max ce length
         debug("conn update le - writing: " + cmd.toString("hex"));
+        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
         this._socket.write(cmd);
-        const { status, data } = await this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
+        const { status, data } = await p;
         return this.processLeConnUpdateComplete(status, data);
     }
     // this function is use by connUpdateLeWait / processLeMetaEvent.
@@ -12196,11 +10155,15 @@ class Hci extends eventemitter3_1.default {
         random.copy(cmd, 6);
         diversifier.copy(cmd, 14);
         key.copy(cmd, 16);
+        // console.log("start le encryption - writing: " + cmd.toString("hex"));
+        const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE], {
+            waitingFor: "EVT_ENCRYPT_CHANGE",
+        });
+        const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE], {
+            waitingFor: "EVT_ENCRYPTION_KEY_REFRESH_COMPLETE",
+        });
         debug("start le encryption - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        // console.log("start le encryption - writing: " + cmd.toString("hex"));
-        const p1 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPT_CHANGE]);
-        const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE]);
         const data = await Promise.race([p1, p2]);
         // const data = await p1;
         // console.log("start le encryption - data: " + data.toString("hex"));
@@ -12237,9 +10200,10 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x02, 3);
         // data
         cmd.writeUInt16LE(handle, 4); // handle
+        const p = this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [handle & 0xff, (handle >> 8) & 0xff]);
         debug("read rssi - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [handle & 0xff, (handle >> 8) & 0xff]);
+        const data = await p;
         if (handle !== data.result.readUInt16LE(0)) {
             throw new Error("handle is different");
         }
@@ -12265,9 +10229,10 @@ class Hci extends eventemitter3_1.default {
         Buffer.from("000000000000", "hex").copy(cmd, 11); // direct addr
         cmd.writeUInt8(0x07, 17);
         cmd.writeUInt8(0x00, 18);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
         debug("set advertisement parameters - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
+        const data = await p;
         // this.emit("stateChange", "poweredOn"); // TODO : really need?
         return data.status;
     }
@@ -12282,9 +10247,10 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(data.length, 4);
         data.copy(cmd, 5);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
         debug("set advertisement data - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
+        const result = await p;
         return result.status;
     }
     async setScanResponseDataWait(data) {
@@ -12298,9 +10264,10 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(data.length, 4);
         data.copy(cmd, 5);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
         debug("set scan response data - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const result = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
+        const result = await p;
         return result.status;
     }
     async setAdvertiseEnableWait(enabled) {
@@ -12312,9 +10279,10 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x01, 3);
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
         debug("set advertise enable - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
+        const data = await p;
         return data.status;
     }
     async leReadBufferSizeWait() {
@@ -12324,9 +10292,10 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.LE_READ_BUFFER_SIZE_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
         debug("le read buffer size - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
+        const data = await p;
         if (!data.status) {
             await this.processLeReadBufferSizeWait(data.result);
         }
@@ -12338,9 +10307,10 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.READ_BUFFER_SIZE_CMD, 1);
         // length
         cmd.writeUInt8(0x0, 3);
+        const p = this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
         debug("read buffer size - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
+        const data = await p;
         if (!data.status) {
             const aclMtu = data.result.readUInt16LE(0);
             const aclMaxInProgress = data.result.readUInt16LE(3);
@@ -12425,8 +10395,9 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(COMMANDS.LE_LTK_NEG_REPLY_CMD, 1);
         // length
         cmd.writeUInt16LE(handle, 3);
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
         this._socket.write(cmd);
-        const data = await this.readCmdCompleteEventWait(COMMANDS.LE_LTK_NEG_REPLY_CMD);
+        const data = await p;
         return data.status;
     }
     processLeMetaEvent(eventType, status, data) {
@@ -12528,17 +10499,19 @@ class Hci extends eventemitter3_1.default {
         this._state = state;
         this.emit("stateChange", state);
     }
-    async readAclStreamWait(handle, cid, firstData) {
-        return new Promise((resolve) => {
+    async readAclStreamWait(handle, cid, firstData, timeout) {
+        return this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
             this._aclStreamObservers[handle][key].push(resolve);
-        });
+        }), { timeout, waitingFor: `readAclStream handle:${handle} cid:${cid} firstData:${firstData}` });
     }
-    async readLeMetaEventWait(eventType) {
+    async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
-        const data = await this._obnizHci.readWait(filter);
+        options = options || {};
+        options.waitingFor = "LeMetaEvent " + JSON.stringify(filter);
+        const data = await this._obnizHci.readWait(filter, options);
         const type = data.readUInt8(3);
         const status = data.readUInt8(4);
         const _data = data.slice(5);
@@ -12557,7 +10530,9 @@ class Hci extends eventemitter3_1.default {
                 ...additionalResultFilter,
             ];
         }
-        const data = await this._obnizHci.readWait(filter);
+        const options = {};
+        options.waitingFor = "CmdCompleteEvent " + JSON.stringify(filter);
+        const data = await this._obnizHci.readWait(filter, options);
         const eventType = data.readUInt8(0);
         const subEventType = data.readUInt8(1);
         const ncmd = data.readUInt8(3);
@@ -15152,12 +13127,8 @@ class M5StickC extends ObnizDevice_1.default {
             return this.imu;
         });
     }
-    _prepareComponents() {
-        // @ts-ignore
-        super._prepareComponents();
-        if (this.hw !== "m5stickc") {
-            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
-        }
+    async _beforeOnConnect() {
+        super._beforeOnConnect();
         if (this.ir) {
             // already wired parts
             return;
@@ -15177,6 +13148,13 @@ class M5StickC extends ObnizDevice_1.default {
         this._m5i2c.start(i2cParams);
         this.axp = this.wired("AXP192", { i2c: this._m5i2c });
         this.led.off();
+    }
+    _prepareComponents() {
+        // @ts-ignore
+        super._prepareComponents();
+        if (this.hw !== "m5stickc") {
+            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
+        }
     }
 }
 exports.M5StickC = M5StickC;
@@ -17171,16 +15149,16 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         if (typeof params.timeout === "number") {
             echo.timeout = params.timeout;
         }
+        if (typeof params.callback === "function") {
+            this.onceQueue("/response/measure/echo", (obj) => {
+                params.callback(obj.echo);
+            });
+        }
         this.Obniz.send({
             measure: {
                 echo,
             },
         });
-        if (params.callback) {
-            this.onceQueue("/response/measure/echo", (obj) => {
-                params.callback(obj.echo);
-            });
-        }
     }
     schemaBasePath() {
         return "measure";
@@ -22914,6 +20892,7 @@ var map = {
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/cir415a/index.js": "./dist/src/parts/Ble/cir415a/index.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01RG/index.js": "./dist/src/parts/Ble/iBS01RG/index.js",
 	"./Ble/iBS01T/index.js": "./dist/src/parts/Ble/iBS01T/index.js",
@@ -22934,6 +20913,8 @@ var map = {
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
 	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
+	"./Ble/tm530/index.js": "./dist/src/parts/Ble/tm530/index.js",
+	"./Ble/tm551/index.js": "./dist/src/parts/Ble/tm551/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
@@ -23332,17 +21313,44 @@ exports.default = Puls08M5stickcS;
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class OMRON_2JCIE {
-    constructor() {
-        this.keys = [];
-        this.requiredKeys = [];
-        this.periperal = null;
+    constructor(peripheral) {
+        this._peripheral = null;
+        if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_BTIREX2");
+        }
+        this._peripheral = peripheral;
     }
     static info() {
         return {
             name: "2JCIE",
         };
+    }
+    static isDevice(peripheral) {
+        return ((peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0));
+    }
+    /**
+     * Get a datas from advertisement mode of OMRON 2JCIE
+     */
+    static getData(peripheral) {
+        if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
+            const adv_data = peripheral.adv_data;
+            return {
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
+                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[18]) * 0.01,
+            };
+        }
+        return null;
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -23352,26 +21360,31 @@ class OMRON_2JCIE {
             localName: "Env",
         };
         await this.obniz.ble.initWait();
-        this.periperal = await this.obniz.ble.scan.startOneWait(target);
-        return this.periperal;
+        this._peripheral = await this.obniz.ble.scan.startOneWait(target);
+        return this._peripheral;
     }
     omron_uuid(uuid) {
         return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
     }
     async connectWait() {
-        if (!this.periperal) {
+        if (!this._peripheral) {
             await this.findWait();
         }
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("2JCIE not found");
         }
-        if (!this.periperal.connected) {
-            await this.periperal.connectWait();
+        if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
+            await this._peripheral.connectWait();
         }
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     signedNumberFromBinary(data) {
@@ -23395,7 +21408,7 @@ class OMRON_2JCIE {
     }
     async getLatestData() {
         await this.connectWait();
-        const c = this.periperal.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
+        const c = this._peripheral.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
         const data = await c.readWait();
         const json = {
             row_number: data[0],
@@ -23459,14 +21472,14 @@ class ENERTALK_TOUCH {
         }
         return false;
     }
-    // @ts-ignore
-    wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
             throw new Error("RS_BTIREX2 is not find.");
         }
-        this._peripheral.ondisconnect = () => {
-            console.log("disconnect");
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
         };
         await this._peripheral.connectWait();
         this._service = this._peripheral.getService(this._uuids.service);
@@ -23558,6 +21571,11 @@ class Logtta_AD {
             throw new Error("Logtta AD not found");
         }
         if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
             await this._peripheral.connectWait();
         }
     }
@@ -23622,6 +21640,7 @@ exports.default = Logtta_AD;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Logtta_Accel {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -23771,6 +21790,11 @@ class Logtta_CO2 {
             throw new Error("Logtta CO2 not found");
         }
         if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
             await this._peripheral.connectWait();
         }
     }
@@ -23839,6 +21863,11 @@ class Logtta_TH {
             throw new Error("Logtta TH not found");
         }
         if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
             await this._peripheral.connectWait();
         }
     }
@@ -23898,6 +21927,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 class MINEW_S1 {
     constructor() {
+        this._peripheral = null;
         // non-wired device
         this.keys = [];
         this.requiredKeys = [];
@@ -24030,6 +22060,7 @@ class REX_BTPM25V {
         this.keys = [];
         this.requiredKeys = [];
         this.onbuttonpressed = null;
+        this._peripheral = null;
         this._uuids = {
             service: "00001523-1212-EFDE-1523-785FEABCD123",
             buttonChar: "000000A1-1212-EFDE-1523-785FEABCD123",
@@ -24037,7 +22068,6 @@ class REX_BTPM25V {
             oneShotMeasurementChar: "000000A8-1212-EFDE-1523-785FEABCD123",
             ledChar: "000000A9-1212-EFDE-1523-785FEABCD123",
         };
-        this._peripheral = null;
         this._oneShotMeasurementCharacteristic = null;
         this._continuousMeasurementCharacteristic = null;
         this._ledCharacteristic = null;
@@ -24064,6 +22094,11 @@ class REX_BTPM25V {
         if (!this._peripheral) {
             throw new Error("RS_Seek3 is not find.");
         }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
         await this._peripheral.connectWait();
         this._oneShotMeasurementCharacteristic = this._peripheral
             .getService(this._uuids.service)
@@ -24255,7 +22290,7 @@ class RS_BTIREX2 {
         };
         await this._peripheral.connectWait();
         console.error("encrypt start");
-        const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
+        // const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
         // this._peripheral.obnizBle.centralBindings._aclStreams[handle].encrypt();
         this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
         this._txCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.txChar);
@@ -24331,6 +22366,11 @@ class RS_Seek3 {
         if (!this._peripheral) {
             throw new Error("RS_Seek3 is not find.");
         }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
         await this._peripheral.connectWait();
         this._buttonCharacteristic = this._peripheral
             .getService(this._uuids.service)
@@ -24365,6 +22405,272 @@ exports.default = RS_Seek3;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/cir415a/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.cir415a
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
+class cir415a {
+    constructor(peripheral) {
+        this.onNotify = null;
+        this.onAuthenticated = null;
+        this.onCardTouch = null;
+        this._peripheral = null;
+        this._authenticated = false;
+        this.masterKey = [
+            0x41,
+            0x43,
+            0x52,
+            0x31,
+            0x32,
+            0x35,
+            0x35,
+            0x55,
+            0x2d,
+            0x4a,
+            0x31,
+            0x20,
+            0x41,
+            0x75,
+            0x74,
+            0x68,
+        ];
+        this.sessionKey = [];
+        this.randomDeviceNumber = [];
+        this.randomNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        this._uuids = {
+            service: "3C4AFFF0-4783-3DE5-A983-D348718EF133",
+            writeChar: "3C4AFFF1-4783-3DE5-A983-D348718EF133",
+            readChar: "3C4AFFF2-4783-3DE5-A983-D348718EF133",
+        };
+        this.readData = [];
+        this.readChar = null;
+        if (peripheral && !cir415a.isDevice(peripheral)) {
+            throw new Error("peripheral is not cir415a");
+        }
+        this._peripheral = peripheral;
+        this._authenticated = false;
+    }
+    static info() {
+        return {
+            name: "cir415a",
+        };
+    }
+    static isDevice(peripheral) {
+        var _a;
+        return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("ACR1255U-J1-")) === 0;
+    }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("peripheral is not cir415a");
+        }
+        if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
+            await this._peripheral.connectWait();
+            this.randomDeviceNumber = [];
+            this.readData = [];
+        }
+        const service = this._peripheral.getService(this._uuids.service);
+        this.readChar = service.getCharacteristic(this._uuids.writeChar);
+        await service.getCharacteristic(this._uuids.readChar).registerNotifyWait(async (data) => {
+            this.readPacket(data);
+        });
+        await this.writeBle([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x45, 0x00], null); // auth step.1
+    }
+    async disconnectWait() {
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
+        }
+    }
+    async write(data) {
+        if (!this._authenticated) {
+            throw new Error("cir415a no authenticate");
+        }
+        if (data.length % 16 !== 0) {
+            const l = 16 - (data.length % 16);
+            for (let i = 0; i < l; i++) {
+                data.push(0xff);
+            }
+        }
+        this.writeBle(data, this.sessionKey);
+    }
+    setMasterKey(key) {
+        if (key.length !== 16) {
+            throw new Error("setMasterKey length error");
+        }
+        this.masterKey = key;
+    }
+    async setAutoPollingWait(enable) {
+        if (!this._authenticated) {
+            throw new Error("cir415a no authenticate");
+        }
+        await this.write([0x6b, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x40, enable ? 0x01 : 0x00]);
+    }
+    async writeADPU(data) {
+        if (!this._authenticated) {
+            throw new Error("cir415a no authenticate");
+        }
+        await this.write([0x6f, (data.length & 0xff00) >> 8, data.length & 0x00ff, 0x00, 0x00, 0x00, 0x00].concat(data));
+    }
+    readPacket(data) {
+        this.readData = this.readData.concat(data);
+        if (this.readData[0] !== 0x05) {
+            this.readData = [];
+        }
+        const dLength = ((this.readData[1] & 0xff) << 8) | (this.readData[2] & 0x00ff);
+        if (this.readData.length - 5 < dLength) {
+            // lack data length
+            return;
+        }
+        if (this.readData[dLength + 4] === 0x0a) {
+            // last packet check
+            data = this.readData.slice(0, dLength + 5);
+            this.parseBlePacket(data);
+            if (this.readData.length > dLength + 5) {
+                // more data
+                this.readData = this.readData.slice(dLength + 5);
+                this.readPacket([]);
+            }
+            else {
+                // delete data
+                this.readData = [];
+            }
+        }
+        else {
+            // console.log("error data");
+            this.readData = [];
+        }
+    }
+    encrypt(data, key) {
+        const c = crypto_1.default.createCipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+        c.setAutoPadding(false);
+        let t = c.update(Buffer.from(data), undefined, "hex");
+        t += c.final("hex");
+        return Array.from(Buffer.from(t, "hex"));
+    }
+    decrypt(data, key) {
+        const dec = crypto_1.default.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
+        dec.setAutoPadding(false);
+        let t = dec.update(Buffer.from(data), "binary", "binary");
+        t += dec.final("binary");
+        const d = Array.from(Buffer.from(t));
+        const list = [];
+        for (let i = 0; i < d.length; i++) {
+            list.push(d[i] >= 194 ? ((d[i] & 0b00000011) << 6) | (d[++i] & 0b00111111) : d[i]);
+        }
+        return list;
+    }
+    parseBlePacket(data) {
+        switch (data[3]) {
+            case 0x83:
+                if (!this._authenticated) {
+                    if (this.randomDeviceNumber.length <= 0) {
+                        // auth step.2
+                        let randomDevice = [];
+                        for (let i = 15; i < data.length - 2; i++) {
+                            randomDevice.push(data[i]);
+                        }
+                        this.randomDeviceNumber = randomDevice;
+                        randomDevice = this.decrypt(randomDevice, this.masterKey);
+                        this.sessionKey = randomDevice.slice(0, 8).concat(this.randomNumber.slice(0, 8));
+                        randomDevice = this.decrypt(this.randomNumber.concat(randomDevice), this.masterKey);
+                        let sendPacket = [0x6b, 0x00, 0x25, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x46, 0x00];
+                        sendPacket = sendPacket.concat(randomDevice);
+                        this.writeBle(sendPacket, null);
+                        return;
+                        // auth step.3
+                    }
+                    else {
+                        // auth step.4
+                        let randomDevice = [];
+                        for (let i = 15; i < data.length - 2; i++) {
+                            randomDevice.push(data[i]);
+                        }
+                        randomDevice = this.decrypt(randomDevice, this.masterKey);
+                        if (this.arrayMatch(this.randomNumber, randomDevice)) {
+                            this._authenticated = true;
+                            if (this.onAuthenticated) {
+                                this.onAuthenticated();
+                            }
+                        }
+                        return;
+                    }
+                }
+                break;
+        }
+        const d = this.decrypt(data.slice(3, data.length - 2), this.sessionKey);
+        const dLen = (((d[1] & 0xff) << 8) | (d[2] & 0x00ff)) + 7; // command Data Form 7 length
+        const dt = d.slice(0, dLen);
+        switch (dt[0]) {
+            case 0x50:
+                if (this.onCardTouch) {
+                    this.onCardTouch(dt[5] === 3);
+                }
+                break;
+        }
+        if (this.onNotify) {
+            this.onNotify(dt);
+        }
+    }
+    async writeBle(data, key) {
+        let packet = [0x05, (data.length & 0xff00) >> 8, data.length & 0x00ff];
+        let checksum = 0;
+        for (let i = 0; i < data.length; i++) {
+            if (i === 6) {
+                continue; // check sum
+            }
+            checksum = (checksum ^ data[i]) & 0xff;
+        }
+        data[6] = checksum;
+        if (key !== null) {
+            data = this.encrypt(data, key);
+        }
+        packet = packet.concat(data);
+        checksum = 0;
+        for (let i = 1; i < packet.length; i++) {
+            checksum = (checksum ^ packet[i]) & 0xff;
+        }
+        packet.push(checksum);
+        packet.push(0x0a);
+        for (let i = 0; i < packet.length / 20; i++) {
+            const d = packet.slice(i * 20, (i + 1) * 20);
+            await this.readChar.writeWait(d);
+        }
+    }
+    arrayMatch(array1, array2) {
+        if (array1.length === array2.length) {
+            for (let i = 0; i < array1.length; i++) {
+                if (array1[i] === array2[i]) {
+                    break;
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+}
+exports.default = cir415a;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/iBS01/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24377,6 +22683,7 @@ exports.default = RS_Seek3;
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS01 {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -24509,6 +22816,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS01RG {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -24593,6 +22901,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS01T {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -24684,6 +22993,7 @@ IBS01T.deviceAdv = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS02IR {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -24758,6 +23068,7 @@ IBS02IR.deviceAdv = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS02PIR {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -24836,6 +23147,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS03T {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -24927,6 +23239,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class IBS03TP {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -25015,6 +23328,7 @@ IBS03TP.deviceAdv = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS03 {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -25101,6 +23415,7 @@ IBS03.deviceAdv = [
 Object.defineProperty(exports, "__esModule", { value: true });
 class IBS04I {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {
@@ -25344,7 +23659,7 @@ class Linking {
                 id_filter = p.idFilter;
             }
         }
-        this.obniz.ble.scan.onfind = function (peripheral) {
+        this.obniz.ble.scan.onfind = (peripheral) => {
             if (!peripheral.localName) {
                 return;
             }
@@ -25355,7 +23670,7 @@ class Linking {
             // if (id_filter && peripheral.id.indexOf(id_filter) !== 0) {
             //   return;
             // }
-            if (this.onadvertisement && typeof this.onadvertisement === "function") {
+            if (typeof this.onadvertisement === "function") {
                 const parsed = advertising_1.default.parse(peripheral);
                 if (parsed) {
                     this.onadvertisement(parsed);
@@ -26144,7 +24459,7 @@ class LinkingDevice {
         }
     }
     _initServices() {
-        const device_name = this._peripheral.localName;
+        const device_name = this._peripheral.localName || "";
         // Device Name
         if (this._generic_access_service.device_name.char) {
             this.services.deviceName = {
@@ -29393,6 +27708,9 @@ exports.default = LinkingService;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 class SCBTGAAAC {
+    constructor() {
+        this._peripheral = null;
+    }
     static info() {
         return {
             name: "SCBTGAAAC",
@@ -29432,9 +27750,165 @@ class SCBTGAAAC {
         }
         return undefined;
     }
-    constructor() { }
 }
 exports.default = SCBTGAAAC;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/tm530/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.TM530
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class TM530 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: "TM530",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!TM530.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: peripheral.adv_data[13],
+            temperature: peripheral.adv_data[14] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            humidity: peripheral.adv_data[16] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+        };
+        return data;
+    }
+}
+exports.default = TM530;
+TM530.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x03,
+    0x03,
+    0xe1,
+    0xff,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0x01,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/tm551/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.TM551
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
+class TM551 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: "TM551",
+        };
+    }
+    static isDevice(peripheral) {
+        if (this.deviceAdv.length > peripheral.adv_data.length) {
+            return false;
+        }
+        for (let index = 0; index < this.deviceAdv.length; index++) {
+            if (this.deviceAdv[index] === -1) {
+                continue;
+            }
+            if (peripheral.adv_data[index] === this.deviceAdv[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!TM551.isDevice(peripheral)) {
+            return null;
+        }
+        const data = {
+            battery: peripheral.adv_data[13],
+            x: peripheral.adv_data[14] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+            y: peripheral.adv_data[16] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+            z: peripheral.adv_data[18] + ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[19]),
+        };
+        return data;
+    }
+}
+exports.default = TM551;
+TM551.deviceAdv = [
+    0x02,
+    0x01,
+    0x06,
+    0x03,
+    0x03,
+    0xe1,
+    0xff,
+    -1,
+    -1,
+    -1,
+    -1,
+    0xa1,
+    0x03,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+];
 
 //# sourceMappingURL=index.js.map
 
@@ -29457,6 +27931,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js"));
 class uPRISM {
     constructor(peripheral) {
+        this._peripheral = null;
         this.readIndex = -1;
         this.accelRange = 1024;
         this._uuids = {
@@ -29470,7 +27945,7 @@ class uPRISM {
         if (peripheral && !uPRISM.isDevice(peripheral)) {
             throw new Error("peripheral is not uPRISM");
         }
-        this.periperal = peripheral;
+        this._peripheral = peripheral;
     }
     static info() {
         return {
@@ -29482,16 +27957,21 @@ class uPRISM {
         return ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.indexOf("uPrism_")) === 0;
     }
     async connectWait() {
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("peripheral is not uPRISM");
         }
-        if (!this.periperal.connected) {
-            await this.periperal.connectWait();
+        if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
+            await this._peripheral.connectWait();
         }
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            await this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     setAccelRange(range) {
@@ -29511,12 +27991,12 @@ class uPRISM {
         }
     }
     async startNotifyWait() {
-        if (!this.periperal || !this.periperal.connected) {
+        if (!this._peripheral || !this._peripheral.connected) {
             throw new Error("peripheral not connected uPRISM");
         }
-        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        const rc = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x01]);
-        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        const c = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
         await c.registerNotifyWait((data) => {
             if (data[1] !== 0x14) {
                 return;
@@ -29576,12 +28056,12 @@ class uPRISM {
         });
     }
     async stopNotifyWait() {
-        if (!(this.periperal && this.periperal.connected)) {
+        if (!(this._peripheral && this._peripheral.connected)) {
             return;
         }
-        const rc = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
+        const rc = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.settingEnableChar);
         await rc.writeWait([0x04, 0x03, 0x00]);
-        const c = this.periperal.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
+        const c = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.notifyChar);
         await c.unregisterNotifyWait();
     }
 }
@@ -47784,6 +46264,521 @@ PEMEncoder.prototype.encode = function encode(data, options) {
 
 /***/ }),
 
+/***/ "./node_modules/assert/assert.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var objectAssign = __webpack_require__("./node_modules/object-assign/index.js");
+
+// compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
+// original notice:
+
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+function compare(a, b) {
+  if (a === b) {
+    return 0;
+  }
+
+  var x = a.length;
+  var y = b.length;
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i];
+      y = b[i];
+      break;
+    }
+  }
+
+  if (x < y) {
+    return -1;
+  }
+  if (y < x) {
+    return 1;
+  }
+  return 0;
+}
+function isBuffer(b) {
+  if (global.Buffer && typeof global.Buffer.isBuffer === 'function') {
+    return global.Buffer.isBuffer(b);
+  }
+  return !!(b != null && b._isBuffer);
+}
+
+// based on node assert, original notice:
+// NB: The URL to the CommonJS spec is kept just for tradition.
+//     node-assert has evolved a lot since then, both in API and behavior.
+
+// http://wiki.commonjs.org/wiki/Unit_Testing/1.0
+//
+// THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
+//
+// Originally from narwhal.js (http://narwhaljs.org)
+// Copyright (c) 2009 Thomas Robinson <280north.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the 'Software'), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+var hasOwn = Object.prototype.hasOwnProperty;
+var pSlice = Array.prototype.slice;
+var functionsHaveNames = (function () {
+  return function foo() {}.name === 'foo';
+}());
+function pToString (obj) {
+  return Object.prototype.toString.call(obj);
+}
+function isView(arrbuf) {
+  if (isBuffer(arrbuf)) {
+    return false;
+  }
+  if (typeof global.ArrayBuffer !== 'function') {
+    return false;
+  }
+  if (typeof ArrayBuffer.isView === 'function') {
+    return ArrayBuffer.isView(arrbuf);
+  }
+  if (!arrbuf) {
+    return false;
+  }
+  if (arrbuf instanceof DataView) {
+    return true;
+  }
+  if (arrbuf.buffer && arrbuf.buffer instanceof ArrayBuffer) {
+    return true;
+  }
+  return false;
+}
+// 1. The assert module provides functions that throw
+// AssertionError's when particular conditions are not met. The
+// assert module must conform to the following interface.
+
+var assert = module.exports = ok;
+
+// 2. The AssertionError is defined in assert.
+// new assert.AssertionError({ message: message,
+//                             actual: actual,
+//                             expected: expected })
+
+var regex = /\s*function\s+([^\(\s]*)\s*/;
+// based on https://github.com/ljharb/function.prototype.name/blob/adeeeec8bfcc6068b187d7d9fb3d5bb1d3a30899/implementation.js
+function getName(func) {
+  if (!util.isFunction(func)) {
+    return;
+  }
+  if (functionsHaveNames) {
+    return func.name;
+  }
+  var str = func.toString();
+  var match = str.match(regex);
+  return match && match[1];
+}
+assert.AssertionError = function AssertionError(options) {
+  this.name = 'AssertionError';
+  this.actual = options.actual;
+  this.expected = options.expected;
+  this.operator = options.operator;
+  if (options.message) {
+    this.message = options.message;
+    this.generatedMessage = false;
+  } else {
+    this.message = getMessage(this);
+    this.generatedMessage = true;
+  }
+  var stackStartFunction = options.stackStartFunction || fail;
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, stackStartFunction);
+  } else {
+    // non v8 browsers so we can have a stacktrace
+    var err = new Error();
+    if (err.stack) {
+      var out = err.stack;
+
+      // try to strip useless frames
+      var fn_name = getName(stackStartFunction);
+      var idx = out.indexOf('\n' + fn_name);
+      if (idx >= 0) {
+        // once we have located the function frame
+        // we need to strip out everything before it (and its line)
+        var next_line = out.indexOf('\n', idx + 1);
+        out = out.substring(next_line + 1);
+      }
+
+      this.stack = out;
+    }
+  }
+};
+
+// assert.AssertionError instanceof Error
+util.inherits(assert.AssertionError, Error);
+
+function truncate(s, n) {
+  if (typeof s === 'string') {
+    return s.length < n ? s : s.slice(0, n);
+  } else {
+    return s;
+  }
+}
+function inspect(something) {
+  if (functionsHaveNames || !util.isFunction(something)) {
+    return util.inspect(something);
+  }
+  var rawname = getName(something);
+  var name = rawname ? ': ' + rawname : '';
+  return '[Function' +  name + ']';
+}
+function getMessage(self) {
+  return truncate(inspect(self.actual), 128) + ' ' +
+         self.operator + ' ' +
+         truncate(inspect(self.expected), 128);
+}
+
+// At present only the three keys mentioned above are used and
+// understood by the spec. Implementations or sub modules can pass
+// other keys to the AssertionError's constructor - they will be
+// ignored.
+
+// 3. All of the following functions must throw an AssertionError
+// when a corresponding condition is not met, with a message that
+// may be undefined if not provided.  All assertion methods provide
+// both the actual and expected values to the assertion error for
+// display purposes.
+
+function fail(actual, expected, message, operator, stackStartFunction) {
+  throw new assert.AssertionError({
+    message: message,
+    actual: actual,
+    expected: expected,
+    operator: operator,
+    stackStartFunction: stackStartFunction
+  });
+}
+
+// EXTENSION! allows for well behaved errors defined elsewhere.
+assert.fail = fail;
+
+// 4. Pure assertion tests whether a value is truthy, as determined
+// by !!guard.
+// assert.ok(guard, message_opt);
+// This statement is equivalent to assert.equal(true, !!guard,
+// message_opt);. To test strictly for the value true, use
+// assert.strictEqual(true, guard, message_opt);.
+
+function ok(value, message) {
+  if (!value) fail(value, true, message, '==', assert.ok);
+}
+assert.ok = ok;
+
+// 5. The equality assertion tests shallow, coercive equality with
+// ==.
+// assert.equal(actual, expected, message_opt);
+
+assert.equal = function equal(actual, expected, message) {
+  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
+};
+
+// 6. The non-equality assertion tests for whether two objects are not equal
+// with != assert.notEqual(actual, expected, message_opt);
+
+assert.notEqual = function notEqual(actual, expected, message) {
+  if (actual == expected) {
+    fail(actual, expected, message, '!=', assert.notEqual);
+  }
+};
+
+// 7. The equivalence assertion tests a deep equality relation.
+// assert.deepEqual(actual, expected, message_opt);
+
+assert.deepEqual = function deepEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected, false)) {
+    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
+  }
+};
+
+assert.deepStrictEqual = function deepStrictEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected, true)) {
+    fail(actual, expected, message, 'deepStrictEqual', assert.deepStrictEqual);
+  }
+};
+
+function _deepEqual(actual, expected, strict, memos) {
+  // 7.1. All identical values are equivalent, as determined by ===.
+  if (actual === expected) {
+    return true;
+  } else if (isBuffer(actual) && isBuffer(expected)) {
+    return compare(actual, expected) === 0;
+
+  // 7.2. If the expected value is a Date object, the actual value is
+  // equivalent if it is also a Date object that refers to the same time.
+  } else if (util.isDate(actual) && util.isDate(expected)) {
+    return actual.getTime() === expected.getTime();
+
+  // 7.3 If the expected value is a RegExp object, the actual value is
+  // equivalent if it is also a RegExp object with the same source and
+  // properties (`global`, `multiline`, `lastIndex`, `ignoreCase`).
+  } else if (util.isRegExp(actual) && util.isRegExp(expected)) {
+    return actual.source === expected.source &&
+           actual.global === expected.global &&
+           actual.multiline === expected.multiline &&
+           actual.lastIndex === expected.lastIndex &&
+           actual.ignoreCase === expected.ignoreCase;
+
+  // 7.4. Other pairs that do not both pass typeof value == 'object',
+  // equivalence is determined by ==.
+  } else if ((actual === null || typeof actual !== 'object') &&
+             (expected === null || typeof expected !== 'object')) {
+    return strict ? actual === expected : actual == expected;
+
+  // If both values are instances of typed arrays, wrap their underlying
+  // ArrayBuffers in a Buffer each to increase performance
+  // This optimization requires the arrays to have the same type as checked by
+  // Object.prototype.toString (aka pToString). Never perform binary
+  // comparisons for Float*Arrays, though, since e.g. +0 === -0 but their
+  // bit patterns are not identical.
+  } else if (isView(actual) && isView(expected) &&
+             pToString(actual) === pToString(expected) &&
+             !(actual instanceof Float32Array ||
+               actual instanceof Float64Array)) {
+    return compare(new Uint8Array(actual.buffer),
+                   new Uint8Array(expected.buffer)) === 0;
+
+  // 7.5 For all other Object pairs, including Array objects, equivalence is
+  // determined by having the same number of owned properties (as verified
+  // with Object.prototype.hasOwnProperty.call), the same set of keys
+  // (although not necessarily the same order), equivalent values for every
+  // corresponding key, and an identical 'prototype' property. Note: this
+  // accounts for both named and indexed properties on Arrays.
+  } else if (isBuffer(actual) !== isBuffer(expected)) {
+    return false;
+  } else {
+    memos = memos || {actual: [], expected: []};
+
+    var actualIndex = memos.actual.indexOf(actual);
+    if (actualIndex !== -1) {
+      if (actualIndex === memos.expected.indexOf(expected)) {
+        return true;
+      }
+    }
+
+    memos.actual.push(actual);
+    memos.expected.push(expected);
+
+    return objEquiv(actual, expected, strict, memos);
+  }
+}
+
+function isArguments(object) {
+  return Object.prototype.toString.call(object) == '[object Arguments]';
+}
+
+function objEquiv(a, b, strict, actualVisitedObjects) {
+  if (a === null || a === undefined || b === null || b === undefined)
+    return false;
+  // if one is a primitive, the other must be same
+  if (util.isPrimitive(a) || util.isPrimitive(b))
+    return a === b;
+  if (strict && Object.getPrototypeOf(a) !== Object.getPrototypeOf(b))
+    return false;
+  var aIsArgs = isArguments(a);
+  var bIsArgs = isArguments(b);
+  if ((aIsArgs && !bIsArgs) || (!aIsArgs && bIsArgs))
+    return false;
+  if (aIsArgs) {
+    a = pSlice.call(a);
+    b = pSlice.call(b);
+    return _deepEqual(a, b, strict);
+  }
+  var ka = objectKeys(a);
+  var kb = objectKeys(b);
+  var key, i;
+  // having the same number of owned properties (keys incorporates
+  // hasOwnProperty)
+  if (ka.length !== kb.length)
+    return false;
+  //the same set of keys (although not necessarily the same order),
+  ka.sort();
+  kb.sort();
+  //~~~cheap key test
+  for (i = ka.length - 1; i >= 0; i--) {
+    if (ka[i] !== kb[i])
+      return false;
+  }
+  //equivalent values for every corresponding key, and
+  //~~~possibly expensive deep test
+  for (i = ka.length - 1; i >= 0; i--) {
+    key = ka[i];
+    if (!_deepEqual(a[key], b[key], strict, actualVisitedObjects))
+      return false;
+  }
+  return true;
+}
+
+// 8. The non-equivalence assertion tests for any deep inequality.
+// assert.notDeepEqual(actual, expected, message_opt);
+
+assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected, false)) {
+    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
+  }
+};
+
+assert.notDeepStrictEqual = notDeepStrictEqual;
+function notDeepStrictEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected, true)) {
+    fail(actual, expected, message, 'notDeepStrictEqual', notDeepStrictEqual);
+  }
+}
+
+
+// 9. The strict equality assertion tests strict equality, as determined by ===.
+// assert.strictEqual(actual, expected, message_opt);
+
+assert.strictEqual = function strictEqual(actual, expected, message) {
+  if (actual !== expected) {
+    fail(actual, expected, message, '===', assert.strictEqual);
+  }
+};
+
+// 10. The strict non-equality assertion tests for strict inequality, as
+// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
+
+assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
+  if (actual === expected) {
+    fail(actual, expected, message, '!==', assert.notStrictEqual);
+  }
+};
+
+function expectedException(actual, expected) {
+  if (!actual || !expected) {
+    return false;
+  }
+
+  if (Object.prototype.toString.call(expected) == '[object RegExp]') {
+    return expected.test(actual);
+  }
+
+  try {
+    if (actual instanceof expected) {
+      return true;
+    }
+  } catch (e) {
+    // Ignore.  The instanceof check doesn't work for arrow functions.
+  }
+
+  if (Error.isPrototypeOf(expected)) {
+    return false;
+  }
+
+  return expected.call({}, actual) === true;
+}
+
+function _tryBlock(block) {
+  var error;
+  try {
+    block();
+  } catch (e) {
+    error = e;
+  }
+  return error;
+}
+
+function _throws(shouldThrow, block, expected, message) {
+  var actual;
+
+  if (typeof block !== 'function') {
+    throw new TypeError('"block" argument must be a function');
+  }
+
+  if (typeof expected === 'string') {
+    message = expected;
+    expected = null;
+  }
+
+  actual = _tryBlock(block);
+
+  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
+            (message ? ' ' + message : '.');
+
+  if (shouldThrow && !actual) {
+    fail(actual, expected, 'Missing expected exception' + message);
+  }
+
+  var userProvidedMessage = typeof message === 'string';
+  var isUnwantedException = !shouldThrow && util.isError(actual);
+  var isUnexpectedException = !shouldThrow && actual && !expected;
+
+  if ((isUnwantedException &&
+      userProvidedMessage &&
+      expectedException(actual, expected)) ||
+      isUnexpectedException) {
+    fail(actual, expected, 'Got unwanted exception' + message);
+  }
+
+  if ((shouldThrow && actual && expected &&
+      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
+    throw actual;
+  }
+}
+
+// 11. Expected to throw an error:
+// assert.throws(block, Error_opt, message_opt);
+
+assert.throws = function(block, /*optional*/error, /*optional*/message) {
+  _throws(true, block, error, message);
+};
+
+// EXTENSION! This is annoying to write outside this module.
+assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
+  _throws(false, block, error, message);
+};
+
+assert.ifError = function(err) { if (err) throw err; };
+
+// Expose a strict only variant of assert
+function strict(value, message) {
+  if (!value) fail(value, true, message, '==', strict);
+}
+assert.strict = objectAssign(strict, assert, {
+  equal: assert.strictEqual,
+  deepEqual: assert.deepStrictEqual,
+  notEqual: assert.notStrictEqual,
+  notDeepEqual: assert.notDeepStrictEqual
+});
+assert.strict.strict = assert.strict;
+
+var objectKeys = Object.keys || function (obj) {
+  var keys = [];
+  for (var key in obj) {
+    if (hasOwn.call(obj, key)) keys.push(key);
+  }
+  return keys;
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
 /***/ "./node_modules/base64-js/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -64156,6 +63151,857 @@ exports.default = global.fetch.bind(global);
 exports.Headers = global.Headers;
 exports.Request = global.Request;
 exports.Response = global.Response;
+
+/***/ }),
+
+/***/ "./node_modules/node-libs-browser/node_modules/inherits/inherits_browser.js":
+/***/ (function(module, exports) {
+
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/node-libs-browser/node_modules/util/support/isBufferBrowser.js":
+/***/ (function(module, exports) {
+
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+
+/***/ }),
+
+/***/ "./node_modules/node-libs-browser/node_modules/util/util.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
+  function getOwnPropertyDescriptors(obj) {
+    var keys = Object.keys(obj);
+    var descriptors = {};
+    for (var i = 0; i < keys.length; i++) {
+      descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
+    }
+    return descriptors;
+  };
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+};
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  if (typeof process !== 'undefined' && process.noDeprecation === true) {
+    return fn;
+  }
+
+  // Allow for deprecating things in the process of starting up.
+  if (typeof process === 'undefined') {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    exports._extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+exports.inspect = inspect;
+
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== exports.inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/support/isBufferBrowser.js");
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+exports.log = function() {
+  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+};
+
+
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+exports.inherits = __webpack_require__("./node_modules/node-libs-browser/node_modules/inherits/inherits_browser.js");
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+var kCustomPromisifiedSymbol = typeof Symbol !== 'undefined' ? Symbol('util.promisify.custom') : undefined;
+
+exports.promisify = function promisify(original) {
+  if (typeof original !== 'function')
+    throw new TypeError('The "original" argument must be of type Function');
+
+  if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
+    var fn = original[kCustomPromisifiedSymbol];
+    if (typeof fn !== 'function') {
+      throw new TypeError('The "util.promisify.custom" argument must be of type Function');
+    }
+    Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+      value: fn, enumerable: false, writable: false, configurable: true
+    });
+    return fn;
+  }
+
+  function fn() {
+    var promiseResolve, promiseReject;
+    var promise = new Promise(function (resolve, reject) {
+      promiseResolve = resolve;
+      promiseReject = reject;
+    });
+
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+    args.push(function (err, value) {
+      if (err) {
+        promiseReject(err);
+      } else {
+        promiseResolve(value);
+      }
+    });
+
+    try {
+      original.apply(this, args);
+    } catch (err) {
+      promiseReject(err);
+    }
+
+    return promise;
+  }
+
+  Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
+
+  if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+    value: fn, enumerable: false, writable: false, configurable: true
+  });
+  return Object.defineProperties(
+    fn,
+    getOwnPropertyDescriptors(original)
+  );
+}
+
+exports.promisify.custom = kCustomPromisifiedSymbol
+
+function callbackifyOnRejected(reason, cb) {
+  // `!reason` guard inspired by bluebird (Ref: https://goo.gl/t5IS6M).
+  // Because `null` is a special error value in callbacks which means "no error
+  // occurred", we error-wrap so the callback consumer can distinguish between
+  // "the promise rejected with null" or "the promise fulfilled with undefined".
+  if (!reason) {
+    var newReason = new Error('Promise was rejected with a falsy value');
+    newReason.reason = reason;
+    reason = newReason;
+  }
+  return cb(reason);
+}
+
+function callbackify(original) {
+  if (typeof original !== 'function') {
+    throw new TypeError('The "original" argument must be of type Function');
+  }
+
+  // We DO NOT return the promise as it gives the user a false sense that
+  // the promise is actually somehow related to the callback's execution
+  // and that the callback throwing will reject the promise.
+  function callbackified() {
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+
+    var maybeCb = args.pop();
+    if (typeof maybeCb !== 'function') {
+      throw new TypeError('The last argument must be of type Function');
+    }
+    var self = this;
+    var cb = function() {
+      return maybeCb.apply(self, arguments);
+    };
+    // In true node style we process the callback on `nextTick` with all the
+    // implications (stack, `uncaughtException`, `async_hooks`)
+    original.apply(this, args)
+      .then(function(ret) { process.nextTick(cb, null, ret) },
+            function(rej) { process.nextTick(callbackifyOnRejected, rej, cb) });
+  }
+
+  Object.setPrototypeOf(callbackified, Object.getPrototypeOf(original));
+  Object.defineProperties(callbackified,
+                          getOwnPropertyDescriptors(original));
+  return callbackified;
+}
+exports.callbackify = callbackify;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
+
+/***/ }),
+
+/***/ "./node_modules/object-assign/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
 
 /***/ }),
 

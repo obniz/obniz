@@ -5,6 +5,7 @@ class REX_BTPM25V {
         this.keys = [];
         this.requiredKeys = [];
         this.onbuttonpressed = null;
+        this._peripheral = null;
         this._uuids = {
             service: "00001523-1212-EFDE-1523-785FEABCD123",
             buttonChar: "000000A1-1212-EFDE-1523-785FEABCD123",
@@ -12,7 +13,6 @@ class REX_BTPM25V {
             oneShotMeasurementChar: "000000A8-1212-EFDE-1523-785FEABCD123",
             ledChar: "000000A9-1212-EFDE-1523-785FEABCD123",
         };
-        this._peripheral = null;
         this._oneShotMeasurementCharacteristic = null;
         this._continuousMeasurementCharacteristic = null;
         this._ledCharacteristic = null;
@@ -39,6 +39,11 @@ class REX_BTPM25V {
         if (!this._peripheral) {
             throw new Error("RS_Seek3 is not find.");
         }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
         await this._peripheral.connectWait();
         this._oneShotMeasurementCharacteristic = this._peripheral
             .getService(this._uuids.service)

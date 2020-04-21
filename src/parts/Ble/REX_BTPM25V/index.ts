@@ -24,6 +24,9 @@ export default class REX_BTPM25V implements ObnizPartsInterface {
   public params: any;
   public onbuttonpressed: ((pressed: boolean) => void) | null = null;
 
+  public _peripheral: BleRemotePeripheral | null = null;
+  public ondisconnect?: (reason: any) => void;
+
   private _uuids = {
     service: "00001523-1212-EFDE-1523-785FEABCD123",
     buttonChar: "000000A1-1212-EFDE-1523-785FEABCD123",
@@ -31,7 +34,6 @@ export default class REX_BTPM25V implements ObnizPartsInterface {
     oneShotMeasurementChar: "000000A8-1212-EFDE-1523-785FEABCD123",
     ledChar: "000000A9-1212-EFDE-1523-785FEABCD123",
   };
-  private _peripheral: BleRemotePeripheral | null = null;
   private _oneShotMeasurementCharacteristic: BleRemoteCharacteristic | null = null;
   private _continuousMeasurementCharacteristic: BleRemoteCharacteristic | null = null;
   private _ledCharacteristic: BleRemoteCharacteristic | null = null;
@@ -51,6 +53,11 @@ export default class REX_BTPM25V implements ObnizPartsInterface {
     if (!this._peripheral) {
       throw new Error("RS_Seek3 is not find.");
     }
+    this._peripheral.ondisconnect = (reason: any) => {
+      if (typeof this.ondisconnect === "function") {
+        this.ondisconnect(reason);
+      }
+    };
     await this._peripheral.connectWait();
     this._oneShotMeasurementCharacteristic = this._peripheral
       .getService(this._uuids.service)!

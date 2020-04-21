@@ -41,7 +41,7 @@ class RS_BTIREX2 {
         };
         await this._peripheral.connectWait();
         console.error("encrypt start");
-        const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
+        // const handle = this._peripheral.obnizBle.centralBindings._handles[this._peripheral.address];
         // this._peripheral.obnizBle.centralBindings._aclStreams[handle].encrypt();
         this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
         this._txCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.txChar);

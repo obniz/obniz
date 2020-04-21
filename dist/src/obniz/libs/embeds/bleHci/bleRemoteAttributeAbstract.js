@@ -28,16 +28,6 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         const childName = childrenName.slice(0, -1);
         return childName + "_uuid";
     }
-    /**
-     * @ignore
-     * @param child
-     */
-    ondiscover(child) { }
-    /**
-     * @ignore
-     * @param children
-     */
-    ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteAttributeAbstract;
 

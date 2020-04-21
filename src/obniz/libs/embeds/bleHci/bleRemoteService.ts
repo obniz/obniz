@@ -145,7 +145,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    *      peripheral.connect({autoDiscovery:false});
    *     }
    * }
-   * obniz.ble.scan.start();
+   * await obniz.ble.scan.startWait();
    * ```
    */
   public async discoverAllCharacteristicsWait(): Promise<BleRemoteCharacteristic[]> {
@@ -175,7 +175,9 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @param characteristic
    */
   public ondiscover(characteristic: any) {
-    this.ondiscovercharacteristic(characteristic);
+    setTimeout(() => {
+      this.ondiscovercharacteristic(characteristic);
+    }, 0);
   }
 
   /**
@@ -183,7 +185,9 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @param characteristics
    */
   public ondiscoverfinished(characteristics: any) {
-    this.ondiscovercharacteristicfinished(characteristics);
+    setTimeout(() => {
+      this.ondiscovercharacteristicfinished(characteristics);
+    }, 0);
   }
 
   /**

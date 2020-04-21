@@ -73,16 +73,16 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         if (typeof params.timeout === "number") {
             echo.timeout = params.timeout;
         }
+        if (typeof params.callback === "function") {
+            this.onceQueue("/response/measure/echo", (obj) => {
+                params.callback(obj.echo);
+            });
+        }
         this.Obniz.send({
             measure: {
                 echo,
             },
         });
-        if (params.callback) {
-            this.onceQueue("/response/measure/echo", (obj) => {
-                params.callback(obj.echo);
-            });
-        }
     }
     schemaBasePath() {
         return "measure";

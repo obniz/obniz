@@ -4,8 +4,9 @@
  */
 
 import Obniz from "../../../obniz";
-import bleRemoteCharacteristic from "../../../obniz/libs/embeds/ble/bleRemoteCharacteristic";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
+import bleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
+import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
+import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
 export interface OMRON_2JCIEOptions {}
@@ -23,23 +24,57 @@ export interface OMRON_2JCIE_Data {
   battery_voltage: number;
 }
 
-export default class OMRON_2JCIE implements ObnizPartsInterface {
+export interface OMRON_2JCIE_AdvData {
+  temperature: number;
+  relative_humidity: number;
+  light: number;
+  uv_index: number;
+  barometric_pressure: number;
+  soud_noise: number;
+}
+
+export default class OMRON_2JCIE implements ObnizPartsBleInterface {
   public static info(): ObnizPartsInfo {
     return {
       name: "2JCIE",
     };
   }
 
-  public keys: string[];
-  public requiredKeys: string[];
-  public periperal: bleRemotePeripheral | null;
+  public static isDevice(peripheral: BleRemotePeripheral) {
+    return (
+      (peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
+      (peripheral.localName && peripheral.localName.indexOf("IM") >= 0)
+    );
+  }
+
+  /**
+   * Get a datas from advertisement mode of OMRON 2JCIE
+   */
+  public static getData(peripheral: BleRemotePeripheral): OMRON_2JCIE_AdvData | null {
+    if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
+      const adv_data = peripheral.adv_data;
+      return {
+        temperature: ObnizPartsBleInterface.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
+        relative_humidity: ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
+        light: ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
+        uv_index: ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
+        barometric_pressure: ObnizPartsBleInterface.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
+        soud_noise: ObnizPartsBleInterface.signed16FromBinary(adv_data[18], adv_data[18]) * 0.01,
+      };
+    }
+    return null;
+  }
+
+  public _peripheral: BleRemotePeripheral | null = null;
   public obniz!: Obniz;
   public params: any;
+  public ondisconnect?: (reason: any) => void;
 
-  constructor() {
-    this.keys = [];
-    this.requiredKeys = [];
-    this.periperal = null;
+  constructor(peripheral: BleRemotePeripheral | null) {
+    if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
+      throw new Error("peripheral is not RS_BTIREX2");
+    }
+    this._peripheral = peripheral;
   }
 
   public wired(obniz: Obniz) {
@@ -52,30 +87,35 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
     };
 
     await this.obniz.ble!.initWait();
-    this.periperal = await this.obniz.ble!.scan.startOneWait(target);
+    this._peripheral = await this.obniz.ble!.scan.startOneWait(target);
 
-    return this.periperal;
+    return this._peripheral;
   }
 
   public omron_uuid(uuid: string): string {
     return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
   }
 
-  public async connectWait(): Promise<void> {
-    if (!this.periperal) {
+  public async connectWait() {
+    if (!this._peripheral) {
       await this.findWait();
     }
-    if (!this.periperal) {
+    if (!this._peripheral) {
       throw new Error("2JCIE not found");
     }
-    if (!this.periperal.connected) {
-      await this.periperal.connectWait();
+    if (!this._peripheral.connected) {
+      this._peripheral.ondisconnect = (reason: any) => {
+        if (typeof this.ondisconnect === "function") {
+          this.ondisconnect(reason);
+        }
+      };
+      await this._peripheral.connectWait();
     }
   }
 
   public async disconnectWait() {
-    if (this.periperal && this.periperal.connected) {
-      this.periperal.disconnectWait();
+    if (this._peripheral && this._peripheral.connected) {
+      await this._peripheral.disconnectWait();
     }
   }
 
@@ -103,9 +143,7 @@ export default class OMRON_2JCIE implements ObnizPartsInterface {
   public async getLatestData(): Promise<OMRON_2JCIE_Data> {
     await this.connectWait();
 
-    const c: bleRemoteCharacteristic = this.periperal!.getService(this.omron_uuid("3000")).getCharacteristic(
-      this.omron_uuid("3001"),
-    );
+    const c = this._peripheral!.getService(this.omron_uuid("3000"))!.getCharacteristic(this.omron_uuid("3001"))!;
     const data: number[] = await c.readWait();
     const json: any = {
       row_number: data[0],

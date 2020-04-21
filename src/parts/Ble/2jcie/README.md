@@ -1,18 +1,41 @@
 # 2JCIE
-enviroment sensor made by OMRON
+enviroment sensor made by OMRON. Battery powered. Temperature, Humidity, Brightness, UV, Air Pressure, Sound Level, Acceleration, VOC.
 
 ![](image.jpg)
 
+## isDevice(BleRemotePeripheral)
 
-## wired(obniz)
-
+Return if is device.
 
 ```javascript
 // Javascript Example
-let omron = obniz.wired('2JCIE');
-
+const Device = Obniz.getPartsClass('2JCIE');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (p) => {
+    if (Device.isDevice(p)) {
+        let data = Device.getData(p);
+        console.log(data);
+    }
+};
+await obniz.ble.scan.startWait();
 ```
 
+## getData(BleRemotePeripheral)
+
+Get a data from advertisement
+
+```javascript
+// Javascript Example
+const Device = Obniz.getPartsClass('2JCIE');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (p) => {
+    if (Device.isDevice(p)) {
+        let data = Device.getData(p);
+        console.log(data);
+    }
+};
+await obniz.ble.scan.startWait();
+```
 
 
 ## [await] findWait()
@@ -45,6 +68,9 @@ let results = await omron.findWait();
 if(results){
     console.log("find");
   
+    omron.ondisconnect = (reason) => {
+      console.log('disconnected');
+    }
     await omron.connectWait();
     let data = await omron.getLatestData();
     
@@ -102,7 +128,6 @@ if(results){
 }
 
 ```
-
 
 The format is below.
 ```javascript

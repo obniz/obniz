@@ -84,7 +84,7 @@ namespace GATT {
 
 /* eslint-enable no-unused-vars */
 
-type GattEventTypes = "notification" | "handleConfirmation" | "handleNotify";
+type GattEventTypes = "notification" | "handleConfirmation" | "handleNotify" | "end";
 
 /**
  * @ignore
@@ -126,7 +126,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     this._aclStream.on("end", this.onAclStreamEndBinded);
   }
 
-  public async encryptWait(options: any) {
+  public async encryptWait(options: any): Promise<string> {
     const result = await this._serialPromiseQueueWait(async () => {
       const encrypt = await this._aclStream.encryptWait(options);
       if (encrypt === 0) {
@@ -136,6 +136,10 @@ class Gatt extends EventEmitter<GattEventTypes> {
       return this._aclStream._smp.getKeys();
     });
     return result;
+  }
+
+  public onEnd(reason: any) {
+    this.emit("end", reason);
   }
 
   public async exchangeMtuWait(mtu: any) {
@@ -774,7 +778,18 @@ class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   private _serialPromiseQueueWait(func: any) {
+    const onfinish = () => {
+      this._commandPromises = this._commandPromises.filter((e) => e !== resultPromise);
+      if (disconnectReject) {
+        this.off("end", disconnectReject);
+      }
+    };
+
+    let disconnectReject: any = null;
     const doPromise = Promise.all(this._commandPromises)
+      .catch((error) => {
+        // nothing
+      })
       .then(() => {
         return func();
       })
@@ -783,16 +798,24 @@ class Gatt extends EventEmitter<GattEventTypes> {
       })
       .then(
         (result) => {
-          this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+          onfinish();
           return Promise.resolve(result);
         },
         (error) => {
-          this._commandPromises = this._commandPromises.filter((e) => e !== doPromise);
+          onfinish();
           return Promise.reject(error);
         },
       );
-    this._commandPromises.push(doPromise);
-    return doPromise as Promise<any>;
+    const disconnectPromise = new Promise((resolve, reject) => {
+      disconnectReject = (reason: any) => {
+        onfinish();
+        reject(reason);
+      };
+      this.on("end", disconnectReject);
+    });
+    const resultPromise = Promise.race([doPromise, disconnectPromise]);
+    this._commandPromises.push(resultPromise);
+    return resultPromise as Promise<any>;
   }
 
   private _execCommandWait(buffer: Buffer, waitOpcode: number | number[]): Promise<Buffer> {

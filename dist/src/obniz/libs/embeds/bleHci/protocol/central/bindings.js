@@ -33,6 +33,14 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
     }
+    addPeripheralData(uuid, addressType) {
+        if (!this._addresses[uuid]) {
+            const address = uuid.match(/.{1,2}/g).join(":");
+            this._addresses[uuid] = address;
+            this._addresseTypes[uuid] = addressType;
+            this._connectable[uuid] = true;
+        }
+    }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
         this._scanServiceUuids = serviceUuids || [];
         await this._gap.startScanningWait(allowDuplicates, activeScan);
@@ -44,6 +52,9 @@ class NobleBindings extends eventemitter3_1.default {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         const doPromise = Promise.all(this._connectPromises)
+            .catch((error) => {
+            // nothing
+        })
             .then(() => {
             return this._hci.createLeConnWait(address, addressType);
         })
@@ -148,6 +159,8 @@ class NobleBindings extends eventemitter3_1.default {
     onDisconnComplete(handle, reason) {
         const uuid = this._handles[handle];
         if (uuid) {
+            const error = new ObnizError_1.ObnizBleHciStateError(reason, { peripheralAddress: uuid });
+            this._gatts[handle].onEnd(error);
             this._gatts[handle].removeAllListeners();
             this._signalings[handle].removeAllListeners();
             delete this._gatts[uuid];
@@ -157,7 +170,6 @@ class NobleBindings extends eventemitter3_1.default {
             delete this._aclStreams[handle];
             delete this._handles[uuid];
             delete this._handles[handle];
-            const error = new ObnizError_1.ObnizBleHciStateError(reason);
             this.emit("disconnect", uuid, error); // TODO: handle reason?
         }
         else {

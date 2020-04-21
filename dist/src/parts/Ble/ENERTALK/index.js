@@ -34,14 +34,14 @@ class ENERTALK_TOUCH {
         }
         return false;
     }
-    // @ts-ignore
-    wired(obniz) { }
     async connectWait() {
         if (!this._peripheral) {
             throw new Error("RS_BTIREX2 is not find.");
         }
-        this._peripheral.ondisconnect = () => {
-            console.log("disconnect");
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
         };
         await this._peripheral.connectWait();
         this._service = this._peripheral.getService(this._uuids.service);

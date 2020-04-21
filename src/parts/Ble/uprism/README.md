@@ -2,7 +2,16 @@
 
 This is a very small IoT sensor module manufactured by Elex Industrial Co., Ltd.
 
-Because it is a BLE device, use `isDevice` instead of` wired`.
+
+- Temperature
+- Humidity
+- Air Pressure
+- Acceleration
+- Compass
+- UV
+- Brightness
+
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -12,12 +21,12 @@ Judge whether it is μPRISM based on the advertisement information received by B
 // Javascript Example
 await obniz.ble.initWait();
 const U_PRISM = Obniz.getPartsClass("uPRISM");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (U_PRISM.isDevice(peripheral)) {
     console.log("device find");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -29,13 +38,13 @@ Create an instance based on the advertisement information received by BLE.
 // Javascript Example
 await obniz.ble.initWait();
 const U_PRISM = Obniz.getPartsClass("uPRISM");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (U_PRISM.isDevice(peripheral) ) {
     console.log("device find");
     const device = new U_PRISM(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -48,11 +57,13 @@ Connect to the device.
 // Javascript Example
 await obniz.ble.initWait();
 const U_PRISM = Obniz.getPartsClass("uPRISM");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (U_PRISM.isDevice(peripheral)) {
     console.log("find");
     const device = new U_PRISM(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
     device.onNotify = (r) => {
@@ -66,6 +77,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -78,7 +90,6 @@ Disconnect from sensor
 // Javascript Example
 await obniz.ble.initWait();
 const U_PRISM = Obniz.getPartsClass("uPRISM");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (U_PRISM.isDevice(peripheral) ) {
     console.log("find");
@@ -89,6 +100,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -103,7 +115,6 @@ Called every time data comes from the device after starting `` startNotifyWait (
 // Javascript Example
 await obniz.ble.initWait();
 const U_PRISM = Obniz.getPartsClass("uPRISM");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (U_PRISM.isDevice(peripheral)) {
     console.log("find");
@@ -121,6 +132,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 
 
@@ -133,7 +145,6 @@ Instructs to start sending sensor data.
 // Javascript Example
 await obniz.ble.initWait();
 const U_PRISM = Obniz.getPartsClass("uPRISM");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (U_PRISM.isDevice(peripheral)) {
     console.log("find");
@@ -151,5 +162,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
     device.startNotifyWait();
   }
 };
+await obniz.ble.scan.startWait();
 ```
 

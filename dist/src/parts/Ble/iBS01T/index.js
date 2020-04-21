@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 class IBS01T {
     constructor() {
+        this._peripheral = null;
     }
     static info() {
         return {

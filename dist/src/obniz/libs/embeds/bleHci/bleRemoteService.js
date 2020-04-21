@@ -134,7 +134,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      *      peripheral.connect({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
     async discoverAllCharacteristicsWait() {
@@ -159,14 +159,18 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @param characteristic
      */
     ondiscover(characteristic) {
-        this.ondiscovercharacteristic(characteristic);
+        setTimeout(() => {
+            this.ondiscovercharacteristic(characteristic);
+        }, 0);
     }
     /**
      * @ignore
      * @param characteristics
      */
     ondiscoverfinished(characteristics) {
-        this.ondiscovercharacteristicfinished(characteristics);
+        setTimeout(() => {
+            this.ondiscovercharacteristicfinished(characteristics);
+        }, 0);
     }
     /**
      * @ignore

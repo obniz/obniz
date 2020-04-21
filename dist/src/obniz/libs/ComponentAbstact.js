@@ -9,7 +9,10 @@ const WSSchema_1 = __importDefault(require("./wscommand/WSSchema"));
 class ComponentAbstract extends eventemitter3_1.default {
     constructor(obniz) {
         super();
-        this.timeout = 10 * 1000;
+        /**
+         * Rsponse waiting timeout in milliseconds
+         */
+        this.timeout = 30 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = obniz;
     }
@@ -41,8 +44,7 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
     validate(commandUri, json) {
         const schema = WSSchema_1.default.getSchema(commandUri);
-        const results = WSSchema_1.default.validateMultiple(json, schema);
-        return results;
+        return WSSchema_1.default.validateMultiple(json, schema);
     }
     onceQueue(eventName, func) {
         this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
@@ -52,8 +54,7 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
     async sendAndReceiveJsonWait(sendObj, schemaPath, option) {
         this.Obniz.send(sendObj);
-        const result = await this.receiveJsonWait(schemaPath, option);
-        return result;
+        return await this.receiveJsonWait(schemaPath, option);
     }
     receiveJsonWait(schemaPath, option) {
         option = option || {};
@@ -62,12 +63,16 @@ class ComponentAbstract extends eventemitter3_1.default {
         option.errors = option.errors || {};
         return new Promise((resolve, reject) => {
             if (this.Obniz.connectionState !== "connected") {
-                reject();
+                reject(new ObnizError_1.ObnizOfflineError());
+                return;
             }
             const clearListeners = () => {
                 this.Obniz.off("close", onObnizClosed);
                 this.off(schemaPath, onDataReceived);
-                clearTimeout(timeoutHandler);
+                if (typeof timeoutHandler === "number") {
+                    clearTimeout(timeoutHandler);
+                    timeoutHandler = undefined;
+                }
                 for (const one of onErrorFuncs) {
                     this.off(one.path, one.onError);
                 }
@@ -83,7 +88,7 @@ class ComponentAbstract extends eventemitter3_1.default {
             };
             const onTimeout = () => {
                 clearListeners();
-                const error = new ObnizError_1.ObnizTimeoutError();
+                const error = new ObnizError_1.ObnizTimeoutError(schemaPath);
                 reject(error);
             };
             const onErrorFuncs = [];
@@ -100,10 +105,10 @@ class ComponentAbstract extends eventemitter3_1.default {
                     const error = new option.errors[path]();
                     reject(error);
                 };
-                this.on(path, onDataReceived);
+                this.on(path, onError);
                 onErrorFuncs.push({ onError, path });
             }
-            const timeoutHandler = setTimeout(onTimeout, option.timeout);
+            let timeoutHandler = setTimeout(onTimeout, option.timeout);
         });
     }
 }

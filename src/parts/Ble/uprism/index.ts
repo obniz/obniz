@@ -3,8 +3,6 @@
  * @module Parts.uPRISM
  */
 
-import Obniz from "../../../obniz";
-import bleRemotePeripheral from "../../../obniz/libs/embeds/ble/bleRemotePeripheral";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
 
@@ -51,8 +49,10 @@ export default class uPRISM implements ObnizPartsBleInterface {
     return peripheral.localName?.indexOf("uPrism_") === 0;
   }
 
+  public _peripheral: null | BleRemotePeripheral = null;
+  public ondisconnect?: (reason: any) => void;
+
   public onNotify?: (data: uPRISM_Data) => void;
-  private periperal: BleRemotePeripheral;
   private readData: uPRISM_Data | undefined;
   private readIndex: number = -1;
   private accelRange: number = 1024;
@@ -70,21 +70,26 @@ export default class uPRISM implements ObnizPartsBleInterface {
     if (peripheral && !uPRISM.isDevice(peripheral)) {
       throw new Error("peripheral is not uPRISM");
     }
-    this.periperal = peripheral;
+    this._peripheral = peripheral;
   }
 
   public async connectWait() {
-    if (!this.periperal) {
+    if (!this._peripheral) {
       throw new Error("peripheral is not uPRISM");
     }
-    if (!this.periperal.connected) {
-      await this.periperal.connectWait();
+    if (!this._peripheral.connected) {
+      this._peripheral.ondisconnect = (reason: any) => {
+        if (typeof this.ondisconnect === "function") {
+          this.ondisconnect(reason);
+        }
+      };
+      await this._peripheral.connectWait();
     }
   }
 
   public async disconnectWait() {
-    if (this.periperal && this.periperal.connected) {
-      await this.periperal.disconnectWait();
+    if (this._peripheral && this._peripheral.connected) {
+      await this._peripheral.disconnectWait();
     }
   }
 
@@ -106,15 +111,15 @@ export default class uPRISM implements ObnizPartsBleInterface {
   }
 
   public async startNotifyWait() {
-    if (!this.periperal || !this.periperal.connected) {
+    if (!this._peripheral || !this._peripheral.connected) {
       throw new Error("peripheral not connected uPRISM");
     }
 
-    const rc = this.periperal.getService(this._uuids.service)!.getCharacteristic(this._uuids.settingEnableChar);
+    const rc = this._peripheral.getService(this._uuids.service)!.getCharacteristic(this._uuids.settingEnableChar);
 
     await rc!.writeWait([0x04, 0x03, 0x01]);
 
-    const c = this.periperal.getService(this._uuids.service)!.getCharacteristic(this._uuids.notifyChar);
+    const c = this._peripheral.getService(this._uuids.service)!.getCharacteristic(this._uuids.notifyChar);
 
     await c!.registerNotifyWait((data: number[]) => {
       if (data[1] !== 0x14) {
@@ -176,15 +181,15 @@ export default class uPRISM implements ObnizPartsBleInterface {
   }
 
   public async stopNotifyWait() {
-    if (!(this.periperal && this.periperal.connected)) {
+    if (!(this._peripheral && this._peripheral.connected)) {
       return;
     }
 
-    const rc = this.periperal!.getService(this._uuids.service)!.getCharacteristic(this._uuids.settingEnableChar);
+    const rc = this._peripheral!.getService(this._uuids.service)!.getCharacteristic(this._uuids.settingEnableChar);
 
     await rc!.writeWait([0x04, 0x03, 0x00]);
 
-    const c = this.periperal!.getService(this._uuids.service)!.getCharacteristic(this._uuids.notifyChar);
+    const c = this._peripheral!.getService(this._uuids.service)!.getCharacteristic(this._uuids.notifyChar);
     await c!.unregisterNotifyWait();
   }
 }

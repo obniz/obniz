@@ -1,7 +1,7 @@
 # REX_BTPM25V
 ラトックシステムズ社製のエアクオリティモニタです
 
-BLEデバイスのため、`wired`は使わずに`isDevice`を使います
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
@@ -11,12 +11,12 @@ BLEで受信したアドバタイズ情報をもとに、REX_BTPM25V かどう�
 // Javascript Example
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -29,13 +29,13 @@ BLEで受信したアドバタイズ情報をもとに、インスタンスを�
 
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
     const device = new REX_BTPM25V(peripheral);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -49,15 +49,18 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
     const device = new REX_BTPM25V(peripheral);
+    device.ondisconnect = (reason) => {
+      console.log(reason)
+    }
     await device.connectWait();
     console.log("connected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -69,7 +72,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
@@ -80,6 +82,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log("disconnected");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -91,7 +94,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
@@ -103,6 +105,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     };
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -114,7 +117,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 // Javascript Example
 await obniz.ble.initWait();
 const REX_BTPM25V = Obniz.getPartsClass("REX_BTPM25V");
-obniz.ble.scan.start(null);
 obniz.ble.scan.onfind = async (peripheral) => {
   if (REX_BTPM25V.isDevice(peripheral)) {
     console.log("find");
@@ -125,6 +127,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(data);
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 

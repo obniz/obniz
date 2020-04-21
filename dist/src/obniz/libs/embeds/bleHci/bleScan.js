@@ -7,8 +7,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+const assert_1 = require("assert");
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const semver_1 = __importDefault(require("semver"));
+const ObnizError_1 = require("../../../ObnizError");
 const util_1 = __importDefault(require("../../utils/util"));
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 /**
@@ -16,6 +18,7 @@ const bleHelper_1 = __importDefault(require("./bleHelper"));
  */
 class BleScan {
     constructor(obnizBle) {
+        this.state = "stopping";
         this._delayNotifyTimers = [];
         this.scanTarget = {};
         this.scanSettings = {};
@@ -25,11 +28,15 @@ class BleScan {
         this._timeoutTimer = undefined;
     }
     /**
+     * Use startWait() instead.
      * @deprecated
      */
-    async start(target = {}, settings = {}) {
-        this.startWait(target, settings).catch((reason) => {
-            this.finish(reason);
+    start(target = {}, settings = {}) {
+        console.log(`start() is deprecated since 3.5.0. Use startWait() instead`);
+        this.startWait(target, settings)
+            .then(() => { })
+            .catch((e) => {
+            throw e;
         });
     }
     /**
@@ -56,7 +63,7 @@ class BleScan {
      *
      * ```javascript
      * // Javascript Example
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      *
      * @param target
@@ -64,6 +71,7 @@ class BleScan {
      */
     async startWait(target = {}, settings = {}) {
         this.obnizBle.warningIfNotInitialize();
+        this.state = "starting";
         const timeout = settings.duration === undefined ? 30 : settings.duration;
         settings.duplicate = !!settings.duplicate;
         settings.filterOnDevice = !!settings.filterOnDevice;
@@ -91,11 +99,17 @@ class BleScan {
         await this.obnizBle.centralBindings.startScanningWait(null, false, settings.activeScan);
         this.clearTimeoutTimer();
         if (timeout !== null) {
-            this._timeoutTimer = setTimeout(() => {
+            this._timeoutTimer = setTimeout(async () => {
                 this._timeoutTimer = undefined;
-                this.end();
+                try {
+                    await this.endWait();
+                }
+                catch (e) {
+                    this.finish(e);
+                }
             }, timeout * 1000);
         }
+        this.state = "started";
     }
     /**
      * This scans and returns the first peripheral that was found among the objects specified in the target.
@@ -115,14 +129,22 @@ class BleScan {
      * @param target
      * @param settings
      */
-    async startOneWait(target, settings) {
+    async startOneWait(target, settings = {}) {
         await this.startWait(target, settings);
-        return new Promise((resolve) => {
-            this.emitter.once("onfind", async (param) => {
-                resolve(param);
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onfind", async (peripheral, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
+                resolve(peripheral);
                 await this.endWait();
             });
-            this.emitter.once("onfinish", () => {
+            this.emitter.once("onfinish", (peripherals, error) => {
+                if (error) {
+                    assert_1.rejects(error);
+                    return;
+                }
                 resolve(null);
             });
         });
@@ -156,18 +178,26 @@ class BleScan {
      */
     async startAllWait(target, settings) {
         await this.startWait(target, settings);
-        return new Promise((resolve) => {
-            this.emitter.once("onfinish", () => {
+        return new Promise((resolve, reject) => {
+            this.emitter.once("onfinish", (peripherals, error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
                 resolve(this.scanedPeripherals);
             });
         });
     }
     /**
+     * Use endWait() instead
      * @deprecated
      */
     end() {
-        this.endWait().catch((reason) => {
-            this.finish(reason);
+        console.log(`end() is deprecated since 3.5.0. Use endWait() instead`);
+        this.endWait()
+            .then(() => { })
+            .catch((e) => {
+            throw e;
         });
     }
     /**
@@ -176,15 +206,18 @@ class BleScan {
      * ```javascript
      * // Javascript Example
      * await obniz.ble.initWait();
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * await obniz.wait(5000);
      * await obniz.ble.scan.endWait();
      * ```
      */
     async endWait() {
-        this.clearTimeoutTimer();
-        await this.obnizBle.centralBindings.stopScanningWait();
-        this.finish();
+        if (this.state === "started" || this.state === "starting") {
+            this.state = "stopping";
+            this.clearTimeoutTimer();
+            await this.obnizBle.centralBindings.stopScanningWait();
+            this.finish();
+        }
     }
     /**
      * @ignore
@@ -193,6 +226,10 @@ class BleScan {
      */
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
+            case "obnizClose": {
+                this.finish(new ObnizError_1.ObnizOfflineError());
+                break;
+            }
             case "onfind": {
                 const peripheral = params;
                 const alreadyGotCompleteAdveData = peripheral.adv_data &&
@@ -380,12 +417,17 @@ class BleScan {
         }
     }
     finish(error) {
-        this.clearTimeoutTimer();
-        this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
-        this._clearDelayNotifyTimer();
-        this.emitter.emit("onfinish", this.scanedPeripherals, error);
-        if (this.onfinish) {
-            this.onfinish(this.scanedPeripherals, error);
+        if (this.state !== "stopped") {
+            this.clearTimeoutTimer();
+            this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
+            this._clearDelayNotifyTimer();
+            this.state = "stopped";
+            setTimeout(() => {
+                this.emitter.emit("onfinish", this.scanedPeripherals, error);
+                if (this.onfinish) {
+                    this.onfinish(this.scanedPeripherals, error);
+                }
+            }, 0);
         }
     }
     _notifyOnFind(peripheral) {
@@ -397,10 +439,12 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            this.emitter.emit("onfind", peripheral);
-            if (this.onfind) {
-                this.onfind(peripheral);
-            }
+            setTimeout(() => {
+                this.emitter.emit("onfind", peripheral);
+                if (this.onfind) {
+                    this.onfind(peripheral);
+                }
+            }, 0);
         }
     }
     isLocalNameTarget(peripheral) {

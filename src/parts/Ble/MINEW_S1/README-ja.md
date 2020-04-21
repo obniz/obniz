@@ -4,7 +4,7 @@ MINEW社製の温湿度ビーコンです。
 
 SLOTはHT Sensor / Infoのみ対応しています。
 
-BLEデバイスのため、`wired`は使わずに`isDevice`を使います
+![](./image.jpg)
 
 
 ## isDevice(peripheral)
@@ -17,12 +17,12 @@ SLOTがiBeacon / UID / URL / TLM は非対応で、falseを返します。
 // Javascript Example
 await obniz.ble.initWait();
 const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = async (peripheral) => {
   if (MINEW_S1.isDevice(peripheral)) {
     console.log("device find");
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -35,13 +35,13 @@ BLEで受信したアドバタイズ情報をもとに、温湿度データを�
 // Javascript Example
 await obniz.ble.initWait();
 const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = (peripheral) => {
   if (MINEW_S1.isDevice(peripheral)) {
     const data = MINEW_S1.getHTData(peripheral);
     console.log(data); 
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 
@@ -68,13 +68,13 @@ BLEで受信したアドバタイズ情報をもとに、デバイス情報を�
 // Javascript Example
 await obniz.ble.initWait();
 const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
-obniz.ble.scan.start();
 obniz.ble.scan.onfind = (peripheral) => {
   if (MINEW_S1.isDevice(peripheral)) {
     const data = MINEW_S1.getInfoData(peripheral);
     console.log(data); 
   }
 };
+await obniz.ble.scan.startWait();
 
 ```
 

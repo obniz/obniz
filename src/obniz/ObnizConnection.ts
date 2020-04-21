@@ -332,7 +332,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
     }
     try {
       if (!obj || typeof obj !== "object") {
-        console.log("obnizjs. didnt send ", obj);
+        this.log("obnizjs. didnt send ", obj);
         return;
       }
       if (Array.isArray(obj)) {
@@ -359,7 +359,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
           if (compressed) {
             sendData = compressed;
             if (this.debugprintBinary) {
-              console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
+              this.log("binalized: " + new Uint8Array(compressed).toString());
             }
           }
         } catch (e) {
@@ -382,7 +382,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
         }
       }
     } catch (e) {
-      console.log(e);
+      this.log(e);
     }
   }
 
@@ -391,7 +391,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
    * @param msg
    */
   public warning(msg: any) {
-    console.log("warning:" + msg);
+    this.log("warning:" + msg);
   }
 
   /**
@@ -399,7 +399,14 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
    * @param msg
    */
   public error(msg: any) {
-    console.error("error:" + msg);
+    console.error(`[obniz ${this.id}] error:${msg}`);
+  }
+
+  /**
+   * @ignore
+   */
+  public log(...args: any[]) {
+    console.log(`[obniz ${this.id}]`, ...args);
   }
 
   protected wsOnOpen() {
@@ -417,7 +424,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
       json = JSON.parse(data);
     } else if (this.wscommands) {
       if (this.debugprintBinary) {
-        console.log("Obniz: binalized: " + new Uint8Array(data).toString());
+        this.log("binalized: " + new Uint8Array(data).toString());
       }
       json = this.binary2Json(data);
     }
@@ -542,7 +549,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
         this.wsOnMessage(data);
       });
       ws.on("close", (event: any) => {
-        console.log("local websocket closed");
+        this.log("local websocket closed");
         this._disconnectLocal();
       });
       ws.on("error", (err: any) => {
@@ -550,7 +557,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
         this._disconnectLocal();
       });
       ws.on("unexpected-response", (event: any) => {
-        console.log("local websocket closed");
+        this.log("local websocket closed");
         this._disconnectLocal();
       });
     } else {
@@ -565,11 +572,11 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
         this.wsOnMessage(event.data);
       };
       ws.onclose = (event: any) => {
-        console.log("local websocket closed");
+        this.log("local websocket closed");
         this._disconnectLocal();
       };
       ws.onerror = (err: any) => {
-        console.log("local websocket error.", err);
+        this.log("local websocket error.", err);
         this._disconnectLocal();
       };
     }
@@ -615,6 +622,16 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
     }
   }
 
+  /**
+   * This function will be called before obniz.onconnect called;
+   */
+  protected async _beforeOnConnect() {}
+
+  /**
+   * This function will be called after obniz.onconnect and all emitter called;
+   */
+  protected async _afterOnConnect() {}
+
   protected _callOnConnect() {
     let canChangeToConnected: any = true;
     if (this._waitForLocalConnectReadyTimer) {
@@ -633,22 +650,28 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
 
     if (canChangeToConnected) {
       this.connectionState = "connected";
+      this._beforeOnConnect();
       if (typeof this.onconnect === "function") {
-        const promise: any = this.onconnect(this);
-        if (promise instanceof Promise) {
-          promise.catch((err: any) => {
-            console.error(err);
-          });
+        try {
+          const promise: any = this.onconnect(this);
+          if (promise instanceof Promise) {
+            promise.catch((err: any) => {
+              console.error(err);
+            });
+          }
+        } catch (err) {
+          console.error(err);
         }
       }
       this.emit("connect", this);
       this.onConnectCalled = true;
+      this._afterOnConnect();
     }
   }
 
   protected print_debug(str: any) {
     if (this.debugprint) {
-      console.log("Obniz: " + str);
+      this.log(str);
     }
   }
 

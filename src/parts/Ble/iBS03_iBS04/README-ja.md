@@ -1,10 +1,10 @@
 # iBS03 iBS04
 INGICS社製のBLEタグです。
 
-サポートデバイス
+以下の２つの製品を扱うことができます。
 
-- iBS03(H) : Button, Magnet Event
-- iBS04 : Button Event
+- iBS03(H) : ボタン・磁気センサー
+- iBS04 : ボタン
 
 ![](image.jpg)
 
@@ -24,13 +24,13 @@ const IBS03 = Obniz.getPartsClass('iBS03');
 // Javascript Example
 const IBS03 = Obniz.getPartsClass('iBS03');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS03.isDevice(p)) {
         let data = IBS03.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 
 ## getData(BleRemotePeripheral)
@@ -46,12 +46,12 @@ obniz.ble.scan.onfind = (p) => {
 // Javascript Example
 const IBS03 = Obniz.getPartsClass('iBS03');
 await obniz.ble.initWait();
-obniz.ble.scan.start(null, { duplicate: true, duration: null });
 obniz.ble.scan.onfind = (p) => {
     if (IBS03.isDevice(p)) {
         let data = IBS03.getData(p);
         console.log(data);
     }
 };
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
 

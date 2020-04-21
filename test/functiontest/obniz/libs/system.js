@@ -157,4 +157,14 @@ describe('obniz.libs.system', function() {
     expect(this.obniz).send([{ system: { sleep_io_trigger: true } }]);
     expect(this.obniz).to.be.finished;
   });
+
+  it('closeAndReconnect', async function() {
+    const before = this.obniz.io0;
+    before.output(true);
+    expect(before.value).to.be.true;
+    await testUtil.closeAndReconnectObnizWait(this);
+    const after = this.obniz.io0;
+    expect(before === after).to.be.true;
+    expect(after.value).to.be.false;
+  });
 });

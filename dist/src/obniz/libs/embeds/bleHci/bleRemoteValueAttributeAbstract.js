@@ -13,18 +13,6 @@ const bleRemoteAttributeAbstract_1 = __importDefault(require("./bleRemoteAttribu
  */
 class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
     /**
-     * @deprecated
-     */
-    writeNumber(val, needResponse) {
-        return super.writeNumber(val, needResponse);
-    }
-    /**
-     *  @deprecated
-     */
-    writeText(str, needResponse) {
-        return super.writeText(str, needResponse);
-    }
-    /**
      * Wrapper for [[writeWait]] with data converting from text.
      * It convert string to UTF-8 and write binary array.
      *

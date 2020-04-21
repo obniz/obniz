@@ -692,11 +692,99 @@
       "image_url": "https://obniz.io/sdk/parts/2JCIE/sensor.JPG",
       "parts": [
         {
-          "name": "2JCIE",
+          "name": "2jcie",
           "store": {}
         },
         {
           "name": "linking",
+          "store": {}
+        },
+        {
+          "name": "ENERTALK",
+          "store": {}
+        },
+        {
+          "name": "iBS01",
+          "store": {}
+        },
+        {
+          "name": "iBS01RG",
+          "store": {}
+        },
+        {
+          "name": "iBS01T",
+          "store": {}
+        },
+        {
+          "name": "iBS02IR",
+          "store": {}
+        },
+        {
+          "name": "iBS02PIR",
+          "store": {}
+        },
+        {
+          "name": "iBS03_iBS04",
+          "store": {}
+        },
+        {
+          "name": "iBS03T",
+          "store": {}
+        },
+        {
+          "name": "iBS03TP",
+          "store": {}
+        },
+        {
+          "name": "iBS04i",
+          "store": {}
+        },
+        {
+          "name": "LogttaAccel",
+          "store": {}
+        },
+        {
+          "name": "LogttaAD",
+          "store": {}
+        },
+        {
+          "name": "LogttaCO2",
+          "store": {}
+        },
+        {
+          "name": "LogttaTemp",
+          "store": {}
+        },
+        {
+          "name": "MINEW_S1",
+          "store": {}
+        },
+        {
+          "name": "REX_BTPM25V",
+          "store": {}
+        },
+        {
+          "name": "RS_SEEK3",
+          "store": {}
+        },
+        {
+          "name": "scbtgaaac",
+          "store": {}
+        },
+        {
+          "name": "uprism",
+          "store": {}
+        },
+        {
+          "name": "cir415a",
+          "store": {}
+        },
+        {
+          "name": "tm530",
+          "store": {}
+        },
+        {
+          "name": "tm551",
           "store": {}
         }
       ]
