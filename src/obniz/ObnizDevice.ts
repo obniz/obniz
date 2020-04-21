@@ -165,7 +165,7 @@ export default class ObnizDevice extends ObnizUIs {
         showObnizDebugError(new Error(msg));
       }
     }
-    console.error(`Error: ${msg}`);
+    console.error(`${msg}`);
   }
 
   /**
