@@ -24,7 +24,7 @@ describe('7-ble', function() {
     checkBoard.ble.peripheral.addService(service);
     let ad = service.advData;
     checkBoard.ble.advertisement.setAdvData(ad);
-    checkBoard.ble.advertisement.start();
+    await checkBoard.ble.advertisement.startWait();
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
@@ -48,7 +48,7 @@ describe('7-ble', function() {
       await wait(1);
     }
 
-    obnizA.ble.scan.end();
+    await obnizA.ble.scan.endWait();
     checkBoard.ble.advertisement.end();
     checkBoard.ble.peripheral.end();
   });
@@ -64,7 +64,7 @@ describe('7-ble', function() {
       localName: localName,
     });
     checkBoard.ble.advertisement.setAdvData(ad);
-    checkBoard.ble.advertisement.start();
+    await checkBoard.ble.advertisement.startWait();
 
     let found = false;
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
@@ -82,7 +82,7 @@ describe('7-ble', function() {
     while (!found) {
       await wait(1);
     }
-    obnizA.ble.scan.end();
+    await obnizA.ble.scan.endWait();
     checkBoard.ble.advertisement.end();
     checkBoard.ble.peripheral.end();
   });

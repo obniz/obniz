@@ -305,6 +305,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   }
 
   /**
+   * Use readWait() instead from 3.5.0
    * @deprecated
    */
   public read() {
@@ -312,6 +313,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
   }
 
   /**
+   * Use writeWait() instead from 3.5.0
    * @deprecated
    */
   public write(array: number[], needResponse?: boolean) {

@@ -234,12 +234,14 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         }
     }
     /**
+     * Use readWait() instead from 3.5.0
      * @deprecated
      */
     read() {
         throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
+     * Use writeWait() instead from 3.5.0
      * @deprecated
      */
     write(array, needResponse) {

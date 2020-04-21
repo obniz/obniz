@@ -28,11 +28,16 @@ class BleScan {
         this._timeoutTimer = undefined;
     }
     /**
-     * Use startWait() instead
+     * Use startWait() instead.
      * @deprecated
      */
-    async start(target = {}, settings = {}) {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("start", "startWait");
+    start(target = {}, settings = {}) {
+        console.log(`start() is deprecated since 3.5.0. Use startWait() instead`);
+        this.startWait(target, settings)
+            .then(() => { })
+            .catch((e) => {
+            throw e;
+        });
     }
     /**
      * This starts scanning BLE.
@@ -188,7 +193,12 @@ class BleScan {
      * @deprecated
      */
     end() {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("end", "endWait");
+        console.log(`end() is deprecated since 3.5.0. Use endWait() instead`);
+        this.endWait()
+            .then(() => { })
+            .catch((e) => {
+            throw e;
+        });
     }
     /**
      * This stops scanning BLE.

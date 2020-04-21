@@ -98,7 +98,9 @@ class BleAttributeAbstract {
         return obj;
     }
     /**
+     * Use writeTextWait() instead from 3.5.0
      * @ignore
+     * @deprecated
      */
     writeText(str, needResponse) {
         throw new ObnizError_1.ObnizDeprecatedFunctionError("writeText", "writeTextWait");
@@ -110,7 +112,9 @@ class BleAttributeAbstract {
         return await this.writeWait(util_1.default.string2dataArray(str), needResponse);
     }
     /**
+     * Use writeNumberWait() instead from 3.5.0
      * @ignore
+     * @deprecated
      */
     writeNumber(val, needResponse) {
         throw new ObnizError_1.ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");

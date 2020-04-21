@@ -2829,7 +2829,7 @@ class ObnizDevice extends ObnizUIs_1.default {
             if (typeof showObnizDebugError === "function") {
                 showObnizDebugError(new Error(msg));
             }
-            this.log(`warning: ${msg}`);
+            this.log(`Warning: ${msg}`);
         }
     }
     /**
@@ -2846,7 +2846,7 @@ class ObnizDevice extends ObnizUIs_1.default {
                 showObnizDebugError(new Error(msg));
             }
         }
-        console.error(new Error(msg));
+        console.error(`Error: ${msg}`);
     }
     /**
      * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
@@ -4925,7 +4925,9 @@ class BleAttributeAbstract {
         return obj;
     }
     /**
+     * Use writeTextWait() instead from 3.5.0
      * @ignore
+     * @deprecated
      */
     writeText(str, needResponse) {
         throw new ObnizError_1.ObnizDeprecatedFunctionError("writeText", "writeTextWait");
@@ -4937,7 +4939,9 @@ class BleAttributeAbstract {
         return await this.writeWait(util_1.default.string2dataArray(str), needResponse);
     }
     /**
+     * Use writeNumberWait() instead from 3.5.0
      * @ignore
+     * @deprecated
      */
     writeNumber(val, needResponse) {
         throw new ObnizError_1.ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
@@ -6026,12 +6030,14 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         }
     }
     /**
+     * Use readWait() instead from 3.5.0
      * @deprecated
      */
     read() {
         throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
+     * Use writeWait() instead from 3.5.0
      * @deprecated
      */
     write(array, needResponse) {
@@ -7109,6 +7115,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js"));
 /**
  * @category Use as Central
@@ -7177,11 +7187,16 @@ class BleScan {
         this._timeoutTimer = undefined;
     }
     /**
-     * Use startWait() instead
+     * Use startWait() instead.
      * @deprecated
      */
-    async start(target = {}, settings = {}) {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("start", "startWait");
+    start(target = {}, settings = {}) {
+        console.log(`start() is deprecated since 3.5.0. Use startWait() instead`);
+        this.startWait(target, settings)
+            .then(() => { })
+            .catch((e) => {
+            throw e;
+        });
     }
     /**
      * This starts scanning BLE.
@@ -7337,7 +7352,12 @@ class BleScan {
      * @deprecated
      */
     end() {
-        throw new ObnizError_1.ObnizDeprecatedFunctionError("end", "endWait");
+        console.log(`end() is deprecated since 3.5.0. Use endWait() instead`);
+        this.endWait()
+            .then(() => { })
+            .catch((e) => {
+            throw e;
+        });
     }
     /**
      * This stops scanning BLE.

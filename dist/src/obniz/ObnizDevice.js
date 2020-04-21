@@ -103,7 +103,7 @@ class ObnizDevice extends ObnizUIs_1.default {
             if (typeof showObnizDebugError === "function") {
                 showObnizDebugError(new Error(msg));
             }
-            this.log(`warning: ${msg}`);
+            this.log(`Warning: ${msg}`);
         }
     }
     /**
@@ -120,7 +120,7 @@ class ObnizDevice extends ObnizUIs_1.default {
                 showObnizDebugError(new Error(msg));
             }
         }
-        console.error(new Error(msg));
+        console.error(`Error: ${msg}`);
     }
     /**
      * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]

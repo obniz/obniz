@@ -5,7 +5,7 @@
 import { rejects } from "assert";
 import EventEmitter from "eventemitter3";
 import semver from "semver";
-import { ObnizDeprecatedFunctionError, ObnizOfflineError } from "../../../ObnizError";
+import { ObnizOfflineError } from "../../../ObnizError";
 import Util from "../../utils/util";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
@@ -176,11 +176,16 @@ export default class BleScan {
   }
 
   /**
-   * Use startWait() instead
+   * Use startWait() instead.
    * @deprecated
    */
-  public async start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
-    throw new ObnizDeprecatedFunctionError("start", "startWait");
+  public start(target: BleScanTarget = {}, settings: BleScanSetting = {}) {
+    console.log(`start() is deprecated since 3.5.0. Use startWait() instead`);
+    this.startWait(target, settings)
+      .then(() => {})
+      .catch((e) => {
+        throw e;
+      });
   }
 
   /**
@@ -344,7 +349,12 @@ export default class BleScan {
    * @deprecated
    */
   public end() {
-    throw new ObnizDeprecatedFunctionError("end", "endWait");
+    console.log(`end() is deprecated since 3.5.0. Use endWait() instead`);
+    this.endWait()
+      .then(() => {})
+      .catch((e) => {
+        throw e;
+      });
   }
 
   /**

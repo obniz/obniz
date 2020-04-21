@@ -159,7 +159,9 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   public abstract writeWait(data: number[], needResponse?: boolean): Promise<boolean>;
 
   /**
+   * Use writeTextWait() instead from 3.5.0
    * @ignore
+   * @deprecated
    */
   public writeText(str: string, needResponse?: boolean) {
     throw new ObnizDeprecatedFunctionError("writeText", "writeTextWait");
@@ -173,7 +175,9 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   }
 
   /**
+   * Use writeNumberWait() instead from 3.5.0
    * @ignore
+   * @deprecated
    */
   public writeNumber(val: number, needResponse?: boolean) {
     throw new ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");

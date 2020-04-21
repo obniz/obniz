@@ -5,31 +5,45 @@ const Obniz = require('../../index.js');
 const LOCAL_IP = '';
 
 //Select Test Board
-//const json = require('./board/esp32devkitc_check_io.json');
-//const json = require('./board/m5stickc_check_io.json');
-const json = require('./board/obniz_check_io.json');
-// const json = require('./board/obniz_1y_check_io.json');
-//const json = require('./board/esp32lte_check_io.json');
-//const json = require('./board/esp32pikokitv4_check_io.json');
 
-let checkBoard_ID = '';
-//test device
-if (json.name === 'ESP32 Dev Kit') {
-  checkBoard_ID = '32106175';
-} else if (json.name === 'M5STICK C') {
-  checkBoard_ID = '88801217';
-} else if (json.name === 'obniz board') {
-  checkBoard_ID = '16438366';
-} else if (json.name === 'obniz 1Y') {
-  checkBoard_ID = '54371148';
-} else if (json.name === 'ESP32 Pico Kit v4') {
-  checkBoard_ID = '05094470';
-} else if (json.name === 'ESP32 LTE') {
-  checkBoard_ID = '41232281';
+let json = require('./board/obniz_1y_check_io.json');
+
+if (process.env.OBNIZ_DEVICE === 'devkitc') {
+  json = require('./board/esp32devkitc_check_io.json');
+} else if (process.env.OBNIZ_DEVICE === 'stickc') {
+  json = require('./board/m5stickc_check_io.json');
+} else if (process.env.OBNIZ_DEVICE === 'board') {
+  json = require('./board/obniz_check_io.json');
+} else if (process.env.OBNIZ_DEVICE === 'board1y') {
+  json = require('./board/obniz_1y_check_io.json');
+} else if (process.env.OBNIZ_DEVICE === 'lte') {
+  json = require('./board/esp32lte_check_io.json');
+} else if (process.env.OBNIZ_DEVICE === 'pico') {
+  json = require('./board/esp32pikokitv4_check_io.json');
+} else if (process.env.OBNIZ_DEVICE) {
+  throw new Error(`unknown device ${process.env.OBNIZ_DEVICE}`);
 }
 
-const obnizA_ID = '54371148';
-const obnizB_ID = '00747253';
+let checkBoard_ID = process.env.OBNIZ_ID;
+if (!checkBoard_ID) {
+  //test device
+  if (json.name === 'ESP32 Dev Kit') {
+    checkBoard_ID = '32106175';
+  } else if (json.name === 'M5STICK C') {
+    checkBoard_ID = '88801217';
+  } else if (json.name === 'obniz board') {
+    checkBoard_ID = '50662155';
+  } else if (json.name === 'obniz 1Y') {
+    checkBoard_ID = '63370966';
+  } else if (json.name === 'ESP32 Pico Kit v4') {
+    checkBoard_ID = '05094470';
+  } else if (json.name === 'ESP32 LTE') {
+    checkBoard_ID = '41232281';
+  }
+}
+
+const obnizA_ID = process.env.OBNIZA_ID || '63370966';
+const obnizB_ID = process.env.OBNIZB_ID || '10803935';
 
 let obnizA, obnizB, checkBoard;
 const check_io = json.io;
@@ -47,17 +61,17 @@ function waitForConenct(done) {
 }
 
 function reboot(done) {
-  if (obnizA !== undefined && obnizA.connectionState === 'connected') {
+  if (obnizA !== undefined) {
     obnizA.reboot();
     obnizA.close();
   }
 
-  if (obnizB !== undefined && obnizB.connectionState === 'connected') {
+  if (obnizB !== undefined) {
     obnizB.reboot();
     obnizB.close();
   }
 
-  if (checkBoard !== undefined && checkBoard.connectionState === 'connected') {
+  if (checkBoard !== undefined) {
     checkBoard.reboot();
     checkBoard.close();
   }
@@ -75,16 +89,16 @@ function connectTwoObniz(done, params) {
   let local_connect = true;
   checkBoard = new Obniz(checkBoard_ID, { local_connect: true }); //obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
   checkBoard.onconnect = () => {
-    // if (process.env.DEBUG) {
-    checkBoard.debugprint = true;
-    // }
+    if (process.env.DEBUG) {
+      checkBoard.debugprint = true;
+    }
     console.log('checkBoard local_connect : ' + local_connect);
     if (json.board.some(board => board === 'obnizA')) {
       obnizA = new Obniz(obnizA_ID, { local_connect: local_connect });
       console.log('A local_connect : ' + local_connect);
-      // if (process.env.DEBUG) {
-      obnizA.debugprint = true;
-      // }
+      if (process.env.DEBUG) {
+        obnizA.debugprint = true;
+      }
       obnizA.onconnect = () => {
         if (json.board.some(board => board === 'obnizB')) {
           obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
