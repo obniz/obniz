@@ -7,14 +7,30 @@ import WSSchema from "./wscommand/WSSchema";
 export type EventHandler = (...args: any) => any;
 
 export interface ReceiveJsonOptions {
+  /**
+   * Indicate timeout in milliseconds.
+   * If not appliced, default timeout will be applied.
+   */
   timeout?: number;
+
+  /**
+   * Indicate sequencial operation or not
+   */
   queue?: boolean;
   errors?: { [schema: string]: typeof ObnizError };
 }
 
 export abstract class ComponentAbstract<EventTypes extends string = string> extends EventEmitter<EventTypes> {
+  /**
+   * obniz to be used
+   */
   public Obniz: Obniz;
+
+  /**
+   * Rsponse waiting timeout in milliseconds
+   */
   public timeout: number = 30 * 1000;
+
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
   constructor(obniz: Obniz) {

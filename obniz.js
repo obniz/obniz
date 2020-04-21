@@ -4067,6 +4067,9 @@ const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/ws
 class ComponentAbstract extends eventemitter3_1.default {
     constructor(obniz) {
         super();
+        /**
+         * Rsponse waiting timeout in milliseconds
+         */
         this.timeout = 30 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = obniz;
