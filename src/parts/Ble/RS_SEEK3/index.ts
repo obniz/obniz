@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.RS_Seek3
+ */
+
 import Obniz from "../../../obniz";
 import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";

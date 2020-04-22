@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.RS_BTIREX2
+ */
+
 import Obniz from "../../../obniz";
 import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";

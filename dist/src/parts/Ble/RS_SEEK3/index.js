@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.RS_Seek3
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class RS_Seek3 {
     constructor(peripheral) {

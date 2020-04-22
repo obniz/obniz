@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = require("../../../ObnizError");
 class ObnizBLEHci {

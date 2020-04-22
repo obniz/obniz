@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.ENERTALK_TOUCH
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class ENERTALK_TOUCH {
     constructor(peripheral) {

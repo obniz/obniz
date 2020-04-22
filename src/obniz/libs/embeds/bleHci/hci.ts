@@ -1,9 +1,9 @@
-import { ObnizOfflineError, ObnizParameterError, ObnizTimeoutError } from "../../../ObnizError";
-
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+
+import { ObnizOfflineError, ObnizParameterError, ObnizTimeoutError } from "../../../ObnizError";
 
 export type EventHandler = (...args: any) => any;
 

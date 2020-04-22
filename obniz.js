@@ -2939,7 +2939,10 @@ exports.default = ObnizDevice;
 
 "use strict";
 
-// tslint:disable:max-classes-per-file
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Errors
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class ObnizError extends Error {
     constructor(code, e) {
@@ -4057,6 +4060,10 @@ module.exports = Obniz;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7903,6 +7910,10 @@ exports.default = BleService;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizBLEHci {
@@ -21437,6 +21448,10 @@ exports.default = OMRON_2JCIE;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.ENERTALK_TOUCH
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class ENERTALK_TOUCH {
     constructor(peripheral) {
@@ -21920,6 +21935,10 @@ exports.default = Logtta_TH;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.MINEW_S1_HT
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -22054,6 +22073,10 @@ exports.default = MINEW_S1;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.REX_BTPM25V
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class REX_BTPM25V {
     constructor(peripheral) {
@@ -22248,6 +22271,10 @@ exports.default = REX_BTPM25V;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.RS_BTIREX2
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 // not working
 class RS_BTIREX2 {
@@ -22330,6 +22357,10 @@ exports.default = RS_BTIREX2;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.RS_Seek3
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class RS_Seek3 {
     constructor(peripheral) {

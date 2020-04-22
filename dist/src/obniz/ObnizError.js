@@ -1,5 +1,8 @@
 "use strict";
-// tslint:disable:max-classes-per-file
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Errors
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class ObnizError extends Error {
     constructor(code, e) {
