@@ -8,8 +8,19 @@ import { ObnizOptions } from "./ObnizOptions";
 import ObnizSystemMethods from "./ObnizSystemMethods";
 
 export default class ObnizUIs extends ObnizSystemMethods {
+  /**
+   * @ignore
+   */
   public static _promptQueue: any[] = [];
+
+  /**
+   * @ignore
+   */
   public static _promptWaiting: boolean = false;
+
+  /**
+   * @ignore
+   */
   public static _promptCount: number = 0;
 
   constructor(id: string, options?: ObnizOptions) {
@@ -78,12 +89,18 @@ export default class ObnizUIs extends ObnizSystemMethods {
     }
     const next = ObnizUIs._promptQueue.shift();
     if (next) {
-      this._promptOne(next.filled, next.callback);
+      ObnizUIs._promptWaiting = true;
+      if (document.readyState !== "loading") {
+        this._promptOne(next.filled, next.callback);
+      } else {
+        document.addEventListener("DOMContentLoaded", () => {
+          this._promptOne(next.filled, next.callback);
+        });
+      }
     }
   }
 
   protected _promptOne(filled: any, callback: any) {
-    ObnizUIs._promptWaiting = true;
     ObnizUIs._promptCount++;
     let result = "";
     new Promise((resolve: any) => {

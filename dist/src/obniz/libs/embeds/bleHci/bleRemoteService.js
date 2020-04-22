@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+const bleHelper_1 = __importDefault(require("./bleHelper"));
 const bleRemoteAttributeAbstract_1 = __importDefault(require("./bleRemoteAttributeAbstract"));
 const bleRemoteCharacteristic_1 = __importDefault(require("./bleRemoteCharacteristic"));
 /**
@@ -109,7 +110,7 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @ignore
      */
     discoverAllCharacteristics() {
-        return this.discoverChildren();
+        this.discoverAllCharacteristicsWait(); // background
     }
     /**
      * Discover services.
@@ -133,31 +134,43 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      *      peripheral.connect({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
-    discoverAllCharacteristicsWait() {
-        return this.discoverChildrenWait();
-    }
-    /**
-     * @ignore
-     */
-    discoverChildren() {
-        this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address, this.uuid);
+    async discoverAllCharacteristicsWait() {
+        const chars = await this.parent.obnizBle.centralBindings.discoverCharacteristicsWait(this.peripheral.address, this.uuid);
+        for (const char of chars) {
+            const uuid = char.uuid;
+            const properties = char.properties.map((e) => bleHelper_1.default.toSnakeCase(e));
+            let child = this.getChild(uuid);
+            if (!child) {
+                child = this.addChild({ uuid });
+            }
+            child.discoverdOnRemote = true;
+            child.properties = properties || [];
+            this.ondiscover(child);
+        }
+        return this.characteristics.filter((elm) => {
+            return elm.discoverdOnRemote;
+        });
     }
     /**
      * @ignore
      * @param characteristic
      */
     ondiscover(characteristic) {
-        this.ondiscovercharacteristic(characteristic);
+        setTimeout(() => {
+            this.ondiscovercharacteristic(characteristic);
+        }, 0);
     }
     /**
      * @ignore
      * @param characteristics
      */
     ondiscoverfinished(characteristics) {
-        this.ondiscovercharacteristicfinished(characteristics);
+        setTimeout(() => {
+            this.ondiscovercharacteristicfinished(characteristics);
+        }, 0);
     }
     /**
      * @ignore
@@ -169,6 +182,18 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @param characteristics
      */
     ondiscovercharacteristicfinished(characteristics) { }
+    /**
+     * @ignore
+     */
+    async readWait() {
+        throw new Error("cannot read service");
+    }
+    /**
+     * @ignore
+     */
+    async writeWait() {
+        throw new Error("cannot write service");
+    }
 }
 exports.default = BleRemoteService;
 

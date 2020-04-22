@@ -4,14 +4,15 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * @category Peripherals
  */
-class PeripheralGrove {
+class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, no, params) {
+        super(obniz);
         this.used = false;
         this._current = {};
-        this.Obniz = obniz;
         this.no = no;
         this._params = params;
         this._reset();
@@ -93,6 +94,9 @@ class PeripheralGrove {
      */
     notified(obj) {
         // nothing
+    }
+    schemaBasePath() {
+        return null;
     }
     useWithType(type, drive) {
         if (this.used) {

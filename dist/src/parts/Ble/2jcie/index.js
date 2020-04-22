@@ -3,17 +3,44 @@
  * @packageDocumentation
  * @module Parts.OMRON_2JCIE
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
 class OMRON_2JCIE {
-    constructor() {
-        this.keys = [];
-        this.requiredKeys = [];
-        this.periperal = null;
+    constructor(peripheral) {
+        this._peripheral = null;
+        if (peripheral && !OMRON_2JCIE.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_BTIREX2");
+        }
+        this._peripheral = peripheral;
     }
     static info() {
         return {
             name: "2JCIE",
         };
+    }
+    static isDevice(peripheral) {
+        return ((peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0));
+    }
+    /**
+     * Get a datas from advertisement mode of OMRON 2JCIE
+     */
+    static getData(peripheral) {
+        if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
+            const adv_data = peripheral.adv_data;
+            return {
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
+                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[18]) * 0.01,
+            };
+        }
+        return null;
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -23,26 +50,31 @@ class OMRON_2JCIE {
             localName: "Env",
         };
         await this.obniz.ble.initWait();
-        this.periperal = await this.obniz.ble.scan.startOneWait(target);
-        return this.periperal;
+        this._peripheral = await this.obniz.ble.scan.startOneWait(target);
+        return this._peripheral;
     }
     omron_uuid(uuid) {
         return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
     }
     async connectWait() {
-        if (!this.periperal) {
+        if (!this._peripheral) {
             await this.findWait();
         }
-        if (!this.periperal) {
+        if (!this._peripheral) {
             throw new Error("2JCIE not found");
         }
-        if (!this.periperal.connected) {
-            await this.periperal.connectWait();
+        if (!this._peripheral.connected) {
+            this._peripheral.ondisconnect = (reason) => {
+                if (typeof this.ondisconnect === "function") {
+                    this.ondisconnect(reason);
+                }
+            };
+            await this._peripheral.connectWait();
         }
     }
     async disconnectWait() {
-        if (this.periperal && this.periperal.connected) {
-            this.periperal.disconnectWait();
+        if (this._peripheral && this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
         }
     }
     signedNumberFromBinary(data) {
@@ -66,7 +98,7 @@ class OMRON_2JCIE {
     }
     async getLatestData() {
         await this.connectWait();
-        const c = this.periperal.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
+        const c = this._peripheral.getService(this.omron_uuid("3000")).getCharacteristic(this.omron_uuid("3001"));
         const data = await c.readWait();
         const json = {
             row_number: data[0],

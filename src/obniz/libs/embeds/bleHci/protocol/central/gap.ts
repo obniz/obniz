@@ -4,25 +4,29 @@
  * @ignore
  */
 // let debug = require('debug')('gap');
+import ObnizBLEHci from "../../hci";
+
 /**
  * @ignore
  */
 const debug: any = () => {};
 
-import events from "events";
+import EventEmitter from "eventemitter3";
+import { ObnizBleOpError } from "../../../../../ObnizError";
 import Hci from "../hci";
+
+type GapEventTypes = "scanStop" | "discover";
 
 /**
  * @ignore
  */
-class Gap extends events.EventEmitter {
-  public _hci: any;
-  public _scanState: any;
-  public _scanFilterDuplicates: any;
+class Gap extends EventEmitter<GapEventTypes> {
+  public _hci: Hci;
+  public _scanState: null | "starting" | "started" | "stopping" | "stopped";
+  public _scanFilterDuplicates: null | boolean;
   public _discoveries: any;
-  public _advertiseState: any;
 
-  constructor(hci: any) {
+  constructor(hci: Hci) {
     super();
     this._hci = hci;
 
@@ -30,85 +34,35 @@ class Gap extends events.EventEmitter {
     this._scanFilterDuplicates = null;
     this._discoveries = {};
 
-    this._hci.on("error", this.onHciError.bind(this));
-    this._hci.on("leScanParametersSet", this.onHciLeScanParametersSet.bind(this));
-    this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
     this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
-
-    this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
-
-    this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
-    this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
-    this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
-    this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
   }
 
-  public startScanning(allowDuplicates: boolean, activeScan: boolean) {
+  public async startScanningWait(allowDuplicates: boolean, activeScan: boolean) {
     this._scanState = "starting";
     this._scanFilterDuplicates = !allowDuplicates;
     this._discoveries = {};
     // Always set scan parameters before scanning
     // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
     // p106 - p107
-    this._hci.setScanEnabled(false, true);
 
-    // console.log("scan enable false");
-    this._hci.once("leScanEnableSet", (scanStopStatus: number) => {
-      this._hci.setScanParameters(activeScan);
-      this._hci.once("leScanParametersSet", (setParamStatus: number) => {
-        setTimeout(() => {
-          this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-        }, 1000);
-      });
-    });
-  }
-
-  public stopScanning() {
-    this._scanState = "stopping";
-
-    this._hci.setScanEnabled(false, true);
-  }
-
-  public onHciLeScanParametersSet() {}
-
-  // Called when receive an event "Command Complete" for "LE Set Scan Enable"
-  public onHciLeScanEnableSet(status: any) {
-    // Check the status we got from the command complete function.
-    if (status !== 0) {
-      // If it is non-zero there was an error, and we should not change
-      // our status as a result.
-      return;
-    }
-
-    if (this._scanState === "starting") {
-      this._scanState = "started";
-
-      this.emit("scanStart", this._scanFilterDuplicates);
-    } else if (this._scanState === "stopping") {
-      this._scanState = "stopped";
-
-      this.emit("scanStop");
-    }
-  }
-
-  // Called when we see the actual command "LE Set Scan Enable"
-  public onLeScanEnableSetCmd(enable: any, filterDuplicates?: any) {
-    // Check to see if the new settings differ from what we expect.
-    // If we are scanning, then a change happens if the new command stops
-    // scanning or if duplicate filtering changes.
-    // If we are not scanning, then a change happens if scanning was enabled.
-    if (this._scanState === "starting" || this._scanState === "started") {
-      if (!enable) {
-        this.emit("scanStop");
-      } else if (this._scanFilterDuplicates !== filterDuplicates) {
-        this._scanFilterDuplicates = filterDuplicates;
-
-        this.emit("scanStart", this._scanFilterDuplicates);
+    try {
+      await this.setScanEnabledWait(false, true);
+    } catch (e) {
+      if (e instanceof ObnizBleOpError) {
+        // nop
+      } else {
+        throw e;
       }
-    } else if ((this._scanState === "stopping" || this._scanState === "stopped") && enable) {
-      // Someone started scanning on us.
-      this.emit("scanStart", this._scanFilterDuplicates);
     }
+
+    const setParamStatus = await this._hci.setScanParametersWait(activeScan);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await this.setScanEnabledWait(true, this._scanFilterDuplicates);
+  }
+
+  public async stopScanningWait() {
+    this._scanState = "stopping";
+    await this._hci.setScanEnabledWait(false, true);
   }
 
   public onHciLeAdvertisingReport(status: any, type?: any, address?: any, addressType?: any, eir?: any, rssi?: any) {
@@ -316,188 +270,20 @@ class Gap extends events.EventEmitter {
     this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
   }
 
-  public startAdvertising(name: any, serviceUuids: any) {
-    debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
+  private async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
+    const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
 
-    let advertisementDataLength: any = 3;
-    let scanDataLength: any = 0;
-
-    const serviceUuids16bit: any = [];
-    const serviceUuids128bit: any = [];
-    let i: any = 0;
-
-    if (name && name.length) {
-      scanDataLength += 2 + name.length;
-    }
-
-    if (serviceUuids && serviceUuids.length) {
-      for (i = 0; i < serviceUuids.length; i++) {
-        const serviceUuid: any = Buffer.from(
-          serviceUuids[i]
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(""),
-          "hex",
-        );
-
-        if (serviceUuid.length === 2) {
-          serviceUuids16bit.push(serviceUuid);
-        } else if (serviceUuid.length === 16) {
-          serviceUuids128bit.push(serviceUuid);
-        }
-      }
-    }
-
-    if (serviceUuids16bit.length) {
-      advertisementDataLength += 2 + 2 * serviceUuids16bit.length;
-    }
-
-    if (serviceUuids128bit.length) {
-      advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
-    }
-
-    const advertisementData: any = Buffer.alloc(advertisementDataLength);
-    const scanData: any = Buffer.alloc(scanDataLength);
-
-    // flags
-    advertisementData.writeUInt8(2, 0);
-    advertisementData.writeUInt8(0x01, 1);
-    advertisementData.writeUInt8(0x06, 2);
-
-    let advertisementDataOffset: any = 3;
-
-    if (serviceUuids16bit.length) {
-      advertisementData.writeUInt8(1 + 2 * serviceUuids16bit.length, advertisementDataOffset);
-      advertisementDataOffset++;
-
-      advertisementData.writeUInt8(0x03, advertisementDataOffset);
-      advertisementDataOffset++;
-
-      for (i = 0; i < serviceUuids16bit.length; i++) {
-        serviceUuids16bit[i].copy(advertisementData, advertisementDataOffset);
-        advertisementDataOffset += serviceUuids16bit[i].length;
-      }
-    }
-
-    if (serviceUuids128bit.length) {
-      advertisementData.writeUInt8(1 + 16 * serviceUuids128bit.length, advertisementDataOffset);
-      advertisementDataOffset++;
-
-      advertisementData.writeUInt8(0x06, advertisementDataOffset);
-      advertisementDataOffset++;
-
-      for (i = 0; i < serviceUuids128bit.length; i++) {
-        serviceUuids128bit[i].copy(advertisementData, advertisementDataOffset);
-        advertisementDataOffset += serviceUuids128bit[i].length;
-      }
-    }
-
-    // name
-    if (name && name.length) {
-      const nameBuffer: any = Buffer.from(name);
-
-      scanData.writeUInt8(1 + nameBuffer.length, 0);
-      scanData.writeUInt8(0x08, 1);
-      nameBuffer.copy(scanData, 2);
-    }
-
-    this.startAdvertisingWithEIRData(advertisementData, scanData);
-  }
-
-  public startAdvertisingIBeacon(data: any) {
-    debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
-
-    const dataLength: any = data.length;
-    const manufacturerDataLength: any = 4 + dataLength;
-    const advertisementDataLength: any = 5 + manufacturerDataLength;
-
-    const advertisementData: any = Buffer.alloc(advertisementDataLength);
-    const scanData: any = Buffer.alloc(0);
-
-    // flags
-    advertisementData.writeUInt8(2, 0);
-    advertisementData.writeUInt8(0x01, 1);
-    advertisementData.writeUInt8(0x06, 2);
-
-    advertisementData.writeUInt8(manufacturerDataLength + 1, 3);
-    advertisementData.writeUInt8(0xff, 4);
-    advertisementData.writeUInt16LE(0x004c, 5); // Apple Company Identifier LE (16 bit)
-    advertisementData.writeUInt8(0x02, 7); // type, 2 => iBeacon
-    advertisementData.writeUInt8(dataLength, 8);
-
-    data.copy(advertisementData, 9);
-
-    this.startAdvertisingWithEIRData(advertisementData, scanData);
-  }
-
-  public startAdvertisingWithEIRData(advertisementData: any, scanData: any) {
-    advertisementData = advertisementData || Buffer.alloc(0);
-    scanData = scanData || Buffer.alloc(0);
-
-    debug(
-      "startAdvertisingWithEIRData: advertisement data = " +
-        advertisementData.toString("hex") +
-        ", scan data = " +
-        scanData.toString("hex"),
-    );
-
-    let error: any = null;
-
-    if (advertisementData.length > 31) {
-      error = new Error("Advertisement data is over maximum limit of 31 bytes");
-    } else if (scanData.length > 31) {
-      error = new Error("Scan data is over maximum limit of 31 bytes");
-    }
-
-    if (error) {
-      this.emit("advertisingStart", error);
+    // Check the status we got from the command complete function.
+    if (scanStopStatus !== 0) {
+      // If it is non-zero there was an error, and we should not change
+      // our status as a result.
+      // throw new ObnizBleOpError();
     } else {
-      this._advertiseState = "starting";
-
-      this._hci.setScanResponseData(scanData);
-      this._hci.setAdvertisingData(advertisementData);
-
-      this._hci.setAdvertiseEnable(true);
-      this._hci.setScanResponseData(scanData);
-      this._hci.setAdvertisingData(advertisementData);
-    }
-  }
-
-  public restartAdvertising() {
-    this._advertiseState = "restarting";
-
-    this._hci.setAdvertiseEnable(true);
-  }
-
-  public stopAdvertising() {
-    this._advertiseState = "stopping";
-
-    this._hci.setAdvertiseEnable(false);
-  }
-
-  public onHciError(error: any) {}
-
-  public onHciLeAdvertisingParametersSet(status: any) {}
-
-  public onHciLeAdvertisingDataSet(status: any) {}
-
-  public onHciLeScanResponseDataSet(status: any) {}
-
-  public onHciLeAdvertiseEnableSet(status: any) {
-    if (this._advertiseState === "starting") {
-      this._advertiseState = "started";
-
-      let error: any = null;
-
-      if (status) {
-        error = new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+      if (this._scanState === "starting") {
+        this._scanState = "started";
+      } else if (this._scanState === "stopping") {
+        this._scanState = "stopped";
       }
-
-      this.emit("advertisingStart", error);
-    } else if (this._advertiseState === "stopping") {
-      this._advertiseState = "stopped";
-
-      this.emit("advertisingStop");
     }
   }
 }

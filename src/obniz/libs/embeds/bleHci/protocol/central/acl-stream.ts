@@ -5,24 +5,28 @@
  */
 // var debug = require('debug')('acl-att-stream');
 
-import events from "events";
+import EventEmitter from "eventemitter3";
 
+import { Handle } from "../../bleTypes";
+import Hci from "../hci";
 import Smp from "./smp";
 
+type AclStreamEventTypes = "data" | "end" | "encrypt" | "encryptFail";
+
 /**
+ *
  * @ignore
  */
-export default class AclStream extends events.EventEmitter {
-  public _hci: any;
-  public _handle: any;
-  public _smp: any;
-  public onSmpStkBinded: any;
+export default class AclStream extends EventEmitter<AclStreamEventTypes> {
+  public _hci: Hci;
+  public _handle: Handle;
+  public _smp: Smp;
   public onSmpFailBinded: any;
   public onSmpEndBinded: any;
 
   constructor(
-    hci: any,
-    handle: any,
+    hci: Hci,
+    handle: Handle,
     localAddressType: any,
     localAddress: any,
     remoteAddressType: any,
@@ -34,24 +38,29 @@ export default class AclStream extends events.EventEmitter {
 
     this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
 
-    this.onSmpStkBinded = this.onSmpStk.bind(this);
     this.onSmpFailBinded = this.onSmpFail.bind(this);
     this.onSmpEndBinded = this.onSmpEnd.bind(this);
 
-    this._smp.on("stk", this.onSmpStkBinded);
     this._smp.on("fail", this.onSmpFailBinded);
     this._smp.on("end", this.onSmpEndBinded);
   }
 
-  public encrypt() {
-    this._smp.sendPairingRequest();
+  public async encryptWait(options?: any) {
+    let encrpytResult = null;
+    encrpytResult = await this._smp.pairingWait(options);
+    return encrpytResult;
   }
 
   public write(cid: any, data: any) {
     this._hci.writeAclDataPkt(this._handle, cid, data);
   }
 
-  public push(cid: any, data: any) {
+  public async readWait(cid: any, flag: number, timeout?: number): Promise<Buffer> {
+    const data = await this._hci.readAclStreamWait(this._handle, cid, flag, timeout);
+    return data;
+  }
+
+  public push(cid: number, data: Buffer) {
     if (data) {
       this.emit("data", cid, data);
     } else {
@@ -59,15 +68,17 @@ export default class AclStream extends events.EventEmitter {
     }
   }
 
-  public pushEncrypt(encrypt: any) {
-    this.emit("encrypt", encrypt);
+  public end() {
+    this.emit("end");
   }
 
-  public onSmpStk(stk: any) {
+  public async onSmpStkWait(stk: any) {
     const random: any = Buffer.from("0000000000000000", "hex");
     const diversifier: any = Buffer.from("0000", "hex");
 
-    this._hci.startLeEncryption(this._handle, random, diversifier, stk);
+    const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, stk);
+    this.emit("encrypt", result);
+    return result;
   }
 
   public onSmpFail() {
@@ -75,8 +86,9 @@ export default class AclStream extends events.EventEmitter {
   }
 
   public onSmpEnd() {
-    this._smp.removeListener("stk", this.onSmpStkBinded);
     this._smp.removeListener("fail", this.onSmpFailBinded);
     this._smp.removeListener("end", this.onSmpEndBinded);
   }
+
+  public startEncrypt(option: any) {}
 }

@@ -103,7 +103,7 @@ class ObnizDevice extends ObnizUIs_1.default {
             if (typeof showObnizDebugError === "function") {
                 showObnizDebugError(new Error(msg));
             }
-            console.log(`Warning: ${msg}`);
+            this.log(`Warning: ${msg}`);
         }
     }
     /**
@@ -111,22 +111,16 @@ class ObnizDevice extends ObnizUIs_1.default {
      * @param msg
      */
     error(msg) {
-        if (this.isNode) {
-            console.error(msg);
-        }
-        else {
+        if (!this.isNode) {
             if (msg && typeof msg === "object" && msg.alert) {
                 this.showAlertUI(msg);
                 msg = msg.message;
             }
             if (typeof showObnizDebugError === "function") {
                 showObnizDebugError(new Error(msg));
-                console.error(new Error(msg));
-            }
-            else {
-                throw new Error(msg);
             }
         }
+        console.error(`${msg}`);
     }
     /**
      * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]

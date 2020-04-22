@@ -16,6 +16,7 @@ interface ObnizTestUtil {
   needBrowserTest: any;
   checkJsonToBinary: any;
   checkBinaryToJson: any;
+  closeAndReconnectObnizWait: any;
 }
 
 declare const testUtil: ObnizTestUtil;

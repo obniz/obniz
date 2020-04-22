@@ -119,16 +119,18 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
    * @ignore
    * @param dataArray
    */
-  public write(dataArray: number[]) {
+  public async writeWait(dataArray: number[]): Promise<boolean> {
     this.data = dataArray;
     this.notifyFromServer("onwrite", { result: "success" });
+    return true;
   }
 
   /**
    * @ignore
    * @param dataArray
    */
-  public read() {
+  public async readWait(): Promise<number[]> {
     this.notifyFromServer("onread", { data: this.data });
+    return this.data;
   }
 }

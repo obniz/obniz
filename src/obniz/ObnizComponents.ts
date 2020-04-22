@@ -4,7 +4,7 @@
  */
 
 import semver from "semver";
-import { ObnizHciBLE, ObnizOldBLE } from "./libs/embeds/ble";
+import ObnizHciBLE from "./libs/embeds/bleHci/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";
 
@@ -23,6 +23,7 @@ import TCP from "./libs/protocol/tcp";
 
 import ObnizParts from "./ObnizParts";
 
+import { ComponentAbstract } from "./libs/ComponentAbstact";
 import HW from "./libs/hw";
 import PeripheralGrove from "./libs/io_peripherals/grove";
 import { ObnizOptions } from "./ObnizOptions";
@@ -232,10 +233,10 @@ export default class ObnizComponents extends ObnizParts {
 
   /**
    * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
-   * and obnizOS ver < 3.0.0 load [[ObnizCore.Components.Ble.old.ObnizBLE|ObnizOldBLE]],
+   * and obnizOS ver < 3.0.0 throw unsupported Error,
    * @category Embeds
    */
-  public ble?: ObnizOldBLE.default | ObnizHciBLE.default;
+  public ble?: ObnizHciBLE;
 
   protected _hwDefinition: any;
 
@@ -414,12 +415,7 @@ export default class ObnizComponents extends ObnizParts {
       grove: PeripheralGrove,
     };
 
-    let ble: any = ObnizHciBLE.default;
-
-    // < 3.0.0-beta
-    if (semver.lt(this.firmware_ver!, "3.0.0-beta")) {
-      ble = ObnizOldBLE.default;
-    }
+    const ble: any = ObnizHciBLE;
 
     const embeds_map: any = {
       display: Display,
@@ -486,15 +482,23 @@ export default class ObnizComponents extends ObnizParts {
   protected notifyToModule(obj: any) {
     super.notifyToModule(obj);
     for (const key of this._allComponentKeys) {
-      if (key === "logicAnalyzer") {
-        if (obj.hasOwnProperty("logic_analyzer")) {
-          (this as any).logicAnalyzer.notified(obj.logic_analyzer);
+      const targetComponent = (this as any)[key];
+      if (targetComponent instanceof ComponentAbstract) {
+        const basePath = targetComponent.schemaBasePath();
+        if (basePath && obj.hasOwnProperty(basePath)) {
+          targetComponent.notifyFromObniz(obj[basePath]);
         }
-        continue;
-      }
-      if (obj.hasOwnProperty(key)) {
-        /* because of nullable */
-        (this as any)[key].notified(obj[key]);
+      } else {
+        if (key === "logicAnalyzer") {
+          if (obj.hasOwnProperty("logic_analyzer")) {
+            (this as any).logicAnalyzer.notified(obj.logic_analyzer);
+          }
+          continue;
+        }
+        if (obj.hasOwnProperty(key)) {
+          /* because of nullable */
+          targetComponent.notified(obj[key]);
+        }
       }
     }
   }

@@ -3,8 +3,7 @@
  * @module ObnizCore.Hardware
  */
 
-import Obniz from "../../index";
-import ObnizBLE from "../embeds/ble/ble";
+import ObnizDevice from "../../ObnizDevice";
 import ObnizBLEHci from "../embeds/bleHci/ble";
 import Display from "../embeds/display";
 import ObnizSwitch from "../embeds/switch";
@@ -20,7 +19,7 @@ import ObnizMeasure from "../measurements/measure";
 /**
  * obniz Board interface
  */
-interface obnizBoard extends Obniz {
+interface obnizBoard extends ObnizDevice {
   io0: PeripheralIO;
   io1: PeripheralIO;
   io2: PeripheralIO;
@@ -63,7 +62,7 @@ interface obnizBoard extends Obniz {
   measure: ObnizMeasure;
   display: Display;
   switch: ObnizSwitch;
-  ble: ObnizBLE | ObnizBLEHci;
+  ble: ObnizBLEHci;
 }
 
 /**

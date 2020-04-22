@@ -55,12 +55,8 @@ class M5StickC extends ObnizDevice_1.default {
             return this.imu;
         });
     }
-    _prepareComponents() {
-        // @ts-ignore
-        super._prepareComponents();
-        if (this.hw !== "m5stickc") {
-            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
-        }
+    async _beforeOnConnect() {
+        super._beforeOnConnect();
         if (this.ir) {
             // already wired parts
             return;
@@ -80,6 +76,13 @@ class M5StickC extends ObnizDevice_1.default {
         this._m5i2c.start(i2cParams);
         this.axp = this.wired("AXP192", { i2c: this._m5i2c });
         this.led.off();
+    }
+    _prepareComponents() {
+        // @ts-ignore
+        super._prepareComponents();
+        if (this.hw !== "m5stickc") {
+            throw new Error("Obniz.M5StickC only support ObnizOS for M5StickC. Your device is not ObnizOS for M5StickC.");
+        }
     }
 }
 exports.M5StickC = M5StickC;

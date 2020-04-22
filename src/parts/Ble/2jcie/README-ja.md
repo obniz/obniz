@@ -1,18 +1,41 @@
 # 2JCIE
-OMRON社製の環境センサです
+OMRON社製の環境センサです。電池で動作し、温度、湿度、照度、UV、気圧、騒音、加速度、VOCを計測できます。
 
 ![](image.jpg)
 
+## isDevice(BleRemotePeripheral)
 
-## wired(obniz)
-
+デバイスを発見した場合、trueを返します。
 
 ```javascript
 // Javascript Example
-let omron = obniz.wired('2JCIE');
-
+const Device = Obniz.getPartsClass('2JCIE');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (p) => {
+    if (Device.isDevice(p)) {
+        let data = Device.getData(p);
+        console.log(data);
+    }
+};
+await obniz.ble.scan.startWait();
 ```
 
+## getData(BleRemotePeripheral)
+
+advertisementからデータを取得(そのようにモード設定されたデバイスのみ発信しています)
+
+```javascript
+// Javascript Example
+const Device = Obniz.getPartsClass('2JCIE');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (p) => {
+    if (Device.isDevice(p)) {
+        let data = Device.getData(p);
+        console.log(data);
+    }
+};
+await obniz.ble.scan.startWait();
+```
 
 
 ## [await] findWait()
@@ -44,6 +67,9 @@ let results = await omron.findWait();
 if(results){
     console.log("find");
   
+    omron.ondisconnect = (reason) => {
+      console.log('disconnected');
+    }
     await omron.connectWait();
     let data = await omron.getLatestData();
     

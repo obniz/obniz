@@ -8,12 +8,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * @ignore
  */
-const events_1 = __importDefault(require("events"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const smp_1 = __importDefault(require("./smp"));
 /**
  * @ignore
  */
-class AclStream extends events_1.default.EventEmitter {
+class AclStream extends eventemitter3_1.default {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
         this._hci = hci;
@@ -28,16 +28,13 @@ class AclStream extends events_1.default.EventEmitter {
         if (data) {
             this.emit("data", cid, data);
         }
-        else {
-            this.emit("end");
-        }
+    }
+    end() {
+        this.emit("end");
     }
     pushEncrypt(encrypt) {
         this.encrypted = encrypt ? true : false;
         this.emit("encryptChange", this.encrypted);
-    }
-    pushLtkNegReply() {
-        this.emit("ltkNegReply");
     }
 }
 exports.default = AclStream;

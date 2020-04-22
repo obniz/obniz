@@ -3,11 +3,12 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import EventEmitter from "eventemitter3";
+import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
 import ObnizUtil from "../../utils/util";
 import BleHelper from "./bleHelper";
 import { BleDeviceAddress, UUID } from "./bleTypes";
 
-export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
+export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
@@ -150,89 +151,43 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
-  public read() {}
+  public abstract readWait(): Promise<number[]>;
 
   /**
    * @ignore
    */
-  public write(data: number[], needResponse?: boolean) {}
+  public abstract writeWait(data: number[], needResponse?: boolean): Promise<boolean>;
 
   /**
+   * Use writeTextWait() instead from 3.5.0
    * @ignore
-   */
-  public writeNumber(val: number, needResponse?: boolean) {
-    this.write([val], needResponse);
-  }
-
-  /**
-   * @ignore
+   * @deprecated
    */
   public writeText(str: string, needResponse?: boolean) {
-    this.write(ObnizUtil.string2dataArray(str), needResponse);
+    throw new ObnizDeprecatedFunctionError("writeText", "writeTextWait");
   }
 
   /**
    * @ignore
    */
-  public readWait(): Promise<number[]> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onread", (params: any) => {
-        if (params.result === "success") {
-          resolve(params.data);
-        } else {
-          reject(new Error("readWait failed"));
-        }
-      });
-      this.read();
-    });
+  public async writeTextWait(str: string, needResponse?: boolean): Promise<boolean> {
+    return await this.writeWait(ObnizUtil.string2dataArray(str), needResponse);
+  }
+
+  /**
+   * Use writeNumberWait() instead from 3.5.0
+   * @ignore
+   * @deprecated
+   */
+  public writeNumber(val: number, needResponse?: boolean) {
+    throw new ObnizDeprecatedFunctionError("writeNumber", "writeNumberWait");
   }
 
   /**
    * @ignore
    */
-  public writeWait(data: number[], needResponse?: boolean): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeWait failed"));
-        }
-      });
-      this.write(data, needResponse);
-    });
-  }
-
-  /**
-   * @ignore
-   */
-  public writeTextWait(data: string, needResponse?: boolean): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeTextWait failed"));
-        }
-      });
-      this.writeText(data, needResponse);
-    });
-  }
-
-  /**
-   * @ignore
-   */
-  public writeNumberWait(data: number, needResponse?: boolean): Promise<void> {
-    return new Promise((resolve: any, reject: any) => {
-      this.emitter.once("onwrite", (params: any) => {
-        if (params.result === "success") {
-          resolve(true);
-        } else {
-          reject(new Error("writeNumberWait failed"));
-        }
-      });
-      this.writeNumber(data, needResponse);
-    });
+  public async writeNumberWait(val: number, needResponse?: boolean): Promise<boolean> {
+    return await this.writeWait([val], needResponse);
   }
 
   /**
@@ -275,30 +230,6 @@ export default class BleAttributeAbstract<ParentClass, ChildrenClass> {
     switch (notifyName) {
       case "onerror": {
         this.onerror(params);
-        break;
-      }
-      case "onwrite": {
-        if (this.onwrite) {
-          this.onwrite(params.result);
-        }
-        break;
-      }
-      case "onread": {
-        if (this.onread) {
-          this.onread(params.data);
-        }
-        break;
-      }
-      case "onwritefromremote": {
-        if (this.onwritefromremote) {
-          this.onwritefromremote(params.address, params.data);
-        }
-        break;
-      }
-      case "onreadfromremote": {
-        if (this.onreadfromremote) {
-          this.onreadfromremote(params.address);
-        }
         break;
       }
     }

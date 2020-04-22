@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 // let debug = require('debug')('signaling');
 const debug = () => { };
-const events_1 = __importDefault(require("events"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 /**
  * @ignore
  */
@@ -26,7 +26,7 @@ const SIGNALING_CID = 0x0005;
 /**
  * @ignore
  */
-class Signaling extends events_1.default.EventEmitter {
+class Signaling extends eventemitter3_1.default {
     constructor(handle, aclStream) {
         super();
         this._handle = handle;

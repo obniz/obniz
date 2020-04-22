@@ -543,7 +543,7 @@ class LinkingDevice {
         }
     }
     _initServices() {
-        const device_name = this._peripheral.localName;
+        const device_name = this._peripheral.localName || "";
         // Device Name
         if (this._generic_access_service.device_name.char) {
             this.services.deviceName = {

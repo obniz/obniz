@@ -13,15 +13,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const debug = () => { };
-const events_1 = __importDefault(require("events"));
-const os_1 = __importDefault(require("os"));
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
 const gap_1 = __importDefault(require("./gap"));
 const gatt_1 = __importDefault(require("./gatt"));
 /**
  * @ignore
  */
-class BlenoBindings extends events_1.default.EventEmitter {
+class BlenoBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
@@ -33,25 +32,24 @@ class BlenoBindings extends events_1.default.EventEmitter {
         this._handle = null;
         this._aclStream = null;
     }
-    startAdvertising(name, serviceUuids) {
+    async startAdvertisingWait(name, serviceUuids) {
         this._advertising = true;
-        this._gap.startAdvertising(name, serviceUuids);
+        await this._gap.startAdvertisingWait(name, serviceUuids);
     }
-    startAdvertisingIBeacon(data) {
+    async startAdvertisingIBeaconWait(data) {
         this._advertising = true;
-        this._gap.startAdvertisingIBeacon(data);
+        await this._gap.startAdvertisingIBeaconWait(data);
     }
-    startAdvertisingWithEIRData(advertisementData, scanData) {
+    async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         this._advertising = true;
-        this._gap.startAdvertisingWithEIRData(advertisementData, scanData);
+        await this._gap.startAdvertisingWithEIRDataWait(advertisementData, scanData);
     }
-    stopAdvertising() {
+    async stopAdvertisingWait() {
         this._advertising = false;
-        this._gap.stopAdvertising();
+        await this._gap.stopAdvertisingWait();
     }
-    setServices(services) {
+    async setServices(services) {
         this._gatt.setServices(services);
-        this.emit("servicesSet");
     }
     disconnect() {
         if (this._handle) {
@@ -59,26 +57,21 @@ class BlenoBindings extends events_1.default.EventEmitter {
             this._hci.disconnect(this._handle);
         }
     }
-    updateRssi() {
+    async updateRssiWait() {
         if (this._handle) {
-            this._hci.readRssi(this._handle);
+            const rssi = await this._hci.readRssiWait(this._handle);
+            return rssi;
         }
+        return null;
     }
     init() {
-        this._gap.on("advertisingStart", this.onAdvertisingStart.bind(this));
-        this._gap.on("advertisingStop", this.onAdvertisingStop.bind(this));
         this._gatt.on("mtuChange", this.onMtuChange.bind(this));
         this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("addressChange", this.onAddressChange.bind(this));
-        this._hci.on("readLocalVersion", this.onReadLocalVersion.bind(this));
         this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
         this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("rssiRead", this.onRssiRead.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-        this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
-        this.emit("platform", os_1.default.platform());
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -97,16 +90,6 @@ class BlenoBindings extends events_1.default.EventEmitter {
         }
         this.emit("stateChange", state);
     }
-    onAddressChange(address) {
-        this.emit("addressChange", address);
-    }
-    onReadLocalVersion(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) { }
-    onAdvertisingStart(error) {
-        this.emit("advertisingStart", error);
-    }
-    onAdvertisingStop() {
-        this.emit("advertisingStop");
-    }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 1) {
             // not slave, ignore
@@ -121,22 +104,22 @@ class BlenoBindings extends events_1.default.EventEmitter {
     onLeConnUpdateComplete(handle, interval, latency, supervisionTimeout) {
         // no-op
     }
-    onDisconnComplete(handle, reason) {
+    async onDisconnCompleteWait(handle, reason) {
         if (this._handle !== handle) {
             return; // not peripheral
         }
         if (this._aclStream) {
-            this._aclStream.push(null, null);
+            this._aclStream.end();
         }
         const address = this._address;
         this._address = null;
         this._handle = null;
         this._aclStream = null;
         if (address) {
-            this.emit("disconnect", address); // TODO: use reason
+            this.emit("disconnect", address, reason); // TODO: use reason
         }
         if (this._advertising) {
-            this._gap.restartAdvertising();
+            await this._gap.restartAdvertisingWait();
         }
     }
     onEncryptChange(handle, encrypt) {
@@ -144,16 +127,8 @@ class BlenoBindings extends events_1.default.EventEmitter {
             this._aclStream.pushEncrypt(encrypt);
         }
     }
-    onLeLtkNegReply(handle) {
-        if (this._handle === handle && this._aclStream) {
-            this._aclStream.pushLtkNegReply();
-        }
-    }
     onMtuChange(mtu) {
         this.emit("mtuChange", mtu);
-    }
-    onRssiRead(handle, rssi) {
-        this.emit("rssiUpdate", rssi);
     }
     onAclDataPkt(handle, cid, data) {
         if (this._handle === handle && this._aclStream) {

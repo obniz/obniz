@@ -30,9 +30,16 @@ class BleAdvertisement {
      * obniz.ble.advertisement.start();
      * ```
      */
+    async startWait() {
+        this.obnizBle.warningIfNotInitialize();
+        await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
+    }
+    /**
+     * @deprecated
+     */
     start() {
         this.obnizBle.warningIfNotInitialize();
-        this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
+        this.startWait(); // background
     }
     /**
      * This stops advertisement of BLE.
@@ -45,8 +52,14 @@ class BleAdvertisement {
      * ```
      *
      */
+    async endWait() {
+        await this.obnizBle.peripheralBindings.stopAdvertisingWait();
+    }
+    /**
+     *  @deprecated
+     */
     end() {
-        this.obnizBle.peripheralBindings.stopAdvertising();
+        this.endWait(); // background
     }
     /**
      * This sets advertise data from data array.

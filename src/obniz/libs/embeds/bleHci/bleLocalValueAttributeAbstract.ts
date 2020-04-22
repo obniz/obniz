@@ -19,23 +19,6 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
   }
 
   /**
-   * @ignore
-   * @param dataArray
-   */
-  public write(dataArray: number[]) {
-    this.data = dataArray;
-    this.notifyFromServer("onwrite", { result: "success" });
-  }
-
-  /**
-   * @ignore
-   * @param dataArray
-   */
-  public read() {
-    this.notifyFromServer("onread", { data: this.data });
-  }
-
-  /**
    * This writes dataArray.
    * It throws an error when failed.
    *
@@ -47,8 +30,10 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    *
    * @param data
    */
-  public writeWait(data: any): Promise<void> {
-    return super.writeWait(data);
+  public async writeWait(data: any): Promise<boolean> {
+    this.data = data;
+    this.notifyFromServer("onwrite", { result: "success" });
+    return true;
   }
 
   /**
@@ -63,7 +48,36 @@ export default class BleLocalValueAttributeAbstract<ParentClass, ChildrenClass> 
    *  console.log("data: " , data );
    * ```
    */
-  public readWait(): Promise<number[]> {
-    return super.readWait();
+  public async readWait(): Promise<number[]> {
+    this.notifyFromServer("onread", { data: this.data });
+    return this.data;
+  }
+
+  /**
+   * @ignore
+   * @param notifyName
+   * @param params
+   */
+  public notifyFromServer(notifyName: any, params: any) {
+    super.notifyFromServer(notifyName, params);
+    this.emitter.emit(notifyName, params);
+    switch (notifyName) {
+      case "onwritefromremote": {
+        setTimeout(() => {
+          if (this.onwritefromremote) {
+            this.onwritefromremote(params.address, params.data);
+          }
+        }, 0);
+        break;
+      }
+      case "onreadfromremote": {
+        setTimeout(() => {
+          if (this.onreadfromremote) {
+            this.onreadfromremote(params.address);
+          }
+        }, 0);
+        break;
+      }
+    }
   }
 }

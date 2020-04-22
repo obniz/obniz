@@ -102,7 +102,7 @@ describe('obniz.libs.spi', function() {
     return r;
   });
 
-  it('write over 32 to <1.0.3', function() {
+  it('write over 32 to <1.0.3', async function() {
     let firmver_ver = this.obniz.firmware_ver;
     this.obniz.firmware_ver = '1.0.2';
     this.obniz.spi0.start({
@@ -124,9 +124,13 @@ describe('obniz.libs.spi', function() {
       data.push(i);
     }
 
-    expect(() => {
-      this.obniz.spi0.writeWait(data);
-    }).to.throw();
+    let didThrow = false;
+    try {
+      await this.obniz.spi0.writeWait(data);
+    } catch (e) {
+      didThrow = true;
+    }
+    expect(didThrow).to.be.true;
     expect(this.obniz).to.be.finished;
     this.obniz.firmware_ver = firmver_ver;
   });

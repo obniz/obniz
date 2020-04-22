@@ -12,8 +12,10 @@ const ws_1 = __importDefault(require("ws"));
 // @ts-ignore
 const package_1 = __importDefault(require("../../package")); // pakcage.js will be created from package.json on build.
 const wscommand_1 = __importDefault(require("./libs/wscommand"));
-class ObnizConnection {
+const ObnizError_1 = require("./ObnizError");
+class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
+        super();
         this.isNode = typeof window === "undefined";
         this.id = id;
         this.socket = null;
@@ -26,7 +28,6 @@ class ObnizConnection {
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
         this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
-        this.emitter = new eventemitter3_1.default();
         this._connectionRetryCount = 0;
         if (!options) {
             options = {};
@@ -124,11 +125,11 @@ class ObnizConnection {
                 resolve(true);
                 return;
             }
-            this.emitter.once("connected", () => {
+            this.once("connect", () => {
                 resolve(true);
             });
             if (!this.options.auto_connect) {
-                this.emitter.once("closed", () => {
+                this.once("close", () => {
                     resolve(false);
                 });
             }
@@ -180,9 +181,15 @@ class ObnizConnection {
      * @param options.local_connect If false, send data via gloval internet.
      */
     send(obj, options) {
+        options = options || {};
+        options.local_connect = options.local_connect !== false;
+        options.connect_check = options.connect_check !== false;
+        if (options.connect_check && this.connectionState !== "connected") {
+            throw new ObnizError_1.ObnizOfflineError();
+        }
         try {
             if (!obj || typeof obj !== "object") {
-                console.log("obnizjs. didnt send ", obj);
+                this.log("obnizjs. didnt send ", obj);
                 return;
             }
             if (Array.isArray(obj)) {
@@ -200,14 +207,14 @@ class ObnizConnection {
                 this.print_debug("send: " + sendData);
             }
             /* compress */
-            if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
+            if (this.wscommand && options.local_connect) {
                 let compressed;
                 try {
                     compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            console.log("Obniz: binalized: " + new Uint8Array(compressed).toString());
+                            this.log("binalized: " + new Uint8Array(compressed).toString());
                         }
                     }
                 }
@@ -233,7 +240,7 @@ class ObnizConnection {
             }
         }
         catch (e) {
-            console.log(e);
+            this.log(e);
         }
     }
     /**
@@ -241,14 +248,20 @@ class ObnizConnection {
      * @param msg
      */
     warning(msg) {
-        console.log("warning:" + msg);
+        this.log("warning:" + msg);
     }
     /**
      * @ignore
      * @param msg
      */
     error(msg) {
-        console.error("error:" + msg);
+        console.error(`[obniz ${this.id}] error:${msg}`);
+    }
+    /**
+     * @ignore
+     */
+    log(...args) {
+        console.log(`[obniz ${this.id}]`, ...args);
     }
     wsOnOpen() {
         this.print_debug("ws connected");
@@ -265,7 +278,7 @@ class ObnizConnection {
         }
         else if (this.wscommands) {
             if (this.debugprintBinary) {
-                console.log("Obniz: binalized: " + new Uint8Array(data).toString());
+                this.log("binalized: " + new Uint8Array(data).toString());
             }
             json = this.binary2Json(data);
         }
@@ -281,10 +294,10 @@ class ObnizConnection {
     wsOnClose(event) {
         this.print_debug("closed");
         this.close();
-        this.emitter.emit("closed");
         if (typeof this.onclose === "function" && this.onConnectCalled === true) {
             this.onclose(this);
         }
+        this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();
     }
@@ -378,7 +391,7 @@ class ObnizConnection {
                 this.wsOnMessage(data);
             });
             ws.on("close", (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             });
             ws.on("error", (err) => {
@@ -386,7 +399,7 @@ class ObnizConnection {
                 this._disconnectLocal();
             });
             ws.on("unexpected-response", (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             });
         }
@@ -402,11 +415,11 @@ class ObnizConnection {
                 this.wsOnMessage(event.data);
             };
             ws.onclose = (event) => {
-                console.log("local websocket closed");
+                this.log("local websocket closed");
                 this._disconnectLocal();
             };
             ws.onerror = (err) => {
-                console.log("local websocket error.", err);
+                this.log("local websocket error.", err);
                 this._disconnectLocal();
             };
         }
@@ -450,6 +463,14 @@ class ObnizConnection {
             socket.onerror = null;
         }
     }
+    /**
+     * This function will be called before obniz.onconnect called;
+     */
+    async _beforeOnConnect() { }
+    /**
+     * This function will be called after obniz.onconnect and all emitter called;
+     */
+    async _afterOnConnect() { }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -467,23 +488,30 @@ class ObnizConnection {
                 /* local_connect is not used */
             }
         }
-        this.emitter.emit("connected");
         if (canChangeToConnected) {
             this.connectionState = "connected";
+            this._beforeOnConnect();
             if (typeof this.onconnect === "function") {
-                const promise = this.onconnect(this);
-                if (promise instanceof Promise) {
-                    promise.catch((err) => {
-                        console.error(err);
-                    });
+                try {
+                    const promise = this.onconnect(this);
+                    if (promise instanceof Promise) {
+                        promise.catch((err) => {
+                            console.error(err);
+                        });
+                    }
+                }
+                catch (err) {
+                    console.error(err);
                 }
             }
+            this.emit("connect", this);
             this.onConnectCalled = true;
+            this._afterOnConnect();
         }
     }
     print_debug(str) {
         if (this.debugprint) {
-            console.log("Obniz: " + str);
+            this.log(str);
         }
     }
     _sendRouted(data) {

@@ -12,6 +12,7 @@ export type BleConnectionState = "connected" | "disconnected";
 export interface BleConnectionUpdateParam {
   address: BleDeviceAddress;
   status: BleConnectionState;
+  reason?: string | Error;
 }
 
 /**
@@ -48,9 +49,9 @@ export default class BlePeripheral {
    * @ignore
    * @private
    */
-  public _updateServices() {
+  public async _updateServices() {
     const bufData: any = this._services.map((e: any) => e.toBufferObj());
-    this.obnizBle.peripheralBindings.setServices(bufData);
+    await this.obnizBle.peripheralBindings.setServices(bufData);
   }
 
   /**
@@ -87,7 +88,6 @@ export default class BlePeripheral {
 
     this._updateServices();
   }
-
   /**
    * @ignore
    * @private

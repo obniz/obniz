@@ -84,7 +84,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.ble.hci.bleattributeabstract.html" class="tsd-kind-icon">Ble<wbr>Attribute<wbr>Abstract</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.ble.hci.blesecurity.html" class="tsd-kind-icon">Ble<wbr>Security</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.ble.hci.obnizble.html" class="tsd-kind-icon">ObnizBLE</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.ble.hci.obnizble.html" class="tsd-kind-icon">ObnizBLE</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/obnizcore.components.ble.hci.obnizblehci.html" class="tsd-kind-icon">ObnizBLEHci</a></li>
 							</ul>
 							<h3>Use as Central Classes</h3>
@@ -117,6 +117,7 @@
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.ble.hci.bleconnectsetting.html" class="tsd-kind-icon">Ble<wbr>Connect<wbr>Setting</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.ble.hci.bleconnectionupdateparam.html" class="tsd-kind-icon">Ble<wbr>Connection<wbr>Update<wbr>Param</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.ble.hci.bledescriptordefine.html" class="tsd-kind-icon">Ble<wbr>Descriptor<wbr>Define</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.ble.hci.blepairingoptions.html" class="tsd-kind-icon">Ble<wbr>Pairing<wbr>Options</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.ble.hci.bleperipheraldefine.html" class="tsd-kind-icon">Ble<wbr>Peripheral<wbr>Define</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.ble.hci.blescanresponsedata.html" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Response<wbr>Data</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.ble.hci.blescansetting.html" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Setting</a></li>
@@ -137,6 +138,9 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#bledevicetype" class="tsd-kind-icon">Ble<wbr>Device<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#bleeventtype" class="tsd-kind-icon">Ble<wbr>Event<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#blescanmode" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Mode</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="obnizcore.components.ble.hci.html#blescanstate" class="tsd-kind-icon">Ble<wbr>Scan<wbr>State</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#eventhandler" class="tsd-kind-icon">Event<wbr>Handler</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#handle" class="tsd-kind-icon">Handle</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.ble.hci.html#uuid" class="tsd-kind-icon">UUID</a></li>
 							</ul>
 						</section>
@@ -151,7 +155,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Advertisement<wbr>Flag<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"limited_discoverable_mode"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"general_discoverable_mode"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"br_edr_not_supported"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"le_br_edr_controller"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"le_br_edr_host"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:26</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:27</li>
 						</ul>
 					</aside>
 				</section>
@@ -161,7 +165,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Attribute<wbr>Propery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"broadcast"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"notify"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"read"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"write"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"write_without_response"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"indicate"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:24</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:25</li>
 						</ul>
 					</aside>
 				</section>
@@ -171,7 +175,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Binary<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:17</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:16</li>
 						</ul>
 					</aside>
 				</section>
@@ -201,7 +205,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Device<wbr>Address<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"public"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"random"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"rpa_public"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"rpa_random"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:16</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:17</li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +215,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Device<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"ble"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"dumo"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"breder"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:15</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:16</li>
 						</ul>
 					</aside>
 				</section>
@@ -221,7 +225,7 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Event<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"connectable_advertisemnt"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"connectable_directed_advertisemnt"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"scannable_advertising"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"non_connectable_advertising"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"scan_response"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:17</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:18</li>
 						</ul>
 					</aside>
 				</section>
@@ -231,7 +235,58 @@
 					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Scan<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"passive"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"active"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:16</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:15</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="blescanstate" class="tsd-anchor"></a>
+					<h3>Ble<wbr>Scan<wbr>State</h3>
+					<div class="tsd-signature tsd-kind-icon">Ble<wbr>Scan<wbr>State<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"stopped"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"stopping"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"started"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"starting"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:114</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
+					<a name="eventhandler" class="tsd-anchor"></a>
+					<h3>Event<wbr>Handler</h3>
+					<div class="tsd-signature tsd-kind-icon">Event<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/hci.ts:9</li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">any</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
+					<a name="handle" class="tsd-anchor"></a>
+					<h3>Handle</h3>
+					<div class="tsd-signature tsd-kind-icon">Handle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleTypes.ts:14</li>
 						</ul>
 					</aside>
 				</section>
@@ -313,7 +368,7 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/obnizcore.components.ble.hci.bleservice.html" class="tsd-kind-icon">Ble<wbr>Service</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../classes/obnizcore.components.ble.hci.obnizble.html" class="tsd-kind-icon">ObnizBLE</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
@@ -333,6 +388,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/obnizcore.components.ble.hci.bledescriptordefine.html" class="tsd-kind-icon">Ble<wbr>Descriptor<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/obnizcore.components.ble.hci.blepairingoptions.html" class="tsd-kind-icon">Ble<wbr>Pairing<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/obnizcore.components.ble.hci.bleperipheraldefine.html" class="tsd-kind-icon">Ble<wbr>Peripheral<wbr>Define</a>
@@ -378,6 +436,15 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.html#blescanmode" class="tsd-kind-icon">Ble<wbr>Scan<wbr>Mode</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="obnizcore.components.ble.hci.html#blescanstate" class="tsd-kind-icon">Ble<wbr>Scan<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="obnizcore.components.ble.hci.html#eventhandler" class="tsd-kind-icon">Event<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="obnizcore.components.ble.hci.html#handle" class="tsd-kind-icon">Handle</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.ble.hci.html#uuid" class="tsd-kind-icon">UUID</a>

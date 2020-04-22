@@ -3,6 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const ObnizError_1 = require("../../../ObnizError");
 const bleRemoteDescriptor_1 = __importDefault(require("./bleRemoteDescriptor"));
 const bleRemoteValueAttributeAbstract_1 = __importDefault(require("./bleRemoteValueAttributeAbstract"));
 /**
@@ -135,8 +140,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param callback
      */
     registerNotify(callback) {
-        this.onnotify = callback;
-        this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, true);
+        this.registerNotifyWait(callback); // background
     }
     /**
      * This sets a notify callback function and wait to finish register.
@@ -159,13 +163,12 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param callback
      *
      */
-    registerNotifyWait(callback) {
-        return new Promise((resolve) => {
-            this.emitter.once("onregisternotify", () => {
-                resolve();
-            });
-            this.registerNotify(callback);
-        });
+    async registerNotifyWait(callback) {
+        this.onnotify = callback;
+        await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, true);
+        if (this.onregisternotify) {
+            this.onregisternotify();
+        }
     }
     /**
      * unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
@@ -197,8 +200,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      */
     unregisterNotify() {
-        this.onnotify = () => { };
-        this.service.peripheral.obnizBle.centralBindings.notify(this.service.peripheral.address, this.service.uuid, this.uuid, false);
+        this.unregisterNotifyWait(); // background
     }
     /**
      * Unregistrate a callback which is registrated by [[registerNotify]] or [[registerNotifyWait]].
@@ -224,73 +226,26 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      *
      */
-    unregisterNotifyWait() {
-        return new Promise((resolve) => {
-            this.emitter.once("onunregisternotify", () => {
-                resolve();
-            });
-            this.unregisterNotify();
-        });
+    async unregisterNotifyWait() {
+        this.onnotify = () => { };
+        await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
+        if (this.onunregisternotify) {
+            this.onunregisternotify();
+        }
     }
     /**
-     * It reads data from the characteristic.
-     *
-     * Even you wrote string or number, it returns binary array.
-     * The returned value appears in the callback function [[onread]].
-     *
-     * ```javascript
-     * // Javascript Example
-     * obniz.ble.scan.onfind = function(peripheral){
-     *   if(peripheral.localName == "my peripheral"){
-     *
-     *     peripheral.onconnect = function(){
-     *       var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
-     *       characteristic.read();
-     *       characteristic.onread = function(dataArray){
-     *         console.log("value : " + dataArray);
-     *       }
-     *     }
-     *
-     *     peripheral.connect();
-     *   }
-     * }
-     * obniz.ble.startScan({duration : 10});
-     * ```
-     *
-     *
+     * Use readWait() instead from 3.5.0
+     * @deprecated
      */
     read() {
-        this.service.peripheral.obnizBle.centralBindings.read(this.service.peripheral.address, this.service.uuid, this.uuid);
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
-     * This writes dataArray to the characteristic.
-     *
-     * ```javascript
-     * // Javascript Example
-     *
-     * await obniz.ble.initWait();
-     * var target = {
-     *   uuids: ["fff0"],
-     * };
-     * var peripheral = await obniz.ble.scan.startOneWait(target);
-     * if(peripheral){
-     *    await peripheral.connectWait();
-     *    console.log("connected");
-     *    await obniz.wait(1000);
-     *
-     *    var dataArray = [0x02, 0xFF];
-     *    peripheral.getService("FF00").getCharacteristic("FF01").write(dataArray);
-     * }
-     * ```
-     *
-     * @param array
-     * @param needResponse
+     * Use writeWait() instead from 3.5.0
+     * @deprecated
      */
     write(array, needResponse) {
-        if (needResponse === undefined) {
-            needResponse = true;
-        }
-        this.service.peripheral.obnizBle.centralBindings.write(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(array), !needResponse);
+        throw new ObnizError_1.ObnizDeprecatedFunctionError("read", "readWait");
     }
     /**
      * This writes dataArray to the characteristic.
@@ -318,8 +273,17 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param data
      * @param needResponse
      */
-    writeWait(data, needResponse) {
-        return super.writeWait(data, needResponse);
+    async writeWait(data, needResponse) {
+        if (needResponse === undefined) {
+            needResponse = true;
+        }
+        await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
+        setTimeout(() => {
+            if (this.onwrite) {
+                this.onwrite("success"); // if fail, throw error.
+            }
+        }, 0);
+        return true;
     }
     /**
      * It reads data from the characteristic.
@@ -345,20 +309,15 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * }
      * ```
      */
-    readWait() {
-        return super.readWait();
-    }
-    /**
-     * @ignore
-     */
-    discoverChildren() {
-        this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(this.service.peripheral.address, this.service.uuid, this.uuid);
-    }
-    /**
-     * @ignore
-     */
-    discoverAllDescriptors() {
-        return this.discoverChildren();
+    async readWait() {
+        const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
+        const data = Array.from(buf);
+        setTimeout(() => {
+            if (this.onread) {
+                this.onread(data);
+            }
+        }, 0);
+        return data;
     }
     /**
      * Discover services.
@@ -384,11 +343,23 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      *      peripheral.connect({autoDiscovery:false});
      *     }
      * }
-     * obniz.ble.scan.start();
+     * await obniz.ble.scan.startWait();
      * ```
      */
-    discoverAllDescriptorsWait() {
-        return this.discoverChildrenWait();
+    async discoverAllDescriptorsWait() {
+        const descriptors = await this.service.peripheral.obnizBle.centralBindings.discoverDescriptorsWait(this.service.peripheral.address, this.service.uuid, this.uuid);
+        for (const descr of descriptors) {
+            const uuid = descr;
+            let child = this.getChild(uuid);
+            if (!child) {
+                child = this.addChild({ uuid });
+            }
+            child.discoverdOnRemote = true;
+            this.ondiscover(child);
+        }
+        return this.descriptors.filter((elm) => {
+            return elm.discoverdOnRemote;
+        });
     }
     /**
      * @ignore
@@ -441,18 +412,22 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param descriptor
      */
     ondiscover(descriptor) {
-        if (this.ondiscoverdescriptor) {
-            this.ondiscoverdescriptor(descriptor);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverdescriptor) {
+                this.ondiscoverdescriptor(descriptor);
+            }
+        }, 0);
     }
     /**
      * @ignore
      * @param descriptors
      */
     ondiscoverfinished(descriptors) {
-        if (this.ondiscoverdescriptorfinished) {
-            this.ondiscoverdescriptorfinished(descriptors);
-        }
+        setTimeout(() => {
+            if (this.ondiscoverdescriptorfinished) {
+                this.ondiscoverdescriptorfinished(descriptors);
+            }
+        }, 0);
     }
     /**
      * @ignore
@@ -462,22 +437,12 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     notifyFromServer(notifyName, params) {
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
-            case "onregisternotify": {
-                if (this.onregisternotify) {
-                    this.onregisternotify();
-                }
-                break;
-            }
-            case "onunregisternotify": {
-                if (this.onunregisternotify) {
-                    this.onunregisternotify();
-                }
-                break;
-            }
             case "onnotify": {
-                if (this.onnotify) {
-                    this.onnotify(params.data || undefined);
-                }
+                setTimeout(() => {
+                    if (this.onnotify) {
+                        this.onnotify(params.data || undefined);
+                    }
+                }, 0);
                 break;
             }
         }

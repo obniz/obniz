@@ -237,4 +237,4 @@ See [LICENSE.txt](./LICENSE.txt)
 
 ## Contribute
 
-[https://www.notion.so/cambrianrobotics/584462928c0943acadbe2531d221fd62](https://www.notion.so/cambrianrobotics/584462928c0943acadbe2531d221fd62)
+[Contribution](./devtools/docs/README.md)

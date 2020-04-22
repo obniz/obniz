@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * @ignore
  */
-const events = require("events");
+const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const crypto_1 = __importDefault(require("./crypto"));
 const mgmt_1 = __importDefault(require("./mgmt"));
 var SMP;
@@ -26,7 +26,7 @@ var SMP;
 /**
  * @ignore
  */
-class Smp extends events.EventEmitter {
+class Smp extends eventemitter3_1.default {
     constructor(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress, hciProtocol) {
         super();
         this._aclStream = aclStream;

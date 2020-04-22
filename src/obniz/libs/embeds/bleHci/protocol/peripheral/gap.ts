@@ -9,15 +9,16 @@
  * @ignore
  */
 const debug: any = () => {};
-
-import events from "events";
+import EventEmitter from "eventemitter3";
 import Hci from "../hci";
+
+type GapEventTypes = "";
 
 /**
  * @ignore
  */
-class Gap extends events.EventEmitter {
-  public _hci: any;
+class Gap extends EventEmitter<GapEventTypes> {
+  public _hci: Hci;
   public _advertiseState: any;
 
   constructor(hci: any) {
@@ -25,16 +26,9 @@ class Gap extends events.EventEmitter {
     this._hci = hci;
 
     this._advertiseState = null;
-
-    this._hci.on("error", this.onHciError.bind(this));
-
-    this._hci.on("leAdvertisingParametersSet", this.onHciLeAdvertisingParametersSet.bind(this));
-    this._hci.on("leAdvertisingDataSet", this.onHciLeAdvertisingDataSet.bind(this));
-    this._hci.on("leScanResponseDataSet", this.onHciLeScanResponseDataSet.bind(this));
-    this._hci.on("leAdvertiseEnableSet", this.onHciLeAdvertiseEnableSet.bind(this));
   }
 
-  public startAdvertising(name: any, serviceUuids: any) {
+  public async startAdvertisingWait(name: any, serviceUuids: any) {
     debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
 
     let advertisementDataLength: any = 3;
@@ -119,10 +113,10 @@ class Gap extends events.EventEmitter {
       nameBuffer.copy(scanData, 2);
     }
 
-    this.startAdvertisingWithEIRData(advertisementData, scanData);
+    await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
   }
 
-  public startAdvertisingIBeacon(data: any) {
+  public async startAdvertisingIBeaconWait(data: any) {
     debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
 
     const dataLength: any = data.length;
@@ -146,10 +140,10 @@ class Gap extends events.EventEmitter {
 
     data.copy(advertisementData, 9);
 
-    this.startAdvertisingWithEIRData(advertisementData, scanData);
+    await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
   }
 
-  public startAdvertisingWithEIRData(advertisementData: any, scanData: any) {
+  public async startAdvertisingWithEIRDataWait(advertisementData: any, scanData: any) {
     advertisementData = advertisementData || Buffer.alloc(0);
     scanData = scanData || Buffer.alloc(0);
 
@@ -160,63 +154,44 @@ class Gap extends events.EventEmitter {
         scanData.toString("hex"),
     );
 
-    let error: any = null;
-
     if (advertisementData.length > 31) {
-      error = new Error("Advertisement data is over maximum limit of 31 bytes");
+      throw new Error("Advertisement data is over maximum limit of 31 bytes");
     } else if (scanData.length > 31) {
-      error = new Error("Scan data is over maximum limit of 31 bytes");
+      throw new Error("Scan data is over maximum limit of 31 bytes");
     }
 
-    if (error) {
-      this.emit("advertisingStart", error);
-    } else {
-      this._advertiseState = "starting";
+    this._advertiseState = "starting";
 
-      this._hci.setScanResponseData(scanData);
-      this._hci.setAdvertisingData(advertisementData);
-      this._hci.setAdvertiseEnable(true);
-      this._hci.setScanResponseData(scanData);
-      this._hci.setAdvertisingData(advertisementData);
-    }
-  }
+    const p1 = this._hci.setScanResponseDataWait(scanData);
+    const p2 = this._hci.setAdvertisingDataWait(advertisementData);
+    await Promise.all([p1, p2]);
+    const p3 = this._hci.setAdvertiseEnableWait(true);
+    const p4 = this._hci.setScanResponseDataWait(scanData);
+    const p5 = this._hci.setAdvertisingDataWait(advertisementData);
+    await Promise.all([p3, p4, p5]);
 
-  public restartAdvertising() {
-    this._advertiseState = "restarting";
+    const status = await p3;
 
-    this._hci.setAdvertiseEnable(true);
-  }
-
-  public stopAdvertising() {
-    this._advertiseState = "stopping";
-
-    this._hci.setAdvertiseEnable(false);
-  }
-
-  public onHciError(error: any) {}
-
-  public onHciLeAdvertisingParametersSet(status: any) {}
-
-  public onHciLeAdvertisingDataSet(status: any) {}
-
-  public onHciLeScanResponseDataSet(status: any) {}
-
-  public onHciLeAdvertiseEnableSet(status: any) {
     if (this._advertiseState === "starting") {
       this._advertiseState = "started";
-
-      let error: any = null;
-
       if (status) {
-        error = new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
+        throw new Error(Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")");
       }
-
-      this.emit("advertisingStart", error);
     } else if (this._advertiseState === "stopping") {
       this._advertiseState = "stopped";
-
-      this.emit("advertisingStop");
     }
+  }
+
+  public async restartAdvertisingWait() {
+    this._advertiseState = "restarting";
+
+    await this._hci.setAdvertiseEnableWait(true);
+  }
+
+  public async stopAdvertisingWait() {
+    this._advertiseState = "stopping";
+
+    await this._hci.setAdvertiseEnableWait(false);
   }
 }
 
