@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+
 import EventEmitter from "eventemitter3";
 import Obniz from "../index";
 import { ObnizError, ObnizOfflineError, ObnizTimeoutError } from "../ObnizError";

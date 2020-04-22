@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.REX_BTPM25V
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class REX_BTPM25V {
     constructor(peripheral) {

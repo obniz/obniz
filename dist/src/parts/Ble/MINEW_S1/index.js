@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.MINEW_S1_HT
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

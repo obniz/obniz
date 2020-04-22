@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.RS_BTIREX2
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 // not working
 class RS_BTIREX2 {

@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MINEW_S1_HT
+ */
+
 import Obniz from "../../../obniz";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizUtil from "../../../obniz/libs/utils/util";

@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Errors
+ */
+
 // tslint:disable:max-classes-per-file
 
 import { deprecate } from "util";

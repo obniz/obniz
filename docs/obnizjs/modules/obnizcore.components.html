@@ -90,6 +90,10 @@
 								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.logicanalyzer.html" class="tsd-kind-icon">Logic<wbr>Analyzer</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.obnizmeasure.html" class="tsd-kind-icon">Obniz<wbr>Measure</a></li>
 							</ul>
+							<h3>Other Classes</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.componentabstract.html" class="tsd-kind-icon">Component<wbr>Abstract</a></li>
+							</ul>
 							<h3>Peripherals Classes</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/obnizcore.components.directive.html" class="tsd-kind-icon">Directive</a></li>
@@ -121,6 +125,7 @@
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/obnizcore.components.peripheralpwmoptions.html" class="tsd-kind-icon">PeripheralPWMOptions</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/obnizcore.components.peripheralspioptions.html" class="tsd-kind-icon">PeripheralSPIOptions</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.peripheraluartoptions.html" class="tsd-kind-icon">PeripheralUARTOptions</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/obnizcore.components.receivejsonoptions.html" class="tsd-kind-icon">Receive<wbr>Json<wbr>Options</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -129,6 +134,7 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#animationstatus" class="tsd-kind-icon">Animation<wbr>Status</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#bittype" class="tsd-kind-icon">Bit<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#drivetype" class="tsd-kind-icon">Drive<wbr>Type</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#eventhandler" class="tsd-kind-icon">Event<wbr>Handler</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="obnizcore.components.html#flowcontroltype" class="tsd-kind-icon">Flow<wbr>Control<wbr>Type</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="obnizcore.components.html#i2cmode" class="tsd-kind-icon">I2CMode</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="obnizcore.components.html#obnizmeasureresultarray" class="tsd-kind-icon">Obniz<wbr>Measure<wbr>Result<wbr>Array</a></li>
@@ -200,6 +206,37 @@
 								Open-drain mode.</li>
 							</ul>
 						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
+					<a name="eventhandler" class="tsd-anchor"></a>
+					<h3>Event<wbr>Handler</h3>
+					<div class="tsd-signature tsd-kind-icon">Event<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/ComponentAbstact.ts:13</li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">any</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
@@ -464,53 +501,13 @@
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_obniz_obnizerror_.html">&quot;obniz/<wbr>Obniz<wbr>Error&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_obniz_libs_componentabstact_.html">&quot;obniz/libs/<wbr>Component<wbr>Abstact&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_obniz_libs_embeds_blehci_hci_.html">&quot;obniz/libs/embeds/ble<wbr>Hci/hci&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_parts_ble_enertalk_index_.html">&quot;parts/<wbr>Ble/ENERTALK/index&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_parts_ble_minew_s1_index_.html">&quot;parts/<wbr>Ble/MINEW_<wbr><wbr>S1/index&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_parts_ble_rex_btpm25v_index_.html">&quot;parts/<wbr>Ble/REX_<wbr>BTPM25<wbr>V/index&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_parts_ble_rs_btirex2_index_.html">&quot;parts/<wbr>Ble/RS_<wbr>BTIREX2/index&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_parts_ble_rs_seek3_index_.html">&quot;parts/<wbr>Ble/RS_<wbr>SEEK3/index&quot;</a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="obnizcore.html">Obniz<wbr>Core</a>
-						<ul>
-							<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
-								<a href="obnizcore.components.html">Components</a>
-								<ul>
-									<li class=" tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
-										<a href="obnizcore.components.ble.html">Ble</a>
-									</li>
-								</ul>
-							</li>
-							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="obnizcore.hardware.html">Hardware</a>
-							</li>
-						</ul>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-not-exported">
-						<a href="parts.html">Parts</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../classes/obnizcore.components.componentabstract.html" class="tsd-kind-icon">Component<wbr>Abstract</a>
+					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../classes/obnizcore.components.directive.html" class="tsd-kind-icon">Directive</a>
 					</li>
@@ -586,6 +583,9 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/obnizcore.components.peripheraluartoptions.html" class="tsd-kind-icon">PeripheralUARTOptions</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/obnizcore.components.receivejsonoptions.html" class="tsd-kind-icon">Receive<wbr>Json<wbr>Options</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.html#animationstatus" class="tsd-kind-icon">Animation<wbr>Status</a>
 					</li>
@@ -594,6 +594,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.html#drivetype" class="tsd-kind-icon">Drive<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="obnizcore.components.html#eventhandler" class="tsd-kind-icon">Event<wbr>Handler</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="obnizcore.components.html#flowcontroltype" class="tsd-kind-icon">Flow<wbr>Control<wbr>Type</a>
