@@ -13064,6 +13064,9 @@ class HW {
         else if (hw === "m5stickc") {
             return __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.json");
         }
+        else if (hw === "m5stack_basic") {
+            return __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.json");
+        }
         else if (hw === "encored") {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored.json");
         }
@@ -13074,6 +13077,13 @@ exports.default = HW;
 
 //# sourceMappingURL=index.js.map
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/hw/m5stack_basic.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"19\":{},\"21\":{},\"22\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
 
 /***/ }),
 
