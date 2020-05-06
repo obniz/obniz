@@ -56,7 +56,7 @@ class NobleBindings extends eventemitter3_1.default {
             // nothing
         })
             .then(() => {
-            return this._hci.createLeConnWait(address, addressType);
+            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
         })
             .then((result) => {
             return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);

@@ -61,6 +61,7 @@ namespace COMMANDS {
   export const OCF_LE_SET_SCAN_PARAMETERS: any = 0x000b;
   export const OCF_LE_SET_SCAN_ENABLE: any = 0x000c;
   export const OCF_LE_CREATE_CONN: any = 0x000d;
+  export const OCF_LE_CREATE_CONN_CANCEL: any = 0x000e;
   export const OCF_LE_CONN_UPDATE: any = 0x0013;
   export const OCF_LE_START_ENCRYPTION: any = 0x0019;
   export const OCF_LE_LTK_NEG_REPLY: any = 0x001b;
@@ -83,6 +84,7 @@ namespace COMMANDS {
   export const LE_SET_SCAN_PARAMETERS_CMD: any = OCF_LE_SET_SCAN_PARAMETERS | (OGF_LE_CTL << 10);
   export const LE_SET_SCAN_ENABLE_CMD: any = OCF_LE_SET_SCAN_ENABLE | (OGF_LE_CTL << 10);
   export const LE_CREATE_CONN_CMD: any = OCF_LE_CREATE_CONN | (OGF_LE_CTL << 10);
+  export const LE_CREATE_CONN_CANCEL_CMD: any = OCF_LE_CREATE_CONN_CANCEL | (OGF_LE_CTL << 10);
   export const LE_CONN_UPDATE_CMD: any = OCF_LE_CONN_UPDATE | (OGF_LE_CTL << 10);
   export const LE_START_ENCRYPTION_CMD: any = OCF_LE_START_ENCRYPTION | (OGF_LE_CTL << 10);
   export const LE_SET_ADVERTISING_PARAMETERS_CMD: any = OCF_LE_SET_ADVERTISING_PARAMETERS | (OGF_LE_CTL << 10);
@@ -372,7 +374,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     return data.status;
   }
 
-  public async createLeConnWait(address: any, addressType: any) {
+  public async createLeConnWait(address: any, addressType: any, timeout: number = 90 * 1000) {
     const cmd: any = Buffer.alloc(29);
 
     // header
@@ -406,10 +408,48 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt16LE(0x0006, 27); // max ce length
 
     debug("create le conn - writing: " + cmd.toString("hex"));
-    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+    const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
+      timeout,
+      onTimeout: async () => {
+        // 一定時間経過。onTimeoutをオーバーライドしてreject()されるのを防ぎ、キャンセルリクエストする。キャンセルされると接続失敗が返るので待つ
+        await this.createLeConnCancelWait();
+      },
+    });
     this._socket.write(cmd);
-    const { status, data } = await p;
-    return this.processLeConnComplete(status, data);
+
+    try {
+      const { status, data } = await p;
+      return this.processLeConnComplete(status, data);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  public async createLeConnCancelWait() {
+    const cmd: any = Buffer.alloc(4);
+
+    // header
+    cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+    cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CANCEL_CMD, 1);
+
+    // length
+    cmd.writeUInt8(0x0, 3);
+
+    /*
+     * 成功すると0x00 失敗で 0x01~0xFFが帰る
+     * 特に接続処理中じゃない場合は 0x0x(command disallowed)がかえる
+     * キャンセルに成功してその応答が来たあとには
+     * LE Connection Complete or an HCI_LE_Enhanced_Connection_Complete event
+     * のどちらかがちゃんと返る
+     */
+    debug("create le conn cancel - writing: " + cmd.toString("hex"));
+    const p = this.readCmdCompleteEventWait(COMMANDS.LE_CREATE_CONN_CANCEL_CMD);
+    this._socket.write(cmd);
+
+    const { status } = await p;
+    if (status !== 0x00) {
+      throw new ObnizBleHciStateError(status);
+    }
   }
 
   public async connUpdateLeWait(

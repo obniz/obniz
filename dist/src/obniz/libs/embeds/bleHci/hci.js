@@ -132,11 +132,24 @@ class ObnizBLEHci {
                 reject(error);
             };
             this.Obniz.on("close", onObnizClosed);
-            const onTimeout = () => {
-                clearListeners();
-                const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
-                reject(error);
-            };
+            let onTimeout;
+            if (option.onTimeout) {
+                onTimeout = () => {
+                    option
+                        .onTimeout()
+                        .then(() => { })
+                        .catch((e) => {
+                        reject(e);
+                    });
+                };
+            }
+            else {
+                onTimeout = () => {
+                    clearListeners();
+                    const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
+                    reject(error);
+                };
+            }
             timeoutHandler = setTimeout(onTimeout, option.timeout);
         });
         if (option.timeout !== null) {
