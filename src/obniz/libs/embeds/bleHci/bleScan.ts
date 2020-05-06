@@ -215,6 +215,9 @@ export default class BleScan {
    * await obniz.ble.scan.startWait();
    * ```
    *
+   * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
+   * Before start scannnig. Establishing connection must be completed or canceled.
+   *
    * @param target
    * @param settings
    */

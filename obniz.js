@@ -6490,6 +6490,10 @@ class BleRemotePeripheral {
      * when connection established, all service/characteristics/desriptors will be discovered automatically.
      * This function will wait until all discovery done.
      *
+     * About Failures
+     * Connection fails some reasons. You can find reason from thrown error.
+     * Also obniz provide 90 seconds timeout for connection establish.
+     *
      * ```javascript
      * // Javascript Example
      *
@@ -7234,6 +7238,9 @@ class BleScan {
      * // Javascript Example
      * await obniz.ble.scan.startWait();
      * ```
+     *
+     * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
+     * Before start scannnig. Establishing connection must be completed or canceled.
      *
      * @param target
      * @param settings
