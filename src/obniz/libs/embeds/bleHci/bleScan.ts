@@ -21,6 +21,10 @@ export type BleBinary = number[];
  * If you set BleScanSetting.filterOnDevice 'true', filters are apply on obniz device. So it reduce traffic.
  */
 export interface BleScanTarget {
+  /**
+   * Service UUID for scan. Provide.
+   * Attention: iBeacon uuid is not service uuid. If you want to filter iBeacon. use binary filter
+   */
   uuids?: UUID[];
   /**
    * scan target device localName. This need perfect matching.
@@ -40,7 +44,10 @@ export interface BleScanTarget {
   /**
    * Advanced search.
    *
-   * Search partially matches advertisement / scan response
+   * You need to enable `filterOnDevice:true` to use this filter.
+   *
+   * Search partially matches advertisement / scan response regarding provided byte array.
+   * If advertisement / scan reponse has a matched byte array in the data, then passed.
    */
   binary?: BleBinary[] | BleBinary;
 }
@@ -541,7 +548,7 @@ export default class BleScan {
       });
     }
     if (scanTarget.binary) {
-      if (Array.isArray(scanTarget.binary[0])) {
+      if (Array.isArray(scanTarget.binary)) {
         scanTarget.binary.forEach((e: any) => {
           adFilters.push({ binary: e });
         });
