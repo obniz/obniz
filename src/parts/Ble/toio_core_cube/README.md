@@ -2,6 +2,10 @@
 The toio core cube is a product of Sony Interactive Entertainment Inc.
 It is a simple 32 mm wide robot.
 
+(This parts library is an unofficial implementation based on the technical specification of toio, which is published in the following link.)
+
+https://toio.github.io/toio-spec/
+
 ![](./image.jpg)
 
 ## isDevice(peripheral)
@@ -276,3 +280,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
 await obniz.ble.scan.startWait();
 
 ```
+
+"toio™"は、株式会社ソニー・インタラクティブエンタテインメントの登録商標または商標です。
+"toio™" is a registered trademark or trademark of Sony Interactive Entertainment Inc.
