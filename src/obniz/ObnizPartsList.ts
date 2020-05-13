@@ -148,6 +148,7 @@ import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/scbtgaaac";
 import TM530, { TM530Options } from "../parts/Ble/tm530";
 import TM551, { TM551Options } from "../parts/Ble/tm551";
+import Toio_Core_Cube, { Toio_Core_CubeOptions } from "../parts/Ble/toio_core_cube";
 import uPRISM, { uPRISMOptions } from "../parts/Ble/uprism";
 
 // Grove
@@ -522,6 +523,7 @@ export interface WiredNameOptionsMap {
   "cir415a": cir415aOptions;
   "TM530": TM530Options;
   "TM551": TM551Options;
+  "Toio_Core_Cube": Toio_Core_CubeOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 
