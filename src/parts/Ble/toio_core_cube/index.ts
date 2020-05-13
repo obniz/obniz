@@ -111,16 +111,8 @@ export default class Toio_Core_Cube implements ObnizPartsInterface {
 
   public async getPosition() {
     const readData = await this._positionCharacteristic!.readWait();
-    interface PositionInfoType {
-      posX: number;
-      posY: number;
-      angle: number;
-      posSensorX: number;
-      posSensorY: number;
-      posSensorAngle: number;
-    }
 
-    const obj: PositionInfoType = {
+    return {
       // NOTE: toioの中心から見たポジション
       posX: (readData[2] << 8) | readData[1],
       posY: (readData[4] << 8) | readData[3],
@@ -129,28 +121,18 @@ export default class Toio_Core_Cube implements ObnizPartsInterface {
       posSensorY: (readData[10] << 8) | readData[9],
       posSensorAngle: (readData[12] << 8) | readData[11],
     };
-
-    return obj;
   }
 
   public async getMotion() {
     const readData = await this._motionCharacteristic!.readWait();
 
-    interface MotionInfoType {
-      isHorizon: boolean;
-      isCollision: boolean;
-      isDoubletap: boolean;
-      atitude: number;
-    }
-
-    const obj: MotionInfoType = {
+    return {
       // NOTE: toioの中心から見たポジション
       isHorizon: readData[1] === 1,
       isCollision: readData[2] === 1,
       isDoubletap: readData[3] === 1,
       atitude: readData[4],
     };
-    return obj;
   }
 
   public async getButtonState() {
