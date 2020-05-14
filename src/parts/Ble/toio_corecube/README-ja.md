@@ -7,7 +7,7 @@ toio コア キューブとは、株式会社ソニー・インタラクティ�
 https://toio.github.io/toio-spec/
 
 # License
-See [LICENSE.txt](https://github.com/obniz/obniz/blob/master/LICENSE.txt).
+See [LICENSE.txt](LICENSE.txt).
 
 
 ![](./image.jpg)
@@ -19,9 +19,9 @@ BLEで受信したアドバタイズ情報をもとに、toio コアキューブ
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
   }
 };
@@ -29,7 +29,7 @@ await obniz.ble.scan.startWait();
 
 ```
 
-## new Toio_Core_Cube(peripheral)
+## new Toio_CoreCube(peripheral)
 
 BLEで受信したアドバタイズ情報をもとに、インスタンスを作成します。
 
@@ -37,11 +37,11 @@ BLEで受信したアドバタイズ情報をもとに、インスタンスを�
 // Javascript Example
 
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
   }
 };
 await obniz.ble.scan.startWait();
@@ -57,11 +57,11 @@ await obniz.ble.scan.startWait();
 // Javascript Example
 
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     device.ondisconnect = (reason) => {
       console.log(reason)
     }
@@ -80,11 +80,11 @@ await obniz.ble.scan.startWait();
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.disconnectWait();
@@ -107,11 +107,11 @@ toio コア キューブが存在している絶対位置(toio ID)を取得し�
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     const data = await device.getPosition();
@@ -146,11 +146,11 @@ toio コア キューブが6軸検出システムによって検出した状態�
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     const data = await device.getMotion();
@@ -185,11 +185,11 @@ toio コア キューブのバッテリー値を取得します。
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     const batteryEquip = await device.getBatteryState();
@@ -207,11 +207,11 @@ toio コア キューブのボタン押下の有無を取得します。
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     const isButtonPush = await device.getButtonState();
@@ -234,11 +234,11 @@ toio コア キューブのモータをPosition IDと無関係に動かします
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.moveAround(100, 255);
@@ -272,11 +272,11 @@ toio コア キューブを指定したPosition IDに向かわせます。
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.movePosition(5, 0, 80, 0, 700, 386, 90);

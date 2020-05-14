@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts.Toio_Core_Cube
+ * @module Parts.Toio_CoreCube
  */
 
 import Obniz from "../../../obniz";
@@ -8,12 +8,12 @@ import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemote
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface Toio_Core_CubeOptions {}
+export interface Toio_CoreCubeOptions {}
 
-export default class Toio_Core_Cube implements ObnizPartsInterface {
+export default class Toio_CoreCube implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
     return {
-      name: "Toio_Core_Cube",
+      name: "toio_CoreCube",
     };
   }
 
@@ -53,7 +53,7 @@ export default class Toio_Core_Cube implements ObnizPartsInterface {
   private _batteryCharacteristic: BleRemoteCharacteristic | null = null;
 
   constructor(peripheral: BleRemotePeripheral | null) {
-    if (peripheral && !Toio_Core_Cube.isDevice(peripheral)) {
+    if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
       throw new Error("peripheral is not RS_Seek3");
     }
     this.peripheral = peripheral;

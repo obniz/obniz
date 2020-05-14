@@ -7,7 +7,7 @@ It is a simple 32 mm wide robot.
 https://toio.github.io/toio-spec/
 
 # License
-See [LICENSE.txt](https://github.com/obniz/obniz/blob/master/LICENSE.txt).
+See [LICENSE.txt](LICENSE.txt).
 
 
 ![](./image.jpg)
@@ -19,9 +19,9 @@ Check whether it is a toio core cube based on the advertised information receive
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
   }
 };
@@ -29,7 +29,7 @@ await obniz.ble.scan.startWait();
 
 ```
 
-## new Toio_Core_Cube(peripheral)
+## new Toio_CoreCube(peripheral)
 
 Create an instance based on the advertisement information.
 
@@ -37,11 +37,11 @@ Create an instance based on the advertisement information.
 // Javascript Example
 
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
   }
 };
 await obniz.ble.scan.startWait();
@@ -58,11 +58,11 @@ Connect to device.
 // Javascript Example
 
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     device.ondisconnect = (reason) => {
       console.log(reason)
     }
@@ -82,11 +82,11 @@ Disconnect from device.
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.disconnectWait();
@@ -107,11 +107,11 @@ More detail is [here](https://toio.github.io/toio-spec/docs/ble_id).
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     const data = await device.getPosition();
@@ -146,11 +146,11 @@ More detail is [here](https://toio.github.io/toio-spec/docs/ble_sensor#%E8%AA%AD
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     const data = await device.getMotion();
@@ -183,11 +183,11 @@ The remaining battery level is changed in 10 increments.
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     const batteryEquip = await device.getBatteryState();
@@ -205,11 +205,11 @@ Get state button pressed.
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     const isButtonPush = await device.getButtonState();
@@ -232,11 +232,11 @@ Also, if 0 is entered or no value is passed to the argument, the motor will be s
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.moveAround(100, 255);
@@ -271,11 +271,11 @@ Argument example is this.
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const Toio_Core_Cube = Obniz.getPartsClass("Toio_Core_Cube");
+const Toio_CoreCube = Obniz.getPartsClass("toio_CoreCube");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (Toio_Core_Cube.isDevice(peripheral)) {
+  if (Toio_CoreCube.isDevice(peripheral)) {
     console.log("find");
-    const device = new Toio_Core_Cube(peripheral);
+    const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
     await device.movePosition(5, 0, 80, 0, 700, 386, 90);

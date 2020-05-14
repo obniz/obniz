@@ -20927,7 +20927,7 @@ var map = {
 	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
 	"./Ble/tm530/index.js": "./dist/src/parts/Ble/tm530/index.js",
 	"./Ble/tm551/index.js": "./dist/src/parts/Ble/tm551/index.js",
-	"./Ble/toio_core_cube/index.js": "./dist/src/parts/Ble/toio_core_cube/index.js",
+	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
@@ -27948,17 +27948,17 @@ TM551.deviceAdv = [
 
 /***/ }),
 
-/***/ "./dist/src/parts/Ble/toio_core_cube/index.js":
+/***/ "./dist/src/parts/Ble/toio_corecube/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 /**
  * @packageDocumentation
- * @module Parts.Toio_Core_Cube
+ * @module Parts.Toio_CoreCube
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class Toio_Core_Cube {
+class Toio_CoreCube {
     constructor(peripheral) {
         this.peripheral = null;
         this.functionButtonPress = null;
@@ -27979,14 +27979,14 @@ class Toio_Core_Cube {
         this._positionCharacteristic = null;
         this._motorCharacteristic = null;
         this._batteryCharacteristic = null;
-        if (peripheral && !Toio_Core_Cube.isDevice(peripheral)) {
+        if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
             throw new Error("peripheral is not RS_Seek3");
         }
         this.peripheral = peripheral;
     }
     static info() {
         return {
-            name: "Toio_Core_Cube",
+            name: "toio_CoreCube",
         };
     }
     static isDevice(peripheral) {
@@ -28148,7 +28148,7 @@ class Toio_Core_Cube {
         ]);
     }
 }
-exports.default = Toio_Core_Cube;
+exports.default = Toio_CoreCube;
 
 //# sourceMappingURL=index.js.map
 

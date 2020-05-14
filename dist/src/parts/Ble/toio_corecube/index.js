@@ -1,10 +1,10 @@
 "use strict";
 /**
  * @packageDocumentation
- * @module Parts.Toio_Core_Cube
+ * @module Parts.Toio_CoreCube
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class Toio_Core_Cube {
+class Toio_CoreCube {
     constructor(peripheral) {
         this.peripheral = null;
         this.functionButtonPress = null;
@@ -25,14 +25,14 @@ class Toio_Core_Cube {
         this._positionCharacteristic = null;
         this._motorCharacteristic = null;
         this._batteryCharacteristic = null;
-        if (peripheral && !Toio_Core_Cube.isDevice(peripheral)) {
+        if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
             throw new Error("peripheral is not RS_Seek3");
         }
         this.peripheral = peripheral;
     }
     static info() {
         return {
-            name: "Toio_Core_Cube",
+            name: "toio_CoreCube",
         };
     }
     static isDevice(peripheral) {
@@ -194,6 +194,6 @@ class Toio_Core_Cube {
         ]);
     }
 }
-exports.default = Toio_Core_Cube;
+exports.default = Toio_CoreCube;
 
 //# sourceMappingURL=index.js.map

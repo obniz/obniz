@@ -788,7 +788,7 @@
           "store": {}
         },
         {
-          "name": "Toio_Core_Cube",
+          "name": "toio_CoreCube",
           "store": {
             "toio": "https://toio.io/",
             "sony": "https://www.sony.jp/toio/",
