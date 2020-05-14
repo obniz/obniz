@@ -6,6 +6,10 @@ It is a simple 32 mm wide robot.
 
 https://toio.github.io/toio-spec/
 
+# License
+See [LICENSE.txt](https://github.com/obniz/obniz/blob/master/LICENSE.txt).
+
+
 ![](./image.jpg)
 
 ## isDevice(peripheral)
@@ -281,5 +285,5 @@ await obniz.ble.scan.startWait();
 
 ```
 
-"toio™"は、株式会社ソニー・インタラクティブエンタテインメントの登録商標または商標です。
-"toio™" is a registered trademark or trademark of Sony Interactive Entertainment Inc.
+"toio?"は、株式会社ソニー・インタラクティブエンタテインメントの登録商標または商標です。
+"toio?" is a registered trademark or trademark of Sony Interactive Entertainment Inc.

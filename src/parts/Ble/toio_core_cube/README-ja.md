@@ -6,6 +6,9 @@ toio コア キューブとは、株式会社ソニー・インタラクティ�
 
 https://toio.github.io/toio-spec/
 
+# License
+See [LICENSE.txt](https://github.com/obniz/obniz/blob/master/LICENSE.txt).
+
 
 ![](./image.jpg)
 
@@ -283,4 +286,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-"toio™"は、株式会社ソニー・インタラクティブエンタテインメントの登録商標または商標です。
+"toio?"は、株式会社ソニー・インタラクティブエンタテインメントの登録商標または商標です。
