@@ -5,6 +5,8 @@
 
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import ObnizPartsBleInterface, { ObnizPartsBleInfo } from "../../../obniz/ObnizPartsBleInterface";
+import BleBatteryService from "../abstract/services/batteryService";
+import BleGenericAccess from "../abstract/services/genericAccess";
 
 export interface Logtta_CO2Options {}
 
@@ -26,12 +28,22 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
   public onNotify?: (co2: number) => void;
   public _peripheral: BleRemotePeripheral | null;
   public ondisconnect?: (reason: any) => void;
+  public genericAccess?: BleGenericAccess;
+  public batteryService?: BleBatteryService;
 
   constructor(peripheral: BleRemotePeripheral | null) {
-    if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
+    if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
       throw new Error("peripheral is not Logtta CO2");
     }
     this._peripheral = peripheral;
+    const service1800 = peripheral.getService("1800");
+    if (service1800) {
+      this.genericAccess = new BleGenericAccess(service1800);
+    }
+    const service180F = peripheral.getService("180F");
+    if (service180F) {
+      this.batteryService = new BleBatteryService(service180F);
+    }
   }
 
   public async connectWait() {

@@ -204,7 +204,7 @@ class ObnizParameterError extends ObnizError {
 exports.ObnizParameterError = ObnizParameterError;
 class ObnizBleUnSupportedOSVersionError extends ObnizError {
     constructor(deviceOS, atLeast) {
-        super(13, `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`);
+        super(15, `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`);
         this.deviceOS = deviceOS;
         this.atLeast = atLeast;
     }
