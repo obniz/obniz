@@ -36,14 +36,6 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
       throw new Error("peripheral is not Logtta CO2");
     }
     this._peripheral = peripheral;
-    const service1800 = peripheral.getService("1800");
-    if (service1800) {
-      this.genericAccess = new BleGenericAccess(service1800);
-    }
-    const service180F = peripheral.getService("180F");
-    if (service180F) {
-      this.batteryService = new BleBatteryService(service180F);
-    }
   }
 
   public async connectWait() {
@@ -57,6 +49,15 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
         }
       };
       await this._peripheral.connectWait();
+
+      const service1800 = this._peripheral.getService("1800");
+      if (service1800) {
+        this.genericAccess = new BleGenericAccess(service1800);
+      }
+      const service180F = this._peripheral.getService("180F");
+      if (service180F) {
+        this.batteryService = new BleBatteryService(service180F);
+      }
     }
   }
 

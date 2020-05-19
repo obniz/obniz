@@ -21829,14 +21829,6 @@ class Logtta_CO2 {
             throw new Error("peripheral is not Logtta CO2");
         }
         this._peripheral = peripheral;
-        const service1800 = peripheral.getService("1800");
-        if (service1800) {
-            this.genericAccess = new genericAccess_1.default(service1800);
-        }
-        const service180F = peripheral.getService("180F");
-        if (service180F) {
-            this.batteryService = new batteryService_1.default(service180F);
-        }
     }
     static info() {
         return {
@@ -21860,6 +21852,14 @@ class Logtta_CO2 {
                 }
             };
             await this._peripheral.connectWait();
+            const service1800 = this._peripheral.getService("1800");
+            if (service1800) {
+                this.genericAccess = new genericAccess_1.default(service1800);
+            }
+            const service180F = this._peripheral.getService("180F");
+            if (service180F) {
+                this.batteryService = new batteryService_1.default(service180F);
+            }
         }
     }
     async disconnectWait() {
