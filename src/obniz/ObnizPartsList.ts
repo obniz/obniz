@@ -148,6 +148,7 @@ import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/scbtgaaac";
 import TM530, { TM530Options } from "../parts/Ble/tm530";
 import TM551, { TM551Options } from "../parts/Ble/tm551";
+import Toio_CoreCube, { Toio_CoreCubeOptions } from "../parts/Ble/toio_corecube";
 import uPRISM, { uPRISMOptions } from "../parts/Ble/uprism";
 
 // Grove
@@ -357,6 +358,8 @@ export interface WiredNameMap {
   "S5851A": S5851A;
   "DPS310": DPS310;
   "BMP280": BMP280;
+
+  "toio_CoreCube": Toio_CoreCube;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -522,6 +525,7 @@ export interface WiredNameOptionsMap {
   "cir415a": cir415aOptions;
   "TM530": TM530Options;
   "TM551": TM551Options;
+  "toio_CoreCube": Toio_CoreCubeOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

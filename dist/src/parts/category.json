@@ -786,6 +786,14 @@
         {
           "name": "tm551",
           "store": {}
+        },
+        {
+          "name": "toio_CoreCube",
+          "store": {
+            "toio": "https://toio.io/",
+            "sony": "https://www.sony.jp/toio/",
+            "switchscience": "https://www.switch-science.com/catalog/6302/"
+          }
         }
       ]
     },
