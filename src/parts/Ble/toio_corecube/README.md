@@ -98,7 +98,7 @@ await obniz.ble.scan.startWait();
 ```
 
 
-## [await]getPosition
+## [await]getPositionWait
 Get the absolute location (the toio ID) where the toio core cube currently locates.
 
 More detail is [here](https://toio.github.io/toio-spec/docs/ble_id).
@@ -114,7 +114,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    const data = await device.getPosition();
+    const data = await device.getPositionWait();
     console.log(data);
   }
 };
@@ -137,7 +137,7 @@ Output example is this.
 ```
 
 
-## [await]getMotion
+## [await]getMotionWait
 Get the toio core cube state information detected by 6-axis detection system.
 
 More detail is [here](https://toio.github.io/toio-spec/docs/ble_sensor#%E8%AA%AD%E3%81%BF%E5%87%BA%E3%81%97%E6%93%8D%E4%BD%9C
@@ -153,7 +153,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    const data = await device.getMotion();
+    const data = await device.getMotionWait();
     console.log(data);
   }
 };
@@ -174,7 +174,7 @@ This atitude is based on [here](https://toio.github.io/toio-spec/docs/ble_sensor
 }
 ```
 
-## [await]getBatteryState
+## [await]getBatteryStateWait
 
 Get cube's Battery level.
 The remaining battery level is changed in 10 increments.
@@ -190,7 +190,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    const batteryEquip = await device.getBatteryState();
+    const batteryEquip = await device.getBatteryStateWait();
     console.log(batteryEquip);//0~100[%]
   }
 };
@@ -198,7 +198,7 @@ await obniz.ble.scan.startWait();
 
 ```
 
-## [await]getButtonState
+## [await]getButtonStateWait
 Get state button pressed.
 
 
@@ -212,7 +212,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    const isButtonPush = await device.getButtonState();
+    const isButtonPush = await device.getButtonStateWait();
     console.log(isButtonPush);//true:Pressed/false:Not Pressed
   }
 };
@@ -220,7 +220,7 @@ await obniz.ble.scan.startWait();
 
 ```
 
-## [await]moveAround(_leftWheelPower,_rightWheelPower)
+## [await]moveAroundWait(_leftWheelPower,_rightWheelPower)
 Move the motor in the toio core cube independently of the Position ID.
 
 In order from left to right of the argument, the output of left motor and
@@ -239,14 +239,14 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    await device.moveAround(100, 255);
+    await device.moveAroundWait(100, 255);
   }
 };
 await obniz.ble.scan.startWait();
 
 ```
 
-## [await]movePosition(timeoutSec,moveType, maxWheelPower, wheelPowerType,targetPosX, targetPosY, targetAngle)
+## [await]movePositionWait(timeoutSec,moveType, maxWheelPower, wheelPowerType,targetPosX, targetPosY, targetAngle)
 Move to the specified position ID.
 
 The argument based on [here](https://toio.github.io/toio-spec/docs/ble_motor#%E7%9B%AE%E6%A8%99%E6%8C%87%E5%AE%9A%E4%BB%98%E3%81%8D%E3%83%A2%E3%83%BC%E3%82%BF%E3%83%BC%E5%88%B6%E5%BE%A1
@@ -278,7 +278,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    await device.movePosition(5, 0, 80, 0, 700, 386, 90);
+    await device.movePositionWait(5, 0, 80, 0, 700, 386, 90);
   }
 };
 await obniz.ble.scan.startWait();

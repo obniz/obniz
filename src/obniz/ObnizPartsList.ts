@@ -358,6 +358,8 @@ export interface WiredNameMap {
   "S5851A": S5851A;
   "DPS310": DPS310;
   "BMP280": BMP280;
+
+  "toio_CoreCube": Toio_CoreCube;
 }
 
 // TODO: この二重管理をなんとかしたい

@@ -86,7 +86,7 @@ class Toio_CoreCube {
         var _a;
         await ((_a = this.peripheral) === null || _a === void 0 ? void 0 : _a.disconnect());
     }
-    async getPosition() {
+    async getPositionWait() {
         const readData = await this._positionCharacteristic.readWait();
         return {
             // NOTE: toioの中心から見たポジション
@@ -98,7 +98,7 @@ class Toio_CoreCube {
             posSensorAngle: (readData[12] << 8) | readData[11],
         };
     }
-    async getMotion() {
+    async getMotionWait() {
         const readData = await this._motionCharacteristic.readWait();
         return {
             // NOTE: toioの中心から見たポジション
@@ -108,7 +108,7 @@ class Toio_CoreCube {
             atitude: readData[4],
         };
     }
-    async getButtonState() {
+    async getButtonStateWait() {
         const readData = await this._buttonCharacteristic.readWait();
         if (readData[1] === 0x80) {
             return true;
@@ -117,11 +117,11 @@ class Toio_CoreCube {
             return false;
         }
     }
-    async getBatteryState() {
+    async getBatteryStateWait() {
         const readData = await this._batteryCharacteristic.readWait();
         return readData[0];
     }
-    async moveAround(_leftWheelPower = 0, _rightWheelPower = 0) {
+    async moveAroundWait(_leftWheelPower = 0, _rightWheelPower = 0) {
         const constraintWheelPower = (wheelPower) => {
             // NOTE: Power is limited belong 0 to 255. And minus value is backward.
             if (wheelPower < -255) {
@@ -155,7 +155,7 @@ class Toio_CoreCube {
             Math.abs(rightWheelPower),
         ]);
     }
-    async movePosition(timeoutSec = 5, moveType = 0, maxWheelPower = 30, wheelPowerType = 30, targetPosX = 0, targetPosY = 0, targetAngle = 0) {
+    async movePositionWait(timeoutSec = 5, moveType = 0, maxWheelPower = 30, wheelPowerType = 30, targetPosX = 0, targetPosY = 0, targetAngle = 0) {
         const parceNumber = (pos) => {
             // NOTE: Pos is must hove belong 0 to 65535.
             if (pos > 65535) {
@@ -171,7 +171,6 @@ class Toio_CoreCube {
                 value1: dv.getUint8(0),
                 value2: dv.getUint8(1),
             };
-            console.log(obj.value1.toString(16) + obj.value2.toString(16));
             return obj;
         };
         const posXObj = parceNumber(targetPosX);

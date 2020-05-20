@@ -109,7 +109,7 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     await this.peripheral?.disconnect();
   }
 
-  public async getPosition() {
+  public async getPositionWait() {
     const readData = await this._positionCharacteristic!.readWait();
 
     return {
@@ -123,7 +123,7 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     };
   }
 
-  public async getMotion() {
+  public async getMotionWait() {
     const readData = await this._motionCharacteristic!.readWait();
 
     return {
@@ -135,7 +135,7 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     };
   }
 
-  public async getButtonState() {
+  public async getButtonStateWait() {
     const readData = await this._buttonCharacteristic!.readWait();
     if (readData[1] === 0x80) {
       return true;
@@ -144,12 +144,12 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     }
   }
 
-  public async getBatteryState() {
+  public async getBatteryStateWait() {
     const readData = await this._batteryCharacteristic!.readWait();
     return readData[0];
   }
 
-  public async moveAround(_leftWheelPower: number = 0, _rightWheelPower: number = 0) {
+  public async moveAroundWait(_leftWheelPower: number = 0, _rightWheelPower: number = 0) {
     const constraintWheelPower = (wheelPower: number) => {
       // NOTE: Power is limited belong 0 to 255. And minus value is backward.
       if (wheelPower < -255) {
@@ -185,7 +185,7 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
     ]);
   }
 
-  public async movePosition(
+  public async movePositionWait(
     timeoutSec: number = 5,
     moveType: number = 0,
     maxWheelPower: number = 30,
@@ -216,7 +216,6 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
         value2: dv.getUint8(1),
       };
 
-      console.log(obj.value1.toString(16) + obj.value2.toString(16));
       return obj;
     };
 

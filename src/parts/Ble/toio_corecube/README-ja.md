@@ -98,7 +98,7 @@ await obniz.ble.scan.startWait();
 
 
 
-## [await]getPosition
+## [await]getPositionWait
 toio コア キューブが存在している絶対位置(toio ID)を取得します。
 
 詳細は[toio コア キューブ仕様のPosition ID](https://toio.github.io/toio-spec/docs/ble_id)を参照してください。
@@ -114,7 +114,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    const data = await device.getPosition();
+    const data = await device.getPositionWait();
     console.log(data);
   }
 };
@@ -137,7 +137,7 @@ await obniz.ble.scan.startWait();
 ```
 
 
-## [await]getMotion
+## [await]getMotionWait
 toio コア キューブが6軸検出システムによって検出した状態情報を取得します。
 
 詳細は[toio コア キューブ仕様の読み出し操作](https://toio.github.io/toio-spec/docs/ble_sensor#%E8%AA%AD%E3%81%BF%E5%87%BA%E3%81%97%E6%93%8D%E4%BD%9C
@@ -153,7 +153,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    const data = await device.getMotion();
+    const data = await device.getMotionWait();
     console.log(data);
   }
 };
@@ -176,7 +176,7 @@ atitudeは[toio コア キューブ仕様の姿勢検出](https://toio.github.io
 ```
 
 
-## [await]getBatteryState
+## [await]getBatteryStateWait
 toio コア キューブのバッテリー値を取得します。
 
 バッテリー残量は10刻みで取得されます。
@@ -192,7 +192,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    const batteryEquip = await device.getBatteryState();
+    const batteryEquip = await device.getBatteryStateWait();
     console.log(batteryEquip);//0~100[%]
   }
 };
@@ -200,7 +200,7 @@ await obniz.ble.scan.startWait();
 
 ```
 
-## [await]getButtonState
+## [await]getButtonStateWait
 toio コア キューブのボタン押下の有無を取得します。
 
 
@@ -214,7 +214,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    const isButtonPush = await device.getButtonState();
+    const isButtonPush = await device.getButtonStateWait();
     console.log(isButtonPush);//true:押下された/false:押下されてない
   }
 };
@@ -241,14 +241,14 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    await device.moveAround(100, 255);
+    await device.moveAroundWait(100, 255);
   }
 };
 await obniz.ble.scan.startWait();
 
 ```
 
-## [await]movePosition(timeoutSec,moveType, maxWheelPower, wheelPowerType,targetPosX, targetPosY, targetAngle)
+## [await]movePositionWait(timeoutSec,moveType, maxWheelPower, wheelPowerType,targetPosX, targetPosY, targetAngle)
 toio コア キューブを指定したPosition IDに向かわせます。
 引数と挙動は[toio コア キューブ仕様の目標指定付きモーター制御](https://toio.github.io/toio-spec/docs/ble_motor#%E7%9B%AE%E6%A8%99%E6%8C%87%E5%AE%9A%E4%BB%98%E3%81%8D%E3%83%A2%E3%83%BC%E3%82%BF%E3%83%BC%E5%88%B6%E5%BE%A1
 )と対応しています。
@@ -279,7 +279,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     const device = new Toio_CoreCube(peripheral);
     await device.connectWait();
     console.log("connected");
-    await device.movePosition(5, 0, 80, 0, 700, 386, 90);
+    await device.movePositionWait(5, 0, 80, 0, 700, 386, 90);
   }
 };
 await obniz.ble.scan.startWait();
