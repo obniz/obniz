@@ -496,14 +496,12 @@ class ObnizConnection extends eventemitter3_1.default {
         if (canChangeToConnected) {
             this.connectionState = "connected";
             this._beforeOnConnect();
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (typeof this.onconnect === "function") {
                     try {
                         const promise = this.onconnect(this);
                         if (promise instanceof Promise) {
-                            promise.catch((err) => {
-                                console.error(err);
-                            });
+                            await promise;
                         }
                     }
                     catch (err) {

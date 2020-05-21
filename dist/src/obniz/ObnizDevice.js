@@ -167,13 +167,15 @@ class ObnizDevice extends ObnizUIs_1.default {
         });
     }
     async loop() {
-        if (typeof this.looper === "function" && this.onConnectCalled) {
-            const prom = this.looper();
-            if (prom instanceof Promise) {
-                await prom;
+        setTimeout(async () => {
+            if (typeof this.looper === "function" && this.onConnectCalled) {
+                const prom = this.looper();
+                if (prom instanceof Promise) {
+                    await prom;
+                }
+                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
             }
-            setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-        }
+        }, 0);
     }
     _callOnConnect() {
         super._callOnConnect();

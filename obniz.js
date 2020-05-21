@@ -2571,14 +2571,12 @@ class ObnizConnection extends eventemitter3_1.default {
         if (canChangeToConnected) {
             this.connectionState = "connected";
             this._beforeOnConnect();
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (typeof this.onconnect === "function") {
                     try {
                         const promise = this.onconnect(this);
                         if (promise instanceof Promise) {
-                            promise.catch((err) => {
-                                console.error(err);
-                            });
+                            await promise;
                         }
                     }
                     catch (err) {
@@ -2901,13 +2899,15 @@ class ObnizDevice extends ObnizUIs_1.default {
         });
     }
     async loop() {
-        if (typeof this.looper === "function" && this.onConnectCalled) {
-            const prom = this.looper();
-            if (prom instanceof Promise) {
-                await prom;
+        setTimeout(async () => {
+            if (typeof this.looper === "function" && this.onConnectCalled) {
+                const prom = this.looper();
+                if (prom instanceof Promise) {
+                    await prom;
+                }
+                setTimeout(this.loop.bind(this), this.repeatInterval || 100);
             }
-            setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-        }
+        }, 0);
     }
     _callOnConnect() {
         super._callOnConnect();
