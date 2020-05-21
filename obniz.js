@@ -2369,9 +2369,14 @@ class ObnizConnection extends eventemitter3_1.default {
     wsOnClose(event) {
         this.print_debug("closed");
         this.close();
-        if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-            this.onclose(this);
-        }
+        setTimeout(() => {
+            if (typeof this.onclose === "function" && this.onConnectCalled === true) {
+                try {
+                    this.onclose(this);
+                }
+                catch (e) { }
+            }
+        }, 0);
         this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();
@@ -2566,19 +2571,21 @@ class ObnizConnection extends eventemitter3_1.default {
         if (canChangeToConnected) {
             this.connectionState = "connected";
             this._beforeOnConnect();
-            if (typeof this.onconnect === "function") {
-                try {
-                    const promise = this.onconnect(this);
-                    if (promise instanceof Promise) {
-                        promise.catch((err) => {
-                            console.error(err);
-                        });
+            setTimeout(() => {
+                if (typeof this.onconnect === "function") {
+                    try {
+                        const promise = this.onconnect(this);
+                        if (promise instanceof Promise) {
+                            promise.catch((err) => {
+                                console.error(err);
+                            });
+                        }
+                    }
+                    catch (err) {
+                        console.error(err);
                     }
                 }
-                catch (err) {
-                    console.error(err);
-                }
-            }
+            }, 0);
             this.emit("connect", this);
             this.onConnectCalled = true;
             this._afterOnConnect();
@@ -3145,7 +3152,7 @@ class ObnizParameterError extends ObnizError {
 exports.ObnizParameterError = ObnizParameterError;
 class ObnizBleUnSupportedOSVersionError extends ObnizError {
     constructor(deviceOS, atLeast) {
-        super(13, `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`);
+        super(15, `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`);
         this.deviceOS = deviceOS;
         this.atLeast = atLeast;
     }
@@ -4934,6 +4941,20 @@ class BleAttributeAbstract {
             obj.data = this.data;
         }
         return obj;
+    }
+    /**
+     * @ignore
+     */
+    async readTextWait() {
+        const data = await this.readWait();
+        return util_1.default.dataArray2string(data);
+    }
+    /**
+     * @ignore
+     */
+    async readNumberWait() {
+        const data = await this.readWait();
+        return data.length > 0 ? data[0] : null;
     }
     /**
      * Use writeTextWait() instead from 3.5.0
@@ -7135,6 +7156,26 @@ const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist
  * @category Use as Central
  */
 class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
+    /**
+     * Wrapper for [[readWait]] with data converting to text.
+     * It convert  UTF-8 and write binary array to string.
+     *
+     * It throws an error when failed.
+     */
+    readTextWait() {
+        return super.readTextWait();
+    }
+    /**
+     * Wrapper for [[writeWait]] with data converting from number.
+     * It writes data as 1byte.
+     *
+     * It throws an error when failed.
+     *
+     * @param val
+     */
+    readNumberWait() {
+        return super.readNumberWait();
+    }
     /**
      * Wrapper for [[writeWait]] with data converting from text.
      * It convert string to UTF-8 and write binary array.
@@ -20904,6 +20945,8 @@ var map = {
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/abstract/services/batteryService.js": "./dist/src/parts/Ble/abstract/services/batteryService.js",
+	"./Ble/abstract/services/genericAccess.js": "./dist/src/parts/Ble/abstract/services/genericAccess.js",
 	"./Ble/cir415a/index.js": "./dist/src/parts/Ble/cir415a/index.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01RG/index.js": "./dist/src/parts/Ble/iBS01RG/index.js",
@@ -21783,10 +21826,15 @@ Logtta_Accel.deviceAdv = [
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/batteryService.js"));
+const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/genericAccess.js"));
 class Logtta_CO2 {
     constructor(peripheral) {
-        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
+        if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
             throw new Error("peripheral is not Logtta CO2");
         }
         this._peripheral = peripheral;
@@ -21813,6 +21861,14 @@ class Logtta_CO2 {
                 }
             };
             await this._peripheral.connectWait();
+            const service1800 = this._peripheral.getService("1800");
+            if (service1800) {
+                this.genericAccess = new genericAccess_1.default(service1800);
+            }
+            const service180F = this._peripheral.getService("180F");
+            if (service180F) {
+                this.batteryService = new batteryService_1.default(service180F);
+            }
         }
     }
     async disconnectWait() {
@@ -22434,6 +22490,64 @@ class RS_Seek3 {
 exports.default = RS_Seek3;
 
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/abstract/services/batteryService.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.abstract.services
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleBatteryService {
+    constructor(service) {
+        this._service = service;
+    }
+    async getBatteryLevel() {
+        const char = this._service.getCharacteristic("2A19");
+        if (!char) {
+            return null;
+        }
+        return await char.readNumberWait();
+    }
+}
+exports.default = BleBatteryService;
+
+//# sourceMappingURL=batteryService.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/abstract/services/genericAccess.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.abstract.services
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleGenericAccess {
+    constructor(service) {
+        this._service = service;
+    }
+    async getDeviceName() {
+        const char = this._service.getCharacteristic("2A00");
+        if (!char) {
+            return null;
+        }
+        return await char.readTextWait();
+    }
+}
+exports.default = BleGenericAccess;
+
+//# sourceMappingURL=genericAccess.js.map
 
 
 /***/ }),

@@ -98,6 +98,20 @@ class BleAttributeAbstract {
         return obj;
     }
     /**
+     * @ignore
+     */
+    async readTextWait() {
+        const data = await this.readWait();
+        return util_1.default.dataArray2string(data);
+    }
+    /**
+     * @ignore
+     */
+    async readNumberWait() {
+        const data = await this.readWait();
+        return data.length > 0 ? data[0] : null;
+    }
+    /**
      * Use writeTextWait() instead from 3.5.0
      * @ignore
      * @deprecated

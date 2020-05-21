@@ -160,3 +160,31 @@ obniz.ble.scan.onfind = async (peripheral) => {
 };
 await obniz.ble.scan.startWait();
 ```
+
+
+
+## [await]batteryService.getBatteryLevel()
+
+Get battery level.
+
+- If it is powered from USB, it returns 254.
+- If it is powered from button cell, 0-100 [%] will be returned according to the remaining level.
+
+
+```javascript
+// Javascript Example
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const batteryLevel = await device.batteryService.getBatteryLevel();
+    console.log(`batteryLevel ${batteryLevel}% `);
+  }
+};
+await obniz.ble.scan.startWait();
+```
