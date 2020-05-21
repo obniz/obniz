@@ -40612,7 +40612,7 @@ class MPU6886 extends MPU6050_1.default {
         MPU6050_1.default.commands.accel_config2 = 0x1d;
         MPU6050_1.default.commands.whoami_result = 0x68;
     }
-    info() {
+    static info() {
         return {
             name: "MPU6886",
         };
