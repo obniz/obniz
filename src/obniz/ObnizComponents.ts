@@ -18,6 +18,7 @@ import PeripheralSPI from "./libs/io_peripherals/spi";
 import PeripheralUART from "./libs/io_peripherals/uart";
 import LogicAnalyzer from "./libs/measurements/logicanalyzer";
 import ObnizMeasure from "./libs/measurements/measure";
+import WiFi from "./libs/network/wifi";
 
 import TCP from "./libs/protocol/tcp";
 
@@ -398,6 +399,7 @@ export default class ObnizComponents extends ObnizParts {
     this._hw_peripherals = hw_peripherals;
     const hw_embeds: any = this._hwDefinition.embeds;
     const hw_protocol: any = this._hwDefinition.protocol;
+    const hw_network: any = this._hwDefinition.network;
 
     const shared_map: any = {
       io: PeripheralDirective,
@@ -425,6 +427,10 @@ export default class ObnizComponents extends ObnizParts {
 
     const protocol_map: any = {
       tcp: TCP,
+    };
+
+    const network_map: any = {
+      wifi: WiFi,
     };
 
     for (const key in shared_map) {
@@ -467,6 +473,16 @@ export default class ObnizComponents extends ObnizParts {
             (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber);
             this._allComponentKeys.push(key + unitIdNumber);
           }
+        }
+      }
+    }
+
+    if (hw_network) {
+      for (const key in network_map) {
+        if (hw_network[key]) {
+          const Class: any = network_map[key];
+          (this as any)[key] = new Class(this, hw_embeds[key]);
+          this._allComponentKeys.push(key);
         }
       }
     }

@@ -93,5 +93,8 @@
       }
     }
   },
+  "network": {
+    "wifi": {}
+  },
   "extraInterface": {}
 }

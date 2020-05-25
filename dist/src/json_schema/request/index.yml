@@ -28,4 +28,5 @@ items:
     logic_analyzer:  {$ref: "/request/logicAnalyzer" }
     system:  {$ref: "/request/system" }
     ws:  {$ref: "/request/ws" }
+    wifi:  {$ref: "/request/wifi" }
 
