@@ -27,3 +27,4 @@ items:
     system: {$ref: "/response/system"}
     debug: {$ref: "/response/debug"}
     ws: {$ref: "/response/ws"}
+    wifi: {$ref: "/response/wifi"}

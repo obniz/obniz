@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/wifi/scan"
+
+type: object
+required: [scan]
+properties:
+  scan:
+    type: boolean
+    enum: [true]
+

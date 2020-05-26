@@ -89,5 +89,8 @@
       }
     }
   },
+  "network": {
+    "wifi": {}
+  },
   "extraInterface": {}
 }

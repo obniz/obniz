@@ -19,6 +19,7 @@ const spi_1 = __importDefault(require("./libs/io_peripherals/spi"));
 const uart_1 = __importDefault(require("./libs/io_peripherals/uart"));
 const logicanalyzer_1 = __importDefault(require("./libs/measurements/logicanalyzer"));
 const measure_1 = __importDefault(require("./libs/measurements/measure"));
+const wifi_1 = __importDefault(require("./libs/network/wifi"));
 const tcp_1 = __importDefault(require("./libs/protocol/tcp"));
 const ObnizParts_1 = __importDefault(require("./ObnizParts"));
 const ComponentAbstact_1 = require("./libs/ComponentAbstact");
@@ -161,6 +162,7 @@ class ObnizComponents extends ObnizParts_1.default {
         this._hw_peripherals = hw_peripherals;
         const hw_embeds = this._hwDefinition.embeds;
         const hw_protocol = this._hwDefinition.protocol;
+        const hw_network = this._hwDefinition.network;
         const shared_map = {
             io: directive_1.default,
             logicAnalyzer: logicanalyzer_1.default,
@@ -183,6 +185,9 @@ class ObnizComponents extends ObnizParts_1.default {
         };
         const protocol_map = {
             tcp: tcp_1.default,
+        };
+        const network_map = {
+            wifi: wifi_1.default,
         };
         for (const key in shared_map) {
             const Class = shared_map[key];
@@ -221,6 +226,15 @@ class ObnizComponents extends ObnizParts_1.default {
                         this[key + unitIdNumber] = new Class(this, unitIdNumber);
                         this._allComponentKeys.push(key + unitIdNumber);
                     }
+                }
+            }
+        }
+        if (hw_network) {
+            for (const key in network_map) {
+                if (hw_network[key]) {
+                    const Class = network_map[key];
+                    this[key] = new Class(this, hw_embeds[key]);
+                    this._allComponentKeys.push(key);
                 }
             }
         }
