@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
+const ObnizError_1 = require("../../../../../ObnizError");
 const crypto_1 = __importDefault(require("./crypto"));
 /**
  * @ignore
@@ -62,14 +63,14 @@ class Smp extends eventemitter3_1.default {
             return await this.pairingWithKeyWait(this._options.keys);
         }
         await this.sendPairingRequestWait();
-        const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
+        const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
-        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
+        const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
-        const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
+        const random = await this._readWait(SMP.PAIRING_RANDOM);
         const encResult = this.handlePairingRandomWait(random);
-        const encInfoPromise = this._aclStream.readWait(SMP.CID, SMP.ENCRYPT_INFO);
-        const masterIdentPromise = this._aclStream.readWait(SMP.CID, SMP.MASTER_IDENT);
+        const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
+        const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
         await Promise.all([encInfoPromise, masterIdentPromise]);
         const encInfo = await encInfoPromise;
         const masterIdent = await masterIdentPromise;
@@ -82,6 +83,12 @@ class Smp extends eventemitter3_1.default {
             return;
         }
         const code = data.readUInt8(0);
+        if (SMP.PAIRING_FAILED === code) {
+            this.handlePairingFailed(data);
+        }
+        else if (SMP.SMP_SECURITY_REQUEST === code) {
+            this.handleSecurityRequest(data);
+        }
         // console.warn("SMP: " + code);
         return;
         if (SMP.PAIRING_RESPONSE === code) {
@@ -158,13 +165,13 @@ class Smp extends eventemitter3_1.default {
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
-            this.emit("fail");
+            this.emit("fail", 0);
             throw new Error("Encryption pcnf error");
         }
         return encResult;
     }
     handlePairingFailed(data) {
-        this.emit("fail");
+        this.emit("fail", data.readUInt8(1));
     }
     handleEncryptInfo(data) {
         this._ltk = data.slice(1);
@@ -236,6 +243,16 @@ class Smp extends eventemitter3_1.default {
             return true;
         }
         return false;
+    }
+    _readWait(flag, timeout) {
+        return Promise.race([this._aclStream.readWait(SMP.CID, flag, timeout), this._pairingFailReject()]);
+    }
+    _pairingFailReject() {
+        return new Promise((resolve, reject) => {
+            this.on("fail", (reason) => {
+                reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason));
+            });
+        });
     }
 }
 exports.default = Smp;

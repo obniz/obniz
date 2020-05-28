@@ -3158,6 +3158,29 @@ class ObnizBleUnSupportedOSVersionError extends ObnizError {
     }
 }
 exports.ObnizBleUnSupportedOSVersionError = ObnizBleUnSupportedOSVersionError;
+class ObnizBlePairingRejectByRemoteError extends ObnizError {
+    constructor(reason) {
+        super(16, `pairing sequence reject by remote peripheral. reason : ${ObnizBlePairingRejectByRemoteError.Errors[reason]}`);
+    }
+}
+exports.ObnizBlePairingRejectByRemoteError = ObnizBlePairingRejectByRemoteError;
+ObnizBlePairingRejectByRemoteError.Errors = {
+    0x00: "Unknown",
+    0x01: "Passkey Entry Failed",
+    0x02: "OOB Not Available",
+    0x03: "Authentication Requirements",
+    0x04: "Confirm Value Failed",
+    0x05: "Pairing Not Supported",
+    0x06: "Encryption Key Size",
+    0x07: "Command Not Supported",
+    0x08: "Unspecified Reason",
+    0x09: "Repeated Attempts",
+    0x0a: "Invalid Parameters",
+    0x0b: "DHKey Check Failed",
+    0x0c: "Numeric Comparison Failed",
+    0x0d: "BR/EDR pairing in progress",
+    0x0e: "Cross-transport Key Deriva- tion/Generation not allowed",
+};
 
 //# sourceMappingURL=ObnizError.js.map
 
@@ -9612,6 +9635,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
 /**
  * @ignore
@@ -9665,14 +9689,14 @@ class Smp extends eventemitter3_1.default {
             return await this.pairingWithKeyWait(this._options.keys);
         }
         await this.sendPairingRequestWait();
-        const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
+        const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
-        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
+        const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
-        const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
+        const random = await this._readWait(SMP.PAIRING_RANDOM);
         const encResult = this.handlePairingRandomWait(random);
-        const encInfoPromise = this._aclStream.readWait(SMP.CID, SMP.ENCRYPT_INFO);
-        const masterIdentPromise = this._aclStream.readWait(SMP.CID, SMP.MASTER_IDENT);
+        const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
+        const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
         await Promise.all([encInfoPromise, masterIdentPromise]);
         const encInfo = await encInfoPromise;
         const masterIdent = await masterIdentPromise;
@@ -9685,6 +9709,12 @@ class Smp extends eventemitter3_1.default {
             return;
         }
         const code = data.readUInt8(0);
+        if (SMP.PAIRING_FAILED === code) {
+            this.handlePairingFailed(data);
+        }
+        else if (SMP.SMP_SECURITY_REQUEST === code) {
+            this.handleSecurityRequest(data);
+        }
         // console.warn("SMP: " + code);
         return;
         if (SMP.PAIRING_RESPONSE === code) {
@@ -9761,13 +9791,13 @@ class Smp extends eventemitter3_1.default {
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
-            this.emit("fail");
+            this.emit("fail", 0);
             throw new Error("Encryption pcnf error");
         }
         return encResult;
     }
     handlePairingFailed(data) {
-        this.emit("fail");
+        this.emit("fail", data.readUInt8(1));
     }
     handleEncryptInfo(data) {
         this._ltk = data.slice(1);
@@ -9839,6 +9869,16 @@ class Smp extends eventemitter3_1.default {
             return true;
         }
         return false;
+    }
+    _readWait(flag, timeout) {
+        return Promise.race([this._aclStream.readWait(SMP.CID, flag, timeout), this._pairingFailReject()]);
+    }
+    _pairingFailReject() {
+        return new Promise((resolve, reject) => {
+            this.on("fail", (reason) => {
+                reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason));
+            });
+        });
     }
 }
 exports.default = Smp;

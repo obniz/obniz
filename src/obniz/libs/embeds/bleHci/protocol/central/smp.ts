@@ -6,6 +6,7 @@
 
 import EventEmitter from "eventemitter3";
 
+import { ObnizBlePairingRejectByRemoteError } from "../../../../../ObnizError";
 import { BleDeviceAddress, BleDeviceAddressType } from "../../bleTypes";
 import AclStream from "./acl-stream";
 import crypto from "./crypto";
@@ -113,15 +114,15 @@ class Smp extends EventEmitter<SmpEventTypes> {
     }
 
     await this.sendPairingRequestWait();
-    const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
+    const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
     this.handlePairingResponse(pairingResponse);
-    const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
+    const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
     this.handlePairingConfirm(confirm);
-    const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
+    const random = await this._readWait(SMP.PAIRING_RANDOM);
     const encResult = this.handlePairingRandomWait(random);
 
-    const encInfoPromise = this._aclStream.readWait(SMP.CID, SMP.ENCRYPT_INFO);
-    const masterIdentPromise = this._aclStream.readWait(SMP.CID, SMP.MASTER_IDENT);
+    const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
+    const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
     await Promise.all([encInfoPromise, masterIdentPromise]);
     const encInfo = await encInfoPromise;
     const masterIdent = await masterIdentPromise;
@@ -137,7 +138,11 @@ class Smp extends EventEmitter<SmpEventTypes> {
     }
 
     const code: any = data.readUInt8(0);
-
+    if (SMP.PAIRING_FAILED === code) {
+      this.handlePairingFailed(data);
+    } else if (SMP.SMP_SECURITY_REQUEST === code) {
+      this.handleSecurityRequest(data);
+    }
     // console.warn("SMP: " + code);
     return;
     if (SMP.PAIRING_RESPONSE === code) {
@@ -219,14 +224,14 @@ class Smp extends EventEmitter<SmpEventTypes> {
     } else {
       this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
 
-      this.emit("fail");
+      this.emit("fail", 0);
       throw new Error("Encryption pcnf error");
     }
     return encResult;
   }
 
-  public handlePairingFailed(data: any) {
-    this.emit("fail");
+  public handlePairingFailed(data: Buffer) {
+    this.emit("fail", data.readUInt8(1));
   }
 
   public handleEncryptInfo(data: any) {
@@ -306,6 +311,18 @@ class Smp extends EventEmitter<SmpEventTypes> {
       return true;
     }
     return false;
+  }
+
+  private _readWait(flag: number, timeout?: number): Promise<Buffer> {
+    return Promise.race([this._aclStream.readWait(SMP.CID, flag, timeout), this._pairingFailReject()]);
+  }
+
+  private _pairingFailReject(): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      this.on("fail", (reason) => {
+        reject(new ObnizBlePairingRejectByRemoteError(reason));
+      });
+    });
   }
 }
 

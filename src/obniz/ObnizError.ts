@@ -210,3 +210,30 @@ export class ObnizBleUnSupportedOSVersionError extends ObnizError {
     );
   }
 }
+
+export class ObnizBlePairingRejectByRemoteError extends ObnizError {
+  public static Errors: { [key: number]: string } = {
+    0x00: "Unknown",
+    0x01: "Passkey Entry Failed",
+    0x02: "OOB Not Available",
+    0x03: "Authentication Requirements",
+    0x04: "Confirm Value Failed",
+    0x05: "Pairing Not Supported",
+    0x06: "Encryption Key Size",
+    0x07: "Command Not Supported",
+    0x08: "Unspecified Reason",
+    0x09: "Repeated Attempts",
+    0x0a: "Invalid Parameters",
+    0x0b: "DHKey Check Failed",
+    0x0c: "Numeric Comparison Failed",
+    0x0d: "BR/EDR pairing in progress",
+    0x0e: "Cross-transport Key Deriva- tion/Generation not allowed",
+  };
+
+  constructor(reason: number) {
+    super(
+      16,
+      `pairing sequence reject by remote peripheral. reason : ${ObnizBlePairingRejectByRemoteError.Errors[reason]}`,
+    );
+  }
+}
