@@ -172,8 +172,8 @@ ObnizBleHciStateError.Errors = {
 };
 // todo error code to message
 class ObnizBleAttError extends ObnizError {
-    constructor(state) {
-        super(11, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+    constructor(state, params) {
+        super(11, `ATT Error: ${params}`);
         this.state = state;
     }
 }
