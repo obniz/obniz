@@ -320,6 +320,8 @@ var map = {
 	"./request/measure/index.yml": "./dist/src/json_schema/request/measure/index.yml",
 	"./request/message/index.yml": "./dist/src/json_schema/request/message/index.yml",
 	"./request/message/send.yml": "./dist/src/json_schema/request/message/send.yml",
+	"./request/plugin/index.yml": "./dist/src/json_schema/request/plugin/index.yml",
+	"./request/plugin/send.yml": "./dist/src/json_schema/request/plugin/send.yml",
 	"./request/pwm/deinit.yml": "./dist/src/json_schema/request/pwm/deinit.yml",
 	"./request/pwm/freq.yml": "./dist/src/json_schema/request/pwm/freq.yml",
 	"./request/pwm/index.yml": "./dist/src/json_schema/request/pwm/index.yml",
@@ -408,6 +410,8 @@ var map = {
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
 	"./response/message/receive.yml": "./dist/src/json_schema/response/message/receive.yml",
+	"./response/plugin/index.yml": "./dist/src/json_schema/response/plugin/index.yml",
+	"./response/plugin/receive.yml": "./dist/src/json_schema/response/plugin/receive.yml",
 	"./response/spi/index.yml": "./dist/src/json_schema/response/spi/index.yml",
 	"./response/spi/read.yml": "./dist/src/json_schema/response/spi/read.yml",
 	"./response/switch/change.yml": "./dist/src/json_schema/response/switch/change.yml",
@@ -824,7 +828,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"}}}}
 
 /***/ }),
 
@@ -951,6 +955,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message/send","related":"/response/message/receive","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{},"to":{"type":"array","minItems":1,"items":{"$ref":"/obnizId"}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/plugin/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin","basePath":"plugin","anyOf":[{"$ref":"/request/plugin/send"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/plugin/send.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin/send","desccription":"plugin send","type":"object","required":["send"],"properties":{"send":{"$ref":"/dataArray"}}}
 
 /***/ }),
 
@@ -1482,7 +1500,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"},"plugin":{"$ref":"/response/plugin"}}}}
 
 /***/ }),
 
@@ -1567,6 +1585,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message/receive","related":"/request/message/send","type":"object","required":["data","from"],"properties":{"data":{},"from":{"type":["string","null"]}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/plugin/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin","basePath":"plugin","anyOf":[{"$ref":"/response/plugin/receive"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/plugin/receive.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/receive","type":"object","required":["receive"],"properties":{"receive":{"$ref":"/dataArray"}}}
 
 /***/ }),
 
@@ -1825,6 +1857,7 @@ const uart_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_per
 const logicanalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/logicanalyzer.js"));
 const measure_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/measure.js"));
 const wifi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/network/wifi.js"));
+const plugin_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/plugin/plugin.js"));
 const tcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/protocol/tcp.js"));
 const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
@@ -1972,6 +2005,7 @@ class ObnizComponents extends ObnizParts_1.default {
             io: directive_1.default,
             logicAnalyzer: logicanalyzer_1.default,
             measure: measure_1.default,
+            plugin: plugin_1.default,
         };
         const peripheral_map = {
             io: io_1.default,
@@ -15347,6 +15381,82 @@ exports.default = WiFi;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/plugin/plugin.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+class Plugin {
+    constructor(obniz, id) {
+        this.Obniz = obniz;
+    }
+    /**
+     * Scan WiFi
+     *
+     * ```javascript
+     * // Javascript Example
+     * console.log(await obniz.wifi.scanWait());
+     * ```
+     *
+     */
+    send(data) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, "3.3.0")) {
+            throw new Error(`Please update obniz firmware >= 3.3.0`);
+        }
+        let send_data = null;
+        if (data === undefined) {
+            return;
+        }
+        if (typeof data === "number") {
+            data = [data];
+        }
+        if (this.Obniz.isNode && data instanceof Buffer) {
+            send_data = [...data];
+        }
+        else if (data.constructor === Array) {
+            send_data = data;
+        }
+        else if (typeof data === "string") {
+            const buf = Buffer.from(data);
+            send_data = [...buf];
+        }
+        this.Obniz.send({ plugin: { send: send_data } });
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() { }
+    /**
+     * @ignore
+     * @param obj
+     */
+    notified(obj) {
+        if (obj.receive) {
+            /* Connectino state update. response of connect(), close from destination, response from */
+            if (this.onreceive) {
+                this.onreceive(obj.receive);
+            }
+        }
+    }
+}
+exports.default = Plugin;
+
+//# sourceMappingURL=plugin.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/protocol/tcp.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -20048,6 +20158,61 @@ exports.default = WSCommandPWM;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandPlugin.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
+class WSCommandPlugin extends WSCommand_1.default {
+    constructor() {
+        super();
+        this.module = 15;
+        this._CommandSend = 0;
+        this._CommandReceive = 1;
+    }
+    send(params, index) {
+        const buf = new Uint8Array(params.send);
+        this.sendCommand(this._CommandSend, buf);
+    }
+    parseFromJson(json) {
+        const module = json.plugin;
+        if (module === undefined) {
+            return;
+        }
+        const schemaData = [{ uri: "/request/plugin/send", onValid: this.send }];
+        const res = this.validateCommandSchema(schemaData, module, "plugin");
+        if (res.valid === 0) {
+            if (res.invalidButLike.length > 0) {
+                throw new Error(res.invalidButLike[0].message);
+            }
+            else {
+                throw new this.WSCommandNotFoundError(`[network]unknown command`);
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        switch (func) {
+            case this._CommandReceive: {
+                objToSend.plugin = {
+                    receive: payload,
+                };
+                break;
+            }
+        }
+    }
+}
+exports.default = WSCommandPlugin;
+
+//# sourceMappingURL=WSCommandPlugin.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandSPI.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -20868,6 +21033,7 @@ const WSCommandI2C_1 = __importDefault(__webpack_require__("./dist/src/obniz/lib
 const WSCommandIO_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandIO.js"));
 const WSCommandLogicAnalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandLogicAnalyzer.js"));
 const WSCommandMeasurement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandMeasurement.js"));
+const WSCommandPlugin_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPlugin.js"));
 const WSCommandPWM_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPWM.js"));
 const WSCommandSPI_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSPI.js"));
 const WSCommandSwitch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSwitch.js"));
@@ -20891,6 +21057,7 @@ WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
 WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
 WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
+WSCommand_1.default.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.default);
 exports.default = WSCommand_1.default;
 
 //# sourceMappingURL=index.js.map
