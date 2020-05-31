@@ -181,6 +181,9 @@ export default class ObnizBLE extends ComponentAbstract {
     }
     this.hci._reset();
     this.hciProtocol = new HciProtocol(this.hci);
+    this.hciProtocol.debugHandler = (text: any) => {
+      this.debug(`BLE-HCI: ${text}`);
+    };
     this.centralBindings = new CentralBindings(this.hciProtocol);
     this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
     this.centralBindings.init();
