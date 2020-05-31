@@ -11,9 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
 const crypto_1 = __importDefault(require("./crypto"));
-const debug = (params) => {
-    console.log(params);
-};
 /**
  * @ignore
  */

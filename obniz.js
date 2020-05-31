@@ -8864,11 +8864,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('att');
-// const debug: any = (params:any) => {
-// };
-const debug = (params) => {
-    console.log(params);
-};
+const debug = () => { };
 /* eslint-disable no-unused-vars */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
@@ -9697,9 +9693,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
-const debug = (params) => {
-    console.log(params);
-};
 /**
  * @ignore
  */

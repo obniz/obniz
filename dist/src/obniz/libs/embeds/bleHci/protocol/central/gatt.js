@@ -4,11 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // let debug = require('debug')('att');
-// const debug: any = (params:any) => {
-// };
-const debug = (params) => {
-    console.log(params);
-};
+const debug = () => { };
 /* eslint-disable no-unused-vars */
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
