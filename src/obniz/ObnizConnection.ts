@@ -473,7 +473,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
   }
 
   protected wsOnError(event: any) {
-    // console.error(event);
+    this.print_debug(`ws onerror event=${event}`);
   }
 
   protected wsOnUnexpectedResponse(req: any, res?: any) {

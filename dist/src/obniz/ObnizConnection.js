@@ -323,7 +323,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnError(event) {
-        // console.error(event);
+        this.print_debug(`ws onerror event=${event}`);
     }
     wsOnUnexpectedResponse(req, res) {
         if (res && res.statusCode === 404) {
