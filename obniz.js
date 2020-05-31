@@ -1981,6 +1981,11 @@ class ObnizComponents extends ObnizParts_1.default {
                     const Class = embeds_map[key];
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
+                    if (typeof this[key].debugHandler === "function") {
+                        this[key].debugHandler = (text) => {
+                            this.print_debug(text);
+                        };
+                    }
                 }
             }
         }
@@ -4253,6 +4258,7 @@ const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
+        this.debugHandler = () => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
@@ -4364,6 +4370,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
         this.centralBindings.init();
         this.peripheralBindings.init();
+        this.centralBindings.debugHandler = (text) => {
+            this.debug(`BLE: ${text}`);
+        };
         this._initialized = false;
         this._initializeWarning = true;
         this.remotePeripherals = [];
@@ -4539,6 +4548,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
         this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
         this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
+    }
+    debug(text) {
+        this.debugHandler(text);
     }
 }
 exports.default = ObnizBLE;
@@ -8186,9 +8198,13 @@ const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/
 class AclStream extends eventemitter3_1.default {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
+        this.debugHandler = () => { };
         this._hci = hci;
         this._handle = handle;
         this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
+        this._smp.debugHandler = (text) => {
+            this.debug(text);
+        };
         this.onSmpFailBinded = this.onSmpFail.bind(this);
         this.onSmpEndBinded = this.onSmpEnd.bind(this);
         this._smp.on("fail", this.onSmpFailBinded);
@@ -8232,6 +8248,9 @@ class AclStream extends eventemitter3_1.default {
         this._smp.removeListener("end", this.onSmpEndBinded);
     }
     startEncrypt(option) { }
+    debug(text) {
+        this.debugHandler(`AclStream: ${text}`);
+    }
 }
 exports.default = AclStream;
 
@@ -8268,6 +8287,7 @@ const signaling_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
 class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
+        this.debugHandler = () => { };
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
@@ -8390,6 +8410,9 @@ class NobleBindings extends eventemitter3_1.default {
             .join("")
             .toLowerCase();
         const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        aclStream.debugHandler = (text) => {
+            this.debug(text);
+        };
         const gatt = new gatt_1.default(address, aclStream);
         const signaling = new signaling_1.default(handle, aclStream);
         this._gatts[uuid] = this._gatts[handle] = gatt;
@@ -8518,6 +8541,9 @@ class NobleBindings extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
         }
         return gatt;
+    }
+    debug(text) {
+        this.debugHandler(`${text}`);
     }
 }
 exports.default = NobleBindings;
@@ -9717,6 +9743,7 @@ class Smp extends eventemitter3_1.default {
         this._stk = null;
         this._ltk = null;
         this._options = undefined;
+        this.debugHandler = () => { };
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(localAddress
@@ -9734,6 +9761,7 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
     async pairingWithKeyWait(key) {
+        this.debug(`Pairing using keys ${key}`);
         this.setKeys(key);
         const encResult = await this._aclStream.onSmpStkWait(this._stk);
         return encResult;
@@ -9741,16 +9769,20 @@ class Smp extends eventemitter3_1.default {
     async pairingWait(options) {
         this._options = options;
         if (this._options && this._options.keys) {
-            // console.warn("skip pairing");
             return await this.pairingWithKeyWait(this._options.keys);
         }
+        this.debug(`Going to Pairing`);
         await this.sendPairingRequestWait();
+        this.debug(`Waiting Pairing Response`);
         const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
         this.handlePairingResponse(pairingResponse);
+        this.debug(`Waiting Pairing Confirm`);
         const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
+        this.debug(`Waiting Pairing Random`);
         const random = await this._readWait(SMP.PAIRING_RANDOM);
         const encResult = this.handlePairingRandomWait(random);
+        this.debug(`Got Pairing Encryption Result`);
         const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
         const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
         await Promise.all([encInfoPromise, masterIdentPromise]);
@@ -9807,10 +9839,8 @@ class Smp extends eventemitter3_1.default {
         this._pres = data;
         if (this.isPasskeyMode()) {
             let passkeyNumber = 0;
-            try {
-                passkeyNumber = await this._options.passkeyCallback();
-            }
-            catch (_a) { }
+            passkeyNumber = await this._options.passkeyCallback();
+            this.debug(`PassKey=${passkeyNumber}`);
             const passkey = new Array(16);
             for (let i = 0; i < 3; i++) {
                 passkey[i] = (passkeyNumber >> (i * 8)) & 0xff;
@@ -9872,6 +9902,7 @@ class Smp extends eventemitter3_1.default {
     }
     setKeys(keyStringBase64) {
         const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
+        this.debug(`restored keys ${keyString}`);
         const keys = JSON.parse(keyString);
         this._stk = Buffer.from(keys.stk);
         this._preq = Buffer.from(keys.preq);
@@ -9897,6 +9928,7 @@ class Smp extends eventemitter3_1.default {
     }
     async sendPairingRequestWait() {
         if (this.isPasskeyMode()) {
+            this.debug(`pair capable passkey`);
             this._preq = Buffer.from([
                 SMP.PAIRING_REQUEST,
                 0x02,
@@ -9908,6 +9940,7 @@ class Smp extends eventemitter3_1.default {
             ]);
         }
         else {
+            this.debug(`pair No Input and No Output`);
             this._preq = Buffer.from([
                 SMP.PAIRING_REQUEST,
                 0x03,
@@ -9935,6 +9968,9 @@ class Smp extends eventemitter3_1.default {
                 reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason));
             });
         });
+    }
+    debug(text) {
+        this.debugHandler(`SMP: ${text}`);
     }
 }
 exports.default = Smp;

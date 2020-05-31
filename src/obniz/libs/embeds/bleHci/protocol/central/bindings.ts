@@ -28,6 +28,7 @@ type NobleBindingsEventType =
  */
 class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public _connectable: any;
+
   private _state: any;
   private _addresses: { [uuid: string]: BleDeviceAddress };
   private _addresseTypes: { [uuid: string]: BleDeviceAddressType };
@@ -58,6 +59,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._hci = hciProtocol;
     this._gap = new Gap(this._hci);
   }
+  public debugHandler: any = () => {};
 
   public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
     if (!this._addresses[uuid]) {
@@ -223,6 +225,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       addressType,
       address,
     );
+    aclStream.debugHandler = (text: any) => {
+      this.debug(text);
+    };
     const gatt = new Gatt(address, aclStream);
     const signaling: any = new Signaling(handle, aclStream);
 
@@ -405,6 +410,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       throw new ObnizBleUnknownPeripheralError(peripheralUuid);
     }
     return gatt;
+  }
+
+  private debug(text: any) {
+    this.debugHandler(`${text}`);
   }
 }
 

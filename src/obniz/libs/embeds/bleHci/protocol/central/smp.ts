@@ -100,7 +100,10 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this._aclStream.on("end", this.onAclStreamEndBinded);
   }
 
+  public debugHandler: any = () => {};
+
   public async pairingWithKeyWait(key: string) {
+    this.debug(`Pairing using keys ${key}`);
     this.setKeys(key);
     const encResult = await this._aclStream.onSmpStkWait(this._stk);
     return encResult;
@@ -109,17 +112,20 @@ class Smp extends EventEmitter<SmpEventTypes> {
   public async pairingWait(options?: SmpEncryptOptions) {
     this._options = options;
     if (this._options && this._options.keys) {
-      // console.warn("skip pairing");
       return await this.pairingWithKeyWait(this._options.keys);
     }
-
+    this.debug(`Going to Pairing`);
     await this.sendPairingRequestWait();
+    this.debug(`Waiting Pairing Response`);
     const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
     this.handlePairingResponse(pairingResponse);
+    this.debug(`Waiting Pairing Confirm`);
     const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
     this.handlePairingConfirm(confirm);
+    this.debug(`Waiting Pairing Random`);
     const random = await this._readWait(SMP.PAIRING_RANDOM);
     const encResult = this.handlePairingRandomWait(random);
+    this.debug(`Got Pairing Encryption Result`);
 
     const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
     const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
@@ -176,9 +182,8 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
     if (this.isPasskeyMode()) {
       let passkeyNumber = 0;
-      try {
-        passkeyNumber = await this._options!.passkeyCallback!();
-      } catch {}
+      passkeyNumber = await this._options!.passkeyCallback!();
+      this.debug(`PassKey=${passkeyNumber}`);
       const passkey = new Array(16);
       for (let i = 0; i < 3; i++) {
         passkey[i] = (passkeyNumber >> (i * 8)) & 0xff;
@@ -256,6 +261,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   public setKeys(keyStringBase64: string) {
     const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
+    this.debug(`restored keys ${keyString}`);
     const keys = JSON.parse(keyString);
     this._stk = Buffer.from(keys.stk);
     this._preq = Buffer.from(keys.preq);
@@ -283,6 +289,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   private async sendPairingRequestWait() {
     if (this.isPasskeyMode()) {
+      this.debug(`pair capable passkey`);
       this._preq = Buffer.from([
         SMP.PAIRING_REQUEST,
         0x02, // IO capability: Keyboard
@@ -293,6 +300,7 @@ class Smp extends EventEmitter<SmpEventTypes> {
         0x01, // Responder key distribution: EncKey
       ]);
     } else {
+      this.debug(`pair No Input and No Output`);
       this._preq = Buffer.from([
         SMP.PAIRING_REQUEST,
         0x03, // IO capability: NoInputNoOutput
@@ -323,6 +331,10 @@ class Smp extends EventEmitter<SmpEventTypes> {
         reject(new ObnizBlePairingRejectByRemoteError(reason));
       });
     });
+  }
+
+  private debug(text: any) {
+    this.debugHandler(`SMP: ${text}`);
   }
 }
 

@@ -32,6 +32,7 @@ const bleService_1 = __importDefault(require("./bleService"));
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
+        this.debugHandler = () => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
@@ -143,6 +144,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
         this.centralBindings.init();
         this.peripheralBindings.init();
+        this.centralBindings.debugHandler = (text) => {
+            this.debug(`BLE: ${text}`);
+        };
         this._initialized = false;
         this._initializeWarning = true;
         this.remotePeripherals = [];
@@ -318,6 +322,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
         this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
         this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
+    }
+    debug(text) {
+        this.debugHandler(text);
     }
 }
 exports.default = ObnizBLE;
