@@ -85,6 +85,12 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     return result;
   }
 
+  public async onSmpLtkWait(ltk: any, random: Buffer, diversifier: Buffer) {
+    const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, ltk);
+    this.emit("encrypt", result);
+    return result;
+  }
+
   public onSmpFail() {
     this.emit("encryptFail");
   }

@@ -8243,6 +8243,11 @@ class AclStream extends eventemitter3_1.default {
         this.emit("encrypt", result);
         return result;
     }
+    async onSmpLtkWait(ltk, random, diversifier) {
+        const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, ltk);
+        this.emit("encrypt", result);
+        return result;
+    }
     onSmpFail() {
         this.emit("encryptFail");
     }
@@ -9766,7 +9771,7 @@ class Smp extends eventemitter3_1.default {
     async pairingWithKeyWait(key) {
         this.debug(`Pairing using keys ${key}`);
         this.setKeys(key);
-        const encResult = await this._aclStream.onSmpStkWait(this._stk);
+        const encResult = await this._aclStream.onSmpLtkWait(this._ltk, this._rand, this._ediv);
         return encResult;
     }
     async pairingWait(options) {
@@ -9778,21 +9783,23 @@ class Smp extends eventemitter3_1.default {
         await this.sendPairingRequestWait();
         this.debug(`Waiting Pairing Response`);
         const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
-        this.handlePairingResponse(pairingResponse);
+        await this.handlePairingResponse(pairingResponse);
         this.debug(`Waiting Pairing Confirm`);
         const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
         this.debug(`Waiting Pairing Random`);
         const random = await this._readWait(SMP.PAIRING_RANDOM);
-        const encResult = this.handlePairingRandomWait(random);
+        const encResultPromise = this.handlePairingRandomWait(random);
         this.debug(`Got Pairing Encryption Result`);
         const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
         const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
-        await Promise.all([encInfoPromise, masterIdentPromise]);
+        await Promise.all([encResultPromise, encInfoPromise, masterIdentPromise]);
+        const encResult = await encResultPromise;
         const encInfo = await encInfoPromise;
         const masterIdent = await masterIdentPromise;
         this.handleEncryptInfo(encInfo);
         this.handleMasterIdent(masterIdent);
+        // await this._aclStream.onSmpLtkWait(this._ltk, this._rand, this._ediv);
         return encResult;
     }
     onAclStreamData(cid, data) {
@@ -9890,11 +9897,14 @@ class Smp extends eventemitter3_1.default {
     }
     handleEncryptInfo(data) {
         this._ltk = data.slice(1);
+        console.log("ltk", this._ltk.toString("hex"));
         this.emit("ltk", this._ltk);
     }
     handleMasterIdent(data) {
         const ediv = data.slice(1, 3);
         const rand = data.slice(3);
+        this._ediv = ediv;
+        this._rand = rand;
         this.emit("masterIdent", ediv, rand);
     }
     write(data) {
@@ -9907,13 +9917,15 @@ class Smp extends eventemitter3_1.default {
         const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
         this.debug(`restored keys ${keyString}`);
         const keys = JSON.parse(keyString);
-        this._stk = Buffer.from(keys.stk);
-        this._preq = Buffer.from(keys.preq);
-        this._pres = Buffer.from(keys.pres);
-        this._tk = Buffer.from(keys.tk);
-        this._r = Buffer.from(keys.r);
-        this._pcnf = Buffer.from(keys.pcnf);
-        this._ltk = Buffer.from(keys.ltk);
+        this._stk = Buffer.from(keys.stk, "hex");
+        this._preq = Buffer.from(keys.preq, "hex");
+        this._pres = Buffer.from(keys.pres, "hex");
+        this._tk = Buffer.from(keys.tk, "hex");
+        this._r = Buffer.from(keys.r, "hex");
+        this._pcnf = Buffer.from(keys.pcnf, "hex");
+        this._ltk = Buffer.from(keys.ltk, "hex");
+        this._ediv = Buffer.from(keys.ediv, "hex");
+        this._rand = Buffer.from(keys.rand, "hex");
     }
     getKeys() {
         const keys = {
@@ -9924,6 +9936,8 @@ class Smp extends eventemitter3_1.default {
             r: this._r.toString("hex"),
             pcnf: this._pcnf.toString("hex"),
             ltk: this._ltk.toString("hex"),
+            ediv: this._ediv.toString("hex"),
+            rand: this._rand.toString("hex"),
         };
         const jsonString = JSON.stringify(keys);
         const keyString = Buffer.from(jsonString, "ascii").toString("base64");
