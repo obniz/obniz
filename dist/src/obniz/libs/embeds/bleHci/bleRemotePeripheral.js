@@ -138,6 +138,9 @@ class BleRemotePeripheral {
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
         await this.obnizBle.centralBindings.connectWait(this.address);
+        if (this._connectSetting.pairingOption) {
+            this.setPairingOption(this._connectSetting.pairingOption);
+        }
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
@@ -434,6 +437,9 @@ class BleRemotePeripheral {
     async pairingWait(options) {
         const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
         return result;
+    }
+    setPairingOption(options) {
+        this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {

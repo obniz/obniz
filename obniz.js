@@ -6561,6 +6561,9 @@ class BleRemotePeripheral {
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
         await this.obnizBle.centralBindings.connectWait(this.address);
+        if (this._connectSetting.pairingOption) {
+            this.setPairingOption(this._connectSetting.pairingOption);
+        }
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
@@ -6857,6 +6860,9 @@ class BleRemotePeripheral {
     async pairingWait(options) {
         const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
         return result;
+    }
+    setPairingOption(options) {
+        this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {
@@ -8199,6 +8205,11 @@ class AclStream extends eventemitter3_1.default {
         encrpytResult = await this._smp.pairingWait(options);
         return encrpytResult;
     }
+    setEncryptOption(options) {
+        let encrpytResult = null;
+        encrpytResult = this._smp.setPairingOption(options);
+        return encrpytResult;
+    }
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
     }
@@ -8510,6 +8521,11 @@ class NobleBindings extends eventemitter3_1.default {
         const gatt = this.getGatt(peripheralUuid);
         const result = await gatt.encryptWait(options);
         return result;
+    }
+    async setPairingOption(peripheralUuid, options) {
+        options = options || {};
+        const gatt = this.getGatt(peripheralUuid);
+        gatt.setEncryptOption(options);
     }
     getGatt(peripheralUuid) {
         const handle = this._handles[peripheralUuid];
@@ -8958,6 +8974,9 @@ class Gatt extends eventemitter3_1.default {
             return this._aclStream._smp.getKeys();
         });
         return result;
+    }
+    async setEncryptOption(options) {
+        this._aclStream.setEncryptOption(options);
     }
     onEnd(reason) {
         this.emit("end", reason);
@@ -9682,8 +9701,11 @@ class Smp extends eventemitter3_1.default {
         const encResult = await this._aclStream.onSmpStkWait(this._stk);
         return encResult;
     }
-    async pairingWait(options) {
+    setPairingOption(options) {
         this._options = options;
+    }
+    async pairingWait(options) {
+        this._options = Object.assign(Object.assign({}, this._options), options);
         if (this._options && this._options.keys) {
             // console.warn("skip pairing");
             return await this.pairingWithKeyWait(this._options.keys);
@@ -9702,6 +9724,9 @@ class Smp extends eventemitter3_1.default {
         const masterIdent = await masterIdentPromise;
         this.handleEncryptInfo(encInfo);
         this.handleMasterIdent(masterIdent);
+        if (this._options && this._options.onPairedCallback) {
+            this._options.onPairedCallback(this.getKeys());
+        }
         return encResult;
     }
     onAclStreamData(cid, data) {

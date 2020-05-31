@@ -44,6 +44,11 @@ export interface SmpEncryptOptions {
    * Callback function that call on pairing passkey required.
    */
   passkeyCallback?: () => Promise<number>;
+
+  /**
+   * Callback function that call on pairing passkey required.
+   */
+  onPairedCallback?: (keys: string) => void;
 }
 
 /**
@@ -106,8 +111,12 @@ class Smp extends EventEmitter<SmpEventTypes> {
     return encResult;
   }
 
-  public async pairingWait(options?: SmpEncryptOptions) {
+  public setPairingOption(options: SmpEncryptOptions) {
     this._options = options;
+  }
+
+  public async pairingWait(options?: SmpEncryptOptions) {
+    this._options = { ...this._options, ...options };
     if (this._options && this._options.keys) {
       // console.warn("skip pairing");
       return await this.pairingWithKeyWait(this._options.keys);
@@ -129,6 +138,9 @@ class Smp extends EventEmitter<SmpEventTypes> {
     this.handleEncryptInfo(encInfo);
     this.handleMasterIdent(masterIdent);
 
+    if (this._options && this._options.onPairedCallback) {
+      this._options.onPairedCallback(this.getKeys());
+    }
     return encResult;
   }
 
