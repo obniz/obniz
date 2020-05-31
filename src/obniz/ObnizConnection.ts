@@ -439,7 +439,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
   }
 
   protected wsOnClose(event: any) {
-    this.print_debug("closed");
+    this.print_debug(`closed from remote event=${event}`);
     this.close();
 
     setTimeout(() => {
