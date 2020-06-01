@@ -55,6 +55,12 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     return encrpytResult;
   }
 
+  public setEncryptOption(options?: any) {
+    let encrpytResult = null;
+    encrpytResult = this._smp.setPairingOption(options);
+    return encrpytResult;
+  }
+
   public write(cid: any, data: any) {
     this._hci.writeAclDataPkt(this._handle, cid, data);
   }

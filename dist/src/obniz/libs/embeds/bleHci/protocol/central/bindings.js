@@ -268,6 +268,11 @@ class NobleBindings extends eventemitter3_1.default {
         const result = await gatt.encryptWait(options);
         return result;
     }
+    async setPairingOption(peripheralUuid, options) {
+        options = options || {};
+        const gatt = this.getGatt(peripheralUuid);
+        gatt.setEncryptOption(options);
+    }
     getGatt(peripheralUuid) {
         const handle = this._handles[peripheralUuid];
         const gatt = this._gatts[handle];

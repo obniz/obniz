@@ -58,8 +58,11 @@ class Smp extends eventemitter3_1.default {
         const encResult = await this._aclStream.onSmpLtkWait(this._ltk, this._rand, this._ediv);
         return encResult;
     }
-    async pairingWait(options) {
+    setPairingOption(options) {
         this._options = options;
+    }
+    async pairingWait(options) {
+        this._options = Object.assign(Object.assign({}, this._options), options);
         if (this._options && this._options.keys) {
             return await this.pairingWithKeyWait(this._options.keys);
         }
@@ -83,7 +86,9 @@ class Smp extends eventemitter3_1.default {
         const masterIdent = await masterIdentPromise;
         this.handleEncryptInfo(encInfo);
         this.handleMasterIdent(masterIdent);
-        // await this._aclStream.onSmpLtkWait(this._ltk, this._rand, this._ediv);
+        if (this._options && this._options.onPairedCallback) {
+            this._options.onPairedCallback(this.getKeys());
+        }
         return encResult;
     }
     onAclStreamData(cid, data) {

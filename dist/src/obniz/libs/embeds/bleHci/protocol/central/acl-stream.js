@@ -35,6 +35,11 @@ class AclStream extends eventemitter3_1.default {
         encrpytResult = await this._smp.pairingWait(options);
         return encrpytResult;
     }
+    setEncryptOption(options) {
+        let encrpytResult = null;
+        encrpytResult = this._smp.setPairingOption(options);
+        return encrpytResult;
+    }
     write(cid, data) {
         this._hci.writeAclDataPkt(this._handle, cid, data);
     }
