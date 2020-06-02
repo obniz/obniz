@@ -9394,7 +9394,7 @@ class Gatt extends eventemitter3_1.default {
     }
     writeAtt(data) {
         const opCode = data[0];
-        const handle = data.readUInt16LE(1);
+        const handle = data.length > 3 ? data.readUInt16LE(1) : "none";
         debug(`ATT: opCode=${opCode}(${ATT_OP_READABLES[opCode]}) handle=${handle} address=` +
             this._address +
             ": write: " +
@@ -9921,7 +9921,6 @@ class Smp extends eventemitter3_1.default {
     }
     handleEncryptInfo(data) {
         this._ltk = data.slice(1);
-        console.log("ltk", this._ltk.toString("hex"));
         this.emit("ltk", this._ltk);
     }
     handleMasterIdent(data) {
@@ -21143,9 +21142,11 @@ var map = {
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
+	"./Ble/PLS_01BT/index.js": "./dist/src/parts/Ble/PLS_01BT/index.js",
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
 	"./Ble/abstract/services/batteryService.js": "./dist/src/parts/Ble/abstract/services/batteryService.js",
 	"./Ble/abstract/services/genericAccess.js": "./dist/src/parts/Ble/abstract/services/genericAccess.js",
 	"./Ble/cir415a/index.js": "./dist/src/parts/Ble/cir415a/index.js",
@@ -22327,6 +22328,87 @@ exports.default = MINEW_S1;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/PLS_01BT/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class PLS_01BT {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.onmesured = null;
+        this._uuids = {
+            service: "CDEACB80-5235-4C07-8846-93A37EE6B86D",
+            rxChar: "CDEACB81-5235-4C07-8846-93A37EE6B86D",
+        };
+        this._peripheral = null;
+        this._rxCharacteristic = null;
+        this._txCharacteristic = null;
+        if (peripheral && !PLS_01BT.isDevice(peripheral)) {
+            throw new Error("peripheral is not PLS_01BT");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "PLS_01BT",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName && peripheral.localName.startsWith("My Oximeter")) {
+            return true;
+        }
+        return false;
+    }
+    // @ts-ignore
+    wired(obniz) { }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("PLS_01BT is not find.");
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (this.ondisconnect) {
+                this.ondisconnect(reason);
+            }
+        };
+        await this._peripheral.connectWait();
+        this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
+        if (!this._rxCharacteristic) {
+            throw new Error("device is not PLS_01BT");
+        }
+        await this._rxCharacteristic.registerNotifyWait((data) => {
+            if (data.length === 4 && data[0] === 0x81) {
+                if (data[1] !== 255 && data[2] !== 177) {
+                    const pulseRate = data[1];
+                    const bloodOxygenLevel = data[2];
+                    const perfusionIndex = data[3];
+                    if (this.onmesured) {
+                        this.onmesured({
+                            pulseRate,
+                            bloodOxygenLevel,
+                            perfusionIndex,
+                        });
+                    }
+                }
+            }
+        });
+    }
+    async disconnectWait() {
+        if (!this._peripheral) {
+            throw new Error("PLS_01BT is not find.");
+        }
+        await this._peripheral.disconnectWait();
+    }
+}
+exports.default = PLS_01BT;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/REX_BTPM25V/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22692,6 +22774,170 @@ exports.default = RS_Seek3;
 
 //# sourceMappingURL=index.js.map
 
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/UT201BLE/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+class UT201BLE {
+    constructor(peripheral, timezoneOffsetMinute) {
+        if (!peripheral || !UT201BLE.isDevice(peripheral)) {
+            throw new Error("peripheral is not UT201BLE");
+        }
+        this._peripheral = peripheral;
+        this._timezoneOffsetMinute = timezoneOffsetMinute;
+    }
+    static info() {
+        return {
+            name: "UT201BLE",
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName && peripheral.localName.startsWith("A&D_UT201BLE_");
+    }
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error("UT201BLE not found");
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
+        let key = null;
+        await this._peripheral.connectWait({
+            pairingOption: {
+                onPairedCallback: (pairingKey) => {
+                    key = pairingKey;
+                },
+            },
+        });
+        const { timeChar, customServiceChar } = this._getChars();
+        await this._writeTimeChar(this._timezoneOffsetMinute);
+        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        return key;
+    }
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error("UT201BLE not found");
+        }
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: pairingKeys,
+            },
+        });
+        return await new Promise(async (resolve, reject) => {
+            if (!this._peripheral) {
+                throw new Error("UT201BLE not found");
+            }
+            const results = [];
+            const { temperatureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+            await this._writeTimeChar(this._timezoneOffsetMinute);
+            temperatureMeasurementChar.registerNotifyWait((data) => {
+                results.push(this._analyzeData(data));
+            });
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+        });
+    }
+    _readFloatLE(buffer, index) {
+        const data = buffer.readUInt32LE(index);
+        let mantissa = data & 0x00ffffff;
+        if ((mantissa & 0x00800000) > 0) {
+            mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
+        }
+        const exponential = data >> 24;
+        return mantissa * Math.pow(10, exponential);
+    }
+    _analyzeData(data) {
+        const buf = Buffer.from(data);
+        const flags = buf.readUInt8(0);
+        let index = 1;
+        const result = {};
+        if (flags & 0x01) {
+            // Fahrenheit
+            result.fahrenheit = this._readFloatLE(buf, index);
+            index += 4;
+        }
+        else {
+            // Celsius
+            result.celsius = this._readFloatLE(buf, index);
+            index += 4;
+        }
+        if (flags & 0x02) {
+            // Time Stamp field present
+            result.date = {
+                year: buf.readUInt16LE(index),
+                month: buf.readUInt8(index + 2),
+                day: buf.readUInt8(index + 3),
+                hour: buf.readUInt8(index + 4),
+                minute: buf.readUInt8(index + 5),
+                second: buf.readUInt8(index + 6),
+            };
+            index += 7;
+        }
+        if (flags & 0x04) {
+            const types = [
+                "unknown",
+                "Armpit",
+                "Body",
+                "Ear",
+                "Finger",
+                "Gastro-intestinal Tract",
+                "Mouth",
+                "Rectum",
+                "Toe",
+                "Tympanum",
+            ];
+            const value = buf.readUInt8(index);
+            index++;
+            result.temperatureType = types[value] || "unknown";
+        }
+        return result;
+    }
+    _getChars() {
+        if (!this._peripheral) {
+            throw new Error("UT201BLE not found");
+        }
+        const temperatureMeasurementChar = this._peripheral
+            .getService("1809")
+            .getCharacteristic("2A1C");
+        const timeChar = this._peripheral.getService("1809").getCharacteristic("2A08");
+        const customServiceChar = this._peripheral
+            .getService("233bf0005a341b6d975c000d5690abe4")
+            .getCharacteristic("233bf0015a341b6d975c000d5690abe4");
+        return {
+            temperatureMeasurementChar,
+            timeChar,
+            customServiceChar,
+        };
+    }
+    async _writeTimeChar(timeOffsetMinute) {
+        const { timeChar } = this._getChars();
+        const date = new Date();
+        date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
+        const buf = Buffer.alloc(7);
+        buf.writeUInt16LE(date.getUTCFullYear(), 0);
+        buf.writeUInt8(date.getUTCMonth() + 1, 2);
+        buf.writeUInt8(date.getUTCDay(), 3);
+        buf.writeUInt8(date.getUTCHours(), 4);
+        buf.writeUInt8(date.getUTCMinutes(), 5);
+        buf.writeUInt8(date.getUTCSeconds(), 6);
+        const arr = Array.from(buf);
+        await timeChar.writeWait(arr);
+    }
+}
+exports.default = UT201BLE;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 

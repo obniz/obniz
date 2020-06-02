@@ -256,7 +256,6 @@ class Smp extends EventEmitter<SmpEventTypes> {
 
   public handleEncryptInfo(data: any) {
     this._ltk = data.slice(1);
-    console.log("ltk", this._ltk.toString("hex"));
     this.emit("ltk", this._ltk);
   }
 

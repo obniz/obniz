@@ -186,7 +186,6 @@ class Smp extends eventemitter3_1.default {
     }
     handleEncryptInfo(data) {
         this._ltk = data.slice(1);
-        console.log("ltk", this._ltk.toString("hex"));
         this.emit("ltk", this._ltk);
     }
     handleMasterIdent(data) {

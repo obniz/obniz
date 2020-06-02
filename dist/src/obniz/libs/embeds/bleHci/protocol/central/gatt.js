@@ -484,7 +484,7 @@ class Gatt extends eventemitter3_1.default {
     }
     writeAtt(data) {
         const opCode = data[0];
-        const handle = data.readUInt16LE(1);
+        const handle = data.length > 3 ? data.readUInt16LE(1) : "none";
         debug(`ATT: opCode=${opCode}(${ATT_OP_READABLES[opCode]}) handle=${handle} address=` +
             this._address +
             ": write: " +
