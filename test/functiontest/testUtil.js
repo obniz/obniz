@@ -4,44 +4,44 @@
  * and open the template in the editor.
  */
 
-let sinon = require('sinon');
-let ws = require('ws');
+let sinon = require("sinon");
+let ws = require("ws");
 let WSServer = ws.Server;
-let semver = require('semver');
+let semver = require("semver");
 
-let fs = require('fs');
-let ejs = require('ejs');
+let fs = require("fs");
+let ejs = require("ejs");
 
-const chai = require('chai');
+const chai = require("chai");
 const expect = chai.expect;
 
 let Obniz;
 let MochaChrome;
 if (
-  typeof window === 'undefined' &&
+  typeof window === "undefined" &&
   process &&
-  !semver.satisfies(process.versions.node, '>=7.6.0')
+  !semver.satisfies(process.versions.node, ">=7.6.0")
 ) {
-  console.log('Loading obniz.js for node 6.10');
-  Obniz = require('../../index.js');
+  console.log("Loading obniz.js for node 6.10");
+  Obniz = require("../../index.js");
 } else {
-  console.log('Loading normal obniz.js');
-  Obniz = require('../../index.js');
-  MochaChrome = require('mocha-chrome');
+  console.log("Loading normal obniz.js");
+  Obniz = require("../../index.js");
+  MochaChrome = require("mocha-chrome");
 }
 
-sinon.stub(Obniz.prototype, 'wsOnClose');
+sinon.stub(Obniz.prototype, "wsOnClose");
 
 let serverDataCount = 0;
 let errorDataCount = 0;
 let testUtil = {
   log: console.log,
   isNode: function() {
-    return typeof window === 'undefined';
+    return typeof window === "undefined";
   },
   createServer: function(port, velify) {
     let wss = new WSServer({
-      host: 'localhost',
+      host: "localhost",
       port: port,
       clientTracking: true,
     });
@@ -63,7 +63,7 @@ let testUtil = {
     let binary =
       options && options.binary !== undefined ? options.binary : false;
     return new Obniz(obnizId, {
-      obniz_server: 'ws://localhost:' + port,
+      obniz_server: "ws://localhost:" + port,
       binary: binary,
     });
   },
@@ -77,8 +77,8 @@ let testUtil = {
     stub.removeAllListeners = sinon.stub();
     stub.readyState = 1;
 
-    sinon.stub(Obniz.prototype, 'wsconnect');
-    obj.obniz = this.createObniz(100, '12345678', options);
+    sinon.stub(Obniz.prototype, "wsconnect");
+    obj.obniz = this.createObniz(100, "12345678", options);
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
     obj.obniz.wsOnOpen();
@@ -97,9 +97,9 @@ let testUtil = {
     stub.removeAllListeners = sinon.stub();
     stub.readyState = 1;
 
-    sinon.stub(Obniz.prototype, 'wsconnect');
+    sinon.stub(Obniz.prototype, "wsconnect");
     obj.obnizOptions = options;
-    obj.obniz = this.createObniz(100, '12345678', options);
+    obj.obniz = this.createObniz(100, "12345678", options);
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
     obj.obniz.wsOnOpen();
@@ -109,11 +109,11 @@ let testUtil = {
           ws: {
             ready: true,
             obniz: {
-              firmware: options.__firmware_ver || '2.1.0',
+              firmware: options.__firmware_ver || "2.1.0",
             },
           },
         },
-      ])
+      ]),
     );
     serverDataCount = 0;
 
@@ -146,11 +146,11 @@ let testUtil = {
             ws: {
               ready: true,
               obniz: {
-                firmware: options.__firmware_ver || '2.1.0',
+                firmware: options.__firmware_ver || "2.1.0",
               },
             },
           },
-        ])
+        ]),
       );
 
       expect(obj.obniz).send([
@@ -170,7 +170,7 @@ let testUtil = {
         } else {
           count--;
           if (count < 0) {
-            reject('waitForWebsocketCall timeout');
+            reject("waitForWebsocketCall timeout");
             return;
           }
           setTimeout(wait, 10);
@@ -181,9 +181,9 @@ let testUtil = {
   },
   receiveJson: function(obniz, jsonVal) {
     if (testUtil.isNode()) {
-      let validator = require('./obnizJsonValidator');
-      let results = validator.responseValidate(jsonVal, 'json');
-      require('chai').expect(results.valid, results.errors).to.be.true;
+      let validator = require("./obnizJsonValidator");
+      let results = validator.responseValidate(jsonVal, "json");
+      require("chai").expect(results.valid, results.errors).to.be.true;
     }
 
     obniz.wsOnMessage(JSON.stringify(jsonVal));
@@ -191,9 +191,9 @@ let testUtil = {
 
   isValidCommandRequestJson: function(jsonVal) {
     if (testUtil.isNode()) {
-      let validator = require('./obnizJsonValidator');
-      let results = validator.requestValidate(jsonVal, 'wscommand');
-      require('chai').expect(results.valid, results.errors).to.be.true;
+      let validator = require("./obnizJsonValidator");
+      let results = validator.requestValidate(jsonVal, "wscommand");
+      require("chai").expect(results.valid, results.errors).to.be.true;
       return results;
     }
 
@@ -203,9 +203,9 @@ let testUtil = {
 
   isValidCommandResponseJson: function(jsonVal) {
     if (testUtil.isNode()) {
-      let validator = require('./obnizJsonValidator');
-      let results = validator.responseValidate(jsonVal, 'wscommand');
-      require('chai').expect(results.valid, results.errors).to.be.true;
+      let validator = require("./obnizJsonValidator");
+      let results = validator.responseValidate(jsonVal, "wscommand");
+      require("chai").expect(results.valid, results.errors).to.be.true;
       return results;
     }
     //browser
@@ -213,95 +213,100 @@ let testUtil = {
   },
 
   obnizAssert: function(_chai, utils) {
-    _chai.Assertion.addProperty('obniz', function() {
-      let obj = utils.flag(this, 'object');
+    _chai.Assertion.addProperty("obniz", function() {
+      let obj = utils.flag(this, "object");
       new _chai.Assertion(obj).to.be.instanceof(Obniz);
     });
 
-    _chai.Assertion.addMethod('send', function(expected) {
+    _chai.Assertion.addMethod("send", function(expected) {
       let count = serverDataCount;
       serverDataCount++;
 
-      let obniz = utils.flag(this, 'object');
+      let obniz = utils.flag(this, "object");
       let stub = obniz.socket.send;
 
       let message =
-        '[obniz.send] no more send data. (called ' +
+        "[obniz.send] no more send data. (called " +
         stub.callCount +
-        ' times, but you expect ' +
+        " times, but you expect " +
         (count + 1) +
-        ' times) ';
+        " times) ";
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       new _chai.Assertion(
         stub.args[count][0],
-        '[obniz.send]invalid json'
+        "[obniz.send]invalid json",
       ).is.json;
       let val = JSON.parse(stub.args[count][0]);
-      new _chai.Assertion(val).to.deep.equal(expected);
+      if (typeof expected === "function") {
+        let result = expected(val);
+        _chai.assert.isOk(result, "function is not match value");
+      } else {
+        new _chai.Assertion(val).to.deep.equal(expected);
+      }
 
       if (testUtil.isNode()) {
-        let validator = require('./obnizJsonValidator');
-        let validateErrors = validator.requestValidate(val, 'json');
+        let validator = require("./obnizJsonValidator");
+        let validateErrors = validator.requestValidate(val, "json");
         new _chai.Assertion(validateErrors.valid, validateErrors.errors).to.be
           .true;
       }
     });
 
-    _chai.Assertion.addMethod('sendBinary', function(expected) {
+    _chai.Assertion.addMethod("sendBinary", function(expected) {
       let count = serverDataCount;
       serverDataCount++;
 
-      let obniz = utils.flag(this, 'object');
+      let obniz = utils.flag(this, "object");
       let stub = obniz.socket.send;
 
       let message =
-        '[obniz.send] no more send data. (called ' +
+        "[obniz.send] no more send data. (called " +
         stub.callCount +
-        ' times, but you expect ' +
+        " times, but you expect " +
         (count + 1) +
-        ' times) ';
+        " times) ";
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       new _chai.Assertion(stub.args[count][0]).to.deep.equal(expected);
     });
 
-    _chai.Assertion.addProperty('finished', function(expected) {
-      let obniz = utils.flag(this, 'object');
+    _chai.Assertion.addProperty("finished", function(expected) {
+      let obniz = utils.flag(this, "object");
       let stub = obniz.socket.send;
       let message =
-        '[obniz.send] not finished. (send: called ' +
+        "[obniz.send] not finished. (send: called " +
         stub.callCount +
-        ' times, but you expect ' +
+        " times, but you expect " +
         serverDataCount +
-        ' times) ';
+        " times) ";
       new _chai.Assertion(stub.callCount, message).to.be.equal(serverDataCount);
 
       let errorStub = obniz.error;
       message =
-        '[obniz.send] not finished. (error: called ' +
+        "[obniz.send] not finished. (error: called " +
         errorStub.callCount +
-        ' times, but you expect ' +
+        " times, but you expect " +
         errorDataCount +
-        ' times) ';
+        " times) ";
       new _chai.Assertion(errorStub.callCount, message).to.be.equal(
-        errorDataCount
+        errorDataCount,
       );
     });
 
-    _chai.Assertion.addMethod('error', function(expected) {
+    _chai.Assertion.addMethod("error", function(expected) {
       let count = errorDataCount;
       errorDataCount++;
 
-      let obniz = utils.flag(this, 'object');
+      let obniz = utils.flag(this, "object");
       let stub = obniz.error;
 
       let message =
-        '[obniz.error] no more error data. (called ' +
+        "[obniz.error] no more error data. (called " +
         stub.callCount +
-        ' times, but you expect ' +
+        " times, but you expect " +
         (count + 1) +
-        ' times) ';
+        " times) ";
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       if (expected) {
@@ -309,8 +314,8 @@ let testUtil = {
       }
     });
 
-    _chai.Assertion.addProperty('json', function(expected) {
-      let string = utils.flag(this, 'object');
+    _chai.Assertion.addProperty("json", function(expected) {
+      let string = utils.flag(this, "object");
       new _chai.Assertion(string).is.string;
       let resolve = null;
       try {
@@ -324,18 +329,18 @@ let testUtil = {
   },
 
   browser: function(url) {
-    url = 'file://' + url;
+    url = "file://" + url;
     let options = {
       url,
       ignoreConsole: true,
     };
     const runner = new MochaChrome(options);
     const result = new Promise((resolve, reject) => {
-      runner.on('ended', stats => {
+      runner.on("ended", stats => {
         resolve(stats);
       });
 
-      runner.on('failure', message => {
+      runner.on("failure", message => {
         reject(message);
       });
     });
@@ -351,9 +356,9 @@ let testUtil = {
   },
 
   ejs: function(url, param) {
-    let data = fs.readFileSync(url, 'utf8');
+    let data = fs.readFileSync(url, "utf8");
     let html = ejs.render(data, param);
-    let newFilename = url.replace('.', '_') + '.html';
+    let newFilename = url.replace(".", "_") + ".html";
 
     return new Promise(function(resolve, reject) {
       fs.writeFile(newFilename, html, function(err) {
@@ -370,9 +375,9 @@ let testUtil = {
 
   needBrowserTest: function() {
     if (
-      typeof window === 'undefined' &&
+      typeof window === "undefined" &&
       process &&
-      !semver.satisfies(process.versions.node, '>=7.6.0')
+      !semver.satisfies(process.versions.node, ">=7.6.0")
     ) {
       return false;
     } else if (process && process.env.NO_BROWSER_TEST) {
@@ -382,18 +387,18 @@ let testUtil = {
   },
 
   checkJsonToBinary: function(requestJson, binary, self) {
-    if (typeof requestJson === 'string') {
+    if (typeof requestJson === "string") {
       requestJson = JSON.parse(requestJson);
     }
     if (
       Array.isArray(binary) &&
       binary.length > 0 &&
-      typeof binary[0] === 'string'
+      typeof binary[0] === "string"
     ) {
-      binary = binary.join(' ');
+      binary = binary.join(" ");
     }
-    if (typeof binary === 'string') {
-      binary = binary.split(' ').map(function(val, index) {
+    if (typeof binary === "string") {
+      binary = binary.split(" ").map(function(val, index) {
         return parseInt(val, 16);
       });
 
@@ -408,14 +413,14 @@ let testUtil = {
 
     let compress = self.obniz.constructor.WSCommand.compress(
       self.obniz.wscommands,
-      requestJson[0]
+      requestJson[0],
     );
 
     expect(compress).to.be.deep.equal(binary);
   },
 
   checkBinaryToJson: function(responseBinaryString, expectedJson, self) {
-    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
+    let binaryArray = responseBinaryString.split(" ").map(function(val, index) {
       return parseInt(val, 16);
     });
     let binary = new Uint8Array(binaryArray);
