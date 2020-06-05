@@ -9670,7 +9670,7 @@ class Gatt extends eventemitter3_1.default {
                     }
                     const requestOpCode = data.readUInt8(1);
                     const attributeHandle = data.readUInt16LE(2);
-                    return new ObnizError_1.ObnizBleAttError(errCode, `errorCode=${errCode}(${ATT_ECODE_READABLES[errCode]}) for request_opcode=${requestOpCode}(${ATT_OP_READABLES[requestOpCode]}) atributeHandle=${attributeHandle} `);
+                    throw new ObnizError_1.ObnizBleAttError(errCode, `errorCode=${errCode}(${ATT_ECODE_READABLES[errCode]}) for request_opcode=${requestOpCode}(${ATT_OP_READABLES[requestOpCode]}) atributeHandle=${attributeHandle} `);
                 }
                 return data;
             }

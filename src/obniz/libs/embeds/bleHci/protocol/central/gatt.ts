@@ -913,7 +913,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
           const requestOpCode = data.readUInt8(1);
           const attributeHandle = data.readUInt16LE(2);
 
-          return new ObnizBleAttError(
+          throw new ObnizBleAttError(
             errCode,
             `errorCode=${errCode}(${ATT_ECODE_READABLES[errCode]}) for request_opcode=${requestOpCode}(${ATT_OP_READABLES[requestOpCode]}) atributeHandle=${attributeHandle} `,
           );
