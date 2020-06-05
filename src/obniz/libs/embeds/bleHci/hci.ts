@@ -155,12 +155,24 @@ export default class ObnizBLEHci {
       };
       this.Obniz.on("close", onObnizClosed);
 
-      const onTimeout = () => {
-        clearListeners();
+      let onTimeout;
+      if (option.onTimeout) {
+        onTimeout = () => {
+          option
+            .onTimeout()
+            .then(() => {})
+            .catch((e: Error) => {
+              reject(e);
+            });
+        };
+      } else {
+        onTimeout = () => {
+          clearListeners();
 
-        const error = new ObnizTimeoutError(option.waitingFor);
-        reject(error);
-      };
+          const error = new ObnizTimeoutError(option.waitingFor);
+          reject(error);
+        };
+      }
       timeoutHandler = setTimeout(onTimeout, option!.timeout);
     });
 

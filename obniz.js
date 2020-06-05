@@ -6601,6 +6601,10 @@ class BleRemotePeripheral {
      * when connection established, all service/characteristics/desriptors will be discovered automatically.
      * This function will wait until all discovery done.
      *
+     * About Failures
+     * Connection fails some reasons. You can find reason from thrown error.
+     * Also obniz provide 90 seconds timeout for connection establish.
+     *
      * ```javascript
      * // Javascript Example
      *
@@ -7372,6 +7376,9 @@ class BleScan {
      * await obniz.ble.scan.startWait();
      * ```
      *
+     * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
+     * Before start scannnig. Establishing connection must be completed or canceled.
+     *
      * @param target
      * @param settings
      */
@@ -7670,7 +7677,7 @@ class BleScan {
             });
         }
         if (scanTarget.binary) {
-            if (Array.isArray(scanTarget.binary[0])) {
+            if (Array.isArray(scanTarget.binary)) {
                 scanTarget.binary.forEach((e) => {
                     adFilters.push({ binary: e });
                 });
@@ -8180,11 +8187,24 @@ class ObnizBLEHci {
                 reject(error);
             };
             this.Obniz.on("close", onObnizClosed);
-            const onTimeout = () => {
-                clearListeners();
-                const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
-                reject(error);
-            };
+            let onTimeout;
+            if (option.onTimeout) {
+                onTimeout = () => {
+                    option
+                        .onTimeout()
+                        .then(() => { })
+                        .catch((e) => {
+                        reject(e);
+                    });
+                };
+            }
+            else {
+                onTimeout = () => {
+                    clearListeners();
+                    const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
+                    reject(error);
+                };
+            }
             timeoutHandler = setTimeout(onTimeout, option.timeout);
         });
         if (option.timeout !== null) {
@@ -8393,7 +8413,7 @@ class NobleBindings extends eventemitter3_1.default {
             // nothing
         })
             .then(() => {
-            return this._hci.createLeConnWait(address, addressType);
+            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
         })
             .then((result) => {
             return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
@@ -10135,6 +10155,7 @@ var COMMANDS;
     COMMANDS.OCF_LE_SET_SCAN_PARAMETERS = 0x000b;
     COMMANDS.OCF_LE_SET_SCAN_ENABLE = 0x000c;
     COMMANDS.OCF_LE_CREATE_CONN = 0x000d;
+    COMMANDS.OCF_LE_CREATE_CONN_CANCEL = 0x000e;
     COMMANDS.OCF_LE_CONN_UPDATE = 0x0013;
     COMMANDS.OCF_LE_START_ENCRYPTION = 0x0019;
     COMMANDS.OCF_LE_LTK_NEG_REPLY = 0x001b;
@@ -10152,6 +10173,7 @@ var COMMANDS;
     COMMANDS.LE_SET_SCAN_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_SCAN_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_SCAN_ENABLE_CMD = COMMANDS.OCF_LE_SET_SCAN_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CREATE_CONN_CMD = COMMANDS.OCF_LE_CREATE_CONN | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CREATE_CONN_CANCEL_CMD = COMMANDS.OCF_LE_CREATE_CONN_CANCEL | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CONN_UPDATE_CMD = COMMANDS.OCF_LE_CONN_UPDATE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_START_ENCRYPTION_CMD = COMMANDS.OCF_LE_START_ENCRYPTION | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
@@ -10354,7 +10376,7 @@ class Hci extends eventemitter3_1.default {
         const data = await p;
         return data.status;
     }
-    async createLeConnWait(address, addressType) {
+    async createLeConnWait(address, addressType, timeout = 90 * 1000) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -10378,10 +10400,43 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0004, 25); // min ce length
         cmd.writeUInt16LE(0x0006, 27); // max ce length
         this.debug("create le conn - writing: " + cmd.toString("hex"));
-        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
+            timeout,
+            onTimeout: async () => {
+                // 一定時間経過。onTimeoutをオーバーライドしてreject()されるのを防ぎ、キャンセルリクエストする。キャンセルされると接続失敗が返るので待つ
+                await this.createLeConnCancelWait();
+            },
+        });
         this._socket.write(cmd);
-        const { status, data } = await p;
-        return this.processLeConnComplete(status, data);
+        try {
+            const { status, data } = await p;
+            return this.processLeConnComplete(status, data);
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+    async createLeConnCancelWait() {
+        const cmd = Buffer.alloc(4);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CANCEL_CMD, 1);
+        // length
+        cmd.writeUInt8(0x0, 3);
+        /*
+         * 成功すると0x00 失敗で 0x01~0xFFが帰る
+         * 特に接続処理中じゃない場合は 0x0x(command disallowed)がかえる
+         * キャンセルに成功してその応答が来たあとには
+         * LE Connection Complete or an HCI_LE_Enhanced_Connection_Complete event
+         * のどちらかがちゃんと返る
+         */
+        this.debug("create le conn cancel - writing: " + cmd.toString("hex"));
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_CREATE_CONN_CANCEL_CMD);
+        this._socket.write(cmd);
+        const { status } = await p;
+        if (status !== 0x00) {
+            throw new ObnizError_1.ObnizBleHciStateError(status);
+        }
     }
     async connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         const cmd = Buffer.alloc(18);
@@ -13357,6 +13412,9 @@ class HW {
         else if (hw === "m5stickc") {
             return __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.json");
         }
+        else if (hw === "m5stack_basic") {
+            return __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.json");
+        }
         else if (hw === "encored") {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored.json");
         }
@@ -13367,6 +13425,13 @@ exports.default = HW;
 
 //# sourceMappingURL=index.js.map
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/hw/m5stack_basic.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"19\":{},\"21\":{},\"22\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
