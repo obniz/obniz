@@ -143,6 +143,7 @@ import Logtta_AD, { Logtta_ADOptions } from "../parts/Ble/LogttaAD";
 import Logtta_CO2, { Logtta_CO2Options } from "../parts/Ble/LogttaCO2";
 import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
 import MINEW_S1, { MINEW_S1Options } from "../parts/Ble/MINEW_S1";
+import PLS_01BT, { PLS_01BTOptions } from "../parts/Ble/PLS_01BT";
 import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
 import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/scbtgaaac";
@@ -150,6 +151,7 @@ import TM530, { TM530Options } from "../parts/Ble/tm530";
 import TM551, { TM551Options } from "../parts/Ble/tm551";
 import Toio_CoreCube, { Toio_CoreCubeOptions } from "../parts/Ble/toio_corecube";
 import uPRISM, { uPRISMOptions } from "../parts/Ble/uprism";
+import UT201BLE, { UT201BLEOptions } from "../parts/Ble/UT201BLE";
 
 // Grove
 import Grove_3AxisAccelerometer, { Grove_3AxisAccelerometerOptions } from "../parts/Grove/Grove_3AxisAccelerometer";
@@ -347,6 +349,8 @@ export interface WiredNameMap {
   "cir415a": cir415a;
   "TM530": TM530;
   "TM551": TM551;
+  "UT201BLE": UT201BLE;
+  "PLS_01BT": PLS_01BT;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -521,11 +525,13 @@ export interface WiredNameOptionsMap {
   "MINEW_S1": MINEW_S1Options;
   "RS_Seek3": RS_Seek3Options;
   "REX_BTPM25V": REX_BTPM25VOptions;
+  "PLS_01BT": PLS_01BTOptions;
   "ENERTALK_TOUCH": ENERTALK_TOUCHOptions;
   "cir415a": cir415aOptions;
   "TM530": TM530Options;
   "TM551": TM551Options;
   "toio_CoreCube": Toio_CoreCubeOptions;
+  "UT201BLE": UT201BLEOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

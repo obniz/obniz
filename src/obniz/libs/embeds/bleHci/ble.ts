@@ -112,6 +112,7 @@ export default class ObnizBLE extends ComponentAbstract {
 
     this._reset();
   }
+  public debugHandler: any = () => {};
 
   /**
    * Initialize BLE module. You need call this first everything before.
@@ -180,10 +181,16 @@ export default class ObnizBLE extends ComponentAbstract {
     }
     this.hci._reset();
     this.hciProtocol = new HciProtocol(this.hci);
+    this.hciProtocol.debugHandler = (text: any) => {
+      this.debug(`BLE-HCI: ${text}`);
+    };
     this.centralBindings = new CentralBindings(this.hciProtocol);
     this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
     this.centralBindings.init();
     this.peripheralBindings.init();
+    this.centralBindings.debugHandler = (text: any) => {
+      this.debug(`BLE: ${text}`);
+    };
 
     this._initialized = false;
     this._initializeWarning = true;
@@ -401,5 +408,9 @@ export default class ObnizBLE extends ComponentAbstract {
     this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
     this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
     this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
+  }
+
+  private debug(text: any) {
+    this.debugHandler(text);
   }
 }

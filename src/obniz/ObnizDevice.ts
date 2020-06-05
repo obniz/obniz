@@ -215,11 +215,15 @@ export default class ObnizDevice extends ObnizUIs {
   protected async loop() {
     setTimeout(async () => {
       if (typeof this.looper === "function" && this.onConnectCalled) {
-        const prom: any = this.looper();
-        if (prom instanceof Promise) {
-          await prom;
+        try {
+          await this.pingWait();
+          const prom: any = this.looper();
+          if (prom instanceof Promise) {
+            await prom;
+          }
+        } finally {
+          setTimeout(this.loop.bind(this), this.repeatInterval || 100);
         }
-        setTimeout(this.loop.bind(this), this.repeatInterval || 100);
       }
     }, 0);
   }
