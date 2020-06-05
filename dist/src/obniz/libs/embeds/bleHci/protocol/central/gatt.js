@@ -56,6 +56,51 @@ var ATT;
     ATT.ECODE_INSUFF_RESOURCES = 0x11;
     ATT.CID = 0x0004;
 })(ATT || (ATT = {}));
+const ATT_OP_READABLES = {
+    0x01: "OP_ERROR",
+    0x02: "OP_MTU_REQ",
+    0x03: "OP_MTU_RESP",
+    0x04: "OP_FIND_INFO_REQ",
+    0x05: "OP_FIND_INFO_RESP",
+    0x08: "OP_READ_BY_TYPE_REQ",
+    0x09: "OP_READ_BY_TYPE_RESP",
+    0x0a: "OP_READ_REQ",
+    0x0b: "OP_READ_RESP",
+    0x0c: "OP_READ_BLOB_REQ",
+    0x0d: "OP_READ_BLOB_RESP",
+    0x10: "OP_READ_BY_GROUP_REQ",
+    0x11: "OP_READ_BY_GROUP_RESP",
+    0x12: "OP_WRITE_REQ",
+    0x13: "OP_WRITE_RESP",
+    0x16: "OP_PREPARE_WRITE_REQ",
+    0x17: "OP_PREPARE_WRITE_RESP",
+    0x18: "OP_EXECUTE_WRITE_REQ",
+    0x19: "OP_EXECUTE_WRITE_RESP",
+    0x1b: "OP_HANDLE_NOTIFY",
+    0x1d: "OP_HANDLE_IND",
+    0x1e: "OP_HANDLE_CNF",
+    0x52: "OP_WRITE_CMD",
+};
+const ATT_ECODE_READABLES = {
+    0x00: "ECODE_SUCCESS",
+    0x01: "ECODE_INVALID_HANDLE",
+    0x02: "ECODE_READ_NOT_PERM",
+    0x03: "ECODE_WRITE_NOT_PERM",
+    0x04: "ECODE_INVALID_PDU",
+    0x05: "ECODE_AUTHENTICATION",
+    0x06: "ECODE_REQ_NOT_SUPP",
+    0x07: "ECODE_INVALID_OFFSET",
+    0x08: "ECODE_AUTHORIZATION",
+    0x09: "ECODE_PREP_QUEUE_FULL",
+    0x0a: "ECODE_ATTR_NOT_FOUND",
+    0x0b: "ECODE_ATTR_NOT_LONG",
+    0x0c: "ECODE_INSUFF_ENCR_KEY_SIZE",
+    0x0d: "ECODE_INVAL_ATTR_VALUE_LEN",
+    0x0e: "ECODE_UNLIKELY",
+    0x0f: "ECODE_INSUFF_ENC",
+    0x10: "ECODE_UNSUPP_GRP_TYPE",
+    0x11: "ECODE_INSUFF_RESOURCES",
+};
 /**
  * @ignore
  */
@@ -98,6 +143,9 @@ class Gatt extends eventemitter3_1.default {
             return this._aclStream._smp.getKeys();
         });
         return result;
+    }
+    async setEncryptOption(options) {
+        this._aclStream.setEncryptOption(options);
     }
     onEnd(reason) {
         this.emit("end", reason);
@@ -435,7 +483,12 @@ class Gatt extends eventemitter3_1.default {
         this._aclStream.removeListener("end", this.onAclStreamEndBinded);
     }
     writeAtt(data) {
-        debug(this._address + ": write: " + data.toString("hex"));
+        const opCode = data[0];
+        const handle = data.length > 3 ? data.readUInt16LE(1) : "none";
+        debug(`ATT: opCode=${opCode}(${ATT_OP_READABLES[opCode]}) handle=${handle} address=` +
+            this._address +
+            ": write: " +
+            data.toString("hex"));
         this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
@@ -636,21 +689,27 @@ class Gatt extends eventemitter3_1.default {
                 for (const code of waitOpcodes) {
                     promises.push(this._aclStream.readWait(ATT.CID, code));
                 }
+                debug(`ATT: wait for opcode=${waitOpcodes}`);
                 const data = await Promise.race(promises);
                 const opCode = data.readUInt8(0);
+                debug(`ATT: received opCode=${opCode}(${ATT_OP_READABLES[opCode]})`);
                 if (opCode === ATT.OP_ERROR) {
-                    if ((data[4] === ATT.ECODE_AUTHENTICATION ||
-                        data[4] === ATT.ECODE_AUTHORIZATION ||
-                        data[4] === ATT.ECODE_INSUFF_ENC) &&
+                    const errCode = data[4];
+                    if ((errCode === ATT.ECODE_AUTHENTICATION ||
+                        errCode === ATT.ECODE_AUTHORIZATION ||
+                        errCode === ATT.ECODE_INSUFF_ENC) &&
                         this._security !== "medium") {
                         // retry after encrypt
+                        debug(`ATT: going to encrypt and try it later.`);
                         await this._aclStream.encryptWait();
                         continue;
                     }
                     if (errorHandle) {
                         return data;
                     }
-                    throw new ObnizError_1.ObnizBleAttError(data.readUInt8(4));
+                    const requestOpCode = data.readUInt8(1);
+                    const attributeHandle = data.readUInt16LE(2);
+                    throw new ObnizError_1.ObnizBleAttError(errCode, `errorCode=${errCode}(${ATT_ECODE_READABLES[errCode]}) for request_opcode=${requestOpCode}(${ATT_OP_READABLES[requestOpCode]}) atributeHandle=${attributeHandle} `);
                 }
                 return data;
             }

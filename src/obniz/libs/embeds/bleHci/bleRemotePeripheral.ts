@@ -65,6 +65,8 @@ export interface BleConnectSetting {
    *
    */
   autoDiscovery?: boolean;
+
+  pairingOption?: BlePairingOptions;
 }
 
 /**
@@ -461,6 +463,9 @@ export default class BleRemotePeripheral {
     this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
     await this.obnizBle.scan.endWait();
     await this.obnizBle.centralBindings.connectWait(this.address);
+    if (this._connectSetting.pairingOption) {
+      this.setPairingOption(this._connectSetting.pairingOption);
+    }
     if (this._connectSetting.autoDiscovery) {
       await this.discoverAllHandlesWait();
     }
@@ -773,6 +778,10 @@ export default class BleRemotePeripheral {
   public async pairingWait(options?: BlePairingOptions): Promise<string> {
     const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
     return result;
+  }
+
+  public setPairingOption(options: BlePairingOptions) {
+    this.obnizBle.centralBindings.setPairingOption(this.address, options);
   }
 
   protected analyseAdvertisement() {

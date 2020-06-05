@@ -21,6 +21,7 @@ const signaling_1 = __importDefault(require("./signaling"));
 class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
+        this.debugHandler = () => { };
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
@@ -143,6 +144,9 @@ class NobleBindings extends eventemitter3_1.default {
             .join("")
             .toLowerCase();
         const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        aclStream.debugHandler = (text) => {
+            this.debug(text);
+        };
         const gatt = new gatt_1.default(address, aclStream);
         const signaling = new signaling_1.default(handle, aclStream);
         this._gatts[uuid] = this._gatts[handle] = gatt;
@@ -264,6 +268,11 @@ class NobleBindings extends eventemitter3_1.default {
         const result = await gatt.encryptWait(options);
         return result;
     }
+    async setPairingOption(peripheralUuid, options) {
+        options = options || {};
+        const gatt = this.getGatt(peripheralUuid);
+        gatt.setEncryptOption(options);
+    }
     getGatt(peripheralUuid) {
         const handle = this._handles[peripheralUuid];
         const gatt = this._gatts[handle];
@@ -271,6 +280,9 @@ class NobleBindings extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
         }
         return gatt;
+    }
+    debug(text) {
+        this.debugHandler(`${text}`);
     }
 }
 exports.default = NobleBindings;

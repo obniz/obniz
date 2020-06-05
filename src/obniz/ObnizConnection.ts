@@ -439,11 +439,16 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
   }
 
   protected wsOnClose(event: any) {
-    this.print_debug("closed");
+    this.print_debug(`closed from remote event=${event}`);
     this.close();
-    if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-      this.onclose(this);
-    }
+
+    setTimeout(() => {
+      if (typeof this.onclose === "function" && this.onConnectCalled === true) {
+        try {
+          this.onclose(this);
+        } catch (e) {}
+      }
+    }, 0);
     this.emit("close", this);
     this.onConnectCalled = false;
 
@@ -468,7 +473,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
   }
 
   protected wsOnError(event: any) {
-    // console.error(event);
+    this.print_debug(`ws onerror event=${event}`);
   }
 
   protected wsOnUnexpectedResponse(req: any, res?: any) {
@@ -651,18 +656,18 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
     if (canChangeToConnected) {
       this.connectionState = "connected";
       this._beforeOnConnect();
-      if (typeof this.onconnect === "function") {
-        try {
-          const promise: any = this.onconnect(this);
-          if (promise instanceof Promise) {
-            promise.catch((err: any) => {
-              console.error(err);
-            });
+      setTimeout(async () => {
+        if (typeof this.onconnect === "function") {
+          try {
+            const promise: any = this.onconnect(this);
+            if (promise instanceof Promise) {
+              await promise;
+            }
+          } catch (err) {
+            console.error(err);
           }
-        } catch (err) {
-          console.error(err);
         }
-      }
+      }, 0);
       this.emit("connect", this);
       this.onConnectCalled = true;
       this._afterOnConnect();

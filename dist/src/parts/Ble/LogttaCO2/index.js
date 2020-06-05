@@ -3,10 +3,15 @@
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const batteryService_1 = __importDefault(require("../abstract/services/batteryService"));
+const genericAccess_1 = __importDefault(require("../abstract/services/genericAccess"));
 class Logtta_CO2 {
     constructor(peripheral) {
-        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
+        if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
             throw new Error("peripheral is not Logtta CO2");
         }
         this._peripheral = peripheral;
@@ -33,6 +38,14 @@ class Logtta_CO2 {
                 }
             };
             await this._peripheral.connectWait();
+            const service1800 = this._peripheral.getService("1800");
+            if (service1800) {
+                this.genericAccess = new genericAccess_1.default(service1800);
+            }
+            const service180F = this._peripheral.getService("180F");
+            if (service180F) {
+                this.batteryService = new batteryService_1.default(service180F);
+            }
         }
     }
     async disconnectWait() {

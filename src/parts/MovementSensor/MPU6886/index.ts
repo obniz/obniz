@@ -11,6 +11,11 @@ import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsIn
 export interface MPU6886Options extends MPU6050Options {}
 
 export default class MPU6886 extends MPU6050 {
+  public static info(): ObnizPartsInfo {
+    return {
+      name: "MPU6886",
+    };
+  }
   public i2cinfo: I2cInfo;
 
   constructor() {
@@ -24,12 +29,6 @@ export default class MPU6886 extends MPU6050 {
     MPU6050.commands.accel_intel_ctrl = 0x69;
     MPU6050.commands.accel_config2 = 0x1d;
     MPU6050.commands.whoami_result = 0x68;
-  }
-
-  public info(): ObnizPartsInfo {
-    return {
-      name: "MPU6886",
-    };
   }
 
   public init() {
