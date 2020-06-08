@@ -674,24 +674,22 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
     if (canChangeToConnected) {
       this.connectionState = "connected";
       this._beforeOnConnect();
-      setTimeout(async () => {
-        if (typeof this.onconnect === "function") {
-          try {
-            const promise: any = this.onconnect(this);
-            if (promise instanceof Promise) {
-              promise.catch((err) => {
-                setTimeout(() => {
-                  throw err;
-                });
+      if (typeof this.onconnect === "function") {
+        try {
+          const promise: any = this.onconnect(this);
+          if (promise instanceof Promise) {
+            promise.catch((err) => {
+              setTimeout(() => {
+                throw err;
               });
-            }
-          } catch (err) {
-            setTimeout(() => {
-              throw err;
             });
           }
+        } catch (err) {
+          setTimeout(() => {
+            throw err;
+          });
         }
-      }, 0);
+      }
       this.emit("connect", this);
       this.onConnectCalled = true;
       this._afterOnConnect();
