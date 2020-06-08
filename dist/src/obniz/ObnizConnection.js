@@ -314,7 +314,9 @@ class ObnizConnection extends eventemitter3_1.default {
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
         this.close();
-        this._runUserCreatedFunction(this.onclose, this);
+        if (this.onConnectCalled === true) {
+            this._runUserCreatedFunction(this.onclose, this);
+        }
         this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();

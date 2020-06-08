@@ -464,7 +464,9 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
     this.print_debug(`closed from remote event=${event}`);
     this.close();
 
-    this._runUserCreatedFunction(this.onclose, this);
+    if (this.onConnectCalled === true) {
+      this._runUserCreatedFunction(this.onclose, this);
+    }
     this.emit("close", this);
     this.onConnectCalled = false;
 
