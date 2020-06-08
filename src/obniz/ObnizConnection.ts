@@ -409,6 +409,28 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
     console.log(`[obniz ${this.id}]`, ...args);
   }
 
+  /**
+   * @ignore
+   * @private
+   */
+  public _runUserCreatedFunction(func?: (...args: any) => any, ...args: any[]) {
+    if (!func) {
+      return;
+    }
+
+    if (typeof func !== "function") {
+      return;
+    }
+
+    try {
+      func(...args);
+    } catch (err) {
+      setTimeout(() => {
+        throw err;
+      });
+    }
+  }
+
   protected wsOnOpen() {
     this.print_debug("ws connected");
     this._connectionRetryCount = 0;
@@ -442,13 +464,7 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
     this.print_debug(`closed from remote event=${event}`);
     this.close();
 
-    setTimeout(() => {
-      if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-        try {
-          this.onclose(this);
-        } catch (e) {}
-      }
-    }, 0);
+    this._runUserCreatedFunction(this.onclose, this);
     this.emit("close", this);
     this.onConnectCalled = false;
 

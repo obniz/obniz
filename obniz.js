@@ -2392,6 +2392,26 @@ class ObnizConnection extends eventemitter3_1.default {
     log(...args) {
         console.log(`[obniz ${this.id}]`, ...args);
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _runUserCreatedFunction(func, ...args) {
+        if (!func) {
+            return;
+        }
+        if (typeof func !== "function") {
+            return;
+        }
+        try {
+            func(...args);
+        }
+        catch (err) {
+            setTimeout(() => {
+                throw err;
+            });
+        }
+    }
     wsOnOpen() {
         this.print_debug("ws connected");
         this._connectionRetryCount = 0;
@@ -2423,14 +2443,7 @@ class ObnizConnection extends eventemitter3_1.default {
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
         this.close();
-        setTimeout(() => {
-            if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-                try {
-                    this.onclose(this);
-                }
-                catch (e) { }
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.onclose, this);
         this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();
