@@ -91,7 +91,7 @@ export default class LogicAnalyzer extends ComponentAbstract {
 
     this.on("/response/logicAnalyzer/data", (obj) => {
       if (this.onmeasured) {
-        this.onmeasured(obj.data);
+        this.Obniz._runUserCreatedFunction(this.onmeasured, obj.data);
       } else {
         if (!this.measured) {
           this.measured = [];

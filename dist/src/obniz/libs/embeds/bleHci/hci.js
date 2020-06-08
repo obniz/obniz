@@ -63,7 +63,7 @@ class ObnizBLEHci {
      */
     notified(obj) {
         if (obj.read && obj.read.data) {
-            this.onread(obj.read.data);
+            this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
             for (const eventName in this._eventHandlerQueue) {
                 if (typeof eventName !== "string" || !eventName.startsWith("[")) {
                     continue;

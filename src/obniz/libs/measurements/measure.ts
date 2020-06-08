@@ -155,7 +155,7 @@ export default class ObnizMeasure extends ComponentAbstract {
 
     if (typeof params.callback === "function") {
       this.onceQueue("/response/measure/echo", (obj) => {
-        params!.callback!(obj.echo);
+        this.Obniz._runUserCreatedFunction(params.callback, obj.echo);
       });
     }
 

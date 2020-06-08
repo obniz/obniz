@@ -299,9 +299,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       this.uuid,
       false,
     );
-    if (this.onunregisternotify) {
-      this.onunregisternotify();
-    }
+    this._runUserCreatedFunction(this.onunregisternotify);
   }
 
   /**
@@ -357,11 +355,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
       Buffer.from(data),
       !needResponse,
     );
-    setTimeout(() => {
-      if (this.onwrite) {
-        this.onwrite("success"); // if fail, throw error.
-      }
-    }, 0);
+    this._runUserCreatedFunction(this.onwrite, "success");
     return true;
   }
 
@@ -397,11 +391,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     );
     const data = Array.from(buf);
 
-    setTimeout(() => {
-      if (this.onread) {
-        this.onread(data);
-      }
-    }, 0);
+    this._runUserCreatedFunction(this.onread, data);
     return data;
   }
 
@@ -513,11 +503,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param descriptor
    */
   public ondiscover(descriptor: any) {
-    setTimeout(() => {
-      if (this.ondiscoverdescriptor) {
-        this.ondiscoverdescriptor(descriptor);
-      }
-    }, 0);
+    this._runUserCreatedFunction(this.ondiscoverdescriptor, descriptor);
   }
 
   /**
@@ -525,11 +511,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * @param descriptors
    */
   public ondiscoverfinished(descriptors: any) {
-    setTimeout(() => {
-      if (this.ondiscoverdescriptorfinished) {
-        this.ondiscoverdescriptorfinished(descriptors);
-      }
-    }, 0);
+    this._runUserCreatedFunction(this.ondiscoverdescriptorfinished, descriptors);
   }
 
   /**
@@ -541,11 +523,7 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case "onnotify": {
-        setTimeout(() => {
-          if (this.onnotify) {
-            this.onnotify(params.data || undefined);
-          }
-        }, 0);
+        this._runUserCreatedFunction(this.onnotify, params.data || undefined);
 
         break;
       }

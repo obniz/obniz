@@ -23,9 +23,7 @@ export default class PeripheralIO extends ComponentAbstract {
 
     this.on("/response/io/get", (obj) => {
       this.value = obj;
-      if (typeof this.onchange === "function") {
-        this.onchange(obj);
-      }
+      this.Obniz._runUserCreatedFunction(this.onchange, obj);
     });
 
     this.on("/response/io/warning", (obj) => {

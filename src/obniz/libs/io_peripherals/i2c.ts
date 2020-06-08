@@ -83,15 +83,13 @@ class PeripheralI2C extends ComponentAbstract {
     this.onerror = undefined;
 
     this.on("/response/i2c/slave", (obj) => {
-      if (typeof this.onwritten === "function") {
-        this.onwritten(obj.data, obj.address);
-      }
+      this.Obniz._runUserCreatedFunction(this.onwritten, obj.data, obj.address);
     });
 
     this.on("/response/i2c/error", (obj) => {
       const message: any = `i2c${this.id}: ${obj.error.message}`;
       if (typeof this.onerror === "function") {
-        this.onerror(new Error(message));
+        this.Obniz._runUserCreatedFunction(this.onerror, new Error(message));
       } else {
         this.Obniz.error({
           alert: "error",

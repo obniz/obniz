@@ -2645,11 +2645,17 @@ class ObnizConnection extends eventemitter3_1.default {
                     try {
                         const promise = this.onconnect(this);
                         if (promise instanceof Promise) {
-                            await promise;
+                            promise.catch((err) => {
+                                setTimeout(() => {
+                                    throw err;
+                                });
+                            });
                         }
                     }
                     catch (err) {
-                        console.error(err);
+                        setTimeout(() => {
+                            throw err;
+                        });
                     }
                 }
             }, 0);
@@ -5132,6 +5138,26 @@ class BleAttributeAbstract {
             }
         }
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _runUserCreatedFunction(func, ...args) {
+        if (!func) {
+            return;
+        }
+        if (typeof func !== "function") {
+            return;
+        }
+        try {
+            func(...args);
+        }
+        catch (err) {
+            setTimeout(() => {
+                throw err;
+            });
+        }
+    }
     setFunctions() {
         let childrenName = this.childrenName;
         if (childrenName) {
@@ -5699,19 +5725,11 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "onwritefromremote": {
-                setTimeout(() => {
-                    if (this.onwritefromremote) {
-                        this.onwritefromremote(params.address, params.data);
-                    }
-                }, 0);
+                this._runUserCreatedFunction(this.onwritefromremote, params.address, params.data);
                 break;
             }
             case "onreadfromremote": {
-                setTimeout(() => {
-                    if (this.onreadfromremote) {
-                        this.onreadfromremote(params.address);
-                    }
-                }, 0);
+                this._runUserCreatedFunction(this.onreadfromremote, params.address);
                 break;
             }
         }
@@ -6164,9 +6182,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async unregisterNotifyWait() {
         this.onnotify = () => { };
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
-        if (this.onunregisternotify) {
-            this.onunregisternotify();
-        }
+        this._runUserCreatedFunction(this.onunregisternotify);
     }
     /**
      * Use readWait() instead from 3.5.0
@@ -6213,11 +6229,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
-        setTimeout(() => {
-            if (this.onwrite) {
-                this.onwrite("success"); // if fail, throw error.
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.onwrite, "success");
         return true;
     }
     /**
@@ -6247,11 +6259,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async readWait() {
         const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
         const data = Array.from(buf);
-        setTimeout(() => {
-            if (this.onread) {
-                this.onread(data);
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.onread, data);
         return data;
     }
     /**
@@ -6347,22 +6355,14 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param descriptor
      */
     ondiscover(descriptor) {
-        setTimeout(() => {
-            if (this.ondiscoverdescriptor) {
-                this.ondiscoverdescriptor(descriptor);
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.ondiscoverdescriptor, descriptor);
     }
     /**
      * @ignore
      * @param descriptors
      */
     ondiscoverfinished(descriptors) {
-        setTimeout(() => {
-            if (this.ondiscoverdescriptorfinished) {
-                this.ondiscoverdescriptorfinished(descriptors);
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.ondiscoverdescriptorfinished, descriptors);
     }
     /**
      * @ignore
@@ -6373,11 +6373,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
             case "onnotify": {
-                setTimeout(() => {
-                    if (this.onnotify) {
-                        this.onnotify(params.data || undefined);
-                    }
-                }, 0);
+                this._runUserCreatedFunction(this.onnotify, params.data || undefined);
                 break;
             }
         }
@@ -6442,11 +6438,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     async readWait() {
         const buf = await this.characteristic.service.peripheral.obnizBle.centralBindings.readValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid);
         const data = Array.from(buf);
-        setTimeout(() => {
-            if (this.onread) {
-                this.onread(data);
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.onread, data);
         return data;
     }
     /**
@@ -6476,11 +6468,7 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
      */
     async writeWait(data) {
         await this.characteristic.service.peripheral.obnizBle.centralBindings.writeValueWait(this.characteristic.service.peripheral.address, this.characteristic.service.uuid, this.characteristic.uuid, this.uuid, Buffer.from(data));
-        setTimeout(() => {
-            if (this.onwrite) {
-                this.onwrite("success"); // if fail, throw error.
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.onwrite, "success");
         return true;
     }
     /**
@@ -6656,12 +6644,8 @@ class BleRemotePeripheral {
             await this.discoverAllHandlesWait();
         }
         this.connected = true;
-        setTimeout(() => {
-            if (this.onconnect) {
-                this.onconnect();
-            }
-            this.emitter.emit("connect");
-        }, 0);
+        this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
+        this.emitter.emit("connect");
     }
     /**
      *  @deprecated
@@ -6820,20 +6804,12 @@ class BleRemotePeripheral {
                 child = newService;
             }
             child.discoverdOnRemote = true;
-            setTimeout(() => {
-                if (this.ondiscoverservice) {
-                    this.ondiscoverservice(child);
-                }
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.ondiscoverservice, child);
         }
         const children = this._services.filter((elm) => {
             return elm.discoverdOnRemote;
         });
-        setTimeout(() => {
-            if (this.ondiscoverservicefinished) {
-                this.ondiscoverservicefinished(children);
-            }
-        }, 1);
+        this.obnizBle.Obniz._runUserCreatedFunction(this.ondiscoverservicefinished, children);
         return children;
     }
     /**
@@ -6874,12 +6850,8 @@ class BleRemotePeripheral {
                     const pre = this.connected;
                     this.connected = false;
                     if (pre) {
-                        setTimeout(() => {
-                            if (this.ondisconnect) {
-                                this.ondisconnect(params.reason);
-                            }
-                            this.emitter.emit("disconnect", params.reason);
-                        }, 0);
+                        this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
+                        this.emitter.emit("disconnect", params.reason);
                     }
                 }
                 break;
@@ -7212,18 +7184,14 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @param characteristic
      */
     ondiscover(characteristic) {
-        setTimeout(() => {
-            this.ondiscovercharacteristic(characteristic);
-        }, 0);
+        this._runUserCreatedFunction(this.ondiscovercharacteristic, characteristic);
     }
     /**
      * @ignore
      * @param characteristics
      */
     ondiscoverfinished(characteristics) {
-        setTimeout(() => {
-            this.ondiscovercharacteristicfinished(characteristics);
-        }, 0);
+        this._runUserCreatedFunction(this.ondiscovercharacteristicfinished, characteristics);
     }
     /**
      * @ignore
@@ -7753,12 +7721,8 @@ class BleScan {
             this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
             this._clearDelayNotifyTimer();
             this.state = "stopped";
-            setTimeout(() => {
-                this.emitter.emit("onfinish", this.scanedPeripherals, error);
-                if (this.onfinish) {
-                    this.onfinish(this.scanedPeripherals, error);
-                }
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
+            this.emitter.emit("onfinish", this.scanedPeripherals, error);
         }
     }
     _notifyOnFind(peripheral) {
@@ -7770,12 +7734,8 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            setTimeout(() => {
-                this.emitter.emit("onfind", peripheral);
-                if (this.onfind) {
-                    this.onfind(peripheral);
-                }
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
+            this.emitter.emit("onfind", peripheral);
         }
     }
     isLocalNameTarget(peripheral) {
@@ -7938,7 +7898,7 @@ class BleSecurity {
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {
-                this.onerror(params);
+                this.Obniz._runUserCreatedFunction(this.onerror, params);
                 break;
             }
         }
@@ -8136,7 +8096,7 @@ class ObnizBLEHci {
      */
     notified(obj) {
         if (obj.read && obj.read.data) {
-            this.onread(obj.read.data);
+            this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
             for (const eventName in this._eventHandlerQueue) {
                 if (typeof eventName !== "string" || !eventName.startsWith("[")) {
                     continue;
@@ -13315,9 +13275,7 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
         super(obniz);
         this.on("/response/switch/change", (obj) => {
             this.state = obj.state;
-            if (this.onchange) {
-                this.onchange(this.state);
-            }
+            this.Obniz._runUserCreatedFunction(this.onchange, this.state);
         });
         this._reset();
     }
@@ -13592,9 +13550,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
         this.id = id;
         this.on("/response/ad/get", (obj) => {
             this.value = obj;
-            if (this.onchange) {
-                this.onchange(obj);
-            }
+            this.Obniz._runUserCreatedFunction(this.onchange, obj);
         });
         this._reset();
     }
@@ -14036,14 +13992,12 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
         this.id = id;
         this.onerror = undefined;
         this.on("/response/i2c/slave", (obj) => {
-            if (typeof this.onwritten === "function") {
-                this.onwritten(obj.data, obj.address);
-            }
+            this.Obniz._runUserCreatedFunction(this.onwritten, obj.data, obj.address);
         });
         this.on("/response/i2c/error", (obj) => {
             const message = `i2c${this.id}: ${obj.error.message}`;
             if (typeof this.onerror === "function") {
-                this.onerror(new Error(message));
+                this.Obniz._runUserCreatedFunction(this.onerror, new Error(message));
             }
             else {
                 this.Obniz.error({
@@ -14321,9 +14275,7 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
         this.id = id;
         this.on("/response/io/get", (obj) => {
             this.value = obj;
-            if (typeof this.onchange === "function") {
-                this.onchange(obj);
-            }
+            this.Obniz._runUserCreatedFunction(this.onchange, obj);
         });
         this.on("/response/io/warning", (obj) => {
             this.Obniz.warning({
@@ -15030,7 +14982,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         this.on("/response/uart/receive", (obj) => {
             if (this.onreceive) {
                 const string = this.tryConvertString(obj.data);
-                this.onreceive(obj.data, string);
+                this.Obniz._runUserCreatedFunction(this.onreceive, obj.data, string);
             }
             else {
                 if (!this.received) {
@@ -15364,7 +15316,7 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
         super(obniz);
         this.on("/response/logicAnalyzer/data", (obj) => {
             if (this.onmeasured) {
-                this.onmeasured(obj.data);
+                this.Obniz._runUserCreatedFunction(this.onmeasured, obj.data);
             }
             else {
                 if (!this.measured) {
@@ -15538,7 +15490,7 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         }
         if (typeof params.callback === "function") {
             this.onceQueue("/response/measure/echo", (obj) => {
-                params.callback(obj.echo);
+                this.Obniz._runUserCreatedFunction(params.callback, obj.echo);
             });
         }
         this.Obniz.send({
@@ -15661,17 +15613,13 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         this.id = id;
         this.on("/response/tcp/connection", (obj) => {
             /* Connectino state update. response of connect(), close from destination, response from */
-            if (this.onconnection) {
-                this.onconnection(obj.connection.connected);
-            }
+            this.Obniz._runUserCreatedFunction(this.onconnection, obj.connection.connected);
             if (!obj.connection.connected) {
                 this._reset();
             }
         });
         this.on("/response/tcp/read", (obj) => {
-            if (this.onreceive) {
-                this.onreceive(obj.read.data);
-            }
+            this.Obniz._runUserCreatedFunction(this.onreceive, obj.read.data);
             const callback = this.readObservers.shift();
             if (callback) {
                 callback(obj.read.data);
@@ -15681,9 +15629,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
             /* response of connect() */
             /* `this.connection` will called before this function */
             if (obj.connect.code !== 0) {
-                if (this.onerror) {
-                    this.onerror(obj.connect);
-                }
+                this.Obniz._runUserCreatedFunction(this.onerror, obj.connect);
             }
             const callback = this.connectObservers.shift();
             if (callback) {

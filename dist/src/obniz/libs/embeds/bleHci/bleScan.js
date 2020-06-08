@@ -425,12 +425,8 @@ class BleScan {
             this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
             this._clearDelayNotifyTimer();
             this.state = "stopped";
-            setTimeout(() => {
-                this.emitter.emit("onfinish", this.scanedPeripherals, error);
-                if (this.onfinish) {
-                    this.onfinish(this.scanedPeripherals, error);
-                }
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
+            this.emitter.emit("onfinish", this.scanedPeripherals, error);
         }
     }
     _notifyOnFind(peripheral) {
@@ -442,12 +438,8 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            setTimeout(() => {
-                this.emitter.emit("onfind", peripheral);
-                if (this.onfind) {
-                    this.onfind(peripheral);
-                }
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
+            this.emitter.emit("onfind", peripheral);
         }
     }
     isLocalNameTarget(peripheral) {

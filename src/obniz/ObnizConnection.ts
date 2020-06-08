@@ -679,10 +679,16 @@ export default class ObnizConnection extends EventEmitter<ObnizConnectionEventNa
           try {
             const promise: any = this.onconnect(this);
             if (promise instanceof Promise) {
-              await promise;
+              promise.catch((err) => {
+                setTimeout(() => {
+                  throw err;
+                });
+              });
             }
           } catch (err) {
-            console.error(err);
+            setTimeout(() => {
+              throw err;
+            });
           }
         }
       }, 0);
