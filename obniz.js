@@ -98,7 +98,10 @@ module.exports = {
   "types": "./dist/src/obniz/index.d.ts",
   "files": [
     "dist",
-    "!dist/**/*.map",
+    "src",
+    "!src/**/*.png",
+    "!src/**/*.jpeg",
+    "!src/**/*.jpg",
     "index.js",
     "obniz.js"
   ],
@@ -22634,6 +22637,10 @@ exports.default = MINEW_S1;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.PLS_01BT
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class PLS_01BT {
     constructor(peripheral) {
@@ -23083,6 +23090,10 @@ exports.default = RS_Seek3;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.UT201BLE
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class UT201BLE {
     constructor(peripheral, timezoneOffsetMinute) {

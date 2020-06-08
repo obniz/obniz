@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.PLS_01BT
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class PLS_01BT {
     constructor(peripheral) {

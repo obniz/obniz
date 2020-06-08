@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.PLS_01BT
+ */
+
 import Obniz from "../../../obniz";
 import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
 import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";

@@ -1,4 +1,8 @@
 "use strict";
+/**
+ * @packageDocumentation
+ * @module Parts.UT201BLE
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class UT201BLE {
     constructor(peripheral, timezoneOffsetMinute) {

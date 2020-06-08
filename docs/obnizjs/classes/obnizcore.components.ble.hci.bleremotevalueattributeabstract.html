@@ -135,6 +135,8 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#readnumberwait" class="tsd-kind-icon">read<wbr>Number<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#readtextwait" class="tsd-kind-icon">read<wbr>Text<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writenumberwait" class="tsd-kind-icon">write<wbr>Number<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writetextwait" class="tsd-kind-icon">write<wbr>Text<wbr>Wait</a></li>
 							</ul>
@@ -218,12 +220,62 @@
 						<div class="lead">
 							<p>It is uuid as string.</p>
 						</div>
-						<pre><code class="language-javasciprt">console.log(attr.uuid); // =&gt; &#39;4C84&#39;</code></pre>
+						<pre><code class="language-javascript"><span class="hljs-built_in">console</span>.log(attr.uuid); <span class="hljs-comment">// =&gt; '4C84'</span></code></pre>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="readnumberwait" class="tsd-anchor"></a>
+					<h3>read<wbr>Number<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Number<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides BleAttributeAbstract.readNumberWait</p>
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:42</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wrapper for <a href="obnizcore.components.ble.hci.blelocalvalueattributeabstract.html#writewait">writeWait</a> with data converting from number.
+									It writes data as 1byte.</p>
+								</div>
+								<p>It throws an error when failed.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="readtextwait" class="tsd-anchor"></a>
+					<h3>read<wbr>Text<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Text<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides BleAttributeAbstract.readTextWait</p>
+								<ul>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:30</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wrapper for <a href="obnizcore.components.ble.hci.obnizblehci.html#readwait">readWait</a> with data converting to text.
+									It convert  UTF-8 and write binary array to string.</p>
+								</div>
+								<p>It throws an error when failed.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="writenumberwait" class="tsd-anchor"></a>
 					<h3>write<wbr>Number<wbr>Wait</h3>
@@ -235,7 +287,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides BleAttributeAbstract.writeNumberWait</p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:43</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:65</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -271,7 +323,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides BleAttributeAbstract.writeTextWait</p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:31</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/bleRemoteValueAttributeAbstract.ts:53</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -324,6 +376,12 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#uuid" class="tsd-kind-icon">uuid</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#readnumberwait" class="tsd-kind-icon">read<wbr>Number<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#readtextwait" class="tsd-kind-icon">read<wbr>Text<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.bleremotevalueattributeabstract.html#writenumberwait" class="tsd-kind-icon">write<wbr>Number<wbr>Wait</a>

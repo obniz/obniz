@@ -33,7 +33,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * It is uuid as string.
    *
-   * ```javasciprt
+   * ```javascript
    * console.log(attr.uuid); // => '4C84'
    * ```
    */
