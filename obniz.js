@@ -193,6 +193,7 @@ module.exports = {
     "power-assert": "^1.6.1",
     "prettier": "^1.14.3",
     "raw-loader": "^4.0.0",
+    "rimraf": "^3.0.2",
     "sinon": "^7.5.0",
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
@@ -349,6 +350,8 @@ var map = {
 	"./request/uart/index.yml": "./dist/src/json_schema/request/uart/index.yml",
 	"./request/uart/init.yml": "./dist/src/json_schema/request/uart/init.yml",
 	"./request/uart/send.yml": "./dist/src/json_schema/request/uart/send.yml",
+	"./request/wifi/index.yml": "./dist/src/json_schema/request/wifi/index.yml",
+	"./request/wifi/scan.yml": "./dist/src/json_schema/request/wifi/scan.yml",
 	"./request/ws/index.yml": "./dist/src/json_schema/request/ws/index.yml",
 	"./request/ws/reset_obniz_on_ws_disconnection.yml": "./dist/src/json_schema/request/ws/reset_obniz_on_ws_disconnection.yml",
 	"./response/ad/get.yml": "./dist/src/json_schema/response/ad/get.yml",
@@ -417,6 +420,8 @@ var map = {
 	"./response/tcp/read.yml": "./dist/src/json_schema/response/tcp/read.yml",
 	"./response/uart/index.yml": "./dist/src/json_schema/response/uart/index.yml",
 	"./response/uart/receive.yml": "./dist/src/json_schema/response/uart/receive.yml",
+	"./response/wifi/index.yml": "./dist/src/json_schema/response/wifi/index.yml",
+	"./response/wifi/scan.yml": "./dist/src/json_schema/response/wifi/scan.yml",
 	"./response/ws/index.yml": "./dist/src/json_schema/response/ws/index.yml",
 	"./response/ws/obniz.yml": "./dist/src/json_schema/response/ws/obniz.yml",
 	"./response/ws/ready.yml": "./dist/src/json_schema/response/ws/ready.yml",
@@ -819,7 +824,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"}}}}
 
 /***/ }),
 
@@ -1159,6 +1164,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/wifi/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/wifi","basePath":"wifi","anyOf":[{"$ref":"/request/wifi/scan"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/wifi/scan.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/wifi/scan","type":"object","required":["scan"],"properties":{"scan":{"type":"boolean","enum":[true]}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/ws/index.yml":
 /***/ (function(module, exports) {
 
@@ -1463,7 +1482,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"}}}}
 
 /***/ }),
 
@@ -1635,6 +1654,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/wifi/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/wifi","basePath":"wifi","anyOf":[{"$ref":"/response/wifi/scan"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/wifi/scan.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/wifi/scan","desccription":"wifi scan","type":"object","required":["scan"],"properties":{"scan":{"type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/ws/index.yml":
 /***/ (function(module, exports) {
 
@@ -1791,6 +1824,7 @@ const spi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peri
 const uart_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_peripherals/uart.js"));
 const logicanalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/logicanalyzer.js"));
 const measure_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/measure.js"));
+const wifi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/network/wifi.js"));
 const tcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/protocol/tcp.js"));
 const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
@@ -1933,6 +1967,7 @@ class ObnizComponents extends ObnizParts_1.default {
         this._hw_peripherals = hw_peripherals;
         const hw_embeds = this._hwDefinition.embeds;
         const hw_protocol = this._hwDefinition.protocol;
+        const hw_network = this._hwDefinition.network;
         const shared_map = {
             io: directive_1.default,
             logicAnalyzer: logicanalyzer_1.default,
@@ -1955,6 +1990,9 @@ class ObnizComponents extends ObnizParts_1.default {
         };
         const protocol_map = {
             tcp: tcp_1.default,
+        };
+        const network_map = {
+            wifi: wifi_1.default,
         };
         for (const key in shared_map) {
             const Class = shared_map[key];
@@ -1980,6 +2018,11 @@ class ObnizComponents extends ObnizParts_1.default {
                     const Class = embeds_map[key];
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
+                    if (typeof this[key].debugHandler === "function") {
+                        this[key].debugHandler = (text) => {
+                            this.print_debug(text);
+                        };
+                    }
                 }
             }
         }
@@ -1993,6 +2036,15 @@ class ObnizComponents extends ObnizParts_1.default {
                         this[key + unitIdNumber] = new Class(this, unitIdNumber);
                         this._allComponentKeys.push(key + unitIdNumber);
                     }
+                }
+            }
+        }
+        if (hw_network) {
+            for (const key in network_map) {
+                if (hw_network[key]) {
+                    const Class = network_map[key];
+                    this[key] = new Class(this, hw_embeds[key]);
+                    this._allComponentKeys.push(key);
                 }
             }
         }
@@ -2366,11 +2418,16 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnClose(event) {
-        this.print_debug("closed");
+        this.print_debug(`closed from remote event=${event}`);
         this.close();
-        if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-            this.onclose(this);
-        }
+        setTimeout(() => {
+            if (typeof this.onclose === "function" && this.onConnectCalled === true) {
+                try {
+                    this.onclose(this);
+                }
+                catch (e) { }
+            }
+        }, 0);
         this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();
@@ -2392,7 +2449,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnError(event) {
-        // console.error(event);
+        this.print_debug(`ws onerror event=${event}`);
     }
     wsOnUnexpectedResponse(req, res) {
         if (res && res.statusCode === 404) {
@@ -2565,19 +2622,19 @@ class ObnizConnection extends eventemitter3_1.default {
         if (canChangeToConnected) {
             this.connectionState = "connected";
             this._beforeOnConnect();
-            if (typeof this.onconnect === "function") {
-                try {
-                    const promise = this.onconnect(this);
-                    if (promise instanceof Promise) {
-                        promise.catch((err) => {
-                            console.error(err);
-                        });
+            setTimeout(async () => {
+                if (typeof this.onconnect === "function") {
+                    try {
+                        const promise = this.onconnect(this);
+                        if (promise instanceof Promise) {
+                            await promise;
+                        }
+                    }
+                    catch (err) {
+                        console.error(err);
                     }
                 }
-                catch (err) {
-                    console.error(err);
-                }
-            }
+            }, 0);
             this.emit("connect", this);
             this.onConnectCalled = true;
             this._afterOnConnect();
@@ -2893,13 +2950,20 @@ class ObnizDevice extends ObnizUIs_1.default {
         });
     }
     async loop() {
-        if (typeof this.looper === "function" && this.onConnectCalled) {
-            const prom = this.looper();
-            if (prom instanceof Promise) {
-                await prom;
+        setTimeout(async () => {
+            if (typeof this.looper === "function" && this.onConnectCalled) {
+                try {
+                    await this.pingWait();
+                    const prom = this.looper();
+                    if (prom instanceof Promise) {
+                        await prom;
+                    }
+                }
+                finally {
+                    setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+                }
             }
-            setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-        }
+        }, 0);
     }
     _callOnConnect() {
         super._callOnConnect();
@@ -3112,8 +3176,8 @@ ObnizBleHciStateError.Errors = {
 };
 // todo error code to message
 class ObnizBleAttError extends ObnizError {
-    constructor(state) {
-        super(11, ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : "Ble ATT state Error");
+    constructor(state, params) {
+        super(11, `ATT Error: ${params}`);
         this.state = state;
     }
 }
@@ -3144,12 +3208,35 @@ class ObnizParameterError extends ObnizError {
 exports.ObnizParameterError = ObnizParameterError;
 class ObnizBleUnSupportedOSVersionError extends ObnizError {
     constructor(deviceOS, atLeast) {
-        super(13, `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`);
+        super(15, `Connected Device has OS=${deviceOS}. But This SDK Support at least ${atLeast} or above. Upgrade Your OS or Downgrade your SDK to use this function`);
         this.deviceOS = deviceOS;
         this.atLeast = atLeast;
     }
 }
 exports.ObnizBleUnSupportedOSVersionError = ObnizBleUnSupportedOSVersionError;
+class ObnizBlePairingRejectByRemoteError extends ObnizError {
+    constructor(reason) {
+        super(16, `pairing sequence reject by remote peripheral. reason : ${ObnizBlePairingRejectByRemoteError.Errors[reason]}`);
+    }
+}
+exports.ObnizBlePairingRejectByRemoteError = ObnizBlePairingRejectByRemoteError;
+ObnizBlePairingRejectByRemoteError.Errors = {
+    0x00: "Unknown",
+    0x01: "Passkey Entry Failed",
+    0x02: "OOB Not Available",
+    0x03: "Authentication Requirements",
+    0x04: "Confirm Value Failed",
+    0x05: "Pairing Not Supported",
+    0x06: "Encryption Key Size",
+    0x07: "Command Not Supported",
+    0x08: "Unspecified Reason",
+    0x09: "Repeated Attempts",
+    0x0a: "Invalid Parameters",
+    0x0b: "DHKey Check Failed",
+    0x0c: "Numeric Comparison Failed",
+    0x0d: "BR/EDR pairing in progress",
+    0x0e: "Cross-transport Key Deriva- tion/Generation not allowed",
+};
 
 //# sourceMappingURL=ObnizError.js.map
 
@@ -4222,6 +4309,7 @@ const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
+        this.debugHandler = () => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
@@ -4329,10 +4417,16 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         this.hci._reset();
         this.hciProtocol = new hci_2.default(this.hci);
+        this.hciProtocol.debugHandler = (text) => {
+            this.debug(`BLE-HCI: ${text}`);
+        };
         this.centralBindings = new bindings_1.default(this.hciProtocol);
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
         this.centralBindings.init();
         this.peripheralBindings.init();
+        this.centralBindings.debugHandler = (text) => {
+            this.debug(`BLE: ${text}`);
+        };
         this._initialized = false;
         this._initializeWarning = true;
         this.remotePeripherals = [];
@@ -4508,6 +4602,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
         this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
         this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
+    }
+    debug(text) {
+        this.debugHandler(text);
     }
 }
 exports.default = ObnizBLE;
@@ -4933,6 +5030,20 @@ class BleAttributeAbstract {
             obj.data = this.data;
         }
         return obj;
+    }
+    /**
+     * @ignore
+     */
+    async readTextWait() {
+        const data = await this.readWait();
+        return util_1.default.dataArray2string(data);
+    }
+    /**
+     * @ignore
+     */
+    async readNumberWait() {
+        const data = await this.readWait();
+        return data.length > 0 ? data[0] : null;
     }
     /**
      * Use writeTextWait() instead from 3.5.0
@@ -6490,6 +6601,10 @@ class BleRemotePeripheral {
      * when connection established, all service/characteristics/desriptors will be discovered automatically.
      * This function will wait until all discovery done.
      *
+     * About Failures
+     * Connection fails some reasons. You can find reason from thrown error.
+     * Also obniz provide 90 seconds timeout for connection establish.
+     *
      * ```javascript
      * // Javascript Example
      *
@@ -6516,6 +6631,9 @@ class BleRemotePeripheral {
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
         await this.obnizBle.centralBindings.connectWait(this.address);
+        if (this._connectSetting.pairingOption) {
+            this.setPairingOption(this._connectSetting.pairingOption);
+        }
         if (this._connectSetting.autoDiscovery) {
             await this.discoverAllHandlesWait();
         }
@@ -6812,6 +6930,9 @@ class BleRemotePeripheral {
     async pairingWait(options) {
         const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
         return result;
+    }
+    setPairingOption(options) {
+        this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
     analyseAdvertisement() {
         if (!this.advertise_data_rows) {
@@ -7135,6 +7256,26 @@ const bleRemoteAttributeAbstract_1 = __importDefault(__webpack_require__("./dist
  */
 class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
     /**
+     * Wrapper for [[readWait]] with data converting to text.
+     * It convert  UTF-8 and write binary array to string.
+     *
+     * It throws an error when failed.
+     */
+    readTextWait() {
+        return super.readTextWait();
+    }
+    /**
+     * Wrapper for [[writeWait]] with data converting from number.
+     * It writes data as 1byte.
+     *
+     * It throws an error when failed.
+     *
+     * @param val
+     */
+    readNumberWait() {
+        return super.readNumberWait();
+    }
+    /**
      * Wrapper for [[writeWait]] with data converting from text.
      * It convert string to UTF-8 and write binary array.
      *
@@ -7234,6 +7375,9 @@ class BleScan {
      * // Javascript Example
      * await obniz.ble.scan.startWait();
      * ```
+     *
+     * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
+     * Before start scannnig. Establishing connection must be completed or canceled.
      *
      * @param target
      * @param settings
@@ -7533,7 +7677,7 @@ class BleScan {
             });
         }
         if (scanTarget.binary) {
-            if (Array.isArray(scanTarget.binary[0])) {
+            if (Array.isArray(scanTarget.binary)) {
                 scanTarget.binary.forEach((e) => {
                     adFilters.push({ binary: e });
                 });
@@ -8043,11 +8187,24 @@ class ObnizBLEHci {
                 reject(error);
             };
             this.Obniz.on("close", onObnizClosed);
-            const onTimeout = () => {
-                clearListeners();
-                const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
-                reject(error);
-            };
+            let onTimeout;
+            if (option.onTimeout) {
+                onTimeout = () => {
+                    option
+                        .onTimeout()
+                        .then(() => { })
+                        .catch((e) => {
+                        reject(e);
+                    });
+                };
+            }
+            else {
+                onTimeout = () => {
+                    clearListeners();
+                    const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
+                    reject(error);
+                };
+            }
             timeoutHandler = setTimeout(onTimeout, option.timeout);
         });
         if (option.timeout !== null) {
@@ -8121,9 +8278,13 @@ const smp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/
 class AclStream extends eventemitter3_1.default {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
+        this.debugHandler = () => { };
         this._hci = hci;
         this._handle = handle;
         this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
+        this._smp.debugHandler = (text) => {
+            this.debug(text);
+        };
         this.onSmpFailBinded = this.onSmpFail.bind(this);
         this.onSmpEndBinded = this.onSmpEnd.bind(this);
         this._smp.on("fail", this.onSmpFailBinded);
@@ -8132,6 +8293,11 @@ class AclStream extends eventemitter3_1.default {
     async encryptWait(options) {
         let encrpytResult = null;
         encrpytResult = await this._smp.pairingWait(options);
+        return encrpytResult;
+    }
+    setEncryptOption(options) {
+        let encrpytResult = null;
+        encrpytResult = this._smp.setPairingOption(options);
         return encrpytResult;
     }
     write(cid, data) {
@@ -8159,6 +8325,11 @@ class AclStream extends eventemitter3_1.default {
         this.emit("encrypt", result);
         return result;
     }
+    async onSmpLtkWait(ltk, random, diversifier) {
+        const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, ltk);
+        this.emit("encrypt", result);
+        return result;
+    }
     onSmpFail() {
         this.emit("encryptFail");
     }
@@ -8167,6 +8338,9 @@ class AclStream extends eventemitter3_1.default {
         this._smp.removeListener("end", this.onSmpEndBinded);
     }
     startEncrypt(option) { }
+    debug(text) {
+        this.debugHandler(`AclStream: ${text}`);
+    }
 }
 exports.default = AclStream;
 
@@ -8203,6 +8377,7 @@ const signaling_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/e
 class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
+        this.debugHandler = () => { };
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
@@ -8238,7 +8413,7 @@ class NobleBindings extends eventemitter3_1.default {
             // nothing
         })
             .then(() => {
-            return this._hci.createLeConnWait(address, addressType);
+            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
         })
             .then((result) => {
             return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
@@ -8325,6 +8500,9 @@ class NobleBindings extends eventemitter3_1.default {
             .join("")
             .toLowerCase();
         const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        aclStream.debugHandler = (text) => {
+            this.debug(text);
+        };
         const gatt = new gatt_1.default(address, aclStream);
         const signaling = new signaling_1.default(handle, aclStream);
         this._gatts[uuid] = this._gatts[handle] = gatt;
@@ -8446,6 +8624,11 @@ class NobleBindings extends eventemitter3_1.default {
         const result = await gatt.encryptWait(options);
         return result;
     }
+    async setPairingOption(peripheralUuid, options) {
+        options = options || {};
+        const gatt = this.getGatt(peripheralUuid);
+        gatt.setEncryptOption(options);
+    }
     getGatt(peripheralUuid) {
         const handle = this._handles[peripheralUuid];
         const gatt = this._gatts[handle];
@@ -8453,6 +8636,9 @@ class NobleBindings extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
         }
         return gatt;
+    }
+    debug(text) {
+        this.debugHandler(`${text}`);
     }
 }
 exports.default = NobleBindings;
@@ -8851,6 +9037,51 @@ var ATT;
     ATT.ECODE_INSUFF_RESOURCES = 0x11;
     ATT.CID = 0x0004;
 })(ATT || (ATT = {}));
+const ATT_OP_READABLES = {
+    0x01: "OP_ERROR",
+    0x02: "OP_MTU_REQ",
+    0x03: "OP_MTU_RESP",
+    0x04: "OP_FIND_INFO_REQ",
+    0x05: "OP_FIND_INFO_RESP",
+    0x08: "OP_READ_BY_TYPE_REQ",
+    0x09: "OP_READ_BY_TYPE_RESP",
+    0x0a: "OP_READ_REQ",
+    0x0b: "OP_READ_RESP",
+    0x0c: "OP_READ_BLOB_REQ",
+    0x0d: "OP_READ_BLOB_RESP",
+    0x10: "OP_READ_BY_GROUP_REQ",
+    0x11: "OP_READ_BY_GROUP_RESP",
+    0x12: "OP_WRITE_REQ",
+    0x13: "OP_WRITE_RESP",
+    0x16: "OP_PREPARE_WRITE_REQ",
+    0x17: "OP_PREPARE_WRITE_RESP",
+    0x18: "OP_EXECUTE_WRITE_REQ",
+    0x19: "OP_EXECUTE_WRITE_RESP",
+    0x1b: "OP_HANDLE_NOTIFY",
+    0x1d: "OP_HANDLE_IND",
+    0x1e: "OP_HANDLE_CNF",
+    0x52: "OP_WRITE_CMD",
+};
+const ATT_ECODE_READABLES = {
+    0x00: "ECODE_SUCCESS",
+    0x01: "ECODE_INVALID_HANDLE",
+    0x02: "ECODE_READ_NOT_PERM",
+    0x03: "ECODE_WRITE_NOT_PERM",
+    0x04: "ECODE_INVALID_PDU",
+    0x05: "ECODE_AUTHENTICATION",
+    0x06: "ECODE_REQ_NOT_SUPP",
+    0x07: "ECODE_INVALID_OFFSET",
+    0x08: "ECODE_AUTHORIZATION",
+    0x09: "ECODE_PREP_QUEUE_FULL",
+    0x0a: "ECODE_ATTR_NOT_FOUND",
+    0x0b: "ECODE_ATTR_NOT_LONG",
+    0x0c: "ECODE_INSUFF_ENCR_KEY_SIZE",
+    0x0d: "ECODE_INVAL_ATTR_VALUE_LEN",
+    0x0e: "ECODE_UNLIKELY",
+    0x0f: "ECODE_INSUFF_ENC",
+    0x10: "ECODE_UNSUPP_GRP_TYPE",
+    0x11: "ECODE_INSUFF_RESOURCES",
+};
 /**
  * @ignore
  */
@@ -8893,6 +9124,9 @@ class Gatt extends eventemitter3_1.default {
             return this._aclStream._smp.getKeys();
         });
         return result;
+    }
+    async setEncryptOption(options) {
+        this._aclStream.setEncryptOption(options);
     }
     onEnd(reason) {
         this.emit("end", reason);
@@ -9230,7 +9464,12 @@ class Gatt extends eventemitter3_1.default {
         this._aclStream.removeListener("end", this.onAclStreamEndBinded);
     }
     writeAtt(data) {
-        debug(this._address + ": write: " + data.toString("hex"));
+        const opCode = data[0];
+        const handle = data.length > 3 ? data.readUInt16LE(1) : "none";
+        debug(`ATT: opCode=${opCode}(${ATT_OP_READABLES[opCode]}) handle=${handle} address=` +
+            this._address +
+            ": write: " +
+            data.toString("hex"));
         this._aclStream.write(ATT.CID, data);
     }
     errorResponse(opcode, handle, status) {
@@ -9431,21 +9670,27 @@ class Gatt extends eventemitter3_1.default {
                 for (const code of waitOpcodes) {
                     promises.push(this._aclStream.readWait(ATT.CID, code));
                 }
+                debug(`ATT: wait for opcode=${waitOpcodes}`);
                 const data = await Promise.race(promises);
                 const opCode = data.readUInt8(0);
+                debug(`ATT: received opCode=${opCode}(${ATT_OP_READABLES[opCode]})`);
                 if (opCode === ATT.OP_ERROR) {
-                    if ((data[4] === ATT.ECODE_AUTHENTICATION ||
-                        data[4] === ATT.ECODE_AUTHORIZATION ||
-                        data[4] === ATT.ECODE_INSUFF_ENC) &&
+                    const errCode = data[4];
+                    if ((errCode === ATT.ECODE_AUTHENTICATION ||
+                        errCode === ATT.ECODE_AUTHORIZATION ||
+                        errCode === ATT.ECODE_INSUFF_ENC) &&
                         this._security !== "medium") {
                         // retry after encrypt
+                        debug(`ATT: going to encrypt and try it later.`);
                         await this._aclStream.encryptWait();
                         continue;
                     }
                     if (errorHandle) {
                         return data;
                     }
-                    throw new ObnizError_1.ObnizBleAttError(data.readUInt8(4));
+                    const requestOpCode = data.readUInt8(1);
+                    const attributeHandle = data.readUInt16LE(2);
+                    throw new ObnizError_1.ObnizBleAttError(errCode, `errorCode=${errCode}(${ATT_ECODE_READABLES[errCode]}) for request_opcode=${requestOpCode}(${ATT_OP_READABLES[requestOpCode]}) atributeHandle=${attributeHandle} `);
                 }
                 return data;
             }
@@ -9570,6 +9815,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
 /**
  * @ignore
@@ -9595,6 +9841,7 @@ class Smp extends eventemitter3_1.default {
         this._stk = null;
         this._ltk = null;
         this._options = undefined;
+        this.debugHandler = () => { };
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
         this._ia = Buffer.from(localAddress
@@ -9612,30 +9859,42 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.on("end", this.onAclStreamEndBinded);
     }
     async pairingWithKeyWait(key) {
+        this.debug(`Pairing using keys ${key}`);
         this.setKeys(key);
-        const encResult = await this._aclStream.onSmpStkWait(this._stk);
+        const encResult = await this._aclStream.onSmpLtkWait(this._ltk, this._rand, this._ediv);
         return encResult;
     }
-    async pairingWait(options) {
+    setPairingOption(options) {
         this._options = options;
+    }
+    async pairingWait(options) {
+        this._options = Object.assign(Object.assign({}, this._options), options);
         if (this._options && this._options.keys) {
-            // console.warn("skip pairing");
             return await this.pairingWithKeyWait(this._options.keys);
         }
+        this.debug(`Going to Pairing`);
         await this.sendPairingRequestWait();
-        const pairingResponse = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RESPONSE);
-        this.handlePairingResponse(pairingResponse);
-        const confirm = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
+        this.debug(`Waiting Pairing Response`);
+        const pairingResponse = await this._readWait(SMP.PAIRING_RESPONSE);
+        await this.handlePairingResponse(pairingResponse);
+        this.debug(`Waiting Pairing Confirm`);
+        const confirm = await this._readWait(SMP.PAIRING_CONFIRM, 60 * 1000); // 60sec timeout
         this.handlePairingConfirm(confirm);
-        const random = await this._aclStream.readWait(SMP.CID, SMP.PAIRING_RANDOM);
-        const encResult = this.handlePairingRandomWait(random);
-        const encInfoPromise = this._aclStream.readWait(SMP.CID, SMP.ENCRYPT_INFO);
-        const masterIdentPromise = this._aclStream.readWait(SMP.CID, SMP.MASTER_IDENT);
-        await Promise.all([encInfoPromise, masterIdentPromise]);
+        this.debug(`Waiting Pairing Random`);
+        const random = await this._readWait(SMP.PAIRING_RANDOM);
+        const encResultPromise = this.handlePairingRandomWait(random);
+        this.debug(`Got Pairing Encryption Result`);
+        const encInfoPromise = this._readWait(SMP.ENCRYPT_INFO);
+        const masterIdentPromise = this._readWait(SMP.MASTER_IDENT);
+        await Promise.all([encResultPromise, encInfoPromise, masterIdentPromise]);
+        const encResult = await encResultPromise;
         const encInfo = await encInfoPromise;
         const masterIdent = await masterIdentPromise;
         this.handleEncryptInfo(encInfo);
         this.handleMasterIdent(masterIdent);
+        if (this._options && this._options.onPairedCallback) {
+            this._options.onPairedCallback(this.getKeys());
+        }
         return encResult;
     }
     onAclStreamData(cid, data) {
@@ -9643,6 +9902,12 @@ class Smp extends eventemitter3_1.default {
             return;
         }
         const code = data.readUInt8(0);
+        if (SMP.PAIRING_FAILED === code) {
+            this.handlePairingFailed(data);
+        }
+        else if (SMP.SMP_SECURITY_REQUEST === code) {
+            this.handleSecurityRequest(data);
+        }
         // console.warn("SMP: " + code);
         return;
         if (SMP.PAIRING_RESPONSE === code) {
@@ -9679,10 +9944,8 @@ class Smp extends eventemitter3_1.default {
         this._pres = data;
         if (this.isPasskeyMode()) {
             let passkeyNumber = 0;
-            try {
-                passkeyNumber = await this._options.passkeyCallback();
-            }
-            catch (_a) { }
+            passkeyNumber = await this._options.passkeyCallback();
+            this.debug(`PassKey=${passkeyNumber}`);
             const passkey = new Array(16);
             for (let i = 0; i < 3; i++) {
                 passkey[i] = (passkeyNumber >> (i * 8)) & 0xff;
@@ -9719,13 +9982,13 @@ class Smp extends eventemitter3_1.default {
         }
         else {
             this.write(Buffer.from([SMP.PAIRING_RANDOM, SMP.PAIRING_CONFIRM]));
-            this.emit("fail");
+            this.emit("fail", 0);
             throw new Error("Encryption pcnf error");
         }
         return encResult;
     }
     handlePairingFailed(data) {
-        this.emit("fail");
+        this.emit("fail", data.readUInt8(1));
     }
     handleEncryptInfo(data) {
         this._ltk = data.slice(1);
@@ -9734,6 +9997,8 @@ class Smp extends eventemitter3_1.default {
     handleMasterIdent(data) {
         const ediv = data.slice(1, 3);
         const rand = data.slice(3);
+        this._ediv = ediv;
+        this._rand = rand;
         this.emit("masterIdent", ediv, rand);
     }
     write(data) {
@@ -9744,14 +10009,17 @@ class Smp extends eventemitter3_1.default {
     }
     setKeys(keyStringBase64) {
         const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
+        this.debug(`restored keys ${keyString}`);
         const keys = JSON.parse(keyString);
-        this._stk = Buffer.from(keys.stk);
-        this._preq = Buffer.from(keys.preq);
-        this._pres = Buffer.from(keys.pres);
-        this._tk = Buffer.from(keys.tk);
-        this._r = Buffer.from(keys.r);
-        this._pcnf = Buffer.from(keys.pcnf);
-        this._ltk = Buffer.from(keys.ltk);
+        this._stk = Buffer.from(keys.stk, "hex");
+        this._preq = Buffer.from(keys.preq, "hex");
+        this._pres = Buffer.from(keys.pres, "hex");
+        this._tk = Buffer.from(keys.tk, "hex");
+        this._r = Buffer.from(keys.r, "hex");
+        this._pcnf = Buffer.from(keys.pcnf, "hex");
+        this._ltk = Buffer.from(keys.ltk, "hex");
+        this._ediv = Buffer.from(keys.ediv, "hex");
+        this._rand = Buffer.from(keys.rand, "hex");
     }
     getKeys() {
         const keys = {
@@ -9762,6 +10030,8 @@ class Smp extends eventemitter3_1.default {
             r: this._r.toString("hex"),
             pcnf: this._pcnf.toString("hex"),
             ltk: this._ltk.toString("hex"),
+            ediv: this._ediv.toString("hex"),
+            rand: this._rand.toString("hex"),
         };
         const jsonString = JSON.stringify(keys);
         const keyString = Buffer.from(jsonString, "ascii").toString("base64");
@@ -9769,6 +10039,7 @@ class Smp extends eventemitter3_1.default {
     }
     async sendPairingRequestWait() {
         if (this.isPasskeyMode()) {
+            this.debug(`pair capable passkey`);
             this._preq = Buffer.from([
                 SMP.PAIRING_REQUEST,
                 0x02,
@@ -9780,6 +10051,7 @@ class Smp extends eventemitter3_1.default {
             ]);
         }
         else {
+            this.debug(`pair No Input and No Output`);
             this._preq = Buffer.from([
                 SMP.PAIRING_REQUEST,
                 0x03,
@@ -9797,6 +10069,19 @@ class Smp extends eventemitter3_1.default {
             return true;
         }
         return false;
+    }
+    _readWait(flag, timeout) {
+        return Promise.race([this._aclStream.readWait(SMP.CID, flag, timeout), this._pairingFailReject()]);
+    }
+    _pairingFailReject() {
+        return new Promise((resolve, reject) => {
+            this.on("fail", (reason) => {
+                reject(new ObnizError_1.ObnizBlePairingRejectByRemoteError(reason));
+            });
+        });
+    }
+    debug(text) {
+        this.debugHandler(`SMP: ${text}`);
     }
 }
 exports.default = Smp;
@@ -9828,10 +10113,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-// let debug = require('debug')('hci');
-const debug = (...params) => {
-    // console.log(...params);
-};
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 var COMMANDS;
 (function (COMMANDS) {
@@ -9874,6 +10155,7 @@ var COMMANDS;
     COMMANDS.OCF_LE_SET_SCAN_PARAMETERS = 0x000b;
     COMMANDS.OCF_LE_SET_SCAN_ENABLE = 0x000c;
     COMMANDS.OCF_LE_CREATE_CONN = 0x000d;
+    COMMANDS.OCF_LE_CREATE_CONN_CANCEL = 0x000e;
     COMMANDS.OCF_LE_CONN_UPDATE = 0x0013;
     COMMANDS.OCF_LE_START_ENCRYPTION = 0x0019;
     COMMANDS.OCF_LE_LTK_NEG_REPLY = 0x001b;
@@ -9891,6 +10173,7 @@ var COMMANDS;
     COMMANDS.LE_SET_SCAN_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_SCAN_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_SCAN_ENABLE_CMD = COMMANDS.OCF_LE_SET_SCAN_ENABLE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CREATE_CONN_CMD = COMMANDS.OCF_LE_CREATE_CONN | (COMMANDS.OGF_LE_CTL << 10);
+    COMMANDS.LE_CREATE_CONN_CANCEL_CMD = COMMANDS.OCF_LE_CREATE_CONN_CANCEL | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_CONN_UPDATE_CMD = COMMANDS.OCF_LE_CONN_UPDATE | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_START_ENCRYPTION_CMD = COMMANDS.OCF_LE_START_ENCRYPTION | (COMMANDS.OGF_LE_CTL << 10);
     COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD = COMMANDS.OCF_LE_SET_ADVERTISING_PARAMETERS | (COMMANDS.OGF_LE_CTL << 10);
@@ -9911,6 +10194,7 @@ class Hci extends eventemitter3_1.default {
     constructor(obnizHci) {
         super();
         this._aclStreamObservers = {};
+        this.debugHandler = () => { };
         this._obnizHci = obnizHci;
         this._state = "poweredOff";
         this.resetBuffers();
@@ -9937,7 +10221,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(eventMask.length, 3);
         eventMask.copy(cmd, 4);
-        debug("set event mask - writing: " + cmd.toString("hex"));
+        this.debug("set event mask - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
     async resetWait() {
@@ -9948,7 +10232,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x00, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.RESET_CMD);
-        debug("reset - writing: " + cmd.toString("hex"));
+        this.debug("reset - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const resetResult = await p;
         this.resetBuffers();
@@ -9980,7 +10264,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_LOCAL_VERSION_CMD);
-        debug("read local version - writing: " + cmd.toString("hex"));
+        this.debug("read local version - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         const hciVer = data.result.readUInt8(0);
@@ -10001,7 +10285,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_BD_ADDR_CMD);
-        debug("read bd addr - writing: " + cmd.toString("hex"));
+        this.debug("read bd addr - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         this.addressType = "public";
@@ -10010,7 +10294,7 @@ class Hci extends eventemitter3_1.default {
             .match(/.{1,2}/g)
             .reverse()
             .join(":");
-        debug("address = " + this.address);
+        this.debug("address = " + this.address);
         return this.address;
     }
     setLeEventMask() {
@@ -10022,7 +10306,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(leEventMask.length, 3);
         leEventMask.copy(cmd, 4);
-        debug("set le event mask - writing: " + cmd.toString("hex"));
+        this.debug("set le event mask - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
     async readLeHostSupportedWait() {
@@ -10033,14 +10317,14 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x00, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_LE_HOST_SUPPORTED_CMD);
-        debug("read LE host supported - writing: " + cmd.toString("hex"));
+        this.debug("read LE host supported - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         if (data.status === 0) {
             const le = data.result.readUInt8(0);
             const simul = data.result.readUInt8(1);
-            debug("\t\t\tle = " + le);
-            debug("\t\t\tsimul = " + simul);
+            this.debug("\t\t\tle = " + le);
+            this.debug("\t\t\tsimul = " + simul);
         }
         return data;
     }
@@ -10054,7 +10338,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(0x01, 4); // le
         cmd.writeUInt8(0x00, 5); // simul
-        debug("write LE host supported - writing: " + cmd.toString("hex"));
+        this.debug("write LE host supported - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
     async setScanParametersWait(isActiveScan) {
@@ -10071,7 +10355,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
         cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_PARAMETERS_CMD);
-        debug("set scan parameters - writing: " + cmd.toString("hex"));
+        this.debug("set scan parameters - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         return data.status;
@@ -10086,13 +10370,13 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // duplicates: 0 -> duplicates, 0 -> duplicates
-        debug("set scan enabled - writing: " + cmd.toString("hex"));
+        this.debug("set scan enabled - writing: " + cmd.toString("hex"));
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
         const data = await p;
         return data.status;
     }
-    async createLeConnWait(address, addressType) {
+    async createLeConnWait(address, addressType, timeout = 90 * 1000) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -10115,11 +10399,44 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x00c8, 23); // supervision timeout
         cmd.writeUInt16LE(0x0004, 25); // min ce length
         cmd.writeUInt16LE(0x0006, 27); // max ce length
-        debug("create le conn - writing: " + cmd.toString("hex"));
-        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE);
+        this.debug("create le conn - writing: " + cmd.toString("hex"));
+        const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
+            timeout,
+            onTimeout: async () => {
+                // 一定時間経過。onTimeoutをオーバーライドしてreject()されるのを防ぎ、キャンセルリクエストする。キャンセルされると接続失敗が返るので待つ
+                await this.createLeConnCancelWait();
+            },
+        });
         this._socket.write(cmd);
-        const { status, data } = await p;
-        return this.processLeConnComplete(status, data);
+        try {
+            const { status, data } = await p;
+            return this.processLeConnComplete(status, data);
+        }
+        catch (e) {
+            throw e;
+        }
+    }
+    async createLeConnCancelWait() {
+        const cmd = Buffer.alloc(4);
+        // header
+        cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
+        cmd.writeUInt16LE(COMMANDS.LE_CREATE_CONN_CANCEL_CMD, 1);
+        // length
+        cmd.writeUInt8(0x0, 3);
+        /*
+         * 成功すると0x00 失敗で 0x01~0xFFが帰る
+         * 特に接続処理中じゃない場合は 0x0x(command disallowed)がかえる
+         * キャンセルに成功してその応答が来たあとには
+         * LE Connection Complete or an HCI_LE_Enhanced_Connection_Complete event
+         * のどちらかがちゃんと返る
+         */
+        this.debug("create le conn cancel - writing: " + cmd.toString("hex"));
+        const p = this.readCmdCompleteEventWait(COMMANDS.LE_CREATE_CONN_CANCEL_CMD);
+        this._socket.write(cmd);
+        const { status } = await p;
+        if (status !== 0x00) {
+            throw new ObnizError_1.ObnizBleHciStateError(status);
+        }
     }
     async connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
         const cmd = Buffer.alloc(18);
@@ -10136,7 +10453,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(Math.floor(supervisionTimeout / 10), 12); // supervision timeout
         cmd.writeUInt16LE(0x0000, 14); // min ce length
         cmd.writeUInt16LE(0x0000, 16); // max ce length
-        debug("conn update le - writing: " + cmd.toString("hex"));
+        this.debug("conn update le - writing: " + cmd.toString("hex"));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE);
         this._socket.write(cmd);
         const { status, data } = await p;
@@ -10148,10 +10465,10 @@ class Hci extends eventemitter3_1.default {
         const interval = data.readUInt16LE(2) * 1.25;
         const latency = data.readUInt16LE(4); // TODO: multiplier?
         const supervisionTimeout = data.readUInt16LE(6) * 10;
-        debug("\t\t\thandle = " + handle);
-        debug("\t\t\tinterval = " + interval);
-        debug("\t\t\tlatency = " + latency);
-        debug("\t\t\tsupervision timeout = " + supervisionTimeout);
+        this.debug("\t\t\thandle = " + handle);
+        this.debug("\t\t\tinterval = " + interval);
+        this.debug("\t\t\tlatency = " + latency);
+        this.debug("\t\t\tsupervision timeout = " + supervisionTimeout);
         return { status, handle, interval, latency, supervisionTimeout };
     }
     async startLeEncryptionWait(handle, random, diversifier, key) {
@@ -10173,20 +10490,39 @@ class Hci extends eventemitter3_1.default {
         const p2 = this._obnizHci.readWait([COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE], {
             waitingFor: "EVT_ENCRYPTION_KEY_REFRESH_COMPLETE",
         });
-        debug("start le encryption - writing: " + cmd.toString("hex"));
+        this.debug("start le encryption - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await Promise.race([p1, p2]);
         // const data = await p1;
         // console.log("start le encryption - data: " + data.toString("hex"));
-        if (data.readUInt16LE(1) === COMMANDS.EVT_ENCRYPT_CHANGE) {
+        if (data.readUInt8(1) === COMMANDS.EVT_ENCRYPT_CHANGE) {
+            if (data.length !== 7) {
+                throw new Error(`le encryption event EVT_ENCRYPT_CHANGE length must be 7 but recieved ${data.length}`);
+            }
+            const status = data.readUInt8(3);
+            if (status !== 0x00) {
+                throw new Error(`le encryption event EVT_ENCRYPT_CHANGE failed with error ${status}`);
+            }
             const encHandle = data.readUInt16LE(4);
             const encrypt = data.readUInt8(6);
-            debug("\t\thandle = " + encHandle);
-            debug("\t\tencrypt = " + encrypt);
+            this.debug("\t\thandle = " + encHandle);
+            this.debug("\t\tencrypt = " + encrypt);
             this.emit("encryptChange", encHandle, encrypt);
             return encrypt;
         }
-        return "refresh";
+        else if (data[1] === COMMANDS.EVT_ENCRYPTION_KEY_REFRESH_COMPLETE) {
+            if (data.length !== 6) {
+                throw new Error(`le encryption event EVT_ENCRYPTION_KEY_REFRESH_COMPLETE length must be 7 but recieved ${data.length}`);
+            }
+            const status = data.readUInt8(3);
+            if (status !== 0x00) {
+                throw new Error(`le encryption event EVT_ENCRYPTION_KEY_REFRESH_COMPLETE failed with error ${status}`);
+            }
+            const encHandle = data.readUInt16LE(4);
+            this.debug("\t\thandle = " + encHandle);
+            return "refresh";
+        }
+        throw new Error("Never Happend");
     }
     disconnect(handle, reason) {
         const cmd = Buffer.alloc(7);
@@ -10199,7 +10535,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt16LE(handle, 4); // handle
         cmd.writeUInt8(reason, 6); // reason
-        debug("disconnect - writing: " + cmd.toString("hex"));
+        this.debug("disconnect - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
     }
     async readRssiWait(handle) {
@@ -10212,15 +10548,15 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt16LE(handle, 4); // handle
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_RSSI_CMD, [handle & 0xff, (handle >> 8) & 0xff]);
-        debug("read rssi - writing: " + cmd.toString("hex"));
+        this.debug("read rssi - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         if (handle !== data.result.readUInt16LE(0)) {
             throw new Error("handle is different");
         }
         const rssi = data.result.readInt8(2);
-        debug("\t\t\thandle = " + handle);
-        debug("\t\t\trssi = " + rssi);
+        this.debug("\t\t\thandle = " + handle);
+        this.debug("\t\t\trssi = " + rssi);
         return rssi;
     }
     async setAdvertisingParametersWait() {
@@ -10241,7 +10577,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x07, 17);
         cmd.writeUInt8(0x00, 18);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_PARAMETERS_CMD);
-        debug("set advertisement parameters - writing: " + cmd.toString("hex"));
+        this.debug("set advertisement parameters - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         // this.emit("stateChange", "poweredOn"); // TODO : really need?
@@ -10259,7 +10595,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(data.length, 4);
         data.copy(cmd, 5);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISING_DATA_CMD);
-        debug("set advertisement data - writing: " + cmd.toString("hex"));
+        this.debug("set advertisement data - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const result = await p;
         return result.status;
@@ -10276,7 +10612,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(data.length, 4);
         data.copy(cmd, 5);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_RESPONSE_DATA_CMD);
-        debug("set scan response data - writing: " + cmd.toString("hex"));
+        this.debug("set scan response data - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const result = await p;
         return result.status;
@@ -10291,7 +10627,7 @@ class Hci extends eventemitter3_1.default {
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_ADVERTISE_ENABLE_CMD);
-        debug("set advertise enable - writing: " + cmd.toString("hex"));
+        this.debug("set advertise enable - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         return data.status;
@@ -10304,7 +10640,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_READ_BUFFER_SIZE_CMD);
-        debug("le read buffer size - writing: " + cmd.toString("hex"));
+        this.debug("le read buffer size - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         if (!data.status) {
@@ -10319,7 +10655,7 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x0, 3);
         const p = this.readCmdCompleteEventWait(COMMANDS.READ_BUFFER_SIZE_CMD);
-        debug("read buffer size - writing: " + cmd.toString("hex"));
+        this.debug("read buffer size - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const data = await p;
         if (!data.status) {
@@ -10327,8 +10663,8 @@ class Hci extends eventemitter3_1.default {
             const aclMaxInProgress = data.result.readUInt16LE(3);
             // sanity
             if (aclMtu && aclMaxInProgress) {
-                debug("br/edr acl mtu = " + aclMtu);
-                debug("br/edr acl max pkts = " + aclMaxInProgress);
+                this.debug("br/edr acl mtu = " + aclMtu);
+                this.debug("br/edr acl max pkts = " + aclMaxInProgress);
                 this._aclMtu = aclMtu;
                 this._aclMaxInProgress = aclMaxInProgress;
                 return { aclMtu, aclMaxInProgress };
@@ -10363,27 +10699,27 @@ class Hci extends eventemitter3_1.default {
         this.pushAclOutQueue();
     }
     pushAclOutQueue() {
-        debug("pushAclOutQueue");
+        this.debug("pushAclOutQueue");
         let inProgress = 0;
         for (const handle in this._handleAclsInProgress) {
             inProgress += this._handleAclsInProgress[handle];
         }
-        debug(inProgress, this._aclMaxInProgress, this._aclOutQueue.length);
+        this.debug(inProgress, this._aclMaxInProgress, this._aclOutQueue.length);
         while (inProgress < this._aclMaxInProgress && this._aclOutQueue.length) {
             inProgress++;
             this.writeOneAclDataPkt();
         }
         if (inProgress >= this._aclMaxInProgress && this._aclOutQueue.length) {
-            debug("acl out queue congested");
-            debug("\tin progress = " + inProgress);
-            debug("\twaiting = " + this._aclOutQueue.length);
+            this.debug("acl out queue congested");
+            this.debug("\tin progress = " + inProgress);
+            this.debug("\twaiting = " + this._aclOutQueue.length);
         }
     }
     writeOneAclDataPkt() {
-        debug("writeOneAclDataPkt");
+        this.debug("writeOneAclDataPkt");
         const pkt = this._aclOutQueue.shift();
         this._handleAclsInProgress[pkt.handle]++;
-        debug("write acl data pkt frag " + pkt.fragId + " handle " + pkt.handle + " - writing: " + pkt.pkt.toString("hex"));
+        this.debug("write acl data pkt frag " + pkt.fragId + " handle " + pkt.handle + " - writing: " + pkt.pkt.toString("hex"));
         this._socket.write(pkt.pkt);
     }
     writeAclDataPkt(handle, cid, data) {
@@ -10395,7 +10731,7 @@ class Hci extends eventemitter3_1.default {
         pkt.writeUInt16LE(data.length, 5); // data length 2  for l2cap
         pkt.writeUInt16LE(cid, 7);
         data.copy(pkt, 9);
-        debug("write acl data pkt - writing: " + pkt.toString("hex"));
+        this.debug("write acl data pkt - writing: " + pkt.toString("hex"));
         this._socket.write(pkt);
     }
     async longTermKeyRequestNegativeReply(handle) {
@@ -10437,14 +10773,14 @@ class Hci extends eventemitter3_1.default {
         const latency = data.readUInt16LE(12); // TODO: multiplier?
         const supervisionTimeout = data.readUInt16LE(14) * 10;
         const masterClockAccuracy = data.readUInt8(16); // TODO: multiplier?
-        debug("\t\t\thandle = " + handle);
-        debug("\t\t\trole = " + role);
-        debug("\t\t\taddress type = " + addressType);
-        debug("\t\t\taddress = " + address);
-        debug("\t\t\tinterval = " + interval);
-        debug("\t\t\tlatency = " + latency);
-        debug("\t\t\tsupervision timeout = " + supervisionTimeout);
-        debug("\t\t\tmaster clock accuracy = " + masterClockAccuracy);
+        this.debug("\t\t\thandle = " + handle);
+        this.debug("\t\t\trole = " + role);
+        this.debug("\t\t\taddress type = " + addressType);
+        this.debug("\t\t\taddress = " + address);
+        this.debug("\t\t\tinterval = " + interval);
+        this.debug("\t\t\tlatency = " + latency);
+        this.debug("\t\t\tsupervision timeout = " + supervisionTimeout);
+        this.debug("\t\t\tmaster clock accuracy = " + masterClockAccuracy);
         this._handleAclsInProgress[handle] = 0;
         if (role === 1) {
             // only slave, emit
@@ -10475,11 +10811,11 @@ class Hci extends eventemitter3_1.default {
             const eirLength = data.readUInt8(8);
             const eir = data.slice(9, eirLength + 9);
             const rssi = data.readInt8(eirLength + 9);
-            debug("\t\t\ttype = " + type);
-            debug("\t\t\taddress = " + address);
-            debug("\t\t\taddress type = " + addressType);
-            debug("\t\t\teir = " + eir.toString("hex"));
-            debug("\t\t\trssi = " + rssi);
+            this.debug("\t\t\ttype = " + type);
+            this.debug("\t\t\taddress = " + address);
+            this.debug("\t\t\taddress type = " + addressType);
+            this.debug("\t\t\teir = " + eir.toString("hex"));
+            this.debug("\t\t\trssi = " + rssi);
             this.emit("leAdvertisingReport", 0, type, address, addressType, eir, rssi);
             data = data.slice(eirLength + 10);
         }
@@ -10496,12 +10832,12 @@ class Hci extends eventemitter3_1.default {
         const aclMaxInProgress = result.readUInt8(2);
         if (!aclMtu) {
             // as per Bluetooth specs
-            debug("falling back to br/edr buffer size");
+            this.debug("falling back to br/edr buffer size");
             await this.readBufferSizeWait();
         }
         else {
-            debug("le acl mtu = " + aclMtu);
-            debug("le acl max in progress = " + aclMaxInProgress);
+            this.debug("le acl mtu = " + aclMtu);
+            this.debug("le acl max in progress = " + aclMaxInProgress);
             this._aclMtu = aclMtu;
             this._aclMaxInProgress = aclMaxInProgress;
         }
@@ -10555,6 +10891,9 @@ class Hci extends eventemitter3_1.default {
     createCmdCompleteEventFilter(cmd) {
         return [COMMANDS.HCI_EVENT_PKT, COMMANDS.EVT_CMD_COMPLETE, -1, -1, (cmd >> 0) & 0xff, (cmd >> 8) & 0xff];
     }
+    debug(...args) {
+        this.debugHandler(`${args[0]}`);
+    }
     onHciAclData(data) {
         const flags = data.readUInt16LE(1) >> 12;
         const handle = data.readUInt16LE(1) & 0x0fff;
@@ -10562,10 +10901,10 @@ class Hci extends eventemitter3_1.default {
             const cid = data.readUInt16LE(7);
             const length = data.readUInt16LE(5);
             const pktData = data.slice(9);
-            debug("\t\tcid = " + cid);
+            this.debug("\t\tcid = " + cid);
             if (length === pktData.length) {
-                debug("\t\thandle = " + handle);
-                debug("\t\tdata = " + pktData.toString("hex"));
+                this.debug("\t\thandle = " + handle);
+                this.debug("\t\tdata = " + pktData.toString("hex"));
                 this.emit("aclDataPkt", handle, cid, pktData);
                 const key = (cid << 8) + pktData.readUInt8(0);
                 if (this._aclStreamObservers[handle] &&
@@ -10603,12 +10942,12 @@ class Hci extends eventemitter3_1.default {
     }
     onHciEventData(data) {
         const subEventType = data.readUInt8(1);
-        debug("\tsub event type = 0x" + subEventType.toString(16));
+        this.debug("\tsub event type = 0x" + subEventType.toString(16));
         if (subEventType === COMMANDS.EVT_DISCONN_COMPLETE) {
             const handle = data.readUInt16LE(4);
             const reason = data.readUInt8(6);
-            debug("\t\thandle = " + handle);
-            debug("\t\treason = " + reason);
+            this.debug("\t\thandle = " + handle);
+            this.debug("\t\treason = " + reason);
             delete this._handleAclsInProgress[handle];
             const aclOutQueue = [];
             let discarded = 0;
@@ -10621,18 +10960,27 @@ class Hci extends eventemitter3_1.default {
                 }
             }
             if (discarded) {
-                debug("\t\tacls discarded = " + discarded);
+                this.debug("\t\tacls discarded = " + discarded);
             }
             this._aclOutQueue = aclOutQueue;
             this.pushAclOutQueue();
             this.emit("disconnComplete", handle, reason);
         }
         else if (subEventType === COMMANDS.EVT_ENCRYPT_CHANGE) {
+            const status = data.readUInt8(3);
             const handle = data.readUInt16LE(4);
             const encrypt = data.readUInt8(6);
-            debug("\t\thandle = " + handle);
-            debug("\t\tencrypt = " + encrypt);
-            this.emit("encryptChange", handle, encrypt);
+            if (status === 0) {
+                this.debug("\t\thandle = " + handle);
+                this.debug("\t\tencrypt = " + encrypt);
+                this.emit("encryptChange", handle, encrypt);
+            }
+            else {
+                this.debug("\t\tencrypt status = " + status);
+                this.debug("\t\thandle = " + handle);
+                this.debug("\t\tencrypt = " + encrypt);
+                this.emit("encryptChange", handle, encrypt);
+            }
         }
         else if (subEventType === COMMANDS.EVT_CMD_COMPLETE) {
             // command complete event are handle each command send functions;
@@ -10640,17 +10988,17 @@ class Hci extends eventemitter3_1.default {
         else if (subEventType === COMMANDS.EVT_CMD_STATUS) {
             const status = data.readUInt8(3);
             const cmd = data.readUInt16LE(5);
-            debug("\t\tstatus = " + status);
-            debug("\t\tcmd = " + cmd);
+            this.debug("\t\tstatus = " + status);
+            this.debug("\t\tcmd = " + cmd);
             this.processCmdStatusEvent(cmd, status);
         }
         else if (subEventType === COMMANDS.EVT_LE_META_EVENT) {
             const leMetaEventType = data.readUInt8(3);
             const leMetaEventStatus = data.readUInt8(4);
             const leMetaEventData = data.slice(5);
-            debug("\t\tLE meta event type = " + leMetaEventType);
-            debug("\t\tLE meta event status = " + leMetaEventStatus);
-            debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
+            this.debug("\t\tLE meta event type = " + leMetaEventType);
+            this.debug("\t\tLE meta event status = " + leMetaEventStatus);
+            this.debug("\t\tLE meta event data = " + leMetaEventData.toString("hex"));
             this.processLeMetaEvent(leMetaEventType, leMetaEventStatus, leMetaEventData);
         }
         else if (subEventType === COMMANDS.EVT_NUMBER_OF_COMPLETED_PACKETS) {
@@ -10658,10 +11006,10 @@ class Hci extends eventemitter3_1.default {
             for (let i = 0; i < handles; i++) {
                 const handle = data.readUInt16LE(4 + i * 4);
                 const pkts = data.readUInt16LE(6 + i * 4);
-                debug("\thandle = " + handle);
-                debug("\t\tcompleted = " + pkts);
+                this.debug("\thandle = " + handle);
+                this.debug("\t\tcompleted = " + pkts);
                 if (this._handleAclsInProgress[handle] === undefined) {
-                    debug("\t\talready closed");
+                    this.debug("\t\talready closed");
                     continue;
                 }
                 if (pkts > this._handleAclsInProgress[handle]) {
@@ -10671,16 +11019,16 @@ class Hci extends eventemitter3_1.default {
                 else {
                     this._handleAclsInProgress[handle] -= pkts;
                 }
-                debug("\t\tin progress = " + this._handleAclsInProgress[handle]);
+                this.debug("\t\tin progress = " + this._handleAclsInProgress[handle]);
             }
             this.pushAclOutQueue();
         }
     }
     onSocketData(array) {
         const data = Buffer.from(array);
-        debug("onSocketData: " + data.toString("hex"));
+        this.debug("onSocketData: " + data.toString("hex"));
         const eventType = data.readUInt8(0);
-        debug("\tevent type = 0x" + eventType.toString(16));
+        this.debug("\tevent type = 0x" + eventType.toString(16));
         if (COMMANDS.HCI_EVENT_PKT === eventType) {
             this.onHciEventData(data);
         }
@@ -13019,21 +13367,21 @@ exports.default = ObnizSwitch;
 /***/ "./dist/src/obniz/libs/hw/encored.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"25\":{},\"26\":{},\"27\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -13064,6 +13412,9 @@ class HW {
         else if (hw === "m5stickc") {
             return __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.json");
         }
+        else if (hw === "m5stack_basic") {
+            return __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.json");
+        }
         else if (hw === "encored") {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored.json");
         }
@@ -13074,6 +13425,13 @@ exports.default = HW;
 
 //# sourceMappingURL=index.js.map
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/hw/m5stack_basic.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"19\":{},\"21\":{},\"22\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -13178,21 +13536,21 @@ exports.M5StickC = M5StickC;
 /***/ "./dist/src/obniz/libs/hw/m5stickc.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
+module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":false,\"raw_alternate\":false,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/obnizb2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":true,\"width\":128,\"height\":64,\"color_depth\":[1]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -15178,6 +15536,83 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
 exports.default = ObnizMeasure;
 
 //# sourceMappingURL=measure.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/network/wifi.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+class WiFi {
+    constructor(obniz, id) {
+        this.Obniz = obniz;
+        this._reset();
+    }
+    /**
+     * Scan WiFi
+     *
+     * ```javascript
+     * // Javascript Example
+     * console.log(await obniz.wifi.scanWait());
+     * ```
+     *
+     */
+    scanWait() {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, "3.3.0")) {
+            throw new Error(`Please update obniz firmware >= 3.3.0`);
+        }
+        this.connectObservers = [];
+        return new Promise((resolve, reject) => {
+            this._addConnectObserver(resolve);
+            this.Obniz.send({ wifi: { scan: true } });
+        });
+    }
+    /**
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.wifi.end();
+     * ```
+     */
+    end() {
+        this._reset();
+    }
+    /**
+     * @ignore
+     * @param obj
+     */
+    notified(obj) {
+        if (obj.scan) {
+            /* Connectino state update. response of connect(), close from destination, response from */
+            const callback = this.connectObservers.shift();
+            if (callback) {
+                callback(obj.scan);
+            }
+        }
+    }
+    _reset() {
+        this.connectObservers = [];
+    }
+    _addConnectObserver(callback) {
+        if (callback) {
+            this.connectObservers.push(callback);
+        }
+    }
+}
+exports.default = WiFi;
+
+//# sourceMappingURL=wifi.js.map
 
 
 /***/ }),
@@ -20515,6 +20950,112 @@ exports.default = WSCommandUart;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandWiFi.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+const jsonBinaryConverter_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/jsonBinaryConverter.js"));
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
+class WSCommandWiFi extends WSCommand_1.default {
+    constructor() {
+        super();
+        this.module = 14;
+        this._CommandScan = 0;
+    }
+    scan(params, index) {
+        this.sendCommand(this._CommandScan, null);
+    }
+    parseFromJson(json) {
+        const module = json.wifi;
+        if (module === undefined) {
+            return;
+        }
+        const schemaData = [{ uri: "/request/wifi/scan", onValid: this.scan }];
+        const res = this.validateCommandSchema(schemaData, module, "wifi");
+        if (res.valid === 0) {
+            if (res.invalidButLike.length > 0) {
+                throw new Error(res.invalidButLike[0].message);
+            }
+            else {
+                throw new this.WSCommandNotFoundError(`[network]unknown command`);
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        switch (func) {
+            case this._CommandScan: {
+                let ScanState;
+                (function (ScanState) {
+                    ScanState[ScanState["SCAN_SSID_LEN"] = 0] = "SCAN_SSID_LEN";
+                    ScanState[ScanState["SCAN_SSID"] = 1] = "SCAN_SSID";
+                    ScanState[ScanState["SCAN_MAC"] = 2] = "SCAN_MAC";
+                    ScanState[ScanState["SCAN_RSSI"] = 3] = "SCAN_RSSI";
+                })(ScanState || (ScanState = {}));
+                let mode = ScanState.SCAN_SSID_LEN;
+                let tmpIndex = 0;
+                let ssid = "";
+                let macAddress = "";
+                let rssi = 0;
+                const scanArray = [];
+                for (let i = 0; i < payload.length; i++) {
+                    switch (mode) {
+                        case ScanState.SCAN_SSID_LEN:
+                            tmpIndex = payload[i];
+                            mode = ScanState.SCAN_SSID;
+                            break;
+                        case ScanState.SCAN_SSID:
+                            ssid += String.fromCharCode(payload[i]);
+                            tmpIndex--;
+                            if (tmpIndex === 0) {
+                                mode = ScanState.SCAN_MAC;
+                                tmpIndex = 0;
+                            }
+                            break;
+                        case ScanState.SCAN_MAC:
+                            macAddress += String.fromCharCode(payload[i]);
+                            tmpIndex++;
+                            if (tmpIndex === 12) {
+                                mode = ScanState.SCAN_RSSI;
+                            }
+                            break;
+                        case ScanState.SCAN_RSSI:
+                            rssi = jsonBinaryConverter_1.default.signedNumberFromBinary([payload[i]]);
+                            mode = ScanState.SCAN_SSID_LEN;
+                            scanArray.push({
+                                ssid,
+                                macAddress,
+                                rssi,
+                            });
+                            ssid = "";
+                            macAddress = "";
+                            rssi = 0;
+                            break;
+                    }
+                }
+                objToSend.wifi = {
+                    scan: scanArray,
+                };
+                break;
+            }
+        }
+    }
+}
+exports.default = WSCommandWiFi;
+
+//# sourceMappingURL=WSCommandWiFi.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSSchema.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -20603,6 +21144,7 @@ const WSCommandSwitch_1 = __importDefault(__webpack_require__("./dist/src/obniz/
 const WSCommandSystem_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSystem.js"));
 const WSCommandTcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandTcp.js"));
 const WSCommandUart_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandUart.js"));
+const WSCommandWiFi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandWiFi.js"));
 /* eslint-disable */
 WSCommand_1.default.addCommandClass("WSCommandSystem", WSCommandSystem_1.default);
 WSCommand_1.default.addCommandClass("WSCommandDirective", WSCommandDirective_1.default);
@@ -20618,6 +21160,7 @@ WSCommand_1.default.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.default
 WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
 WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
+WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
 exports.default = WSCommand_1.default;
 
 //# sourceMappingURL=index.js.map
@@ -20900,9 +21443,13 @@ var map = {
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
+	"./Ble/PLS_01BT/index.js": "./dist/src/parts/Ble/PLS_01BT/index.js",
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
+	"./Ble/abstract/services/batteryService.js": "./dist/src/parts/Ble/abstract/services/batteryService.js",
+	"./Ble/abstract/services/genericAccess.js": "./dist/src/parts/Ble/abstract/services/genericAccess.js",
 	"./Ble/cir415a/index.js": "./dist/src/parts/Ble/cir415a/index.js",
 	"./Ble/iBS01/index.js": "./dist/src/parts/Ble/iBS01/index.js",
 	"./Ble/iBS01RG/index.js": "./dist/src/parts/Ble/iBS01RG/index.js",
@@ -20926,6 +21473,7 @@ var map = {
 	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
 	"./Ble/tm530/index.js": "./dist/src/parts/Ble/tm530/index.js",
 	"./Ble/tm551/index.js": "./dist/src/parts/Ble/tm551/index.js",
+	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
 	"./Ble/uprism/index.js": "./dist/src/parts/Ble/uprism/index.js",
 	"./Camera/ArduCAMMini/index.js": "./dist/src/parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./dist/src/parts/Camera/JpegSerialCam/index.js",
@@ -21781,10 +22329,15 @@ Logtta_Accel.deviceAdv = [
  * @packageDocumentation
  * @module Parts.Logtta_CO2
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/batteryService.js"));
+const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/genericAccess.js"));
 class Logtta_CO2 {
     constructor(peripheral) {
-        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
+        if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
             throw new Error("peripheral is not Logtta CO2");
         }
         this._peripheral = peripheral;
@@ -21811,6 +22364,14 @@ class Logtta_CO2 {
                 }
             };
             await this._peripheral.connectWait();
+            const service1800 = this._peripheral.getService("1800");
+            if (service1800) {
+                this.genericAccess = new genericAccess_1.default(service1800);
+            }
+            const service180F = this._peripheral.getService("180F");
+            if (service180F) {
+                this.batteryService = new batteryService_1.default(service180F);
+            }
         }
     }
     async disconnectWait() {
@@ -22062,6 +22623,87 @@ class MINEW_S1 {
     wired(obniz) { }
 }
 exports.default = MINEW_S1;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/PLS_01BT/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class PLS_01BT {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this.onmesured = null;
+        this._uuids = {
+            service: "CDEACB80-5235-4C07-8846-93A37EE6B86D",
+            rxChar: "CDEACB81-5235-4C07-8846-93A37EE6B86D",
+        };
+        this._peripheral = null;
+        this._rxCharacteristic = null;
+        this._txCharacteristic = null;
+        if (peripheral && !PLS_01BT.isDevice(peripheral)) {
+            throw new Error("peripheral is not PLS_01BT");
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "PLS_01BT",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName && peripheral.localName.startsWith("My Oximeter")) {
+            return true;
+        }
+        return false;
+    }
+    // @ts-ignore
+    wired(obniz) { }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("PLS_01BT is not find.");
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (this.ondisconnect) {
+                this.ondisconnect(reason);
+            }
+        };
+        await this._peripheral.connectWait();
+        this._rxCharacteristic = this._peripheral.getService(this._uuids.service).getCharacteristic(this._uuids.rxChar);
+        if (!this._rxCharacteristic) {
+            throw new Error("device is not PLS_01BT");
+        }
+        await this._rxCharacteristic.registerNotifyWait((data) => {
+            if (data.length === 4 && data[0] === 0x81) {
+                if (data[1] !== 255 && data[2] !== 177) {
+                    const pulseRate = data[1];
+                    const bloodOxygenLevel = data[2];
+                    const perfusionIndex = data[3];
+                    if (this.onmesured) {
+                        this.onmesured({
+                            pulseRate,
+                            bloodOxygenLevel,
+                            perfusionIndex,
+                        });
+                    }
+                }
+            }
+        });
+    }
+    async disconnectWait() {
+        if (!this._peripheral) {
+            throw new Error("PLS_01BT is not find.");
+        }
+        await this._peripheral.disconnectWait();
+    }
+}
+exports.default = PLS_01BT;
 
 //# sourceMappingURL=index.js.map
 
@@ -22432,6 +23074,228 @@ class RS_Seek3 {
 exports.default = RS_Seek3;
 
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/UT201BLE/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+class UT201BLE {
+    constructor(peripheral, timezoneOffsetMinute) {
+        if (!peripheral || !UT201BLE.isDevice(peripheral)) {
+            throw new Error("peripheral is not UT201BLE");
+        }
+        this._peripheral = peripheral;
+        this._timezoneOffsetMinute = timezoneOffsetMinute;
+    }
+    static info() {
+        return {
+            name: "UT201BLE",
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName && peripheral.localName.startsWith("A&D_UT201BLE_");
+    }
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error("UT201BLE not found");
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
+        let key = null;
+        await this._peripheral.connectWait({
+            pairingOption: {
+                onPairedCallback: (pairingKey) => {
+                    key = pairingKey;
+                },
+            },
+        });
+        const { timeChar, customServiceChar } = this._getChars();
+        await this._writeTimeChar(this._timezoneOffsetMinute);
+        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        return key;
+    }
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error("UT201BLE not found");
+        }
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: pairingKeys,
+            },
+        });
+        return await new Promise(async (resolve, reject) => {
+            if (!this._peripheral) {
+                throw new Error("UT201BLE not found");
+            }
+            const results = [];
+            const { temperatureMeasurementChar, timeChar, customServiceChar } = this._getChars();
+            await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
+            await this._writeTimeChar(this._timezoneOffsetMinute);
+            temperatureMeasurementChar.registerNotifyWait((data) => {
+                results.push(this._analyzeData(data));
+            });
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+        });
+    }
+    _readFloatLE(buffer, index) {
+        const data = buffer.readUInt32LE(index);
+        let mantissa = data & 0x00ffffff;
+        if ((mantissa & 0x00800000) > 0) {
+            mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
+        }
+        const exponential = data >> 24;
+        return mantissa * Math.pow(10, exponential);
+    }
+    _analyzeData(data) {
+        const buf = Buffer.from(data);
+        const flags = buf.readUInt8(0);
+        let index = 1;
+        const result = {};
+        if (flags & 0x01) {
+            // Fahrenheit
+            result.fahrenheit = this._readFloatLE(buf, index);
+            index += 4;
+        }
+        else {
+            // Celsius
+            result.celsius = this._readFloatLE(buf, index);
+            index += 4;
+        }
+        if (flags & 0x02) {
+            // Time Stamp field present
+            result.date = {
+                year: buf.readUInt16LE(index),
+                month: buf.readUInt8(index + 2),
+                day: buf.readUInt8(index + 3),
+                hour: buf.readUInt8(index + 4),
+                minute: buf.readUInt8(index + 5),
+                second: buf.readUInt8(index + 6),
+            };
+            index += 7;
+        }
+        if (flags & 0x04) {
+            const types = [
+                "unknown",
+                "Armpit",
+                "Body",
+                "Ear",
+                "Finger",
+                "Gastro-intestinal Tract",
+                "Mouth",
+                "Rectum",
+                "Toe",
+                "Tympanum",
+            ];
+            const value = buf.readUInt8(index);
+            index++;
+            result.temperatureType = types[value] || "unknown";
+        }
+        return result;
+    }
+    _getChars() {
+        if (!this._peripheral) {
+            throw new Error("UT201BLE not found");
+        }
+        const temperatureMeasurementChar = this._peripheral
+            .getService("1809")
+            .getCharacteristic("2A1C");
+        const timeChar = this._peripheral.getService("1809").getCharacteristic("2A08");
+        const customServiceChar = this._peripheral
+            .getService("233bf0005a341b6d975c000d5690abe4")
+            .getCharacteristic("233bf0015a341b6d975c000d5690abe4");
+        return {
+            temperatureMeasurementChar,
+            timeChar,
+            customServiceChar,
+        };
+    }
+    async _writeTimeChar(timeOffsetMinute) {
+        const { timeChar } = this._getChars();
+        const date = new Date();
+        date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
+        const buf = Buffer.alloc(7);
+        buf.writeUInt16LE(date.getUTCFullYear(), 0);
+        buf.writeUInt8(date.getUTCMonth() + 1, 2);
+        buf.writeUInt8(date.getUTCDay(), 3);
+        buf.writeUInt8(date.getUTCHours(), 4);
+        buf.writeUInt8(date.getUTCMinutes(), 5);
+        buf.writeUInt8(date.getUTCSeconds(), 6);
+        const arr = Array.from(buf);
+        await timeChar.writeWait(arr);
+    }
+}
+exports.default = UT201BLE;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/abstract/services/batteryService.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.abstract.services
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleBatteryService {
+    constructor(service) {
+        this._service = service;
+    }
+    async getBatteryLevel() {
+        const char = this._service.getCharacteristic("2A19");
+        if (!char) {
+            return null;
+        }
+        return await char.readNumberWait();
+    }
+}
+exports.default = BleBatteryService;
+
+//# sourceMappingURL=batteryService.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/abstract/services/genericAccess.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.abstract.services
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class BleGenericAccess {
+    constructor(service) {
+        this._service = service;
+    }
+    async getDeviceName() {
+        const char = this._service.getCharacteristic("2A00");
+        if (!char) {
+            return null;
+        }
+        return await char.readTextWait();
+    }
+}
+exports.default = BleGenericAccess;
+
+//# sourceMappingURL=genericAccess.js.map
 
 
 /***/ }),
@@ -27940,6 +28804,212 @@ TM551.deviceAdv = [
     -1,
     -1,
 ];
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/toio_corecube/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Toio_CoreCube
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Toio_CoreCube {
+    constructor(peripheral) {
+        this.peripheral = null;
+        this.functionButtonPress = null;
+        this.functionMotionChange = null;
+        this.keys = [];
+        this.requiredKeys = [];
+        this._uuids = {
+            serviceID: "10B20100-5B3B-4571-9508-CF3EFCD7BBAE",
+            characteristicIDMotor: "10B20102-5B3B-4571-9508-CF3EFCD7BBAE",
+            characteristicIDPos: "10B20101-5B3B-4571-9508-CF3EFCD7BBAE",
+            characteristicIDMotion: "10B20106-5B3B-4571-9508-CF3EFCD7BBAE",
+            characteristicIDButton: "10B20107-5B3B-4571-9508-CF3EFCD7BBAE",
+            characteristicIDBattery: "10B20108-5B3B-4571-9508-CF3EFCD7BBAE",
+        };
+        this.timeout = 100;
+        this._buttonCharacteristic = null;
+        this._motionCharacteristic = null;
+        this._positionCharacteristic = null;
+        this._motorCharacteristic = null;
+        this._batteryCharacteristic = null;
+        if (peripheral && !Toio_CoreCube.isDevice(peripheral)) {
+            throw new Error("peripheral is not RS_Seek3");
+        }
+        this.peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: "toio_CoreCube",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName === "toio Core Cube") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    wired(obniz) { }
+    async connectWait(timeout) {
+        if (!this.peripheral) {
+            throw new Error("RS_Seek3 is not find.");
+        }
+        this.peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === "function") {
+                this.ondisconnect(reason);
+            }
+        };
+        this.timeout = timeout;
+        await this.peripheral.connectWait();
+        this._buttonCharacteristic = this.peripheral
+            .getService(this._uuids.serviceID)
+            .getCharacteristic(this._uuids.characteristicIDButton);
+        this._motorCharacteristic = this.peripheral
+            .getService(this._uuids.serviceID)
+            .getCharacteristic(this._uuids.characteristicIDMotor);
+        this._motionCharacteristic = this.peripheral
+            .getService(this._uuids.serviceID)
+            .getCharacteristic(this._uuids.characteristicIDMotion);
+        this._positionCharacteristic = this.peripheral
+            .getService(this._uuids.serviceID)
+            .getCharacteristic(this._uuids.characteristicIDPos);
+        this._batteryCharacteristic = this.peripheral
+            .getService(this._uuids.serviceID)
+            .getCharacteristic(this._uuids.characteristicIDBattery);
+        if (this._buttonCharacteristic) {
+            if (typeof this.functionButtonPress === "function") {
+                this._buttonCharacteristic.registerNotify(this.functionButtonPress);
+            }
+        }
+        if (this._buttonCharacteristic) {
+            if (typeof this.functionMotionChange === "function") {
+                this._buttonCharacteristic.registerNotify(this.functionMotionChange);
+            }
+        }
+        return 0;
+    }
+    async disconnectWait() {
+        var _a;
+        await ((_a = this.peripheral) === null || _a === void 0 ? void 0 : _a.disconnect());
+    }
+    async getPositionWait() {
+        const readData = await this._positionCharacteristic.readWait();
+        return {
+            // NOTE: toioの中心から見たポジション
+            posX: (readData[2] << 8) | readData[1],
+            posY: (readData[4] << 8) | readData[3],
+            angle: (readData[6] << 8) | readData[5],
+            posSensorX: (readData[8] << 8) | readData[7],
+            posSensorY: (readData[10] << 8) | readData[9],
+            posSensorAngle: (readData[12] << 8) | readData[11],
+        };
+    }
+    async getMotionWait() {
+        const readData = await this._motionCharacteristic.readWait();
+        return {
+            // NOTE: toioの中心から見たポジション
+            isHorizon: readData[1] === 1,
+            isCollision: readData[2] === 1,
+            isDoubletap: readData[3] === 1,
+            atitude: readData[4],
+        };
+    }
+    async getButtonStateWait() {
+        const readData = await this._buttonCharacteristic.readWait();
+        if (readData[1] === 0x80) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    async getBatteryStateWait() {
+        const readData = await this._batteryCharacteristic.readWait();
+        return readData[0];
+    }
+    async moveAroundWait(_leftWheelPower = 0, _rightWheelPower = 0) {
+        const constraintWheelPower = (wheelPower) => {
+            // NOTE: Power is limited belong 0 to 255. And minus value is backward.
+            if (wheelPower < -255) {
+                wheelPower = -255;
+            }
+            else if (wheelPower > 255) {
+                wheelPower = 255;
+            }
+            return wheelPower;
+        };
+        const numWheelDirection = (wheelPower) => {
+            // NOTE: 1 is forward. and 2 is backward.
+            if (wheelPower >= 0) {
+                return 1;
+            }
+            else if (wheelPower < 0) {
+                return 2;
+            }
+        };
+        const leftWheelPower = constraintWheelPower(_leftWheelPower);
+        const rightWheelPower = constraintWheelPower(_rightWheelPower);
+        const leftWheelDirection = numWheelDirection(leftWheelPower);
+        const rightWheelDirection = numWheelDirection(rightWheelPower);
+        await this._motorCharacteristic.writeWait([
+            1,
+            1,
+            leftWheelDirection,
+            Math.abs(leftWheelPower),
+            2,
+            rightWheelDirection,
+            Math.abs(rightWheelPower),
+        ]);
+    }
+    async movePositionWait(timeoutSec = 5, moveType = 0, maxWheelPower = 30, wheelPowerType = 30, targetPosX = 0, targetPosY = 0, targetAngle = 0) {
+        const parceNumber = (pos) => {
+            // NOTE: Pos is must hove belong 0 to 65535.
+            if (pos > 65535) {
+                pos = 65535;
+            }
+            else if (pos < 0) {
+                pos = 0;
+            }
+            const buffer = new ArrayBuffer(2);
+            const dv = new DataView(buffer);
+            dv.setUint16(0, pos);
+            const obj = {
+                value1: dv.getUint8(0),
+                value2: dv.getUint8(1),
+            };
+            return obj;
+        };
+        const posXObj = parceNumber(targetPosX);
+        const posYObj = parceNumber(targetPosY);
+        const targetAngleObj = parceNumber(targetAngle);
+        await this._motorCharacteristic.writeWait([
+            0x03,
+            0x00,
+            timeoutSec,
+            moveType,
+            maxWheelPower,
+            wheelPowerType,
+            0x00,
+            posXObj.value2,
+            posXObj.value1,
+            posYObj.value2,
+            posYObj.value1,
+            targetAngleObj.value2,
+            targetAngleObj.value1,
+        ]);
+    }
+}
+exports.default = Toio_CoreCube;
 
 //# sourceMappingURL=index.js.map
 
@@ -40290,7 +41360,7 @@ class MPU6886 extends MPU6050_1.default {
         MPU6050_1.default.commands.accel_config2 = 0x1d;
         MPU6050_1.default.commands.whoami_result = 0x68;
     }
-    info() {
+    static info() {
         return {
             name: "MPU6886",
         };

@@ -18,9 +18,13 @@ const smp_1 = __importDefault(require("./smp"));
 class AclStream extends eventemitter3_1.default {
     constructor(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
         super();
+        this.debugHandler = () => { };
         this._hci = hci;
         this._handle = handle;
         this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
+        this._smp.debugHandler = (text) => {
+            this.debug(text);
+        };
         this.onSmpFailBinded = this.onSmpFail.bind(this);
         this.onSmpEndBinded = this.onSmpEnd.bind(this);
         this._smp.on("fail", this.onSmpFailBinded);
@@ -29,6 +33,11 @@ class AclStream extends eventemitter3_1.default {
     async encryptWait(options) {
         let encrpytResult = null;
         encrpytResult = await this._smp.pairingWait(options);
+        return encrpytResult;
+    }
+    setEncryptOption(options) {
+        let encrpytResult = null;
+        encrpytResult = this._smp.setPairingOption(options);
         return encrpytResult;
     }
     write(cid, data) {
@@ -56,6 +65,11 @@ class AclStream extends eventemitter3_1.default {
         this.emit("encrypt", result);
         return result;
     }
+    async onSmpLtkWait(ltk, random, diversifier) {
+        const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, ltk);
+        this.emit("encrypt", result);
+        return result;
+    }
     onSmpFail() {
         this.emit("encryptFail");
     }
@@ -64,6 +78,9 @@ class AclStream extends eventemitter3_1.default {
         this._smp.removeListener("end", this.onSmpEndBinded);
     }
     startEncrypt(option) { }
+    debug(text) {
+        this.debugHandler(`AclStream: ${text}`);
+    }
 }
 exports.default = AclStream;
 

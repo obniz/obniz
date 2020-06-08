@@ -108,7 +108,7 @@ export default class ObnizBLEHci {
    * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
    * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
    */
-  public timeoutPromiseWrapper(promise: Promise<any>, option?: any) {
+  public timeoutPromiseWrapper<T>(promise: Promise<T>, option?: any): Promise<T> {
     option = option || {};
     if (option.timeout === null) {
       option.timeout = null;
@@ -155,12 +155,24 @@ export default class ObnizBLEHci {
       };
       this.Obniz.on("close", onObnizClosed);
 
-      const onTimeout = () => {
-        clearListeners();
+      let onTimeout;
+      if (option.onTimeout) {
+        onTimeout = () => {
+          option
+            .onTimeout()
+            .then(() => {})
+            .catch((e: Error) => {
+              reject(e);
+            });
+        };
+      } else {
+        onTimeout = () => {
+          clearListeners();
 
-        const error = new ObnizTimeoutError(option.waitingFor);
-        reject(error);
-      };
+          const error = new ObnizTimeoutError(option.waitingFor);
+          reject(error);
+        };
+      }
       timeoutHandler = setTimeout(onTimeout, option!.timeout);
     });
 

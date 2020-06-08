@@ -292,11 +292,16 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnClose(event) {
-        this.print_debug("closed");
+        this.print_debug(`closed from remote event=${event}`);
         this.close();
-        if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-            this.onclose(this);
-        }
+        setTimeout(() => {
+            if (typeof this.onclose === "function" && this.onConnectCalled === true) {
+                try {
+                    this.onclose(this);
+                }
+                catch (e) { }
+            }
+        }, 0);
         this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();
@@ -318,7 +323,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnError(event) {
-        // console.error(event);
+        this.print_debug(`ws onerror event=${event}`);
     }
     wsOnUnexpectedResponse(req, res) {
         if (res && res.statusCode === 404) {
@@ -491,19 +496,19 @@ class ObnizConnection extends eventemitter3_1.default {
         if (canChangeToConnected) {
             this.connectionState = "connected";
             this._beforeOnConnect();
-            if (typeof this.onconnect === "function") {
-                try {
-                    const promise = this.onconnect(this);
-                    if (promise instanceof Promise) {
-                        promise.catch((err) => {
-                            console.error(err);
-                        });
+            setTimeout(async () => {
+                if (typeof this.onconnect === "function") {
+                    try {
+                        const promise = this.onconnect(this);
+                        if (promise instanceof Promise) {
+                            await promise;
+                        }
+                    }
+                    catch (err) {
+                        console.error(err);
                     }
                 }
-                catch (err) {
-                    console.error(err);
-                }
-            }
+            }, 0);
             this.emit("connect", this);
             this.onConnectCalled = true;
             this._afterOnConnect();

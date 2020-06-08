@@ -94,6 +94,9 @@
       }
     }
   },
+  "network": {
+    "wifi": {}
+  },
   "extraInterface": {
     "m5stickc_hat": {
       "units": {

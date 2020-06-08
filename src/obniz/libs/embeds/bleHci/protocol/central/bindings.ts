@@ -28,6 +28,7 @@ type NobleBindingsEventType =
  */
 class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public _connectable: any;
+
   private _state: any;
   private _addresses: { [uuid: string]: BleDeviceAddress };
   private _addresseTypes: { [uuid: string]: BleDeviceAddressType };
@@ -58,6 +59,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._hci = hciProtocol;
     this._gap = new Gap(this._hci);
   }
+  public debugHandler: any = () => {};
 
   public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
     if (!this._addresses[uuid]) {
@@ -87,7 +89,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         // nothing
       })
       .then(() => {
-        return this._hci.createLeConnWait(address, addressType);
+        return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
       })
       .then((result) => {
         return this.onLeConnComplete(
@@ -223,6 +225,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       addressType,
       address,
     );
+    aclStream.debugHandler = (text: any) => {
+      this.debug(text);
+    };
     const gatt = new Gatt(address, aclStream);
     const signaling: any = new Signaling(handle, aclStream);
 
@@ -397,6 +402,12 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return result;
   }
 
+  public async setPairingOption(peripheralUuid: any, options: any) {
+    options = options || {};
+    const gatt: Gatt = this.getGatt(peripheralUuid);
+    gatt.setEncryptOption(options);
+  }
+
   private getGatt(peripheralUuid: any): Gatt {
     const handle = this._handles[peripheralUuid];
     const gatt: Gatt = this._gatts[handle];
@@ -405,6 +416,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       throw new ObnizBleUnknownPeripheralError(peripheralUuid);
     }
     return gatt;
+  }
+
+  private debug(text: any) {
+    this.debugHandler(`${text}`);
   }
 }
 

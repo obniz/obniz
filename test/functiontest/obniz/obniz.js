@@ -84,11 +84,13 @@ describe('obniz', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('ready', function() {
+  it('ready', async function() {
+    await wait(1);
     this.obniz.onconnect = sinon.stub();
     testUtil.receiveJson(this.obniz, [
       { ws: { ready: true, obniz: { firmware: '1.0.3' } } },
     ]);
+    await wait(1);
 
     expect(this.obniz.onconnect.callCount).to.be.equal(1);
     expect(this.obniz.onconnect.getCall(0).args.length).to.be.equal(1);
@@ -219,4 +221,9 @@ describe('obniz', function() {
     let uart = this.obniz.getFreeUart();
     expect(uart).to.be.equal(this.obniz.uart0);
   });
+
+  function wait(ms){
+    return new Promise(resolve => setTimeout(resolve,ms));
+  }
 });
+

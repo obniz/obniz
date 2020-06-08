@@ -17,6 +17,7 @@ import WSCommandSwitch from "./WSCommandSwitch";
 import WSCommandSystem from "./WSCommandSystem";
 import WSCommandTcp from "./WSCommandTcp";
 import WSCommandUart from "./WSCommandUart";
+import WSCommandWiFi from "./WSCommandWiFi";
 
 /* eslint-disable */
 WSCommand.addCommandClass("WSCommandSystem", WSCommandSystem);
@@ -33,5 +34,6 @@ WSCommand.addCommandClass("WSCommandSwitch", WSCommandSwitch);
 WSCommand.addCommandClass("WSCommandBle", WSCommandBle);
 WSCommand.addCommandClass("WSCommandMeasurement", WSCommandMeasurement);
 WSCommand.addCommandClass("WSCommandTcp", WSCommandTcp);
+WSCommand.addCommandClass("WSCommandWiFi", WSCommandWiFi);
 
 export default WSCommand;

@@ -101,6 +101,7 @@
     "power-assert": "^1.6.1",
     "prettier": "^1.14.3",
     "raw-loader": "^4.0.0",
+    "rimraf": "^3.0.2",
     "sinon": "^7.5.0",
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",

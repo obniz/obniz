@@ -156,6 +156,22 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */
+  public async readTextWait(): Promise<string | null> {
+    const data = await this.readWait();
+    return ObnizUtil.dataArray2string(data);
+  }
+
+  /**
+   * @ignore
+   */
+  public async readNumberWait(): Promise<number | null> {
+    const data = await this.readWait();
+    return data.length > 0 ? data[0] : null;
+  }
+
+  /**
+   * @ignore
+   */
   public abstract writeWait(data: number[], needResponse?: boolean): Promise<boolean>;
 
   /**

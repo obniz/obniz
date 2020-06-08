@@ -169,3 +169,31 @@ obniz.ble.scan.onfind = async (peripheral) => {
 };
 await obniz.ble.scan.startWait();
 ```
+
+
+
+## [await]batteryService.getBatteryLevel()
+
+バッテリー残量を取得します。
+
+- USB電源につながっている場合は254が返ります
+- 電池駆動している場合は、残量に応じて0-100[%]が返ります
+
+
+```javascript
+// Javascript Example
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral)) {
+    console.log("find");
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    
+    const batteryLevel = await device.batteryService.getBatteryLevel();
+    console.log(`batteryLevel ${batteryLevel}% `);
+  }
+};
+await obniz.ble.scan.startWait();
+```

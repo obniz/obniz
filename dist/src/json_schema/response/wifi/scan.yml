@@ -1,0 +1,17 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/wifi/scan"
+desccription: "wifi scan"
+
+type: object
+required: [scan]
+properties:
+  scan:
+    type: object
+    required: [data]
+    properties:
+      data:
+        $ref: "/dataArray"
+        description: "wifi scan data"
+

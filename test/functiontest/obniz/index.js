@@ -236,42 +236,74 @@ describe('obniz.index', function() {
       });
   });
 
-  it('repeat', function() {
+  it('repeat', async () => {
     let called = false;
-    return new Promise(resolve => {
+    await new Promise(resolve => {
       testUtil.setupNotConnectedYetObnizPromise(this, resolve);
-    })
-      .then(() => {
-        expect(this.obniz).to.be.obniz;
-        expect(this.obniz).to.be.finished; // input queue
+    });
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).to.be.finished; // input queue
 
-        this.obniz.repeat(function() {
-          called = true;
-        });
-        testUtil.receiveJson(this.obniz, [
-          {
-            ws: {
-              ready: true,
-              obniz: {
-                firmware: '1.0.3',
-              },
-            },
+    this.obniz.repeat(function() {
+      called = true;
+    });
+    testUtil.receiveJson(this.obniz, [
+      {
+        ws: {
+          ready: true,
+          obniz: {
+            firmware: '1.0.3',
           },
-        ]);
+        },
+      },
+    ]);
 
-        return new Promise(resolve => {
-          setTimeout(resolve, 500);
-        });
-      })
-      .then(() => {
-        return new Promise(resolve => {
-          this.obniz.looper = null;
-          testUtil.releaseObnizePromise(this, resolve);
-        });
-      })
-      .then(() => {
-        expect(called).to.be.true;
-      });
+    expect(this.obniz).send([
+      {
+        ws: {
+          reset_obniz_on_ws_disconnection: true,
+        },
+      },
+    ]);
+
+    expect(this.obniz).to.be.finished;
+
+    await wait(10);
+    let key = [];
+
+    expect(this.obniz).send(val => {
+      if (
+        val[0] &&
+        val[0].system &&
+        val[0].system.ping &&
+        val[0].system.ping.key
+      ) {
+        key = val[0].system.ping.key;
+        return true;
+      }
+      return false;
+    });
+    expect(this.obniz).to.be.finished;
+    testUtil.receiveJson(this.obniz, [
+      {
+        system: {
+          pong: {
+            key: key,
+            obnizTime: 1591354603572,
+            pingServerTime: 1591354601594,
+            pongServerTime: 1591354601771,
+          },
+        },
+      },
+    ]);
+    await wait(10);
+
+    await new Promise(resolve => {
+      this.obniz.looper = null;
+      testUtil.releaseObnizePromise(this, resolve);
+    });
+
+    expect(called).to.be.true;
   });
 
   it('connect_repeat', function() {

@@ -22,6 +22,7 @@ const WSCommandSwitch_1 = __importDefault(require("./WSCommandSwitch"));
 const WSCommandSystem_1 = __importDefault(require("./WSCommandSystem"));
 const WSCommandTcp_1 = __importDefault(require("./WSCommandTcp"));
 const WSCommandUart_1 = __importDefault(require("./WSCommandUart"));
+const WSCommandWiFi_1 = __importDefault(require("./WSCommandWiFi"));
 /* eslint-disable */
 WSCommand_1.default.addCommandClass("WSCommandSystem", WSCommandSystem_1.default);
 WSCommand_1.default.addCommandClass("WSCommandDirective", WSCommandDirective_1.default);
@@ -37,6 +38,7 @@ WSCommand_1.default.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.default
 WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
 WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
+WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
 exports.default = WSCommand_1.default;
 
 //# sourceMappingURL=index.js.map

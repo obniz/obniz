@@ -238,7 +238,12 @@ let testUtil = {
         '[obniz.send]invalid json'
       ).is.json;
       let val = JSON.parse(stub.args[count][0]);
-      new _chai.Assertion(val).to.deep.equal(expected);
+      if (typeof expected === 'function') {
+        let result = expected(val);
+        _chai.assert.isOk(result, 'function is not match value');
+      } else {
+        new _chai.Assertion(val).to.deep.equal(expected);
+      }
 
       if (testUtil.isNode()) {
         let validator = require('./obnizJsonValidator');

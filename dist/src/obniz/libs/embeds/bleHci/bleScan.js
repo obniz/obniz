@@ -66,6 +66,9 @@ class BleScan {
      * await obniz.ble.scan.startWait();
      * ```
      *
+     * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
+     * Before start scannnig. Establishing connection must be completed or canceled.
+     *
      * @param target
      * @param settings
      */
@@ -364,7 +367,7 @@ class BleScan {
             });
         }
         if (scanTarget.binary) {
-            if (Array.isArray(scanTarget.binary[0])) {
+            if (Array.isArray(scanTarget.binary)) {
                 scanTarget.binary.forEach((e) => {
                     adFilters.push({ binary: e });
                 });
