@@ -251,6 +251,28 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
     }
   }
 
+  /**
+   * @ignore
+   * @private
+   */
+  public _runUserCreatedFunction(func?: (...args: any) => any, ...args: any[]) {
+    if (!func) {
+      return;
+    }
+
+    if (typeof func !== "function") {
+      return;
+    }
+
+    try {
+      func(...args);
+    } catch (err) {
+      setTimeout(() => {
+        throw err;
+      });
+    }
+  }
+
   protected setFunctions() {
     let childrenName: any = this.childrenName;
     if (childrenName) {

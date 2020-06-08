@@ -79,7 +79,7 @@ class BleSecurity {
     notifyFromServer(notifyName, params) {
         switch (notifyName) {
             case "onerror": {
-                this.onerror(params);
+                this.Obniz._runUserCreatedFunction(this.onerror, params);
                 break;
             }
         }

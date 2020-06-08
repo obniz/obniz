@@ -54,19 +54,11 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "onwritefromremote": {
-                setTimeout(() => {
-                    if (this.onwritefromremote) {
-                        this.onwritefromremote(params.address, params.data);
-                    }
-                }, 0);
+                this._runUserCreatedFunction(this.onwritefromremote, params.address, params.data);
                 break;
             }
             case "onreadfromremote": {
-                setTimeout(() => {
-                    if (this.onreadfromremote) {
-                        this.onreadfromremote(params.address);
-                    }
-                }, 0);
+                this._runUserCreatedFunction(this.onreadfromremote, params.address);
                 break;
             }
         }
