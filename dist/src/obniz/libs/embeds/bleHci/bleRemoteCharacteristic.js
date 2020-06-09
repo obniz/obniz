@@ -229,9 +229,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async unregisterNotifyWait() {
         this.onnotify = () => { };
         await this.service.peripheral.obnizBle.centralBindings.notifyWait(this.service.peripheral.address, this.service.uuid, this.uuid, false);
-        if (this.onunregisternotify) {
-            this.onunregisternotify();
-        }
+        this._runUserCreatedFunction(this.onunregisternotify);
     }
     /**
      * Use readWait() instead from 3.5.0
@@ -278,11 +276,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
             needResponse = true;
         }
         await this.service.peripheral.obnizBle.centralBindings.writeWait(this.service.peripheral.address, this.service.uuid, this.uuid, Buffer.from(data), !needResponse);
-        setTimeout(() => {
-            if (this.onwrite) {
-                this.onwrite("success"); // if fail, throw error.
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.onwrite, "success");
         return true;
     }
     /**
@@ -312,11 +306,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
     async readWait() {
         const buf = await this.service.peripheral.obnizBle.centralBindings.readWait(this.service.peripheral.address, this.service.uuid, this.uuid);
         const data = Array.from(buf);
-        setTimeout(() => {
-            if (this.onread) {
-                this.onread(data);
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.onread, data);
         return data;
     }
     /**
@@ -412,22 +402,14 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @param descriptor
      */
     ondiscover(descriptor) {
-        setTimeout(() => {
-            if (this.ondiscoverdescriptor) {
-                this.ondiscoverdescriptor(descriptor);
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.ondiscoverdescriptor, descriptor);
     }
     /**
      * @ignore
      * @param descriptors
      */
     ondiscoverfinished(descriptors) {
-        setTimeout(() => {
-            if (this.ondiscoverdescriptorfinished) {
-                this.ondiscoverdescriptorfinished(descriptors);
-            }
-        }, 0);
+        this._runUserCreatedFunction(this.ondiscoverdescriptorfinished, descriptors);
     }
     /**
      * @ignore
@@ -438,11 +420,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         super.notifyFromServer(notifyName, params);
         switch (notifyName) {
             case "onnotify": {
-                setTimeout(() => {
-                    if (this.onnotify) {
-                        this.onnotify(params.data || undefined);
-                    }
-                }, 0);
+                this._runUserCreatedFunction(this.onnotify, params.data || undefined);
                 break;
             }
         }

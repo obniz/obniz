@@ -471,12 +471,8 @@ export default class BleRemotePeripheral {
     }
 
     this.connected = true;
-    setTimeout(() => {
-      if (this.onconnect) {
-        this.onconnect();
-      }
-      this.emitter.emit("connect");
-    }, 0);
+    this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
+    this.emitter.emit("connect");
   }
 
   /**
@@ -644,22 +640,14 @@ export default class BleRemotePeripheral {
       }
       child.discoverdOnRemote = true;
 
-      setTimeout(() => {
-        if (this.ondiscoverservice) {
-          this.ondiscoverservice(child);
-        }
-      }, 0);
+      this.obnizBle.Obniz._runUserCreatedFunction(this.ondiscoverservice, child);
     }
 
     const children: any = this._services.filter((elm: any) => {
       return elm.discoverdOnRemote;
     });
 
-    setTimeout(() => {
-      if (this.ondiscoverservicefinished) {
-        this.ondiscoverservicefinished(children);
-      }
-    }, 1);
+    this.obnizBle.Obniz._runUserCreatedFunction(this.ondiscoverservicefinished, children);
     return children;
   }
 
@@ -702,12 +690,8 @@ export default class BleRemotePeripheral {
           const pre = this.connected;
           this.connected = false;
           if (pre) {
-            setTimeout(() => {
-              if (this.ondisconnect) {
-                this.ondisconnect(params.reason);
-              }
-              this.emitter.emit("disconnect", params.reason);
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
+            this.emitter.emit("disconnect", params.reason);
           }
         }
         break;

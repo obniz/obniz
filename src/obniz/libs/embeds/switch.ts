@@ -43,9 +43,7 @@ export default class ObnizSwitch extends ComponentAbstract {
     super(obniz);
     this.on("/response/switch/change", (obj) => {
       this.state = obj.state;
-      if (this.onchange) {
-        this.onchange(this.state);
-      }
+      this.Obniz._runUserCreatedFunction(this.onchange, this.state);
     });
 
     this._reset();

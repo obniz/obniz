@@ -20,17 +20,13 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         this.id = id;
         this.on("/response/tcp/connection", (obj) => {
             /* Connectino state update. response of connect(), close from destination, response from */
-            if (this.onconnection) {
-                this.onconnection(obj.connection.connected);
-            }
+            this.Obniz._runUserCreatedFunction(this.onconnection, obj.connection.connected);
             if (!obj.connection.connected) {
                 this._reset();
             }
         });
         this.on("/response/tcp/read", (obj) => {
-            if (this.onreceive) {
-                this.onreceive(obj.read.data);
-            }
+            this.Obniz._runUserCreatedFunction(this.onreceive, obj.read.data);
             const callback = this.readObservers.shift();
             if (callback) {
                 callback(obj.read.data);
@@ -40,9 +36,7 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
             /* response of connect() */
             /* `this.connection` will called before this function */
             if (obj.connect.code !== 0) {
-                if (this.onerror) {
-                    this.onerror(obj.connect);
-                }
+                this.Obniz._runUserCreatedFunction(this.onerror, obj.connect);
             }
             const callback = this.connectObservers.shift();
             if (callback) {

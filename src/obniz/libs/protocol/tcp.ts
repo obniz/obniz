@@ -89,17 +89,13 @@ export default class Tcp extends ComponentAbstract {
 
     this.on("/response/tcp/connection", (obj) => {
       /* Connectino state update. response of connect(), close from destination, response from */
-      if (this.onconnection) {
-        this.onconnection(obj.connection.connected);
-      }
+      this.Obniz._runUserCreatedFunction(this.onconnection, obj.connection.connected);
       if (!obj.connection.connected) {
         this._reset();
       }
     });
     this.on("/response/tcp/read", (obj) => {
-      if (this.onreceive) {
-        this.onreceive(obj.read.data);
-      }
+      this.Obniz._runUserCreatedFunction(this.onreceive, obj.read.data);
       const callback: any = this.readObservers.shift();
       if (callback) {
         callback(obj.read.data);
@@ -109,9 +105,7 @@ export default class Tcp extends ComponentAbstract {
       /* response of connect() */
       /* `this.connection` will called before this function */
       if (obj.connect.code !== 0) {
-        if (this.onerror) {
-          this.onerror(obj.connect);
-        }
+        this.Obniz._runUserCreatedFunction(this.onerror, obj.connect);
       }
       const callback: any = this.connectObservers.shift();
       if (callback) {

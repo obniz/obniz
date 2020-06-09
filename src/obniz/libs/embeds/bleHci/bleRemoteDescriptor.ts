@@ -56,12 +56,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
       this.uuid,
     );
     const data = Array.from(buf);
-
-    setTimeout(() => {
-      if (this.onread) {
-        this.onread(data);
-      }
-    }, 0);
+    this._runUserCreatedFunction(this.onread, data);
     return data;
   }
 
@@ -98,12 +93,7 @@ export default class BleRemoteDescriptor extends BleRemoteValueAttributeAbstract
       this.uuid,
       Buffer.from(data),
     );
-
-    setTimeout(() => {
-      if (this.onwrite) {
-        this.onwrite("success"); // if fail, throw error.
-      }
-    }, 0);
+    this._runUserCreatedFunction(this.onwrite, "success");
     return true;
   }
 

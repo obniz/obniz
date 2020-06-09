@@ -263,6 +263,26 @@ class ObnizConnection extends eventemitter3_1.default {
     log(...args) {
         console.log(`[obniz ${this.id}]`, ...args);
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _runUserCreatedFunction(func, ...args) {
+        if (!func) {
+            return;
+        }
+        if (typeof func !== "function") {
+            return;
+        }
+        try {
+            func(...args);
+        }
+        catch (err) {
+            setTimeout(() => {
+                throw err;
+            });
+        }
+    }
     wsOnOpen() {
         this.print_debug("ws connected");
         this._connectionRetryCount = 0;
@@ -294,14 +314,9 @@ class ObnizConnection extends eventemitter3_1.default {
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
         this.close();
-        setTimeout(() => {
-            if (typeof this.onclose === "function" && this.onConnectCalled === true) {
-                try {
-                    this.onclose(this);
-                }
-                catch (e) { }
-            }
-        }, 0);
+        if (this.onConnectCalled === true) {
+            this._runUserCreatedFunction(this.onclose, this);
+        }
         this.emit("close", this);
         this.onConnectCalled = false;
         this._reconnect();
@@ -496,19 +511,23 @@ class ObnizConnection extends eventemitter3_1.default {
         if (canChangeToConnected) {
             this.connectionState = "connected";
             this._beforeOnConnect();
-            setTimeout(async () => {
-                if (typeof this.onconnect === "function") {
-                    try {
-                        const promise = this.onconnect(this);
-                        if (promise instanceof Promise) {
-                            await promise;
-                        }
-                    }
-                    catch (err) {
-                        console.error(err);
+            if (typeof this.onconnect === "function") {
+                try {
+                    const promise = this.onconnect(this);
+                    if (promise instanceof Promise) {
+                        promise.catch((err) => {
+                            setTimeout(() => {
+                                throw err;
+                            });
+                        });
                     }
                 }
-            }, 0);
+                catch (err) {
+                    setTimeout(() => {
+                        throw err;
+                    });
+                }
+            }
             this.emit("connect", this);
             this.onConnectCalled = true;
             this._afterOnConnect();

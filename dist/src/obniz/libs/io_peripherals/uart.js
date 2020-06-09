@@ -20,7 +20,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         this.on("/response/uart/receive", (obj) => {
             if (this.onreceive) {
                 const string = this.tryConvertString(obj.data);
-                this.onreceive(obj.data, string);
+                this.Obniz._runUserCreatedFunction(this.onreceive, obj.data, string);
             }
             else {
                 if (!this.received) {

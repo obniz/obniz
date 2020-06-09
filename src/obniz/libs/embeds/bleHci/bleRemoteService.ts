@@ -175,9 +175,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @param characteristic
    */
   public ondiscover(characteristic: any) {
-    setTimeout(() => {
-      this.ondiscovercharacteristic(characteristic);
-    }, 0);
+    this._runUserCreatedFunction(this.ondiscovercharacteristic, characteristic);
   }
 
   /**
@@ -185,9 +183,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @param characteristics
    */
   public ondiscoverfinished(characteristics: any) {
-    setTimeout(() => {
-      this.ondiscovercharacteristicfinished(characteristics);
-    }, 0);
+    this._runUserCreatedFunction(this.ondiscovercharacteristicfinished, characteristics);
   }
 
   /**

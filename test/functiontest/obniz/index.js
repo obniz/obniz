@@ -201,6 +201,7 @@ describe('obniz.index', function() {
 
   it('onconnect', function() {
     let called = false;
+    let called2 = false;
     return new Promise(resolve => {
       testUtil.setupNotConnectedYetObnizPromise(this, resolve);
     })
@@ -211,6 +212,9 @@ describe('obniz.index', function() {
         this.obniz.onconnect = function() {
           called = true;
         };
+        this.obniz.on('connect', function() {
+          called2 = true;
+        });
         testUtil.receiveJson(this.obniz, [
           {
             ws: {
@@ -233,7 +237,49 @@ describe('obniz.index', function() {
       })
       .then(() => {
         expect(called).to.be.true;
+        expect(called2).to.be.true;
       });
+  });
+
+  it('onclose', async () => {
+    let called = false;
+    let called2 = false;
+    await new Promise(resolve => {
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
+    });
+
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).to.be.finished; // input queue
+
+    this.obniz.onclose = function() {
+      called = true;
+    };
+    this.obniz.on('close', function() {
+      called2 = true;
+    });
+    testUtil.receiveJson(this.obniz, [
+      {
+        ws: {
+          ready: true,
+          obniz: {
+            firmware: '1.0.3',
+          },
+        },
+      },
+    ]);
+    //connected
+    await wait(10);
+    expect(called).to.be.false;
+
+    // wsOnClose wrapped by stub
+    this.obniz.wsOnClose.wrappedMethod.bind(this.obniz)();
+
+    expect(called).to.be.true;
+    expect(called2).to.be.true;
+
+    await new Promise(resolve => {
+      testUtil.releaseObnizePromise(this, resolve);
+    });
   });
 
   it('repeat', async () => {

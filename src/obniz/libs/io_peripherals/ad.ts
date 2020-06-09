@@ -41,9 +41,7 @@ export default class PeripheralAD extends ComponentAbstract {
 
     this.on("/response/ad/get", (obj) => {
       this.value = obj;
-      if (this.onchange) {
-        this.onchange(obj);
-      }
+      this.Obniz._runUserCreatedFunction(this.onchange, obj);
     });
 
     this._reset();
