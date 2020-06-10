@@ -166,6 +166,7 @@ import Grove_LightSensor, { Grove_LightSensorOptions } from "../parts/Grove/Grov
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
 import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
 import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
+import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
 
 import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
 // Keyestudio
@@ -313,6 +314,7 @@ export interface WiredNameMap {
   "Grove_JoyStick": Grove_JoyStick;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  "Grove_Speaker": Grove_Speaker;
   "Grove_SoilMoistureSensor": Grove_SoilMoistureSensor;
   "Grove_DistanceSensor": Grove_DistanceSensor;
   "Grove_LightSensor": Grove_LightSensor;
@@ -497,6 +499,7 @@ export interface WiredNameOptionsMap {
   "Grove_EARTH": Grove_EARTHOptions;
   "Grove_JoyStick": Grove_JoyStickOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  "Grove_Speaker": Grove_SpeakerOptions;
   "Grove_RotaryAnglesensor": Grove_RotaryAngleSensorOptions;
 
   "Grove_DistanceSensor": Grove_DistanceSensorOptions;

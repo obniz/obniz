@@ -714,6 +714,12 @@
           "store": {
             "seedstudio": "https://www.seeedstudio.com/Grove-Capacitive-Moisture-Sensor-Corrosion-Resistant-p-2850.html"
           }
+        },
+        {
+          "name": "Grove_Speaker",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Speaker-p-1445.html"
+          }
         }
       ]
     },

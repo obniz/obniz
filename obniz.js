@@ -13902,6 +13902,14 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         });
         return this._current.uart;
     }
+    getPwm(drive = "5v") {
+        this.useWithType("pwm", drive);
+        this._current.pwm = this.Obniz.getFreePwm();
+        this._current.pwm.start({
+            io: this._params.pin1,
+        });
+        return this._current.pwm;
+    }
     /**
      * @ignore
      */
@@ -21482,6 +21490,7 @@ var map = {
 	"./Grove/Grove_PressureSensor/index.js": "./dist/src/parts/Grove/Grove_PressureSensor/index.js",
 	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
 	"./Grove/Grove_SoilMoistureSensor/index.js": "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js",
+	"./Grove/Grove_Speaker/index.js": "./dist/src/parts/Grove/Grove_Speaker/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
@@ -37719,6 +37728,62 @@ class Grove_SoilMoistureSensor {
     }
 }
 exports.default = Grove_SoilMoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_Speaker/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Speaker
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_Speaker {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_Speaker",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            this.pwm = this.params.grove.getPwm();
+        }
+        else {
+            this.obniz = obniz;
+            this.obniz.setVccGnd(null, this.params.gnd, "5v");
+            this.pwm = obniz.getFreePwm();
+            this.pwm.start({ io: this.params.signal });
+        }
+    }
+    play(frequency) {
+        if (typeof frequency !== "number") {
+            throw new Error("freq must be a number");
+        }
+        frequency = Math.floor(frequency); // temporary
+        if (frequency > 0) {
+            this.pwm.freq(frequency);
+            this.pwm.pulse((1 / frequency / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Grove_Speaker;
 
 //# sourceMappingURL=index.js.map
 
