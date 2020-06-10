@@ -21477,6 +21477,7 @@ var map = {
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
+	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
@@ -37479,6 +37480,53 @@ class Grove_MP3 {
     }
 }
 exports.default = Grove_MP3;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_RotaryAngleSensorOptionsA
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_RotaryAngleSensor {
+    constructor() {
+        // public vcc_voltage = 5.0;
+        this.position = 0;
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Grove_RotaryAngleSensor",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+}
+exports.default = Grove_RotaryAngleSensor;
 
 //# sourceMappingURL=index.js.map
 
