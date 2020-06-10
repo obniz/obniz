@@ -29,7 +29,7 @@ import HW from "./libs/hw";
 import PeripheralGrove from "./libs/io_peripherals/grove";
 import { ObnizOptions } from "./ObnizOptions";
 
-export default class ObnizComponents extends ObnizParts {
+export default abstract class ObnizComponents extends ObnizParts {
   /* board peripherals */
 
   /**
