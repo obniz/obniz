@@ -2692,7 +2692,7 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             this.emit("connect", this);
             this.onConnectCalled = true;
-            this.startLoopInBackground();
+            this._startLoopInBackground();
             this._afterOnConnect();
         }
     }
@@ -2825,7 +2825,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    async startLoopInBackground() {
+    async _startLoopInBackground() {
         this._nextLoopTimeout = setTimeout(async () => {
             this._nextLoopTimeout = undefined;
             if (typeof this._looper === "function" && this.connectionState === "connected") {
@@ -2838,7 +2838,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
                 finally {
                     if (this.connectionState === "connected") {
-                        this._nextLoopTimeout = setTimeout(this.startLoopInBackground.bind(this), this._repeatInterval || 100);
+                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
                     }
                 }
             }

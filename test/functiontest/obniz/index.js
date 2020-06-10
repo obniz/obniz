@@ -465,7 +465,7 @@ describe('obniz.index', function() {
     });
 
     expect(count).to.be.equal(5);
-  })
+  });
 
   it('connect_repeat', function() {
     let results = true;

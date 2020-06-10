@@ -731,7 +731,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       }
       this.emit("connect", this);
       this.onConnectCalled = true;
-      this.startLoopInBackground();
+      this._startLoopInBackground();
       this._afterOnConnect();
     }
   }
@@ -877,7 +877,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     return json;
   }
 
-  protected async startLoopInBackground() {
+  private async _startLoopInBackground() {
     this._nextLoopTimeout = setTimeout(async () => {
       this._nextLoopTimeout = undefined;
       if (typeof this._looper === "function" && this.connectionState === "connected") {
@@ -889,7 +889,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
           }
         } finally {
           if (this.connectionState === "connected") {
-            this._nextLoopTimeout = setTimeout(this.startLoopInBackground.bind(this), this._repeatInterval || 100);
+            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
           }
         }
       }
