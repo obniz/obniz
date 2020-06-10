@@ -157,6 +157,7 @@ import UT201BLE, { UT201BLEOptions } from "../parts/Ble/UT201BLE";
 import Grove_3AxisAccelerometer, { Grove_3AxisAccelerometerOptions } from "../parts/Grove/Grove_3AxisAccelerometer";
 import Grove_Button, { Grove_ButtonOptions } from "../parts/Grove/Grove_Button";
 import Grove_Buzzer, { Grove_BuzzerOptions } from "../parts/Grove/Grove_Buzzer";
+import Grove_DistanceSensor, { Grove_DistanceSensorOptions } from "../parts/Grove/Grove_DistanceSensor";
 import Grove_EarHeartRate, { Grove_EarHeartRateOptions } from "../parts/Grove/Grove_EarHeartRate";
 import Grove_EARTH, { Grove_EARTHOptions } from "../parts/Grove/Grove_EARTH";
 import Grove_GPS, { Grove_GPSOptions } from "../parts/Grove/Grove_GPS";
@@ -308,8 +309,7 @@ export interface WiredNameMap {
   "Grove_JoyStick": Grove_JoyStick;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
-  // "Grove_RotaryAngleSensor": Grove_RotaryAngleSensor;
-
+  "Grove_DistanceSensor": Grove_DistanceSensor;
   // StickCHat
   "M5StickC_JoyStick": M5StickC_JoyStick;
   "M5StickC_ADC": M5StickC_ADC;
@@ -492,6 +492,7 @@ export interface WiredNameOptionsMap {
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
   "Grove_RotaryAnglesensor": Grove_RotaryAngleSensorOptions;
 
+  "Grove_DistanceSensor": Grove_DistanceSensorOptions;
   // StickCHat
   "M5StickC_JoyStick": M5StickC_JoyStickOptions;
   "M5StickC_ADC": M5StickC_ADCOptions;

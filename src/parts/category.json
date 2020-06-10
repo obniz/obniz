@@ -690,6 +690,12 @@
           "store": {
             "seedstudio": "https://www.seeedstudio.com/Grove-Rotary-Angle-Sensor-p-770.html"
           }
+        },
+        {
+          "name": "Grove_DistanceSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-80cm-Infrared-Proximity-Sensor.html"
+          }
         }
       ]
     },

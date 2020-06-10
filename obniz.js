@@ -21472,6 +21472,7 @@ var map = {
 	"./Grove/Grove_3AxisAccelerometer/index.js": "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js",
 	"./Grove/Grove_Button/index.js": "./dist/src/parts/Grove/Grove_Button/index.js",
 	"./Grove/Grove_Buzzer/index.js": "./dist/src/parts/Grove/Grove_Buzzer/index.js",
+	"./Grove/Grove_DistanceSensor/index.js": "./dist/src/parts/Grove/Grove_DistanceSensor/index.js",
 	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
@@ -36858,6 +36859,50 @@ class Grove_Buzzer {
     }
 }
 exports.default = Grove_Buzzer;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_DistanceSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts..Grove_DistanceSensor
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const GP2Y0A21YK0F_1 = __importDefault(__webpack_require__("./dist/src/parts/DistanceSensor/GP2Y0A21YK0F/index.js"));
+class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
+    static info() {
+        return {
+            name: "Grove_DistanceSensor",
+        };
+    }
+    constructor() {
+        super();
+        this.keys = ["gnd", "vcc", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad_signal = groveAd.secondary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad_signal = obniz.getAD(this.params.signal);
+        }
+    }
+}
+exports.default = Grove_DistanceSensor;
 
 //# sourceMappingURL=index.js.map
 
