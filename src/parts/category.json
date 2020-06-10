@@ -696,6 +696,12 @@
           "store": {
             "seedstudio": "https://www.seeedstudio.com/Grove-80cm-Infrared-Proximity-Sensor.html"
           }
+        },
+        {
+          "name": "Grove_LightSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Light-Sensor-v1.2-p-2727.html"
+          }
         }
       ]
     },

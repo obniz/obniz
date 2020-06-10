@@ -21477,6 +21477,7 @@ var map = {
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
+	"./Grove/Grove_LightSensor/index.js": "./dist/src/parts/Grove/Grove_LightSensor/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
 	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
@@ -37419,6 +37420,53 @@ class Grove_JoyStick {
     }
 }
 exports.default = Grove_JoyStick;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_LightSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_LightSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_LightSensor {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_LightSensor",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    async getWait() {
+        return await this.ad.getWait();
+    }
+}
+exports.default = Grove_LightSensor;
 
 //# sourceMappingURL=index.js.map
 
