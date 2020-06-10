@@ -4,7 +4,7 @@ Grove connectable Button.
 
 ![](image.jpg)
 
-## wired(obniz,  { signal [, vcc, gnd]});
+## wired(obniz,  { signal [, vcc, gnd, grove]});
 
 
 name | type | required | default | description
@@ -12,7 +12,7 @@ name | type | required | default | description
 signal | `number(obniz Board io)` | yes |  &nbsp; | Signal pin of state output(4 pin of Grove)
 vcc | `number(obniz Board io)` | no |  &nbsp; | VCC for button(2 pin of Grove)
 gnd | `number(obniz Board io)` | no |  &nbsp; | GND for button(0 pin of Grove)
-
+grove | `object` | no | &nbsp;  | grove interface object if a device has
 
 ```Javascript
 // Javascript Example
@@ -21,6 +21,14 @@ button.onchange = function(voltage) {
   console.log(voltage);
 }
 ```
+
+```Javascript
+// Javascript Example
+var button = obniz.wired("Grove_Button", {grove: obniz.grove0});
+button.onchange = function(voltage) {
+  console.log(voltage);
+}
+``` 
 
 ## onchange = function(pressed){}
 called when button pressed/released.
