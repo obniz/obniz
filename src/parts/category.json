@@ -708,6 +708,12 @@
           "store": {
             "seedstudio": "https://www.seeedstudio.com/Grove-Round-Force-Sensor-FSR402.html"
           }
+        },
+        {
+          "name": "Grove_SoilMoistureSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Capacitive-Moisture-Sensor-Corrosion-Resistant-p-2850.html"
+          }
         }
       ]
     },
