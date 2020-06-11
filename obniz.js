@@ -2152,7 +2152,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this.debugprint = false;
         this.debugprintBinary = false;
         this.debugs = [];
-        this.onConnectCalled = false;
+        this._onConnectCalled = false;
         this.hw = undefined;
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
@@ -2250,7 +2250,7 @@ class ObnizConnection extends eventemitter3_1.default {
         option = option || {};
         const timeout = option.timeout || null;
         return new Promise((resolve, reject) => {
-            if (this.onConnectCalled) {
+            if (this._onConnectCalled) {
                 resolve(true);
                 return;
             }
@@ -2300,7 +2300,12 @@ class ObnizConnection extends eventemitter3_1.default {
             this.clearSocket(this.socket);
             delete this.socket;
         }
+        if (this._nextLoopTimeout) {
+            clearTimeout(this._nextLoopTimeout);
+            this._nextLoopTimeout = undefined;
+        }
         this.connectionState = "closed";
+        this._onConnectCalled = false;
     }
     /**
      * Send json/binary data to obniz Cloud or device.
@@ -2412,6 +2417,34 @@ class ObnizConnection extends eventemitter3_1.default {
             });
         }
     }
+    /**
+     * Repeat will call the callback function periodically while it is connected to obniz Board.
+     * It will stop calling once it is disconnected from obniz Board.
+     *
+     * ```javascript
+     * // Javascript Example
+     *  obniz.ad0.start();
+     *  obniz.repeat(function(){
+     *    if (obniz.ad0.value > 2.5) {
+     *      obniz.io0.output(true);
+     *    } else {
+     *      obniz.io0.output(false);
+     *    }
+     *  }, 100)
+     * ```
+     *
+     * @param callback
+     * @param interval  default 100. It mean 100ms interval loop.
+     */
+    repeat(callback, interval) {
+        if (this._looper) {
+            this._looper = callback;
+            this._repeatInterval = interval || this._repeatInterval || 100;
+            return;
+        }
+        this._looper = callback;
+        this._repeatInterval = interval || 100;
+    }
     wsOnOpen() {
         this.print_debug("ws connected");
         this._connectionRetryCount = 0;
@@ -2442,12 +2475,12 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
+        const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
-        if (this.onConnectCalled === true) {
+        if (beforeOnConnectCalled === true) {
             this._runUserCreatedFunction(this.onclose, this);
         }
         this.emit("close", this);
-        this.onConnectCalled = false;
         this._reconnect();
     }
     _reconnect() {
@@ -2658,7 +2691,8 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
             this.emit("connect", this);
-            this.onConnectCalled = true;
+            this._onConnectCalled = true;
+            this._startLoopInBackground();
             this._afterOnConnect();
         }
     }
@@ -2791,6 +2825,25 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
+    async _startLoopInBackground() {
+        this._nextLoopTimeout = setTimeout(async () => {
+            this._nextLoopTimeout = undefined;
+            if (typeof this._looper === "function" && this.connectionState === "connected") {
+                try {
+                    await this.pingWait();
+                    const prom = this._looper();
+                    if (prom instanceof Promise) {
+                        await prom;
+                    }
+                }
+                finally {
+                    if (this.connectionState === "connected") {
+                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+                    }
+                }
+            }
+        }, 0);
+    }
 }
 exports.default = ObnizConnection;
 
@@ -2859,37 +2912,6 @@ class ObnizDevice extends ObnizUIs_1.default {
     constructor(id, options) {
         super(id, options);
         this.util = new util_1.default(this);
-    }
-    /**
-     * Repeat will call the callback function periodically while it is connected to obniz Board.
-     * It will stop calling once it is disconnected from obniz Board.
-     *
-     * ```javascript
-     * // Javascript Example
-     *  obniz.ad0.start();
-     *  obniz.repeat(function(){
-     *    if (obniz.ad0.value > 2.5) {
-     *      obniz.io0.output(true);
-     *    } else {
-     *      obniz.io0.output(false);
-     *    }
-     *  }, 100)
-     * ```
-     *
-     * @param callback
-     * @param interval  default 100. It mean 100ms interval loop.
-     */
-    repeat(callback, interval) {
-        if (this.looper) {
-            this.looper = callback;
-            this.repeatInterval = interval || this.repeatInterval || 100;
-            return;
-        }
-        this.looper = callback;
-        this.repeatInterval = interval || 100;
-        if (this.onConnectCalled) {
-            this.loop();
-        }
     }
     /**
      * @ignore
@@ -2971,25 +2993,8 @@ class ObnizDevice extends ObnizUIs_1.default {
             },
         });
     }
-    async loop() {
-        setTimeout(async () => {
-            if (typeof this.looper === "function" && this.onConnectCalled) {
-                try {
-                    await this.pingWait();
-                    const prom = this.looper();
-                    if (prom instanceof Promise) {
-                        await prom;
-                    }
-                }
-                finally {
-                    setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-                }
-            }
-        }, 0);
-    }
     _callOnConnect() {
         super._callOnConnect();
-        this.loop();
     }
     notifyToModule(obj) {
         super.notifyToModule(obj);
@@ -13897,6 +13902,14 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         });
         return this._current.uart;
     }
+    getPwm(drive = "5v") {
+        this.useWithType("pwm", drive);
+        this._current.pwm = this.Obniz.getFreePwm();
+        this._current.pwm.start({
+            io: this._params.pin1,
+        });
+        return this._current.pwm;
+    }
     /**
      * @ignore
      */
@@ -21467,11 +21480,17 @@ var map = {
 	"./Grove/Grove_3AxisAccelerometer/index.js": "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js",
 	"./Grove/Grove_Button/index.js": "./dist/src/parts/Grove/Grove_Button/index.js",
 	"./Grove/Grove_Buzzer/index.js": "./dist/src/parts/Grove/Grove_Buzzer/index.js",
+	"./Grove/Grove_DistanceSensor/index.js": "./dist/src/parts/Grove/Grove_DistanceSensor/index.js",
 	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
+	"./Grove/Grove_LightSensor/index.js": "./dist/src/parts/Grove/Grove_LightSensor/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
+	"./Grove/Grove_PressureSensor/index.js": "./dist/src/parts/Grove/Grove_PressureSensor/index.js",
+	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
+	"./Grove/Grove_SoilMoistureSensor/index.js": "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js",
+	"./Grove/Grove_Speaker/index.js": "./dist/src/parts/Grove/Grove_Speaker/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
@@ -36858,6 +36877,50 @@ exports.default = Grove_Buzzer;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_DistanceSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts..Grove_DistanceSensor
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const GP2Y0A21YK0F_1 = __importDefault(__webpack_require__("./dist/src/parts/DistanceSensor/GP2Y0A21YK0F/index.js"));
+class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
+    static info() {
+        return {
+            name: "Grove_DistanceSensor",
+        };
+    }
+    constructor() {
+        super();
+        this.keys = ["gnd", "vcc", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad_signal = groveAd.secondary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad_signal = obniz.getAD(this.params.signal);
+        }
+    }
+}
+exports.default = Grove_DistanceSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_EARTH/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -37374,6 +37437,53 @@ exports.default = Grove_JoyStick;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_LightSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_LightSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_LightSensor {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_LightSensor",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    async getWait() {
+        return await this.ad.getWait();
+    }
+}
+exports.default = Grove_LightSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_MP3/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -37474,6 +37584,206 @@ class Grove_MP3 {
     }
 }
 exports.default = Grove_MP3;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_PressureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_PressureSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_PressureSensor {
+    constructor() {
+        this.keys = ["vcc", "gnd", "output", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_PressureSensor",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.output);
+        }
+        this.ad.start((value) => {
+            this.value = value * 100;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    async getWait() {
+        const value = await this.ad.getWait();
+        this.value = value * 100;
+        return this.value;
+    }
+}
+exports.default = Grove_PressureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_RotaryAngleSensorOptionsA
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_RotaryAngleSensor {
+    constructor() {
+        // public vcc_voltage = 5.0;
+        this.position = 0;
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Grove_RotaryAngleSensor",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+}
+exports.default = Grove_RotaryAngleSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_SoilMoistureSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_SoilMoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_SoilMoistureSensor",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    async getWait() {
+        return await this.ad.getWait();
+    }
+}
+exports.default = Grove_SoilMoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_Speaker/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Speaker
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_Speaker {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_Speaker",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            this.pwm = this.params.grove.getPwm();
+        }
+        else {
+            this.obniz = obniz;
+            this.obniz.setVccGnd(null, this.params.gnd, "5v");
+            this.pwm = obniz.getFreePwm();
+            this.pwm.start({ io: this.params.signal });
+        }
+    }
+    play(frequency) {
+        if (typeof frequency !== "number") {
+            throw new Error("freq must be a number");
+        }
+        frequency = Math.floor(frequency); // temporary
+        if (frequency > 0) {
+            this.pwm.freq(frequency);
+            this.pwm.pulse((1 / frequency / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Grove_Speaker;
 
 //# sourceMappingURL=index.js.map
 

@@ -23,7 +23,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this.debugprint = false;
         this.debugprintBinary = false;
         this.debugs = [];
-        this.onConnectCalled = false;
+        this._onConnectCalled = false;
         this.hw = undefined;
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
@@ -121,7 +121,7 @@ class ObnizConnection extends eventemitter3_1.default {
         option = option || {};
         const timeout = option.timeout || null;
         return new Promise((resolve, reject) => {
-            if (this.onConnectCalled) {
+            if (this._onConnectCalled) {
                 resolve(true);
                 return;
             }
@@ -171,7 +171,12 @@ class ObnizConnection extends eventemitter3_1.default {
             this.clearSocket(this.socket);
             delete this.socket;
         }
+        if (this._nextLoopTimeout) {
+            clearTimeout(this._nextLoopTimeout);
+            this._nextLoopTimeout = undefined;
+        }
         this.connectionState = "closed";
+        this._onConnectCalled = false;
     }
     /**
      * Send json/binary data to obniz Cloud or device.
@@ -283,6 +288,34 @@ class ObnizConnection extends eventemitter3_1.default {
             });
         }
     }
+    /**
+     * Repeat will call the callback function periodically while it is connected to obniz Board.
+     * It will stop calling once it is disconnected from obniz Board.
+     *
+     * ```javascript
+     * // Javascript Example
+     *  obniz.ad0.start();
+     *  obniz.repeat(function(){
+     *    if (obniz.ad0.value > 2.5) {
+     *      obniz.io0.output(true);
+     *    } else {
+     *      obniz.io0.output(false);
+     *    }
+     *  }, 100)
+     * ```
+     *
+     * @param callback
+     * @param interval  default 100. It mean 100ms interval loop.
+     */
+    repeat(callback, interval) {
+        if (this._looper) {
+            this._looper = callback;
+            this._repeatInterval = interval || this._repeatInterval || 100;
+            return;
+        }
+        this._looper = callback;
+        this._repeatInterval = interval || 100;
+    }
     wsOnOpen() {
         this.print_debug("ws connected");
         this._connectionRetryCount = 0;
@@ -313,12 +346,12 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
+        const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
-        if (this.onConnectCalled === true) {
+        if (beforeOnConnectCalled === true) {
             this._runUserCreatedFunction(this.onclose, this);
         }
         this.emit("close", this);
-        this.onConnectCalled = false;
         this._reconnect();
     }
     _reconnect() {
@@ -529,7 +562,8 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
             this.emit("connect", this);
-            this.onConnectCalled = true;
+            this._onConnectCalled = true;
+            this._startLoopInBackground();
             this._afterOnConnect();
         }
     }
@@ -661,6 +695,25 @@ class ObnizConnection extends eventemitter3_1.default {
             data = frame.next;
         }
         return json;
+    }
+    async _startLoopInBackground() {
+        this._nextLoopTimeout = setTimeout(async () => {
+            this._nextLoopTimeout = undefined;
+            if (typeof this._looper === "function" && this.connectionState === "connected") {
+                try {
+                    await this.pingWait();
+                    const prom = this._looper();
+                    if (prom instanceof Promise) {
+                        await prom;
+                    }
+                }
+                finally {
+                    if (this.connectionState === "connected") {
+                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+                    }
+                }
+            }
+        }, 0);
     }
 }
 exports.default = ObnizConnection;

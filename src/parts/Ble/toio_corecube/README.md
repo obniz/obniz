@@ -285,5 +285,4 @@ await obniz.ble.scan.startWait();
 
 ```
 
-"toio?"は、株式会社ソニー・インタラクティブエンタテインメントの登録商標または商標です。
-"toio?" is a registered trademark or trademark of Sony Interactive Entertainment Inc.
+"toio" is a registered trademark or trademark of Sony Interactive Entertainment Inc.
