@@ -464,7 +464,7 @@ describe('obniz.index', function() {
       testUtil.releaseObnizePromise(this, resolve);
     });
 
-    expect(count).to.be.equal(5);
+    expect(4 <= count && count <= 6).to.be.true;
   });
 
   it('connect_repeat', function() {
