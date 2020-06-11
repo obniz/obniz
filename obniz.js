@@ -2152,7 +2152,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this.debugprint = false;
         this.debugprintBinary = false;
         this.debugs = [];
-        this.onConnectCalled = false;
+        this._onConnectCalled = false;
         this.hw = undefined;
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
@@ -2250,7 +2250,7 @@ class ObnizConnection extends eventemitter3_1.default {
         option = option || {};
         const timeout = option.timeout || null;
         return new Promise((resolve, reject) => {
-            if (this.onConnectCalled) {
+            if (this._onConnectCalled) {
                 resolve(true);
                 return;
             }
@@ -2305,7 +2305,7 @@ class ObnizConnection extends eventemitter3_1.default {
             this._nextLoopTimeout = undefined;
         }
         this.connectionState = "closed";
-        this.onConnectCalled = false;
+        this._onConnectCalled = false;
     }
     /**
      * Send json/binary data to obniz Cloud or device.
@@ -2475,7 +2475,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
-        const beforeOnConnectCalled = this.onConnectCalled;
+        const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
         if (beforeOnConnectCalled === true) {
             this._runUserCreatedFunction(this.onclose, this);
@@ -2691,7 +2691,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
             this.emit("connect", this);
-            this.onConnectCalled = true;
+            this._onConnectCalled = true;
             this._startLoopInBackground();
             this._afterOnConnect();
         }

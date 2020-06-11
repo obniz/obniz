@@ -150,7 +150,6 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   protected socket: any;
   protected socket_local: any;
   protected debugs: any;
-  protected onConnectCalled: boolean;
   protected bufferdAmoundWarnBytes: number;
   protected options: any;
   protected wscommand: any;
@@ -160,6 +159,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   protected _waitForLocalConnectReadyTimer: any;
   protected _connectionRetryCount: number;
   protected sendPool: any;
+  private _onConnectCalled: boolean;
   private _looper: any;
   private _repeatInterval: any;
   private _nextLoopTimeout?: Timeout;
@@ -173,7 +173,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     this.debugprint = false;
     this.debugprintBinary = false;
     this.debugs = [];
-    this.onConnectCalled = false;
+    this._onConnectCalled = false;
     this.hw = undefined;
     this.firmware_ver = undefined;
     this.connectionState = "closed"; // closed/connecting/connected/closing
@@ -264,7 +264,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     const timeout: any = option.timeout || null;
 
     return new Promise((resolve: any, reject: any) => {
-      if (this.onConnectCalled) {
+      if (this._onConnectCalled) {
         resolve(true);
         return;
       }
@@ -321,7 +321,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       this._nextLoopTimeout = undefined;
     }
     this.connectionState = "closed";
-    this.onConnectCalled = false;
+    this._onConnectCalled = false;
   }
 
   /**
@@ -502,7 +502,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
 
   protected wsOnClose(event: any) {
     this.print_debug(`closed from remote event=${event}`);
-    const beforeOnConnectCalled = this.onConnectCalled;
+    const beforeOnConnectCalled = this._onConnectCalled;
     this.close();
 
     if (beforeOnConnectCalled === true) {
@@ -730,7 +730,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
         }
       }
       this.emit("connect", this);
-      this.onConnectCalled = true;
+      this._onConnectCalled = true;
       this._startLoopInBackground();
       this._afterOnConnect();
     }
