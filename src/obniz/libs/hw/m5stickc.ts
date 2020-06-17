@@ -281,11 +281,6 @@ export class M5StickC extends ObnizDevice {
   /**
    * @category Peripherals
    */
-  public spi1!: PeripheralSPI;
-
-  /**
-   * @category Peripherals
-   */
   public i2c0!: PeripheralI2C;
 
   /**

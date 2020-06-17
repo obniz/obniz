@@ -10,7 +10,7 @@ required: [connection]
 properties:
   connection:
     type: object
-    required: [connect]
+    required: [connected]
     properties:
       connected:
         type: boolean
