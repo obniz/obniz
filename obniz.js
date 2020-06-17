@@ -1625,7 +1625,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/tcp/connection.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/connection","type":"object","required":["connection"],"properties":{"connection":{"type":"object","required":["connect"],"properties":{"connected":{"type":"boolean"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/connection","type":"object","required":["connection"],"properties":{"connection":{"type":"object","required":["connected"],"properties":{"connected":{"type":"boolean"}}}}}
 
 /***/ }),
 
