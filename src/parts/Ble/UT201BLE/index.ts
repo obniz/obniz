@@ -195,7 +195,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     const buf = Buffer.alloc(7);
     buf.writeUInt16LE(date.getUTCFullYear(), 0);
     buf.writeUInt8(date.getUTCMonth() + 1, 2);
-    buf.writeUInt8(date.getUTCDay(), 3);
+    buf.writeUInt8(date.getUTCDate(), 3);
     buf.writeUInt8(date.getUTCHours(), 4);
     buf.writeUInt8(date.getUTCMinutes(), 5);
     buf.writeUInt8(date.getUTCSeconds(), 6);
