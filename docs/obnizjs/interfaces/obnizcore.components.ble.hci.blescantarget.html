@@ -119,14 +119,16 @@
 					<div class="tsd-signature tsd-kind-icon">binary<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#blebinary" class="tsd-signature-type">BleBinary</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="../modules/obnizcore.components.ble.hci.html#blebinary" class="tsd-signature-type">BleBinary</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:45</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:52</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Advanced search.</p>
 						</div>
-						<p>Search partially matches advertisement / scan response</p>
+						<p>You need to enable <code>filterOnDevice:true</code> to use this filter.</p>
+						<p>Search partially matches advertisement / scan response regarding provided byte array.
+						If advertisement / scan reponse has a matched byte array in the data, then passed.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
@@ -135,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">device<wbr>Address<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-signature-type">BleDeviceAddress</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-signature-type">BleDeviceAddress</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:38</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:42</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -150,7 +152,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:28</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:32</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -165,7 +167,7 @@
 					<div class="tsd-signature tsd-kind-icon">local<wbr>Name<wbr>Prefix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:33</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:37</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -180,9 +182,15 @@
 					<div class="tsd-signature tsd-kind-icon">uuids<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.components.ble.hci.html#uuid" class="tsd-signature-type">UUID</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:24</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleScan.ts:28</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Service UUID for scan. Provide.
+							Attention: iBeacon uuid is not service uuid. If you want to filter iBeacon. use binary filter</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>

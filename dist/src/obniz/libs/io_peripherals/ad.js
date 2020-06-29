@@ -14,9 +14,7 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
         this.id = id;
         this.on("/response/ad/get", (obj) => {
             this.value = obj;
-            if (this.onchange) {
-                this.onchange(obj);
-            }
+            this.Obniz._runUserCreatedFunction(this.onchange, obj);
         });
         this._reset();
     }

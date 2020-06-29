@@ -42,7 +42,7 @@ if (!checkBoard_ID) {
   }
 }
 
-const obnizA_ID = process.env.OBNIZA_ID || '63370966';
+const obnizA_ID = process.env.OBNIZA_ID || '54371148';
 const obnizB_ID = process.env.OBNIZB_ID || '10803935';
 
 let obnizA, obnizB, checkBoard;

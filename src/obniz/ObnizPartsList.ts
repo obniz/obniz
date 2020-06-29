@@ -143,6 +143,7 @@ import Logtta_AD, { Logtta_ADOptions } from "../parts/Ble/LogttaAD";
 import Logtta_CO2, { Logtta_CO2Options } from "../parts/Ble/LogttaCO2";
 import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
 import MINEW_S1, { MINEW_S1Options } from "../parts/Ble/MINEW_S1";
+import PLS_01BT, { PLS_01BTOptions } from "../parts/Ble/PLS_01BT";
 import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
 import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
 import SCBTGAAAC, { SCBTGAAACOptions } from "../parts/Ble/scbtgaaac";
@@ -150,17 +151,24 @@ import TM530, { TM530Options } from "../parts/Ble/tm530";
 import TM551, { TM551Options } from "../parts/Ble/tm551";
 import Toio_CoreCube, { Toio_CoreCubeOptions } from "../parts/Ble/toio_corecube";
 import uPRISM, { uPRISMOptions } from "../parts/Ble/uprism";
+import UT201BLE, { UT201BLEOptions } from "../parts/Ble/UT201BLE";
 
 // Grove
 import Grove_3AxisAccelerometer, { Grove_3AxisAccelerometerOptions } from "../parts/Grove/Grove_3AxisAccelerometer";
 import Grove_Button, { Grove_ButtonOptions } from "../parts/Grove/Grove_Button";
 import Grove_Buzzer, { Grove_BuzzerOptions } from "../parts/Grove/Grove_Buzzer";
+import Grove_DistanceSensor, { Grove_DistanceSensorOptions } from "../parts/Grove/Grove_DistanceSensor";
 import Grove_EarHeartRate, { Grove_EarHeartRateOptions } from "../parts/Grove/Grove_EarHeartRate";
 import Grove_EARTH, { Grove_EARTHOptions } from "../parts/Grove/Grove_EARTH";
 import Grove_GPS, { Grove_GPSOptions } from "../parts/Grove/Grove_GPS";
 import Grove_JoyStick, { Grove_JoyStickOptions } from "../parts/Grove/Grove_JoyStick";
+import Grove_LightSensor, { Grove_LightSensorOptions } from "../parts/Grove/Grove_LightSensor";
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
+import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
+import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
+import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
 
+import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
 // Keyestudio
 import Keyestudio_Button, { Keyestudio_ButtonOptions } from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, { Keyestudio_BuzzerOptions } from "../parts/Keyestudio/Keyestudio_Buzzer";
@@ -306,6 +314,11 @@ export interface WiredNameMap {
   "Grove_JoyStick": Grove_JoyStick;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  "Grove_Speaker": Grove_Speaker;
+  "Grove_SoilMoistureSensor": Grove_SoilMoistureSensor;
+  "Grove_DistanceSensor": Grove_DistanceSensor;
+  "Grove_LightSensor": Grove_LightSensor;
+  "Grove_PressureSensor": Grove_PressureSensor;
   // StickCHat
   "M5StickC_JoyStick": M5StickC_JoyStick;
   "M5StickC_ADC": M5StickC_ADC;
@@ -347,6 +360,8 @@ export interface WiredNameMap {
   "cir415a": cir415a;
   "TM530": TM530;
   "TM551": TM551;
+  "UT201BLE": UT201BLE;
+  "PLS_01BT": PLS_01BT;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -484,6 +499,13 @@ export interface WiredNameOptionsMap {
   "Grove_EARTH": Grove_EARTHOptions;
   "Grove_JoyStick": Grove_JoyStickOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  "Grove_Speaker": Grove_SpeakerOptions;
+  "Grove_RotaryAnglesensor": Grove_RotaryAngleSensorOptions;
+
+  "Grove_DistanceSensor": Grove_DistanceSensorOptions;
+  "Grove_LightSensor": Grove_LightSensorOptions;
+  "Grove_PressureSensor": Grove_PressureSensorOptions;
+  "Grove_SoilMoistureSensor": Grove_SoilMoistureSensorOptions;
   // StickCHat
   "M5StickC_JoyStick": M5StickC_JoyStickOptions;
   "M5StickC_ADC": M5StickC_ADCOptions;
@@ -521,11 +543,13 @@ export interface WiredNameOptionsMap {
   "MINEW_S1": MINEW_S1Options;
   "RS_Seek3": RS_Seek3Options;
   "REX_BTPM25V": REX_BTPM25VOptions;
+  "PLS_01BT": PLS_01BTOptions;
   "ENERTALK_TOUCH": ENERTALK_TOUCHOptions;
   "cir415a": cir415aOptions;
   "TM530": TM530Options;
   "TM551": TM551Options;
   "toio_CoreCube": Toio_CoreCubeOptions;
+  "UT201BLE": UT201BLEOptions;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

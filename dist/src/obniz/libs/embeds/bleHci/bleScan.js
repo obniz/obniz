@@ -66,6 +66,9 @@ class BleScan {
      * await obniz.ble.scan.startWait();
      * ```
      *
+     * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
+     * Before start scannnig. Establishing connection must be completed or canceled.
+     *
      * @param target
      * @param settings
      */
@@ -364,7 +367,7 @@ class BleScan {
             });
         }
         if (scanTarget.binary) {
-            if (Array.isArray(scanTarget.binary[0])) {
+            if (Array.isArray(scanTarget.binary)) {
                 scanTarget.binary.forEach((e) => {
                     adFilters.push({ binary: e });
                 });
@@ -422,12 +425,8 @@ class BleScan {
             this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
             this._clearDelayNotifyTimer();
             this.state = "stopped";
-            setTimeout(() => {
-                this.emitter.emit("onfinish", this.scanedPeripherals, error);
-                if (this.onfinish) {
-                    this.onfinish(this.scanedPeripherals, error);
-                }
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
+            this.emitter.emit("onfinish", this.scanedPeripherals, error);
         }
     }
     _notifyOnFind(peripheral) {
@@ -439,12 +438,8 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            setTimeout(() => {
-                this.emitter.emit("onfind", peripheral);
-                if (this.onfind) {
-                    this.onfind(peripheral);
-                }
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
+            this.emitter.emit("onfind", peripheral);
         }
     }
     isLocalNameTarget(peripheral) {

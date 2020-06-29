@@ -37,6 +37,9 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._handle = handle;
 
     this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
+    this._smp.debugHandler = (text: string) => {
+      this.debug(text);
+    };
 
     this.onSmpFailBinded = this.onSmpFail.bind(this);
     this.onSmpEndBinded = this.onSmpEnd.bind(this);
@@ -44,10 +47,17 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     this._smp.on("fail", this.onSmpFailBinded);
     this._smp.on("end", this.onSmpEndBinded);
   }
+  public debugHandler: any = () => {};
 
   public async encryptWait(options?: any) {
     let encrpytResult = null;
     encrpytResult = await this._smp.pairingWait(options);
+    return encrpytResult;
+  }
+
+  public setEncryptOption(options?: any) {
+    let encrpytResult = null;
+    encrpytResult = this._smp.setPairingOption(options);
     return encrpytResult;
   }
 
@@ -81,6 +91,12 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     return result;
   }
 
+  public async onSmpLtkWait(ltk: any, random: Buffer, diversifier: Buffer) {
+    const result = await this._hci.startLeEncryptionWait(this._handle, random, diversifier, ltk);
+    this.emit("encrypt", result);
+    return result;
+  }
+
   public onSmpFail() {
     this.emit("encryptFail");
   }
@@ -91,4 +107,8 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
   }
 
   public startEncrypt(option: any) {}
+
+  private debug(text: any) {
+    this.debugHandler(`AclStream: ${text}`);
+  }
 }

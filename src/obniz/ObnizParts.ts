@@ -14,7 +14,7 @@ import { WiredNameMap, WiredNameOptionsMap } from "./ObnizPartsList";
  */
 const _parts: any = {};
 
-export default class ObnizParts extends ObnizConnection {
+export default abstract class ObnizParts extends ObnizConnection {
   /**
    * @ignore
    * @private

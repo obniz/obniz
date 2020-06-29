@@ -21,6 +21,10 @@ export type BleBinary = number[];
  * If you set BleScanSetting.filterOnDevice 'true', filters are apply on obniz device. So it reduce traffic.
  */
 export interface BleScanTarget {
+  /**
+   * Service UUID for scan. Provide.
+   * Attention: iBeacon uuid is not service uuid. If you want to filter iBeacon. use binary filter
+   */
   uuids?: UUID[];
   /**
    * scan target device localName. This need perfect matching.
@@ -40,7 +44,10 @@ export interface BleScanTarget {
   /**
    * Advanced search.
    *
-   * Search partially matches advertisement / scan response
+   * You need to enable `filterOnDevice:true` to use this filter.
+   *
+   * Search partially matches advertisement / scan response regarding provided byte array.
+   * If advertisement / scan reponse has a matched byte array in the data, then passed.
    */
   binary?: BleBinary[] | BleBinary;
 }
@@ -214,6 +221,9 @@ export default class BleScan {
    * // Javascript Example
    * await obniz.ble.scan.startWait();
    * ```
+   *
+   * Scanning starts with no error and results with not advertisement found while a device is trying to connect a peripheral.
+   * Before start scannnig. Establishing connection must be completed or canceled.
    *
    * @param target
    * @param settings
@@ -538,7 +548,7 @@ export default class BleScan {
       });
     }
     if (scanTarget.binary) {
-      if (Array.isArray(scanTarget.binary[0])) {
+      if (Array.isArray(scanTarget.binary)) {
         scanTarget.binary.forEach((e: any) => {
           adFilters.push({ binary: e });
         });
@@ -601,12 +611,8 @@ export default class BleScan {
       this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
       this._clearDelayNotifyTimer();
       this.state = "stopped";
-      setTimeout(() => {
-        this.emitter.emit("onfinish", this.scanedPeripherals, error);
-        if (this.onfinish) {
-          this.onfinish(this.scanedPeripherals, error);
-        }
-      }, 0);
+      this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
+      this.emitter.emit("onfinish", this.scanedPeripherals, error);
     }
   }
 
@@ -619,12 +625,8 @@ export default class BleScan {
     }
     if (this.isTarget(peripheral)) {
       this.scanedPeripherals.push(peripheral);
-      setTimeout(() => {
-        this.emitter.emit("onfind", peripheral);
-        if (this.onfind) {
-          this.onfind(peripheral);
-        }
-      }, 0);
+      this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
+      this.emitter.emit("onfind", peripheral);
     }
   }
 

@@ -180,6 +180,26 @@ class BleAttributeAbstract {
             }
         }
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _runUserCreatedFunction(func, ...args) {
+        if (!func) {
+            return;
+        }
+        if (typeof func !== "function") {
+            return;
+        }
+        try {
+            func(...args);
+        }
+        catch (err) {
+            setTimeout(() => {
+                throw err;
+            });
+        }
+    }
     setFunctions() {
         let childrenName = this.childrenName;
         if (childrenName) {

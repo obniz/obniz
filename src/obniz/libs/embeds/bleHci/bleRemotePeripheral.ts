@@ -65,6 +65,8 @@ export interface BleConnectSetting {
    *
    */
   autoDiscovery?: boolean;
+
+  pairingOption?: BlePairingOptions;
 }
 
 /**
@@ -431,6 +433,10 @@ export default class BleRemotePeripheral {
    * when connection established, all service/characteristics/desriptors will be discovered automatically.
    * This function will wait until all discovery done.
    *
+   * About Failures
+   * Connection fails some reasons. You can find reason from thrown error.
+   * Also obniz provide 90 seconds timeout for connection establish.
+   *
    * ```javascript
    * // Javascript Example
    *
@@ -457,17 +463,16 @@ export default class BleRemotePeripheral {
     this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
     await this.obnizBle.scan.endWait();
     await this.obnizBle.centralBindings.connectWait(this.address);
+    if (this._connectSetting.pairingOption) {
+      this.setPairingOption(this._connectSetting.pairingOption);
+    }
     if (this._connectSetting.autoDiscovery) {
       await this.discoverAllHandlesWait();
     }
 
     this.connected = true;
-    setTimeout(() => {
-      if (this.onconnect) {
-        this.onconnect();
-      }
-      this.emitter.emit("connect");
-    }, 0);
+    this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
+    this.emitter.emit("connect");
   }
 
   /**
@@ -635,22 +640,14 @@ export default class BleRemotePeripheral {
       }
       child.discoverdOnRemote = true;
 
-      setTimeout(() => {
-        if (this.ondiscoverservice) {
-          this.ondiscoverservice(child);
-        }
-      }, 0);
+      this.obnizBle.Obniz._runUserCreatedFunction(this.ondiscoverservice, child);
     }
 
     const children: any = this._services.filter((elm: any) => {
       return elm.discoverdOnRemote;
     });
 
-    setTimeout(() => {
-      if (this.ondiscoverservicefinished) {
-        this.ondiscoverservicefinished(children);
-      }
-    }, 1);
+    this.obnizBle.Obniz._runUserCreatedFunction(this.ondiscoverservicefinished, children);
     return children;
   }
 
@@ -693,12 +690,8 @@ export default class BleRemotePeripheral {
           const pre = this.connected;
           this.connected = false;
           if (pre) {
-            setTimeout(() => {
-              if (this.ondisconnect) {
-                this.ondisconnect(params.reason);
-              }
-              this.emitter.emit("disconnect", params.reason);
-            }, 0);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.ondisconnect, params.reason);
+            this.emitter.emit("disconnect", params.reason);
           }
         }
         break;
@@ -769,6 +762,10 @@ export default class BleRemotePeripheral {
   public async pairingWait(options?: BlePairingOptions): Promise<string> {
     const result = await this.obnizBle.centralBindings.pairingWait(this.address, options);
     return result;
+  }
+
+  public setPairingOption(options: BlePairingOptions) {
+    this.obnizBle.centralBindings.setPairingOption(this.address, options);
   }
 
   protected analyseAdvertisement() {

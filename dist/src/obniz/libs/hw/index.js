@@ -21,6 +21,9 @@ class HW {
         else if (hw === "m5stickc") {
             return require("./m5stickc.json");
         }
+        else if (hw === "m5stack_basic") {
+            return require("./m5stack_basic.json");
+        }
         else if (hw === "encored") {
             return require("./encored.json");
         }

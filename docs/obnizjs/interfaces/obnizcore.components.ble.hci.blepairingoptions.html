@@ -106,6 +106,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="obnizcore.components.ble.hci.blepairingoptions.html#keys" class="tsd-kind-icon">keys</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="obnizcore.components.ble.hci.blepairingoptions.html#onpairedcallback" class="tsd-kind-icon">on<wbr>Paired<wbr>Callback</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="obnizcore.components.ble.hci.blepairingoptions.html#passkeycallback" class="tsd-kind-icon">passkey<wbr>Callback</a></li>
 							</ul>
 						</section>
@@ -121,7 +122,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides SmpEncryptOptions.keys</p>
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:96</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:98</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -145,6 +146,22 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 <span class="hljs-keyword">await</span> obniz.ble.scan.startWait();</code></pre>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="onpairedcallback" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Paired<wbr>Callback</h3>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Paired<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>keys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from SmpEncryptOptions.onPairedCallback</p>
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/protocol/central/smp.ts:51</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Callback function that call on pairing passkey required.</p>
+						</div>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="passkeycallback" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> passkey<wbr>Callback</h3>
@@ -152,7 +169,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<aside class="tsd-sources">
 						<p>Overrides SmpEncryptOptions.passkeyCallback</p>
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:125</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:127</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -199,6 +216,9 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.blepairingoptions.html#keys" class="tsd-kind-icon">keys</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.blepairingoptions.html#onpairedcallback" class="tsd-kind-icon">on<wbr>Paired<wbr>Callback</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.blepairingoptions.html#passkeycallback" class="tsd-kind-icon">passkey<wbr>Callback</a>

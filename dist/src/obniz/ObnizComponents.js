@@ -215,6 +215,11 @@ class ObnizComponents extends ObnizParts_1.default {
                     const Class = embeds_map[key];
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
+                    if (typeof this[key].debugHandler === "function") {
+                        this[key].debugHandler = (text) => {
+                            this.print_debug(text);
+                        };
+                    }
                 }
             }
         }

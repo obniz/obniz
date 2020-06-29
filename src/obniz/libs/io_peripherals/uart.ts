@@ -117,7 +117,7 @@ export default class PeripheralUART extends ComponentAbstract {
     this.on("/response/uart/receive", (obj) => {
       if (this.onreceive) {
         const string: any = this.tryConvertString(obj.data);
-        this.onreceive(obj.data, string);
+        this.Obniz._runUserCreatedFunction(this.onreceive, obj.data, string);
       } else {
         if (!this.received) {
           this.received = [];

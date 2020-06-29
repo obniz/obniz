@@ -159,18 +159,14 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
      * @param characteristic
      */
     ondiscover(characteristic) {
-        setTimeout(() => {
-            this.ondiscovercharacteristic(characteristic);
-        }, 0);
+        this._runUserCreatedFunction(this.ondiscovercharacteristic, characteristic);
     }
     /**
      * @ignore
      * @param characteristics
      */
     ondiscoverfinished(characteristics) {
-        setTimeout(() => {
-            this.ondiscovercharacteristicfinished(characteristics);
-        }, 0);
+        this._runUserCreatedFunction(this.ondiscovercharacteristicfinished, characteristics);
     }
     /**
      * @ignore

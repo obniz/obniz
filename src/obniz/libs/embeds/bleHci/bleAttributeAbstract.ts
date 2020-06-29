@@ -33,7 +33,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * It is uuid as string.
    *
-   * ```javasciprt
+   * ```javascript
    * console.log(attr.uuid); // => '4C84'
    * ```
    */
@@ -248,6 +248,28 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
         this.onerror(params);
         break;
       }
+    }
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public _runUserCreatedFunction(func?: (...args: any) => any, ...args: any[]) {
+    if (!func) {
+      return;
+    }
+
+    if (typeof func !== "function") {
+      return;
+    }
+
+    try {
+      func(...args);
+    } catch (err) {
+      setTimeout(() => {
+        throw err;
+      });
     }
   }
 

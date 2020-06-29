@@ -87,7 +87,7 @@ export default class BleSecurity {
   public notifyFromServer(notifyName: any, params: any) {
     switch (notifyName) {
       case "onerror": {
-        this.onerror(params);
+        this.Obniz._runUserCreatedFunction(this.onerror, params);
         break;
       }
     }

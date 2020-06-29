@@ -684,6 +684,42 @@
           "store": {
             "seedstudio": "https://www.seeedstudio.com/Grove-3-Axis-Digital-Accelerometer-16g-p-1156.html"
           }
+        },
+        {
+          "name": "Grove_RotaryAngleSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Rotary-Angle-Sensor-p-770.html"
+          }
+        },
+        {
+          "name": "Grove_DistanceSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-80cm-Infrared-Proximity-Sensor.html"
+          }
+        },
+        {
+          "name": "Grove_LightSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Light-Sensor-v1.2-p-2727.html"
+          }
+        },
+        {
+          "name": "Grove_PressureSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Round-Force-Sensor-FSR402.html"
+          }
+        },
+        {
+          "name": "Grove_SoilMoistureSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Capacitive-Moisture-Sensor-Corrosion-Resistant-p-2850.html"
+          }
+        },
+        {
+          "name": "Grove_Speaker",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Speaker-p-1445.html"
+          }
         }
       ]
     },

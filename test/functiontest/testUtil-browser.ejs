@@ -168,8 +168,14 @@ var testUtil = {
        
        new _chai.Assertion(stub.args[count][0],"[obniz.send]invalid json").is.json;
        var val = JSON.parse(stub.args[count][0]);
-       new _chai.Assertion(val).to.deep.equal(expected);
-     });
+       if (typeof expected === "function") {
+         let result = expected(val);
+         _chai.assert.isOk(result, "function is not match value");
+       } else {
+         new _chai.Assertion(val).to.deep.equal(expected);
+       }
+
+});
 
 
       _chai.Assertion.addMethod('sendBinary', function (expected) {

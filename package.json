@@ -1,12 +1,15 @@
 {
   "name": "obniz",
-  "version": "3.5.0",
+  "version": "3.6.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
   "files": [
     "dist",
-    "!dist/**/*.map",
+    "src",
+    "!src/**/*.png",
+    "!src/**/*.jpeg",
+    "!src/**/*.jpg",
     "index.js",
     "obniz.js"
   ],
