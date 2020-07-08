@@ -197,3 +197,96 @@ obniz.ble.scan.onfind = async (peripheral) => {
 };
 await obniz.ble.scan.startWait();
 ```
+
+## [await]authPinCodeWait(pin)
+
+デバイスと認証を行います。デフォルト値は0000です。
+
+```javascript
+// Javascript Example
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral) ) {
+    console.log("find");
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.authPinCodeWait("0000");
+    console.log("authPinCodeWait");
+  }
+};
+await obniz.ble.scan.startWait();
+
+```
+
+## [await]setBeaconMode(enable)
+
+デバイスと認証をあらかじめ済ませた状態で実行してください。
+
+定期的にビーコンを発信するモードの有効無効を制御できます。
+
+設定後に切断した後から有効になります。
+
+```javascript
+// Javascript Example
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (LOGTTA_CO2.isDevice(peripheral) ) {
+    console.log("find");
+    const device = new LOGTTA_CO2(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.authPinCodeWait("0000");
+    console.log("authPinCodeWait");
+    await device.setBeaconMode(true);
+    console.log("authPinCodeWait");
+    await device.disconnectWait();
+    console.log("disconnected");
+  }
+};
+await obniz.ble.scan.startWait();
+
+```
+
+
+## isAdvDevice(BleRemotePeripheral)
+
+アドバタイジングしているデバイスを発見した場合、trueを返します。
+
+```javascript
+// Javascript Example
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA_CO2.isAdvDevice(p)) {
+        console.log("found");
+    }
+};
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
+
+```
+
+## getData(BleRemotePeripheral)
+
+発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
+
+- battery : バッテリの電圧
+- address : MacAddress
+- co2 : co2濃度
+- interval : 送信間隔
+
+
+```javascript
+// Javascript Example
+const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (p) => {
+    if (LOGTTA_CO2.isAdvDevice(p)) {
+        let data = LOGTTA_CO2.getData(p);
+        console.log(data);
+    }
+};
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
+```

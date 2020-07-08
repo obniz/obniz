@@ -224,92 +224,50 @@ await obniz.ble.scan.startWait();
 ```
 
 
+## [await]authPinCodeWait(pin)
 
-# Logtta AD
-Logtta AD を検索し、データを取得します。
-
-![](image.jpg)
-
-
-
-## getPartsClass(name)
+デバイスと認証を行います。デフォルト値は0000です。
 
 ```javascript
 // Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
-```
-
-## isDevice(BleRemotePeripheral)
-
-デバイスを発見した場合、trueを返します。
-
-```javascript
-// Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (LOGTTA_AD.isDevice(p)) {
-        let data = LOGTTA_AD.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## new LOGTTA_AD(peripheral)
-
-BLEが受信した広告情報に基づいてインスタンスを作成します。
-
-
-```javascript
-// Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral) ) {
-    console.log("device find");
-    const device = new LOGTTA_AD(peripheral);
-  }
-};
-await obniz.ble.scan.startWait();
-```
-
-
-## [await]connectWait()
-
-デバイスに接続します。
-
-```javascript
-// Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
+  if (Logtta_AD.isDevice(peripheral) ) {
     console.log("find");
-    const device = new LOGTTA_AD(peripheral);
+    const device = new Logtta_AD(peripheral);
     await device.connectWait();
     console.log("connected");
+    await device.authPinCodeWait("0000");
+    console.log("authPinCodeWait");
   }
 };
 await obniz.ble.scan.startWait();
 
 ```
 
+## [await]setBeaconMode(enable)
 
-## [await]disconnectWait()
+デバイスと認証をあらかじめ済ませた状態で実行してください。
 
-デバイスとの接続を切断します。
+定期的にビーコンを発信するモードの有効無効を制御できます。
+
+設定後に切断した後から有効になります。
 
 ```javascript
 // Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral) ) {
+  if (Logtta_AD.isDevice(peripheral) ) {
     console.log("find");
-    const device = new LOGTTA_AD(peripheral);
+    const device = new Logtta_AD(peripheral);
     await device.connectWait();
     console.log("connected");
+    await device.authPinCodeWait("0000");
+    console.log("authPinCodeWait");
+    await device.setBeaconMode(true);
+    console.log("authPinCodeWait");
     await device.disconnectWait();
     console.log("disconnected");
   }
@@ -319,156 +277,43 @@ await obniz.ble.scan.startWait();
 ```
 
 
-## onNotify =  function (data){}
+## isAdvDevice(BleRemotePeripheral)
 
-データを受信したら、そのデータをコールバック関数で返します。
-
-``startNotifyWait()``を開始した後にデバイスからデータが来るたびに呼び出されます。
+アドバタイジングしているデバイスを発見した場合、trueを返します。
 
 ```javascript
 // Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_AD(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    device.onNotify = (data) => {
-        console.log( `ampere:${data.ampere} volt:${data.volt} count:${data.count}` );
-    };
-    device.startNotifyWait();
-  }
+obniz.ble.scan.onfind = (p) => {
+    if (Logtta_AD.isAdvDevice(p)) {
+        console.log("found");
+    }
 };
-await obniz.ble.scan.startWait();
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
+
 ```
 
-## startNotifyWait()
+## getData(BleRemotePeripheral)
 
-センサーデータを送信を開始するように指示をします。
+発見した場合にデバイスの情報を返します。発見できなかった場合にはNullを返します。
+
+- battery : バッテリの電圧
+- address : MacAddress
+- temperature: 温度
+- humidity: 湿度
+- interval : 送信間隔
+
 
 ```javascript
 // Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
+const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_AD(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    device.onNotify = (data) => {
-        console.log( `ampere:${data.ampere} volt:${data.volt} count:${data.count}` );
-    };
-    device.startNotifyWait();
-  }
+obniz.ble.scan.onfind = (p) => {
+    if (Logtta_AD.isAdvDevice(p)) {
+        let data = Logtta_AD.getData(p);
+        console.log(data);
+    }
 };
-await obniz.ble.scan.startWait();
-```
-
-
-## [await]getAllWait()
-
-デバイスからすべてのセンサーデータを取得します。
-
-```javascript
-// Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_AD(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const data = await device.getAllWait();
-    console.log(`AD get volt ${data.volt} or ampere ${data.ampere} count ${data.count}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
-
-取得できるデータフォーマットは次の通りです。
-
-```json
-// example response
-{
-  "ampere": 5, // mA
-  "volt": 3,   // mV
-  "count": 10  // count
-}
-```
-
-## [await]getAmpereWait()
-
-デバイスから電流値を取得します。
-
-4mA - 20mAの間で取得できます。
-
-```javascript
-// Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_AD(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const data = await device.getAmpereWait();
-    console.log(`AD data ${data}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
-
-
-## [await]getVoltWait()
-
-デバイスから電圧値を取得します。
-
-1V - 5Vの間でデータを取得できます。
-
-```javascript
-// Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_AD(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const data = await device.getVoltWait();
-    console.log(`AD data ${data}`);
-  }
-};
-await obniz.ble.scan.startWait();
-```
-
-
-## [await]getCountWait()
-
-デバイスからカウント情報を取得できます。
-
-```javascript
-// Javascript Example
-const LOGTTA_AD = Obniz.getPartsClass('Logtta_AD');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = async (peripheral) => {
-  if (LOGTTA_AD.isDevice(peripheral)) {
-    console.log("find");
-    const device = new LOGTTA_AD(peripheral);
-    await device.connectWait();
-    console.log("connected");
-    
-    const data = await device.getCountWait();
-    console.log(`AD data ${data}`);
-  }
-};
-await obniz.ble.scan.startWait();
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```
