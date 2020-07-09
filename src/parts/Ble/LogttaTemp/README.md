@@ -253,6 +253,9 @@ You can control the enable/disable of the mode that periodically sends out beaco
 
 It becomes effective after the setting is made and then disconnected.
 
+To exit beacon mode, you must press and hold the button on the device for at least 2 seconds For more information, please click on the link below to view the document. For more information, please click on the link below to view the document.
+http://www.uni-elec.co.jp/logtta_page.html
+
 ```javascript
 // Javascript Example
 const Logtta_AD = Obniz.getPartsClass('Logtta_AD');

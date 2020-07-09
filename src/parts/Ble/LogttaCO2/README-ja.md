@@ -228,6 +228,9 @@ await obniz.ble.scan.startWait();
 
 設定後に切断した後から有効になります。
 
+ビーコンモードを終了する場合、デバイスにあるボタンを2秒以上長押しする操作が必要になります。詳しくは下記のリンクよりドキュメントをご覧ください。
+http://www.uni-elec.co.jp/logtta_page.html
+
 ```javascript
 // Javascript Example
 const LOGTTA_CO2 = Obniz.getPartsClass('Logtta_CO2');
