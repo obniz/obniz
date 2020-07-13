@@ -4,6 +4,7 @@
  * @module ObnizCore.Errors
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizBlePairingRejectByRemoteError = exports.ObnizBleUnSupportedOSVersionError = exports.ObnizParameterError = exports.ObnizBleUnsupportedHciError = exports.ObnizDeprecatedFunctionError = exports.ObnizBleAttError = exports.ObnizBleHciStateError = exports.ObnizBleOpError = exports.ObnizBleUnknownDescriptorError = exports.ObnizBleUnknownCharacteristicError = exports.ObnizBleUnknownServiceError = exports.ObnizBleUnknownPeripheralError = exports.ObnizI2cWarning = exports.ObnizI2cError = exports.ObnizTimeoutError = exports.ObnizOfflineError = exports.ObnizError = void 0;
 class ObnizError extends Error {
     constructor(code, e) {
         super(e);
