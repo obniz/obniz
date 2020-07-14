@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setBaseDir = void 0;
 /**
  * @packageDocumentation
  * @ignore
