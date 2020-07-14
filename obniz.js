@@ -126,8 +126,7 @@ module.exports = {
     "lint-js": "eslint --fix . --rulesdir devtools/eslint/rule",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
     "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
-    "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts",
-    "codegen" :"graphql-codegen --config ./src/obniz/cloud/codegen.yml"
+    "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -211,11 +210,7 @@ module.exports = {
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
     "webpack-stream": "^5.2.1",
-    "yaml-loader": "^0.5.0",
-    "@graphql-codegen/cli": "1.13.5",
-    "@graphql-codegen/typescript": "1.13.5",
-    "@graphql-codegen/typescript-document-nodes": "1.13.5",
-    "@graphql-codegen/introspection": "1.13.5"
+    "yaml-loader": "^0.5.0"
   },
   "dependencies": {
     "@types/eventemitter3": "^1.2.0",
@@ -234,13 +229,7 @@ module.exports = {
     "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
     "typedoc-plugin-internal-external": "^2.1.1",
-    "ws": "^6.1.4",
-    "@graphql-codegen/typescript": "^1.13.5",
-    "@graphql-codegen/typescript-graphql-request": "^1.13.5",
-    "@graphql-codegen/typescript-operations": "^1.13.5",
-    "get-graphql-schema": "^2.1.2",
-    "graphql": "^15.0.0",
-    "graphql-request": "^1.8.2"
+    "ws": "^6.1.4"
   },
   "bugs": {
     "url": "https://forum.obniz.io"
