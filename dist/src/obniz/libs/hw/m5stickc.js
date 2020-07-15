@@ -7,6 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.M5StickC = void 0;
 const ObnizDevice_1 = __importDefault(require("../../ObnizDevice"));
 class M5StickC extends ObnizDevice_1.default {
     constructor(id, options) {

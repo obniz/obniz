@@ -23,16 +23,16 @@ describe('5-spi-exchange', function() {
   });
 
   afterEach(async () => {
-    if (obnizA.spi0.isUsed()) {
+    if (obnizA.spi0 && obnizA.spi0.isUsed()) {
       obnizA.spi0.end();
     }
-    if (obnizA.spi1.isUsed()) {
+    if (obnizA.spi1 && obnizA.spi1.isUsed()) {
       obnizA.spi1.end();
     }
-    if (checkBoard.spi0.isUsed()) {
+    if (checkBoard.spi0 && checkBoard.spi0.isUsed()) {
       checkBoard.spi0.end();
     }
-    if (checkBoard.spi1.isUsed()) {
+    if (checkBoard.spi1 && checkBoard.spi1.isUsed()) {
       checkBoard.spi1.end();
     }
   });
@@ -113,7 +113,7 @@ describe('5-spi-exchange', function() {
   });
 
   it('two port at same time', async function() {
-    if (check_io.length < 6) {
+    if (check_io.length < 6 || checkBoard.spi0 || checkBoard.spi1) {
       expect(true).to.be.true;
       return;
     }

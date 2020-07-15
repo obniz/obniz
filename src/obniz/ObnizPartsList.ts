@@ -128,6 +128,7 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
 import cir415a, { cir415aOptions } from "../parts/Ble/cir415a";
 import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from "../parts/Ble/ENERTALK";
+import HEM_6233T, { HEM_6233TOptions } from "../parts/Ble/HEM_6233T";
 import IBS01, { IBS01Options } from "../parts/Ble/iBS01";
 import IBS01RG, { IBS01RGOptions } from "../parts/Ble/iBS01RG";
 import IBS01T, { IBS01TOptions } from "../parts/Ble/iBS01T";
@@ -362,6 +363,7 @@ export interface WiredNameMap {
   "TM551": TM551;
   "UT201BLE": UT201BLE;
   "PLS_01BT": PLS_01BT;
+  "HEM_6233T": HEM_6233T;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -550,6 +552,8 @@ export interface WiredNameOptionsMap {
   "TM551": TM551Options;
   "toio_CoreCube": Toio_CoreCubeOptions;
   "UT201BLE": UT201BLEOptions;
+  "HEM_6233T": HEM_6233TOptions;
+
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

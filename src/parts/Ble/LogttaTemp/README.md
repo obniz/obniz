@@ -221,3 +221,101 @@ obniz.ble.scan.onfind = async (peripheral) => {
 await obniz.ble.scan.startWait();
 ```
 
+
+
+## [await]authPinCodeWait(pin)
+
+Authenticate with the device. The default value is 0000.
+
+```javascript
+// Javascript Example
+const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_AD.isDevice(peripheral) ) {
+    console.log("find");
+    const device = new Logtta_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.authPinCodeWait("0000");
+    console.log("authPinCodeWait");
+  }
+};
+await obniz.ble.scan.startWait();
+
+```
+
+## [await]setBeaconMode(enable)
+
+Run the device and authentication in advance.
+
+You can control the enable/disable of the mode that periodically sends out beacons.
+
+It becomes effective after the setting is made and then disconnected.
+
+To exit beacon mode, you must press and hold the button on the device for at least 2 seconds For more information, please click on the link below to view the document. For more information, please click on the link below to view the document.
+http://www.uni-elec.co.jp/logtta_page.html
+
+```javascript
+// Javascript Example
+const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (Logtta_AD.isDevice(peripheral) ) {
+    console.log("find");
+    const device = new Logtta_AD(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    await device.authPinCodeWait("0000");
+    console.log("authPinCodeWait");
+    await device.setBeaconMode(true);
+    console.log("authPinCodeWait");
+    await device.disconnectWait();
+    console.log("disconnected");
+  }
+};
+await obniz.ble.scan.startWait();
+
+```
+
+
+## isAdvDevice(BleRemotePeripheral)
+
+If it finds the device it is advertizing, it returns true.
+
+```javascript
+// Javascript Example
+const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (p) => {
+    if (Logtta_AD.isAdvDevice(p)) {
+        console.log("found");
+    }
+};
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
+
+```
+
+## getData(BleRemotePeripheral)
+
+Returns the information of the device if it is found. Returns Null if the device was not found.
+
+- battery : battery voltage
+- address : MacAddress
+- temperature: temperature
+- humidity: humidity
+- interval : transmission interval
+
+
+```javascript
+// Javascript Example
+const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (p) => {
+    if (Logtta_AD.isAdvDevice(p)) {
+        let data = Logtta_AD.getData(p);
+        console.log(data);
+    }
+};
+await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
+```

@@ -142,7 +142,7 @@ tcp command
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `tcpX.connection.connected` |  boolean  | &nbsp; | &nbsp; |
+| `tcpX.connection.connected` |  boolean  | <ul><li>required</li></ul> | &nbsp; |
 
 
 

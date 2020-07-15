@@ -20,6 +20,8 @@ if (process.env.OBNIZ_DEVICE === 'devkitc') {
   json = require('./board/esp32lte_check_io.json');
 } else if (process.env.OBNIZ_DEVICE === 'pico') {
   json = require('./board/esp32pikokitv4_check_io.json');
+} else if (process.env.OBNIZ_DEVICE === 'stack') {
+  json = require('./board/m5stackbasic_check_io.json');
 } else if (process.env.OBNIZ_DEVICE) {
   throw new Error(`unknown device ${process.env.OBNIZ_DEVICE}`);
 }
@@ -38,6 +40,8 @@ if (!checkBoard_ID) {
   } else if (json.name === 'ESP32 Pico Kit v4') {
     checkBoard_ID = '05094470';
   } else if (json.name === 'ESP32 LTE') {
+    checkBoard_ID = '41232281';
+  } else if (json.name === 'M5Stack Basicv') {
     checkBoard_ID = '41232281';
   }
 }
