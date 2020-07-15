@@ -11,6 +11,7 @@ import WSCommandI2C from "./WSCommandI2C";
 import WSCommandIO from "./WSCommandIO";
 import WSCommandLogicAnalyzer from "./WSCommandLogicAnalyzer";
 import WSCommandMeasurement from "./WSCommandMeasurement";
+import WSCommandPlugin from "./WSCommandPlugin";
 import WSCommandPWM from "./WSCommandPWM";
 import WSCommandSPI from "./WSCommandSPI";
 import WSCommandSwitch from "./WSCommandSwitch";
@@ -35,5 +36,6 @@ WSCommand.addCommandClass("WSCommandBle", WSCommandBle);
 WSCommand.addCommandClass("WSCommandMeasurement", WSCommandMeasurement);
 WSCommand.addCommandClass("WSCommandTcp", WSCommandTcp);
 WSCommand.addCommandClass("WSCommandWiFi", WSCommandWiFi);
+WSCommand.addCommandClass("WSCommandPlugin", WSCommandPlugin);
 
 export default WSCommand;
