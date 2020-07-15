@@ -271,17 +271,18 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       this.once("connect", () => {
         resolve(true);
       });
-      if (!this.options.auto_connect) {
-        this.once("close", () => {
-          resolve(false);
-        });
-      }
+
       if (timeout) {
         setTimeout(() => {
           resolve(false);
         }, timeout * 1000);
       }
-      this.connect();
+      if (!this.options.auto_connect) {
+        this.once("close", () => {
+          resolve(false);
+        });
+        this.connect();
+      }
     });
   }
 

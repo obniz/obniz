@@ -2291,17 +2291,17 @@ class ObnizConnection extends eventemitter3_1.default {
             this.once("connect", () => {
                 resolve(true);
             });
-            if (!this.options.auto_connect) {
-                this.once("close", () => {
-                    resolve(false);
-                });
-            }
             if (timeout) {
                 setTimeout(() => {
                     resolve(false);
                 }, timeout * 1000);
             }
-            this.connect();
+            if (!this.options.auto_connect) {
+                this.once("close", () => {
+                    resolve(false);
+                });
+                this.connect();
+            }
         });
     }
     /**

@@ -97,6 +97,8 @@ var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 servo.off();
+
+
 servo.on();
 ```
 ## off();
@@ -108,5 +110,4 @@ var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 servo.off();
-servo.on();
 ```
