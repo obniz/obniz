@@ -29,4 +29,5 @@ items:
     system:  {$ref: "/request/system" }
     ws:  {$ref: "/request/ws" }
     wifi:  {$ref: "/request/wifi" }
+    plugin:  {$ref: "/request/plugin" }
 
