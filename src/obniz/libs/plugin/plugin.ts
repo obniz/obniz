@@ -42,8 +42,8 @@ export default class Plugin {
    *
    */
   public send(data: string | number | number[] | Buffer) {
-    if (semver.lt(this.Obniz.firmware_ver!, "3.3.0")) {
-      throw new Error(`Please update obniz firmware >= 3.3.0`);
+    if (semver.lt(this.Obniz.firmware_ver!, "3.4.0")) {
+      throw new Error(`Please update obniz firmware >= 3.4.0`);
     }
 
     let send_data: any = null;
