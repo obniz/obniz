@@ -1787,6 +1787,30 @@ class ObnizApi {
         return this.post("/state", null, callback);
     }
     /**
+     * Get device is online or offline
+     */
+    getStateWait() {
+        return new Promise((resolve) => {
+            this.post("/state", null, resolve);
+        });
+    }
+    /**
+     * Get metadata
+     * @param callback with result
+     */
+    getMetadata(callback) {
+        return this.get("/metadata", callback);
+    }
+    /**
+     * Get metadata
+     * @param callback with result
+     */
+    getMetadataWait() {
+        return new Promise((resolve) => {
+            this.get("/metadata", resolve);
+        });
+    }
+    /**
      * post data via obniz REST api
      * @param json
      * @param callback
@@ -1813,6 +1837,35 @@ class ObnizApi {
         if (params) {
             fetchParams.body = JSON.stringify(params);
         }
+        return node_fetch_1.default(url, fetchParams)
+            .then((res) => {
+            return res.json();
+        })
+            .then((json) => {
+            if (typeof callback === "function") {
+                callback(json);
+            }
+            return new Promise((resolve) => {
+                resolve(json);
+            });
+        });
+    }
+    get(path, callback) {
+        const url = this.urlBase + path;
+        // let query = [];
+        // query.push("XXX");
+        // if(query.length > 0){
+        //   url += "?" + query.join("&");
+        // }
+        const headers = {};
+        headers["Content-Type"] = "application/json";
+        if (this.options.access_token) {
+            headers.authorization = "Bearer " + this.options.access_token;
+        }
+        const fetchParams = {
+            method: "GET",
+            headers,
+        };
         return node_fetch_1.default(url, fetchParams)
             .then((res) => {
             return res.json();
@@ -2862,12 +2915,14 @@ class ObnizConnection extends eventemitter3_1.default {
     async _startLoopInBackground() {
         this._nextLoopTimeout = setTimeout(async () => {
             this._nextLoopTimeout = undefined;
-            if (typeof this._looper === "function" && this.connectionState === "connected") {
+            if (this.connectionState === "connected") {
                 try {
-                    await this.pingWait();
-                    const prom = this._looper();
-                    if (prom instanceof Promise) {
-                        await prom;
+                    if (typeof this._looper === "function") {
+                        await this.pingWait();
+                        const prom = this._looper();
+                        if (prom instanceof Promise) {
+                            await prom;
+                        }
                     }
                 }
                 finally {
@@ -4133,6 +4188,10 @@ const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/Obni
  *
  */
 class Obniz extends ObnizDevice_1.default {
+    constructor(id, options) {
+        super(id, options);
+        this.api = new ObnizApi_1.default(id, options);
+    }
     /**
      * obniz REST api class
      * @returns {ObnizApi}

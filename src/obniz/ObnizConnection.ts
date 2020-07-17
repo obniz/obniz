@@ -881,12 +881,14 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   private async _startLoopInBackground() {
     this._nextLoopTimeout = setTimeout(async () => {
       this._nextLoopTimeout = undefined;
-      if (typeof this._looper === "function" && this.connectionState === "connected") {
+      if (this.connectionState === "connected") {
         try {
-          await this.pingWait();
-          const prom: any = this._looper();
-          if (prom instanceof Promise) {
-            await prom;
+          if (typeof this._looper === "function") {
+            await this.pingWait();
+            const prom: any = this._looper();
+            if (prom instanceof Promise) {
+              await prom;
+            }
           }
         } finally {
           if (this.connectionState === "connected") {

@@ -33,6 +33,10 @@ const ObnizDevice_1 = __importDefault(require("./ObnizDevice"));
  *
  */
 class Obniz extends ObnizDevice_1.default {
+    constructor(id, options) {
+        super(id, options);
+        this.api = new ObnizApi_1.default(id, options);
+    }
     /**
      * obniz REST api class
      * @returns {ObnizApi}

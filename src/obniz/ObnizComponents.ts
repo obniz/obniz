@@ -3,7 +3,6 @@
  * @module ObnizCore
  */
 
-import semver from "semver";
 import ObnizHciBLE from "./libs/embeds/bleHci/ble";
 import Display from "./libs/embeds/display";
 import ObnizSwitch from "./libs/embeds/switch";

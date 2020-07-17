@@ -39,10 +39,20 @@ class Obniz extends ObnizDevice {
 
   /**
    * obniz REST api class
+   */
+  public api: ObnizApi;
+
+  /**
+   * obniz REST api class
    * @returns {ObnizApi}
    */
   public static get api() {
     return ObnizApi;
+  }
+
+  constructor(id: string, options?: ObnizOptions) {
+    super(id, options);
+    this.api = new ObnizApi(id, options);
   }
 }
 
@@ -80,6 +90,7 @@ try {
  */
 import requireContext = require("./libs/webpackReplace/require-context");
 import ObnizApi from "./ObnizApi";
+import { ObnizOptions } from "./ObnizOptions";
 
 require.context = requireContext.default;
 if (requireContext.setBaseDir) {
