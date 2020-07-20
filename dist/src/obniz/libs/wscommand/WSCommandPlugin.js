@@ -34,8 +34,13 @@ class WSCommandPlugin extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         switch (func) {
             case this._CommandReceive: {
+                // convert buffer to array
+                const arr = new Array(payload.byteLength);
+                for (let i = 0; i < arr.length; i++) {
+                    arr[i] = payload[i];
+                }
                 objToSend.plugin = {
-                    receive: payload,
+                    receive: arr,
                 };
                 break;
             }
