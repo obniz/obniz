@@ -2862,12 +2862,14 @@ class ObnizConnection extends eventemitter3_1.default {
     async _startLoopInBackground() {
         this._nextLoopTimeout = setTimeout(async () => {
             this._nextLoopTimeout = undefined;
-            if (typeof this._looper === "function" && this.connectionState === "connected") {
+            if (this.connectionState === "connected") {
                 try {
-                    await this.pingWait();
-                    const prom = this._looper();
-                    if (prom instanceof Promise) {
-                        await prom;
+                    if (typeof this._looper === "function") {
+                        await this.pingWait();
+                        const prom = this._looper();
+                        if (prom instanceof Promise) {
+                            await prom;
+                        }
                     }
                 }
                 finally {
@@ -6532,7 +6534,7 @@ exports.default = BleRemoteDescriptor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -7031,7 +7033,7 @@ class BleRemotePeripheral {
         }
         const major = (data[20] << 8) + data[21];
         const minor = (data[22] << 8) + data[23];
-        const power = data[24];
+        const power = Buffer.from([data[24]]).readInt8(0);
         this.iBeacon = {
             uuid,
             major,
@@ -7055,6 +7057,7 @@ exports.default = BleRemotePeripheral;
 
 //# sourceMappingURL=bleRemotePeripheral.js.map
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
