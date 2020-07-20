@@ -1,6 +1,8 @@
 # UT201BLE
 株式会社エー・アンド・デイの体温計です。
 
+![](./image.jpg)
+
 ## isDevice(peripheral)
 
 BLEで受信したアドバタイズ情報をもとに、UT201BLEかどうかを判定します

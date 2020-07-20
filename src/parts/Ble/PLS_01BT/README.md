@@ -1,5 +1,6 @@
 # PLS_01BT
 It's an oxygen saturation meter made by Custom Co.
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
