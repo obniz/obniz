@@ -1,6 +1,7 @@
 # HEM_6233T
 This is a blood pressure sensor from OMRON Corporation.
 
+![](./image.jpg)
 ## isDevice(peripheral)
 
 Judges whether or not it is HEM_6233T based on the advertised information received by the BLE.
