@@ -880,7 +880,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
 
   private async _startLoopInBackground() {
     if (this._nextLoopTimeout) {
-      return;
+      clearTimeout(this._nextLoopTimeout);
     }
     this._nextLoopTimeout = setTimeout(async () => {
       this._nextLoopTimeout = undefined;
