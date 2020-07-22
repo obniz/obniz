@@ -697,6 +697,9 @@ class ObnizConnection extends eventemitter3_1.default {
         return json;
     }
     async _startLoopInBackground() {
+        if (this._nextLoopTimeout) {
+            return;
+        }
         this._nextLoopTimeout = setTimeout(async () => {
             this._nextLoopTimeout = undefined;
             if (this.connectionState === "connected") {
@@ -711,7 +714,9 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
                 finally {
                     if (this.connectionState === "connected") {
-                        this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+                        if (!this._nextLoopTimeout) {
+                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+                        }
                     }
                 }
             }
