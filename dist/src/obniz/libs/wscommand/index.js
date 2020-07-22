@@ -16,6 +16,7 @@ const WSCommandI2C_1 = __importDefault(require("./WSCommandI2C"));
 const WSCommandIO_1 = __importDefault(require("./WSCommandIO"));
 const WSCommandLogicAnalyzer_1 = __importDefault(require("./WSCommandLogicAnalyzer"));
 const WSCommandMeasurement_1 = __importDefault(require("./WSCommandMeasurement"));
+const WSCommandPlugin_1 = __importDefault(require("./WSCommandPlugin"));
 const WSCommandPWM_1 = __importDefault(require("./WSCommandPWM"));
 const WSCommandSPI_1 = __importDefault(require("./WSCommandSPI"));
 const WSCommandSwitch_1 = __importDefault(require("./WSCommandSwitch"));
@@ -39,6 +40,7 @@ WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
 WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
 WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
+WSCommand_1.default.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.default);
 exports.default = WSCommand_1.default;
 
 //# sourceMappingURL=index.js.map

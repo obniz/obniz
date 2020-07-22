@@ -6,6 +6,7 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+const m5stack_basic_1 = require("./libs/hw/m5stack_basic");
 const m5stickc_1 = require("./libs/hw/m5stickc");
 const ObnizDevice_1 = __importDefault(require("./ObnizDevice"));
 /**
@@ -44,6 +45,7 @@ class Obniz extends ObnizDevice_1.default {
  * M5StickC device
  */
 Obniz.M5StickC = m5stickc_1.M5StickC;
+Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
 /*===================*/
 /* Utils */
 /*===================*/

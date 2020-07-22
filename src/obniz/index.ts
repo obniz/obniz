@@ -3,6 +3,7 @@
  * @module ObnizCore
  */
 
+import { M5StackBasic } from "./libs/hw/m5stack_basic";
 import { M5StickC } from "./libs/hw/m5stickc";
 import ObnizDevice from "./ObnizDevice";
 
@@ -34,6 +35,7 @@ class Obniz extends ObnizDevice {
    * M5StickC device
    */
   public static M5StickC = M5StickC;
+  public static M5StackBasic = M5StackBasic;
 
   /**
    * obniz REST api class

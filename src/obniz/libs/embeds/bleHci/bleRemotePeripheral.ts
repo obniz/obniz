@@ -839,7 +839,7 @@ export default class BleRemotePeripheral {
 
     const major: any = (data[20] << 8) + data[21];
     const minor: any = (data[22] << 8) + data[23];
-    const power: any = data[24];
+    const power: any = Buffer.from([data[24]]).readInt8(0);
 
     this.iBeacon = {
       uuid,

@@ -497,7 +497,7 @@ class BleRemotePeripheral {
         }
         const major = (data[20] << 8) + data[21];
         const minor = (data[22] << 8) + data[23];
-        const power = data[24];
+        const power = Buffer.from([data[24]]).readInt8(0);
         this.iBeacon = {
             uuid,
             major,

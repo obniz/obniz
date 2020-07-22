@@ -20,6 +20,7 @@ const uart_1 = __importDefault(require("./libs/io_peripherals/uart"));
 const logicanalyzer_1 = __importDefault(require("./libs/measurements/logicanalyzer"));
 const measure_1 = __importDefault(require("./libs/measurements/measure"));
 const wifi_1 = __importDefault(require("./libs/network/wifi"));
+const plugin_1 = __importDefault(require("./libs/plugin/plugin"));
 const tcp_1 = __importDefault(require("./libs/protocol/tcp"));
 const ObnizParts_1 = __importDefault(require("./ObnizParts"));
 const ComponentAbstact_1 = require("./libs/ComponentAbstact");
@@ -167,6 +168,7 @@ class ObnizComponents extends ObnizParts_1.default {
             io: directive_1.default,
             logicAnalyzer: logicanalyzer_1.default,
             measure: measure_1.default,
+            plugin: plugin_1.default,
         };
         const peripheral_map = {
             io: io_1.default,

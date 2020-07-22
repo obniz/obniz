@@ -18,6 +18,7 @@ import AXP192 from "../../../parts/Power/AXP192";
 import ObnizBLEHci from "../embeds/bleHci/ble";
 import Display from "../embeds/display";
 import PeripheralAD from "../io_peripherals/ad";
+import PeripheralGrove from "../io_peripherals/grove";
 import PeripheralPWM from "../io_peripherals/pwm";
 import PeripheralSPI from "../io_peripherals/spi";
 import PeripheralUART from "../io_peripherals/uart";
@@ -281,12 +282,12 @@ export class M5StickC extends ObnizDevice {
   /**
    * @category Peripherals
    */
-  public spi1!: PeripheralSPI;
+  public i2c0!: PeripheralI2C;
 
   /**
    * @category Peripherals
    */
-  public i2c0!: PeripheralI2C;
+  public grove0!: PeripheralGrove;
 
   /**
    * This is used by system. Please use i2c0.

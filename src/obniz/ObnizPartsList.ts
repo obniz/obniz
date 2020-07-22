@@ -128,6 +128,7 @@ import Puls08M5stickcS, { Puls08M5stickcSOptions } from "../parts/Biological/PUL
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from "../parts/Ble/2jcie";
 import cir415a, { cir415aOptions } from "../parts/Ble/cir415a";
 import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from "../parts/Ble/ENERTALK";
+import HEM_6233T, { HEM_6233TOptions } from "../parts/Ble/HEM_6233T";
 import IBS01, { IBS01Options } from "../parts/Ble/iBS01";
 import IBS01RG, { IBS01RGOptions } from "../parts/Ble/iBS01RG";
 import IBS01T, { IBS01TOptions } from "../parts/Ble/iBS01T";
@@ -157,12 +158,18 @@ import UT201BLE, { UT201BLEOptions } from "../parts/Ble/UT201BLE";
 import Grove_3AxisAccelerometer, { Grove_3AxisAccelerometerOptions } from "../parts/Grove/Grove_3AxisAccelerometer";
 import Grove_Button, { Grove_ButtonOptions } from "../parts/Grove/Grove_Button";
 import Grove_Buzzer, { Grove_BuzzerOptions } from "../parts/Grove/Grove_Buzzer";
+import Grove_DistanceSensor, { Grove_DistanceSensorOptions } from "../parts/Grove/Grove_DistanceSensor";
 import Grove_EarHeartRate, { Grove_EarHeartRateOptions } from "../parts/Grove/Grove_EarHeartRate";
 import Grove_EARTH, { Grove_EARTHOptions } from "../parts/Grove/Grove_EARTH";
 import Grove_GPS, { Grove_GPSOptions } from "../parts/Grove/Grove_GPS";
 import Grove_JoyStick, { Grove_JoyStickOptions } from "../parts/Grove/Grove_JoyStick";
+import Grove_LightSensor, { Grove_LightSensorOptions } from "../parts/Grove/Grove_LightSensor";
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
+import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
+import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
+import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
 
+import Grove_RotaryAngleSensor, { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
 // Keyestudio
 import Keyestudio_Button, { Keyestudio_ButtonOptions } from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, { Keyestudio_BuzzerOptions } from "../parts/Keyestudio/Keyestudio_Buzzer";
@@ -308,6 +315,11 @@ export interface WiredNameMap {
   "Grove_JoyStick": Grove_JoyStick;
   "Grove_GPS": Grove_GPS;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometer;
+  "Grove_Speaker": Grove_Speaker;
+  "Grove_SoilMoistureSensor": Grove_SoilMoistureSensor;
+  "Grove_DistanceSensor": Grove_DistanceSensor;
+  "Grove_LightSensor": Grove_LightSensor;
+  "Grove_PressureSensor": Grove_PressureSensor;
   // StickCHat
   "M5StickC_JoyStick": M5StickC_JoyStick;
   "M5StickC_ADC": M5StickC_ADC;
@@ -351,6 +363,7 @@ export interface WiredNameMap {
   "TM551": TM551;
   "UT201BLE": UT201BLE;
   "PLS_01BT": PLS_01BT;
+  "HEM_6233T": HEM_6233T;
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -488,6 +501,13 @@ export interface WiredNameOptionsMap {
   "Grove_EARTH": Grove_EARTHOptions;
   "Grove_JoyStick": Grove_JoyStickOptions;
   "Grove_3AxisAccelerometer": Grove_3AxisAccelerometerOptions;
+  "Grove_Speaker": Grove_SpeakerOptions;
+  "Grove_RotaryAnglesensor": Grove_RotaryAngleSensorOptions;
+
+  "Grove_DistanceSensor": Grove_DistanceSensorOptions;
+  "Grove_LightSensor": Grove_LightSensorOptions;
+  "Grove_PressureSensor": Grove_PressureSensorOptions;
+  "Grove_SoilMoistureSensor": Grove_SoilMoistureSensorOptions;
   // StickCHat
   "M5StickC_JoyStick": M5StickC_JoyStickOptions;
   "M5StickC_ADC": M5StickC_ADCOptions;
@@ -532,6 +552,8 @@ export interface WiredNameOptionsMap {
   "TM551": TM551Options;
   "toio_CoreCube": Toio_CoreCubeOptions;
   "UT201BLE": UT201BLEOptions;
+  "HEM_6233T": HEM_6233TOptions;
+
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
 

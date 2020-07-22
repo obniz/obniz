@@ -323,6 +323,8 @@ var map = {
 	"./request/measure/index.yml": "./dist/src/json_schema/request/measure/index.yml",
 	"./request/message/index.yml": "./dist/src/json_schema/request/message/index.yml",
 	"./request/message/send.yml": "./dist/src/json_schema/request/message/send.yml",
+	"./request/plugin/index.yml": "./dist/src/json_schema/request/plugin/index.yml",
+	"./request/plugin/send.yml": "./dist/src/json_schema/request/plugin/send.yml",
 	"./request/pwm/deinit.yml": "./dist/src/json_schema/request/pwm/deinit.yml",
 	"./request/pwm/freq.yml": "./dist/src/json_schema/request/pwm/freq.yml",
 	"./request/pwm/index.yml": "./dist/src/json_schema/request/pwm/index.yml",
@@ -411,6 +413,8 @@ var map = {
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
 	"./response/message/receive.yml": "./dist/src/json_schema/response/message/receive.yml",
+	"./response/plugin/index.yml": "./dist/src/json_schema/response/plugin/index.yml",
+	"./response/plugin/receive.yml": "./dist/src/json_schema/response/plugin/receive.yml",
 	"./response/spi/index.yml": "./dist/src/json_schema/response/spi/index.yml",
 	"./response/spi/read.yml": "./dist/src/json_schema/response/spi/read.yml",
 	"./response/switch/change.yml": "./dist/src/json_schema/response/switch/change.yml",
@@ -827,7 +831,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"}}}}
 
 /***/ }),
 
@@ -954,6 +958,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message/send","related":"/response/message/receive","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{},"to":{"type":"array","minItems":1,"items":{"$ref":"/obnizId"}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/plugin/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin","basePath":"plugin","anyOf":[{"$ref":"/request/plugin/send"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/plugin/send.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin/send","desccription":"plugin send","type":"object","required":["send"],"properties":{"send":{"$ref":"/dataArray"}}}
 
 /***/ }),
 
@@ -1485,7 +1503,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"},"plugin":{"$ref":"/response/plugin"}}}}
 
 /***/ }),
 
@@ -1573,6 +1591,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/plugin/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin","basePath":"plugin","anyOf":[{"$ref":"/response/plugin/receive"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/plugin/receive.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/receive","type":"object","required":["receive"],"properties":{"receive":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/spi/index.yml":
 /***/ (function(module, exports) {
 
@@ -1625,7 +1657,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/tcp/connection.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/connection","type":"object","required":["connection"],"properties":{"connection":{"type":"object","required":["connect"],"properties":{"connected":{"type":"boolean"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/connection","type":"object","required":["connection"],"properties":{"connection":{"type":"object","required":["connected"],"properties":{"connected":{"type":"boolean"}}}}}
 
 /***/ }),
 
@@ -1828,6 +1860,7 @@ const uart_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/io_per
 const logicanalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/logicanalyzer.js"));
 const measure_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/measurements/measure.js"));
 const wifi_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/network/wifi.js"));
+const plugin_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/plugin/plugin.js"));
 const tcp_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/protocol/tcp.js"));
 const ObnizParts_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizParts.js"));
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
@@ -1975,6 +2008,7 @@ class ObnizComponents extends ObnizParts_1.default {
             io: directive_1.default,
             logicAnalyzer: logicanalyzer_1.default,
             measure: measure_1.default,
+            plugin: plugin_1.default,
         };
         const peripheral_map = {
             io: io_1.default,
@@ -2152,7 +2186,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this.debugprint = false;
         this.debugprintBinary = false;
         this.debugs = [];
-        this.onConnectCalled = false;
+        this._onConnectCalled = false;
         this.hw = undefined;
         this.firmware_ver = undefined;
         this.connectionState = "closed"; // closed/connecting/connected/closing
@@ -2250,24 +2284,24 @@ class ObnizConnection extends eventemitter3_1.default {
         option = option || {};
         const timeout = option.timeout || null;
         return new Promise((resolve, reject) => {
-            if (this.onConnectCalled) {
+            if (this._onConnectCalled) {
                 resolve(true);
                 return;
             }
             this.once("connect", () => {
                 resolve(true);
             });
-            if (!this.options.auto_connect) {
-                this.once("close", () => {
-                    resolve(false);
-                });
-            }
             if (timeout) {
                 setTimeout(() => {
                     resolve(false);
                 }, timeout * 1000);
             }
-            this.connect();
+            if (!this.options.auto_connect) {
+                this.once("close", () => {
+                    resolve(false);
+                });
+                this.connect();
+            }
         });
     }
     /**
@@ -2300,7 +2334,12 @@ class ObnizConnection extends eventemitter3_1.default {
             this.clearSocket(this.socket);
             delete this.socket;
         }
+        if (this._nextLoopTimeout) {
+            clearTimeout(this._nextLoopTimeout);
+            this._nextLoopTimeout = undefined;
+        }
         this.connectionState = "closed";
+        this._onConnectCalled = false;
     }
     /**
      * Send json/binary data to obniz Cloud or device.
@@ -2412,6 +2451,34 @@ class ObnizConnection extends eventemitter3_1.default {
             });
         }
     }
+    /**
+     * Repeat will call the callback function periodically while it is connected to obniz Board.
+     * It will stop calling once it is disconnected from obniz Board.
+     *
+     * ```javascript
+     * // Javascript Example
+     *  obniz.ad0.start();
+     *  obniz.repeat(function(){
+     *    if (obniz.ad0.value > 2.5) {
+     *      obniz.io0.output(true);
+     *    } else {
+     *      obniz.io0.output(false);
+     *    }
+     *  }, 100)
+     * ```
+     *
+     * @param callback
+     * @param interval  default 100. It mean 100ms interval loop.
+     */
+    repeat(callback, interval) {
+        if (this._looper) {
+            this._looper = callback;
+            this._repeatInterval = interval || this._repeatInterval || 100;
+            return;
+        }
+        this._looper = callback;
+        this._repeatInterval = interval || 100;
+    }
     wsOnOpen() {
         this.print_debug("ws connected");
         this._connectionRetryCount = 0;
@@ -2442,12 +2509,12 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
+        const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
-        if (this.onConnectCalled === true) {
+        if (beforeOnConnectCalled === true) {
             this._runUserCreatedFunction(this.onclose, this);
         }
         this.emit("close", this);
-        this.onConnectCalled = false;
         this._reconnect();
     }
     _reconnect() {
@@ -2658,7 +2725,8 @@ class ObnizConnection extends eventemitter3_1.default {
                 }
             }
             this.emit("connect", this);
-            this.onConnectCalled = true;
+            this._onConnectCalled = true;
+            this._startLoopInBackground();
             this._afterOnConnect();
         }
     }
@@ -2791,6 +2859,32 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
+    async _startLoopInBackground() {
+        if (this._nextLoopTimeout) {
+            clearTimeout(this._nextLoopTimeout);
+        }
+        this._nextLoopTimeout = setTimeout(async () => {
+            this._nextLoopTimeout = undefined;
+            if (this.connectionState === "connected") {
+                try {
+                    if (typeof this._looper === "function") {
+                        await this.pingWait();
+                        const prom = this._looper();
+                        if (prom instanceof Promise) {
+                            await prom;
+                        }
+                    }
+                }
+                finally {
+                    if (this.connectionState === "connected") {
+                        if (!this._nextLoopTimeout) {
+                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+                        }
+                    }
+                }
+            }
+        }, 0);
+    }
 }
 exports.default = ObnizConnection;
 
@@ -2859,37 +2953,6 @@ class ObnizDevice extends ObnizUIs_1.default {
     constructor(id, options) {
         super(id, options);
         this.util = new util_1.default(this);
-    }
-    /**
-     * Repeat will call the callback function periodically while it is connected to obniz Board.
-     * It will stop calling once it is disconnected from obniz Board.
-     *
-     * ```javascript
-     * // Javascript Example
-     *  obniz.ad0.start();
-     *  obniz.repeat(function(){
-     *    if (obniz.ad0.value > 2.5) {
-     *      obniz.io0.output(true);
-     *    } else {
-     *      obniz.io0.output(false);
-     *    }
-     *  }, 100)
-     * ```
-     *
-     * @param callback
-     * @param interval  default 100. It mean 100ms interval loop.
-     */
-    repeat(callback, interval) {
-        if (this.looper) {
-            this.looper = callback;
-            this.repeatInterval = interval || this.repeatInterval || 100;
-            return;
-        }
-        this.looper = callback;
-        this.repeatInterval = interval || 100;
-        if (this.onConnectCalled) {
-            this.loop();
-        }
     }
     /**
      * @ignore
@@ -2971,25 +3034,8 @@ class ObnizDevice extends ObnizUIs_1.default {
             },
         });
     }
-    async loop() {
-        setTimeout(async () => {
-            if (typeof this.looper === "function" && this.onConnectCalled) {
-                try {
-                    await this.pingWait();
-                    const prom = this.looper();
-                    if (prom instanceof Promise) {
-                        await prom;
-                    }
-                }
-                finally {
-                    setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-                }
-            }
-        }, 0);
-    }
     _callOnConnect() {
         super._callOnConnect();
-        this.loop();
     }
     notifyToModule(obj) {
         super.notifyToModule(obj);
@@ -4067,6 +4113,7 @@ function _ReadCookie(name) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
 const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
 const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
 /**
@@ -4105,6 +4152,7 @@ class Obniz extends ObnizDevice_1.default {
  * M5StickC device
  */
 Obniz.M5StickC = m5stickc_1.M5StickC;
+Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
 /*===================*/
 /* Utils */
 /*===================*/
@@ -6491,7 +6539,7 @@ exports.default = BleRemoteDescriptor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -6990,7 +7038,7 @@ class BleRemotePeripheral {
         }
         const major = (data[20] << 8) + data[21];
         const minor = (data[22] << 8) + data[23];
-        const power = data[24];
+        const power = Buffer.from([data[24]]).readInt8(0);
         this.iBeacon = {
             uuid,
             major,
@@ -7014,6 +7062,7 @@ exports.default = BleRemotePeripheral;
 
 //# sourceMappingURL=bleRemotePeripheral.js.map
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -13402,10 +13451,49 @@ exports.default = HW;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/m5stack_basic.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Hardware
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
+class M5StackBasic extends ObnizDevice_1.default {
+    constructor(id, options) {
+        super(id, options);
+    }
+    async _beforeOnConnect() {
+        super._beforeOnConnect();
+        this.buttonA = this.wired("Button", { signal: 39 });
+        this.buttonB = this.wired("Button", { signal: 38 });
+        this.buttonC = this.wired("Button", { signal: 37 });
+    }
+    _prepareComponents() {
+        // @ts-ignore
+        super._prepareComponents();
+        if (this.hw !== "m5stack_basic") {
+            throw new Error("Obniz.M5StackBasic only support ObnizOS for M5Stack Basic. Your device is not ObnizOS for M5Stack Basic.");
+        }
+    }
+}
+exports.M5StackBasic = M5StackBasic;
+
+//# sourceMappingURL=m5stack_basic.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/m5stack_basic.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"19\":{},\"21\":{},\"22\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"m5stack_basic\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":22,\"pin2\":21}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":320,\"height\":240,\"color_depth\":[1,4,16]},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -13510,7 +13598,7 @@ exports.M5StickC = M5StickC;
 /***/ "./dist/src/obniz/libs/hw/m5stickc.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
+module.exports = JSON.parse("{\"rev\":\"3\",\"hw\":\"m5stickc\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"9\":{},\"10\":{},\"21\":{},\"22\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"grove\":{\"units\":{\"0\":{\"pin1\":33,\"pin2\":32}}}},\"embeds\":{\"ble\":{},\"display\":{\"paper_white\":true,\"raw_alternate\":false,\"width\":160,\"height\":80,\"color_depth\":[1,4,16]}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{\"m5stickc_hat\":{\"units\":{\"0\":{},\"26\":{},\"36\":{}},\"i2c\":{\"sda\":0,\"scl\":26},\"uart\":{\"tx\":0,\"rx\":26}}}}");
 
 /***/ }),
 
@@ -13896,6 +13984,14 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
             drive,
         });
         return this._current.uart;
+    }
+    getPwm(drive = "5v") {
+        this.useWithType("pwm", drive);
+        this._current.pwm = this.Obniz.getFreePwm();
+        this._current.pwm.start({
+            io: this._params.pin1,
+        });
+        return this._current.pwm;
     }
     /**
      * @ignore
@@ -15582,6 +15678,82 @@ exports.default = WiFi;
 
 //# sourceMappingURL=wifi.js.map
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/plugin/plugin.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+class Plugin {
+    constructor(obniz, id) {
+        this.Obniz = obniz;
+    }
+    /**
+     * Scan WiFi
+     *
+     * ```javascript
+     * // Javascript Example
+     * console.log(await obniz.wifi.scanWait());
+     * ```
+     *
+     */
+    send(data) {
+        if (semver_1.default.lt(this.Obniz.firmware_ver, "3.4.0")) {
+            throw new Error(`Please update obniz firmware >= 3.4.0`);
+        }
+        let send_data = null;
+        if (data === undefined) {
+            return;
+        }
+        if (typeof data === "number") {
+            data = [data];
+        }
+        if (this.Obniz.isNode && data instanceof Buffer) {
+            send_data = [...data];
+        }
+        else if (data.constructor === Array) {
+            send_data = data;
+        }
+        else if (typeof data === "string") {
+            const buf = Buffer.from(data);
+            send_data = [...buf];
+        }
+        this.Obniz.send({ plugin: { send: send_data } });
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() { }
+    /**
+     * @ignore
+     * @param obj
+     */
+    notified(obj) {
+        if (obj.receive) {
+            /* Connectino state update. response of connect(), close from destination, response from */
+            const string = util_1.default.dataArray2string(obj.receive);
+            this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
+        }
+    }
+}
+exports.default = Plugin;
+
+//# sourceMappingURL=plugin.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -20280,6 +20452,66 @@ exports.default = WSCommandPWM;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandPlugin.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
+class WSCommandPlugin extends WSCommand_1.default {
+    constructor() {
+        super();
+        this.module = 15;
+        this._CommandSend = 0;
+        this._CommandReceive = 1;
+    }
+    send(params, index) {
+        const buf = new Uint8Array(params.send);
+        this.sendCommand(this._CommandSend, buf);
+    }
+    parseFromJson(json) {
+        const module = json.plugin;
+        if (module === undefined) {
+            return;
+        }
+        const schemaData = [{ uri: "/request/plugin/send", onValid: this.send }];
+        const res = this.validateCommandSchema(schemaData, module, "plugin");
+        if (res.valid === 0) {
+            if (res.invalidButLike.length > 0) {
+                throw new Error(res.invalidButLike[0].message);
+            }
+            else {
+                throw new this.WSCommandNotFoundError(`[network]unknown command`);
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        switch (func) {
+            case this._CommandReceive: {
+                // convert buffer to array
+                const arr = new Array(payload.byteLength);
+                for (let i = 0; i < arr.length; i++) {
+                    arr[i] = payload[i];
+                }
+                objToSend.plugin = {
+                    receive: arr,
+                };
+                break;
+            }
+        }
+    }
+}
+exports.default = WSCommandPlugin;
+
+//# sourceMappingURL=WSCommandPlugin.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandSPI.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -21100,6 +21332,7 @@ const WSCommandI2C_1 = __importDefault(__webpack_require__("./dist/src/obniz/lib
 const WSCommandIO_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandIO.js"));
 const WSCommandLogicAnalyzer_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandLogicAnalyzer.js"));
 const WSCommandMeasurement_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandMeasurement.js"));
+const WSCommandPlugin_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPlugin.js"));
 const WSCommandPWM_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandPWM.js"));
 const WSCommandSPI_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSPI.js"));
 const WSCommandSwitch_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSwitch.js"));
@@ -21123,6 +21356,7 @@ WSCommand_1.default.addCommandClass("WSCommandBle", WSCommandBle_1.default);
 WSCommand_1.default.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.default);
 WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
 WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
+WSCommand_1.default.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.default);
 exports.default = WSCommand_1.default;
 
 //# sourceMappingURL=index.js.map
@@ -21400,6 +21634,7 @@ var map = {
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
+	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
@@ -21454,6 +21689,7 @@ var map = {
 	"./DistanceSensor/HC-SR04/index.js": "./dist/src/parts/DistanceSensor/HC-SR04/index.js",
 	"./DistanceSensor/VL53L0X/index.js": "./dist/src/parts/DistanceSensor/VL53L0X/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./dist/src/parts/GPS/GYSFDMAXB/index.js",
+	"./GasSensor/CCS811/index.js": "./dist/src/parts/GasSensor/CCS811/index.js",
 	"./GasSensor/MQ135/index.js": "./dist/src/parts/GasSensor/MQ135/index.js",
 	"./GasSensor/MQ2/index.js": "./dist/src/parts/GasSensor/MQ2/index.js",
 	"./GasSensor/MQ3/index.js": "./dist/src/parts/GasSensor/MQ3/index.js",
@@ -21467,11 +21703,17 @@ var map = {
 	"./Grove/Grove_3AxisAccelerometer/index.js": "./dist/src/parts/Grove/Grove_3AxisAccelerometer/index.js",
 	"./Grove/Grove_Button/index.js": "./dist/src/parts/Grove/Grove_Button/index.js",
 	"./Grove/Grove_Buzzer/index.js": "./dist/src/parts/Grove/Grove_Buzzer/index.js",
+	"./Grove/Grove_DistanceSensor/index.js": "./dist/src/parts/Grove/Grove_DistanceSensor/index.js",
 	"./Grove/Grove_EARTH/index.js": "./dist/src/parts/Grove/Grove_EARTH/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./dist/src/parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./dist/src/parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_JoyStick/index.js": "./dist/src/parts/Grove/Grove_JoyStick/index.js",
+	"./Grove/Grove_LightSensor/index.js": "./dist/src/parts/Grove/Grove_LightSensor/index.js",
 	"./Grove/Grove_MP3/index.js": "./dist/src/parts/Grove/Grove_MP3/index.js",
+	"./Grove/Grove_PressureSensor/index.js": "./dist/src/parts/Grove/Grove_PressureSensor/index.js",
+	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
+	"./Grove/Grove_SoilMoistureSensor/index.js": "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js",
+	"./Grove/Grove_Speaker/index.js": "./dist/src/parts/Grove/Grove_Speaker/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
@@ -22063,6 +22305,191 @@ exports.default = ENERTALK_TOUCH;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/HEM_6233T/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.HEM_6233T
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class HEM_6233T {
+    constructor(peripheral, timezoneOffsetMinute) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this._peripheral = null;
+        // if (peripheral && !HEM_6233T.isDevice(peripheral)) {
+        //   throw new Error("peripheral is not HEM_6233T");
+        // }
+        this._peripheral = peripheral;
+        this._timezoneOffsetMinute = timezoneOffsetMinute;
+    }
+    static info() {
+        return {
+            name: "HEM_6233T",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName && peripheral.localName.startsWith("BLESmart_")) {
+            return true;
+        }
+        return false;
+    }
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error("HEM_6233T is not find.");
+        }
+        await this._peripheral.connectWait({
+            autoDiscovery: true,
+            pairingOption: {
+                keys: pairingKeys,
+            },
+        });
+        const results = [];
+        return await new Promise(async (resolve, reject) => {
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+            await this.subscribeWait("1805", "2A2B"); // current time
+            await this.subscribeWait("180F", "2A19", async () => {
+                // send command (unknown meaning)
+                this._peripheral.obnizBle.hci.write([
+                    0x02,
+                    0x00,
+                    0x00,
+                    0x09,
+                    0x00,
+                    0x05,
+                    0x00,
+                    0x04,
+                    0x00,
+                    0x01,
+                    0x06,
+                    0x01,
+                    0x00,
+                    0x0a,
+                ]);
+                this._writeTimeCharWait(this._timezoneOffsetMinute);
+            }); // battery Level
+            await this.subscribeWait("1810", "2A35", async (data) => {
+                console.error("SUCCESS", data);
+                results.push(this._analyzeData(data));
+            }); // blood pressure
+        });
+    }
+    async subscribeWait(service, char, callback) {
+        if (!this._peripheral) {
+            throw new Error("HEM_6233T is not find.");
+        }
+        const characteristics = this._peripheral.getService(service).getCharacteristic(char);
+        await characteristics.registerNotifyWait(async (data) => {
+            if (callback) {
+                callback(data);
+            }
+        });
+    }
+    async _writeTimeCharWait(timeOffsetMinute) {
+        if (!this._peripheral) {
+            throw new Error("HEM_6233T is not find.");
+        }
+        const timeChar = this._peripheral.getService("1805").getCharacteristic("2A2B");
+        const date = new Date();
+        date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
+        const buf = Buffer.alloc(7);
+        buf.writeUInt16LE(date.getUTCFullYear(), 0);
+        buf.writeUInt8(date.getUTCMonth() + 1, 2);
+        buf.writeUInt8(date.getUTCDate(), 3);
+        buf.writeUInt8(date.getUTCHours(), 4);
+        buf.writeUInt8(date.getUTCMinutes(), 5);
+        buf.writeUInt8(date.getUTCSeconds(), 6);
+        const arr = Array.from(buf);
+        await timeChar.writeWait(arr);
+    }
+    _readFloatLE(buffer, index) {
+        const data = buffer.readUInt16LE(index);
+        let mantissa = data & 0x0fff;
+        if ((mantissa & 0x0800) > 0) {
+            mantissa = -1 * (~(mantissa - 0x01) & 0x0fff);
+        }
+        const exponential = data >> 12;
+        return mantissa * Math.pow(10, exponential);
+    }
+    _readSFloatLE(buffer, index) {
+        const data = buffer.readUInt32LE(index);
+        let mantissa = data & 0x00ffffff;
+        if ((mantissa & 0x00800000) > 0) {
+            mantissa = -1 * (~(mantissa - 0x01) & 0x00ffffff);
+        }
+        const exponential = data >> 24;
+        return mantissa * Math.pow(10, exponential);
+    }
+    _analyzeData(data) {
+        const buf = Buffer.from(data);
+        const flags = buf.readUInt8(0);
+        let index = 1;
+        const result = {};
+        let scale = 1;
+        if (flags & 0x01) {
+            // kPa
+            scale = 7.501;
+        }
+        result.bloodPressure = {
+            systolic: this._readFloatLE(buf, index) * scale,
+            diastolic: this._readFloatLE(buf, index + 2) * scale,
+            meanArterialPressure: this._readFloatLE(buf, index + 4) * scale,
+            unit: "mmHg",
+        };
+        index += 6;
+        if (flags & 0x02) {
+            // Time Stamp field present
+            result.date = {
+                year: buf.readUInt16LE(index),
+                month: buf.readUInt8(index + 2),
+                day: buf.readUInt8(index + 3),
+                hour: buf.readUInt8(index + 4),
+                minute: buf.readUInt8(index + 5),
+                second: buf.readUInt8(index + 6),
+            };
+            index += 7;
+        }
+        if (flags & 0x04) {
+            result.pulseRate = buf.readUInt16LE(index);
+            index += 2;
+        }
+        if (flags & 0x08) {
+            result.userId = buf.readUInt8(index);
+            index += 1;
+        }
+        if (flags & 0x10) {
+            const statusFlag = {
+                0x01: "BodyMovementDetection",
+                0x02: "CuffFitDetection",
+                0x04: "IrregularPulseDetection",
+                0x08: "PulseRateRangeDetection",
+                0x10: "MeasurementPositionDetection",
+            };
+            const mesurementStatus = buf.readUInt16LE(index);
+            index++;
+            result.measurementStatus = [];
+            for (const f in statusFlag) {
+                if (+f & mesurementStatus) {
+                    result.measurementStatus.push(statusFlag[f]);
+                }
+            }
+        }
+        return result;
+    }
+}
+exports.default = HEM_6233T;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/LogttaAD/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22312,6 +22739,44 @@ class Logtta_CO2 {
     static isDevice(peripheral) {
         return peripheral.localName === "CO2 Sensor";
     }
+    static isAdvDevice(peripheral) {
+        if (peripheral.adv_data.length !== 31) {
+            return false;
+        }
+        const data = peripheral.adv_data;
+        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (peripheral.adv_data.length !== 31) {
+            return null;
+        }
+        const data = peripheral.adv_data;
+        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
+            return null;
+        }
+        const alert = data[15];
+        const interval = (data[13] << 8) | data[14];
+        const advData = {
+            battery: data[12],
+            co2: (data[8] << 8) | data[9],
+            interval,
+            address: peripheral.address,
+        };
+        return advData;
+    }
+    static getName(data) {
+        let name = "";
+        for (let i = 16; i < data.length; i++) {
+            if (data[i] === 0) {
+                break;
+            }
+            name += String.fromCharCode(data[i]);
+        }
+        return name;
+    }
     static get_uuid(uuid) {
         return `31f3${uuid}-bd1c-46b1-91e4-f57abcf7d449`;
     }
@@ -22360,6 +22825,41 @@ class Logtta_CO2 {
             }
         });
     }
+    async authPinCodeWait(code) {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return;
+        }
+        if (code.length !== 4) {
+            throw new Error("Invalid length auth code");
+        }
+        const data = [0];
+        for (let i = 0; i < code.length; i += 2) {
+            data.push((this.checkNumber(code.charAt(i)) << 4) | this.checkNumber(code.charAt(i + 1)));
+        }
+        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB30"));
+        await c.writeWait(data);
+    }
+    // 有効にしたあと、切断するとビーコンが発信される
+    async setBeaconMode(enable) {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return;
+        }
+        const c = this._peripheral.getService(Logtta_CO2.get_uuid("AB20")).getCharacteristic(Logtta_CO2.get_uuid("AB2D"));
+        if (enable) {
+            await c.writeWait([1]);
+        }
+        else {
+            await c.writeWait([0]);
+        }
+    }
+    checkNumber(data) {
+        if (data >= "0" && data <= "9") {
+            return parseInt(data, 10);
+        }
+        else {
+            throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
+        }
+    }
 }
 exports.default = Logtta_CO2;
 
@@ -22392,6 +22892,45 @@ class Logtta_TH {
     }
     static isDevice(peripheral) {
         return peripheral.localName === "TH Sensor";
+    }
+    static isAdvDevice(peripheral) {
+        if (peripheral.adv_data.length !== 31) {
+            return false;
+        }
+        const data = peripheral.adv_data;
+        if (Logtta_TH.getName(data) !== "TH Sensor") {
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (peripheral.adv_data.length !== 31) {
+            return null;
+        }
+        const data = peripheral.adv_data;
+        if (Logtta_TH.getName(data) !== "TH Sensor") {
+            return null;
+        }
+        const alert = data[15];
+        const interval = (data[13] << 8) | data[14];
+        const advData = {
+            battery: data[12],
+            temperature: (((data[8] << 8) | data[9]) / 65536) * 175.72 - 46.85,
+            humidity: (((data[10] << 8) | data[11]) / 65536) * 125 - 6,
+            interval,
+            address: peripheral.address,
+        };
+        return advData;
+    }
+    static getName(data) {
+        let name = "";
+        for (let i = 16; i < data.length; i++) {
+            if (data[i] === 0) {
+                break;
+            }
+            name += String.fromCharCode(data[i]);
+        }
+        return name;
     }
     static get_uuid(uuid) {
         return `f7ee${uuid}-276e-4165-aa69-7e3de7fc627e`;
@@ -22444,6 +22983,41 @@ class Logtta_TH {
                 });
             }
         });
+    }
+    async authPinCodeWait(code) {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return;
+        }
+        if (code.length !== 4) {
+            throw new Error("Invalid length auth code");
+        }
+        const data = [0];
+        for (let i = 0; i < code.length; i += 2) {
+            data.push((this.checkNumber(code.charAt(i)) << 4) | this.checkNumber(code.charAt(i + 1)));
+        }
+        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA30"));
+        await c.writeWait(data);
+    }
+    // 有効にしたあと、切断するとビーコンが発信される
+    async setBeaconMode(enable) {
+        if (!(this._peripheral && this._peripheral.connected)) {
+            return;
+        }
+        const c = this._peripheral.getService(Logtta_TH.get_uuid("AA20")).getCharacteristic(Logtta_TH.get_uuid("AA2D"));
+        if (enable) {
+            await c.writeWait([1]);
+        }
+        else {
+            await c.writeWait([0]);
+        }
+    }
+    checkNumber(data) {
+        if (data >= "0" && data <= "9") {
+            return parseInt(data, 10);
+        }
+        else {
+            throw new Error(`authorization code can only be entered from 0-9.input word : ${data}`);
+        }
     }
 }
 exports.default = Logtta_TH;
@@ -23196,7 +23770,7 @@ class UT201BLE {
         const buf = Buffer.alloc(7);
         buf.writeUInt16LE(date.getUTCFullYear(), 0);
         buf.writeUInt8(date.getUTCMonth() + 1, 2);
-        buf.writeUInt8(date.getUTCDay(), 3);
+        buf.writeUInt8(date.getUTCDate(), 3);
         buf.writeUInt8(date.getUTCHours(), 4);
         buf.writeUInt8(date.getUTCMinutes(), 5);
         buf.writeUInt8(date.getUTCSeconds(), 6);
@@ -36243,6 +36817,203 @@ exports.default = GYSFDMAXB;
 
 /***/ }),
 
+/***/ "./dist/src/parts/GasSensor/CCS811/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.CCS811
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class CCS811 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.i2cinfo = {
+            address: 0x5b,
+            clock: 100000,
+            voltage: "3v",
+            pull: "3v",
+        };
+        this.requiredKeys = [];
+        this.keys = ["vcc", "gnd", "scl", "sda", "nwak", "nrst", "nint", "i2c", "add", "address"];
+        this.ioKeys = ["vcc", "gnd", "scl", "sda", "nwak", "nrst", "nint", "add"];
+        this.commands = {};
+        this.commands.addresses = {
+            CCS811_STATUS: 0x00,
+            CCS811_MEAS_MODE: 0x01,
+            CCS811_ALG_RESULT_DATA: 0x02,
+            CCS811_RAW_DATA: 0x03,
+            CCS811_ENV_DATA: 0x05,
+            CCS811_NTC: 0x06,
+            CCS811_THRESHOLDS: 0x10,
+            CCS811_BASELINE: 0x11,
+            CCS811_HW_ID: 0x20,
+            CCS811_HW_VERSION: 0x21,
+            CCS811_FW_BOOT_VERSION: 0x23,
+            CCS811_FW_APP_VERSION: 0x24,
+            CCS811_ERROR_ID: 0xe0,
+            CCS811_APP_START: 0xf4,
+            CCS811_SW_RESET: 0xff,
+        };
+    }
+    static info() {
+        return {
+            name: "CCS811",
+        };
+    }
+    i2cInfo() {
+        return this.i2cinfo;
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        this.obniz.setVccGnd(this.params.vcc, null, "3v");
+        this.obniz.setVccGnd(null, this.params.gnd, "5v");
+        this.obniz.wait(10);
+        this.address = 0x5b;
+        if (this.params.address === 0x5b) {
+            this.address = 0x5b;
+        }
+        else if (this.params.address === 0x5a) {
+            this.address = 0x5a;
+        }
+        else if (this.params.address !== undefined) {
+            throw new Error("address must be 0x5a or 0x5b");
+        }
+        if (obniz.isValidIO(this.params.add)) {
+            this.io_add = obniz.getIO(this.params.add);
+            this.io_add.drive("3v");
+            this.io_add.output(this.address === 0x5a ? false : true);
+        }
+        if (this.params.i2c !== undefined) {
+            this.i2c = this.params.i2c;
+        }
+        else {
+            this.params.clock = this.params.clock || 100 * 1000;
+            this.params.mode = "master";
+            this.params.pull = "3v";
+            this.i2c = obniz.getI2CWithConfig(this.params);
+        }
+        this.obniz.wait(10);
+    }
+    async configWait() {
+        // restart
+        const readCheck = await this.readWait(this.commands.addresses.CCS811_HW_ID, 1);
+        if (readCheck[0] !== 0x81) {
+            console.log("readCheck error " + readCheck);
+        }
+        await this.obniz.wait(10);
+        console.log("restarted");
+        // reset
+        this.write(this.commands.addresses.CCS811_SW_RESET, [0x11, 0xe5, 0x72, 0x8a]);
+        await this.obniz.wait(10);
+        console.log("reset");
+        // checkForStatusError
+        const status = await this.readWait(this.commands.addresses.CCS811_STATUS, 1);
+        console.log("Status: " + status);
+        this.start();
+        await this.setDriveModeWait(1); // Read every second
+        await this.obniz.wait(10);
+        console.log("config done");
+    }
+    start() {
+        this.write(this.commands.addresses.CCS811_APP_START, []);
+    }
+    // Mode 0 = Idle
+    // Mode 1 = read every 1s
+    // Mode 2 = every 10s
+    // Mode 3 = every 60s
+    // Mode 4 = RAW mode
+    async setDriveModeWait(mode) {
+        if (mode > 4) {
+            mode = 4;
+        } // sanitize input
+        let value = await this.getMeasModeWait();
+        value &= ~(0b00000111 << 4); // Clear DRIVE_MODE bits
+        value |= mode << 4; // Mask in mode
+        this.write(this.commands.addresses.CCS811_MEAS_MODE, value);
+    }
+    async getMeasModeWait() {
+        const meas_mode = await this.readWait(this.commands.addresses.CCS811_MEAS_MODE, 1); // Read what's currently there
+        return meas_mode[0];
+    }
+    async getDriveModeWait() {
+        const meas_mode = await this.getMeasModeWait();
+        let drive_mode = meas_mode >>> 4;
+        if (drive_mode > 8) {
+            drive_mode -= 8;
+        }
+        return drive_mode;
+    }
+    async setEnvironmentalDataWait(relativeHumidity, temperature) {
+        // Check for invalid temperatures
+        if (temperature < -25 || temperature > 50) {
+            console.log("temperature is out of range");
+        }
+        // Check for invalid humidity
+        if (relativeHumidity < 0 || relativeHumidity > 100) {
+            console.log("humidity is out of range");
+        }
+        const rH = relativeHumidity * 1000; // 42.348 becomes 42348
+        let temp = temperature * 1000; // 23.2 becomes 23200
+        const envData = [];
+        envData[0] = Math.round((rH + 250) / 500);
+        envData[1] = 0; // CCS811 only supports increments of 0.5 so bits 7-0 will always be zero
+        temp += 25000; // Add the 25C offset
+        envData[2] = Math.round((temp + 250) / 500);
+        envData[3] = 0;
+        // console.log("envData: ", envData);
+        this.write(this.commands.addresses.CCS811_ENV_DATA, envData);
+    }
+    // Checks to see if DATA_READ flag is set in the status register
+    async checkAvailableDataWait() {
+        const value = (await this.readWait(this.commands.addresses.CCS811_STATUS, 1))[0];
+        return Boolean(value & (1 << 3));
+    }
+    async readAlgorithmResultsWait() {
+        const data = await this.readWait(this.commands.addresses.CCS811_ALG_RESULT_DATA, 8);
+        // Data ordered:
+        // co2MSB, co2LSB, tvocMSB, tvocLSB
+        const eCO2 = (data[0] << 8) | data[1];
+        const TVOC = (data[2] << 8) | data[3];
+        return { eCO2, TVOC };
+    }
+    async geteCO2Wait() {
+        return (await this.readAlgorithmResultsWait()).eCO2;
+    }
+    async getTVOCWait() {
+        return (await this.readAlgorithmResultsWait()).TVOC;
+    }
+    wake() {
+        this.io_nwak = this.obniz.getIO(this.params.nwak);
+        this.io_nwak.drive("3v");
+        this.io_nwak.output(false);
+    }
+    sleep() {
+        this.io_nwak = this.obniz.getIO(this.params.nwak);
+        this.io_nwak.drive("3v");
+        this.io_nwak.output(true);
+    }
+    async hwResetWait() {
+        this.io_nrst = this.obniz.getIO(this.params.nrst);
+        this.io_nrst.drive("3v");
+        this.io_nrst.output(false);
+        await this.obniz.wait(10);
+        this.io_nrst.output(true);
+    }
+}
+exports.default = CCS811;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/GasSensor/MQ135/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -36858,6 +37629,50 @@ exports.default = Grove_Buzzer;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_DistanceSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts..Grove_DistanceSensor
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const GP2Y0A21YK0F_1 = __importDefault(__webpack_require__("./dist/src/parts/DistanceSensor/GP2Y0A21YK0F/index.js"));
+class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
+    static info() {
+        return {
+            name: "Grove_DistanceSensor",
+        };
+    }
+    constructor() {
+        super();
+        this.keys = ["gnd", "vcc", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    wired(obniz) {
+        this.obniz = obniz;
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad_signal = groveAd.secondary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad_signal = obniz.getAD(this.params.signal);
+        }
+    }
+}
+exports.default = Grove_DistanceSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_EARTH/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -37374,6 +38189,53 @@ exports.default = Grove_JoyStick;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Grove/Grove_LightSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_LightSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_LightSensor {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_LightSensor",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    async getWait() {
+        return await this.ad.getWait();
+    }
+}
+exports.default = Grove_LightSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Grove/Grove_MP3/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -37474,6 +38336,206 @@ class Grove_MP3 {
     }
 }
 exports.default = Grove_MP3;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_PressureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_PressureSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_PressureSensor {
+    constructor() {
+        this.keys = ["vcc", "gnd", "output", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_PressureSensor",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.output);
+        }
+        this.ad.start((value) => {
+            this.value = value * 100;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+    async getWait() {
+        const value = await this.ad.getWait();
+        this.value = value * 100;
+        return this.value;
+    }
+}
+exports.default = Grove_PressureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_RotaryAngleSensorOptionsA
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_RotaryAngleSensor {
+    constructor() {
+        // public vcc_voltage = 5.0;
+        this.position = 0;
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+        this.drive = "5v";
+    }
+    static info() {
+        return {
+            name: "Grove_RotaryAngleSensor",
+        };
+    }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            this.value = value;
+            if (this.onchange) {
+                this.onchange(this.value);
+            }
+        });
+    }
+}
+exports.default = Grove_RotaryAngleSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_SoilMoistureSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_SoilMoistureSensor {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_SoilMoistureSensor",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            const groveAd = this.params.grove.getAnalog();
+            this.ad = groveAd.primary;
+        }
+        else {
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.ad = obniz.getAD(this.params.signal);
+        }
+        this.ad.start((value) => {
+            if (this.onchange) {
+                this.onchange(value);
+            }
+        });
+    }
+    async getWait() {
+        return await this.ad.getWait();
+    }
+}
+exports.default = Grove_SoilMoistureSensor;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_Speaker/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_Speaker
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_Speaker {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal", "grove"];
+        this.requiredKeys = [];
+    }
+    static info() {
+        return {
+            name: "Grove_Speaker",
+        };
+    }
+    onchange(value) { }
+    wired(obniz) {
+        if (this.params.grove) {
+            this.pwm = this.params.grove.getPwm();
+        }
+        else {
+            this.obniz = obniz;
+            this.obniz.setVccGnd(null, this.params.gnd, "5v");
+            this.pwm = obniz.getFreePwm();
+            this.pwm.start({ io: this.params.signal });
+        }
+    }
+    play(frequency) {
+        if (typeof frequency !== "number") {
+            throw new Error("freq must be a number");
+        }
+        frequency = Math.floor(frequency); // temporary
+        if (frequency > 0) {
+            this.pwm.freq(frequency);
+            this.pwm.pulse((1 / frequency / 2) * 1000);
+        }
+        else {
+            this.pwm.pulse(0);
+        }
+    }
+    stop() {
+        this.play(0);
+    }
+}
+exports.default = Grove_Speaker;
 
 //# sourceMappingURL=index.js.map
 

@@ -313,43 +313,158 @@ describe('obniz.index', function() {
     ]);
 
     expect(this.obniz).to.be.finished;
-
-    await wait(10);
-    let key = [];
-
-    expect(this.obniz).send(val => {
-      if (
-        val[0] &&
-        val[0].system &&
-        val[0].system.ping &&
-        val[0].system.ping.key
-      ) {
-        key = val[0].system.ping.key;
-        return true;
-      }
-      return false;
-    });
-    expect(this.obniz).to.be.finished;
-    testUtil.receiveJson(this.obniz, [
-      {
-        system: {
-          pong: {
-            key: key,
-            obnizTime: 1591354603572,
-            pingServerTime: 1591354601594,
-            pongServerTime: 1591354601771,
-          },
-        },
-      },
-    ]);
-    await wait(10);
+    await pingPongWait(this.obniz);
 
     await new Promise(resolve => {
-      this.obniz.looper = null;
+      this.obniz._looper = null;
       testUtil.releaseObnizePromise(this, resolve);
     });
 
     expect(called).to.be.true;
+  });
+
+  it('repeat in onconnect', async () => {
+    let called = false;
+    await new Promise(resolve => {
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
+    });
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).to.be.finished; // input queue
+
+    this.obniz.onconnect = () => {
+      console.log('set repeat');
+      this.obniz.repeat(function() {
+        called = true;
+      });
+    };
+    testUtil.receiveJson(this.obniz, [
+      {
+        ws: {
+          ready: true,
+          obniz: {
+            firmware: '1.0.3',
+          },
+        },
+      },
+    ]);
+
+    expect(this.obniz).send([
+      {
+        ws: {
+          reset_obniz_on_ws_disconnection: true,
+        },
+      },
+    ]);
+
+    expect(this.obniz).to.be.finished;
+    await wait(10);
+    await pingPongWait(this.obniz);
+
+    await new Promise(resolve => {
+      this.obniz._looper = null;
+      testUtil.releaseObnizePromise(this, resolve);
+    });
+
+    expect(called).to.be.true;
+  });
+
+  it('double repeat', async () => {
+    let called = false;
+    let called2 = false;
+    await new Promise(resolve => {
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
+    });
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).to.be.finished; // input queue
+
+    // auto pong response
+    sinon.stub(this.obniz, 'pingWait').returns(Promise.resolve());
+
+    this.obniz.repeat(function() {
+      called = true;
+    });
+
+    this.obniz.repeat(function() {
+      called2 = true;
+    });
+    testUtil.receiveJson(this.obniz, [
+      {
+        ws: {
+          ready: true,
+          obniz: {
+            firmware: '1.0.3',
+          },
+        },
+      },
+    ]);
+
+    expect(this.obniz).send([
+      {
+        ws: {
+          reset_obniz_on_ws_disconnection: true,
+        },
+      },
+    ]);
+
+    await wait(10);
+
+    await new Promise(resolve => {
+      this.obniz._looper = null;
+      testUtil.releaseObnizePromise(this, resolve);
+    });
+
+    expect(called).to.be.false;
+    expect(called2).to.be.true;
+  });
+
+  it('double repeat in onconnect', async () => {
+    await new Promise(resolve => {
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
+    });
+
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).to.be.finished; // input queue
+
+    // auto pong response
+    sinon.stub(this.obniz, 'pingWait').returns(Promise.resolve());
+
+    let count = 0;
+    this.obniz.onconnect = () => {
+      this.obniz.repeat(function() {
+        count += 100;
+      }, 10);
+
+      this.obniz.repeat(function() {
+        count++;
+      }, 100);
+    };
+    testUtil.receiveJson(this.obniz, [
+      {
+        ws: {
+          ready: true,
+          obniz: {
+            firmware: '1.0.3',
+          },
+        },
+      },
+    ]);
+
+    expect(this.obniz).send([
+      {
+        ws: {
+          reset_obniz_on_ws_disconnection: true,
+        },
+      },
+    ]);
+
+    await wait(510);
+
+    await new Promise(resolve => {
+      this.obniz._looper = null;
+      testUtil.releaseObnizePromise(this, resolve);
+    });
+
+    expect(4 <= count && count <= 6).to.be.true;
   });
 
   it('connect_repeat', function() {
@@ -389,7 +504,7 @@ describe('obniz.index', function() {
       })
       .then(() => {
         return new Promise(resolve => {
-          this.obniz.looper = null;
+          this.obniz._looper = null;
           testUtil.releaseObnizePromise(this, resolve);
         });
       })
@@ -478,5 +593,38 @@ describe('obniz.index', function() {
     return new Promise(resolve => {
       setTimeout(resolve, ms);
     });
+  }
+
+  async function pingPongWait(obniz) {
+    await wait(10);
+
+    let key = [];
+
+    expect(obniz).send(val => {
+      if (
+        val[0] &&
+        val[0].system &&
+        val[0].system.ping &&
+        val[0].system.ping.key
+      ) {
+        key = val[0].system.ping.key;
+        return true;
+      }
+      return false;
+    });
+    expect(obniz).to.be.finished;
+    testUtil.receiveJson(obniz, [
+      {
+        system: {
+          pong: {
+            key: key,
+            obnizTime: 1591354603572,
+            pingServerTime: 1591354601594,
+            pongServerTime: 1591354601771,
+          },
+        },
+      },
+    ]);
+    await wait(10);
   }
 });

@@ -48,8 +48,6 @@ export default class ObnizDevice extends ObnizUIs {
    */
   public onmessage: any;
 
-  protected looper: any;
-  protected repeatInterval: any;
   protected ondebug: any;
 
   /**
@@ -96,39 +94,6 @@ export default class ObnizDevice extends ObnizUIs {
   constructor(id: string, options?: ObnizOptions) {
     super(id, options);
     this.util = new ObnizUtil(this);
-  }
-
-  /**
-   * Repeat will call the callback function periodically while it is connected to obniz Board.
-   * It will stop calling once it is disconnected from obniz Board.
-   *
-   * ```javascript
-   * // Javascript Example
-   *  obniz.ad0.start();
-   *  obniz.repeat(function(){
-   *    if (obniz.ad0.value > 2.5) {
-   *      obniz.io0.output(true);
-   *    } else {
-   *      obniz.io0.output(false);
-   *    }
-   *  }, 100)
-   * ```
-   *
-   * @param callback
-   * @param interval  default 100. It mean 100ms interval loop.
-   */
-  public repeat(callback: any, interval: any) {
-    if (this.looper) {
-      this.looper = callback;
-      this.repeatInterval = interval || this.repeatInterval || 100;
-      return;
-    }
-    this.looper = callback;
-    this.repeatInterval = interval || 100;
-
-    if (this.onConnectCalled) {
-      this.loop();
-    }
   }
 
   /**
@@ -212,25 +177,8 @@ export default class ObnizDevice extends ObnizUIs {
     });
   }
 
-  protected async loop() {
-    setTimeout(async () => {
-      if (typeof this.looper === "function" && this.onConnectCalled) {
-        try {
-          await this.pingWait();
-          const prom: any = this.looper();
-          if (prom instanceof Promise) {
-            await prom;
-          }
-        } finally {
-          setTimeout(this.loop.bind(this), this.repeatInterval || 100);
-        }
-      }
-    }, 0);
-  }
-
   protected _callOnConnect() {
     super._callOnConnect();
-    this.loop();
   }
 
   protected notifyToModule(obj: any) {

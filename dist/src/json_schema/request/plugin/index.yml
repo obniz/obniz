@@ -1,0 +1,9 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/plugin"
+basePath: "plugin"
+description: "plugin command"
+
+"anyOf":
+  - {$ref: "/request/plugin/send"}

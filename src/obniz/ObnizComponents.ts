@@ -19,6 +19,7 @@ import PeripheralUART from "./libs/io_peripherals/uart";
 import LogicAnalyzer from "./libs/measurements/logicanalyzer";
 import ObnizMeasure from "./libs/measurements/measure";
 import WiFi from "./libs/network/wifi";
+import Plugin from "./libs/plugin/plugin";
 
 import TCP from "./libs/protocol/tcp";
 
@@ -29,7 +30,7 @@ import HW from "./libs/hw";
 import PeripheralGrove from "./libs/io_peripherals/grove";
 import { ObnizOptions } from "./ObnizOptions";
 
-export default class ObnizComponents extends ObnizParts {
+export default abstract class ObnizComponents extends ObnizParts {
   /* board peripherals */
 
   /**
@@ -239,6 +240,11 @@ export default class ObnizComponents extends ObnizParts {
    */
   public ble?: ObnizHciBLE;
 
+  /**
+   * @category plugin
+   */
+  public plugin?: Plugin;
+
   protected _hwDefinition: any;
 
   protected pongObservers: any;
@@ -405,6 +411,7 @@ export default class ObnizComponents extends ObnizParts {
       io: PeripheralDirective,
       logicAnalyzer: LogicAnalyzer,
       measure: ObnizMeasure,
+      plugin: Plugin,
     };
 
     const peripheral_map: any = {

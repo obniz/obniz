@@ -28,3 +28,4 @@ items:
     debug: {$ref: "/response/debug"}
     ws: {$ref: "/response/ws"}
     wifi: {$ref: "/response/wifi"}
+    plugin: {$ref: "/response/plugin"}

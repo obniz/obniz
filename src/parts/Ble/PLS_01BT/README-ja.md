@@ -1,5 +1,6 @@
 # PLS_01BT
 株式会社カスタム社製の　酸素飽和度メータです
+![](./image.jpg)
 
 ## isDevice(peripheral)
 
