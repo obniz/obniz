@@ -15690,6 +15690,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 class Plugin {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -15738,9 +15739,8 @@ class Plugin {
     notified(obj) {
         if (obj.receive) {
             /* Connectino state update. response of connect(), close from destination, response from */
-            if (this.onreceive) {
-                this.onreceive(obj.receive);
-            }
+            const string = util_1.default.dataArray2string(obj.receive);
+            this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
         }
     }
 }
@@ -20487,8 +20487,13 @@ class WSCommandPlugin extends WSCommand_1.default {
     notifyFromBinary(objToSend, func, payload) {
         switch (func) {
             case this._CommandReceive: {
+                // convert buffer to array
+                const arr = new Array(payload.byteLength);
+                for (let i = 0; i < arr.length; i++) {
+                    arr[i] = payload[i];
+                }
                 objToSend.plugin = {
-                    receive: payload,
+                    receive: arr,
                 };
                 break;
             }

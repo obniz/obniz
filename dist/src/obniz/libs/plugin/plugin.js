@@ -8,6 +8,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = __importDefault(require("semver"));
+const util_1 = __importDefault(require("../utils/util"));
 class Plugin {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -56,9 +57,8 @@ class Plugin {
     notified(obj) {
         if (obj.receive) {
             /* Connectino state update. response of connect(), close from destination, response from */
-            if (this.onreceive) {
-                this.onreceive(obj.receive);
-            }
+            const string = util_1.default.dataArray2string(obj.receive);
+            this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
         }
     }
 }
