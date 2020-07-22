@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.CCS811
+ */
+
 import Obniz from "../../../obniz";
 import { PullType } from "../../../obniz/libs/io_peripherals/common";
 import PeripheralIO from "../../../obniz/libs/io_peripherals/io";

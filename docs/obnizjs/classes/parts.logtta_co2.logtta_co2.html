@@ -109,11 +109,15 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.logtta_co2.logtta_co2.html#authpincodewait" class="tsd-kind-icon">auth<wbr>Pin<wbr>Code<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.logtta_co2.logtta_co2.html#connectwait" class="tsd-kind-icon">connect<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.logtta_co2.logtta_co2.html#disconnectwait" class="tsd-kind-icon">disconnect<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.logtta_co2.logtta_co2.html#getwait" class="tsd-kind-icon">get<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.logtta_co2.logtta_co2.html#setbeaconmode" class="tsd-kind-icon">set<wbr>Beacon<wbr>Mode</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.logtta_co2.logtta_co2.html#startnotifywait" class="tsd-kind-icon">start<wbr>Notify<wbr>Wait</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.logtta_co2.logtta_co2.html#getdata" class="tsd-kind-icon">get<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.logtta_co2.logtta_co2.html#info" class="tsd-kind-icon">info</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.logtta_co2.logtta_co2.html#isadvdevice" class="tsd-kind-icon">is<wbr>Adv<wbr>Device</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="parts.logtta_co2.logtta_co2.html#isdevice" class="tsd-kind-icon">is<wbr>Device</a></li>
 							</ul>
 						</section>
@@ -132,7 +136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:32</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:79</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,7 +158,7 @@
 					<div class="tsd-signature tsd-kind-icon">_peripheral<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:29</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:76</li>
 						</ul>
 					</aside>
 				</section>
@@ -164,7 +168,7 @@
 					<div class="tsd-signature tsd-kind-icon">battery<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="parts.abstract.services.blebatteryservice.html" class="tsd-signature-type">BleBatteryService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:32</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:79</li>
 						</ul>
 					</aside>
 				</section>
@@ -174,7 +178,7 @@
 					<div class="tsd-signature tsd-kind-icon">generic<wbr>Access<span class="tsd-signature-symbol">:</span> <a href="parts.abstract.services.blegenericaccess.html" class="tsd-signature-type">BleGenericAccess</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:31</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:78</li>
 						</ul>
 					</aside>
 				</section>
@@ -184,7 +188,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Notify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>co2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:28</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:75</li>
 						</ul>
 					</aside>
 				</section>
@@ -194,13 +198,36 @@
 					<div class="tsd-signature tsd-kind-icon">ondisconnect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:30</li>
+							<li>Defined in src/parts/Ble/LogttaCO2/index.ts:77</li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="authpincodewait" class="tsd-anchor"></a>
+					<h3>auth<wbr>Pin<wbr>Code<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">auth<wbr>Pin<wbr>Code<wbr>Wait<span class="tsd-signature-symbol">(</span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:141</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>code: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="connectwait" class="tsd-anchor"></a>
 					<h3>connect<wbr>Wait</h3>
@@ -211,7 +238,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:41</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:88</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -228,7 +255,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:64</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:111</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -245,10 +272,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:70</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:117</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setbeaconmode" class="tsd-anchor"></a>
+					<h3>set<wbr>Beacon<wbr>Mode</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Beacon<wbr>Mode<span class="tsd-signature-symbol">(</span>enable<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:159</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>enable: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -262,10 +312,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:80</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:127</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getdata" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Data</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Data<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.logtta_co2.logtta_co2_adv_data.html" class="tsd-signature-type">Logtta_CO2_Adv_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:41</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/parts.logtta_co2.logtta_co2_adv_data.html" class="tsd-signature-type">Logtta_CO2_Adv_Data</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -279,10 +352,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:14</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:20</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsbleinfo.html" class="tsd-signature-type">ObnizPartsBleInfo</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="isadvdevice" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> is<wbr>Adv<wbr>Device</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Adv<wbr>Device<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:30</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -296,7 +392,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:20</li>
+									<li>Defined in src/parts/Ble/LogttaCO2/index.ts:26</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -345,6 +441,9 @@
 								<a href="parts.logtta_co2.logtta_co2.html#ondisconnect" class="tsd-kind-icon">ondisconnect</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="parts.logtta_co2.logtta_co2.html#authpincodewait" class="tsd-kind-icon">auth<wbr>Pin<wbr>Code<wbr>Wait</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="parts.logtta_co2.logtta_co2.html#connectwait" class="tsd-kind-icon">connect<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -354,10 +453,19 @@
 								<a href="parts.logtta_co2.logtta_co2.html#getwait" class="tsd-kind-icon">get<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="parts.logtta_co2.logtta_co2.html#setbeaconmode" class="tsd-kind-icon">set<wbr>Beacon<wbr>Mode</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="parts.logtta_co2.logtta_co2.html#startnotifywait" class="tsd-kind-icon">start<wbr>Notify<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="parts.logtta_co2.logtta_co2.html#getdata" class="tsd-kind-icon">get<wbr>Data</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="parts.logtta_co2.logtta_co2.html#info" class="tsd-kind-icon">info</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="parts.logtta_co2.logtta_co2.html#isadvdevice" class="tsd-kind-icon">is<wbr>Adv<wbr>Device</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="parts.logtta_co2.logtta_co2.html#isdevice" class="tsd-kind-icon">is<wbr>Device</a>
@@ -368,6 +476,9 @@
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/parts.logtta_co2.logtta_co2options.html" class="tsd-kind-icon">Logtta_<wbr>CO2<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/parts.logtta_co2.logtta_co2_adv_data.html" class="tsd-kind-icon">Logtta_<wbr>CO2_<wbr><wbr>Adv_<wbr><wbr>Data</a>
 					</li>
 				</ul>
 			</nav>

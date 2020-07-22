@@ -36822,6 +36822,10 @@ exports.default = GYSFDMAXB;
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ * @module Parts.CCS811
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
