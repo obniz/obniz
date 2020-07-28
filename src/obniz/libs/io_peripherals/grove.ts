@@ -20,7 +20,7 @@ export interface PeripheralGroveParams {
 }
 
 export type PeripheralGroveType = "digital" | "analog" | "analog-digital" | "i2c" | "uart" | "pwm";
-
+export type GrovePinOption = "default" | "secondaryOnly";
 /**
  * @category Peripherals
  */
@@ -43,7 +43,10 @@ export default class PeripheralGrove extends ComponentAbstract {
     this._reset();
   }
 
-  public getDigital(drive: DriveType = "5v"): { primary: PeripheralIO; secondary?: PeripheralIO } {
+  public getDigital(
+    drive: DriveType = "5v",
+    pinOption: GrovePinOption = "default",
+  ): { primary: PeripheralIO; secondary?: PeripheralIO } {
     this.useWithType("digital", drive);
     const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
     const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
@@ -52,17 +55,33 @@ export default class PeripheralGrove extends ComponentAbstract {
       // required
       throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
     }
+    if (pinOption === "default" && !primary) {
+      // required
+      throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+    }
+
+    if (pinOption === "secondaryOnly" && !secondary) {
+      // required
+      throw new Error("grove digital secondary pin " + this._params.pin2 + " is not valid io");
+    }
     return { primary, secondary };
   }
 
-  public getAnalog(drive: DriveType = "5v"): { primary: PeripheralAD; secondary?: PeripheralAD } {
+  public getAnalog(
+    drive: DriveType = "5v",
+    pinOption: GrovePinOption = "default",
+  ): { primary?: PeripheralAD; secondary?: PeripheralAD } {
     this.useWithType("analog", drive);
     const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
     const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
 
-    if (!primary) {
+    if (pinOption === "default" && !primary) {
       // required
       throw new Error("grove analog primary pin " + this._params.pin1 + " is not valid io");
+    }
+    if (pinOption === "secondaryOnly" && !secondary) {
+      // required
+      throw new Error("grove analog secondary pin " + this._params.pin2 + " is not valid io");
     }
     return { primary, secondary };
   }
