@@ -38,7 +38,9 @@ export default class Plugin {
    *
    * ```javascript
    * // Javascript Example
-   * console.log(await obniz.wifi.scanWait());
+   * obniz.plugin.send("obniz.js send data")
+   *
+   * obniz.plugin.send([0x00, 0x01, 0x02])
    * ```
    *
    */

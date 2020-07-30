@@ -168,7 +168,7 @@ obniz.plugin.onreceive = <span class="hljs-function"><span class="hljs-params">d
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/plugin/plugin.ts:45</li>
+									<li>Defined in src/obniz/libs/plugin/plugin.ts:47</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -176,7 +176,9 @@ obniz.plugin.onreceive = <span class="hljs-function"><span class="hljs-params">d
 									<p>Scan WiFi</p>
 								</div>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">await</span> obniz.wifi.scanWait());</code></pre>
+obniz.plugin.send(<span class="hljs-string">"obniz.js send data"</span>)
+
+obniz.plugin.send([<span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x02</span>])</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
