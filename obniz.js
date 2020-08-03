@@ -2179,6 +2179,7 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._lastDataReceivedAt = 0;
         this.isNode = typeof window === "undefined";
         this.id = id;
         this.socket = null;
@@ -2488,6 +2489,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnMessage(data) {
+        this._lastDataReceivedAt = new Date().getTime();
         let json;
         if (typeof data === "string") {
             json = JSON.parse(data);
@@ -2705,7 +2707,10 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }
         if (canChangeToConnected) {
+            const currentTime = new Date().getTime();
+            this._lastDataReceivedAt = currentTime; // reset
             this.connectionState = "connected";
+            this._startPingLoopInBackground();
             this._beforeOnConnect();
             if (typeof this.onconnect === "function") {
                 try {
@@ -2880,6 +2885,50 @@ class ObnizConnection extends eventemitter3_1.default {
                         if (!this._nextLoopTimeout) {
                             this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
                         }
+                    }
+                }
+            }
+        }, 0);
+    }
+    async _startPingLoopInBackground() {
+        if (this._nextPingTimeout) {
+            clearTimeout(this._nextPingTimeout);
+        }
+        this._nextPingTimeout = setTimeout(async () => {
+            const loopInterval = 60 * 1000; // 60 sec
+            const loopTimeout = 30 * 1000; // 30 sec
+            this._nextPingTimeout = undefined;
+            if (this.connectionState === "connected") {
+                const currentTime = new Date().getTime();
+                // after 15 sec from last data received
+                if (this._lastDataReceivedAt + loopTimeout < currentTime) {
+                    const time = this._lastDataReceivedAt;
+                    try {
+                        const p = this.pingWait();
+                        const wait = new Promise((resolve, reject) => {
+                            setTimeout(reject, loopTimeout);
+                        });
+                        await Promise.race([p, wait]);
+                        this.log("ping/pong success");
+                    }
+                    catch (e) {
+                        if (time === this._lastDataReceivedAt) {
+                            // ping error or timeout
+                            this.error("ping/pong response timeout error");
+                            this.wsOnClose("ping/pong response timeout error");
+                            return;
+                        }
+                        else {
+                            // this will be disconnect -> reconnect while pingWait
+                        }
+                    }
+                }
+                else {
+                    this.log("ping/pong not need");
+                }
+                if (this.connectionState === "connected") {
+                    if (!this._nextPingTimeout) {
+                        this._nextPingTimeout = setTimeout(this._startPingLoopInBackground.bind(this), loopInterval);
                     }
                 }
             }
