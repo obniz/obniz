@@ -891,6 +891,9 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       clearTimeout(this._nextLoopTimeout);
     }
     this._nextLoopTimeout = setTimeout(async () => {
+      if (this._nextLoopTimeout) {
+        clearTimeout(this._nextLoopTimeout);
+      }
       this._nextLoopTimeout = undefined;
       if (this.connectionState === "connected") {
         try {
@@ -919,6 +922,9 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     this._nextPingTimeout = setTimeout(async () => {
       const loopInterval = 60 * 1000; // 60 sec
       const loopTimeout = 30 * 1000; // 30 sec
+      if (this._nextPingTimeout) {
+        clearTimeout(this._nextPingTimeout);
+      }
       this._nextPingTimeout = undefined;
       if (this.connectionState === "connected") {
         const currentTime = new Date().getTime();
@@ -932,19 +938,21 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
               setTimeout(reject, loopTimeout);
             });
             await Promise.race([p, wait]);
-            this.log("ping/pong success");
+            // this.log("ping/pong success");
           } catch (e) {
-            if (time === this._lastDataReceivedAt) {
+            if (this.connectionState !== "connected") {
+              // already closed
+            } else if (time !== this._lastDataReceivedAt) {
+              // this will be disconnect -> reconnect while pingWait
+            } else {
               // ping error or timeout
-              this.error("ping/pong response timeout error");
+              // this.error("ping/pong response timeout error");
               this.wsOnClose("ping/pong response timeout error");
               return;
-            } else {
-              // this will be disconnect -> reconnect while pingWait
             }
           }
         } else {
-          this.log("ping/pong not need");
+          // this.log("ping/pong not need");
         }
 
         if (this.connectionState === "connected") {
