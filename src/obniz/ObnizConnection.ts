@@ -163,6 +163,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   private _looper: any;
   private _repeatInterval: any;
   private _nextLoopTimeout?: Timeout;
+  private _nextPingTimeout?: Timeout;
+  private _lastDataReceivedAt: number = 0;
 
   constructor(id: string, options?: ObnizOptions) {
     super();
@@ -482,6 +484,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   }
 
   protected wsOnMessage(data: any) {
+    this._lastDataReceivedAt = new Date().getTime();
+
     let json: any;
     if (typeof data === "string") {
       json = JSON.parse(data);
@@ -712,7 +716,11 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     }
 
     if (canChangeToConnected) {
+      const currentTime = new Date().getTime();
+      this._lastDataReceivedAt = currentTime; // reset
+
       this.connectionState = "connected";
+      this._startPingLoopInBackground();
       this._beforeOnConnect();
       if (typeof this.onconnect === "function") {
         try {
@@ -883,6 +891,9 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       clearTimeout(this._nextLoopTimeout);
     }
     this._nextLoopTimeout = setTimeout(async () => {
+      if (this._nextLoopTimeout) {
+        clearTimeout(this._nextLoopTimeout);
+      }
       this._nextLoopTimeout = undefined;
       if (this.connectionState === "connected") {
         try {
@@ -898,6 +909,55 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
             if (!this._nextLoopTimeout) {
               this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
             }
+          }
+        }
+      }
+    }, 0);
+  }
+
+  private async _startPingLoopInBackground() {
+    if (this._nextPingTimeout) {
+      clearTimeout(this._nextPingTimeout);
+    }
+    this._nextPingTimeout = setTimeout(async () => {
+      const loopInterval = 60 * 1000; // 60 sec
+      const loopTimeout = 30 * 1000; // 30 sec
+      if (this._nextPingTimeout) {
+        clearTimeout(this._nextPingTimeout);
+      }
+      this._nextPingTimeout = undefined;
+      if (this.connectionState === "connected") {
+        const currentTime = new Date().getTime();
+
+        // after 15 sec from last data received
+        if (this._lastDataReceivedAt + loopTimeout < currentTime) {
+          const time = this._lastDataReceivedAt;
+          try {
+            const p = this.pingWait();
+            const wait = new Promise((resolve, reject) => {
+              setTimeout(reject, loopTimeout);
+            });
+            await Promise.race([p, wait]);
+            // this.log("ping/pong success");
+          } catch (e) {
+            if (this.connectionState !== "connected") {
+              // already closed
+            } else if (time !== this._lastDataReceivedAt) {
+              // this will be disconnect -> reconnect while pingWait
+            } else {
+              // ping error or timeout
+              // this.error("ping/pong response timeout error");
+              this.wsOnClose("ping/pong response timeout error");
+              return;
+            }
+          }
+        } else {
+          // this.log("ping/pong not need");
+        }
+
+        if (this.connectionState === "connected") {
+          if (!this._nextPingTimeout) {
+            this._nextPingTimeout = setTimeout(this._startPingLoopInBackground.bind(this), loopInterval);
           }
         }
       }
