@@ -14002,22 +14002,50 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         this._params = params;
         this._reset();
     }
-    getDigital(drive = "5v") {
+    getDigital(drive = "5v", pinOption = "default") {
         this.useWithType("digital", drive);
         const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
         const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        if (!primary) {
+            // required
+            throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+        }
+        if (pinOption === "default" && !primary) {
+            // required
+            throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+        }
+        if (pinOption === "secondaryOnly" && !secondary) {
+            // required
+            throw new Error("grove digital secondary pin " + this._params.pin2 + " is not valid io");
+        }
         return { primary, secondary };
     }
-    getAnalog(drive = "5v") {
+    getAnalog(drive = "5v", pinOption = "default") {
         this.useWithType("analog", drive);
         const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
         const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
+        if (pinOption === "default" && !primary) {
+            // required
+            throw new Error("grove analog primary pin " + this._params.pin1 + " is not valid io");
+        }
+        if (pinOption === "secondaryOnly" && !secondary) {
+            // required
+            throw new Error("grove analog secondary pin " + this._params.pin2 + " is not valid io");
+        }
         return { primary, secondary };
     }
     getAnalogDigital(drive = "5v") {
         this.useWithType("analog-digital", drive);
         const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
         const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        if (!analog) {
+            // required
+            throw new Error("grove analog pin " + this._params.pin1 + " is not valid io");
+        }
+        if (!digital) {
+            // required
+            throw new Error("grove digital pin " + this._params.pin2 + " is not valid io");
+        }
         return { analog, digital };
     }
     getI2c(frequency, drive = "5v") {
@@ -37717,7 +37745,7 @@ class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            const groveAd = this.params.grove.getAnalog();
+            const groveAd = this.params.grove.getAnalog("5v", "secondaryOnly");
             this.ad_signal = groveAd.secondary;
         }
         else {
