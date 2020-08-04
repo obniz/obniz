@@ -2179,6 +2179,7 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._lastDataReceivedAt = 0;
         this.isNode = typeof window === "undefined";
         this.id = id;
         this.socket = null;
@@ -2488,6 +2489,7 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     wsOnMessage(data) {
+        this._lastDataReceivedAt = new Date().getTime();
         let json;
         if (typeof data === "string") {
             json = JSON.parse(data);
@@ -2705,7 +2707,10 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }
         if (canChangeToConnected) {
+            const currentTime = new Date().getTime();
+            this._lastDataReceivedAt = currentTime; // reset
             this.connectionState = "connected";
+            this._startPingLoopInBackground();
             this._beforeOnConnect();
             if (typeof this.onconnect === "function") {
                 try {
@@ -2864,6 +2869,9 @@ class ObnizConnection extends eventemitter3_1.default {
             clearTimeout(this._nextLoopTimeout);
         }
         this._nextLoopTimeout = setTimeout(async () => {
+            if (this._nextLoopTimeout) {
+                clearTimeout(this._nextLoopTimeout);
+            }
             this._nextLoopTimeout = undefined;
             if (this.connectionState === "connected") {
                 try {
@@ -2880,6 +2888,56 @@ class ObnizConnection extends eventemitter3_1.default {
                         if (!this._nextLoopTimeout) {
                             this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
                         }
+                    }
+                }
+            }
+        }, 0);
+    }
+    async _startPingLoopInBackground() {
+        if (this._nextPingTimeout) {
+            clearTimeout(this._nextPingTimeout);
+        }
+        this._nextPingTimeout = setTimeout(async () => {
+            const loopInterval = 60 * 1000; // 60 sec
+            const loopTimeout = 30 * 1000; // 30 sec
+            if (this._nextPingTimeout) {
+                clearTimeout(this._nextPingTimeout);
+            }
+            this._nextPingTimeout = undefined;
+            if (this.connectionState === "connected") {
+                const currentTime = new Date().getTime();
+                // after 15 sec from last data received
+                if (this._lastDataReceivedAt + loopTimeout < currentTime) {
+                    const time = this._lastDataReceivedAt;
+                    try {
+                        const p = this.pingWait();
+                        const wait = new Promise((resolve, reject) => {
+                            setTimeout(reject, loopTimeout);
+                        });
+                        await Promise.race([p, wait]);
+                        // this.log("ping/pong success");
+                    }
+                    catch (e) {
+                        if (this.connectionState !== "connected") {
+                            // already closed
+                        }
+                        else if (time !== this._lastDataReceivedAt) {
+                            // this will be disconnect -> reconnect while pingWait
+                        }
+                        else {
+                            // ping error or timeout
+                            // this.error("ping/pong response timeout error");
+                            this.wsOnClose("ping/pong response timeout error");
+                            return;
+                        }
+                    }
+                }
+                else {
+                    // this.log("ping/pong not need");
+                }
+                if (this.connectionState === "connected") {
+                    if (!this._nextPingTimeout) {
+                        this._nextPingTimeout = setTimeout(this._startPingLoopInBackground.bind(this), loopInterval);
                     }
                 }
             }
@@ -13944,22 +14002,50 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         this._params = params;
         this._reset();
     }
-    getDigital(drive = "5v") {
+    getDigital(drive = "5v", pinOption = "default") {
         this.useWithType("digital", drive);
         const primary = this.Obniz.isValidIO(this._params.pin1) ? this.Obniz.getIO(this._params.pin1) : undefined;
         const secondary = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        if (!primary) {
+            // required
+            throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+        }
+        if (pinOption === "default" && !primary) {
+            // required
+            throw new Error("grove digital primary pin " + this._params.pin1 + " is not valid io");
+        }
+        if (pinOption === "secondaryOnly" && !secondary) {
+            // required
+            throw new Error("grove digital secondary pin " + this._params.pin2 + " is not valid io");
+        }
         return { primary, secondary };
     }
-    getAnalog(drive = "5v") {
+    getAnalog(drive = "5v", pinOption = "default") {
         this.useWithType("analog", drive);
         const primary = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
         const secondary = this.Obniz.isValidAD(this._params.pin2) ? this.Obniz.getAD(this._params.pin2) : undefined;
+        if (pinOption === "default" && !primary) {
+            // required
+            throw new Error("grove analog primary pin " + this._params.pin1 + " is not valid io");
+        }
+        if (pinOption === "secondaryOnly" && !secondary) {
+            // required
+            throw new Error("grove analog secondary pin " + this._params.pin2 + " is not valid io");
+        }
         return { primary, secondary };
     }
     getAnalogDigital(drive = "5v") {
         this.useWithType("analog-digital", drive);
         const analog = this.Obniz.isValidAD(this._params.pin1) ? this.Obniz.getAD(this._params.pin1) : undefined;
         const digital = this.Obniz.isValidIO(this._params.pin2) ? this.Obniz.getIO(this._params.pin2) : undefined;
+        if (!analog) {
+            // required
+            throw new Error("grove analog pin " + this._params.pin1 + " is not valid io");
+        }
+        if (!digital) {
+            // required
+            throw new Error("grove digital pin " + this._params.pin2 + " is not valid io");
+        }
         return { analog, digital };
     }
     getI2c(frequency, drive = "5v") {
@@ -15705,7 +15791,9 @@ class Plugin {
      *
      * ```javascript
      * // Javascript Example
-     * console.log(await obniz.wifi.scanWait());
+     * obniz.plugin.send("obniz.js send data")
+     *
+     * obniz.plugin.send([0x00, 0x01, 0x02])
      * ```
      *
      */
@@ -37657,7 +37745,7 @@ class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
     wired(obniz) {
         this.obniz = obniz;
         if (this.params.grove) {
-            const groveAd = this.params.grove.getAnalog();
+            const groveAd = this.params.grove.getAnalog("5v", "secondaryOnly");
             this.ad_signal = groveAd.secondary;
         }
         else {

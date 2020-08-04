@@ -79,6 +79,8 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
     'switch',
     'ble/hci',
     'tcp',
+    'wifi',
+    'plugin',
     'message',
     'debug',
   ];
