@@ -7,17 +7,17 @@ import Obniz from "../../../obniz";
 import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_EarHeartrateOptionsA {
+export interface Grove_EarHeartRateOptionsA {
   signal: number;
   gnd?: number;
   vcc?: number;
 }
 
-interface Grove_EarHeartrateOptionsB {
+interface Grove_EarHeartRateOptionsB {
   grove: PeripheralGrove;
 }
 
-export type Grove_EarHeartrateOptions = Grove_EarHeartrateOptionsA | Grove_EarHeartrateOptionsB;
+export type Grove_EarHeartRateOptions = Grove_EarHeartRateOptionsA | Grove_EarHeartRateOptionsB;
 
 export default class Grove_EarHeartRate implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
