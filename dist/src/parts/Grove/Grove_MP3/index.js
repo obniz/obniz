@@ -6,8 +6,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_MP3 {
     constructor() {
-        this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx"];
-        this.requiredKeys = ["mp3_rx", "mp3_tx"];
+        this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx", "grove"];
+        this.requiredKeys = [];
         this.ioKeys = this.keys;
         this.displayName = "MP3";
         this.displayIoNames = { mp3_rx: "MP3Rx", mp3_tx: "MP3Tx" };
@@ -19,17 +19,22 @@ class Grove_MP3 {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.my_tx = this.params.mp3_rx;
-        this.my_rx = this.params.mp3_tx;
-        this.uart = this.obniz.getFreeUart();
+        if (this.params.grove) {
+            this.uart = this.params.grove.getUart(9600, "5v");
+        }
+        else {
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.my_tx = this.params.mp3_rx;
+            this.my_rx = this.params.mp3_tx;
+            this.uart = this.obniz.getFreeUart();
+            this.uart.start({
+                tx: this.my_tx,
+                rx: this.my_rx,
+                baud: 9600,
+            });
+        }
     }
     async initWait(strage) {
-        this.uart.start({
-            tx: this.my_tx,
-            rx: this.my_rx,
-            baud: 9600,
-        });
         await this.obniz.wait(100);
         this.uartSend(0x0c, 0);
         await this.obniz.wait(500);

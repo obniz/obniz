@@ -4,13 +4,20 @@
  */
 
 import Obniz from "../../../obniz";
+import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_EarHeartRateOptions {
-  gnd: number;
-  vcc: number;
-  signal?: number;
+export interface Grove_EarHeartrateOptionsA {
+  signal: number;
+  gnd?: number;
+  vcc?: number;
 }
+
+interface Grove_EarHeartrateOptionsB {
+  grove: PeripheralGrove;
+}
+
+export type Grove_EarHeartrateOptions = Grove_EarHeartrateOptionsA | Grove_EarHeartrateOptionsB;
 
 export default class Grove_EarHeartRate implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
@@ -27,6 +34,7 @@ export default class Grove_EarHeartRate implements ObnizPartsInterface {
     signal: "signal",
   };
   public params: any;
+  public signal: any;
 
   public interval = 5;
   public duration = 2.5 * 1000;
@@ -34,18 +42,24 @@ export default class Grove_EarHeartRate implements ObnizPartsInterface {
   protected obniz!: Obniz;
 
   constructor() {
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["vcc", "gnd"];
+    this.keys = ["signal", "gnd", "vcc", "grove"];
+    this.requiredKeys = [];
   }
 
   public wired(obniz: Obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    if (this.params.grove) {
+      this.signal = this.params.grove.pin1;
+      this.params.grove.getDigital("5v");
+    } else {
+      obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.signal = this.params.signal;
+    }
   }
 
   public start(callback: (rate: number) => void) {
     this.obniz.logicAnalyzer!.start({
-      io: this.params.signal as number,
+      io: this.signal as number,
       interval: this.interval as number,
       duration: this.duration as number,
     });
