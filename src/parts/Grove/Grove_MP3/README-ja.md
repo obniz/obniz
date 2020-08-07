@@ -59,7 +59,8 @@ Groveケーブルの場合以下のようになります。
 var mp3 = obniz.wired("Grove_MP3", {gnd:0, vcc:1, mp3_rx:2, mp3_tx:3});
 ```
   
-groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。  
+※ M5Stack,M5StickCでは動作電圧が足りず、正しく動作しない可能性があります。
 ```Javascript
 // Javascript Example
 var mp3 = obniz.wired("Grove_MP3", {grove: obniz.grove0});
