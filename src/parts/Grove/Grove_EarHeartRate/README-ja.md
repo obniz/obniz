@@ -10,7 +10,7 @@ Stores
 [https://www.switch-science.com/catalog/2526/](https://www.switch-science.com/catalog/2526/)
 
 
-## wired(obniz, {gnd, vcc, signal})
+## wired(obniz, {gnd, vcc, signal, grove})
 センサーと接続します。
 センサーからはGroveケーブルで３本のケーブルがでています。
 黒がGND,赤がVCC、黄色がsignalです。
@@ -23,6 +23,12 @@ var heartrate = obniz.wired("Grove_EarHeartRate", {gnd: 0, vcc: 1, signal: 2});
 heartrate.start(function(rate){
   console.log(rate);
 })
+```
+
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
+```Javascript
+// Javascript Example
+var heartrate = obniz.wired("Grove_EarHeartRate", {grove: obniz.grove0});
 ```
 
 ## start(callback(heartrate))

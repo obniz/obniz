@@ -10,7 +10,7 @@ Stores
 [https://www.switch-science.com/catalog/2526/](https://www.switch-science.com/catalog/2526/)
 
 
-## wired(obniz, {gnd, vcc, signal})
+## wired(obniz, {gnd, vcc, signal, grove})
 Connect Grove cables.
 Black: GND, Red: VCC, Yellow: Signal.
 
@@ -20,6 +20,12 @@ var heartrate = obniz.wired("Grove_EarHeartRate", {gnd: 0, vcc: 1, signal: 2});
 heartrate.start(function(rate){
   console.log(rate);
 })
+```
+
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
+```Javascript
+// Javascript Example
+var heartrate = obniz.wired("Grove_EarHeartRate", {grove: obniz.grove0});
 ```
 
 ## start(callback(heartrate))

@@ -36,7 +36,7 @@ Library for Grove GPS Module [Grove - GPS](https://www.seeedstudio.com/Grove-GPS
 </html>
 ```
 
-## wired(tx, rx {, vcc, gnd})
+## wired(tx, rx {, vcc, gnd, grove})
 
 Connect tx, rx, vcc, gnd to an obniz Board.
 
@@ -56,6 +56,12 @@ And specify the pins on program.
 // Javascript Example
 let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 ```
+
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
+```Javascript
+// Javascript Example
+let gps = obniz.wired("Grove_GPS", {grove: obniz.grove0});
+``` 
 
 Functions are common with [GYSFDMAXB Library](https://obniz.io/ja/sdk/parts/GYSFDMAXB/README.md) apart from start1pps function.
 The following is common functions.

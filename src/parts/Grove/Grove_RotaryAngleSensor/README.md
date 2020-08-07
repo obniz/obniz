@@ -19,8 +19,12 @@ vcc | `number(obniz Board io)` | no |  &nbsp; | VCC(2 pin of Grove)
 gnd | `number(obniz Board io)` | no |  &nbsp; | GND(0 pin of Grove)
 grove | `object` | no | &nbsp;  | grove interface object if a device has
 
-![](wired.png)
-
+```Javascript
+// Javascript Example
+const meter = obniz.wired("Grove_RotaryAngleSensor", {gnd:0, vcc:1, signal: 3});
+```
+  
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
 ```Javascript
 // Javascript Example
 const meter = obniz.wired("Grove_RotaryAngleSensor", {grove: obniz.grove0});
