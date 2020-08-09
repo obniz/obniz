@@ -654,7 +654,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
 
   protected _disconnectLocal() {
     if (this.socket_local) {
-      if (this.socket.readyState <= 1) {
+      if (this.socket_local.readyState <= 1) {
         this.socket_local.close();
       }
       this.clearSocket(this.socket_local);

@@ -2326,6 +2326,11 @@ class ObnizConnection extends eventemitter3_1.default {
     close() {
         this._stopLoopInBackground();
         this._drainQueued();
+        // expire local connect waiting timer for call.
+        if (this._waitForLocalConnectReadyTimer) {
+            clearTimeout(this._waitForLocalConnectReadyTimer);
+            this._waitForLocalConnectReadyTimer = undefined;
+        }
         this._disconnectLocal();
         if (this.socket) {
             if (this.socket.readyState <= 1) {
@@ -2647,16 +2652,18 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _disconnectLocal() {
         if (this.socket_local) {
-            if (this.socket.readyState <= 1) {
+            if (this.socket_local.readyState <= 1) {
                 this.socket_local.close();
             }
             this.clearSocket(this.socket_local);
             delete this.socket_local;
         }
-        if (this._waitForLocalConnectReadyTimer) {
+        // If connection to cloud is ready and waiting for local connect.
+        // then call onconnect() immidiately.
+        if (this.socket && this.socket.readyState === 1 && this._waitForLocalConnectReadyTimer) {
             clearTimeout(this._waitForLocalConnectReadyTimer);
             this._waitForLocalConnectReadyTimer = null;
-            this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
+            this._callOnConnect();
         }
     }
     clearSocket(socket) {
