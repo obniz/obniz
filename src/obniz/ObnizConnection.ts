@@ -512,10 +512,10 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     const beforeOnConnectCalled = this._onConnectCalled;
     this.close();
 
+    this.emit("close", this);
     if (beforeOnConnectCalled === true) {
       this._runUserCreatedFunction(this.onclose, this);
     }
-    this.emit("close", this);
     this._reconnect();
   }
 
@@ -717,8 +717,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       this._lastDataReceivedAt = currentTime; // reset
 
       this.connectionState = "connected";
-      this._startPingLoopInBackground();
       this._beforeOnConnect();
+      this.emit("connect", this);
       if (typeof this.onconnect === "function") {
         try {
           const promise: any = this.onconnect(this);
@@ -736,8 +736,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
           });
         }
       }
-      this.emit("connect", this);
       this._onConnectCalled = true;
+      this._startPingLoopInBackground();
       this._startLoopInBackground();
     }
   }
@@ -920,7 +920,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     }
   }
 
-  private async _startPingLoopInBackground() {
+  private _startPingLoopInBackground() {
     if (this._nextPingTimeout) {
       clearTimeout(this._nextPingTimeout);
     }

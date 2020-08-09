@@ -352,10 +352,10 @@ class ObnizConnection extends eventemitter3_1.default {
         this.print_debug(`closed from remote event=${event}`);
         const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
+        this.emit("close", this);
         if (beforeOnConnectCalled === true) {
             this._runUserCreatedFunction(this.onclose, this);
         }
-        this.emit("close", this);
         this._reconnect();
     }
     _reconnect() {
@@ -545,8 +545,8 @@ class ObnizConnection extends eventemitter3_1.default {
             const currentTime = new Date().getTime();
             this._lastDataReceivedAt = currentTime; // reset
             this.connectionState = "connected";
-            this._startPingLoopInBackground();
             this._beforeOnConnect();
+            this.emit("connect", this);
             if (typeof this.onconnect === "function") {
                 try {
                     const promise = this.onconnect(this);
@@ -565,8 +565,8 @@ class ObnizConnection extends eventemitter3_1.default {
                     });
                 }
             }
-            this.emit("connect", this);
             this._onConnectCalled = true;
+            this._startPingLoopInBackground();
             this._startLoopInBackground();
         }
     }
@@ -736,7 +736,7 @@ class ObnizConnection extends eventemitter3_1.default {
             this._nextLoopTimeout = undefined;
         }
     }
-    async _startPingLoopInBackground() {
+    _startPingLoopInBackground() {
         if (this._nextPingTimeout) {
             clearTimeout(this._nextPingTimeout);
         }
