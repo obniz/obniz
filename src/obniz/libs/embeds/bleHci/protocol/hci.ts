@@ -406,10 +406,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     this.debug("create le conn - writing: " + cmd.toString("hex"));
     const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
       timeout,
-      onTimeout: async () => {
-        // 一定時間経過。onTimeoutをオーバーライドしてreject()されるのを防ぎ、キャンセルリクエストする。キャンセルされると接続失敗が返るので待つ
-        await this.createLeConnCancelWait();
-      },
+      // onTimeout: async () => {
+      //   // 一定時間経過。onTimeoutをオーバーライドしてreject()されるのを防ぎ、キャンセルリクエストする。キャンセルされると接続失敗が返るので待つ
+      //   await this.createLeConnCancelWait();
+      // },
     });
     this._socket.write(cmd);
 
