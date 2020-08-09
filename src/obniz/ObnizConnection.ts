@@ -308,6 +308,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   }
 
   public close() {
+    this._stopLoopInBackground();
     this._drainQueued();
     this._disconnectLocal();
     if (this.socket) {
@@ -886,10 +887,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     return json;
   }
 
-  private async _startLoopInBackground() {
-    if (this._nextLoopTimeout) {
-      clearTimeout(this._nextLoopTimeout);
-    }
+  private _startLoopInBackground() {
+    this._stopLoopInBackground();
     this._nextLoopTimeout = setTimeout(async () => {
       if (this._nextLoopTimeout) {
         clearTimeout(this._nextLoopTimeout);
@@ -913,6 +912,13 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
         }
       }
     }, 0);
+  }
+
+  private _stopLoopInBackground() {
+    if (this._nextLoopTimeout) {
+      clearTimeout(this._nextLoopTimeout);
+      this._nextLoopTimeout = undefined;
+    }
   }
 
   private async _startPingLoopInBackground() {
