@@ -158,15 +158,11 @@ export default class ObnizBLE extends ComponentAbstract {
     if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
       const address = this.peripheral.currentConnectedDeviceAddress;
       this.peripheral.currentConnectedDeviceAddress = null;
-      setTimeout(() => {
-        if (this.peripheral.onconnectionupdates) {
-          this.peripheral.onconnectionupdates({
-            address,
-            status: "disconnected",
-            reason: new ObnizOfflineError(),
-          });
-        }
-      }, 0);
+      this.Obniz._runUserCreatedFunction(this.peripheral.onconnectionupdates, {
+        address,
+        status: "disconnected",
+        reason: new ObnizOfflineError(),
+      });
     }
 
     if (this.remotePeripherals) {

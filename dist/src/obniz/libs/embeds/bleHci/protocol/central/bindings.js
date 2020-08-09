@@ -33,6 +33,10 @@ class NobleBindings extends eventemitter3_1.default {
         this._signalings = {};
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
+        this._hci.on("stateChange", this.onStateChange.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+        this._gap.on("discover", this.onDiscover.bind(this));
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
@@ -78,12 +82,6 @@ class NobleBindings extends eventemitter3_1.default {
     async updateRssiWait(peripheralUuid) {
         const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
         return rssi;
-    }
-    init() {
-        this._gap.on("discover", this.onDiscover.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
     }
     onStateChange(state) {
         if (this._state === state) {

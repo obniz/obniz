@@ -28,6 +28,13 @@ class BlenoBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
         this._gatt = new gatt_1.default();
+        this._gatt.on("mtuChange", this.onMtuChange.bind(this));
+        this._hci.on("stateChange", this.onStateChange.bind(this));
+        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
+        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
+        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
+        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
         this._address = null;
         this._handle = null;
         this._aclStream = null;
@@ -48,7 +55,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
     }
-    async setServices(services) {
+    setServices(services) {
         this._gatt.setServices(services);
     }
     disconnect() {
@@ -63,15 +70,6 @@ class BlenoBindings extends eventemitter3_1.default {
             return rssi;
         }
         return null;
-    }
-    init() {
-        this._gatt.on("mtuChange", this.onMtuChange.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
-        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
     }
     onStateChange(state) {
         if (this._state === state) {

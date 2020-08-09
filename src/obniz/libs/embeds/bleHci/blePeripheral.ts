@@ -49,9 +49,9 @@ export default class BlePeripheral {
    * @ignore
    * @private
    */
-  public async _updateServices() {
+  public _updateServices() {
     const bufData: any = this._services.map((e: any) => e.toBufferObj());
-    await this.obnizBle.peripheralBindings.setServices(bufData);
+    this.obnizBle.peripheralBindings.setServices(bufData);
   }
 
   /**

@@ -118,15 +118,11 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
             const address = this.peripheral.currentConnectedDeviceAddress;
             this.peripheral.currentConnectedDeviceAddress = null;
-            setTimeout(() => {
-                if (this.peripheral.onconnectionupdates) {
-                    this.peripheral.onconnectionupdates({
-                        address,
-                        status: "disconnected",
-                        reason: new ObnizError_1.ObnizOfflineError(),
-                    });
-                }
-            }, 0);
+            this.Obniz._runUserCreatedFunction(this.peripheral.onconnectionupdates, {
+                address,
+                status: "disconnected",
+                reason: new ObnizError_1.ObnizOfflineError(),
+            });
         }
         if (this.remotePeripherals) {
             for (const p of this.remotePeripherals) {
@@ -145,8 +141,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         };
         this.centralBindings = new bindings_1.default(this.hciProtocol);
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
-        this.centralBindings.init();
-        this.peripheralBindings.init();
         this.centralBindings.debugHandler = (text) => {
             this.debug(`BLE: ${text}`);
         };

@@ -4536,15 +4536,11 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
             const address = this.peripheral.currentConnectedDeviceAddress;
             this.peripheral.currentConnectedDeviceAddress = null;
-            setTimeout(() => {
-                if (this.peripheral.onconnectionupdates) {
-                    this.peripheral.onconnectionupdates({
-                        address,
-                        status: "disconnected",
-                        reason: new ObnizError_1.ObnizOfflineError(),
-                    });
-                }
-            }, 0);
+            this.Obniz._runUserCreatedFunction(this.peripheral.onconnectionupdates, {
+                address,
+                status: "disconnected",
+                reason: new ObnizError_1.ObnizOfflineError(),
+            });
         }
         if (this.remotePeripherals) {
             for (const p of this.remotePeripherals) {
@@ -4563,8 +4559,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         };
         this.centralBindings = new bindings_1.default(this.hciProtocol);
         this.peripheralBindings = new bindings_2.default(this.hciProtocol);
-        this.centralBindings.init();
-        this.peripheralBindings.init();
         this.centralBindings.debugHandler = (text) => {
             this.debug(`BLE: ${text}`);
         };
@@ -5883,9 +5877,9 @@ class BlePeripheral {
      * @ignore
      * @private
      */
-    async _updateServices() {
+    _updateServices() {
         const bufData = this._services.map((e) => e.toBufferObj());
-        await this.obnizBle.peripheralBindings.setServices(bufData);
+        this.obnizBle.peripheralBindings.setServices(bufData);
     }
     /**
      * This starts a service as peripheral.
@@ -8485,6 +8479,10 @@ class NobleBindings extends eventemitter3_1.default {
         this._signalings = {};
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
+        this._hci.on("stateChange", this.onStateChange.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+        this._gap.on("discover", this.onDiscover.bind(this));
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
@@ -8530,12 +8528,6 @@ class NobleBindings extends eventemitter3_1.default {
     async updateRssiWait(peripheralUuid) {
         const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
         return rssi;
-    }
-    init() {
-        this._gap.on("discover", this.onDiscover.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -11226,6 +11218,13 @@ class BlenoBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
         this._gatt = new gatt_1.default();
+        this._gatt.on("mtuChange", this.onMtuChange.bind(this));
+        this._hci.on("stateChange", this.onStateChange.bind(this));
+        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
+        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
+        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
+        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
         this._address = null;
         this._handle = null;
         this._aclStream = null;
@@ -11246,7 +11245,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
     }
-    async setServices(services) {
+    setServices(services) {
         this._gatt.setServices(services);
     }
     disconnect() {
@@ -11261,15 +11260,6 @@ class BlenoBindings extends eventemitter3_1.default {
             return rssi;
         }
         return null;
-    }
-    init() {
-        this._gatt.on("mtuChange", this.onMtuChange.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
-        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
     }
     onStateChange(state) {
         if (this._state === state) {
