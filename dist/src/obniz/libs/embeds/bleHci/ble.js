@@ -32,6 +32,8 @@ const bleService_1 = __importDefault(require("./bleService"));
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
+        this._initialized = false;
+        this.remotePeripherals = [];
         this.debugHandler = () => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
@@ -41,9 +43,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             if (obj.hci) {
                 this.hci.notified(obj.hci);
             }
-        });
-        obniz.on("close", () => {
-            this._reset();
         });
         this._reset();
     }
@@ -124,13 +123,14 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 reason: new ObnizError_1.ObnizOfflineError(),
             });
         }
-        if (this.remotePeripherals) {
-            for (const p of this.remotePeripherals) {
-                if (p.connected) {
-                    p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
-                }
+        // clear all found
+        for (const p of this.remotePeripherals) {
+            if (p.connected) {
+                p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
             }
         }
+        this.remotePeripherals = [];
+        // clear scanning
         if (this.scan && this.scan.state !== "stopped") {
             this.scan.notifyFromServer("obnizClose", {});
         }
@@ -144,14 +144,20 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.centralBindings.debugHandler = (text) => {
             this.debug(`BLE: ${text}`);
         };
+        this.centralBindings.on("stateChange", this.onStateChange.bind(this));
+        this.centralBindings.on("discover", this.onDiscover.bind(this));
+        this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
+        this.centralBindings.on("notification", this.onNotification.bind(this));
+        this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
+        this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
+        this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
+        this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
         this._initialized = false;
         this._initializeWarning = true;
-        this.remotePeripherals = [];
         this.peripheral = new blePeripheral_1.default(this);
         this.advertisement = new bleAdvertisement_1.default(this);
         this.scan = new bleScan_1.default(this);
         this.security = new bleSecurity_1.default(this);
-        this._bind();
     }
     /**
      * Connect to peripheral without scanning.
@@ -309,16 +315,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 reason,
             });
         }
-    }
-    _bind() {
-        this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-        this.centralBindings.on("discover", this.onDiscover.bind(this));
-        this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-        this.centralBindings.on("notification", this.onNotification.bind(this));
-        this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
-        this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
-        this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
-        this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
     }
     debug(text) {
         this.debugHandler(text);

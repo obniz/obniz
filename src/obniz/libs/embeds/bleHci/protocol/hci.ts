@@ -413,12 +413,8 @@ class Hci extends EventEmitter<HciEventTypes> {
     });
     this._socket.write(cmd);
 
-    try {
-      const { status, data } = await p;
-      return this.processLeConnComplete(status, data);
-    } catch (e) {
-      throw e;
-    }
+    const { status, data } = await p;
+    return this.processLeConnComplete(status, data);
   }
 
   public async createLeConnCancelWait() {

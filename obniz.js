@@ -4450,6 +4450,8 @@ const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
+        this._initialized = false;
+        this.remotePeripherals = [];
         this.debugHandler = () => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
@@ -4459,9 +4461,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             if (obj.hci) {
                 this.hci.notified(obj.hci);
             }
-        });
-        obniz.on("close", () => {
-            this._reset();
         });
         this._reset();
     }
@@ -4542,13 +4541,14 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 reason: new ObnizError_1.ObnizOfflineError(),
             });
         }
-        if (this.remotePeripherals) {
-            for (const p of this.remotePeripherals) {
-                if (p.connected) {
-                    p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
-                }
+        // clear all found
+        for (const p of this.remotePeripherals) {
+            if (p.connected) {
+                p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
             }
         }
+        this.remotePeripherals = [];
+        // clear scanning
         if (this.scan && this.scan.state !== "stopped") {
             this.scan.notifyFromServer("obnizClose", {});
         }
@@ -4562,14 +4562,20 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.centralBindings.debugHandler = (text) => {
             this.debug(`BLE: ${text}`);
         };
+        this.centralBindings.on("stateChange", this.onStateChange.bind(this));
+        this.centralBindings.on("discover", this.onDiscover.bind(this));
+        this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
+        this.centralBindings.on("notification", this.onNotification.bind(this));
+        this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
+        this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
+        this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
+        this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
         this._initialized = false;
         this._initializeWarning = true;
-        this.remotePeripherals = [];
         this.peripheral = new blePeripheral_1.default(this);
         this.advertisement = new bleAdvertisement_1.default(this);
         this.scan = new bleScan_1.default(this);
         this.security = new bleSecurity_1.default(this);
-        this._bind();
     }
     /**
      * Connect to peripheral without scanning.
@@ -4727,16 +4733,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 reason,
             });
         }
-    }
-    _bind() {
-        this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-        this.centralBindings.on("discover", this.onDiscover.bind(this));
-        this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-        this.centralBindings.on("notification", this.onNotification.bind(this));
-        this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
-        this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
-        this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
-        this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
     }
     debug(text) {
         this.debugHandler(text);
@@ -8272,17 +8268,21 @@ class ObnizBLEHci {
                 return;
             }
             onObnizClosed = () => {
+                onObnizClosed = null;
                 clearListeners();
-                const error = new ObnizError_1.ObnizOfflineError();
-                reject(error);
+                reject(new ObnizError_1.ObnizOfflineError());
             };
-            this.Obniz.on("close", onObnizClosed);
+            this.Obniz.once("close", onObnizClosed);
             let onTimeout;
             if (option.onTimeout) {
                 onTimeout = () => {
+                    timeoutHandler = null;
+                    clearListeners();
                     option
                         .onTimeout()
-                        .then(() => { })
+                        .then(() => {
+                        reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                    })
                         .catch((e) => {
                         reject(e);
                     });
@@ -8290,9 +8290,9 @@ class ObnizBLEHci {
             }
             else {
                 onTimeout = () => {
+                    timeoutHandler = null;
                     clearListeners();
-                    const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
-                    reject(error);
+                    reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
                 };
             }
             timeoutHandler = setTimeout(onTimeout, option.timeout);
@@ -10490,19 +10490,10 @@ class Hci extends eventemitter3_1.default {
         this.debug("create le conn - writing: " + cmd.toString("hex"));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
-            onTimeout: async () => {
-                // 一定時間経過。onTimeoutをオーバーライドしてreject()されるのを防ぎ、キャンセルリクエストする。キャンセルされると接続失敗が返るので待つ
-                await this.createLeConnCancelWait();
-            },
         });
         this._socket.write(cmd);
-        try {
-            const { status, data } = await p;
-            return this.processLeConnComplete(status, data);
-        }
-        catch (e) {
-            throw e;
-        }
+        const { status, data } = await p;
+        return this.processLeConnComplete(status, data);
     }
     async createLeConnCancelWait() {
         const cmd = Buffer.alloc(4);
