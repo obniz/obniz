@@ -10326,16 +10326,14 @@ class Hci extends eventemitter3_1.default {
         this.resetBuffers();
         this.setEventMask();
         this.setLeEventMask();
-        const p1 = this.readLocalVersionWait();
-        const p2 = this.readBdAddrWait();
+        await this.readLocalVersionWait();
         this.writeLeHostSupported();
-        const p3 = this.readLeHostSupportedWait();
-        const p4 = this.leReadBufferSizeWait();
-        await Promise.all([p1, p2, p3, p4]);
+        await this.readLeHostSupportedWait();
+        await this.readBdAddrWait();
+        await this.leReadBufferSizeWait();
         if (this._state !== "poweredOn") {
-            const p5 = this.setScanEnabledWait(false, true);
-            const p6 = this.setScanParametersWait(false);
-            await Promise.all([p5, p6]);
+            await this.setScanEnabledWait(false, true);
+            await this.setScanParametersWait(false);
             this.stateChange("poweredOn");
         }
     }
