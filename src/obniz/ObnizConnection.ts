@@ -438,6 +438,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     try {
       func(...args);
     } catch (err) {
+      console.error(`obniz.js handled Exception inside of ${func}`);
       setTimeout(() => {
         throw err;
       });
@@ -695,11 +696,6 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    */
   protected async _beforeOnConnect() {}
 
-  /**
-   * This function will be called after obniz.onconnect and all emitter called;
-   */
-  protected async _afterOnConnect() {}
-
   protected _callOnConnect() {
     let canChangeToConnected: any = true;
     if (this._waitForLocalConnectReadyTimer) {
@@ -734,6 +730,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
             });
           }
         } catch (err) {
+          console.error(`obniz.js handled Exception inside of onconnect()`);
           setTimeout(() => {
             throw err;
           });
@@ -742,7 +739,6 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       this.emit("connect", this);
       this._onConnectCalled = true;
       this._startLoopInBackground();
-      this._afterOnConnect();
     }
   }
 
@@ -903,6 +899,9 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
               await prom;
             }
           }
+        } catch (e) {
+          console.error(`obniz.js handled Exception inside of obniz.repeat() function`);
+          console.error(e);
         } finally {
           if (this.connectionState === "connected") {
             if (!this._nextLoopTimeout) {
