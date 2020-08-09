@@ -143,7 +143,7 @@ module.exports = {
   ],
   "repository": "obniz/obniz",
   "author": "yukisato <yuki@yuki-sato.com>",
-  "homepage": "https://obniz.io/",
+  "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
     "@types/chai": "^4.2.7",
@@ -232,7 +232,7 @@ module.exports = {
     "ws": "^6.1.4"
   },
   "bugs": {
-    "url": "https://forum.obniz.io"
+    "url": "https://forum.obniz.com"
   },
   "private": false,
   "browser": {
