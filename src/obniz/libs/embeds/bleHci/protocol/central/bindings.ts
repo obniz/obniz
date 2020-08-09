@@ -58,6 +58,12 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
     this._hci = hciProtocol;
     this._gap = new Gap(this._hci);
+
+    this._hci.on("stateChange", this.onStateChange.bind(this));
+    this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+
+    this._gap.on("discover", this.onDiscover.bind(this));
   }
   public debugHandler: any = () => {};
 
@@ -125,14 +131,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public async updateRssiWait(peripheralUuid: UUID) {
     const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
     return rssi;
-  }
-
-  public init() {
-    this._gap.on("discover", this.onDiscover.bind(this));
-
-    this._hci.on("stateChange", this.onStateChange.bind(this));
-    this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
   }
 
   public onStateChange(state: any) {

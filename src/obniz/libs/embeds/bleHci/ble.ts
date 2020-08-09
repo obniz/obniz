@@ -182,8 +182,6 @@ export default class ObnizBLE extends ComponentAbstract {
     };
     this.centralBindings = new CentralBindings(this.hciProtocol);
     this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
-    this.centralBindings.init();
-    this.peripheralBindings.init();
     this.centralBindings.debugHandler = (text: any) => {
       this.debug(`BLE: ${text}`);
     };
