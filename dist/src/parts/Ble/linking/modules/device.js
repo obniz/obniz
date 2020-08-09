@@ -81,14 +81,11 @@ class LinkingDevice {
             onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
             onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
             await this._getServicesAndChars();
-            onprogress({ step: 3.5, desc: "PAIRING" });
-            await this._peripheral.pairingWait();
             onprogress({ step: 4, desc: "SUBSCRIBING" });
             await this._subscribeForIndicate();
             onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
             let res;
             res = await this.write("GET_DEVICE_INFORMATION");
-            console.log("GET_DEVICE_INFORMATION", res);
             this.info.id = "";
             if ("deviceId" in res.data) {
                 this.info.id = res.data.deviceId;
@@ -518,7 +515,6 @@ class LinkingDevice {
                 }
             };
             try {
-                console.log("linking write ", buf);
                 await this.char_write.writeWait(buf, true);
             }
             catch (e) {

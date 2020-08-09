@@ -210,7 +210,8 @@ module.exports = {
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
     "webpack-stream": "^5.2.1",
-    "yaml-loader": "^0.5.0"
+    "yaml-loader": "^0.5.0",
+    "typedoc-plugin-internal-external": "^2.1.1"
   },
   "dependencies": {
     "@types/eventemitter3": "^1.2.0",
@@ -228,7 +229,6 @@ module.exports = {
     "semver": "^5.7.0",
     "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
-    "typedoc-plugin-internal-external": "^2.1.1",
     "ws": "^6.1.4"
   },
   "bugs": {
@@ -24195,7 +24195,7 @@ class cir415a {
     decrypt(data, key) {
         const dec = crypto_1.default.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
         dec.setAutoPadding(false);
-        let t = dec.update(Buffer.from(data), undefined, "binary");
+        let t = dec.update(Buffer.from(data), "binary", "binary");
         t += dec.final("binary");
         const d = Array.from(Buffer.from(t));
         const list = [];
@@ -25628,14 +25628,11 @@ class LinkingDevice {
             onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
             onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
             await this._getServicesAndChars();
-            onprogress({ step: 3.5, desc: "PAIRING" });
-            await this._peripheral.pairingWait();
             onprogress({ step: 4, desc: "SUBSCRIBING" });
             await this._subscribeForIndicate();
             onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
             let res;
             res = await this.write("GET_DEVICE_INFORMATION");
-            console.log("GET_DEVICE_INFORMATION", res);
             this.info.id = "";
             if ("deviceId" in res.data) {
                 this.info.id = res.data.deviceId;
@@ -26065,7 +26062,6 @@ class LinkingDevice {
                 }
             };
             try {
-                console.log("linking write ", buf);
                 await this.char_write.writeWait(buf, true);
             }
             catch (e) {
