@@ -21728,6 +21728,7 @@ var map = {
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
+	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
 	"./Ble/PLS_01BT/index.js": "./dist/src/parts/Ble/PLS_01BT/index.js",
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
@@ -23253,6 +23254,109 @@ exports.default = MINEW_S1;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/MiniBreeze/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.MiniBreeze
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class MiniBreeze {
+    constructor() {
+        this._peripheral = null;
+        // non-wired device
+        this.keys = [];
+        this.requiredKeys = [];
+        this.params = {};
+    }
+    static info() {
+        return { name: "MiniBreeze" };
+    }
+    static gasType() {
+        return {
+            0: "none",
+            1: "HCHO",
+            2: "CO",
+            3: "CO2",
+            5: "Rn",
+            6: "PM1.0",
+            7: "PM2.5",
+            8: "PM10",
+        };
+    }
+    static status() {
+        return {
+            0: "BatteryEmpty",
+            1: "BatteryLow",
+            2: "BatteryNormal",
+            3: "BatteryCharging",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.adv_data.length !== 31 || !this._hasPrefix(peripheral)) {
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!this._hasPrefix(peripheral)) {
+            return null;
+        }
+        if (!peripheral.adv_data || peripheral.adv_data.length !== 31 || !peripheral.localName) {
+            return null;
+        }
+        const buf = Buffer.from(peripheral.adv_data.splice(7));
+        const gasType = MiniBreeze.gasType()[buf.readUInt8(0)] || "unknown";
+        const sensVal = buf.readUInt16LE(1);
+        const temperature = buf.readUInt8(3);
+        const humidity = buf.readUInt8(4);
+        const version = buf.readUInt8(5) + "." + buf.readUInt8(6) + "." + buf.readUInt8(7);
+        const status = MiniBreeze.status()[buf.readUInt8(9)] || "Invalid";
+        return {
+            gasType,
+            sensVal,
+            temperature,
+            humidity,
+            version,
+            status,
+            devName: peripheral.localName,
+        };
+    }
+    static _hasPrefix(peripheral) {
+        if (!peripheral.adv_data || peripheral.adv_data.length < 10) {
+            return false;
+        }
+        const target = [
+            // flag
+            0x02,
+            0x01,
+            0x06,
+            // ManufactureData
+            0x0d,
+            0xff,
+            0xff,
+            0x02,
+        ];
+        for (const index in target) {
+            if (target[index] >= 0 && target[index] !== peripheral.adv_data[index]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    wired(obniz) { }
+}
+exports.default = MiniBreeze;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/PLS_01BT/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24091,7 +24195,7 @@ class cir415a {
     decrypt(data, key) {
         const dec = crypto_1.default.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
         dec.setAutoPadding(false);
-        let t = dec.update(Buffer.from(data), "binary", "binary");
+        let t = dec.update(Buffer.from(data), undefined, "binary");
         t += dec.final("binary");
         const d = Array.from(Buffer.from(t));
         const list = [];
@@ -25524,11 +25628,14 @@ class LinkingDevice {
             onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
             onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
             await this._getServicesAndChars();
+            onprogress({ step: 3.5, desc: "PAIRING" });
+            await this._peripheral.pairingWait();
             onprogress({ step: 4, desc: "SUBSCRIBING" });
             await this._subscribeForIndicate();
             onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
             let res;
             res = await this.write("GET_DEVICE_INFORMATION");
+            console.log("GET_DEVICE_INFORMATION", res);
             this.info.id = "";
             if ("deviceId" in res.data) {
                 this.info.id = res.data.deviceId;
@@ -25958,6 +26065,7 @@ class LinkingDevice {
                 }
             };
             try {
+                console.log("linking write ", buf);
                 await this.char_write.writeWait(buf, true);
             }
             catch (e) {
