@@ -20,12 +20,26 @@ class BleScan {
     constructor(obnizBle) {
         this.state = "stopping";
         this._delayNotifyTimers = [];
-        this.scanTarget = {};
-        this.scanSettings = {};
         this.obnizBle = obnizBle;
         this.emitter = new eventemitter3_1.default();
+        this.scanTarget = {};
+        this.scanSettings = {};
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.scanTarget = {};
+        this.scanSettings = {};
+        this.scanedPeripherals = [];
+        if (this._timeoutTimer) {
+            clearTimeout(this._timeoutTimer);
+            this._timeoutTimer = undefined;
+            this.finish(new Error(`Reset Occured while scanning.`));
+        }
     }
     /**
      * Use startWait() instead.
@@ -219,7 +233,7 @@ class BleScan {
             this.state = "stopping";
             this.clearTimeoutTimer();
             await this.obnizBle.centralBindings.stopScanningWait();
-            this.finish();
+            this.finish(); // state will changed to stopped inside of this function.
         }
     }
     /**

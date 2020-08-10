@@ -16,67 +16,67 @@ import EventEmitter from "eventemitter3";
  * @ignore
  */
 namespace ATT {
-  export const OP_ERROR: any = 0x01;
-  export const OP_MTU_REQ: any = 0x02;
-  export const OP_MTU_RESP: any = 0x03;
-  export const OP_FIND_INFO_REQ: any = 0x04;
-  export const OP_FIND_INFO_RESP: any = 0x05;
-  export const OP_FIND_BY_TYPE_REQ: any = 0x06;
-  export const OP_FIND_BY_TYPE_RESP: any = 0x07;
-  export const OP_READ_BY_TYPE_REQ: any = 0x08;
-  export const OP_READ_BY_TYPE_RESP: any = 0x09;
-  export const OP_READ_REQ: any = 0x0a;
-  export const OP_READ_RESP: any = 0x0b;
-  export const OP_READ_BLOB_REQ: any = 0x0c;
-  export const OP_READ_BLOB_RESP: any = 0x0d;
-  export const OP_READ_MULTI_REQ: any = 0x0e;
-  export const OP_READ_MULTI_RESP: any = 0x0f;
-  export const OP_READ_BY_GROUP_REQ: any = 0x10;
-  export const OP_READ_BY_GROUP_RESP: any = 0x11;
-  export const OP_WRITE_REQ: any = 0x12;
-  export const OP_WRITE_RESP: any = 0x13;
-  export const OP_WRITE_CMD: any = 0x52;
-  export const OP_PREP_WRITE_REQ: any = 0x16;
-  export const OP_PREP_WRITE_RESP: any = 0x17;
-  export const OP_EXEC_WRITE_REQ: any = 0x18;
-  export const OP_EXEC_WRITE_RESP: any = 0x19;
-  export const OP_HANDLE_NOTIFY: any = 0x1b;
-  export const OP_HANDLE_IND: any = 0x1d;
-  export const OP_HANDLE_CNF: any = 0x1e;
-  export const OP_SIGNED_WRITE_CMD: any = 0xd2;
+  export const OP_ERROR = 0x01;
+  export const OP_MTU_REQ = 0x02;
+  export const OP_MTU_RESP = 0x03;
+  export const OP_FIND_INFO_REQ = 0x04;
+  export const OP_FIND_INFO_RESP = 0x05;
+  export const OP_FIND_BY_TYPE_REQ = 0x06;
+  export const OP_FIND_BY_TYPE_RESP = 0x07;
+  export const OP_READ_BY_TYPE_REQ = 0x08;
+  export const OP_READ_BY_TYPE_RESP = 0x09;
+  export const OP_READ_REQ = 0x0a;
+  export const OP_READ_RESP = 0x0b;
+  export const OP_READ_BLOB_REQ = 0x0c;
+  export const OP_READ_BLOB_RESP = 0x0d;
+  export const OP_READ_MULTI_REQ = 0x0e;
+  export const OP_READ_MULTI_RESP = 0x0f;
+  export const OP_READ_BY_GROUP_REQ = 0x10;
+  export const OP_READ_BY_GROUP_RESP = 0x11;
+  export const OP_WRITE_REQ = 0x12;
+  export const OP_WRITE_RESP = 0x13;
+  export const OP_WRITE_CMD = 0x52;
+  export const OP_PREP_WRITE_REQ = 0x16;
+  export const OP_PREP_WRITE_RESP = 0x17;
+  export const OP_EXEC_WRITE_REQ = 0x18;
+  export const OP_EXEC_WRITE_RESP = 0x19;
+  export const OP_HANDLE_NOTIFY = 0x1b;
+  export const OP_HANDLE_IND = 0x1d;
+  export const OP_HANDLE_CNF = 0x1e;
+  export const OP_SIGNED_WRITE_CMD = 0xd2;
 
-  export const ECODE_SUCCESS: any = 0x00;
-  export const ECODE_INVALID_HANDLE: any = 0x01;
-  export const ECODE_READ_NOT_PERM: any = 0x02;
-  export const ECODE_WRITE_NOT_PERM: any = 0x03;
-  export const ECODE_INVALID_PDU: any = 0x04;
-  export const ECODE_AUTHENTICATION: any = 0x05;
-  export const ECODE_REQ_NOT_SUPP: any = 0x06;
-  export const ECODE_INVALID_OFFSET: any = 0x07;
-  export const ECODE_AUTHORIZATION: any = 0x08;
-  export const ECODE_PREP_QUEUE_FULL: any = 0x09;
-  export const ECODE_ATTR_NOT_FOUND: any = 0x0a;
-  export const ECODE_ATTR_NOT_LONG: any = 0x0b;
-  export const ECODE_INSUFF_ENCR_KEY_SIZE: any = 0x0c;
-  export const ECODE_INVAL_ATTR_VALUE_LEN: any = 0x0d;
-  export const ECODE_UNLIKELY: any = 0x0e;
-  export const ECODE_INSUFF_ENC: any = 0x0f;
-  export const ECODE_UNSUPP_GRP_TYPE: any = 0x10;
-  export const ECODE_INSUFF_RESOURCES: any = 0x11;
+  export const ECODE_SUCCESS = 0x00;
+  export const ECODE_INVALID_HANDLE = 0x01;
+  export const ECODE_READ_NOT_PERM = 0x02;
+  export const ECODE_WRITE_NOT_PERM = 0x03;
+  export const ECODE_INVALID_PDU = 0x04;
+  export const ECODE_AUTHENTICATION = 0x05;
+  export const ECODE_REQ_NOT_SUPP = 0x06;
+  export const ECODE_INVALID_OFFSET = 0x07;
+  export const ECODE_AUTHORIZATION = 0x08;
+  export const ECODE_PREP_QUEUE_FULL = 0x09;
+  export const ECODE_ATTR_NOT_FOUND = 0x0a;
+  export const ECODE_ATTR_NOT_LONG = 0x0b;
+  export const ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
+  export const ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
+  export const ECODE_UNLIKELY = 0x0e;
+  export const ECODE_INSUFF_ENC = 0x0f;
+  export const ECODE_UNSUPP_GRP_TYPE = 0x10;
+  export const ECODE_INSUFF_RESOURCES = 0x11;
 
-  export const CID: any = 0x0004;
+  export const CID = 0x0004;
 }
 
 /**
  * @ignore
  */
 namespace GATT {
-  export const PRIM_SVC_UUID: any = 0x2800;
-  export const INCLUDE_UUID: any = 0x2802;
-  export const CHARAC_UUID: any = 0x2803;
+  export const PRIM_SVC_UUID = 0x2800;
+  export const INCLUDE_UUID = 0x2802;
+  export const CHARAC_UUID = 0x2803;
 
-  export const CLIENT_CHARAC_CFG_UUID: any = 0x2902;
-  export const SERVER_CHARAC_CFG_UUID: any = 0x2903;
+  export const CLIENT_CHARAC_CFG_UUID = 0x2902;
+  export const SERVER_CHARAC_CFG_UUID = 0x2903;
 }
 
 /* eslint-enable no-unused-vars */
@@ -86,9 +86,9 @@ type GattEventTypes = "mtuChange";
  * @ignore
  */
 export default class Gatt extends EventEmitter<GattEventTypes> {
-  public maxMtu: any;
-  public _mtu: any;
-  public _preparedWriteRequest: any;
+  public maxMtu = 256;
+  public _mtu = 23;
+  public _preparedWriteRequest: any = null;
   public onAclStreamDataBinded: any;
   public onAclStreamEndBinded: any;
   public _handles: any;
@@ -97,33 +97,41 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
   constructor() {
     super();
+
+    this._reset();
+
+    this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
+    this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
     this.maxMtu = 256;
     this._mtu = 23;
     this._preparedWriteRequest = null;
 
     this.setServices([]);
-
-    this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-    this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+    this.setAclStream(undefined);
   }
 
   public setServices(services: any) {
     // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
 
     // base services and characteristics
-    const allServices: any = [].concat(services);
+    const allServices: any[] = [].concat(services);
 
     this._handles = [];
 
-    let handle: any = 0;
-    let i: any;
-    let j: any;
+    let handle = 0;
 
-    for (i = 0; i < allServices.length; i++) {
-      const service: any = allServices[i];
+    for (let i = 0; i < allServices.length; i++) {
+      const service = allServices[i];
 
       handle++;
-      const serviceHandle: any = handle;
+      const serviceHandle = handle;
 
       this._handles[serviceHandle] = {
         type: "service",
@@ -133,11 +141,11 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         // endHandle filled in below
       };
 
-      for (j = 0; j < service.characteristics.length; j++) {
-        const characteristic: any = service.characteristics[j];
+      for (let j = 0; j < service.characteristics.length; j++) {
+        const characteristic = service.characteristics[j];
 
-        let properties: any = 0;
-        let secure: any = 0;
+        let properties = 0;
+        let secure = 0;
 
         if (characteristic.properties.indexOf("read") !== -1) {
           properties |= 0x02;
@@ -180,10 +188,10 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         }
 
         handle++;
-        const characteristicHandle: any = handle;
+        const characteristicHandle = handle;
 
         handle++;
-        const characteristicValueHandle: any = handle;
+        const characteristicValueHandle = handle;
 
         this._handles[characteristicHandle] = {
           type: "characteristic",
@@ -201,13 +209,13 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           value: characteristic.value,
         };
 
-        const hasCCCD: any = characteristic.descriptors.find((e: any) => e.uuid === "2902");
+        const hasCCCD = characteristic.descriptors.find((e: any) => e.uuid === "2902");
         if (hasCCCD || properties & 0x30) {
           // notify or indicate
           // add client characteristic configuration descriptor
 
           handle++;
-          const clientCharacteristicConfigurationDescriptorHandle: any = handle;
+          const clientCharacteristicConfigurationDescriptorHandle = handle;
           this._handles[clientCharacteristicConfigurationDescriptorHandle] = {
             type: "descriptor",
             handle: clientCharacteristicConfigurationDescriptorHandle,
@@ -220,12 +228,12 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         }
 
         for (let k = 0; k < characteristic.descriptors.length; k++) {
-          const descriptor: any = characteristic.descriptors[k];
+          const descriptor = characteristic.descriptors[k];
           if (descriptor.uuid === "2902") {
             continue;
           }
           handle++;
-          const descriptorHandle: any = handle;
+          const descriptorHandle = handle;
 
           this._handles[descriptorHandle] = {
             type: "descriptor",
@@ -242,31 +250,37 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
       this._handles[serviceHandle].endHandle = handle;
     }
 
-    const debugHandles: any = [];
-    for (i = 0; i < this._handles.length; i++) {
-      handle = this._handles[i];
+    // const debugHandles = [];
+    // for (let i = 0; i < this._handles.length; i++) {
+    //   const anHandle = this._handles[i];
 
-      debugHandles[i] = {};
-      for (j in handle) {
-        if (Buffer.isBuffer(handle[j])) {
-          debugHandles[i][j] = handle[j] ? "Buffer('" + handle[j].toString("hex") + "', 'hex')" : null;
-        } else if (j !== "attribute") {
-          debugHandles[i][j] = handle[j];
-        }
-      }
-    }
+    //   debugHandles[i] = {};
+    //   for (let key in anHandle) {
+    //     if (Buffer.isBuffer(anHandle[key])) {
+    //       debugHandles[i][key] = anHandle[key] ? "Buffer('" + anHandle[key].toString("hex") + "', 'hex')" : null;
+    //     } else if (key !== "attribute") {
+    //       debugHandles[i][key] = anHandle[key];
+    //     }
+    //   }
+    // }
 
-    debug("handles = " + JSON.stringify(debugHandles, null, 2));
+    // debug("handles = " + JSON.stringify(debugHandles, null, 2));
   }
 
-  public setAclStream(aclStream: AclStream) {
+  public setAclStream(aclStream: AclStream | undefined) {
     this._mtu = 23;
     this._preparedWriteRequest = null;
 
+    if (this._aclStream) {
+      this._aclStream.end();
+      this._aclStream!.removeListener("data", this.onAclStreamDataBinded);
+      this._aclStream!.removeListener("end", this.onAclStreamEndBinded);
+    }
     this._aclStream = aclStream;
-
-    this._aclStream.on("data", this.onAclStreamDataBinded);
-    this._aclStream.on("end", this.onAclStreamEndBinded);
+    if (this._aclStream) {
+      this._aclStream.on("data", this.onAclStreamDataBinded);
+      this._aclStream.on("end", this.onAclStreamEndBinded);
+    }
   }
 
   public onAclStreamData(cid: any, data?: any) {
@@ -306,7 +320,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public errorResponse(opcode: any, handle: any, status: any) {
-    const buf: any = Buffer.alloc(5);
+    const buf = Buffer.alloc(5);
 
     buf.writeUInt8(ATT.OP_ERROR, 0);
     buf.writeUInt8(opcode, 1);
@@ -319,8 +333,8 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   public handleRequest(request: any) {
     debug("handing request: " + request.toString("hex"));
 
-    const requestType: any = request[0];
-    let response: any = null;
+    const requestType = request[0];
+    let response = null;
 
     switch (requestType) {
       case ATT.OP_MTU_REQ:
@@ -380,7 +394,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handleMtuRequest(request: any) {
-    let mtu: any = request.readUInt16LE(1);
+    let mtu = request.readUInt16LE(1);
 
     if (mtu < 23) {
       mtu = 23;
@@ -392,7 +406,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
     this.emit("mtuChange", this._mtu);
 
-    const response: any = Buffer.alloc(3);
+    const response = Buffer.alloc(3);
 
     response.writeUInt8(ATT.OP_MTU_RESP, 0);
     response.writeUInt16LE(mtu, 1);
@@ -401,17 +415,17 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handleFindInfoRequest(request: any) {
-    let response: any = null;
+    let response = null;
 
-    const startHandle: any = request.readUInt16LE(1);
-    const endHandle: any = request.readUInt16LE(3);
+    const startHandle = request.readUInt16LE(1);
+    const endHandle = request.readUInt16LE(3);
 
-    const infos: any = [];
-    let uuid: any = null;
+    const infos = [];
+    let uuid = null;
     let i: any;
 
     for (i = startHandle; i <= endHandle; i++) {
-      const handle: any = this._handles[i];
+      const handle = this._handles[i];
 
       if (!handle) {
         break;
@@ -440,8 +454,8 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     }
 
     if (infos.length) {
-      const uuidSize: any = infos[0].uuid.length / 2;
-      let numInfo: any = 1;
+      const uuidSize = infos[0].uuid.length / 2;
+      let numInfo = 1;
 
       for (i = 1; i < infos.length; i++) {
         if (infos[0].uuid.length !== infos[i].uuid.length) {
@@ -450,8 +464,8 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         numInfo++;
       }
 
-      const lengthPerInfo: any = uuidSize === 2 ? 4 : 18;
-      const maxInfo: any = Math.floor((this._mtu - 2) / lengthPerInfo);
+      const lengthPerInfo = uuidSize === 2 ? 4 : 18;
+      const maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
       numInfo = Math.min(numInfo, maxInfo);
 
       response = Buffer.alloc(2 + numInfo * lengthPerInfo);
@@ -460,7 +474,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
       response[1] = uuidSize === 2 ? 0x01 : 0x2;
 
       for (i = 0; i < numInfo; i++) {
-        const info: any = infos[i];
+        const info = infos[i];
 
         response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
 
@@ -483,24 +497,24 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handleFindByTypeRequest(request: any) {
-    let response: any = null;
+    let response = null;
 
-    const startHandle: any = request.readUInt16LE(1);
-    const endHandle: any = request.readUInt16LE(3);
-    const uuid: any = request
+    const startHandle = request.readUInt16LE(1);
+    const endHandle = request.readUInt16LE(3);
+    const uuid = request
       .slice(5, 7)
       .toString("hex")
       .match(/.{1,2}/g)
       .reverse()
       .join("");
-    const value: any = request
+    const value = request
       .slice(7)
       .toString("hex")
       .match(/.{1,2}/g)
       .reverse()
       .join("");
 
-    const handles: any = [];
+    const handles = [];
     let handle: any;
 
     for (let i = startHandle; i <= endHandle; i++) {
@@ -519,9 +533,9 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     }
 
     if (handles.length) {
-      const lengthPerHandle: any = 4;
-      let numHandles: any = handles.length;
-      const maxHandles: any = Math.floor((this._mtu - 1) / lengthPerHandle);
+      const lengthPerHandle = 4;
+      let numHandles = handles.length;
+      const maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
 
       numHandles = Math.min(numHandles, maxHandles);
 
@@ -543,11 +557,11 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handleReadByGroupRequest(request: any) {
-    let response: any = null;
+    let response = null;
 
-    const startHandle: any = request.readUInt16LE(1);
-    const endHandle: any = request.readUInt16LE(3);
-    const uuid: any = request
+    const startHandle = request.readUInt16LE(1);
+    const endHandle = request.readUInt16LE(3);
+    const uuid = request
       .slice(5)
       .toString("hex")
       .match(/.{1,2}/g)
@@ -564,12 +578,12 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     );
 
     if ("2800" === uuid || "2802" === uuid) {
-      const services: any = [];
-      const type: any = "2800" === uuid ? "service" : "includedService";
+      const services = [];
+      const type = "2800" === uuid ? "service" : "includedService";
       let i: any;
 
       for (i = startHandle; i <= endHandle; i++) {
-        const handle: any = this._handles[i];
+        const handle = this._handles[i];
 
         if (!handle) {
           break;
@@ -581,8 +595,8 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
       }
 
       if (services.length) {
-        const uuidSize: any = services[0].uuid.length / 2;
-        let numServices: any = 1;
+        const uuidSize = services[0].uuid.length / 2;
+        let numServices = 1;
 
         for (i = 1; i < services.length; i++) {
           if (services[0].uuid.length !== services[i].uuid.length) {
@@ -591,8 +605,8 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           numServices++;
         }
 
-        const lengthPerService: any = uuidSize === 2 ? 6 : 20;
-        const maxServices: any = Math.floor((this._mtu - 2) / lengthPerService);
+        const lengthPerService = uuidSize === 2 ? 6 : 20;
+        const maxServices = Math.floor((this._mtu - 2) / lengthPerService);
         numServices = Math.min(numServices, maxServices);
 
         response = Buffer.alloc(2 + numServices * lengthPerService);
@@ -601,12 +615,12 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         response[1] = lengthPerService;
 
         for (i = 0; i < numServices; i++) {
-          const service: any = services[i];
+          const service = services[i];
 
           response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
           response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
 
-          const serviceUuid: any = Buffer.from(
+          const serviceUuid = Buffer.from(
             service.uuid
               .match(/.{1,2}/g)
               .reverse()
@@ -628,12 +642,12 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handleReadByTypeRequest(request: any) {
-    let response: any = null;
-    const requestType: any = request[0];
+    let response = null;
+    const requestType = request[0];
 
-    const startHandle: any = request.readUInt16LE(1);
-    const endHandle: any = request.readUInt16LE(3);
-    const uuid: any = request
+    const startHandle = request.readUInt16LE(1);
+    const endHandle = request.readUInt16LE(3);
+    const uuid = request
       .slice(5)
       .toString("hex")
       .match(/.{1,2}/g)
@@ -652,7 +666,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
     );
 
     if ("2803" === uuid) {
-      const characteristics: any = [];
+      const characteristics = [];
 
       for (i = startHandle; i <= endHandle; i++) {
         handle = this._handles[i];
@@ -667,8 +681,8 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
       }
 
       if (characteristics.length) {
-        const uuidSize: any = characteristics[0].uuid.length / 2;
-        let numCharacteristics: any = 1;
+        const uuidSize = characteristics[0].uuid.length / 2;
+        let numCharacteristics = 1;
 
         for (i = 1; i < characteristics.length; i++) {
           if (characteristics[0].uuid.length !== characteristics[i].uuid.length) {
@@ -677,8 +691,8 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           numCharacteristics++;
         }
 
-        const lengthPerCharacteristic: any = uuidSize === 2 ? 7 : 21;
-        const maxCharacteristics: any = Math.floor((this._mtu - 2) / lengthPerCharacteristic);
+        const lengthPerCharacteristic = uuidSize === 2 ? 7 : 21;
+        const maxCharacteristics = Math.floor((this._mtu - 2) / lengthPerCharacteristic);
         numCharacteristics = Math.min(numCharacteristics, maxCharacteristics);
 
         response = Buffer.alloc(2 + numCharacteristics * lengthPerCharacteristic);
@@ -687,13 +701,13 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         response[1] = lengthPerCharacteristic;
 
         for (i = 0; i < numCharacteristics; i++) {
-          const characteristic: any = characteristics[i];
+          const characteristic = characteristics[i];
 
           response.writeUInt16LE(characteristic.startHandle, 2 + i * lengthPerCharacteristic);
           response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
           response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
 
-          const characteristicUuid: any = Buffer.from(
+          const characteristicUuid = Buffer.from(
             characteristic.uuid
               .match(/.{1,2}/g)
               .reverse()
@@ -708,9 +722,9 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         response = this.errorResponse(ATT.OP_READ_BY_TYPE_REQ, startHandle, ATT.ECODE_ATTR_NOT_FOUND);
       }
     } else {
-      let handleAttribute: any = null;
-      let valueHandle: any = null;
-      let secure: any = false;
+      let handleAttribute = null;
+      let valueHandle = null;
+      let secure = false;
 
       for (i = startHandle; i <= endHandle; i++) {
         handle = this._handles[i];
@@ -722,11 +736,11 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         if (handle.type === "characteristic" && handle.uuid === uuid) {
           handleAttribute = handle.attribute;
           valueHandle = handle.valueHandle;
-          secure = handle.secure & 0x02;
+          secure = (handle.secure & 0x02) !== 0;
           break;
         } else if (handle.type === "descriptor" && handle.uuid === uuid) {
           valueHandle = i;
-          secure = handle.secure & 0x02;
+          secure = (handle.secure & 0x02) !== 0;
           break;
         }
       }
@@ -736,10 +750,10 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
       } else if (valueHandle) {
         const callback: any = ((_valueHandle: any) => {
           return (result: any, _data: any) => {
-            let callbackResponse: any = null;
+            let callbackResponse = null;
 
             if (ATT.ECODE_SUCCESS === result) {
-              const dataLength: any = Math.min(_data.length, this._mtu - 4);
+              const dataLength = Math.min(_data.length, this._mtu - 4);
               callbackResponse = Buffer.alloc(4 + dataLength);
 
               callbackResponse[0] = ATT.OP_READ_BY_TYPE_RESP;
@@ -758,7 +772,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           };
         })(valueHandle);
 
-        const data: any = this._handles[valueHandle].value;
+        const data = this._handles[valueHandle].value;
 
         if (data) {
           callback(ATT.ECODE_SUCCESS, data);
@@ -776,26 +790,26 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handleReadOrReadBlobRequest(request: any) {
-    let response: any = null;
+    let response = null;
 
-    const requestType: any = request[0];
-    const valueHandle: any = request.readUInt16LE(1);
-    const offset: any = requestType === ATT.OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
+    const requestType = request[0];
+    const valueHandle = request.readUInt16LE(1);
+    const offset = requestType === ATT.OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
 
-    const handle: any = this._handles[valueHandle];
+    const handle = this._handles[valueHandle];
     let i: any;
 
     if (handle) {
-      let result: any = null;
-      let data: any = null;
-      const handleType: any = handle.type;
+      let result = null;
+      let data = null;
+      const handleType = handle.type;
 
-      const callback: any = ((_requestType: any, _valueHandle: any) => {
+      const callback = ((_requestType: any, _valueHandle: any) => {
         return (_result: any, _data: any) => {
-          let callbackResponse: any = null;
+          let callbackResponse = null;
 
           if (ATT.ECODE_SUCCESS === _result) {
-            const dataLength: any = Math.min(_data.length, this._mtu - 1);
+            const dataLength = Math.min(_data.length, this._mtu - 1);
             callbackResponse = Buffer.alloc(1 + dataLength);
 
             callbackResponse[0] = _requestType === ATT.OP_READ_BLOB_REQ ? ATT.OP_READ_BLOB_RESP : ATT.OP_READ_RESP;
@@ -822,7 +836,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           "hex",
         );
       } else if (handleType === "characteristic") {
-        const uuid: any = Buffer.from(
+        const uuid = Buffer.from(
           handle.uuid
             .match(/.{1,2}/g)
             .reverse()
@@ -839,9 +853,9 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           data[i + 3] = uuid[i];
         }
       } else if (handleType === "characteristicValue" || handleType === "descriptor") {
-        let handleProperties: any = handle.properties;
-        let handleSecure: any = handle.secure;
-        let handleAttribute: any = handle.attribute;
+        let handleProperties = handle.properties;
+        let handleSecure = handle.secure;
+        let handleAttribute = handle.attribute;
         if (handleType === "characteristicValue") {
           handleProperties = this._handles[valueHandle - 1].properties;
           handleSecure = this._handles[valueHandle - 1].secure;
@@ -889,29 +903,29 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handleWriteRequestOrCommand(request: any) {
-    let response: any = null;
+    let response = null;
 
-    const requestType: any = request[0];
-    const withoutResponse: any = requestType === ATT.OP_WRITE_CMD;
-    const valueHandle: any = request.readUInt16LE(1);
-    const data: any = request.slice(3);
-    const offset: any = 0;
+    const requestType = request[0];
+    const withoutResponse = requestType === ATT.OP_WRITE_CMD;
+    const valueHandle = request.readUInt16LE(1);
+    const data = request.slice(3);
+    const offset = 0;
 
-    let handle: any = this._handles[valueHandle];
+    let handle = this._handles[valueHandle];
 
     if (handle) {
       if (handle.type === "characteristicValue") {
         handle = this._handles[valueHandle - 1];
       }
 
-      const handleProperties: any = handle.properties;
-      const handleSecure: any = handle.secure;
+      const handleProperties = handle.properties;
+      const handleSecure = handle.secure;
 
       if (handleProperties && (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)) {
-        const callback: any = ((_requestType: any, _valueHandle: any, _withoutResponse: any) => {
+        const callback = ((_requestType: any, _valueHandle: any, _withoutResponse: any) => {
           return (result: any) => {
             if (!_withoutResponse) {
-              let callbackResponse: any = null;
+              let callbackResponse = null;
 
               if (ATT.ECODE_SUCCESS === result) {
                 callbackResponse = Buffer.from([ATT.OP_WRITE_RESP]);
@@ -929,26 +943,26 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
         if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !(this._aclStream && this._aclStream.encrypted)) {
           response = this.errorResponse(requestType, valueHandle, ATT.ECODE_AUTHENTICATION);
         } else if (handle.type === "descriptor" || handle.uuid === "2902") {
-          let result: any = null;
+          let result = null;
 
           if (data.length !== 2) {
             result = ATT.ECODE_INVAL_ATTR_VALUE_LEN;
           } else {
-            const value: any = data.readUInt16LE(0);
-            const handleAttribute: any = handle.attribute;
+            const value = data.readUInt16LE(0);
+            const handleAttribute = handle.attribute;
 
             handle.value = data;
 
             if (value & 0x0003) {
-              const updateValueCallback: any = ((_valueHandle: any, _attribute: any) => {
+              const updateValueCallback = ((_valueHandle: any, _attribute: any) => {
                 return (_data: any) => {
-                  const dataLength: any = Math.min(_data.length, this._mtu - 3);
-                  const useNotify: any = _attribute.properties.indexOf("notify") !== -1;
-                  const useIndicate: any = _attribute.properties.indexOf("indicate") !== -1;
+                  const dataLength = Math.min(_data.length, this._mtu - 3);
+                  const useNotify = _attribute.properties.indexOf("notify") !== -1;
+                  const useIndicate = _attribute.properties.indexOf("indicate") !== -1;
                   let i: any;
 
                   if (useNotify) {
-                    const notifyMessage: any = Buffer.alloc(3 + dataLength);
+                    const notifyMessage = Buffer.alloc(3 + dataLength);
 
                     notifyMessage.writeUInt8(ATT.OP_HANDLE_NOTIFY, 0);
                     notifyMessage.writeUInt16LE(_valueHandle, 1);
@@ -962,7 +976,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
                     _attribute.emit("notify");
                   } else if (useIndicate) {
-                    const indicateMessage: any = Buffer.alloc(3 + dataLength);
+                    const indicateMessage = Buffer.alloc(3 + dataLength);
 
                     indicateMessage.writeUInt8(ATT.OP_HANDLE_IND, 0);
                     indicateMessage.writeUInt16LE(_valueHandle, 1);
@@ -1004,21 +1018,21 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handlePrepareWriteRequest(request: any) {
-    let response: any = null;
+    let response = null;
 
-    const requestType: any = request[0];
-    const valueHandle: any = request.readUInt16LE(1);
-    const offset: any = request.readUInt16LE(3);
-    const data: any = request.slice(5);
+    const requestType = request[0];
+    const valueHandle = request.readUInt16LE(1);
+    const offset = request.readUInt16LE(3);
+    const data = request.slice(5);
 
-    let handle: any = this._handles[valueHandle];
+    let handle = this._handles[valueHandle];
 
     if (handle) {
       if (handle.type === "characteristicValue") {
         handle = this._handles[valueHandle - 1];
 
-        const handleProperties: any = handle.properties;
-        const handleSecure: any = handle.secure;
+        const handleProperties = handle.properties;
+        const handleSecure = handle.secure;
 
         if (handleProperties && handleProperties & 0x08) {
           if (handleSecure & 0x08 && !(this._aclStream && this._aclStream.encrypted)) {
@@ -1061,18 +1075,18 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
   }
 
   public handleExecuteWriteRequest(request: any) {
-    let response: any = null;
+    let response = null;
 
-    const requestType: any = request[0];
-    const flag: any = request[1];
+    const requestType = request[0];
+    const flag = request[1];
 
     if (this._preparedWriteRequest) {
       if (flag === 0x00) {
         response = Buffer.from([ATT.OP_EXEC_WRITE_RESP]);
       } else if (flag === 0x01) {
-        const callback: any = ((_requestType: any, _valueHandle: any) => {
+        const callback = ((_requestType: any, _valueHandle: any) => {
           return (result: any) => {
-            let callbackResponse: any = null;
+            let callbackResponse = null;
 
             if (ATT.ECODE_SUCCESS === result) {
               callbackResponse = Buffer.from([ATT.OP_EXEC_WRITE_RESP]);

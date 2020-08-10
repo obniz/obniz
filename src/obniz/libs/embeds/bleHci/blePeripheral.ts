@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
+import { ObnizOfflineError } from "../../../ObnizError";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BleService from "./bleService";
@@ -49,8 +50,24 @@ export default class BlePeripheral {
    * @ignore
    * @private
    */
+  public _reset() {
+    if (this.currentConnectedDeviceAddress) {
+      const address = this.currentConnectedDeviceAddress;
+      this.currentConnectedDeviceAddress = null;
+      this.obnizBle.Obniz._runUserCreatedFunction(this.onconnectionupdates, {
+        address,
+        status: "disconnected",
+        reason: new ObnizOfflineError(),
+      });
+    }
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
   public _updateServices() {
-    const bufData: any = this._services.map((e: any) => e.toBufferObj());
+    const bufData = this._services.map((e) => e.toBufferObj());
     this.obnizBle.peripheralBindings.setServices(bufData);
   }
 

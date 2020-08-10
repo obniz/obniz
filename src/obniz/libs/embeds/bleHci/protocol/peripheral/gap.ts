@@ -28,6 +28,14 @@ class Gap extends EventEmitter<GapEventTypes> {
     this._advertiseState = null;
   }
 
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this._advertiseState = null;
+  }
+
   public async startAdvertisingWait(name: any, serviceUuids: any) {
     debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
 

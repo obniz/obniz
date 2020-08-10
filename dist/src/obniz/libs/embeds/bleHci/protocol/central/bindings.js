@@ -22,21 +22,35 @@ class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this.debugHandler = () => { };
+        this._hci = hciProtocol;
+        this._gap = new gap_1.default(this._hci);
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
         this._connectable = {};
-        this._connectPromises = [];
         this._handles = {};
         this._gatts = {};
         this._aclStreams = {};
         this._signalings = {};
-        this._hci = hciProtocol;
-        this._gap = new gap_1.default(this._hci);
         this._hci.on("stateChange", this.onStateChange.bind(this));
         this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
         this._gap.on("discover", this.onDiscover.bind(this));
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._state = null;
+        this._addresses = {};
+        this._addresseTypes = {};
+        this._connectable = {};
+        this._handles = {};
+        this._gatts = {};
+        this._aclStreams = {};
+        this._signalings = {};
+        this._gap._reset();
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
@@ -53,28 +67,16 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    connectWait(peripheralUuid) {
+    async connectWait(peripheralUuid) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
-        const doPromise = Promise.all(this._connectPromises)
-            .catch((error) => {
-            // nothing
-        })
-            .then(() => {
-            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-        })
-            .then((result) => {
+        try {
+            const result = await this._hci.createLeConnWait(address, addressType, 90 * 1000);
             return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-        })
-            .then((result) => {
-            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-            return Promise.resolve(result);
-        }, (error) => {
-            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-            return Promise.reject(error);
-        });
-        this._connectPromises.push(doPromise);
-        return doPromise;
+        }
+        catch (e) {
+            throw e;
+        }
     }
     disconnect(peripheralUuid) {
         this._hci.disconnect(this._handles[peripheralUuid]);

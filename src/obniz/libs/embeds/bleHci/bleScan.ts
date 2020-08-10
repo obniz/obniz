@@ -173,13 +173,29 @@ export default class BleScan {
   }> = [];
 
   constructor(obnizBle: ObnizBLE) {
-    this.scanTarget = {};
-    this.scanSettings = {};
     this.obnizBle = obnizBle;
     this.emitter = new EventEmitter();
+    this.scanTarget = {};
+    this.scanSettings = {};
 
     this.scanedPeripherals = [];
     this._timeoutTimer = undefined;
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this.scanTarget = {};
+    this.scanSettings = {};
+
+    this.scanedPeripherals = [];
+    if (this._timeoutTimer) {
+      clearTimeout(this._timeoutTimer);
+      this._timeoutTimer = undefined;
+      this.finish(new Error(`Reset Occured while scanning.`));
+    }
   }
 
   /**
@@ -383,7 +399,7 @@ export default class BleScan {
       this.state = "stopping";
       this.clearTimeoutTimer();
       await this.obnizBle.centralBindings.stopScanningWait();
-      this.finish();
+      this.finish(); // state will changed to stopped inside of this function.
     }
   }
 

@@ -4,6 +4,7 @@
  */
 
 import EventEmitter from "eventemitter3";
+import { ObnizTimeoutError } from "../../../ObnizError";
 import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
 import BleRemoteService from "./bleRemoteService";
@@ -462,15 +463,22 @@ export default class BleRemotePeripheral {
     this._connectSetting = setting || {};
     this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
     await this.obnizBle.scan.endWait();
-    await this.obnizBle.centralBindings.connectWait(this.address);
+    try {
+      await this.obnizBle.centralBindings.connectWait(this.address);
+    } catch (e) {
+      if (e instanceof ObnizTimeoutError) {
+        await this.obnizBle.resetWait();
+        throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+      }
+      throw e;
+    }
+    this.connected = true;
     if (this._connectSetting.pairingOption) {
       this.setPairingOption(this._connectSetting.pairingOption);
     }
     if (this._connectSetting.autoDiscovery) {
       await this.discoverAllHandlesWait();
     }
-
-    this.connected = true;
     this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
     this.emitter.emit("connect");
   }

@@ -234,8 +234,8 @@ ObnizBlePairingRejectByRemoteError.Errors = {
     0x0e: "Cross-transport Key Deriva- tion/Generation not allowed",
 };
 class ObnizBleScanStartError extends ObnizError {
-    constructor(msg) {
-        super(17, msg);
+    constructor(state, msg) {
+        super(17, `${msg} state=${state}(${ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : ""})`);
     }
 }
 exports.ObnizBleScanStartError = ObnizBleScanStartError;

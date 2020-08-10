@@ -1,90 +1,87 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const eventemitter3_1 = __importDefault(require("eventemitter3"));
-/**
- * Deprecated class
- */
-class BleSecurity {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.emitter = new eventemitter3_1.default();
-    }
-    /**
-     * Deprecated function
-     * @param mode
-     * @param level
-     */
-    setModeLevel(mode, level) {
-        throw new Error("setModeLevel is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param introducedVersion
-     * @param functionName
-     */
-    checkIntroducedFirmware(introducedVersion, functionName) {
-        throw new Error("checkIntroducedFirmware is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param authTypes
-     */
-    setAuth(authTypes) {
-        throw new Error("setAuth is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param level
-     */
-    setIndicateSecurityLevel(level) {
-        throw new Error("setIndicateSecurityLevel is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param keyTypes
-     */
-    setEnableKeyTypes(keyTypes) {
-        throw new Error("setEnableKeyTypes is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param size
-     */
-    setKeyMaxSize(size) {
-        throw new Error("setKeyMaxSize is deprecated method");
-    }
-    /**
-     * Deprecated function
-     */
-    clearBondingDevicesList() {
-        throw new Error("clearBondingDevicesList is deprecated method");
-    }
-    /**
-     * @ignore
-     * @param params
-     */
-    onerror(params) { } // dummy
-    /**
-     * @ignore
-     * @param notifyName
-     * @param params
-     */
-    notifyFromServer(notifyName, params) {
-        switch (notifyName) {
-            case "onerror": {
-                this.Obniz._runUserCreatedFunction(this.onerror, params);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleSecurity;
+// /**
+//  * @packageDocumentation
+//  * @module ObnizCore.Components.Ble.Hci
+//  */
+// import EventEmitter from "eventemitter3";
+// /**
+//  * Deprecated class
+//  */
+// export default class BleSecurity {
+//   protected Obniz: any;
+//   protected emitter: EventEmitter;
+//   constructor(Obniz: any) {
+//     this.Obniz = Obniz;
+//     this.emitter = new EventEmitter();
+//   }
+//   /**
+//    * Deprecated function
+//    * @param mode
+//    * @param level
+//    */
+//   public setModeLevel(mode: any, level: any) {
+//     throw new Error("setModeLevel is deprecated method");
+//   }
+//   /**
+//    * Deprecated function
+//    * @param introducedVersion
+//    * @param functionName
+//    */
+//   public checkIntroducedFirmware(introducedVersion: any, functionName: any) {
+//     throw new Error("checkIntroducedFirmware is deprecated method");
+//   }
+//   /**
+//    * Deprecated function
+//    * @param authTypes
+//    */
+//   public setAuth(authTypes: any) {
+//     throw new Error("setAuth is deprecated method");
+//   }
+//   /**
+//    * Deprecated function
+//    * @param level
+//    */
+//   public setIndicateSecurityLevel(level: any) {
+//     throw new Error("setIndicateSecurityLevel is deprecated method");
+//   }
+//   /**
+//    * Deprecated function
+//    * @param keyTypes
+//    */
+//   public setEnableKeyTypes(keyTypes: any) {
+//     throw new Error("setEnableKeyTypes is deprecated method");
+//   }
+//   /**
+//    * Deprecated function
+//    * @param size
+//    */
+//   public setKeyMaxSize(size: any) {
+//     throw new Error("setKeyMaxSize is deprecated method");
+//   }
+//   /**
+//    * Deprecated function
+//    */
+//   public clearBondingDevicesList() {
+//     throw new Error("clearBondingDevicesList is deprecated method");
+//   }
+//   /**
+//    * @ignore
+//    * @param params
+//    */
+//   public onerror(params: any) {} // dummy
+//   /**
+//    * @ignore
+//    * @param notifyName
+//    * @param params
+//    */
+//   public notifyFromServer(notifyName: any, params: any) {
+//     switch (notifyName) {
+//       case "onerror": {
+//         this.Obniz._runUserCreatedFunction(this.onerror, params);
+//         break;
+//       }
+//     }
+//   }
+// }
 
 //# sourceMappingURL=bleSecurity.js.map

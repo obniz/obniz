@@ -33,12 +33,12 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     toBufferObj() {
         const obj = {
             uuid: bleHelper_1.default.uuidFilter(this.uuid),
+            emit: this.emit.bind(this),
         };
         if (this.childrenName) {
             const key = this.childrenName;
             obj[key] = this.children.map((e) => e.toBufferObj());
         }
-        obj.emit = this.emit.bind(this);
         return obj;
     }
     /**

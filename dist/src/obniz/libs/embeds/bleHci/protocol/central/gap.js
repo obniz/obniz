@@ -15,21 +15,32 @@ const ObnizError_1 = require("../../../../../ObnizError");
 class Gap extends eventemitter3_1.default {
     constructor(hci) {
         super();
-        this._hci = hci;
         this._scanState = null;
         this._scanFilterDuplicates = null;
         this._discoveries = {};
+        this._hci = hci;
+        this._reset();
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._scanState = null;
+        this._scanFilterDuplicates = null;
+        this._discoveries = {};
+    }
     async startScanningWait(allowDuplicates, activeScan) {
-        this._scanState = "starting";
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
         // Always set scan parameters before scanning
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         try {
-            await this.setScanEnabledWait(false, true);
+            if (this._scanState === "starting" || this._scanState === "started") {
+                await this.setScanEnabledWait(false, true);
+            }
         }
         catch (e) {
             if (e instanceof ObnizError_1.ObnizBleScanStartError) {
@@ -39,16 +50,28 @@ class Gap extends eventemitter3_1.default {
                 throw e;
             }
         }
+        this._scanState = "starting";
         const status = await this._hci.setScanParametersWait(activeScan);
         if (status !== 0) {
-            throw new ObnizError_1.ObnizBleScanStartError(`startScanning Error setting active scan=${activeScan} was failed status=${status}`);
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning Error setting active scan=${activeScan} was failed`);
         }
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await this.setScanEnabledWait(true, this._scanFilterDuplicates);
     }
     async stopScanningWait() {
-        this._scanState = "stopping";
-        await this._hci.setScanEnabledWait(false, true);
+        try {
+            if (this._scanState === "starting" || this._scanState === "started") {
+                await this.setScanEnabledWait(false, true);
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
+            }
+            else {
+                throw e;
+            }
+        }
     }
     onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
         const previouslyDiscovered = !!this._discoveries[address];
@@ -235,7 +258,7 @@ class Gap extends eventemitter3_1.default {
         if (status !== 0) {
             // If it is non-zero there was an error, and we should not change
             // our status as a result.
-            throw new ObnizError_1.ObnizBleScanStartError(`startScanning enable=${enabled} was failed. status=${status}`);
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`);
         }
         else {
             if (this._scanState === "starting") {

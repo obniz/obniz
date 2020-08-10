@@ -24,6 +24,13 @@ class Gap extends eventemitter3_1.default {
         this._hci = hci;
         this._advertiseState = null;
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._advertiseState = null;
+    }
     async startAdvertisingWait(name, serviceUuids) {
         debug("startAdvertising: name = " + name + ", serviceUuids = " + JSON.stringify(serviceUuids, null, 2));
         let advertisementDataLength = 3;

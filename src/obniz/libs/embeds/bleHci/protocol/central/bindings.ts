@@ -7,6 +7,7 @@
 
 import EventEmitter from "eventemitter3";
 
+import { timeEnd } from "console";
 import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError, ObnizError } from "../../../../../ObnizError";
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
 import Hci from "../hci";
@@ -32,7 +33,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   private _state: any;
   private _addresses: { [uuid: string]: BleDeviceAddress };
   private _addresseTypes: { [uuid: string]: BleDeviceAddressType };
-  private _connectPromises: Array<Promise<any>>;
   private _handles: any;
   private _gatts: { [handle: string]: Gatt };
   private _aclStreams: { [key: string]: AclStream };
@@ -43,21 +43,19 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
   constructor(hciProtocol: any) {
     super();
+    this._hci = hciProtocol;
+    this._gap = new Gap(this._hci);
+
     this._state = null;
 
     this._addresses = {};
     this._addresseTypes = {};
     this._connectable = {};
 
-    this._connectPromises = [];
-
     this._handles = {};
     this._gatts = {};
     this._aclStreams = {};
     this._signalings = {};
-
-    this._hci = hciProtocol;
-    this._gap = new Gap(this._hci);
 
     this._hci.on("stateChange", this.onStateChange.bind(this));
     this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
@@ -65,6 +63,25 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
     this._gap.on("discover", this.onDiscover.bind(this));
   }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this._state = null;
+
+    this._addresses = {};
+    this._addresseTypes = {};
+    this._connectable = {};
+
+    this._handles = {};
+    this._gatts = {};
+    this._aclStreams = {};
+    this._signalings = {};
+    this._gap._reset();
+  }
+
   public debugHandler: any = () => {};
 
   public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
@@ -86,42 +103,26 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     await this._gap.stopScanningWait();
   }
 
-  public connectWait(peripheralUuid: any) {
+  public async connectWait(peripheralUuid: any) {
     const address: any = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
 
-    const doPromise = Promise.all(this._connectPromises)
-      .catch((error) => {
-        // nothing
-      })
-      .then(() => {
-        return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-      })
-      .then((result) => {
-        return this.onLeConnComplete(
-          result.status,
-          result.handle,
-          result.role,
-          result.addressType,
-          result.address,
-          result.interval,
-          result.latency,
-          result.supervisionTimeout,
-          result.masterClockAccuracy,
-        );
-      })
-      .then(
-        (result) => {
-          this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-          return Promise.resolve(result);
-        },
-        (error) => {
-          this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-          return Promise.reject(error);
-        },
+    try {
+      const result = await this._hci.createLeConnWait(address, addressType, 90 * 1000);
+      return this.onLeConnComplete(
+        result.status,
+        result.handle,
+        result.role,
+        result.addressType,
+        result.address,
+        result.interval,
+        result.latency,
+        result.supervisionTimeout,
+        result.masterClockAccuracy,
       );
-    this._connectPromises.push(doPromise);
-    return doPromise;
+    } catch (e) {
+      throw e;
+    }
   }
 
   public disconnect(peripheralUuid: any) {

@@ -3,6 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const ObnizError_1 = require("../../../ObnizError");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 const bleService_1 = __importDefault(require("./bleService"));
 /**
@@ -13,6 +18,21 @@ class BlePeripheral {
         this.obnizBle = obnizBle;
         this._services = [];
         this.currentConnectedDeviceAddress = null;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        if (this.currentConnectedDeviceAddress) {
+            const address = this.currentConnectedDeviceAddress;
+            this.currentConnectedDeviceAddress = null;
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onconnectionupdates, {
+                address,
+                status: "disconnected",
+                reason: new ObnizError_1.ObnizOfflineError(),
+            });
+        }
     }
     /**
      * @ignore

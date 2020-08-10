@@ -88,11 +88,14 @@ const STATUS_MAPPER = require("./hci-status");
 class Hci extends eventemitter3_1.default {
     constructor(obnizHci) {
         super();
+        this._state = "poweredOff";
         this._aclStreamObservers = {};
+        /**
+         * @ignore
+         * @private
+         */
         this.debugHandler = () => { };
         this._obnizHci = obnizHci;
-        this._state = "poweredOff";
-        this.resetBuffers();
         this._obnizHci.Obniz.on("disconnect", () => {
             this.stateChange("poweredOff");
         });
@@ -103,6 +106,15 @@ class Hci extends eventemitter3_1.default {
             },
         };
         this._obnizHci.onread = this.onSocketData.bind(this);
+        this.resetBuffers();
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.stateChange("poweredOff");
+        this.resetBuffers();
     }
     async initWait() {
         await this.resetWait();
@@ -120,6 +132,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
     }
     async resetWait() {
+        this._reset();
         const cmd = Buffer.alloc(4);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -130,14 +143,18 @@ class Hci extends eventemitter3_1.default {
         this.debug("reset - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const resetResult = await p;
-        this.resetBuffers();
         this.setEventMask();
         this.setLeEventMask();
-        await this.readLocalVersionWait();
+        const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer } = await this.readLocalVersionWait();
+        this.debug(`localVersion ${hciVer} ${hciRev} ${lmpVer} ${manufacturer} ${lmpSubVer}`);
         this.writeLeHostSupported();
         await this.readLeHostSupportedWait();
-        await this.readBdAddrWait();
-        await this.leReadBufferSizeWait();
+        const addr = await this.readBdAddrWait();
+        this.debug(`BdAddr=${addr}`);
+        const bufsize = await this.leReadBufferSizeWait();
+        if (bufsize) {
+            this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
+        }
         if (this._state !== "poweredOn") {
             await this.setScanEnabledWait(false, true);
             await this.setScanParametersWait(false);
@@ -528,7 +545,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
         const data = await p;
         if (!data.status) {
-            await this.processLeReadBufferSizeWait(data.result);
+            return await this.processLeReadBufferSizeWait(data.result);
         }
     }
     async readBufferSizeWait() {
@@ -717,7 +734,7 @@ class Hci extends eventemitter3_1.default {
         if (!aclMtu) {
             // as per Bluetooth specs
             this.debug("falling back to br/edr buffer size");
-            await this.readBufferSizeWait();
+            return await this.readBufferSizeWait();
         }
         else {
             this.debug("le acl mtu = " + aclMtu);

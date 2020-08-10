@@ -39,6 +39,19 @@ class BlenoBindings extends eventemitter3_1.default {
         this._handle = null;
         this._aclStream = null;
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._state = null;
+        this._advertising = false;
+        this._gap._reset();
+        this._gatt._reset();
+        this._address = null;
+        this._handle = null;
+        this._aclStream = null;
+    }
     async startAdvertisingWait(name, serviceUuids) {
         this._advertising = true;
         await this._gap.startAdvertisingWait(name, serviceUuids);
@@ -108,11 +121,11 @@ class BlenoBindings extends eventemitter3_1.default {
         }
         if (this._aclStream) {
             this._aclStream.end();
+            this._aclStream = null;
         }
         const address = this._address;
         this._address = null;
         this._handle = null;
-        this._aclStream = null;
         if (address) {
             this.emit("disconnect", address, reason); // TODO: use reason
         }
