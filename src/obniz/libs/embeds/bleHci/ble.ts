@@ -34,6 +34,21 @@ import { BleDeviceAddress, BleDeviceAddressType, UUID } from "./bleTypes";
  * Peripheral and Central mode are supported
  */
 export default class ObnizBLE extends ComponentAbstract {
+  // public security!: BleSecurity;
+
+  /**
+   * Initialized status.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.ble.isInitialized; // => false
+   * await obniz.ble.initWait();
+   * obniz.ble.isInitialized; // => true
+   * ```
+   */
+  public get isInitialized() {
+    return this._initialized;
+  }
   /**
    * @ignore
    *
@@ -68,7 +83,6 @@ export default class ObnizBLE extends ComponentAbstract {
   public hci: ObnizBLEHci;
   public peripheral!: BlePeripheral;
   public scan!: BleScan;
-  // public security!: BleSecurity;
 
   /**
    * @ignore
@@ -88,9 +102,13 @@ export default class ObnizBLE extends ComponentAbstract {
    */
   public advertisement!: BleAdvertisement;
   protected hciProtocol!: HciProtocol;
-  protected _initialized: boolean = false;
   protected _initializeWarning!: boolean;
   protected remotePeripherals: BleRemotePeripheral[] = [];
+
+  /**
+   * @ignore
+   */
+  private _initialized: boolean = false;
 
   constructor(obniz: Obniz) {
     super(obniz);

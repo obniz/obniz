@@ -4455,8 +4455,11 @@ const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
-        this._initialized = false;
         this.remotePeripherals = [];
+        /**
+         * @ignore
+         */
+        this._initialized = false;
         this.debugHandler = () => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
@@ -4468,6 +4471,20 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             }
         });
         this._reset();
+    }
+    // public security!: BleSecurity;
+    /**
+     * Initialized status.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.isInitialized; // => false
+     * await obniz.ble.initWait();
+     * obniz.ble.isInitialized; // => true
+     * ```
+     */
+    get isInitialized() {
+        return this._initialized;
     }
     /**
      * @ignore
