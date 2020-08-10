@@ -12,7 +12,7 @@ import ObnizBLEHci from "../../hci";
 const debug: any = () => {};
 
 import EventEmitter from "eventemitter3";
-import { ObnizBleOpError } from "../../../../../ObnizError";
+import { ObnizBleScanStartError } from "../../../../../ObnizError";
 import Hci from "../hci";
 
 type GapEventTypes = "scanStop" | "discover";
@@ -48,14 +48,19 @@ class Gap extends EventEmitter<GapEventTypes> {
     try {
       await this.setScanEnabledWait(false, true);
     } catch (e) {
-      if (e instanceof ObnizBleOpError) {
-        // nop
+      if (e instanceof ObnizBleScanStartError) {
+        // If not started yet. this error may called. just ignore it.
       } else {
         throw e;
       }
     }
 
-    const setParamStatus = await this._hci.setScanParametersWait(activeScan);
+    const status = await this._hci.setScanParametersWait(activeScan);
+    if (status !== 0) {
+      throw new ObnizBleScanStartError(
+        `startScanning Error setting active scan=${activeScan} was failed status=${status}`,
+      );
+    }
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await this.setScanEnabledWait(true, this._scanFilterDuplicates);
   }
@@ -271,13 +276,13 @@ class Gap extends EventEmitter<GapEventTypes> {
   }
 
   private async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
-    const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
+    const status = await this._hci.setScanEnabledWait(enabled, true);
 
     // Check the status we got from the command complete function.
-    if (scanStopStatus !== 0) {
+    if (status !== 0) {
       // If it is non-zero there was an error, and we should not change
       // our status as a result.
-      // throw new ObnizBleOpError();
+      throw new ObnizBleScanStartError(`startScanning enable=${enabled} was failed. status=${status}`);
     } else {
       if (this._scanState === "starting") {
         this._scanState = "started";

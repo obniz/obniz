@@ -32,14 +32,17 @@ class Gap extends eventemitter3_1.default {
             await this.setScanEnabledWait(false, true);
         }
         catch (e) {
-            if (e instanceof ObnizError_1.ObnizBleOpError) {
-                // nop
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
             }
             else {
                 throw e;
             }
         }
-        const setParamStatus = await this._hci.setScanParametersWait(activeScan);
+        const status = await this._hci.setScanParametersWait(activeScan);
+        if (status !== 0) {
+            throw new ObnizError_1.ObnizBleScanStartError(`startScanning Error setting active scan=${activeScan} was failed status=${status}`);
+        }
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await this.setScanEnabledWait(true, this._scanFilterDuplicates);
     }
@@ -227,12 +230,12 @@ class Gap extends eventemitter3_1.default {
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
-        const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
+        const status = await this._hci.setScanEnabledWait(enabled, true);
         // Check the status we got from the command complete function.
-        if (scanStopStatus !== 0) {
+        if (status !== 0) {
             // If it is non-zero there was an error, and we should not change
             // our status as a result.
-            // throw new ObnizBleOpError();
+            throw new ObnizError_1.ObnizBleScanStartError(`startScanning enable=${enabled} was failed. status=${status}`);
         }
         else {
             if (this._scanState === "starting") {

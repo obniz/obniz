@@ -237,3 +237,9 @@ export class ObnizBlePairingRejectByRemoteError extends ObnizError {
     );
   }
 }
+
+export class ObnizBleScanStartError extends ObnizError {
+  constructor(msg: any) {
+    super(17, msg);
+  }
+}
