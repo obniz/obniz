@@ -22359,7 +22359,11 @@ exports.default = OMRON_2JCIE;
  * @packageDocumentation
  * @module Parts.ENERTALK_TOUCH
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/batteryService.js"));
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
@@ -22409,6 +22413,10 @@ class ENERTALK_TOUCH {
         this._humidityChar = this._service.getCharacteristic(this._uuids.humidityChar);
         this._illuminanceChar = this._service.getCharacteristic(this._uuids.illuminanceChar);
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
+        const service180F = this._peripheral.getService("180F");
+        if (service180F) {
+            this.batteryService = new batteryService_1.default(service180F);
+        }
     }
     async disconnectWait() {
         var _a;
@@ -24058,12 +24066,15 @@ class BleBatteryService {
     constructor(service) {
         this._service = service;
     }
-    async getBatteryLevel() {
+    async getBatteryLevelWait() {
         const char = this._service.getCharacteristic("2A19");
         if (!char) {
             return null;
         }
         return await char.readNumberWait();
+    }
+    getBatteryLevel() {
+        return this.getBatteryLevelWait();
     }
 }
 exports.default = BleBatteryService;
@@ -24087,7 +24098,7 @@ class BleGenericAccess {
     constructor(service) {
         this._service = service;
     }
-    async getDeviceName() {
+    async getDeviceNameWait() {
         const char = this._service.getCharacteristic("2A00");
         if (!char) {
             return null;

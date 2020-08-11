@@ -185,3 +185,28 @@ obniz.ble.scan.onfind = async (peripheral) => {
 await obniz.ble.scan.startWait();
 
 ```
+
+
+## [await]batteryService.getBatteryLevelWait()
+
+Get battery level. 0-100 [%] will be returned according to the remaining level.
+
+
+```javascript
+// Javascript Example
+await obniz.ble.initWait();
+const ENERTALK_TOUCH = Obniz.getPartsClass("ENERTALK_TOUCH");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (ENERTALK_TOUCH.isDevice(peripheral)) {
+    console.log("find");
+    const device = new ENERTALK_TOUCH(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const batteryLevel = await device.batteryService.getBatteryLevelWait();
+    console.log(`batteryLevel ${batteryLevel}% `);
+
+  }
+};
+await obniz.ble.scan.startWait();
+```
+

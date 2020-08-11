@@ -12,7 +12,7 @@ export default class BleGenericAccess {
     this._service = service;
   }
 
-  public async getDeviceName(): Promise<string | null> {
+  public async getDeviceNameWait(): Promise<string | null> {
     const char = this._service.getCharacteristic("2A00");
     if (!char) {
       return null;
