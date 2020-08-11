@@ -1,0 +1,23 @@
+/usr/local/bin/node --require ts-node/register /Users/kido/Documents/extra/obniz/obnizjs/test/test-ble-linking-sh.ts
+start
+find
+connected
+cccd [ 0, 0 ]
+register finshed
+cccd [ 2, 0 ]
+wrote
+notify with data 128,0,1,0,6,0,1,0,0,0,2,1,0,0,27,3,2,0,0,57
+notify with data 131,19,4,4,0,0,180,249,9,232,5,1,0,0,113,7,1,0,0,0
+notify with data 128,0,1,0,6,0,1,0,0,0,2,1,0,0,27,3,2,0,0,57
+wrote
+notify with data 131,19,4,4,0,0,180,249,9,232,5,1,0,0,113,7,1,0,0,0
+wrote
+notify with data 128,0,1,0,6,0,1,0,0,0,2,1,0,0,27,3,2,0,0,57
+wrote
+wrote
+notify with data 131,19,4,4,0,0,180,249,9,232,5,1,0,0,113,7,1,0,0,0
+wrote
+notify with data 128,0,1,0,6,0,1,0,0,0,2,1,0,0,27,3,2,0,0,57
+wrote
+
+Process finished with exit code 130 (interrupted by signal 2: SIGINT)

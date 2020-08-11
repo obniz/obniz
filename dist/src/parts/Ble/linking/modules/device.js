@@ -82,13 +82,15 @@ class LinkingDevice {
             onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
             await this._getServicesAndChars();
             onprogress({ step: 3.5, desc: "PAIRING" });
-            await this._peripheral.pairingWait();
+            const keys = await this._peripheral
+                .pairingWait();
+            console.log({ keys });
             onprogress({ step: 4, desc: "SUBSCRIBING" });
             await this._subscribeForIndicate();
+            await this.char_write.writeWait([0x01], true);
             onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
             let res;
             res = await this.write("GET_DEVICE_INFORMATION");
-            console.log("GET_DEVICE_INFORMATION", res);
             this.info.id = "";
             if ("deviceId" in res.data) {
                 this.info.id = res.data.deviceId;
@@ -298,6 +300,7 @@ class LinkingDevice {
     }
     _receivedIndicate(buf) {
         const parsed = this._LinkingService.parseResponse(buf);
+        console.log("linking buf parse", buf, JSON.stringify(parsed, null, 2));
         if (!parsed) {
             return;
         }
@@ -518,7 +521,7 @@ class LinkingDevice {
                 }
             };
             try {
-                console.log("linking write ", buf);
+                console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
                 await this.char_write.writeWait(buf, true);
             }
             catch (e) {
@@ -641,48 +644,29 @@ class LinkingDevice {
             this.services.illuminance = this._createSensorServiceObject(0x0a);
         }
     }
-    _deviceNameGet() {
-        const promise = new Promise((resolve, reject) => {
-            const char = this._generic_access_service.device_name.char;
-            char.read((error, data) => {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    resolve({
-                        deviceName: data.toString("utf8"),
-                    });
-                }
-            });
-        });
-        return promise;
+    async _deviceNameGet() {
+        const char = this._generic_access_service.device_name.char;
+        const data = await char.readWait();
+        return {
+            deviceName: Buffer.from(data).toString("utf8"),
+        };
     }
-    _deviceNameSet(name) {
-        const promise = new Promise((resolve, reject) => {
-            if (!name) {
-                reject(new Error("Device name is required."));
-                return;
-            }
-            else if (typeof name !== "string") {
-                reject(new Error("Device name must be a string."));
-                return;
-            }
-            else if (name.length > 32) {
-                reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
-                return;
-            }
-            const buf = Buffer.from(name, "utf8");
-            const char = this._generic_access_service.device_name.char;
-            char.write(buf, false, (error) => {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    resolve();
-                }
-            });
-        });
-        return promise;
+    async _deviceNameSet(name) {
+        if (!name) {
+            throw new Error("Device name is required.");
+            return;
+        }
+        else if (typeof name !== "string") {
+            throw new Error("Device name must be a string.");
+            return;
+        }
+        else if (name.length > 32) {
+            throw new Error("Device name is too long. The length must be in the range 1 to 32.");
+            return;
+        }
+        const buf = Buffer.from(name, "utf8");
+        const char = this._generic_access_service.device_name.char;
+        await char.writeWait(buf, false);
     }
     _ledTurnOn(color, pattern, duration) {
         let color_number = 1;

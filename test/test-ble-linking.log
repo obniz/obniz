@@ -1,0 +1,1448 @@
+/usr/local/bin/node --require ts-node/register /Users/kido/Documents/extra/obniz/obnizjs/test/test-ble-linking.ts
+Debugger listening on ws://127.0.0.1:52875/4781c8ad-d712-4a90-a93a-4781afb63272
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+[obniz 10803935] ws connected
+[obniz 10803935] {"ws":{"redirect":"wss://9ws.obniz.io"}}
+[obniz 10803935] WS connection changed to wss://9ws.obniz.io
+[obniz 10803935] connecting to wss://9ws.obniz.io/obniz/10803935/ws/1?obnizjs=3.7.1&accept_binary=true
+[obniz 10803935] ws connected
+[obniz 10803935] {"ws":{"ready":true,"obniz":{"hw":"obnizb2","firmware":"3.4.1-beta.0"},"local_connect":{"ip":"192.168.68.103"}}}
+[obniz 10803935] send: [{"ws":{"reset_obniz_on_ws_disconnection":true}}]
+[obniz 10803935] local connect to ws://192.168.68.103
+[obniz 10803935] connected to ws://192.168.68.103
+[obniz 10803935] BLE-HCI: reset - writing: 01030c00
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,3,12,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,3,12,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e0405030c00
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] BLE-HCI: set event mask - writing: 01010c08fffffbff07f8bf3d
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,1,12,8,255,255,251,255,7,248,191,61]}}}]
+[obniz 10803935] BLE-HCI: set le event mask - writing: 010120081f00000000000000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,1,32,8,31,0,0,0,0,0,0,0]}}}]
+[obniz 10803935] BLE-HCI: read local version - writing: 01011000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,1,16,0]}}}]
+[obniz 10803935] BLE-HCI: read bd addr - writing: 01091000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,9,16,0]}}}]
+[obniz 10803935] BLE-HCI: write LE host supported - writing: 016d0c020100
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,109,12,2,1,0]}}}]
+[obniz 10803935] BLE-HCI: read LE host supported - writing: 016c0c00
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,108,12,0]}}}]
+[obniz 10803935] BLE-HCI: le read buffer size - writing: 01022000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,2,32,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,1,12,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e0405010c00
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,1,32,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e0405012000
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,12,5,1,16,0,8,14,3,8,96,0,14,3]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e0c05011000080e030860000e03
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,10,5,9,16,0,50,111,100,18,207,164]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e0a05091000326f6412cfa4
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,109,12,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e04056d0c00
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,6,5,108,12,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e06056c0c000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,7,5,2,32,0,251,0,10]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e0705022000fb000a
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] BLE-HCI: address = a4:cf:12:64:6f:32
+[obniz 10803935] BLE-HCI: 			le = 1
+[obniz 10803935] BLE-HCI: 			simul = 0
+[obniz 10803935] BLE-HCI: le acl mtu = 251
+[obniz 10803935] BLE-HCI: le acl max in progress = 10
+[obniz 10803935] BLE-HCI: set scan enabled - writing: 010c20020001
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,12,32,2,0,1]}}}]
+[obniz 10803935] BLE-HCI: set scan parameters - writing: 010b200700100010000000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,11,32,7,0,16,0,16,0,0,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,12,32,12]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e04050c200c
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,11,32,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e04050b2000
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+start() is deprecated since 3.5.0. Use startWait() instead
+[obniz 10803935] send: [{"ble":{"hci":{"advertisement_filter":[]}}}]
+[obniz 10803935] BLE-HCI: set scan enabled - writing: 010c20020001
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,12,32,2,0,1]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,12,32,12]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e04050c200c
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] BLE-HCI: set scan parameters - writing: 010b200701100010000000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,11,32,7,1,16,0,16,0,0,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,11,32,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e04050b2000
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] BLE-HCI: set scan enabled - writing: 010c20020101
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,12,32,2,1,1]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,12,32,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e04050c2000
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,26,2,1,0,1,60,97,155,97,87,112,14,2,1,6,10,255,76,0,16,5,75,28,207,91,30,198]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1a020100013c619b6157700e0201060aff4c0010054b1ccf5b1ec6
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 00013c619b6157700e0201060aff4c0010054b1ccf5b1ec6
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = 70:57:61:9b:61:3c
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 0201060aff4c0010054b1ccf5b1e
+[obniz 10803935] BLE-HCI: 			rssi = -58
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,12,2,1,4,1,60,97,155,97,87,112,0,195]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e0c020104013c619b61577000c3
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 04013c619b61577000c3
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 70:57:61:9b:61:3c
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir =
+[obniz 10803935] BLE-HCI: 			rssi = -61
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,33,2,1,0,1,185,108,67,120,222,213,21,2,1,6,3,3,78,254,13,255,226,2,16,80,0,1,0,9,21,213,64,0,203]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e2102010001b96c4378ded51502010603034efe0dffe20210500001000915d54000cb
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0001b96c4378ded51502010603034efe0dffe20210500001000915d54000cb
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = d5:de:78:43:6c:b9
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 02010603034efe0dffe20210500001000915d54000
+[obniz 10803935] BLE-HCI: 			rssi = -53
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,28,2,1,4,1,185,108,67,120,222,213,16,2,10,200,12,9,83,95,116,104,48,48,48,48,48,48,49,203]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1c02010401b96c4378ded510020ac80c09535f746830303030303031cb
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0401b96c4378ded510020ac80c09535f746830303030303031cb
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = d5:de:78:43:6c:b9
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 020ac80c09535f746830303030303031
+[obniz 10803935] BLE-HCI: 			rssi = -53
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,43,2,1,3,1,195,86,163,62,73,39,31,2,1,26,3,3,111,253,23,22,111,253,214,239,205,182,226,48,182,87,4,98,99,219,236,109,65,217,186,36,17,20,181]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e2b02010301c356a33e49271f02011a03036ffd17166ffdd6efcdb6e230b657046263dbec6d41d9ba241114b5
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0301c356a33e49271f02011a03036ffd17166ffdd6efcdb6e230b657046263dbec6d41d9ba241114b5
+[obniz 10803935] BLE-HCI: 			type = 3
+[obniz 10803935] BLE-HCI: 			address = 27:49:3e:a3:56:c3
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 02011a03036ffd17166ffdd6efcdb6e230b657046263dbec6d41d9ba241114
+[obniz 10803935] BLE-HCI: 			rssi = -75
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,40,2,1,2,1,85,53,101,239,204,75,28,3,3,159,254,23,22,159,254,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,181]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e2802010201553565efcc4b1c03039ffe17169ffe0000000000000000000000000000000000000000b5
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0201553565efcc4b1c03039ffe17169ffe0000000000000000000000000000000000000000b5
+[obniz 10803935] BLE-HCI: 			type = 2
+[obniz 10803935] BLE-HCI: 			address = 4b:cc:ef:65:35:55
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 03039ffe17169ffe0000000000000000000000000000000000000000
+[obniz 10803935] BLE-HCI: 			rssi = -75
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,22,2,1,4,1,85,53,101,239,204,75,10,9,255,224,0,68,102,202,149,13,248,190]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1602010401553565efcc4b0a09ffe0004466ca950df8be
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0401553565efcc4b0a09ffe0004466ca950df8be
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 4b:cc:ef:65:35:55
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 09ffe0004466ca950df8
+[obniz 10803935] BLE-HCI: 			rssi = -66
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,43,2,1,0,0,49,82,22,84,171,240,31,2,1,6,9,9,84,78,84,95,66,87,32,32,17,7,53,172,173,29,191,184,184,131,121,71,144,107,0,81,62,39,175]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e2b0201000031521654abf01f0201060909544e545f42572020110735acad1dbfb8b8837947906b00513e27af
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 000031521654abf01f0201060909544e545f42572020110735acad1dbfb8b8837947906b00513e27af
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = f0:ab:54:16:52:31
+[obniz 10803935] BLE-HCI: 			address type = public
+[obniz 10803935] BLE-HCI: 			eir = 0201060909544e545f42572020110735acad1dbfb8b8837947906b00513e27
+[obniz 10803935] BLE-HCI: 			rssi = -81
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,12,2,1,4,0,49,82,22,84,171,240,0,177]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e0c0201040031521654abf000b1
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 040031521654abf000b1
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = f0:ab:54:16:52:31
+[obniz 10803935] BLE-HCI: 			address type = public
+[obniz 10803935] BLE-HCI: 			eir =
+[obniz 10803935] BLE-HCI: 			rssi = -79
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,29,2,1,0,1,214,124,25,26,253,110,17,2,1,26,2,10,7,10,255,76,0,16,5,71,28,236,81,4,223]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1d02010001d67c191afd6e1102011a020a070aff4c001005471cec5104df
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0001d67c191afd6e1102011a020a070aff4c001005471cec5104df
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = 6e:fd:1a:19:7c:d6
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 02011a020a070aff4c001005471cec5104
+[obniz 10803935] BLE-HCI: 			rssi = -33
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,12,2,1,4,1,214,124,25,26,253,110,0,222]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e0c02010401d67c191afd6e00de
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0401d67c191afd6e00de
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 6e:fd:1a:19:7c:d6
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir =
+[obniz 10803935] BLE-HCI: 			rssi = -34
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,29,2,1,0,1,108,126,72,173,242,117,17,2,1,26,2,10,12,10,255,76,0,16,5,3,24,49,206,154,181]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1d020100016c7e48adf2751102011a020a0c0aff4c001005031831ce9ab5
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 00016c7e48adf2751102011a020a0c0aff4c001005031831ce9ab5
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = 75:f2:ad:48:7e:6c
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 02011a020a0c0aff4c001005031831ce9a
+[obniz 10803935] BLE-HCI: 			rssi = -75
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,12,2,1,4,1,108,126,72,173,242,117,0,181]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e0c020104016c7e48adf27500b5
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 04016c7e48adf27500b5
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 75:f2:ad:48:7e:6c
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir =
+[obniz 10803935] BLE-HCI: 			rssi = -75
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,26,2,1,0,1,22,63,171,203,34,79,14,2,1,26,10,255,76,0,16,5,3,24,134,21,58,170]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1a02010001163fabcb224f0e02011a0aff4c001005031886153aaa
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0001163fabcb224f0e02011a0aff4c001005031886153aaa
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = 4f:22:cb:ab:3f:16
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 02011a0aff4c001005031886153a
+[obniz 10803935] BLE-HCI: 			rssi = -86
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,43,2,1,3,1,13,214,180,60,33,26,31,30,255,6,0,1,9,32,2,180,166,78,64,118,92,222,172,175,205,111,71,62,117,244,224,93,174,21,170,200,96,142,166]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e2b020103010dd6b43c211a1f1eff060001092002b4a64e40765cdeacafcd6f473e75f4e05dae15aac8608ea6
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 03010dd6b43c211a1f1eff060001092002b4a64e40765cdeacafcd6f473e75f4e05dae15aac8608ea6
+[obniz 10803935] BLE-HCI: 			type = 3
+[obniz 10803935] BLE-HCI: 			address = 1a:21:3c:b4:d6:0d
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 1eff060001092002b4a64e40765cdeacafcd6f473e75f4e05dae15aac8608e
+[obniz 10803935] BLE-HCI: 			rssi = -90
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,42,2,1,0,0,250,255,10,23,38,44,30,2,1,6,3,3,10,24,17,7,179,131,60,34,15,39,17,231,147,174,146,54,82,86,38,129,4,255,142,5,1,165]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e2a02010000faff0a17262c1e02010603030a181107b3833c220f2711e793ae92365256268104ff8e0501a5
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0000faff0a17262c1e02010603030a181107b3833c220f2711e793ae92365256268104ff8e0501a5
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = 2c:26:17:0a:ff:fa
+[obniz 10803935] BLE-HCI: 			address type = public
+[obniz 10803935] BLE-HCI: 			eir = 02010603030a181107b3833c220f2711e793ae92365256268104ff8e0501
+[obniz 10803935] BLE-HCI: 			rssi = -91
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,23,2,1,4,0,250,255,10,23,38,44,11,10,9,79,77,86,82,45,86,49,57,48,168]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1702010400faff0a17262c0b0a094f4d56522d56313930a8
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0400faff0a17262c0b0a094f4d56522d56313930a8
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 2c:26:17:0a:ff:fa
+[obniz 10803935] BLE-HCI: 			address type = public
+[obniz 10803935] BLE-HCI: 			eir = 0a094f4d56522d56313930
+[obniz 10803935] BLE-HCI: 			rssi = -88
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,43,2,1,3,1,78,3,40,123,80,14,31,2,1,26,3,3,111,253,23,22,111,253,19,53,96,54,27,82,235,44,219,43,208,119,95,114,53,61,179,99,156,38,166]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e2b020103014e03287b500e1f02011a03036ffd17166ffd133560361b52eb2cdb2bd0775f72353db3639c26a6
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 03014e03287b500e1f02011a03036ffd17166ffd133560361b52eb2cdb2bd0775f72353db3639c26a6
+[obniz 10803935] BLE-HCI: 			type = 3
+[obniz 10803935] BLE-HCI: 			address = 0e:50:7b:28:03:4e
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 02011a03036ffd17166ffd133560361b52eb2cdb2bd0775f72353db3639c26
+[obniz 10803935] BLE-HCI: 			rssi = -90
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,29,2,1,0,1,26,216,253,202,182,112,17,2,1,26,2,10,12,10,255,76,0,16,5,3,24,139,241,60,168]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1d020100011ad8fdcab6701102011a020a0c0aff4c00100503188bf13ca8
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 00011ad8fdcab6701102011a020a0c0aff4c00100503188bf13ca8
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = 70:b6:ca:fd:d8:1a
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 02011a020a0c0aff4c00100503188bf13c
+[obniz 10803935] BLE-HCI: 			rssi = -88
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,12,2,1,4,1,26,216,253,202,182,112,0,169]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e0c020104011ad8fdcab67000a9
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 04011ad8fdcab67000a9
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 70:b6:ca:fd:d8:1a
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir =
+[obniz 10803935] BLE-HCI: 			rssi = -87
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,29,2,1,0,1,49,220,68,89,122,85,17,2,1,26,2,10,12,10,255,76,0,16,5,72,28,100,121,169,166]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1d0201000131dc44597a551102011a020a0c0aff4c001005481c6479a9a6
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 000131dc44597a551102011a020a0c0aff4c001005481c6479a9a6
+[obniz 10803935] BLE-HCI: 			type = 0
+[obniz 10803935] BLE-HCI: 			address = 55:7a:59:44:dc:31
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 02011a020a0c0aff4c001005481c6479a9
+[obniz 10803935] BLE-HCI: 			rssi = -90
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,12,2,1,4,1,49,220,68,89,122,85,0,168]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e0c0201040131dc44597a5500a8
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 040131dc44597a5500a8
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 55:7a:59:44:dc:31
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir =
+[obniz 10803935] BLE-HCI: 			rssi = -88
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,40,2,1,2,1,165,225,84,208,69,111,28,3,3,159,254,23,22,159,254,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e2802010201a5e154d0456f1c03039ffe17169ffe0000000000000000000000000000000000000000bd
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0201a5e154d0456f1c03039ffe17169ffe0000000000000000000000000000000000000000bd
+[obniz 10803935] BLE-HCI: 			type = 2
+[obniz 10803935] BLE-HCI: 			address = 6f:45:d0:54:e1:a5
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 03039ffe17169ffe0000000000000000000000000000000000000000
+[obniz 10803935] BLE-HCI: 			rssi = -67
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,22,2,1,4,1,165,225,84,208,69,111,10,9,255,224,0,68,102,202,149,13,248,189]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e1602010401a5e154d0456f0a09ffe0004466ca950df8bd
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0401a5e154d0456f0a09ffe0004466ca950df8bd
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 6f:45:d0:54:e1:a5
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir = 09ffe0004466ca950df8
+[obniz 10803935] BLE-HCI: 			rssi = -67
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,12,2,1,4,1,22,63,171,203,34,79,0,172]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e0c02010401163fabcb224f00ac
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 2
+[obniz 10803935] BLE-HCI: 		LE meta event status = 1
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0401163fabcb224f00ac
+[obniz 10803935] BLE-HCI: 			type = 4
+[obniz 10803935] BLE-HCI: 			address = 4f:22:cb:ab:3f:16
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			eir =
+[obniz 10803935] BLE-HCI: 			rssi = -84
+end() is deprecated since 3.5.0. Use endWait() instead
+[obniz 10803935] BLE-HCI: set scan enabled - writing: 010c20020001
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,12,32,2,0,1]}}}]
+{ step: 1, desc: 'CONNECTING' }
+[obniz 10803935] BLE-HCI: create le conn - writing: 010d2019600030000001b96c4378ded50006000c000000c80004000600
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,13,32,25,96,0,48,0,0,1,185,108,67,120,222,213,0,6,0,12,0,0,0,200,0,4,0,6,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,14,4,5,12,32,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040e04050c2000
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xe
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,15,4,0,5,13,32]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040f0400050d20
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xf
+[obniz 10803935] BLE-HCI: 		status = 0
+[obniz 10803935] BLE-HCI: 		cmd = 8205
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,19,1,0,0,0,0,1,185,108,67,120,222,213,12,0,0,0,200,0,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e13010000000001b96c4378ded50c000000c80000
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 1
+[obniz 10803935] BLE-HCI: 		LE meta event status = 0
+[obniz 10803935] BLE-HCI: 		LE meta event data = 00000001b96c4378ded50c000000c80000
+[obniz 10803935] BLE-HCI: 			handle = 0
+[obniz 10803935] BLE-HCI: 			role = 0
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			address = d5:de:78:43:6c:b9
+[obniz 10803935] BLE-HCI: 			interval = 15
+[obniz 10803935] BLE-HCI: 			latency = 0
+[obniz 10803935] BLE-HCI: 			supervision timeout = 2000
+[obniz 10803935] BLE-HCI: 			master clock accuracy = 0
+[obniz 10803935] BLE-HCI: 			handle = 0
+[obniz 10803935] BLE-HCI: 			role = 0
+[obniz 10803935] BLE-HCI: 			address type = random
+[obniz 10803935] BLE-HCI: 			address = d5:de:78:43:6c:b9
+[obniz 10803935] BLE-HCI: 			interval = 15
+[obniz 10803935] BLE-HCI: 			latency = 0
+[obniz 10803935] BLE-HCI: 			supervision timeout = 2000
+[obniz 10803935] BLE-HCI: 			master clock accuracy = 0
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 020000070003000400020001
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,7,0,3,0,4,0,2,0,1]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,7,0,3,0,4,0,3,23,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 020020070003000400031700
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 031700
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400100100ffff0028
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,16,1,0,255,255,0,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,18,0,14,0,4,0,17,6,1,0,9,0,0,24,10,0,13,0,1,24]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002012000e00040011060100090000180a000d000118
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 11060100090000180a000d000118
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400100e00ffff0028
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,16,14,0,255,255,0,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,26,0,22,0,4,0,17,20,14,0,21,0,205,166,19,91,131,80,141,128,68,64,211,80,1,105,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201a001600040011140e001500cda6135b83508d804440d3500169b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 11140e001500cda6135b83508d804440d3500169b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400101600ffff0028
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,16,22,0,255,255,0,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,26,0,22,0,4,0,17,20,22,0,34,0,205,166,19,91,131,80,141,128,68,64,211,80,0,1,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201a0016000400111416002200cda6135b83508d804440d3500001b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 111416002200cda6135b83508d804440d3500001b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400102300ffff0028
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,16,35,0,255,255,0,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,26,0,22,0,4,0,17,20,35,0,255,255,205,166,19,91,131,80,141,128,68,64,211,80,0,2,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201a001600040011142300ffffcda6135b83508d804440d3500002b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 11142300ffffcda6135b83508d804440d3500002b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700040008010009000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,1,0,9,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,7,2,0,10,3,0,0,42,4,0,2,5,0,1,42,6,0,2,7,0,4,42]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b0017000400090702000a0300002a0400020500012a0600020700042a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 090702000a0300002a0400020500012a0600020700042a
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400080a000d000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,10,0,13,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,13,0,9,0,4,0,9,7,11,0,32,12,0,5,42]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200d000900040009070b00200c00052a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09070b00200c00052a
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400080e0015000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,14,0,21,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,15,0,8,16,0,205,166,19,91,131,80,141,128,68,64,211,80,1,145,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b001700040009150f00081000cda6135b83508d804440d3500191b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09150f00081000cda6135b83508d804440d3500191b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700040008160022000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,22,0,34,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,23,0,10,24,0,205,166,19,91,131,80,141,128,68,64,211,80,1,1,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b0017000400091517000a1800cda6135b83508d804440d3500101b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 091517000a1800cda6135b83508d804440d3500101b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400082300ffff0328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,35,0,255,255,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,36,0,2,37,0,205,166,19,91,131,80,141,128,68,64,211,80,1,2,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b001700040009152400022500cda6135b83508d804440d3500102b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09152400022500cda6135b83508d804440d3500102b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700040008080009000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,8,0,9,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,13,0,9,0,4,0,9,7,8,0,2,9,0,166,42]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200d000900040009070800020900a62a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09070800020900a62a
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400080d000d000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,13,0,13,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,8,13,0,10]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002009000500040001080d000a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 01080d000a
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700040008110015000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,17,0,21,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,18,0,32,19,0,205,166,19,91,131,80,141,128,68,64,211,80,2,145,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b001700040009151200201300cda6135b83508d804440d3500291b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09151200201300cda6135b83508d804440d3500291b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700040008190022000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,25,0,34,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,26,0,10,27,0,205,166,19,91,131,80,141,128,68,64,211,80,2,1,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b001700040009151a000a1b00cda6135b83508d804440d3500201b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09151a000a1b00cda6135b83508d804440d3500201b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400082600ffff0328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,38,0,255,255,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,39,0,2,40,0,205,166,19,91,131,80,141,128,68,64,211,80,2,2,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b001700040009152700022800cda6135b83508d804440d3500202b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09152700022800cda6135b83508d804440d3500202b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700040008140015000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,20,0,21,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,8,20,0,10]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 020020090005000400010814000a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 010814000a
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400081c0022000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,28,0,34,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,29,0,10,30,0,205,166,19,91,131,80,141,128,68,64,211,80,3,1,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b001700040009151d000a1e00cda6135b83508d804440d3500301b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09151d000a1e00cda6135b83508d804440d3500301b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400082900ffff0328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,41,0,255,255,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,42,0,8,43,0,205,166,19,91,131,80,141,128,68,64,211,80,3,2,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b001700040009152a00082b00cda6135b83508d804440d3500302b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09152a00082b00cda6135b83508d804440d3500302b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400081f0022000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,31,0,34,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,27,0,23,0,4,0,9,21,32,0,8,33,0,205,166,19,91,131,80,141,128,68,64,211,80,4,1,179,179]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200201b001700040009152000082100cda6135b83508d804440d3500401b3b3
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 09152000082100cda6135b83508d804440d3500401b3b3
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b0007000400082c00ffff0328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,44,0,255,255,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,8,44,0,10]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002009000500040001082c000a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 01082c000a
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700040008220022000328
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,34,0,34,0,3,40]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,8,34,0,10]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 020020090005000400010822000a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 010822000a
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000404000300
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,4,0,3,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,4,4,0,1]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200900050004000104040001
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 0104040001
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000406000500
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,6,0,5,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,4,6,0,1]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200900050004000104060001
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 0104060001
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000408000700
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,8,0,7,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,4,8,0,1]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200900050004000104080001
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 0104080001
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 020000090005000400040a000900
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,10,0,9,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,4,10,0,1]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002009000500040001040a0001
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 01040a0001
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 020000090005000400040d000d00
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,13,0,13,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,13,0,2,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a000600040005010d000229
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 05010d000229
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000411001100
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,17,0,17,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,17,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a0006000400050111000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 050111000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000414001500
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,20,0,21,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,14,0,10,0,4,0,5,1,20,0,2,41,21,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200e000a00040005011400022915000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 05011400022915000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000419001900
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,25,0,25,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,25,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a0006000400050119000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 050119000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 020000090005000400041c001c00
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,28,0,28,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,28,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a000600040005011c000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 05011c000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 020000090005000400041f001f00
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,31,0,31,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,31,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a000600040005011f000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 05011f000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000422002200
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,34,0,34,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,34,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a0006000400050122000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 050122000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000426002600
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,38,0,38,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,38,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a0006000400050126000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 050126000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000429002900
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,41,0,41,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,41,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a0006000400050129000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 050129000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 020000090005000400042c00ffff
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,44,0,255,255]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,44,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a000600040005012c000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 05012c000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004000415001500
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,21,0,21,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,5,1,21,0,1,41]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a0006000400050115000129
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 050115000129
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 020000090005000400042d00ffff
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,4,45,0,255,255]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,4,45,0,10]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002009000500040001042d000a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 01042d000a
+{ step: 2, desc: 'CONNECTION_ESTABLISHED' }
+{ step: 3, desc: 'GETTING_CHARACTERISTICS' }
+{ step: 4, desc: 'SUBSCRIBING' }
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700040008120015000229
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,4,0,8,18,0,21,0,2,41]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,10,0,6,0,4,0,9,4,20,0,0,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200a0006000400090414000000
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 090414000000
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004001214000200
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,18,20,0,2,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,9,0,5,0,4,0,1,18,20,0,5]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200900050004000112140005
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 0112140005
+[obniz 10803935] BLE: AclStream: SMP: Going to Pairing
+[obniz 10803935] BLE: AclStream: SMP: pair No Input and No Output
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000b000700060001030001100001
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,11,0,7,0,6,0,1,3,0,1,16,0,1]}}}]
+[obniz 10803935] BLE: AclStream: SMP: Waiting Pairing Response
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,11,0,7,0,6,0,2,3,0,1,16,0,1]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200b000700060002030001100001
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 6
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 02030001100001
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 02000015001100060003abf8855db19f886c9c7eb86ae83b4625
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,21,0,17,0,6,0,3,171,248,133,93,177,159,136,108,156,126,184,106,232,59,70,37]}}}]
+[obniz 10803935] BLE: AclStream: SMP: Waiting Pairing Confirm
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,21,0,17,0,6,0,3,109,49,245,81,0,33,245,21,61,192,128,41,62,57,197,113]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 020020150011000600036d31f5510021f5153dc080293e39c571
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 6
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 036d31f5510021f5153dc080293e39c571
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 020000150011000600040db51a5dc42781a71cda6770d9c1ae89
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,21,0,17,0,6,0,4,13,181,26,93,196,39,129,167,28,218,103,112,217,193,174,137]}}}]
+[obniz 10803935] BLE: AclStream: SMP: Waiting Pairing Random
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,21,0,17,0,6,0,4,26,117,92,127,42,129,140,49,4,117,245,121,1,58,236,194]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 020020150011000600041a755c7f2a818c310475f579013aecc2
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 6
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 041a755c7f2a818c310475f579013aecc2
+[obniz 10803935] BLE-HCI: start le encryption - writing: 0119201c0000000000000000000000003235fe29b293a4bd23e1fd37eb9dc27d
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,25,32,28,0,0,0,0,0,0,0,0,0,0,0,0,50,53,254,41,178,147,164,189,35,225,253,55,235,157,194,125]}}}]
+[obniz 10803935] BLE: AclStream: SMP: Got Pairing Encryption Result
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,15,4,0,5,25,32]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040f0400051920
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xf
+[obniz 10803935] BLE-HCI: 		status = 0
+[obniz 10803935] BLE-HCI: 		cmd = 8217
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,8,4,0,0,0,1]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 04080400000001
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x8
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		encrypt = 1
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,21,0,17,0,6,0,6,243,49,5,163,49,236,57,185,59,118,29,60,74,23,114,90]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002015001100060006f33105a331ec39b93b761d3c4a17725a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 6
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 06f33105a331ec39b93b761d3c4a17725a
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,15,0,11,0,6,0,7,21,73,144,2,74,158,221,73,52,146]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200f000b00060007154990024a9edd493492
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 6
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 07154990024a9edd493492
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,11,0,7,0,4,0,8,1,0,255,255,166,42]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0200200b0007000400080100ffffa62a
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 080100ffffa62a
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		encrypt = 1
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000900050004001214000200
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,9,0,5,0,4,0,18,20,0,2,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,5,0,1,0,4,0,19]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002005000100040013
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 13
+{ step: 5, desc: 'GETTING_DEVICE_INFOMATION' }
+linking write  <Buffer 03 00 00 00 00>
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000c00080004001210000300000000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,12,0,8,0,4,0,18,16,0,3,0,0,0,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,5,0,1,0,4,0,19]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002005000100040013
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 4
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 13
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[2,0,32,16,0,12,0,5,0,18,3,8,0,16,0,32,0,0,0,144,1]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 02002010000c000500120308001000200000009001
+[obniz 10803935] BLE-HCI: 	event type = 0x2
+[obniz 10803935] BLE-HCI: 		cid = 5
+[obniz 10803935] BLE-HCI: 		handle = 0
+[obniz 10803935] BLE-HCI: 		data = 120308001000200000009001
+[obniz 10803935] BLE-HCI: write acl data pkt - writing: 0200000a0006000500130302000000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[2,0,0,10,0,6,0,5,0,19,3,2,0,0,0]}}}]
+[obniz 10803935] BLE-HCI: conn update le - writing: 0113200e0000100020000000900100000000
+[obniz 10803935] send: [{"ble":{"hci":{"write":[1,19,32,14,0,0,16,0,32,0,0,0,144,1,0,0,0,0]}}}]
+[obniz 10803935] send via local
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,15,4,0,5,19,32]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 040f0400051320
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0xf
+[obniz 10803935] BLE-HCI: 		status = 0
+[obniz 10803935] BLE-HCI: 		cmd = 8211
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,19,5,1,0,0,1,0]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 0413050100000100
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x13
+[obniz 10803935] BLE-HCI: 	handle = 0
+[obniz 10803935] BLE-HCI: 		completed = 1
+[obniz 10803935] BLE-HCI: 		in progress = 0
+[obniz 10803935] BLE-HCI: pushAclOutQueue
+[obniz 10803935] BLE-HCI: 0
+[obniz 10803935] recvd via local
+[obniz 10803935] {"ble":{"hci":{"read":{"data":[4,62,10,3,0,0,0,32,0,0,0,144,1]}}}}
+[obniz 10803935] BLE-HCI: onSocketData: 043e0a03000000200000009001
+[obniz 10803935] BLE-HCI: 	event type = 0x4
+[obniz 10803935] BLE-HCI: 	sub event type = 0x3e
+[obniz 10803935] BLE-HCI: 		LE meta event type = 3
+[obniz 10803935] BLE-HCI: 		LE meta event status = 0
+[obniz 10803935] BLE-HCI: 		LE meta event data = 0000200000009001
+[obniz 10803935] BLE-HCI: 			handle = 0
+[obniz 10803935] BLE-HCI: 			interval = 40
+[obniz 10803935] BLE-HCI: 			latency = 0
+[obniz 10803935] BLE-HCI: 			supervision timeout = 4000
+[obniz 10803935] BLE-HCI: 			handle = 0
+[obniz 10803935] BLE-HCI: 			interval = 40
+[obniz 10803935] BLE-HCI: 			latency = 0
+[obniz 10803935] BLE-HCI: 			supervision timeout = 4000

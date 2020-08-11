@@ -9,6 +9,7 @@ import BleRemotePeripheral from "../../../obniz/libs/embeds/bleHci/bleRemotePeri
 import BleRemoteService from "../../../obniz/libs/embeds/bleHci/bleRemoteService";
 import ObnizPartsBleInterface from "../../../obniz/ObnizPartsBleInterface";
 import { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
+import BleBatteryService from "../abstract/services/batteryService";
 
 export interface ENERTALK_TOUCHOptions {}
 
@@ -32,6 +33,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
   public onbuttonpressed: ((pressed: boolean) => void) | null = null;
   public _peripheral: BleRemotePeripheral | null = null;
   public ondisconnect?: (reason: any) => void;
+  public batteryService?: BleBatteryService;
 
   private _uuids = {
     service: "3526797e-448b-4bbb-9145-c5083e0e09dc",
@@ -68,6 +70,10 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     this._humidityChar = this._service.getCharacteristic(this._uuids.humidityChar);
     this._illuminanceChar = this._service.getCharacteristic(this._uuids.illuminanceChar);
     this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
+    const service180F = this._peripheral.getService("180F");
+    if (service180F) {
+      this.batteryService = new BleBatteryService(service180F);
+    }
   }
 
   public async disconnectWait() {

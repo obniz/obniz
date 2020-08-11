@@ -172,7 +172,7 @@ await obniz.ble.scan.startWait();
 
 
 
-## [await]batteryService.getBatteryLevel()
+## [await]batteryService.getBatteryLevelWait()
 
 バッテリー残量を取得します。
 
@@ -191,7 +191,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
     await device.connectWait();
     console.log("connected");
     
-    const batteryLevel = await device.batteryService.getBatteryLevel();
+    const batteryLevel = await device.batteryService.getBatteryLevelWait();
     console.log(`batteryLevel ${batteryLevel}% `);
   }
 };
