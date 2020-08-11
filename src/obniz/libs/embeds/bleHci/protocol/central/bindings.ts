@@ -7,7 +7,6 @@
 
 import EventEmitter from "eventemitter3";
 
-import { timeEnd } from "console";
 import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError, ObnizError } from "../../../../../ObnizError";
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
 import Hci from "../hci";

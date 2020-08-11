@@ -325,10 +325,6 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       this.clearSocket(this.socket);
       delete this.socket;
     }
-    if (this._nextLoopTimeout) {
-      clearTimeout(this._nextLoopTimeout);
-      this._nextLoopTimeout = undefined;
-    }
     this.connectionState = "closed";
     this._onConnectCalled = false;
   }
