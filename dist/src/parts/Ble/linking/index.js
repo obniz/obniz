@@ -129,7 +129,7 @@ class Linking {
         // var target = {
         //   uuids: this.PRIMARY_SERVICE_UUID_LIST
         // };
-        this.obniz.ble.scan.startWait();
+        this.obniz.ble.scan.start();
         this._discover_status = true;
     }
     stopScan() {
@@ -139,7 +139,7 @@ class Linking {
                 clearTimeout(this._discover_timer);
                 this._discover_timer = null;
             }
-            this.obniz.ble.scan.endWait();
+            this.obniz.ble.scan.end();
         }
     }
     startScan(p) {

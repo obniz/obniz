@@ -51,7 +51,7 @@ module.exports = {
   ],
   "repository": "obniz/obniz",
   "author": "yukisato <yuki@yuki-sato.com>",
-  "homepage": "https://obniz.io/",
+  "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
     "@types/chai": "^4.2.7",
@@ -118,7 +118,8 @@ module.exports = {
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
     "webpack-stream": "^5.2.1",
-    "yaml-loader": "^0.5.0"
+    "yaml-loader": "^0.5.0",
+    "typedoc-plugin-internal-external": "^2.1.1"
   },
   "dependencies": {
     "@types/eventemitter3": "^1.2.0",
@@ -136,11 +137,10 @@ module.exports = {
     "semver": "^5.7.0",
     "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
-    "typedoc-plugin-internal-external": "^2.1.1",
     "ws": "^6.1.4"
   },
   "bugs": {
-    "url": "https://forum.obniz.io"
+    "url": "https://forum.obniz.com"
   },
   "private": false,
   "browser": {

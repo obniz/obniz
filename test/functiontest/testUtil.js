@@ -230,7 +230,8 @@ let testUtil = {
         stub.callCount +
         ' times, but you expect ' +
         (count + 1) +
-        ' times) ';
+        ' times) \n expected data = ' +
+        JSON.stringify(expected);
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       new _chai.Assertion(
@@ -265,7 +266,8 @@ let testUtil = {
         stub.callCount +
         ' times, but you expect ' +
         (count + 1) +
-        ' times) ';
+        ' times) \n expected data = ' +
+        JSON.stringify(expected);
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       new _chai.Assertion(stub.args[count][0]).to.deep.equal(expected);

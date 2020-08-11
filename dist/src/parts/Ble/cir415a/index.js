@@ -153,7 +153,7 @@ class cir415a {
     decrypt(data, key) {
         const dec = crypto_1.default.createDecipheriv("aes-128-cbc", Buffer.from(key), new Uint8Array(16));
         dec.setAutoPadding(false);
-        let t = dec.update(Buffer.from(data), undefined, "binary");
+        let t = dec.update(Buffer.from(data), "binary", "binary");
         t += dec.final("binary");
         const d = Array.from(Buffer.from(t));
         const list = [];

@@ -80,9 +80,20 @@ class Gatt extends eventemitter3_1.default {
         this.maxMtu = 256;
         this._mtu = 23;
         this._preparedWriteRequest = null;
-        this.setServices([]);
+        this._reset();
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.maxMtu = 256;
+        this._mtu = 23;
+        this._preparedWriteRequest = null;
+        this.setServices([]);
+        this.setAclStream(undefined);
     }
     setServices(services) {
         // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
@@ -90,9 +101,7 @@ class Gatt extends eventemitter3_1.default {
         const allServices = [].concat(services);
         this._handles = [];
         let handle = 0;
-        let i;
-        let j;
-        for (i = 0; i < allServices.length; i++) {
+        for (let i = 0; i < allServices.length; i++) {
             const service = allServices[i];
             handle++;
             const serviceHandle = handle;
@@ -102,7 +111,7 @@ class Gatt extends eventemitter3_1.default {
                 attribute: service,
                 startHandle: serviceHandle,
             };
-            for (j = 0; j < service.characteristics.length; j++) {
+            for (let j = 0; j < service.characteristics.length; j++) {
                 const characteristic = service.characteristics[j];
                 let properties = 0;
                 let secure = 0;
@@ -190,27 +199,33 @@ class Gatt extends eventemitter3_1.default {
             }
             this._handles[serviceHandle].endHandle = handle;
         }
-        const debugHandles = [];
-        for (i = 0; i < this._handles.length; i++) {
-            handle = this._handles[i];
-            debugHandles[i] = {};
-            for (j in handle) {
-                if (Buffer.isBuffer(handle[j])) {
-                    debugHandles[i][j] = handle[j] ? "Buffer('" + handle[j].toString("hex") + "', 'hex')" : null;
-                }
-                else if (j !== "attribute") {
-                    debugHandles[i][j] = handle[j];
-                }
-            }
-        }
-        debug("handles = " + JSON.stringify(debugHandles, null, 2));
+        // const debugHandles = [];
+        // for (let i = 0; i < this._handles.length; i++) {
+        //   const anHandle = this._handles[i];
+        //   debugHandles[i] = {};
+        //   for (let key in anHandle) {
+        //     if (Buffer.isBuffer(anHandle[key])) {
+        //       debugHandles[i][key] = anHandle[key] ? "Buffer('" + anHandle[key].toString("hex") + "', 'hex')" : null;
+        //     } else if (key !== "attribute") {
+        //       debugHandles[i][key] = anHandle[key];
+        //     }
+        //   }
+        // }
+        // debug("handles = " + JSON.stringify(debugHandles, null, 2));
     }
     setAclStream(aclStream) {
         this._mtu = 23;
         this._preparedWriteRequest = null;
+        if (this._aclStream) {
+            this._aclStream.end();
+            this._aclStream.removeListener("data", this.onAclStreamDataBinded);
+            this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+        }
         this._aclStream = aclStream;
-        this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("end", this.onAclStreamEndBinded);
+        if (this._aclStream) {
+            this._aclStream.on("data", this.onAclStreamDataBinded);
+            this._aclStream.on("end", this.onAclStreamEndBinded);
+        }
     }
     onAclStreamData(cid, data) {
         if (cid !== ATT.CID) {
@@ -567,12 +582,12 @@ class Gatt extends eventemitter3_1.default {
                 if (handle.type === "characteristic" && handle.uuid === uuid) {
                     handleAttribute = handle.attribute;
                     valueHandle = handle.valueHandle;
-                    secure = handle.secure & 0x02;
+                    secure = (handle.secure & 0x02) !== 0;
                     break;
                 }
                 else if (handle.type === "descriptor" && handle.uuid === uuid) {
                     valueHandle = i;
-                    secure = handle.secure & 0x02;
+                    secure = (handle.secure & 0x02) !== 0;
                     break;
                 }
             }

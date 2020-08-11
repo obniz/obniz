@@ -237,3 +237,12 @@ export class ObnizBlePairingRejectByRemoteError extends ObnizError {
     );
   }
 }
+
+export class ObnizBleScanStartError extends ObnizError {
+  constructor(state: number, msg: any) {
+    super(
+      17,
+      `${msg} state=${state}(${ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : ""})`,
+    );
+  }
+}
