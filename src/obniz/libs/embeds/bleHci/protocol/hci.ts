@@ -1002,7 +1002,7 @@ class Hci extends EventEmitter<HciEventTypes> {
   protected async readLeMetaEventWait(eventType: number, options?: any) {
     const filter = this.createLeMetaEventFilter(eventType);
     options = options || {};
-    options.waitingFor = "LeMetaEvent " + JSON.stringify(filter);
+    options.waitingFor = `LeMetaEvent ${JSON.stringify(filter)} (event = ${eventType})`;
     const data = await this._obnizHci.readWait(filter, options);
 
     const type = data.readUInt8(3);
@@ -1029,7 +1029,7 @@ class Hci extends EventEmitter<HciEventTypes> {
       ];
     }
     const options: any = {};
-    options.waitingFor = "CmdCompleteEvent " + JSON.stringify(filter);
+    options.waitingFor = `CmdCompleteEvent ${JSON.stringify(filter)}(cmd = ${requestCmd})`;
     const data = await this._obnizHci.readWait(filter, options);
 
     const eventType = data.readUInt8(0);

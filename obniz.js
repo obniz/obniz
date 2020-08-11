@@ -8161,7 +8161,7 @@ class ObnizBLEHci {
          * HCI level timeout should never occure. Response must be sent from a device.
          * This timeout is for just in case for a device nerver send response.
          */
-        this.timeout = 5 * 60 * 1000;
+        this.timeout = 90 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
     }
@@ -11004,7 +11004,7 @@ class Hci extends eventemitter3_1.default {
     async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
         options = options || {};
-        options.waitingFor = "LeMetaEvent " + JSON.stringify(filter);
+        options.waitingFor = `LeMetaEvent ${JSON.stringify(filter)} (event = ${eventType})`;
         const data = await this._obnizHci.readWait(filter, options);
         const type = data.readUInt8(3);
         const status = data.readUInt8(4);
@@ -11025,7 +11025,7 @@ class Hci extends eventemitter3_1.default {
             ];
         }
         const options = {};
-        options.waitingFor = "CmdCompleteEvent " + JSON.stringify(filter);
+        options.waitingFor = `CmdCompleteEvent ${JSON.stringify(filter)}(cmd = ${requestCmd})`;
         const data = await this._obnizHci.readWait(filter, options);
         const eventType = data.readUInt8(0);
         const subEventType = data.readUInt8(1);
