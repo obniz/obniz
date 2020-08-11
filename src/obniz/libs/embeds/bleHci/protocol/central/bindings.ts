@@ -39,6 +39,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   private _hci: Hci;
   private _gap: Gap;
   private _scanServiceUuids: any;
+  private _connectPromises: Array<Promise<any>>;
 
   constructor(hciProtocol: any) {
     super();
@@ -55,6 +56,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._gatts = {};
     this._aclStreams = {};
     this._signalings = {};
+    this._connectPromises = [];
 
     this._hci.on("stateChange", this.onStateChange.bind(this));
     this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
@@ -79,6 +81,9 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._aclStreams = {};
     this._signalings = {};
     this._gap._reset();
+
+    // TODO: It muset be canceled.
+    this._connectPromises = [];
   }
 
   public debugHandler: any = () => {};
@@ -106,22 +111,39 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     const address: any = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
 
-    try {
-      const result = await this._hci.createLeConnWait(address, addressType, 90 * 1000);
-      return this.onLeConnComplete(
-        result.status,
-        result.handle,
-        result.role,
-        result.addressType,
-        result.address,
-        result.interval,
-        result.latency,
-        result.supervisionTimeout,
-        result.masterClockAccuracy,
+    // Block parall connection ongoing for ESP32 bug.
+    const doPromise = Promise.all(this._connectPromises)
+      .catch((error) => {
+        // nothing
+      })
+      .then(() => {
+        return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
+      })
+      .then((result) => {
+        return this.onLeConnComplete(
+          result.status,
+          result.handle,
+          result.role,
+          result.addressType,
+          result.address,
+          result.interval,
+          result.latency,
+          result.supervisionTimeout,
+          result.masterClockAccuracy,
+        );
+      })
+      .then(
+        (result) => {
+          this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+          return Promise.resolve(result);
+        },
+        (error) => {
+          this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+          return Promise.reject(error);
+        },
       );
-    } catch (e) {
-      throw e;
-    }
+    this._connectPromises.push(doPromise);
+    return doPromise;
   }
 
   public disconnect(peripheralUuid: any) {
