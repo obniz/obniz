@@ -14,7 +14,7 @@ export default class ObnizBLEHci {
    * HCI level timeout should never occure. Response must be sent from a device.
    * This timeout is for just in case for a device nerver send response.
    */
-  public timeout: number = 5 * 60 * 1000;
+  public timeout: number = 90 * 1000;
 
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
