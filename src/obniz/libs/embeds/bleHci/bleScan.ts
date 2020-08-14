@@ -672,7 +672,7 @@ export default class BleScan {
     const uuids: any = peripheral.advertisementServiceUuids().map((e: any) => {
       return BleHelper.uuidFilter(e);
     });
-    for (const uuid of this.scanTarget.uuids) {
+    for (const uuid of this._arrayWrapper(this.scanTarget.uuids)) {
       if (uuids.includes(uuid)) {
         return true;
       }
@@ -684,8 +684,10 @@ export default class BleScan {
     if (!this.scanTarget.deviceAddress) {
       return false;
     }
-    if (this.scanTarget.deviceAddress === peripheral.address) {
-      return true;
+    for (const deviceAddress of this._arrayWrapper(this.scanTarget.deviceAddress)) {
+      if (deviceAddress === peripheral.address) {
+        return true;
+      }
     }
     return false;
   }
