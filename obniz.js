@@ -25620,7 +25620,7 @@ class LinkingDevice {
         this.advertisement = advertising_1.default.parse(peripheral);
         this._peripheral = peripheral;
     }
-    async connect() {
+    async connect(setting) {
         if (this.connected === true) {
             throw new Error("The device has been already connected.");
         }
@@ -25637,17 +25637,12 @@ class LinkingDevice {
                     this.ondisconnect({ wasClean: false });
                 }
             };
-            await peripheral.connectWait();
+            await peripheral.connectWait(setting);
             onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
             onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
             await this._getServicesAndChars();
-            onprogress({ step: 3.5, desc: "PAIRING" });
-            const keys = await this._peripheral
-                .pairingWait();
-            console.log({ keys });
             onprogress({ step: 4, desc: "SUBSCRIBING" });
             await this._subscribeForIndicate();
-            await this.char_write.writeWait([0x01], true);
             onprogress({ step: 5, desc: "GETTING_DEVICE_INFOMATION" });
             let res;
             res = await this.write("GET_DEVICE_INFORMATION");
@@ -25843,6 +25838,7 @@ class LinkingDevice {
         });
     }
     _receivedPacket(buf) {
+        // console.log("receive raw packet ", buf);
         const new_buf = Buffer.alloc(buf.length - 1);
         buf.copy(new_buf, 0, 1, buf.length);
         this._div_packet_queue.push(new_buf);
@@ -25860,7 +25856,7 @@ class LinkingDevice {
     }
     _receivedIndicate(buf) {
         const parsed = this._LinkingService.parseResponse(buf);
-        console.log("linking buf parse", buf, JSON.stringify(parsed, null, 2));
+        // console.log("linking buf parse", buf, JSON.stringify(parsed, null, 2));
         if (!parsed) {
             return;
         }
@@ -26081,7 +26077,7 @@ class LinkingDevice {
                 }
             };
             try {
-                console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
+                // console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
                 await this.char_write.writeWait(buf, true);
             }
             catch (e) {
@@ -27299,7 +27295,7 @@ class LinkingServiceNotification {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -27960,7 +27956,7 @@ class LinkingServiceProperty {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -28301,7 +28297,7 @@ class LinkingServiceSensor {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -28843,7 +28839,7 @@ class LinkingServiceSetting {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
