@@ -7989,7 +7989,7 @@ class BleScan {
         const uuids = peripheral.advertisementServiceUuids().map((e) => {
             return bleHelper_1.default.uuidFilter(e);
         });
-        for (const uuid of this.scanTarget.uuids) {
+        for (const uuid of this._arrayWrapper(this.scanTarget.uuids)) {
             if (uuids.includes(uuid)) {
                 return true;
             }
@@ -8000,8 +8000,10 @@ class BleScan {
         if (!this.scanTarget.deviceAddress) {
             return false;
         }
-        if (this.scanTarget.deviceAddress === peripheral.address) {
-            return true;
+        for (const deviceAddress of this._arrayWrapper(this.scanTarget.deviceAddress)) {
+            if (deviceAddress === peripheral.address) {
+                return true;
+            }
         }
         return false;
     }
@@ -25358,7 +25360,7 @@ class Linking {
         // var target = {
         //   uuids: this.PRIMARY_SERVICE_UUID_LIST
         // };
-        this.obniz.ble.scan.start();
+        this.obniz.ble.scan.startWait();
         this._discover_status = true;
     }
     stopScan() {
@@ -25368,7 +25370,7 @@ class Linking {
                 clearTimeout(this._discover_timer);
                 this._discover_timer = null;
             }
-            this.obniz.ble.scan.end();
+            this.obniz.ble.scan.endWait();
         }
     }
     startScan(p) {
@@ -25700,7 +25702,7 @@ class LinkingDevice {
         this.advertisement = advertising_1.default.parse(peripheral);
         this._peripheral = peripheral;
     }
-    async connect() {
+    async connect(setting) {
         if (this.connected === true) {
             throw new Error("The device has been already connected.");
         }
@@ -25717,7 +25719,7 @@ class LinkingDevice {
                     this.ondisconnect({ wasClean: false });
                 }
             };
-            await peripheral.connectWait();
+            await peripheral.connectWait(setting);
             onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
             onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
             await this._getServicesAndChars();
@@ -25918,6 +25920,7 @@ class LinkingDevice {
         });
     }
     _receivedPacket(buf) {
+        // console.log("receive raw packet ", buf);
         const new_buf = Buffer.alloc(buf.length - 1);
         buf.copy(new_buf, 0, 1, buf.length);
         this._div_packet_queue.push(new_buf);
@@ -25935,6 +25938,7 @@ class LinkingDevice {
     }
     _receivedIndicate(buf) {
         const parsed = this._LinkingService.parseResponse(buf);
+        // console.log("linking buf parse", buf, JSON.stringify(parsed, null, 2));
         if (!parsed) {
             return;
         }
@@ -26155,6 +26159,7 @@ class LinkingDevice {
                 }
             };
             try {
+                // console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
                 await this.char_write.writeWait(buf, true);
             }
             catch (e) {
@@ -26277,48 +26282,29 @@ class LinkingDevice {
             this.services.illuminance = this._createSensorServiceObject(0x0a);
         }
     }
-    _deviceNameGet() {
-        const promise = new Promise((resolve, reject) => {
-            const char = this._generic_access_service.device_name.char;
-            char.read((error, data) => {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    resolve({
-                        deviceName: data.toString("utf8"),
-                    });
-                }
-            });
-        });
-        return promise;
+    async _deviceNameGet() {
+        const char = this._generic_access_service.device_name.char;
+        const data = await char.readWait();
+        return {
+            deviceName: Buffer.from(data).toString("utf8"),
+        };
     }
-    _deviceNameSet(name) {
-        const promise = new Promise((resolve, reject) => {
-            if (!name) {
-                reject(new Error("Device name is required."));
-                return;
-            }
-            else if (typeof name !== "string") {
-                reject(new Error("Device name must be a string."));
-                return;
-            }
-            else if (name.length > 32) {
-                reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
-                return;
-            }
-            const buf = Buffer.from(name, "utf8");
-            const char = this._generic_access_service.device_name.char;
-            char.write(buf, false, (error) => {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    resolve();
-                }
-            });
-        });
-        return promise;
+    async _deviceNameSet(name) {
+        if (!name) {
+            throw new Error("Device name is required.");
+            return;
+        }
+        else if (typeof name !== "string") {
+            throw new Error("Device name must be a string.");
+            return;
+        }
+        else if (name.length > 32) {
+            throw new Error("Device name is too long. The length must be in the range 1 to 32.");
+            return;
+        }
+        const buf = Buffer.from(name, "utf8");
+        const char = this._generic_access_service.device_name.char;
+        await char.writeWait(buf, false);
     }
     _ledTurnOn(color, pattern, duration) {
         let color_number = 1;
@@ -27391,7 +27377,7 @@ class LinkingServiceNotification {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -28052,7 +28038,7 @@ class LinkingServiceProperty {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -28393,7 +28379,7 @@ class LinkingServiceSensor {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -28935,7 +28921,7 @@ class LinkingServiceSetting {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);

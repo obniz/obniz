@@ -12,7 +12,7 @@
  * ---------------------------------------------------------------- */
 "use strict";
 import BleRemoteCharacteristic from "../../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";
-import BleRemotePeripheral from "../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
+import BleRemotePeripheral, { BleConnectSetting } from "../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral";
 import LinkingAdvertising from "./advertising";
 import LinkingService from "./service";
 
@@ -68,7 +68,7 @@ export default class LinkingDevice {
     this._peripheral = peripheral;
   }
 
-  public async connect() {
+  public async connect(setting?: BleConnectSetting) {
     if (this.connected === true) {
       throw new Error("The device has been already connected.");
     }
@@ -85,7 +85,7 @@ export default class LinkingDevice {
           this.ondisconnect({ wasClean: false });
         }
       };
-      await peripheral.connectWait();
+      await peripheral.connectWait(setting);
       onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
       onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
       await this._getServicesAndChars();
@@ -294,6 +294,7 @@ export default class LinkingDevice {
   }
 
   public _receivedPacket(buf: any) {
+    // console.log("receive raw packet ", buf);
     const new_buf = Buffer.alloc(buf.length - 1);
     buf.copy(new_buf, 0, 1, buf.length);
     this._div_packet_queue.push(new_buf);
@@ -313,6 +314,7 @@ export default class LinkingDevice {
 
   public _receivedIndicate(buf: any) {
     const parsed = this._LinkingService.parseResponse(buf);
+    // console.log("linking buf parse", buf, JSON.stringify(parsed, null, 2));
     if (!parsed) {
       return;
     }
@@ -517,6 +519,7 @@ export default class LinkingDevice {
       };
 
       try {
+        // console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
         await this.char_write!.writeWait(buf, true);
       } catch (e) {
         reject(e);
@@ -640,45 +643,28 @@ export default class LinkingDevice {
     }
   }
 
-  public _deviceNameGet() {
-    const promise = new Promise((resolve, reject) => {
-      const char = this._generic_access_service.device_name.char;
-      char.read((error: any, data: any) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve({
-            deviceName: data.toString("utf8"),
-          });
-        }
-      });
-    });
-    return promise;
+  public async _deviceNameGet(): Promise<any> {
+    const char = this._generic_access_service.device_name.char as BleRemoteCharacteristic;
+    const data = await char.readWait();
+    return {
+      deviceName: Buffer.from(data).toString("utf8"),
+    };
   }
 
-  public _deviceNameSet(name: string) {
-    const promise = new Promise((resolve, reject) => {
-      if (!name) {
-        reject(new Error("Device name is required."));
-        return;
-      } else if (typeof name !== "string") {
-        reject(new Error("Device name must be a string."));
-        return;
-      } else if (name.length > 32) {
-        reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
-        return;
-      }
-      const buf = Buffer.from(name, "utf8");
-      const char = this._generic_access_service.device_name.char;
-      char.write(buf, false, (error: any) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
-    return promise;
+  public async _deviceNameSet(name: string) {
+    if (!name) {
+      throw new Error("Device name is required.");
+      return;
+    } else if (typeof name !== "string") {
+      throw new Error("Device name must be a string.");
+      return;
+    } else if (name.length > 32) {
+      throw new Error("Device name is too long. The length must be in the range 1 to 32.");
+      return;
+    }
+    const buf = Buffer.from(name, "utf8");
+    const char = this._generic_access_service.device_name.char as BleRemoteCharacteristic;
+    await char.writeWait(buf, false);
   }
 
   public _ledTurnOn(color: any, pattern: any, duration: any) {
