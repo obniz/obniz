@@ -18,15 +18,16 @@ i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
 grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
 
 ```javascript
+var joystick = obniz.wired("Grove_JoyStick", { scl:0, sda:1, vcc:2, gnd:3 });
+```
+
+
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
+
+```javascript
 var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
 obniz.onconnect = async function() {
   var joystick = obniz.wired("Grove_JoyStick", { grove: obniz.grove0 });
-  while(true) {
-    var x = await joystick.getXWait()
-    var y = await joystick.getYWait()
-    console.log(`${x}-${y}`);
-    await obniz.wait(1);
-  }
 }
 ```
 
