@@ -5,9 +5,9 @@ Groveコネクタで利用できる可変抵抗です。ボリュームのよう
 回されることで間の１本の電圧が２つの電圧の間を移動します。
 
 ![](image.jpg)
-
-
 このパーツで扱えるポテンションメーターの抵抗値は10Ω〜10kΩの間です。
+
+## wired(obniz, {[signal, vcc, gnd, grove]});
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -16,6 +16,12 @@ vcc | `number(obniz Board io)` | no |  &nbsp; | VCC端子(2 pin of Grove)
 gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(0 pin of Grove)
 grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
 
+```Javascript
+// Javascript Example
+const meter = obniz.wired("Grove_RotaryAngleSensor", {gnd:0, vcc:1, signal: 3});
+```
+
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
 ```Javascript
 // Javascript Example
 const meter = obniz.wired("Grove_RotaryAngleSensor", {grove: obniz.grove0});

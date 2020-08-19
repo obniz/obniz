@@ -7,7 +7,7 @@ It detect moisture level in soil.
 It has both analog and digital outputs.
 
 
-## wired(obniz, { aout, dout, vcc, gnd })
+## wired(obniz, { aout, dout, vcc, gnd, grove })
 connect EARTH UNIT to the obniz Device.  
 
 name | type | required | default | description
@@ -18,6 +18,16 @@ dout | `number(obniz Board io)` | no |  &nbsp; | digital out
 aout | `number(obniz Board io)` | no | &nbsp;  | analog out
 grove | `object` | no | &nbsp;  | grove property when device has a grove interface
 
+```javascript
+obniz.onconnect = async function() {
+  var earth = obniz.wired("Grove_EARTH", {aout: 0, dout: 1, vcc: 2, gnd: 3});
+  earth.onchange = (val) => {
+    console.log(val)
+  }
+}
+```  
+  
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
 ```javascript
 // JavaScript Example
 var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");

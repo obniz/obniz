@@ -4,7 +4,7 @@ Grove 3軸加速度センサモジュール[Grove - 3 Axis Digital Accelerometer
 
 ![](image.jpg)
 
-## wired(scl, sda {, vcc, gnd})
+## wired(scl, sda {, vcc, gnd, grove})
 
 obniz Boardに3軸加速度センサを接続します。
 次のように接続を行います。
@@ -16,10 +16,18 @@ obniz Boardに3軸加速度センサを接続します。
 | vcc | - | vcc |
 | gnd | - | gnd |
 
+
 ```javascript
 // Javascript Example
 var accelMeter = obniz.wired("Grove_3AxisAccelerometer", { scl:0, sda:1, vcc:2, gnd:3 });
 ```
+  
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
+```javascript
+// Javascript Example
+var accelMeter = obniz.wired("Grove_3AxisAccelerometer", {grove: obniz.grove0});
+```
+
 
 ## [await] getWait()
 

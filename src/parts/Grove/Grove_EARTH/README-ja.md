@@ -19,6 +19,16 @@ grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場�
 白線、黄線、赤線、黒線がそれぞれaout、dout、vcc、gndに対応しています。
 
 ```javascript
+obniz.onconnect = async function() {
+  var earth = obniz.wired("Grove_EARTH", {aout: 0, dout: 1, vcc: 2, gnd: 3});
+  earth.onchange = (val) => {
+    console.log(val)
+  }
+}
+```
+  
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
+```javascript
 var obniz = new Obniz.M5StickC("OBNIZ_ID_HERE");
 obniz.onconnect = async function() {
   var earth = obniz.wired("Grove_EARTH", { grove: obniz.grove0 });

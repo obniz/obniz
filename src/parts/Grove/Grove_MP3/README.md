@@ -42,7 +42,7 @@ Filenames under this kind of folder should be 3 digits from 001.
 
 One folder can contain files up to 255.
 
-## wired(obniz, {gnd, vcc, mp3_rx, mp3_tx})
+## wired(obniz, {gnd, vcc, mp3_rx, mp3_tx, grove})
 
 Connect to a module.
 If you are using Grove cable, 
@@ -57,6 +57,12 @@ If you are using Grove cable,
 ```Javascript
 // Javascript Example
 var mp3 = obniz.wired("Grove_MP3", {gnd:0, vcc:1, mp3_rx:2, mp3_tx:3});
+```
+  
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
+```Javascript
+// Javascript Example
+var mp3 = obniz.wired("Grove_MP3", {grove: obniz.grove0});
 ```
 
 ## [await] initWait()

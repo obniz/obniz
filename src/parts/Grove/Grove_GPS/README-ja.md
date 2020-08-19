@@ -36,7 +36,7 @@ Grove GPSモジュール[(Grove - GPS)](https://www.seeedstudio.com/Grove-GPS-p-
 ```
 
 
-## wired(rx, tx {, vcc, gnd})
+## wired(rx, tx {, vcc, gnd, grove})
 
 obniz BoardにGPSモジュールを接続します。
 次のように接続を行います。
@@ -55,6 +55,13 @@ obniz BoardにGPSモジュールを接続します。
 // Javascript Example
 let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 ```
+
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
+```Javascript
+// Javascript Example
+let gps = obniz.wired("Grove_GPS", {grove: obniz.grove0});
+``` 
+
 
 ## readSentence()
 

@@ -43,7 +43,7 @@ MP3ファイル
 一つのフォルダ内のファイルは255個(01~255)までです。
 例: /01/001abc.mp3, /02/001cdf.mp3
 
-## wired(obniz, {vcc, gnd, mp3_rx, mp3_tx})
+## wired(obniz, {vcc, gnd, mp3_rx, mp3_tx, grove})
 モジュールと接続します。
 Groveケーブルの場合以下のようになります。
 
@@ -57,7 +57,13 @@ Groveケーブルの場合以下のようになります。
 ```Javascript
 // Javascript Example
 var mp3 = obniz.wired("Grove_MP3", {gnd:0, vcc:1, mp3_rx:2, mp3_tx:3});
-// Groveケーブルの場合はobniz BoardのIO_0に黒,IO_1に赤,IO_2に白,IO_3に黄色を接続してください。
+```
+  
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。  
+※ M5Stack,M5StickCでは動作電圧が足りず、正しく動作しない可能性があります。
+```Javascript
+// Javascript Example
+var mp3 = obniz.wired("Grove_MP3", {grove: obniz.grove0});
 ```
 
 ## [await] initWait()
