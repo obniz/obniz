@@ -233,5 +233,11 @@ ObnizBlePairingRejectByRemoteError.Errors = {
     0x0d: "BR/EDR pairing in progress",
     0x0e: "Cross-transport Key Deriva- tion/Generation not allowed",
 };
+class ObnizBleScanStartError extends ObnizError {
+    constructor(state, msg) {
+        super(17, `${msg} state=${state}(${ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : ""})`);
+    }
+}
+exports.ObnizBleScanStartError = ObnizBleScanStartError;
 
 //# sourceMappingURL=ObnizError.js.map

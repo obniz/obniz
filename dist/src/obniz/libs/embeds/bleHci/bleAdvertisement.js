@@ -14,6 +14,14 @@ class BleAdvertisement {
         this.scan_resp = [];
     }
     /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.adv_data = [];
+        this.scan_resp = [];
+    }
+    /**
      * This starts advertisement of BLE.
      *
      * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.

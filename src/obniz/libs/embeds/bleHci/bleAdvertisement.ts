@@ -22,6 +22,15 @@ export default class BleAdvertisement {
   }
 
   /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this.adv_data = [];
+    this.scan_resp = [];
+  }
+
+  /**
    * This starts advertisement of BLE.
    *
    * Before calling this function, you should call [[setAdvData]] or [[setAdvDataRaw]] to set data.

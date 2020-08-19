@@ -87,24 +87,24 @@ export default class Mgmt {
     this.write(MGMT_OP_LOAD_LONG_TERM_KEYS, 0, op);
   }
 
-  public rite(opcode: any, index: any, data: any) {
-    let length: any = 0;
+  // public rite(opcode: any, index: any, data: any) {
+  //   let length: any = 0;
 
-    if (data) {
-      length = data.length;
-    }
+  //   if (data) {
+  //     length = data.length;
+  //   }
 
-    const pkt: any = Buffer.alloc(6 + length);
+  //   const pkt: any = Buffer.alloc(6 + length);
 
-    pkt.writeUInt16LE(opcode, 0);
-    pkt.writeUInt16LE(index, 2);
-    pkt.writeUInt16LE(length, 4);
+  //   pkt.writeUInt16LE(opcode, 0);
+  //   pkt.writeUInt16LE(index, 2);
+  //   pkt.writeUInt16LE(length, 4);
 
-    if (length) {
-      data.copy(pkt, 6);
-    }
+  //   if (length) {
+  //     data.copy(pkt, 6);
+  //   }
 
-    debug("writing -> " + pkt.toString("hex"));
-    this._hci._socket.write(pkt);
-  }
+  //   debug("writing -> " + pkt.toString("hex"));
+  //   this._hci._socket.write(pkt);
+  // }
 }

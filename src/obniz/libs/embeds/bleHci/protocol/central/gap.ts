@@ -12,7 +12,7 @@ import ObnizBLEHci from "../../hci";
 const debug: any = () => {};
 
 import EventEmitter from "eventemitter3";
-import { ObnizBleOpError } from "../../../../../ObnizError";
+import { ObnizBleScanStartError } from "../../../../../ObnizError";
 import Hci from "../hci";
 
 type GapEventTypes = "scanStop" | "discover";
@@ -22,23 +22,30 @@ type GapEventTypes = "scanStop" | "discover";
  */
 class Gap extends EventEmitter<GapEventTypes> {
   public _hci: Hci;
-  public _scanState: null | "starting" | "started" | "stopping" | "stopped";
-  public _scanFilterDuplicates: null | boolean;
-  public _discoveries: any;
+  public _scanState: null | "starting" | "started" | "stopping" | "stopped" = null;
+  public _scanFilterDuplicates: null | boolean = null;
+  public _discoveries: any = {};
 
   constructor(hci: Hci) {
     super();
     this._hci = hci;
 
-    this._scanState = null;
-    this._scanFilterDuplicates = null;
-    this._discoveries = {};
+    this._reset();
 
     this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
   }
 
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this._scanState = null;
+    this._scanFilterDuplicates = null;
+    this._discoveries = {};
+  }
+
   public async startScanningWait(allowDuplicates: boolean, activeScan: boolean) {
-    this._scanState = "starting";
     this._scanFilterDuplicates = !allowDuplicates;
     this._discoveries = {};
     // Always set scan parameters before scanning
@@ -46,23 +53,38 @@ class Gap extends EventEmitter<GapEventTypes> {
     // p106 - p107
 
     try {
-      await this.setScanEnabledWait(false, true);
+      if (this._scanState === "starting" || this._scanState === "started") {
+        await this.setScanEnabledWait(false, true);
+      }
     } catch (e) {
-      if (e instanceof ObnizBleOpError) {
-        // nop
+      if (e instanceof ObnizBleScanStartError) {
+        // If not started yet. this error may called. just ignore it.
       } else {
         throw e;
       }
     }
+    this._scanState = "starting";
 
-    const setParamStatus = await this._hci.setScanParametersWait(activeScan);
+    const status = await this._hci.setScanParametersWait(activeScan);
+    if (status !== 0) {
+      throw new ObnizBleScanStartError(status, `startScanning Error setting active scan=${activeScan} was failed`);
+    }
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await this.setScanEnabledWait(true, this._scanFilterDuplicates);
   }
 
   public async stopScanningWait() {
-    this._scanState = "stopping";
-    await this._hci.setScanEnabledWait(false, true);
+    try {
+      if (this._scanState === "starting" || this._scanState === "started") {
+        await this.setScanEnabledWait(false, true);
+      }
+    } catch (e) {
+      if (e instanceof ObnizBleScanStartError) {
+        // If not started yet. this error may called. just ignore it.
+      } else {
+        throw e;
+      }
+    }
   }
 
   public onHciLeAdvertisingReport(status: any, type?: any, address?: any, addressType?: any, eir?: any, rssi?: any) {
@@ -271,13 +293,16 @@ class Gap extends EventEmitter<GapEventTypes> {
   }
 
   private async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
-    const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
+    const status = await this._hci.setScanEnabledWait(enabled, true);
 
     // Check the status we got from the command complete function.
-    if (scanStopStatus !== 0) {
+    if (status !== 0) {
       // If it is non-zero there was an error, and we should not change
       // our status as a result.
-      // throw new ObnizBleOpError();
+      throw new ObnizBleScanStartError(
+        status,
+        `startScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`,
+      );
     } else {
       if (this._scanState === "starting") {
         this._scanState = "started";

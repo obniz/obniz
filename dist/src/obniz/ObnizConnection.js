@@ -161,7 +161,13 @@ class ObnizConnection extends eventemitter3_1.default {
         this.wsconnect();
     }
     close() {
+        this._stopLoopInBackground();
         this._drainQueued();
+        // expire local connect waiting timer for call.
+        if (this._waitForLocalConnectReadyTimer) {
+            clearTimeout(this._waitForLocalConnectReadyTimer);
+            this._waitForLocalConnectReadyTimer = undefined;
+        }
         this._disconnectLocal();
         if (this.socket) {
             if (this.socket.readyState <= 1) {
@@ -171,10 +177,6 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             this.clearSocket(this.socket);
             delete this.socket;
-        }
-        if (this._nextLoopTimeout) {
-            clearTimeout(this._nextLoopTimeout);
-            this._nextLoopTimeout = undefined;
         }
         this.connectionState = "closed";
         this._onConnectCalled = false;
@@ -284,6 +286,7 @@ class ObnizConnection extends eventemitter3_1.default {
             func(...args);
         }
         catch (err) {
+            console.error(`obniz.js handled Exception inside of ${func}`);
             setTimeout(() => {
                 throw err;
             });
@@ -350,10 +353,10 @@ class ObnizConnection extends eventemitter3_1.default {
         this.print_debug(`closed from remote event=${event}`);
         const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
+        this.emit("close", this);
         if (beforeOnConnectCalled === true) {
             this._runUserCreatedFunction(this.onclose, this);
         }
-        this.emit("close", this);
         this._reconnect();
     }
     _reconnect() {
@@ -482,16 +485,18 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _disconnectLocal() {
         if (this.socket_local) {
-            if (this.socket.readyState <= 1) {
+            if (this.socket_local.readyState <= 1) {
                 this.socket_local.close();
             }
             this.clearSocket(this.socket_local);
             delete this.socket_local;
         }
-        if (this._waitForLocalConnectReadyTimer) {
+        // If connection to cloud is ready and waiting for local connect.
+        // then call onconnect() immidiately.
+        if (this.socket && this.socket.readyState === 1 && this._waitForLocalConnectReadyTimer) {
             clearTimeout(this._waitForLocalConnectReadyTimer);
             this._waitForLocalConnectReadyTimer = null;
-            this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
+            this._callOnConnect();
         }
     }
     clearSocket(socket) {
@@ -522,10 +527,6 @@ class ObnizConnection extends eventemitter3_1.default {
      * This function will be called before obniz.onconnect called;
      */
     async _beforeOnConnect() { }
-    /**
-     * This function will be called after obniz.onconnect and all emitter called;
-     */
-    async _afterOnConnect() { }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -547,8 +548,8 @@ class ObnizConnection extends eventemitter3_1.default {
             const currentTime = new Date().getTime();
             this._lastDataReceivedAt = currentTime; // reset
             this.connectionState = "connected";
-            this._startPingLoopInBackground();
             this._beforeOnConnect();
+            this.emit("connect", this);
             if (typeof this.onconnect === "function") {
                 try {
                     const promise = this.onconnect(this);
@@ -561,15 +562,15 @@ class ObnizConnection extends eventemitter3_1.default {
                     }
                 }
                 catch (err) {
+                    console.error(`obniz.js handled Exception inside of onconnect()`);
                     setTimeout(() => {
                         throw err;
                     });
                 }
             }
-            this.emit("connect", this);
             this._onConnectCalled = true;
+            this._startPingLoopInBackground();
             this._startLoopInBackground();
-            this._afterOnConnect();
         }
     }
     print_debug(str) {
@@ -701,10 +702,8 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    async _startLoopInBackground() {
-        if (this._nextLoopTimeout) {
-            clearTimeout(this._nextLoopTimeout);
-        }
+    _startLoopInBackground() {
+        this._stopLoopInBackground();
         this._nextLoopTimeout = setTimeout(async () => {
             if (this._nextLoopTimeout) {
                 clearTimeout(this._nextLoopTimeout);
@@ -720,6 +719,10 @@ class ObnizConnection extends eventemitter3_1.default {
                         }
                     }
                 }
+                catch (e) {
+                    console.error(`obniz.js handled Exception inside of obniz.repeat() function`);
+                    console.error(e);
+                }
                 finally {
                     if (this.connectionState === "connected") {
                         if (!this._nextLoopTimeout) {
@@ -730,7 +733,13 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }, 0);
     }
-    async _startPingLoopInBackground() {
+    _stopLoopInBackground() {
+        if (this._nextLoopTimeout) {
+            clearTimeout(this._nextLoopTimeout);
+            this._nextLoopTimeout = undefined;
+        }
+    }
+    _startPingLoopInBackground() {
         if (this._nextPingTimeout) {
             clearTimeout(this._nextPingTimeout);
         }
