@@ -171,6 +171,7 @@ export default class LinkingDevice {
       onprogress({ step: 12, desc: "COMPLETED" });
     } catch (e) {
       onprogress({ step: 0, desc: "FAILED" });
+      await this._clean();
       throw e;
     }
   }
@@ -465,13 +466,14 @@ export default class LinkingDevice {
   }
 
   public async disconnect() {
-    if (this.connected === false) {
+    if (this._peripheral) {
+      if (this._peripheral.connected) {
+        await this._peripheral.disconnectWait(); // ondisconnect will call
+      } else {
+        await this._clean();
+      }
+    } else {
       await this._clean();
-      return;
-    }
-    await this._peripheral.disconnectWait();
-    if (this._isFunction(this.ondisconnect)) {
-      this.ondisconnect({ wasClean: true });
     }
   }
 
@@ -490,6 +492,9 @@ export default class LinkingDevice {
     this.char_indicate = null;
     this._div_packet_queue = [];
     this._onresponse = null;
+    if (p.connected) {
+      await p.disconnectWait();
+    }
   }
 
   public write(message_name: any, params?: any) {
