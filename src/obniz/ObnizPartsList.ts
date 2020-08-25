@@ -145,6 +145,7 @@ import Logtta_CO2, { Logtta_CO2Options } from "../parts/Ble/LogttaCO2";
 import Logtta_TH, { Logtta_THOptions } from "../parts/Ble/LogttaTemp";
 import MINEW_S1, { MINEW_S1Options } from "../parts/Ble/MINEW_S1";
 import MiniBreeze, { MiniBreezeOptions } from "../parts/Ble/MiniBreeze";
+import MT_500BT, { MT_500BTOptions } from "../parts/Ble/MT_500BT";
 import PLS_01BT, { PLS_01BTOptions } from "../parts/Ble/PLS_01BT";
 import REX_BTPM25V, { REX_BTPM25VOptions } from "../parts/Ble/REX_BTPM25V";
 import RS_Seek3, { RS_Seek3Options } from "../parts/Ble/RS_SEEK3";
@@ -366,6 +367,8 @@ export interface WiredNameMap {
   "PLS_01BT": PLS_01BT;
   "HEM_6233T": HEM_6233T;
   "MiniBreeze": MiniBreeze;
+  "MT_500BT": MT_500BT;
+
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcS;
 
@@ -556,6 +559,7 @@ export interface WiredNameOptionsMap {
   "UT201BLE": UT201BLEOptions;
   "HEM_6233T": HEM_6233TOptions;
   "MiniBreeze": MiniBreezeOptions;
+  "MT_500BT": MT_500BTOptions;
 
   // Bioligical
   "PULSE08_M5STICKC-S": Puls08M5stickcSOptions;
