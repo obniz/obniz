@@ -13542,6 +13542,13 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/encored_lte.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"18\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
@@ -13588,6 +13595,13 @@ class HW {
         }
         else if (hw === "encored") {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored.json");
+        }
+        else if (hw === "encored_lte") {
+            return __webpack_require__("./dist/src/obniz/libs/hw/encored_lte.json");
+        }
+        else {
+            // default
+            return __webpack_require__("./dist/src/obniz/libs/hw/esp32w.json");
         }
         return undefined;
     }
