@@ -1,6 +1,6 @@
 # MT_500BT
 日本精密測器社製の非接触温度センサです。
-
+![](image.jpg)
 
 ## isDevice(peripheral)
 
