@@ -162,6 +162,7 @@ class LinkingDevice {
         }
         catch (e) {
             onprogress({ step: 0, desc: "FAILED" });
+            await this._clean();
             throw e;
         }
     }
@@ -467,13 +468,16 @@ class LinkingDevice {
         }
     }
     async disconnect() {
-        if (this.connected === false) {
-            await this._clean();
-            return;
+        if (this._peripheral) {
+            if (this._peripheral.connected) {
+                await this._peripheral.disconnectWait(); // ondisconnect will call
+            }
+            else {
+                await this._clean();
+            }
         }
-        await this._peripheral.disconnectWait();
-        if (this._isFunction(this.ondisconnect)) {
-            this.ondisconnect({ wasClean: true });
+        else {
+            await this._clean();
         }
     }
     async _clean() {
@@ -491,6 +495,9 @@ class LinkingDevice {
         this.char_indicate = null;
         this._div_packet_queue = [];
         this._onresponse = null;
+        if (p.connected) {
+            await p.disconnectWait();
+        }
     }
     write(message_name, params) {
         return new Promise(async (resolve, reject) => {
