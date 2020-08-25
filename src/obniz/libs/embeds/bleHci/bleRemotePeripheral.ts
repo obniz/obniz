@@ -473,11 +473,16 @@ export default class BleRemotePeripheral {
       throw e;
     }
     this.connected = true;
-    if (this._connectSetting.pairingOption) {
-      this.setPairingOption(this._connectSetting.pairingOption);
-    }
-    if (this._connectSetting.autoDiscovery) {
-      await this.discoverAllHandlesWait();
+    try {
+      if (this._connectSetting.pairingOption) {
+        this.setPairingOption(this._connectSetting.pairingOption);
+      }
+      if (this._connectSetting.autoDiscovery) {
+        await this.discoverAllHandlesWait();
+      }
+    } catch (e) {
+      await this.disconnectWait();
+      throw e;
     }
     this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
     this.emitter.emit("connect");
