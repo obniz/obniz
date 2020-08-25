@@ -19,6 +19,11 @@ export default class HW {
       return require("./m5stack_basic.json");
     } else if (hw === "encored") {
       return require("./encored.json");
+    } else if (hw === "encored_lte") {
+      return require("./encored_lte.json");
+    } else {
+      // default
+      return require("./esp32w.json");
     }
     return undefined;
   }
