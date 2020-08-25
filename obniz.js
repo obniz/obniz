@@ -45162,6 +45162,9 @@ class AM2320 {
         return (await this.getAllWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllWait()).humidity;
     }
 }
@@ -45483,6 +45486,9 @@ class BME280 {
         return (await this.getAllWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllWait()).humidity;
     }
     async getPressureWait() {
@@ -45613,6 +45619,9 @@ class DHT12 extends i2cParts_1.default {
         return (await this.getAllDataWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllDataWait()).humidity;
     }
 }
@@ -45713,6 +45722,9 @@ class S5851A {
         return temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         this.i2c.write(this.address, [0x20, 0x24]);
         this.i2c.write(this.address, [0xe0, 0x00]);
         const ret = await this.i2c.readWait(this.address, 4);

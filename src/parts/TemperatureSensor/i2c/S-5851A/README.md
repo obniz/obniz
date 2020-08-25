@@ -12,13 +12,13 @@ var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5
 ## [await] getTempWait()
 Get a temperature. Unit is Celsius.
 
-## [await] getHumdWait()
+## [await] getHumidWait()
 Get a Humidity. Unit is Ratio(%).
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5, addressmode:"A"});
-var temp = await sensor.getTemp();
-var humd = await sensor.getHumd();
+var temp = await sensor.getTempWait();
+var humd = await sensor.getHumidWait();
 console.log('temperature:' + temp);
 console.log('humidity:' + humd);
 ```

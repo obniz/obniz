@@ -44,6 +44,9 @@ class AM2320 {
         return (await this.getAllWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllWait()).humidity;
     }
 }
