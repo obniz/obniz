@@ -1,7 +1,7 @@
 # MT_500BT
 
 This is a non-contact temperature sensor manufactured by Nihon Seimitsu Sokki.
-
+![](image.jpg)
 
 ## isDevice(peripheral)
 
