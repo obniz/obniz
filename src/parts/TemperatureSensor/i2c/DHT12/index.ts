@@ -58,6 +58,10 @@ export default class DHT12 extends i2cParts implements ObnizPartsInterface {
   }
 
   public async getHumdWait(): Promise<number> {
+    return await this.getHumidWait();
+  }
+
+  public async getHumidWait(): Promise<number> {
     return ((await this.getAllDataWait()) as any).humidity;
   }
 }

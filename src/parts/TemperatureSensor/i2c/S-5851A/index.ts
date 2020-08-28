@@ -115,6 +115,10 @@ export default class S5851A implements ObnizPartsInterface {
   }
 
   public async getHumdWait(): Promise<number> {
+    return await this.getHumidWait();
+  }
+
+  public async getHumidWait(): Promise<number> {
     this.i2c.write(this.address, [0x20, 0x24]);
     this.i2c.write(this.address, [0xe0, 0x00]);
     const ret: any = await this.i2c.readWait(this.address, 4);

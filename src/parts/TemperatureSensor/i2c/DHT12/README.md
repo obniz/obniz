@@ -36,14 +36,14 @@ console.log(data);
     
 ```
 
-## [await] getHumdWait()
+## [await] getHumidWait()
 Get a Humidity. Unit is Ratio(%).
 
 ```javascript
 // Javascript Example
 let device = obniz.wired("DHT12",{scl:26,sda:0});
 
-let data = await device.getHumdWait();
+let data = await device.getHumidWait();
 console.log(data);
     
 ```
