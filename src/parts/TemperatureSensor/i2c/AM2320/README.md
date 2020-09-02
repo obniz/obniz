@@ -58,7 +58,7 @@ const temp = await sensor.getTempWait();
 console.log('temp: ' + temp + ' degree');
 ```
 
-## [await] getHumdWait()
+## [await] getHumidWait()
 
 Measure and return the current humidity. The unit is %.
 
@@ -66,6 +66,6 @@ Measure and return the current humidity. The unit is %.
 // Javascript Example
 var sensor = obniz.wired("AM2320", { vcc: 3, sda: 2, gnd: 1, scl: 0 });
 obniz.wait(2000);
-const humd = await sensor.getHumdWait();
+const humd = await sensor.getHumidWait();
 console.log('humd: ' + humd + ' %');
 ```

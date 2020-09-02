@@ -12,11 +12,15 @@ export default class BleBatteryService {
     this._service = service;
   }
 
-  public async getBatteryLevel(): Promise<number | null> {
+  public async getBatteryLevelWait(): Promise<number | null> {
     const char = this._service.getCharacteristic("2A19");
     if (!char) {
       return null;
     }
     return await char.readNumberWait();
+  }
+
+  public getBatteryLevel(): Promise<number | null> {
+    return this.getBatteryLevelWait();
   }
 }

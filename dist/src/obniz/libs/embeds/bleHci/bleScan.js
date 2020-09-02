@@ -20,12 +20,26 @@ class BleScan {
     constructor(obnizBle) {
         this.state = "stopping";
         this._delayNotifyTimers = [];
-        this.scanTarget = {};
-        this.scanSettings = {};
         this.obnizBle = obnizBle;
         this.emitter = new eventemitter3_1.default();
+        this.scanTarget = {};
+        this.scanSettings = {};
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.scanTarget = {};
+        this.scanSettings = {};
+        this.scanedPeripherals = [];
+        if (this._timeoutTimer) {
+            clearTimeout(this._timeoutTimer);
+            this._timeoutTimer = undefined;
+            this.finish(new Error(`Reset Occured while scanning.`));
+        }
     }
     /**
      * Use startWait() instead.
@@ -219,7 +233,7 @@ class BleScan {
             this.state = "stopping";
             this.clearTimeoutTimer();
             await this.obnizBle.centralBindings.stopScanningWait();
-            this.finish();
+            this.finish(); // state will changed to stopped inside of this function.
         }
     }
     /**
@@ -425,8 +439,8 @@ class BleScan {
             this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
             this._clearDelayNotifyTimer();
             this.state = "stopped";
-            this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
             this.emitter.emit("onfinish", this.scanedPeripherals, error);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
         }
     }
     _notifyOnFind(peripheral) {
@@ -438,8 +452,8 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
             this.emitter.emit("onfind", peripheral);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
         }
     }
     isLocalNameTarget(peripheral) {
@@ -478,7 +492,7 @@ class BleScan {
         const uuids = peripheral.advertisementServiceUuids().map((e) => {
             return bleHelper_1.default.uuidFilter(e);
         });
-        for (const uuid of this.scanTarget.uuids) {
+        for (const uuid of this._arrayWrapper(this.scanTarget.uuids)) {
             if (uuids.includes(uuid)) {
                 return true;
             }
@@ -489,8 +503,10 @@ class BleScan {
         if (!this.scanTarget.deviceAddress) {
             return false;
         }
-        if (this.scanTarget.deviceAddress === peripheral.address) {
-            return true;
+        for (const deviceAddress of this._arrayWrapper(this.scanTarget.deviceAddress)) {
+            if (deviceAddress === peripheral.address) {
+                return true;
+            }
         }
         return false;
     }

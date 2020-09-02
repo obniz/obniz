@@ -4,14 +4,21 @@
  */
 
 import Obniz from "../../../obniz";
+import PeripheralGrove from "../../../obniz/libs/io_peripherals/grove";
 import PeripheralPWM from "../../../obniz/libs/io_peripherals/pwm";
 import ObnizPartsInterface, { ObnizPartsInfo } from "../../../obniz/ObnizPartsInterface";
 
-export interface Grove_BuzzerOptions {
+export interface Grove_BuzzerOptionsA {
   signal: number;
   gnd?: number;
   vcc?: number;
 }
+
+interface Grove_BuzzerOptionsB {
+  grove: PeripheralGrove;
+}
+
+export type Grove_BuzzerOptions = Grove_BuzzerOptionsA | Grove_BuzzerOptionsB;
 
 export default class Grove_Buzzer implements ObnizPartsInterface {
   public static info(): ObnizPartsInfo {
@@ -29,15 +36,19 @@ export default class Grove_Buzzer implements ObnizPartsInterface {
   private pwm!: PeripheralPWM;
 
   constructor() {
-    this.keys = ["signal", "gnd", "vcc"];
-    this.requiredKeys = ["signal"];
+    this.keys = ["signal", "gnd", "vcc", "grove"];
+    this.requiredKeys = [];
   }
 
   public wired(obniz: Obniz) {
-    this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    this.pwm = obniz.getFreePwm();
-    this.pwm.start({ io: this.params.signal });
+    if (this.params.grove) {
+      this.pwm = this.params.grove.getPwm();
+    } else {
+      this.obniz = obniz;
+      obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      this.pwm = obniz.getFreePwm();
+      this.pwm.start({ io: this.params.signal });
+    }
   }
 
   public play(freq: number) {

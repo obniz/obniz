@@ -8,6 +8,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
+const ObnizError_1 = require("../../../ObnizError");
 const ble_1 = __importDefault(require("./ble"));
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 const bleRemoteService_1 = __importDefault(require("./bleRemoteService"));
@@ -141,14 +142,29 @@ class BleRemotePeripheral {
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
-        await this.obnizBle.centralBindings.connectWait(this.address);
-        if (this._connectSetting.pairingOption) {
-            this.setPairingOption(this._connectSetting.pairingOption);
+        try {
+            await this.obnizBle.centralBindings.connectWait(this.address);
         }
-        if (this._connectSetting.autoDiscovery) {
-            await this.discoverAllHandlesWait();
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                await this.obnizBle.resetWait();
+                throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+            }
+            throw e;
         }
         this.connected = true;
+        try {
+            if (this._connectSetting.pairingOption) {
+                this.setPairingOption(this._connectSetting.pairingOption);
+            }
+            if (this._connectSetting.autoDiscovery) {
+                await this.discoverAllHandlesWait();
+            }
+        }
+        catch (e) {
+            await this.disconnectWait();
+            throw e;
+        }
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
         this.emitter.emit("connect");
     }

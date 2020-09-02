@@ -32,7 +32,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   private _state: any;
   private _addresses: { [uuid: string]: BleDeviceAddress };
   private _addresseTypes: { [uuid: string]: BleDeviceAddressType };
-  private _connectPromises: Array<Promise<any>>;
   private _handles: any;
   private _gatts: { [handle: string]: Gatt };
   private _aclStreams: { [key: string]: AclStream };
@@ -40,25 +39,53 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   private _hci: Hci;
   private _gap: Gap;
   private _scanServiceUuids: any;
+  private _connectPromises: Array<Promise<any>>;
 
   constructor(hciProtocol: any) {
     super();
+    this._hci = hciProtocol;
+    this._gap = new Gap(this._hci);
+
     this._state = null;
 
     this._addresses = {};
     this._addresseTypes = {};
     this._connectable = {};
 
+    this._handles = {};
+    this._gatts = {};
+    this._aclStreams = {};
+    this._signalings = {};
     this._connectPromises = [];
+
+    this._hci.on("stateChange", this.onStateChange.bind(this));
+    this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+
+    this._gap.on("discover", this.onDiscover.bind(this));
+  }
+
+  /**
+   * @ignore
+   * @private
+   */
+  public _reset() {
+    this._state = null;
+
+    this._addresses = {};
+    this._addresseTypes = {};
+    this._connectable = {};
 
     this._handles = {};
     this._gatts = {};
     this._aclStreams = {};
     this._signalings = {};
+    this._gap._reset();
 
-    this._hci = hciProtocol;
-    this._gap = new Gap(this._hci);
+    // TODO: It muset be canceled.
+    this._connectPromises = [];
   }
+
   public debugHandler: any = () => {};
 
   public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
@@ -80,10 +107,11 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     await this._gap.stopScanningWait();
   }
 
-  public connectWait(peripheralUuid: any) {
+  public async connectWait(peripheralUuid: any) {
     const address: any = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
 
+    // Block parall connection ongoing for ESP32 bug.
     const doPromise = Promise.all(this._connectPromises)
       .catch((error) => {
         // nothing
@@ -125,14 +153,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public async updateRssiWait(peripheralUuid: UUID) {
     const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
     return rssi;
-  }
-
-  public init() {
-    this._gap.on("discover", this.onDiscover.bind(this));
-
-    this._hci.on("stateChange", this.onStateChange.bind(this));
-    this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
   }
 
   public onStateChange(state: any) {

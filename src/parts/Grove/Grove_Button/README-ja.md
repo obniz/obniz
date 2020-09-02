@@ -22,6 +22,7 @@ button.onchange = function(voltage) {
 }
 ```
 
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
 ```Javascript
 // Javascript Example
 var button = obniz.wired("Grove_Button", {grove: obniz.grove0});

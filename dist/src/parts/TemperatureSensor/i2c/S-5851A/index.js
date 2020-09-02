@@ -84,6 +84,9 @@ class S5851A {
         return temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         this.i2c.write(this.address, [0x20, 0x24]);
         this.i2c.write(this.address, [0xe0, 0x00]);
         const ret = await this.i2c.readWait(this.address, 4);

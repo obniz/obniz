@@ -14,7 +14,7 @@ export default class ObnizBLEHci {
    * HCI level timeout should never occure. Response must be sent from a device.
    * This timeout is for just in case for a device nerver send response.
    */
-  public timeout: number = 5 * 60 * 1000;
+  public timeout: number = 90 * 1000;
 
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
@@ -149,28 +149,31 @@ export default class ObnizBLEHci {
       }
 
       onObnizClosed = () => {
+        onObnizClosed = null;
         clearListeners();
-        const error = new ObnizOfflineError();
-        reject(error);
+        reject(new ObnizOfflineError());
       };
-      this.Obniz.on("close", onObnizClosed);
+      this.Obniz.once("close", onObnizClosed);
 
       let onTimeout;
       if (option.onTimeout) {
         onTimeout = () => {
+          timeoutHandler = null;
+          clearListeners();
           option
             .onTimeout()
-            .then(() => {})
+            .then(() => {
+              reject(new ObnizTimeoutError(option.waitingFor));
+            })
             .catch((e: Error) => {
               reject(e);
             });
         };
       } else {
         onTimeout = () => {
+          timeoutHandler = null;
           clearListeners();
-
-          const error = new ObnizTimeoutError(option.waitingFor);
-          reject(error);
+          reject(new ObnizTimeoutError(option.waitingFor));
         };
       }
       timeoutHandler = setTimeout(onTimeout, option!.timeout);

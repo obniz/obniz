@@ -18,6 +18,12 @@ grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場�
 
 ```Javascript
 // Javascript Example
+let sensor = obniz.wired("Grove_LightSensor", {gnd:0, vcc:1, signal: 3});
+```
+
+groveを持つデバイスでは、パラメータに{grove: obniz.grove0}を指定することで接続できます。
+```Javascript
+// Javascript Example
 let sensor = obniz.wired("Grove_LightSensor", {grove: obniz.grove0});
 ```
 

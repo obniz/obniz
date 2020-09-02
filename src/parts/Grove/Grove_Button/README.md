@@ -21,7 +21,7 @@ button.onchange = function(voltage) {
   console.log(voltage);
 }
 ```
-
+If the device has a grove interface, it can be connected with just the parameter {grove: obniz.grove0}.
 ```Javascript
 // Javascript Example
 var button = obniz.wired("Grove_Button", {grove: obniz.grove0});

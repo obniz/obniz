@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.7.1",
+  "version": "3.8.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -143,7 +143,7 @@ module.exports = {
   ],
   "repository": "obniz/obniz",
   "author": "yukisato <yuki@yuki-sato.com>",
-  "homepage": "https://obniz.io/",
+  "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
     "@types/chai": "^4.2.7",
@@ -210,7 +210,8 @@ module.exports = {
     "webpack-cli": "^3.3.4",
     "webpack-node-externals": "^1.7.2",
     "webpack-stream": "^5.2.1",
-    "yaml-loader": "^0.5.0"
+    "yaml-loader": "^0.5.0",
+    "typedoc-plugin-internal-external": "^2.1.1"
   },
   "dependencies": {
     "@types/eventemitter3": "^1.2.0",
@@ -228,11 +229,10 @@ module.exports = {
     "semver": "^5.7.0",
     "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
-    "typedoc-plugin-internal-external": "^2.1.1",
     "ws": "^6.1.4"
   },
   "bugs": {
-    "url": "https://forum.obniz.io"
+    "url": "https://forum.obniz.com"
   },
   "private": false,
   "browser": {
@@ -2324,7 +2324,13 @@ class ObnizConnection extends eventemitter3_1.default {
         this.wsconnect();
     }
     close() {
+        this._stopLoopInBackground();
         this._drainQueued();
+        // expire local connect waiting timer for call.
+        if (this._waitForLocalConnectReadyTimer) {
+            clearTimeout(this._waitForLocalConnectReadyTimer);
+            this._waitForLocalConnectReadyTimer = undefined;
+        }
         this._disconnectLocal();
         if (this.socket) {
             if (this.socket.readyState <= 1) {
@@ -2334,10 +2340,6 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             this.clearSocket(this.socket);
             delete this.socket;
-        }
-        if (this._nextLoopTimeout) {
-            clearTimeout(this._nextLoopTimeout);
-            this._nextLoopTimeout = undefined;
         }
         this.connectionState = "closed";
         this._onConnectCalled = false;
@@ -2447,6 +2449,7 @@ class ObnizConnection extends eventemitter3_1.default {
             func(...args);
         }
         catch (err) {
+            console.error(`obniz.js handled Exception inside of ${func}`);
             setTimeout(() => {
                 throw err;
             });
@@ -2513,10 +2516,10 @@ class ObnizConnection extends eventemitter3_1.default {
         this.print_debug(`closed from remote event=${event}`);
         const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
+        this.emit("close", this);
         if (beforeOnConnectCalled === true) {
             this._runUserCreatedFunction(this.onclose, this);
         }
-        this.emit("close", this);
         this._reconnect();
     }
     _reconnect() {
@@ -2645,16 +2648,18 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _disconnectLocal() {
         if (this.socket_local) {
-            if (this.socket.readyState <= 1) {
+            if (this.socket_local.readyState <= 1) {
                 this.socket_local.close();
             }
             this.clearSocket(this.socket_local);
             delete this.socket_local;
         }
-        if (this._waitForLocalConnectReadyTimer) {
+        // If connection to cloud is ready and waiting for local connect.
+        // then call onconnect() immidiately.
+        if (this.socket && this.socket.readyState === 1 && this._waitForLocalConnectReadyTimer) {
             clearTimeout(this._waitForLocalConnectReadyTimer);
             this._waitForLocalConnectReadyTimer = null;
-            this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
+            this._callOnConnect();
         }
     }
     clearSocket(socket) {
@@ -2685,10 +2690,6 @@ class ObnizConnection extends eventemitter3_1.default {
      * This function will be called before obniz.onconnect called;
      */
     async _beforeOnConnect() { }
-    /**
-     * This function will be called after obniz.onconnect and all emitter called;
-     */
-    async _afterOnConnect() { }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -2710,8 +2711,8 @@ class ObnizConnection extends eventemitter3_1.default {
             const currentTime = new Date().getTime();
             this._lastDataReceivedAt = currentTime; // reset
             this.connectionState = "connected";
-            this._startPingLoopInBackground();
             this._beforeOnConnect();
+            this.emit("connect", this);
             if (typeof this.onconnect === "function") {
                 try {
                     const promise = this.onconnect(this);
@@ -2724,15 +2725,15 @@ class ObnizConnection extends eventemitter3_1.default {
                     }
                 }
                 catch (err) {
+                    console.error(`obniz.js handled Exception inside of onconnect()`);
                     setTimeout(() => {
                         throw err;
                     });
                 }
             }
-            this.emit("connect", this);
             this._onConnectCalled = true;
+            this._startPingLoopInBackground();
             this._startLoopInBackground();
-            this._afterOnConnect();
         }
     }
     print_debug(str) {
@@ -2864,10 +2865,8 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         return json;
     }
-    async _startLoopInBackground() {
-        if (this._nextLoopTimeout) {
-            clearTimeout(this._nextLoopTimeout);
-        }
+    _startLoopInBackground() {
+        this._stopLoopInBackground();
         this._nextLoopTimeout = setTimeout(async () => {
             if (this._nextLoopTimeout) {
                 clearTimeout(this._nextLoopTimeout);
@@ -2883,6 +2882,10 @@ class ObnizConnection extends eventemitter3_1.default {
                         }
                     }
                 }
+                catch (e) {
+                    console.error(`obniz.js handled Exception inside of obniz.repeat() function`);
+                    console.error(e);
+                }
                 finally {
                     if (this.connectionState === "connected") {
                         if (!this._nextLoopTimeout) {
@@ -2893,7 +2896,13 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }, 0);
     }
-    async _startPingLoopInBackground() {
+    _stopLoopInBackground() {
+        if (this._nextLoopTimeout) {
+            clearTimeout(this._nextLoopTimeout);
+            this._nextLoopTimeout = undefined;
+        }
+    }
+    _startPingLoopInBackground() {
         if (this._nextPingTimeout) {
             clearTimeout(this._nextPingTimeout);
         }
@@ -3363,6 +3372,12 @@ ObnizBlePairingRejectByRemoteError.Errors = {
     0x0d: "BR/EDR pairing in progress",
     0x0e: "Cross-transport Key Deriva- tion/Generation not allowed",
 };
+class ObnizBleScanStartError extends ObnizError {
+    constructor(state, msg) {
+        super(17, `${msg} state=${state}(${ObnizBleHciStateError.Errors[state] ? ObnizBleHciStateError.Errors[state] : ""})`);
+    }
+}
+exports.ObnizBleScanStartError = ObnizBleScanStartError;
 
 //# sourceMappingURL=ObnizError.js.map
 
@@ -4428,7 +4443,6 @@ const bleDescriptor_1 = __importDefault(__webpack_require__("./dist/src/obniz/li
 const blePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/blePeripheral.js"));
 const bleRemotePeripheral_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemotePeripheral.js"));
 const bleScan_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleScan.js"));
-const bleSecurity_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleSecurity.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
 /**
  * Use a obniz device as a BLE device.
@@ -4437,6 +4451,11 @@ const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz) {
         super(obniz);
+        this.remotePeripherals = [];
+        /**
+         * @ignore
+         */
+        this._initialized = false;
         this.debugHandler = () => { };
         this.hci = new hci_1.default(obniz);
         this.service = bleService_1.default;
@@ -4447,10 +4466,21 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 this.hci.notified(obj.hci);
             }
         });
-        obniz.on("close", () => {
-            this._reset();
-        });
         this._reset();
+    }
+    // public security!: BleSecurity;
+    /**
+     * Initialized status.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.ble.isInitialized; // => false
+     * await obniz.ble.initWait();
+     * obniz.ble.isInitialized; // => true
+     * ```
+     */
+    get isInitialized() {
+        return this._initialized;
     }
     /**
      * @ignore
@@ -4497,7 +4527,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             if (semver_1.default.lt(this.Obniz.firmware_ver, MinHCIAvailableOS)) {
                 throw new ObnizError_1.ObnizBleUnSupportedOSVersionError(this.Obniz.firmware_ver, MinHCIAvailableOS);
             }
-            this._initialized = true;
             // force initialize on obnizOS < 3.2.0
             if (semver_1.default.lt(this.Obniz.firmware_ver, "3.2.0")) {
                 this.hci.init();
@@ -4513,6 +4542,30 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 }
                 throw e;
             }
+            this._initialized = true;
+        }
+    }
+    /**
+     * Reset Target Device and current SDK status without rebooting. If error occured while reset, then target device will reboot.
+     *
+     * ```javascript
+     * // Javascript Example
+     * await obniz.ble.resetWait();
+     * ```
+     */
+    async resetWait() {
+        try {
+            if (this._initialized) {
+                this._reset();
+                await this.hciProtocol.resetWait();
+                this._initialized = true;
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleUnsupportedHciError) {
+                this.Obniz.reboot();
+            }
+            throw e;
         }
     }
     /**
@@ -4520,49 +4573,64 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     _reset() {
-        if (this.peripheral && this.peripheral.currentConnectedDeviceAddress) {
-            const address = this.peripheral.currentConnectedDeviceAddress;
-            this.peripheral.currentConnectedDeviceAddress = null;
-            setTimeout(() => {
-                if (this.peripheral.onconnectionupdates) {
-                    this.peripheral.onconnectionupdates({
-                        address,
-                        status: "disconnected",
-                        reason: new ObnizError_1.ObnizOfflineError(),
-                    });
-                }
-            }, 0);
-        }
-        if (this.remotePeripherals) {
-            for (const p of this.remotePeripherals) {
-                if (p.connected) {
-                    p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
-                }
-            }
-        }
-        if (this.scan && this.scan.state !== "stopped") {
-            this.scan.notifyFromServer("obnizClose", {});
-        }
-        this.hci._reset();
-        this.hciProtocol = new hci_2.default(this.hci);
-        this.hciProtocol.debugHandler = (text) => {
-            this.debug(`BLE-HCI: ${text}`);
-        };
-        this.centralBindings = new bindings_1.default(this.hciProtocol);
-        this.peripheralBindings = new bindings_2.default(this.hciProtocol);
-        this.centralBindings.init();
-        this.peripheralBindings.init();
-        this.centralBindings.debugHandler = (text) => {
-            this.debug(`BLE: ${text}`);
-        };
+        // reset state at first
         this._initialized = false;
         this._initializeWarning = true;
+        // clear all found peripherals.
+        for (const p of this.remotePeripherals) {
+            if (p.connected) {
+                p.notifyFromServer("statusupdate", { status: "disconnected", reason: new ObnizError_1.ObnizOfflineError() });
+            }
+        }
         this.remotePeripherals = [];
-        this.peripheral = new blePeripheral_1.default(this);
-        this.advertisement = new bleAdvertisement_1.default(this);
-        this.scan = new bleScan_1.default(this);
-        this.security = new bleSecurity_1.default(this);
-        this._bind();
+        // instantiate
+        if (!this.peripheral) {
+            this.peripheral = new blePeripheral_1.default(this);
+        }
+        if (!this.scan) {
+            this.scan = new bleScan_1.default(this);
+        }
+        if (!this.advertisement) {
+            this.advertisement = new bleAdvertisement_1.default(this);
+        }
+        // reset all submodules.
+        this.peripheral._reset();
+        this.scan._reset();
+        this.advertisement._reset();
+        // clear scanning
+        this.hci._reset();
+        if (!this.hciProtocol) {
+            this.hciProtocol = new hci_2.default(this.hci);
+            this.hciProtocol.debugHandler = (text) => {
+                this.debug(`BLE-HCI: ${text}`);
+            };
+        }
+        else {
+            this.hciProtocol._reset();
+        }
+        if (!this.centralBindings) {
+            this.centralBindings = new bindings_1.default(this.hciProtocol);
+            this.centralBindings.debugHandler = (text) => {
+                this.debug(`BLE: ${text}`);
+            };
+            this.centralBindings.on("stateChange", this.onStateChange.bind(this));
+            this.centralBindings.on("discover", this.onDiscover.bind(this));
+            this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
+            this.centralBindings.on("notification", this.onNotification.bind(this));
+        }
+        else {
+            this.centralBindings._reset();
+        }
+        if (!this.peripheralBindings) {
+            this.peripheralBindings = new bindings_2.default(this.hciProtocol);
+            this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
+            this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
+            this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
+            this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
+        }
+        else {
+            this.peripheralBindings._reset();
+        }
     }
     /**
      * Connect to peripheral without scanning.
@@ -4721,16 +4789,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             });
         }
     }
-    _bind() {
-        this.centralBindings.on("stateChange", this.onStateChange.bind(this));
-        this.centralBindings.on("discover", this.onDiscover.bind(this));
-        this.centralBindings.on("disconnect", this.onDisconnect.bind(this));
-        this.centralBindings.on("notification", this.onNotification.bind(this));
-        this.peripheralBindings.on("stateChange", this.onPeripheralStateChange.bind(this));
-        this.peripheralBindings.on("accept", this.onPeripheralAccept.bind(this));
-        this.peripheralBindings.on("mtuChange", this.onPeripheralMtuChange.bind(this));
-        this.peripheralBindings.on("disconnect", this.onPeripheralDisconnect.bind(this));
-    }
     debug(text) {
         this.debugHandler(text);
     }
@@ -4758,6 +4816,14 @@ const bleAdvertisementBuilder_1 = __importDefault(__webpack_require__("./dist/sr
 class BleAdvertisement {
     constructor(obnizBle) {
         this.obnizBle = obnizBle;
+        this.adv_data = [];
+        this.scan_resp = [];
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
         this.adv_data = [];
         this.scan_resp = [];
     }
@@ -5676,12 +5742,12 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     toBufferObj() {
         const obj = {
             uuid: bleHelper_1.default.uuidFilter(this.uuid),
+            emit: this.emit.bind(this),
         };
         if (this.childrenName) {
             const key = this.childrenName;
             obj[key] = this.children.map((e) => e.toBufferObj());
         }
-        obj.emit = this.emit.bind(this);
         return obj;
     }
     /**
@@ -5855,6 +5921,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleService.js"));
 /**
@@ -5870,9 +5941,24 @@ class BlePeripheral {
      * @ignore
      * @private
      */
-    async _updateServices() {
+    _reset() {
+        if (this.currentConnectedDeviceAddress) {
+            const address = this.currentConnectedDeviceAddress;
+            this.currentConnectedDeviceAddress = null;
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onconnectionupdates, {
+                address,
+                status: "disconnected",
+                reason: new ObnizError_1.ObnizOfflineError(),
+            });
+        }
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _updateServices() {
         const bufData = this._services.map((e) => e.toBufferObj());
-        await this.obnizBle.peripheralBindings.setServices(bufData);
+        this.obnizBle.peripheralBindings.setServices(bufData);
     }
     /**
      * This starts a service as peripheral.
@@ -6607,6 +6693,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 const ble_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/ble.js"));
 const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const bleRemoteService_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteService.js"));
@@ -6740,14 +6827,29 @@ class BleRemotePeripheral {
         this._connectSetting = setting || {};
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
-        await this.obnizBle.centralBindings.connectWait(this.address);
-        if (this._connectSetting.pairingOption) {
-            this.setPairingOption(this._connectSetting.pairingOption);
+        try {
+            await this.obnizBle.centralBindings.connectWait(this.address);
         }
-        if (this._connectSetting.autoDiscovery) {
-            await this.discoverAllHandlesWait();
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizTimeoutError) {
+                await this.obnizBle.resetWait();
+                throw new Error(`Connection to device(address=${this.address}) was timedout. ble have been reseted`);
+            }
+            throw e;
         }
         this.connected = true;
+        try {
+            if (this._connectSetting.pairingOption) {
+                this.setPairingOption(this._connectSetting.pairingOption);
+            }
+            if (this._connectSetting.autoDiscovery) {
+                await this.discoverAllHandlesWait();
+            }
+        }
+        catch (e) {
+            await this.disconnectWait();
+            throw e;
+        }
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
         this.emitter.emit("connect");
     }
@@ -7421,12 +7523,26 @@ class BleScan {
     constructor(obnizBle) {
         this.state = "stopping";
         this._delayNotifyTimers = [];
-        this.scanTarget = {};
-        this.scanSettings = {};
         this.obnizBle = obnizBle;
         this.emitter = new eventemitter3_1.default();
+        this.scanTarget = {};
+        this.scanSettings = {};
         this.scanedPeripherals = [];
         this._timeoutTimer = undefined;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.scanTarget = {};
+        this.scanSettings = {};
+        this.scanedPeripherals = [];
+        if (this._timeoutTimer) {
+            clearTimeout(this._timeoutTimer);
+            this._timeoutTimer = undefined;
+            this.finish(new Error(`Reset Occured while scanning.`));
+        }
     }
     /**
      * Use startWait() instead.
@@ -7620,7 +7736,7 @@ class BleScan {
             this.state = "stopping";
             this.clearTimeoutTimer();
             await this.obnizBle.centralBindings.stopScanningWait();
-            this.finish();
+            this.finish(); // state will changed to stopped inside of this function.
         }
     }
     /**
@@ -7826,8 +7942,8 @@ class BleScan {
             this._delayNotifyTimers.forEach((e) => this._notifyOnFind(e.peripheral));
             this._clearDelayNotifyTimer();
             this.state = "stopped";
-            this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
             this.emitter.emit("onfinish", this.scanedPeripherals, error);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfinish, this.scanedPeripherals, error);
         }
     }
     _notifyOnFind(peripheral) {
@@ -7839,8 +7955,8 @@ class BleScan {
         }
         if (this.isTarget(peripheral)) {
             this.scanedPeripherals.push(peripheral);
-            this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
             this.emitter.emit("onfind", peripheral);
+            this.obnizBle.Obniz._runUserCreatedFunction(this.onfind, peripheral);
         }
     }
     isLocalNameTarget(peripheral) {
@@ -7879,7 +7995,7 @@ class BleScan {
         const uuids = peripheral.advertisementServiceUuids().map((e) => {
             return bleHelper_1.default.uuidFilter(e);
         });
-        for (const uuid of this.scanTarget.uuids) {
+        for (const uuid of this._arrayWrapper(this.scanTarget.uuids)) {
             if (uuids.includes(uuid)) {
                 return true;
             }
@@ -7890,8 +8006,10 @@ class BleScan {
         if (!this.scanTarget.deviceAddress) {
             return false;
         }
-        if (this.scanTarget.deviceAddress === peripheral.address) {
-            return true;
+        for (const deviceAddress of this._arrayWrapper(this.scanTarget.deviceAddress)) {
+            if (deviceAddress === peripheral.address) {
+                return true;
+            }
         }
         return false;
     }
@@ -7914,104 +8032,6 @@ class BleScan {
 exports.default = BleScan;
 
 //# sourceMappingURL=bleScan.js.map
-
-
-/***/ }),
-
-/***/ "./dist/src/obniz/libs/embeds/bleHci/bleSecurity.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @packageDocumentation
- * @module ObnizCore.Components.Ble.Hci
- */
-const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
-/**
- * Deprecated class
- */
-class BleSecurity {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.emitter = new eventemitter3_1.default();
-    }
-    /**
-     * Deprecated function
-     * @param mode
-     * @param level
-     */
-    setModeLevel(mode, level) {
-        throw new Error("setModeLevel is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param introducedVersion
-     * @param functionName
-     */
-    checkIntroducedFirmware(introducedVersion, functionName) {
-        throw new Error("checkIntroducedFirmware is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param authTypes
-     */
-    setAuth(authTypes) {
-        throw new Error("setAuth is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param level
-     */
-    setIndicateSecurityLevel(level) {
-        throw new Error("setIndicateSecurityLevel is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param keyTypes
-     */
-    setEnableKeyTypes(keyTypes) {
-        throw new Error("setEnableKeyTypes is deprecated method");
-    }
-    /**
-     * Deprecated function
-     * @param size
-     */
-    setKeyMaxSize(size) {
-        throw new Error("setKeyMaxSize is deprecated method");
-    }
-    /**
-     * Deprecated function
-     */
-    clearBondingDevicesList() {
-        throw new Error("clearBondingDevicesList is deprecated method");
-    }
-    /**
-     * @ignore
-     * @param params
-     */
-    onerror(params) { } // dummy
-    /**
-     * @ignore
-     * @param notifyName
-     * @param params
-     */
-    notifyFromServer(notifyName, params) {
-        switch (notifyName) {
-            case "onerror": {
-                this.Obniz._runUserCreatedFunction(this.onerror, params);
-                break;
-            }
-        }
-    }
-}
-exports.default = BleSecurity;
-
-//# sourceMappingURL=bleSecurity.js.map
 
 
 /***/ }),
@@ -8149,7 +8169,7 @@ class ObnizBLEHci {
          * HCI level timeout should never occure. Response must be sent from a device.
          * This timeout is for just in case for a device nerver send response.
          */
-        this.timeout = 5 * 60 * 1000;
+        this.timeout = 90 * 1000;
         this._eventHandlerQueue = {};
         this.Obniz = Obniz;
     }
@@ -8265,17 +8285,21 @@ class ObnizBLEHci {
                 return;
             }
             onObnizClosed = () => {
+                onObnizClosed = null;
                 clearListeners();
-                const error = new ObnizError_1.ObnizOfflineError();
-                reject(error);
+                reject(new ObnizError_1.ObnizOfflineError());
             };
-            this.Obniz.on("close", onObnizClosed);
+            this.Obniz.once("close", onObnizClosed);
             let onTimeout;
             if (option.onTimeout) {
                 onTimeout = () => {
+                    timeoutHandler = null;
+                    clearListeners();
                     option
                         .onTimeout()
-                        .then(() => { })
+                        .then(() => {
+                        reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
+                    })
                         .catch((e) => {
                         reject(e);
                     });
@@ -8283,9 +8307,9 @@ class ObnizBLEHci {
             }
             else {
                 onTimeout = () => {
+                    timeoutHandler = null;
                     clearListeners();
-                    const error = new ObnizError_1.ObnizTimeoutError(option.waitingFor);
-                    reject(error);
+                    reject(new ObnizError_1.ObnizTimeoutError(option.waitingFor));
                 };
             }
             timeoutHandler = setTimeout(onTimeout, option.timeout);
@@ -8461,17 +8485,38 @@ class NobleBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this.debugHandler = () => { };
+        this._hci = hciProtocol;
+        this._gap = new gap_1.default(this._hci);
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
         this._connectable = {};
-        this._connectPromises = [];
         this._handles = {};
         this._gatts = {};
         this._aclStreams = {};
         this._signalings = {};
-        this._hci = hciProtocol;
-        this._gap = new gap_1.default(this._hci);
+        this._connectPromises = [];
+        this._hci.on("stateChange", this.onStateChange.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+        this._gap.on("discover", this.onDiscover.bind(this));
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._state = null;
+        this._addresses = {};
+        this._addresseTypes = {};
+        this._connectable = {};
+        this._handles = {};
+        this._gatts = {};
+        this._aclStreams = {};
+        this._signalings = {};
+        this._gap._reset();
+        // TODO: It muset be canceled.
+        this._connectPromises = [];
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
@@ -8488,9 +8533,10 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    connectWait(peripheralUuid) {
+    async connectWait(peripheralUuid) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
+        // Block parall connection ongoing for ESP32 bug.
         const doPromise = Promise.all(this._connectPromises)
             .catch((error) => {
             // nothing
@@ -8517,12 +8563,6 @@ class NobleBindings extends eventemitter3_1.default {
     async updateRssiWait(peripheralUuid) {
         const rssi = await this._hci.readRssiWait(this._handles[peripheralUuid]);
         return rssi;
-    }
-    init() {
-        this._gap.on("discover", this.onDiscover.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -8822,37 +8862,63 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class Gap extends eventemitter3_1.default {
     constructor(hci) {
         super();
-        this._hci = hci;
         this._scanState = null;
         this._scanFilterDuplicates = null;
         this._discoveries = {};
+        this._hci = hci;
+        this._reset();
         this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
     }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._scanState = null;
+        this._scanFilterDuplicates = null;
+        this._discoveries = {};
+    }
     async startScanningWait(allowDuplicates, activeScan) {
-        this._scanState = "starting";
         this._scanFilterDuplicates = !allowDuplicates;
         this._discoveries = {};
         // Always set scan parameters before scanning
         // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
         // p106 - p107
         try {
-            await this.setScanEnabledWait(false, true);
+            if (this._scanState === "starting" || this._scanState === "started") {
+                await this.setScanEnabledWait(false, true);
+            }
         }
         catch (e) {
-            if (e instanceof ObnizError_1.ObnizBleOpError) {
-                // nop
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
             }
             else {
                 throw e;
             }
         }
-        const setParamStatus = await this._hci.setScanParametersWait(activeScan);
+        this._scanState = "starting";
+        const status = await this._hci.setScanParametersWait(activeScan);
+        if (status !== 0) {
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning Error setting active scan=${activeScan} was failed`);
+        }
         await new Promise((resolve) => setTimeout(resolve, 1000));
         await this.setScanEnabledWait(true, this._scanFilterDuplicates);
     }
     async stopScanningWait() {
-        this._scanState = "stopping";
-        await this._hci.setScanEnabledWait(false, true);
+        try {
+            if (this._scanState === "starting" || this._scanState === "started") {
+                await this.setScanEnabledWait(false, true);
+            }
+        }
+        catch (e) {
+            if (e instanceof ObnizError_1.ObnizBleScanStartError) {
+                // If not started yet. this error may called. just ignore it.
+            }
+            else {
+                throw e;
+            }
+        }
     }
     onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi) {
         const previouslyDiscovered = !!this._discoveries[address];
@@ -9034,12 +9100,12 @@ class Gap extends eventemitter3_1.default {
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
-        const scanStopStatus = await this._hci.setScanEnabledWait(enabled, true);
+        const status = await this._hci.setScanEnabledWait(enabled, true);
         // Check the status we got from the command complete function.
-        if (scanStopStatus !== 0) {
+        if (status !== 0) {
             // If it is non-zero there was an error, and we should not change
             // our status as a result.
-            // throw new ObnizBleOpError();
+            throw new ObnizError_1.ObnizBleScanStartError(status, `startScanning enable=${enabled} was failed. Maybe Connection to a device is under going.`);
         }
         else {
             if (this._scanState === "starting") {
@@ -10276,11 +10342,14 @@ const STATUS_MAPPER = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/p
 class Hci extends eventemitter3_1.default {
     constructor(obnizHci) {
         super();
+        this._state = "poweredOff";
         this._aclStreamObservers = {};
+        /**
+         * @ignore
+         * @private
+         */
         this.debugHandler = () => { };
         this._obnizHci = obnizHci;
-        this._state = "poweredOff";
-        this.resetBuffers();
         this._obnizHci.Obniz.on("disconnect", () => {
             this.stateChange("poweredOff");
         });
@@ -10291,6 +10360,15 @@ class Hci extends eventemitter3_1.default {
             },
         };
         this._obnizHci.onread = this.onSocketData.bind(this);
+        this.resetBuffers();
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.stateChange("poweredOff");
+        this.resetBuffers();
     }
     async initWait() {
         await this.resetWait();
@@ -10308,6 +10386,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
     }
     async resetWait() {
+        this._reset();
         const cmd = Buffer.alloc(4);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -10318,19 +10397,21 @@ class Hci extends eventemitter3_1.default {
         this.debug("reset - writing: " + cmd.toString("hex"));
         this._socket.write(cmd);
         const resetResult = await p;
-        this.resetBuffers();
         this.setEventMask();
         this.setLeEventMask();
-        const p1 = this.readLocalVersionWait();
-        const p2 = this.readBdAddrWait();
+        const { hciVer, hciRev, lmpVer, manufacturer, lmpSubVer } = await this.readLocalVersionWait();
+        this.debug(`localVersion ${hciVer} ${hciRev} ${lmpVer} ${manufacturer} ${lmpSubVer}`);
         this.writeLeHostSupported();
-        const p3 = this.readLeHostSupportedWait();
-        const p4 = this.leReadBufferSizeWait();
-        await Promise.all([p1, p2, p3, p4]);
+        await this.readLeHostSupportedWait();
+        const addr = await this.readBdAddrWait();
+        this.debug(`BdAddr=${addr}`);
+        const bufsize = await this.leReadBufferSizeWait();
+        if (bufsize) {
+            this.debug(`Buffer Mtu=${bufsize.aclMtu} aclMaxInProgress=${bufsize.aclMaxInProgress}`);
+        }
         if (this._state !== "poweredOn") {
-            const p5 = this.setScanEnabledWait(false, true);
-            const p6 = this.setScanParametersWait(false);
-            await Promise.all([p5, p6]);
+            await this.setScanEnabledWait(false, true);
+            await this.setScanParametersWait(false);
             this.stateChange("poweredOn");
         }
     }
@@ -10485,19 +10566,10 @@ class Hci extends eventemitter3_1.default {
         this.debug("create le conn - writing: " + cmd.toString("hex"));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
-            onTimeout: async () => {
-                // 一定時間経過。onTimeoutをオーバーライドしてreject()されるのを防ぎ、キャンセルリクエストする。キャンセルされると接続失敗が返るので待つ
-                await this.createLeConnCancelWait();
-            },
         });
         this._socket.write(cmd);
-        try {
-            const { status, data } = await p;
-            return this.processLeConnComplete(status, data);
-        }
-        catch (e) {
-            throw e;
-        }
+        const { status, data } = await p;
+        return this.processLeConnComplete(status, data);
     }
     async createLeConnCancelWait() {
         const cmd = Buffer.alloc(4);
@@ -10727,7 +10799,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
         const data = await p;
         if (!data.status) {
-            await this.processLeReadBufferSizeWait(data.result);
+            return await this.processLeReadBufferSizeWait(data.result);
         }
     }
     async readBufferSizeWait() {
@@ -10916,7 +10988,7 @@ class Hci extends eventemitter3_1.default {
         if (!aclMtu) {
             // as per Bluetooth specs
             this.debug("falling back to br/edr buffer size");
-            await this.readBufferSizeWait();
+            return await this.readBufferSizeWait();
         }
         else {
             this.debug("le acl mtu = " + aclMtu);
@@ -10940,7 +11012,7 @@ class Hci extends eventemitter3_1.default {
     async readLeMetaEventWait(eventType, options) {
         const filter = this.createLeMetaEventFilter(eventType);
         options = options || {};
-        options.waitingFor = "LeMetaEvent " + JSON.stringify(filter);
+        options.waitingFor = `LeMetaEvent ${JSON.stringify(filter)} (event = ${eventType})`;
         const data = await this._obnizHci.readWait(filter, options);
         const type = data.readUInt8(3);
         const status = data.readUInt8(4);
@@ -10961,7 +11033,7 @@ class Hci extends eventemitter3_1.default {
             ];
         }
         const options = {};
-        options.waitingFor = "CmdCompleteEvent " + JSON.stringify(filter);
+        options.waitingFor = `CmdCompleteEvent ${JSON.stringify(filter)}(cmd = ${requestCmd})`;
         const data = await this._obnizHci.readWait(filter, options);
         const eventType = data.readUInt8(0);
         const subEventType = data.readUInt8(1);
@@ -11213,6 +11285,26 @@ class BlenoBindings extends eventemitter3_1.default {
         this._hci = hciProtocol;
         this._gap = new gap_1.default(this._hci);
         this._gatt = new gatt_1.default();
+        this._gatt.on("mtuChange", this.onMtuChange.bind(this));
+        this._hci.on("stateChange", this.onStateChange.bind(this));
+        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
+        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
+        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
+        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
+        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
+        this._address = null;
+        this._handle = null;
+        this._aclStream = null;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this._state = null;
+        this._advertising = false;
+        this._gap._reset();
+        this._gatt._reset();
         this._address = null;
         this._handle = null;
         this._aclStream = null;
@@ -11233,7 +11325,7 @@ class BlenoBindings extends eventemitter3_1.default {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
     }
-    async setServices(services) {
+    setServices(services) {
         this._gatt.setServices(services);
     }
     disconnect() {
@@ -11248,15 +11340,6 @@ class BlenoBindings extends eventemitter3_1.default {
             return rssi;
         }
         return null;
-    }
-    init() {
-        this._gatt.on("mtuChange", this.onMtuChange.bind(this));
-        this._hci.on("stateChange", this.onStateChange.bind(this));
-        this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
-        this._hci.on("leConnUpdateComplete", this.onLeConnUpdateComplete.bind(this));
-        this._hci.on("disconnComplete", this.onDisconnCompleteWait.bind(this));
-        this._hci.on("encryptChange", this.onEncryptChange.bind(this));
-        this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -11295,11 +11378,11 @@ class BlenoBindings extends eventemitter3_1.default {
         }
         if (this._aclStream) {
             this._aclStream.end();
+            this._aclStream = null;
         }
         const address = this._address;
         this._address = null;
         this._handle = null;
-        this._aclStream = null;
         if (address) {
             this.emit("disconnect", address, reason); // TODO: use reason
         }
@@ -11426,6 +11509,13 @@ class Gap extends eventemitter3_1.default {
     constructor(hci) {
         super();
         this._hci = hci;
+        this._advertiseState = null;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
         this._advertiseState = null;
     }
     async startAdvertisingWait(name, serviceUuids) {
@@ -11649,9 +11739,20 @@ class Gatt extends eventemitter3_1.default {
         this.maxMtu = 256;
         this._mtu = 23;
         this._preparedWriteRequest = null;
-        this.setServices([]);
+        this._reset();
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.maxMtu = 256;
+        this._mtu = 23;
+        this._preparedWriteRequest = null;
+        this.setServices([]);
+        this.setAclStream(undefined);
     }
     setServices(services) {
         // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
@@ -11659,9 +11760,7 @@ class Gatt extends eventemitter3_1.default {
         const allServices = [].concat(services);
         this._handles = [];
         let handle = 0;
-        let i;
-        let j;
-        for (i = 0; i < allServices.length; i++) {
+        for (let i = 0; i < allServices.length; i++) {
             const service = allServices[i];
             handle++;
             const serviceHandle = handle;
@@ -11671,7 +11770,7 @@ class Gatt extends eventemitter3_1.default {
                 attribute: service,
                 startHandle: serviceHandle,
             };
-            for (j = 0; j < service.characteristics.length; j++) {
+            for (let j = 0; j < service.characteristics.length; j++) {
                 const characteristic = service.characteristics[j];
                 let properties = 0;
                 let secure = 0;
@@ -11759,27 +11858,33 @@ class Gatt extends eventemitter3_1.default {
             }
             this._handles[serviceHandle].endHandle = handle;
         }
-        const debugHandles = [];
-        for (i = 0; i < this._handles.length; i++) {
-            handle = this._handles[i];
-            debugHandles[i] = {};
-            for (j in handle) {
-                if (Buffer.isBuffer(handle[j])) {
-                    debugHandles[i][j] = handle[j] ? "Buffer('" + handle[j].toString("hex") + "', 'hex')" : null;
-                }
-                else if (j !== "attribute") {
-                    debugHandles[i][j] = handle[j];
-                }
-            }
-        }
-        debug("handles = " + JSON.stringify(debugHandles, null, 2));
+        // const debugHandles = [];
+        // for (let i = 0; i < this._handles.length; i++) {
+        //   const anHandle = this._handles[i];
+        //   debugHandles[i] = {};
+        //   for (let key in anHandle) {
+        //     if (Buffer.isBuffer(anHandle[key])) {
+        //       debugHandles[i][key] = anHandle[key] ? "Buffer('" + anHandle[key].toString("hex") + "', 'hex')" : null;
+        //     } else if (key !== "attribute") {
+        //       debugHandles[i][key] = anHandle[key];
+        //     }
+        //   }
+        // }
+        // debug("handles = " + JSON.stringify(debugHandles, null, 2));
     }
     setAclStream(aclStream) {
         this._mtu = 23;
         this._preparedWriteRequest = null;
+        if (this._aclStream) {
+            this._aclStream.end();
+            this._aclStream.removeListener("data", this.onAclStreamDataBinded);
+            this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+        }
         this._aclStream = aclStream;
-        this._aclStream.on("data", this.onAclStreamDataBinded);
-        this._aclStream.on("end", this.onAclStreamEndBinded);
+        if (this._aclStream) {
+            this._aclStream.on("data", this.onAclStreamDataBinded);
+            this._aclStream.on("end", this.onAclStreamEndBinded);
+        }
     }
     onAclStreamData(cid, data) {
         if (cid !== ATT.CID) {
@@ -12136,12 +12241,12 @@ class Gatt extends eventemitter3_1.default {
                 if (handle.type === "characteristic" && handle.uuid === uuid) {
                     handleAttribute = handle.attribute;
                     valueHandle = handle.valueHandle;
-                    secure = handle.secure & 0x02;
+                    secure = (handle.secure & 0x02) !== 0;
                     break;
                 }
                 else if (handle.type === "descriptor" && handle.uuid === uuid) {
                     valueHandle = i;
-                    secure = handle.secure & 0x02;
+                    secure = (handle.secure & 0x02) !== 0;
                     break;
                 }
             }
@@ -12543,21 +12648,6 @@ class Mgmt {
             this._ltkInfos[i].copy(op, 2 + i * LTK_INFO_SIZE);
         }
         this.write(MGMT_OP_LOAD_LONG_TERM_KEYS, 0, op);
-    }
-    rite(opcode, index, data) {
-        let length = 0;
-        if (data) {
-            length = data.length;
-        }
-        const pkt = Buffer.alloc(6 + length);
-        pkt.writeUInt16LE(opcode, 0);
-        pkt.writeUInt16LE(index, 2);
-        pkt.writeUInt16LE(length, 4);
-        if (length) {
-            data.copy(pkt, 6);
-        }
-        debug("writing -> " + pkt.toString("hex"));
-        this._hci._socket.write(pkt);
     }
 }
 exports.default = Mgmt;
@@ -13452,6 +13542,13 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored\",\"peripherals\":{
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/hw/encored_lte.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"18\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{},\"extraInterface\":{}}");
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
@@ -13498,6 +13595,13 @@ class HW {
         }
         else if (hw === "encored") {
             return __webpack_require__("./dist/src/obniz/libs/hw/encored.json");
+        }
+        else if (hw === "encored_lte") {
+            return __webpack_require__("./dist/src/obniz/libs/hw/encored_lte.json");
+        }
+        else {
+            // default
+            return __webpack_require__("./dist/src/obniz/libs/hw/esp32w.json");
         }
         return undefined;
     }
@@ -21728,6 +21832,8 @@ var map = {
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
 	"./Ble/MINEW_S1/index.js": "./dist/src/parts/Ble/MINEW_S1/index.js",
+	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
+	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
 	"./Ble/PLS_01BT/index.js": "./dist/src/parts/Ble/PLS_01BT/index.js",
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
@@ -22292,7 +22398,11 @@ exports.default = OMRON_2JCIE;
  * @packageDocumentation
  * @module Parts.ENERTALK_TOUCH
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/batteryService.js"));
 class ENERTALK_TOUCH {
     constructor(peripheral) {
         this.keys = [];
@@ -22342,6 +22452,10 @@ class ENERTALK_TOUCH {
         this._humidityChar = this._service.getCharacteristic(this._uuids.humidityChar);
         this._illuminanceChar = this._service.getCharacteristic(this._uuids.illuminanceChar);
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
+        const service180F = this._peripheral.getService("180F");
+        if (service180F) {
+            this.batteryService = new batteryService_1.default(service180F);
+        }
     }
     async disconnectWait() {
         var _a;
@@ -23253,6 +23367,349 @@ exports.default = MINEW_S1;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/MT_500BT/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
+class MT_500BT {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this._uuids = {
+            MSDPService: "1ef19620a8034af0ae954b4b0aa26f29",
+            rxChar: "1ef19621a8034af0ae954b4b0aa26f29",
+            txChar: "1ef19622a8034af0ae954b4b0aa26f29",
+        };
+        if (peripheral && !MT_500BT.isDevice(peripheral)) {
+            throw new Error("peripheral is not MT_500BT");
+        }
+        this._peripheral = peripheral;
+        this._emitter = new eventemitter3_1.default();
+    }
+    static info() {
+        return {
+            name: "MT_500BT",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName && peripheral.localName.startsWith("MT-500")) {
+            return true;
+        }
+        return false;
+    }
+    static getIFUID(peripheral) {
+        if (!this.isDevice(peripheral) || peripheral.localName.length < 12) {
+            return null;
+        }
+        const hexStr = peripheral.localName.slice(7, 11);
+        return Buffer.from(hexStr, "hex").readUInt16BE(0);
+    }
+    static getCNKey(peripheral) {
+        const ifuid = this.getIFUID(peripheral);
+        if (ifuid === null) {
+            return null;
+        }
+        const cnkey = (((ifuid ^ 0xb452) << 3) & 0xffff) | ((ifuid ^ 0xb452) >> (16 - 3));
+        return cnkey;
+    }
+    // @ts-ignore
+    wired(obniz) { }
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error("MT-500BT is not find.");
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            // console.log("disconnect");
+            if (this.ondisconnect) {
+                this.ondisconnect(reason);
+            }
+        };
+        // console.log("connecting");
+        await this._peripheral.connectWait();
+        try {
+            // console.log("connected");
+            this.MSDPService = this._peripheral.getService(this._uuids.MSDPService);
+            this.MSDPRxChar = this.MSDPService.getCharacteristic(this._uuids.rxChar);
+            this.MSDPTxChar = this.MSDPService.getCharacteristic(this._uuids.txChar);
+            // console.log("char set");
+            await this.MSDPRxChar.registerNotifyWait((data) => {
+                // console.log("recv array", data);
+                if (data.length !== 20) {
+                    throw new Error("unknown format received");
+                }
+                if (data[0] !== 0xe7) {
+                    throw new Error("unknown header");
+                }
+                const calcedChecksum = this._checksum(data.slice(0, 19));
+                if (data[19] !== calcedChecksum) {
+                    throw new Error("checksum failed");
+                }
+                const replyBuf = Buffer.from(data);
+                this._emitter.emit("" + replyBuf.readUInt8(1), replyBuf);
+            });
+            // console.log("registerNotifyWait");
+            await this.startCommunicationCommandWait();
+        }
+        catch (e) {
+            await this.disconnectWait();
+        }
+    }
+    async startCommunicationCommandWait() {
+        const cnkey = "" + MT_500BT.getCNKey(this._peripheral); // to string
+        const CNKeyBuf = Buffer.from(cnkey, "utf8");
+        const startCommand = this._createCommand(0xfd, Array.from(CNKeyBuf));
+        // console.log("sendDataReplyWait");
+        const res = await this._sendDataReplyWait(startCommand);
+        if (res.readUInt8(2) !== 0) {
+            throw new Error("StartCommunicationError " + res.readUInt8(2));
+        }
+    }
+    async getDeviceInformationWait() {
+        const res1 = await this._sendDataReplyWait(this._createCommand(0x00, [0x01]));
+        const res2 = await this._sendDataReplyWait(this._createCommand(0x00, [0x02]));
+        const deviceType = {
+            2: "Pulse rate meter",
+            3: "SpO2(BO)",
+            4: "Thermometer",
+            5: "SpO2(MP)",
+            6: "Blood pressure meter",
+        };
+        return {
+            cls: deviceType[res1.readUInt8(3)],
+            dvnm: util_1.default.dataArray2string(Array.from(res1.slice(4, -1))),
+            swif: util_1.default.dataArray2string(Array.from(res2.slice(3, -1))),
+        };
+    }
+    // device always throw error
+    // public async getDatetimeWait(): Promise<any> {
+    //   const res = await this._sendDataReplyWait(this._createCommand(0x01, [0x00]));
+    //   const year = res.readUInt8(3) !== 0xff ? res.readUInt8(3) : undefined;
+    //   const month = res.readUInt8(4) !== 0xff ? res.readUInt8(4) : undefined;
+    //   const day = res.readUInt8(5) !== 0xff ? res.readUInt8(5) : undefined;
+    //   const hour = res.readUInt8(6) !== 0xff ? res.readUInt8(6) : undefined;
+    //   const minute = res.readUInt8(7) !== 0xff ? res.readUInt8(7) : undefined;
+    //   const second = res.readUInt8(8) !== 0xff ? res.readUInt8(8) : undefined;
+    //   return {
+    //     year,
+    //     month,
+    //     day,
+    //     hour,
+    //     minute,
+    //     second,
+    //   };
+    // }
+    //
+    // device always throw error
+    // public async setDatetimeWait(timeOffsetMinute: number): Promise<any> {
+    //   const date = new Date();
+    //   date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
+    //
+    //   const res = await this._sendDataReplyWait(
+    //     this._createCommand(0x01, [
+    //       0x01, // write
+    //       date.getUTCFullYear() - 2000,
+    //       date.getUTCMonth() + 1,
+    //       date.getUTCDate(),
+    //       date.getUTCHours(),
+    //       date.getUTCMinutes(),
+    //       date.getUTCSeconds(),
+    //     ]),
+    //   );
+    //   if (res.readUInt8(3) !== 0) {
+    //     throw new Error("setDatetimeWait error " + res.readUInt8(3));
+    //   }
+    // }
+    async getTemperatureWait() {
+        const res = await this._sendDataReplyWait(this._createCommand(0x80));
+        const year = res.readUInt8(3) !== 0xff ? res.readUInt8(3) + 2000 : undefined;
+        const month = res.readUInt8(4) !== 0xff ? res.readUInt8(4) : undefined;
+        const day = res.readUInt8(5) !== 0xff ? res.readUInt8(5) : undefined;
+        const hour = res.readUInt8(6) !== 0xff ? res.readUInt8(6) : undefined;
+        const minute = res.readUInt8(7) !== 0xff ? res.readUInt8(7) : undefined;
+        const second = res.readUInt8(8) !== 0xff ? res.readUInt8(8) : undefined;
+        const bodyTemperature = res.readUInt16LE(9) !== 0xff7f ? res.readUInt16LE(9) / 10 : undefined;
+        const materialTemperature = res.readUInt16LE(11) !== 0xff7f ? res.readUInt16LE(11) / 10 : undefined;
+        const airTemperature = res.readUInt16LE(13) !== 0xff7f ? res.readUInt16LE(13) / 10 : undefined;
+        return {
+            timestamp: {
+                year,
+                month,
+                day,
+                hour,
+                minute,
+                second,
+            },
+            temperature: {
+                body: bodyTemperature,
+                material: materialTemperature,
+                air: airTemperature,
+            },
+        };
+    }
+    async disconnectWait() {
+        if (!this._peripheral) {
+            throw new Error("MT-500BT is not find.");
+        }
+        if (this._peripheral.connected) {
+            await this._peripheral.disconnectWait();
+        }
+    }
+    _createCommand(cid, data = []) {
+        if (data.length >= 18) {
+            throw new Error("too many data length");
+        }
+        const command = [0xe7, cid, ...data];
+        for (let i = 0; i < 19; i++) {
+            if (command[i] === undefined) {
+                command[i] = 0xff; // N/A
+            }
+        }
+        command.push(this._checksum(command));
+        return Buffer.from(command);
+    }
+    _checksum(data) {
+        if (data.length !== 19) {
+            throw Error("unknown format");
+        }
+        const sum = data.reduce((a, b) => a + b, 0);
+        const inv = (0xa5 + sum) & 0xff;
+        const result = (inv ^ 0xff) + 1;
+        return result;
+    }
+    _sendDataReplyWait(sendData) {
+        return new Promise((resolve, reject) => {
+            if (!this.MSDPRxChar) {
+                reject(new Error("MSDPRxChar is not found"));
+                return;
+            }
+            if (!this.MSDPTxChar) {
+                reject(new Error("MSDPTxChar is not found"));
+                return;
+            }
+            // console.log("write array", Array.from(sendData));
+            this._emitter.once("" + sendData.readUInt8(1), resolve);
+            this.MSDPTxChar.writeWait(Array.from(sendData));
+        });
+    }
+}
+exports.default = MT_500BT;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MiniBreeze/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.MiniBreeze
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class MiniBreeze {
+    constructor() {
+        this._peripheral = null;
+        // non-wired device
+        this.keys = [];
+        this.requiredKeys = [];
+        this.params = {};
+    }
+    static info() {
+        return { name: "MiniBreeze" };
+    }
+    static gasType() {
+        return {
+            0: "none",
+            1: "HCHO",
+            2: "CO",
+            3: "CO2",
+            5: "Rn",
+            6: "PM1.0",
+            7: "PM2.5",
+            8: "PM10",
+        };
+    }
+    static status() {
+        return {
+            0: "BatteryEmpty",
+            1: "BatteryLow",
+            2: "BatteryNormal",
+            3: "BatteryCharging",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.adv_data.length !== 31 || !this._hasPrefix(peripheral)) {
+            return false;
+        }
+        return true;
+    }
+    static getData(peripheral) {
+        if (!this._hasPrefix(peripheral)) {
+            return null;
+        }
+        if (!peripheral.adv_data || peripheral.adv_data.length !== 31 || !peripheral.localName) {
+            return null;
+        }
+        const buf = Buffer.from(peripheral.adv_data.splice(7));
+        const gasType = MiniBreeze.gasType()[buf.readUInt8(0)] || "unknown";
+        const sensVal = buf.readUInt16LE(1);
+        const temperature = buf.readUInt8(3);
+        const humidity = buf.readUInt8(4);
+        const version = buf.readUInt8(5) + "." + buf.readUInt8(6) + "." + buf.readUInt8(7);
+        const status = MiniBreeze.status()[buf.readUInt8(9)] || "Invalid";
+        return {
+            gasType,
+            sensVal,
+            temperature,
+            humidity,
+            version,
+            status,
+            devName: peripheral.localName,
+        };
+    }
+    static _hasPrefix(peripheral) {
+        if (!peripheral.adv_data || peripheral.adv_data.length < 10) {
+            return false;
+        }
+        const target = [
+            // flag
+            0x02,
+            0x01,
+            0x06,
+            // ManufactureData
+            0x0d,
+            0xff,
+            0xff,
+            0x02,
+        ];
+        for (const index in target) {
+            if (target[index] >= 0 && target[index] !== peripheral.adv_data[index]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    wired(obniz) { }
+}
+exports.default = MiniBreeze;
+
+//# sourceMappingURL=index.js.map
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/PLS_01BT/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23888,12 +24345,15 @@ class BleBatteryService {
     constructor(service) {
         this._service = service;
     }
-    async getBatteryLevel() {
+    async getBatteryLevelWait() {
         const char = this._service.getCharacteristic("2A19");
         if (!char) {
             return null;
         }
         return await char.readNumberWait();
+    }
+    getBatteryLevel() {
+        return this.getBatteryLevelWait();
     }
 }
 exports.default = BleBatteryService;
@@ -23917,7 +24377,7 @@ class BleGenericAccess {
     constructor(service) {
         this._service = service;
     }
-    async getDeviceName() {
+    async getDeviceNameWait() {
         const char = this._service.getCharacteristic("2A00");
         if (!char) {
             return null;
@@ -25161,7 +25621,7 @@ class Linking {
         // var target = {
         //   uuids: this.PRIMARY_SERVICE_UUID_LIST
         // };
-        this.obniz.ble.scan.start();
+        this.obniz.ble.scan.startWait();
         this._discover_status = true;
     }
     stopScan() {
@@ -25171,7 +25631,7 @@ class Linking {
                 clearTimeout(this._discover_timer);
                 this._discover_timer = null;
             }
-            this.obniz.ble.scan.end();
+            this.obniz.ble.scan.endWait();
         }
     }
     startScan(p) {
@@ -25503,7 +25963,7 @@ class LinkingDevice {
         this.advertisement = advertising_1.default.parse(peripheral);
         this._peripheral = peripheral;
     }
-    async connect() {
+    async connect(setting) {
         if (this.connected === true) {
             throw new Error("The device has been already connected.");
         }
@@ -25520,7 +25980,7 @@ class LinkingDevice {
                     this.ondisconnect({ wasClean: false });
                 }
             };
-            await peripheral.connectWait();
+            await peripheral.connectWait(setting);
             onprogress({ step: 2, desc: "CONNECTION_ESTABLISHED" });
             onprogress({ step: 3, desc: "GETTING_CHARACTERISTICS" });
             await this._getServicesAndChars();
@@ -25605,6 +26065,7 @@ class LinkingDevice {
         }
         catch (e) {
             onprogress({ step: 0, desc: "FAILED" });
+            await this._clean();
             throw e;
         }
     }
@@ -25721,6 +26182,7 @@ class LinkingDevice {
         });
     }
     _receivedPacket(buf) {
+        // console.log("receive raw packet ", buf);
         const new_buf = Buffer.alloc(buf.length - 1);
         buf.copy(new_buf, 0, 1, buf.length);
         this._div_packet_queue.push(new_buf);
@@ -25738,6 +26200,7 @@ class LinkingDevice {
     }
     _receivedIndicate(buf) {
         const parsed = this._LinkingService.parseResponse(buf);
+        // console.log("linking buf parse", buf, JSON.stringify(parsed, null, 2));
         if (!parsed) {
             return;
         }
@@ -25908,13 +26371,16 @@ class LinkingDevice {
         }
     }
     async disconnect() {
-        if (this.connected === false) {
-            await this._clean();
-            return;
+        if (this._peripheral) {
+            if (this._peripheral.connected) {
+                await this._peripheral.disconnectWait(); // ondisconnect will call
+            }
+            else {
+                await this._clean();
+            }
         }
-        await this._peripheral.disconnectWait();
-        if (this._isFunction(this.ondisconnect)) {
-            this.ondisconnect({ wasClean: true });
+        else {
+            await this._clean();
         }
     }
     async _clean() {
@@ -25932,6 +26398,9 @@ class LinkingDevice {
         this.char_indicate = null;
         this._div_packet_queue = [];
         this._onresponse = null;
+        if (p.connected) {
+            await p.disconnectWait();
+        }
     }
     write(message_name, params) {
         return new Promise(async (resolve, reject) => {
@@ -25958,6 +26427,7 @@ class LinkingDevice {
                 }
             };
             try {
+                // console.log("linking write ", buf, message_name, JSON.stringify(params, null, 2));
                 await this.char_write.writeWait(buf, true);
             }
             catch (e) {
@@ -26080,48 +26550,29 @@ class LinkingDevice {
             this.services.illuminance = this._createSensorServiceObject(0x0a);
         }
     }
-    _deviceNameGet() {
-        const promise = new Promise((resolve, reject) => {
-            const char = this._generic_access_service.device_name.char;
-            char.read((error, data) => {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    resolve({
-                        deviceName: data.toString("utf8"),
-                    });
-                }
-            });
-        });
-        return promise;
+    async _deviceNameGet() {
+        const char = this._generic_access_service.device_name.char;
+        const data = await char.readWait();
+        return {
+            deviceName: Buffer.from(data).toString("utf8"),
+        };
     }
-    _deviceNameSet(name) {
-        const promise = new Promise((resolve, reject) => {
-            if (!name) {
-                reject(new Error("Device name is required."));
-                return;
-            }
-            else if (typeof name !== "string") {
-                reject(new Error("Device name must be a string."));
-                return;
-            }
-            else if (name.length > 32) {
-                reject(new Error("Device name is too long. The length must be in the range 1 to 32."));
-                return;
-            }
-            const buf = Buffer.from(name, "utf8");
-            const char = this._generic_access_service.device_name.char;
-            char.write(buf, false, (error) => {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    resolve();
-                }
-            });
-        });
-        return promise;
+    async _deviceNameSet(name) {
+        if (!name) {
+            throw new Error("Device name is required.");
+            return;
+        }
+        else if (typeof name !== "string") {
+            throw new Error("Device name must be a string.");
+            return;
+        }
+        else if (name.length > 32) {
+            throw new Error("Device name is too long. The length must be in the range 1 to 32.");
+            return;
+        }
+        const buf = Buffer.from(name, "utf8");
+        const char = this._generic_access_service.device_name.char;
+        await char.writeWait(buf, false);
     }
     _ledTurnOn(color, pattern, duration) {
         let color_number = 1;
@@ -27194,7 +27645,7 @@ class LinkingServiceNotification {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -27855,7 +28306,7 @@ class LinkingServiceProperty {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -28196,7 +28647,7 @@ class LinkingServiceSensor {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -28738,7 +29189,7 @@ class LinkingServiceSetting {
         const buf_list = [];
         // packet header
         const header_buf = Buffer.alloc(1);
-        header_buf.writeUInt8(parseInt("00000011", 2));
+        header_buf.writeUInt8(parseInt("00000001", 2));
         buf_list.push(header_buf);
         // Service ID
         const sid_buf = Buffer.alloc(1);
@@ -37679,8 +38130,8 @@ exports.default = Grove_Button;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_Buzzer {
     constructor() {
-        this.keys = ["signal", "gnd", "vcc"];
-        this.requiredKeys = ["signal"];
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -37688,10 +38139,15 @@ class Grove_Buzzer {
         };
     }
     wired(obniz) {
-        this.obniz = obniz;
-        this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.pwm = obniz.getFreePwm();
-        this.pwm.start({ io: this.params.signal });
+        if (this.params.grove) {
+            this.pwm = this.params.grove.getPwm();
+        }
+        else {
+            this.obniz = obniz;
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.pwm = obniz.getFreePwm();
+            this.pwm.start({ io: this.params.signal });
+        }
     }
     play(freq) {
         if (typeof freq !== "number") {
@@ -37833,8 +38289,8 @@ class Grove_EarHeartRate {
         };
         this.interval = 5;
         this.duration = 2.5 * 1000;
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["vcc", "gnd"];
+        this.keys = ["signal", "gnd", "vcc", "grove"];
+        this.requiredKeys = [];
     }
     static info() {
         return {
@@ -37843,11 +38299,18 @@ class Grove_EarHeartRate {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+        if (this.params.grove) {
+            this.signal = this.params.grove.pin1;
+            this.params.grove.getDigital("5v");
+        }
+        else {
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.signal = this.params.signal;
+        }
     }
     start(callback) {
         this.obniz.logicAnalyzer.start({
-            io: this.params.signal,
+            io: this.signal,
             interval: this.interval,
             duration: this.duration,
         });
@@ -38336,8 +38799,8 @@ exports.default = Grove_LightSensor;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_MP3 {
     constructor() {
-        this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx"];
-        this.requiredKeys = ["mp3_rx", "mp3_tx"];
+        this.keys = ["vcc", "gnd", "mp3_rx", "mp3_tx", "grove"];
+        this.requiredKeys = [];
         this.ioKeys = this.keys;
         this.displayName = "MP3";
         this.displayIoNames = { mp3_rx: "MP3Rx", mp3_tx: "MP3Tx" };
@@ -38349,17 +38812,22 @@ class Grove_MP3 {
     }
     wired(obniz) {
         this.obniz = obniz;
-        obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-        this.my_tx = this.params.mp3_rx;
-        this.my_rx = this.params.mp3_tx;
-        this.uart = this.obniz.getFreeUart();
+        if (this.params.grove) {
+            this.uart = this.params.grove.getUart(9600, "5v");
+        }
+        else {
+            obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.my_tx = this.params.mp3_rx;
+            this.my_rx = this.params.mp3_tx;
+            this.uart = this.obniz.getFreeUart();
+            this.uart.start({
+                tx: this.my_tx,
+                rx: this.my_rx,
+                baud: 9600,
+            });
+        }
     }
     async initWait(strage) {
-        this.uart.start({
-            tx: this.my_tx,
-            rx: this.my_rx,
-            baud: 9600,
-        });
         await this.obniz.wait(100);
         this.uartSend(0x0c, 0);
         await this.obniz.wait(500);
@@ -44694,6 +45162,9 @@ class AM2320 {
         return (await this.getAllWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllWait()).humidity;
     }
 }
@@ -45015,6 +45486,9 @@ class BME280 {
         return (await this.getAllWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllWait()).humidity;
     }
     async getPressureWait() {
@@ -45145,6 +45619,9 @@ class DHT12 extends i2cParts_1.default {
         return (await this.getAllDataWait()).temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         return (await this.getAllDataWait()).humidity;
     }
 }
@@ -45245,6 +45722,9 @@ class S5851A {
         return temperature;
     }
     async getHumdWait() {
+        return await this.getHumidWait();
+    }
+    async getHumidWait() {
         this.i2c.write(this.address, [0x20, 0x24]);
         this.i2c.write(this.address, [0xe0, 0x00]);
         const ret = await this.i2c.readWait(this.address, 4);

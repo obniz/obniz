@@ -40,3 +40,65 @@ device.onconnectprogress = obj => {
 await device.connect();
 await device.services.led.turnOn("Red", "Pattern1");
 ```
+
+
+
+## pairing
+
+Pairing with the device is automatic when needed.
+If you want to save your pairing key, use onPairedCallback
+
+
+```javascript
+// Javascript Example
+const linking = obniz.wired("Linking");
+await linking.init();
+const device_list = await linking.discover({
+  duration: 5000,
+  nameFilter: "Tomoru"
+});
+if (device_list.length == 0) {
+  console.log("not found");
+  return;
+}
+device = device_list[0];
+device.onconnectprogress = obj => {
+  console.log(obj);
+};
+await device.connect({
+  pairingOption : {
+    onPairedCallback : (keys) =>{
+       //store key 
+       console.log(keys);
+    }
+  }
+});
+```
+
+
+If you want to use a pairing key after the second connection, please specify a key when you connect.
+
+```javascript
+// Javascript Example
+const keys = "xxxxxx"; //stored keys
+
+const linking = obniz.wired("Linking");
+await linking.init();
+const device_list = await linking.discover({
+  duration: 5000,
+  nameFilter: "Tomoru"
+});
+if (device_list.length == 0) {
+  console.log("not found");
+  return;
+}
+device = device_list[0];
+device.onconnectprogress = obj => {
+  console.log(obj);
+};
+await device.connect({
+  pairingOption : {
+    keys : keys  
+  }
+});
+```

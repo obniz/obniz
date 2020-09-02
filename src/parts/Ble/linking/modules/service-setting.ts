@@ -337,7 +337,7 @@ export default class LinkingServiceSetting {
     const buf_list = [];
     // packet header
     const header_buf: any = Buffer.alloc(1);
-    header_buf.writeUInt8(parseInt("00000011", 2));
+    header_buf.writeUInt8(parseInt("00000001", 2));
     buf_list.push(header_buf);
     // Service ID
     const sid_buf: any = Buffer.alloc(1);

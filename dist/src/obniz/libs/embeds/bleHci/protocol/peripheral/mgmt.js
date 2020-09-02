@@ -52,21 +52,6 @@ class Mgmt {
         }
         this.write(MGMT_OP_LOAD_LONG_TERM_KEYS, 0, op);
     }
-    rite(opcode, index, data) {
-        let length = 0;
-        if (data) {
-            length = data.length;
-        }
-        const pkt = Buffer.alloc(6 + length);
-        pkt.writeUInt16LE(opcode, 0);
-        pkt.writeUInt16LE(index, 2);
-        pkt.writeUInt16LE(length, 4);
-        if (length) {
-            data.copy(pkt, 6);
-        }
-        debug("writing -> " + pkt.toString("hex"));
-        this._hci._socket.write(pkt);
-    }
 }
 exports.default = Mgmt;
 
