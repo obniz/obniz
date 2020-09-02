@@ -1,3 +1,8 @@
+/**
+ * @packageDocumentation
+ * @module Parts.MT_500BT
+ */
+
 import EventEmitter from "eventemitter3";
 import Obniz from "../../../obniz";
 import BleRemoteCharacteristic from "../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic";

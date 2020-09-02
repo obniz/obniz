@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>BleGenericAccess | obniz</title>
+	<title>MiniBreeze_InfoData | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,16 +59,13 @@
 					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="../modules/parts.abstract.html">abstract</a>
+					<a href="../modules/parts.minibreeze.html">MiniBreeze</a>
 				</li>
 				<li>
-					<a href="../modules/parts.abstract.services.html">services</a>
-				</li>
-				<li>
-					<a href="parts.abstract.services.blegenericaccess.html">BleGenericAccess</a>
+					<a href="parts.minibreeze.minibreeze_infodata.html">MiniBreeze_InfoData</a>
 				</li>
 			</ul>
-			<h1>Class BleGenericAccess</h1>
+			<h1>Interface MiniBreeze_InfoData</h1>
 		</div>
 	</div>
 </header>
@@ -79,7 +76,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">BleGenericAccess</span>
+						<span class="target">MiniBreeze_InfoData</span>
 					</li>
 				</ul>
 			</section>
@@ -88,64 +85,91 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Constructors</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="parts.abstract.services.blegenericaccess.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Methods</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="parts.abstract.services.blegenericaccess.html#getdevicenamewait" class="tsd-kind-icon">get<wbr>Device<wbr>Name<wbr>Wait</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minibreeze.minibreeze_infodata.html#devname" class="tsd-kind-icon">dev<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minibreeze.minibreeze_infodata.html#gastype" class="tsd-kind-icon">gas<wbr>Type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minibreeze.minibreeze_infodata.html#humidity" class="tsd-kind-icon">humidity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minibreeze.minibreeze_infodata.html#sensval" class="tsd-kind-icon">sens<wbr>Val</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minibreeze.minibreeze_infodata.html#status" class="tsd-kind-icon">status</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minibreeze.minibreeze_infodata.html#temperature" class="tsd-kind-icon">temperature</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.minibreeze.minibreeze_infodata.html#version" class="tsd-kind-icon">version</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Ble<wbr>Generic<wbr>Access<span class="tsd-signature-symbol">(</span>service<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteservice.html" class="tsd-signature-type">BleRemoteService</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="parts.abstract.services.blegenericaccess.html" class="tsd-signature-type">BleGenericAccess</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in src/parts/Ble/abstract/services/genericAccess.ts:9</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>service: <a href="obnizcore.components.ble.hci.bleremoteservice.html" class="tsd-signature-type">BleRemoteService</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="parts.abstract.services.blegenericaccess.html" class="tsd-signature-type">BleGenericAccess</a></h4>
-						</li>
-					</ul>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="devname" class="tsd-anchor"></a>
+					<h3>dev<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">dev<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:18</li>
+						</ul>
+					</aside>
 				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getdevicenamewait" class="tsd-anchor"></a>
-					<h3>get<wbr>Device<wbr>Name<wbr>Wait</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Device<wbr>Name<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in src/parts/Ble/abstract/services/genericAccess.ts:15</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="gastype" class="tsd-anchor"></a>
+					<h3>gas<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">gas<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"none"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"HCHO"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"CO"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"CO2"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"Rn"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"PM1.0"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"PM2.5"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"PM10"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unknown"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:12</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="humidity" class="tsd-anchor"></a>
+					<h3>humidity</h3>
+					<div class="tsd-signature tsd-kind-icon">humidity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:15</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="sensval" class="tsd-anchor"></a>
+					<h3>sens<wbr>Val</h3>
+					<div class="tsd-signature tsd-kind-icon">sens<wbr>Val<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:13</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="status" class="tsd-anchor"></a>
+					<h3>status</h3>
+					<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"BatteryEmpty"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BatteryLow"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BatteryNormal"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"BatteryCharging"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"Invalid"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:17</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="temperature" class="tsd-anchor"></a>
+					<h3>temperature</h3>
+					<div class="tsd-signature tsd-kind-icon">temperature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:14</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="version" class="tsd-anchor"></a>
+					<h3>version</h3>
+					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/MiniBreeze/index.ts:16</li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -160,18 +184,36 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="parts.abstract.services.blebatteryservice.html" class="tsd-kind-icon">Ble<wbr>Battery<wbr>Service</a>
+						<a href="../classes/parts.minibreeze.minibreeze.html" class="tsd-kind-icon">Mini<wbr>Breeze</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.minibreeze.minibreezeoptions.html" class="tsd-kind-icon">Mini<wbr>Breeze<wbr>Options</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="parts.abstract.services.blegenericaccess.html" class="tsd-kind-icon">Ble<wbr>Generic<wbr>Access</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.minibreeze.minibreeze_infodata.html" class="tsd-kind-icon">Mini<wbr>Breeze_<wbr><wbr>Info<wbr>Data</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="parts.abstract.services.blegenericaccess.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.minibreeze.minibreeze_infodata.html#devname" class="tsd-kind-icon">dev<wbr>Name</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="parts.abstract.services.blegenericaccess.html#getdevicenamewait" class="tsd-kind-icon">get<wbr>Device<wbr>Name<wbr>Wait</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.minibreeze.minibreeze_infodata.html#gastype" class="tsd-kind-icon">gas<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.minibreeze.minibreeze_infodata.html#humidity" class="tsd-kind-icon">humidity</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.minibreeze.minibreeze_infodata.html#sensval" class="tsd-kind-icon">sens<wbr>Val</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.minibreeze.minibreeze_infodata.html#status" class="tsd-kind-icon">status</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.minibreeze.minibreeze_infodata.html#temperature" class="tsd-kind-icon">temperature</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.minibreeze.minibreeze_infodata.html#version" class="tsd-kind-icon">version</a>
 							</li>
 						</ul>
 					</li>
