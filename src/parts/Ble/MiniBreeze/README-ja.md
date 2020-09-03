@@ -1,6 +1,7 @@
 # MiniBreeze
 SENKO社製の温湿度・ガスセンサです。
 
+![](./image.jpg)
 
 
 ## isDevice(peripheral)

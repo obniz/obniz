@@ -1,26 +1,19 @@
-# MINEW_S1
-Temperature / Humidity beacon made byShenzhen Minew Technologies Co.
-It is necessary to set the inkjet output in advance using the dedicated application.
-
-It only supports HT sensor / information　SLOT.
+# MiniBreeze
+This is a temperature, humidity and gas sensor made by SENKO.
 
 
 ![](./image.jpg)
 
-
 ## isDevice(peripheral)
 
-Check whether it is MINEW_S1 based on the advertisement information
-
-Return true if advertisement is HT sensor / information　SLOT.
-iBeacon / UID / URL / TLM SLOT are not supported, and return false.
+Based on the advertisement information received by the BLE, it is determined whether it is MiniBreeze or not.
 
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
+const MiniBreeze = Obniz.getPartsClass("MiniBreeze");
 obniz.ble.scan.onfind = async (peripheral) => {
-  if (MINEW_S1.isDevice(peripheral)) {
+  if (MiniBreeze.isDevice(peripheral)) {
     console.log("device find");
   }
 };
@@ -29,18 +22,18 @@ await obniz.ble.scan.startWait();
 ```
 
 
-## getHTData()
+## getData()
 
-Get temperature and humidity data based on the advertisement information.
-Returns null for different SLOT advertisement information.
+Acquires temperature, humidity and gas data based on the advertisement information received by the BLE.
+Returns null in the case of advertisement information of a different SLOT.
 
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
-const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
+const MiniBreeze = Obniz.getPartsClass("MiniBreeze");
 obniz.ble.scan.onfind = (peripheral) => {
-  if (MINEW_S1.isDevice(peripheral)) {
-    const data = MINEW_S1.getHTData(peripheral);
+  if (MiniBreeze.isDevice(peripheral)) {
+    const data = MiniBreeze.getData(peripheral);
     console.log(data); 
   }
 };
@@ -48,48 +41,17 @@ await obniz.ble.scan.startWait();
 
 ```
 
-Return data format is below.
+The format of the return value is as follows
 
 ```javascript
 {
-  frameType: number;
-  versionNumber: number;
-  batteryLevel: number;
+  gasType: "none" | "HCHO" | "CO" | "CO2" | "Rn" | "PM1.0" | "PM2.5" | "PM10" | "unknown";
+  sensVal: number;
   temperature: number;
   humidity: number;
-  macAddress: string;
+  version: string;
+  status: "BatteryEmpty" | "BatteryLow" | "BatteryNormal" | "BatteryCharging" | "Invalid";
+  devName: string;
 }
 ```
 
-
-
-## getInfoData()
-
-Get device data based on the advertisement information.
-Returns null for different SLOT advertisement information.
-
-```javascript
-// Javascript Example
-await obniz.ble.initWait();
-const MINEW_S1 = Obniz.getPartsClass("MINEW_S1");
-obniz.ble.scan.onfind = (peripheral) => {
-  if (MINEW_S1.isDevice(peripheral)) {
-    const data = MINEW_S1.getInfoData(peripheral);
-    console.log(data); 
-  }
-};
-await obniz.ble.scan.startWait();
-
-```
-
-Return data format is below.
-
-```javascript
-{
-  frameType: number;
-  versionNumber: number;
-  batteryLevel: number;
-  macAddress: string;
-  name: string;
-}
-```
