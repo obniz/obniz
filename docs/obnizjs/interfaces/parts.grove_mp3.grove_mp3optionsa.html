@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Grove_EarHeartRateOptions | obniz</title>
+	<title>Grove_MP3OptionsA | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,13 +59,13 @@
 					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="../modules/parts.grove_earheartrate.html">Grove_EarHeartRate</a>
+					<a href="../modules/parts.grove_mp3.html">Grove_MP3</a>
 				</li>
 				<li>
-					<a href="parts.grove_earheartrate.grove_earheartrateoptions.html">Grove_EarHeartRateOptions</a>
+					<a href="parts.grove_mp3.grove_mp3optionsa.html">Grove_MP3OptionsA</a>
 				</li>
 			</ul>
-			<h1>Interface Grove_EarHeartRateOptions</h1>
+			<h1>Interface Grove_MP3OptionsA</h1>
 		</div>
 	</div>
 </header>
@@ -76,7 +76,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Grove_EarHeartRateOptions</span>
+						<span class="target">Grove_MP3OptionsA</span>
 					</li>
 				</ul>
 			</section>
@@ -87,9 +87,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.grove_earheartrate.grove_earheartrateoptions.html#gnd" class="tsd-kind-icon">gnd</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.grove_earheartrate.grove_earheartrateoptions.html#signal" class="tsd-kind-icon">signal</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.grove_earheartrate.grove_earheartrateoptions.html#vcc" class="tsd-kind-icon">vcc</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.grove_mp3.grove_mp3optionsa.html#gnd" class="tsd-kind-icon">gnd</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.grove_mp3.grove_mp3optionsa.html#mp3_rx" class="tsd-kind-icon">mp3_<wbr>rx</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.grove_mp3.grove_mp3optionsa.html#mp3_tx" class="tsd-kind-icon">mp3_<wbr>tx</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.grove_mp3.grove_mp3optionsa.html#vcc" class="tsd-kind-icon">vcc</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,31 +100,41 @@
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="gnd" class="tsd-anchor"></a>
-					<h3>gnd</h3>
-					<div class="tsd-signature tsd-kind-icon">gnd<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> gnd</h3>
+					<div class="tsd-signature tsd-kind-icon">gnd<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Grove/Grove_EarHeartRate/index.ts:10</li>
+							<li>Defined in src/parts/Grove/Grove_MP3/index.ts:12</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="signal" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> signal</h3>
-					<div class="tsd-signature tsd-kind-icon">signal<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="mp3_rx" class="tsd-anchor"></a>
+					<h3>mp3_<wbr>rx</h3>
+					<div class="tsd-signature tsd-kind-icon">mp3_<wbr>rx<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Grove/Grove_EarHeartRate/index.ts:12</li>
+							<li>Defined in src/parts/Grove/Grove_MP3/index.ts:13</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="mp3_tx" class="tsd-anchor"></a>
+					<h3>mp3_<wbr>tx</h3>
+					<div class="tsd-signature tsd-kind-icon">mp3_<wbr>tx<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Grove/Grove_MP3/index.ts:14</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="vcc" class="tsd-anchor"></a>
-					<h3>vcc</h3>
-					<div class="tsd-signature tsd-kind-icon">vcc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> vcc</h3>
+					<div class="tsd-signature tsd-kind-icon">vcc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Grove/Grove_EarHeartRate/index.ts:11</li>
+							<li>Defined in src/parts/Grove/Grove_MP3/index.ts:11</li>
 						</ul>
 					</aside>
 				</section>
@@ -140,26 +151,35 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/parts.grove_earheartrate.grove_earheartrate.html" class="tsd-kind-icon">Grove_<wbr><wbr>Ear<wbr>Heart<wbr>Rate</a>
+						<a href="../classes/parts.grove_mp3.grove_mp3.html" class="tsd-kind-icon">Grove_<wbr>MP3</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="parts.grove_earheartrate.grove_earheartrateoptions.html" class="tsd-kind-icon">Grove_<wbr><wbr>Ear<wbr>Heart<wbr>Rate<wbr>Options</a>
+						<a href="parts.grove_mp3.grove_mp3optionsa.html" class="tsd-kind-icon">Grove_<wbr>MP3<wbr>OptionsA</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.grove_earheartrate.grove_earheartrateoptions.html#gnd" class="tsd-kind-icon">gnd</a>
+								<a href="parts.grove_mp3.grove_mp3optionsa.html#gnd" class="tsd-kind-icon">gnd</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.grove_earheartrate.grove_earheartrateoptions.html#signal" class="tsd-kind-icon">signal</a>
+								<a href="parts.grove_mp3.grove_mp3optionsa.html#mp3_rx" class="tsd-kind-icon">mp3_<wbr>rx</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="parts.grove_earheartrate.grove_earheartrateoptions.html#vcc" class="tsd-kind-icon">vcc</a>
+								<a href="parts.grove_mp3.grove_mp3optionsa.html#mp3_tx" class="tsd-kind-icon">mp3_<wbr>tx</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.grove_mp3.grove_mp3optionsa.html#vcc" class="tsd-kind-icon">vcc</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="parts.grove_mp3.grove_mp3optionsb.html" class="tsd-kind-icon">Grove_<wbr>MP3<wbr>OptionsB</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/parts.grove_mp3.html#grove_mp3options" class="tsd-kind-icon">Grove_<wbr>MP3<wbr>Options</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
