@@ -25688,7 +25688,7 @@ exports.default = Linking;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
+/* WEBPACK VAR INJECTION */(function(Buffer) {/**
  * @packageDocumentation
  * @module Parts.Linking
  */
@@ -25711,7 +25711,7 @@ class LinkingAdvertising {
         if (ad.adv_data.length < 5) {
             return null;
         }
-        const manu = ad.adv_data.slice(5);
+        const manu = Buffer.from(ad.adv_data.slice(5));
         //    const manu = ad.manufacturerData;
         if (!manu || manu.length < 8) {
             return null;
@@ -25908,6 +25908,7 @@ exports.default = LinkingAdvertising;
 
 //# sourceMappingURL=advertising.js.map
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
