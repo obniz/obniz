@@ -25525,6 +25525,12 @@ class Linking {
             name: "Linking",
         };
     }
+    get LinkingAdvertising() {
+        return advertising_1.default;
+    }
+    get LinkingDevice() {
+        return device_1.default;
+    }
     wired(obniz) {
         this.obniz = obniz;
     }
