@@ -18,7 +18,11 @@ const ieee754_1 = __importDefault(require("./ieee754"));
 class LinkingAdvertising {
     static parse(peripheral) {
         const ad = peripheral;
-        const manu = ad.manufacturerData;
+        if (ad.adv_data.length < 5) {
+            return null;
+        }
+        const manu = ad.adv_data.slice(5);
+        //    const manu = ad.manufacturerData;
         if (!manu || manu.length < 8) {
             return null;
         }
