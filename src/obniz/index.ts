@@ -5,6 +5,8 @@
 
 import { M5StackBasic } from "./libs/hw/m5stack_basic";
 import { M5StickC } from "./libs/hw/m5stickc";
+import ObnizApi from "./ObnizApi";
+import ObnizApp from "./ObnizApp";
 import ObnizDevice from "./ObnizDevice";
 
 /**
@@ -44,6 +46,14 @@ class Obniz extends ObnizDevice {
   public static get api() {
     return ObnizApi;
   }
+
+  /**
+   * App Support class
+   * @returns {ObnizApp}
+   */
+  public static get App() {
+    return ObnizApp;
+  }
 }
 
 export = Obniz;
@@ -79,7 +89,6 @@ try {
  * @ignore
  */
 import requireContext = require("./libs/webpackReplace/require-context");
-import ObnizApi from "./ObnizApi";
 
 require.context = requireContext.default;
 if (requireContext.setBaseDir) {

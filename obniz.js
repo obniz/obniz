@@ -1834,6 +1834,67 @@ exports.default = ObnizApi;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/ObnizApp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizApp
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class ObnizApp {
+    /**
+     * Determine obniz.js is running on obniz Cloud or not.
+     */
+    static isCloudRunning() {
+        return typeof done === "function";
+    }
+    /**
+     * request object on obniz Cloud execution for webhook call.
+     *
+     * ```javascript
+     * // JavaScript example
+     * const req = Obniz.App.req();
+     * ```
+     *
+     */
+    static req() {
+        if (this.isCloudRunning()) {
+            return req;
+        }
+        return {};
+    }
+    /**
+     * done call for obniz Cloud execution.
+     * Pass arguemnt for update cloud execution status.
+     *
+     * ```javascript
+     * // JavaScript example
+     * Obniz.App.done({
+     *   status: 'success',  // or 'error'
+     *   text: 'ex. Door Opened'
+     * });
+     * ```
+     *
+     */
+    static done(arg) {
+        if (this.isCloudRunning()) {
+            return done(arg);
+        }
+        else {
+            console.error(`This program is not running on obniz Cloud.`);
+        }
+    }
+}
+exports.default = ObnizApp;
+
+//# sourceMappingURL=ObnizApp.js.map
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/ObnizComponents.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4188,6 +4249,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
 const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
+const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
+const ObnizApp_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApp.js"));
 const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
@@ -4219,6 +4282,13 @@ class Obniz extends ObnizDevice_1.default {
      */
     static get api() {
         return ObnizApi_1.default;
+    }
+    /**
+     * App Support class
+     * @returns {ObnizApp}
+     */
+    static get App() {
+        return ObnizApp_1.default;
     }
 }
 /**
@@ -4257,7 +4327,6 @@ catch (e) {
  * @ignore
  */
 const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
-const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
 if (requireContext.setBaseDir) {
     requireContext.setBaseDir(__dirname);
