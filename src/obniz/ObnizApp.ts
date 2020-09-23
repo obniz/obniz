@@ -55,10 +55,10 @@ export default class ObnizApp {
   }
 
   /**
-   * Configration by user for This App.
+   * Configration by user for This App. Only Available for BrowserApp
    */
   public static configs(): any {
-    if (this.isCloudRunning()) {
+    if (typeof configs === "object") {
       return configs;
     } else {
       return null;

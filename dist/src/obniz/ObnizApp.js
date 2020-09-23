@@ -50,10 +50,10 @@ class ObnizApp {
         }
     }
     /**
-     * Configration by user for This App.
+     * Configration by user for This App. Only Available for BrowserApp
      */
     static configs() {
-        if (this.isCloudRunning()) {
+        if (typeof configs === "object") {
             return configs;
         }
         else {
