@@ -17,6 +17,8 @@ class ObnizApp {
      * ```javascript
      * // JavaScript example
      * const req = Obniz.App.req();
+     * console.log(req.query);
+     * console.log(req.body);
      * ```
      *
      */
@@ -24,7 +26,7 @@ class ObnizApp {
         if (this.isCloudRunning()) {
             return req;
         }
-        return {};
+        return null;
     }
     /**
      * done call for obniz Cloud execution.
@@ -45,6 +47,17 @@ class ObnizApp {
         }
         else {
             console.error(`This program is not running on obniz Cloud.`);
+        }
+    }
+    /**
+     * Configration by user for This App.
+     */
+    static configs() {
+        if (this.isCloudRunning()) {
+            return configs;
+        }
+        else {
+            return null;
         }
     }
 }

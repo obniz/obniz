@@ -5,6 +5,7 @@
 
 declare var done: any;
 declare var req: any;
+declare var configs: any;
 
 export default class ObnizApp {
   /**
@@ -20,6 +21,8 @@ export default class ObnizApp {
    * ```javascript
    * // JavaScript example
    * const req = Obniz.App.req();
+   * console.log(req.query);
+   * console.log(req.body);
    * ```
    *
    */
@@ -27,7 +30,7 @@ export default class ObnizApp {
     if (this.isCloudRunning()) {
       return req;
     }
-    return {};
+    return null;
   }
 
   /**
@@ -48,6 +51,17 @@ export default class ObnizApp {
       return done(arg);
     } else {
       console.error(`This program is not running on obniz Cloud.`);
+    }
+  }
+
+  /**
+   * Configration by user for This App.
+   */
+  public static configs(): any {
+    if (this.isCloudRunning()) {
+      return configs;
+    } else {
+      return null;
     }
   }
 }
