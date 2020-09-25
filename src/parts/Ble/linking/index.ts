@@ -41,6 +41,14 @@ export default class Linking {
   public periperal: bleRemotePeripheral | null;
   public obniz!: Obniz;
 
+  public get LinkingAdvertising() {
+    return LinkingAdvertising;
+  }
+
+  public get LinkingDevice() {
+    return LinkingDevice;
+  }
+
   constructor(params: any) {
     this.keys = [];
     this.requiredKeys = [];

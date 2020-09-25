@@ -4,7 +4,6 @@
  */
 
 import ObnizUtil from "./libs/utils/util";
-import ObnizApi from "./ObnizApi";
 import { ObnizOptions } from "./ObnizOptions";
 import ObnizUIs from "./ObnizUIs";
 

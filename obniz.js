@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -1830,6 +1830,80 @@ class ObnizApi {
 exports.default = ObnizApi;
 
 //# sourceMappingURL=ObnizApi.js.map
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/ObnizApp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizApp
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class ObnizApp {
+    /**
+     * Determine obniz.js is running on obniz Cloud or not.
+     */
+    static isCloudRunning() {
+        return typeof done === "function";
+    }
+    /**
+     * request object on obniz Cloud execution for webhook call.
+     *
+     * ```javascript
+     * // JavaScript example
+     * const req = Obniz.App.req();
+     * console.log(req.query);
+     * console.log(req.body);
+     * ```
+     *
+     */
+    static req() {
+        if (this.isCloudRunning()) {
+            return req;
+        }
+        return null;
+    }
+    /**
+     * done call for obniz Cloud execution.
+     * Pass arguemnt for update cloud execution status.
+     *
+     * ```javascript
+     * // JavaScript example
+     * Obniz.App.done({
+     *   status: 'success',  // or 'error'
+     *   text: 'ex. Door Opened'
+     * });
+     * ```
+     *
+     */
+    static done(arg) {
+        if (this.isCloudRunning()) {
+            return done(arg);
+        }
+        else {
+            console.error(`This program is not running on obniz Cloud.`);
+        }
+    }
+    /**
+     * Configration by user for This App. Only Available for BrowserApp
+     */
+    static configs() {
+        if (typeof configs === "object") {
+            return configs;
+        }
+        else {
+            return null;
+        }
+    }
+}
+exports.default = ObnizApp;
+
+//# sourceMappingURL=ObnizApp.js.map
 
 
 /***/ }),
@@ -4188,6 +4262,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
 const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
+const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
+const ObnizApp_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApp.js"));
 const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
@@ -4219,6 +4295,13 @@ class Obniz extends ObnizDevice_1.default {
      */
     static get api() {
         return ObnizApi_1.default;
+    }
+    /**
+     * App Support class
+     * @returns {ObnizApp}
+     */
+    static get App() {
+        return ObnizApp_1.default;
     }
 }
 /**
@@ -4257,7 +4340,6 @@ catch (e) {
  * @ignore
  */
 const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
-const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 __webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
 if (requireContext.setBaseDir) {
     requireContext.setBaseDir(__dirname);
@@ -25525,6 +25607,12 @@ class Linking {
             name: "Linking",
         };
     }
+    get LinkingAdvertising() {
+        return advertising_1.default;
+    }
+    get LinkingDevice() {
+        return device_1.default;
+    }
     wired(obniz) {
         this.obniz = obniz;
     }
@@ -25682,7 +25770,7 @@ exports.default = Linking;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
+/* WEBPACK VAR INJECTION */(function(Buffer) {/**
  * @packageDocumentation
  * @module Parts.Linking
  */
@@ -25702,7 +25790,11 @@ const ieee754_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/link
 class LinkingAdvertising {
     static parse(peripheral) {
         const ad = peripheral;
-        const manu = ad.manufacturerData;
+        if (ad.adv_data.length < 5) {
+            return null;
+        }
+        const manu = Buffer.from(ad.adv_data.slice(5));
+        //    const manu = ad.manufacturerData;
         if (!manu || manu.length < 8) {
             return null;
         }
@@ -25898,6 +25990,7 @@ exports.default = LinkingAdvertising;
 
 //# sourceMappingURL=advertising.js.map
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
