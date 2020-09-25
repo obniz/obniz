@@ -8,6 +8,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const m5stack_basic_1 = require("./libs/hw/m5stack_basic");
 const m5stickc_1 = require("./libs/hw/m5stickc");
+const ObnizApi_1 = __importDefault(require("./ObnizApi"));
+const ObnizApp_1 = __importDefault(require("./ObnizApp"));
 const ObnizDevice_1 = __importDefault(require("./ObnizDevice"));
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
@@ -39,6 +41,13 @@ class Obniz extends ObnizDevice_1.default {
      */
     static get api() {
         return ObnizApi_1.default;
+    }
+    /**
+     * App Support class
+     * @returns {ObnizApp}
+     */
+    static get App() {
+        return ObnizApp_1.default;
     }
 }
 /**
@@ -77,7 +86,6 @@ catch (e) {
  * @ignore
  */
 const requireContext = require("./libs/webpackReplace/require-context");
-const ObnizApi_1 = __importDefault(require("./ObnizApi"));
 require.context = requireContext.default;
 if (requireContext.setBaseDir) {
     requireContext.setBaseDir(__dirname);
