@@ -123,6 +123,13 @@ export default class ObnizBLE extends ComponentAbstract {
       }
     });
 
+    this.on("/response/ble/error", (obj) => {
+      console.log("fasji");
+      if (obj.hci) {
+        this.hci.notified(obj.hci);
+      }
+    });
+
     this._reset();
   }
   public debugHandler: any = () => {};

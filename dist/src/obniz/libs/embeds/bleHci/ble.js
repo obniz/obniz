@@ -46,6 +46,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 this.hci.notified(obj.hci);
             }
         });
+        this.on("/response/ble/error", (obj) => {
+            console.log("fasji");
+            if (obj.hci) {
+                this.hci.notified(obj.hci);
+            }
+        });
         this._reset();
     }
     // public security!: BleSecurity;
