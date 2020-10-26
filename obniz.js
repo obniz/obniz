@@ -2464,7 +2464,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     }
                 }
                 catch (e) {
-                    this.error("------ errored json -------");
+                    this.error({ alert: "error", message: "------ errored json -------" });
                     this.error(sendData);
                     throw e;
                 }
@@ -3999,7 +3999,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         this.showOffLine();
         if (!this.isValidObnizId(this.id)) {
             if (this.isNode) {
-                this.error("invalid obniz id");
+                this.error({ alert: "error", message: "invalid obniz id" });
             }
             else {
                 const filled = _ReadCookie("obniz-last-used") || "";
