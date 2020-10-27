@@ -271,5 +271,3 @@ class Gap extends eventemitter3_1.default {
     }
 }
 exports.default = Gap;
-
-//# sourceMappingURL=gap.js.map

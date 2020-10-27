@@ -59,5 +59,3 @@ class JoyStick {
     }
 }
 exports.default = JoyStick;
-
-//# sourceMappingURL=index.js.map

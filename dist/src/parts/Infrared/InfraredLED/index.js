@@ -40,5 +40,3 @@ class InfraredLED {
     }
 }
 exports.default = InfraredLED;
-
-//# sourceMappingURL=index.js.map

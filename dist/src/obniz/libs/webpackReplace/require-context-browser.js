@@ -5,5 +5,3 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 exports.default = {};
-
-//# sourceMappingURL=require-context-browser.js.map

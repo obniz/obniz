@@ -100,5 +100,3 @@ class LED {
     }
 }
 exports.default = LED;
-
-//# sourceMappingURL=index.js.map

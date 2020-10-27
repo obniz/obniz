@@ -20,5 +20,3 @@ class BleBatteryService {
     }
 }
 exports.default = BleBatteryService;
-
-//# sourceMappingURL=batteryService.js.map

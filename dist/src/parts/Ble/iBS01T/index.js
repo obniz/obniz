@@ -84,5 +84,3 @@ IBS01T.deviceAdv = [
     -1,
     -1,
 ];
-
-//# sourceMappingURL=index.js.map

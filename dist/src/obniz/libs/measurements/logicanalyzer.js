@@ -123,5 +123,3 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = LogicAnalyzer;
-
-//# sourceMappingURL=logicanalyzer.js.map

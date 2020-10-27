@@ -38,5 +38,3 @@ class AclStream extends eventemitter3_1.default {
     }
 }
 exports.default = AclStream;
-
-//# sourceMappingURL=acl-stream.js.map

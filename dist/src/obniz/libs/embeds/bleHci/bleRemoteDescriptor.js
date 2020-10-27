@@ -89,5 +89,3 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteDescriptor;
-
-//# sourceMappingURL=bleRemoteDescriptor.js.map

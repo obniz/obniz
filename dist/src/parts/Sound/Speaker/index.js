@@ -38,5 +38,3 @@ class Speaker {
     }
 }
 exports.default = Speaker;
-
-//# sourceMappingURL=index.js.map

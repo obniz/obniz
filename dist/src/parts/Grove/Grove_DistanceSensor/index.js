@@ -32,5 +32,3 @@ class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
     }
 }
 exports.default = Grove_DistanceSensor;
-
-//# sourceMappingURL=index.js.map
