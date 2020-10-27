@@ -4549,7 +4549,23 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         });
         this.on("/response/ble/error", (obj) => {
             if (obj.error) {
-                const msg = obj.error.message;
+                const error = obj.error;
+                let msg = "BLE error: " + error.message;
+                msg += " (";
+                msg += "error_code: " + error.error_code;
+                msg += ", ";
+                msg += "module_error_code: " + error.module_error_code;
+                msg += ", ";
+                msg += "function_code: " + error.function_code;
+                msg += ", ";
+                msg += "address: " + error.address;
+                msg += ", ";
+                msg += "service_uuid: " + error.service_uuid;
+                msg += ", ";
+                msg += "characteristic_uuid: " + error.characteristic_uuid;
+                msg += ", ";
+                msg += "descriptor_uuid: " + error.descriptor_uuid;
+                msg += ") ";
                 this.Obniz.error({ alert: "error", message: msg });
             }
         });
