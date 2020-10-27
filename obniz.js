@@ -4548,19 +4548,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             }
         });
         this.on("/response/ble/error", (obj) => {
-            console.log("fasji");
-            // this.error({ alert: "error", message:  });
             if (obj.error) {
                 const msg = obj.error.message;
-                console.log(msg);
                 this.Obniz.error({ alert: "error", message: msg });
             }
-            console.dir(obj);
-            // console.log(obj);
-            // console.log(this.hci);
-            // if (obj.hci) {
-            //   this.hci.notified(obj.hci);
-            // }
         });
         this._reset();
     }
