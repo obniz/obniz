@@ -398,6 +398,9 @@ class ObnizConnection extends eventemitter3_1.default {
             this.close();
         }
         let url = server + "/obniz/" + this.id + "/ws/1";
+        if (this._isIpAddress(this.id)) {
+            url = `ws://${this.id}/`;
+        }
         const query = [];
         if (this.constructor.version) {
             query.push("obnizjs=" + this.constructor.version);
@@ -572,6 +575,10 @@ class ObnizConnection extends eventemitter3_1.default {
             this._startPingLoopInBackground();
             this._startLoopInBackground();
         }
+    }
+    _isIpAddress(str) {
+        const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
+        return str.match(regex) !== null;
     }
     print_debug(str) {
         if (this.debugprint) {

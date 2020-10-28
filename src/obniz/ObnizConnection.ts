@@ -197,7 +197,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     };
     if (this.options.binary) {
       this.wscommand = (this.constructor as typeof ObnizConnection).WSCommand;
-      const classes: any = (this.constructor as typeof ObnizConnection).WSCommand.CommandClasses;
+      const classes = (this.constructor as typeof ObnizConnection).WSCommand.CommandClasses;
       this.wscommands = [];
       for (const class_name in classes) {
         this.wscommands.push(
@@ -360,7 +360,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
         return;
       }
 
-      let sendData: any = JSON.stringify([obj]);
+      let sendData = JSON.stringify([obj]);
       if (this.debugprint) {
         this.print_debug("send: " + sendData);
       }
@@ -554,8 +554,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     this._reconnect();
   }
 
-  protected wsconnect(desired_server?: any) {
-    let server: any = this.options.obniz_server;
+  protected wsconnect(desired_server?: string) {
+    let server = this.options.obniz_server;
     if (desired_server) {
       server = "" + desired_server;
     }
@@ -564,7 +564,10 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       this.close();
     }
 
-    let url: any = server + "/obniz/" + this.id + "/ws/1";
+    let url = server + "/obniz/" + this.id + "/ws/1";
+    if (this._isIpAddress(this.id)) {
+      url = `ws://${this.id}/`;
+    }
 
     const query: any = [];
     if ((this.constructor as typeof ObnizConnection).version) {
@@ -605,7 +608,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   }
 
   protected _connectLocal(host: any) {
-    const url: any = "ws://" + host;
+    const url = "ws://" + host;
     this.print_debug("local connect to " + url);
     let ws: any;
     if (this.isNode) {
@@ -682,7 +685,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     }
     /* unbind */
     if (this.isNode) {
-      const shouldRemoveObservers: any = ["open", "message", "close", "error", "unexpected-response"];
+      const shouldRemoveObservers = ["open", "message", "close", "error", "unexpected-response"];
       for (let i = 0; i < shouldRemoveObservers.length; i++) {
         socket.removeAllListeners(shouldRemoveObservers[i]);
       }
@@ -700,7 +703,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   protected async _beforeOnConnect() {}
 
   protected _callOnConnect() {
-    let canChangeToConnected: any = true;
+    let canChangeToConnected = true;
     if (this._waitForLocalConnectReadyTimer) {
       /* obniz.js can't wait for local_connect any more! */
       clearTimeout(this._waitForLocalConnectReadyTimer);
@@ -745,6 +748,11 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     }
   }
 
+  protected _isIpAddress(str: string) {
+    const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
+    return str.match(regex) !== null;
+  }
+
   protected print_debug(str: any) {
     if (this.debugprint) {
       this.log(str);
@@ -774,12 +782,12 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     if (!this._sendQueue) {
       return;
     }
-    let expectSize: any = 0;
+    let expectSize = 0;
     for (let i = 0; i < this._sendQueue.length; i++) {
       expectSize += this._sendQueue[i].length;
     }
-    let filled: any = 0;
-    const sendData: any = new Uint8Array(expectSize);
+    let filled = 0;
+    const sendData = new Uint8Array(expectSize);
     for (let i = 0; i < this._sendQueue.length; i++) {
       sendData.set(this._sendQueue[i], filled);
       filled += this._sendQueue[i].length;
