@@ -86,6 +86,13 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
     }
   }
 
+  protected removeFromOnceQueue(eventName: string, func: EventHandler) {
+    this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
+    if (typeof func === "function") {
+      this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e === func);
+    }
+  }
+
   protected async sendAndReceiveJsonWait(sendObj: any, schemaPath: string, option?: ReceiveJsonOptions): Promise<any> {
     this.Obniz.send(sendObj);
     return await this.receiveJsonWait(schemaPath, option);
@@ -104,7 +111,11 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
       }
       const clearListeners = () => {
         this.Obniz.off("close", onObnizClosed);
-        this.off(schemaPath as any, onDataReceived);
+        if (option!.queue) {
+          this.removeFromOnceQueue(schemaPath as any, onDataReceived);
+        } else {
+          this.off(schemaPath as any, onDataReceived);
+        }
         if (typeof timeoutHandler === "number") {
           clearTimeout(timeoutHandler);
           timeoutHandler = undefined;

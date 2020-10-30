@@ -56,6 +56,12 @@ class ComponentAbstract extends eventemitter3_1.default {
             this._eventHandlerQueue[eventName].push(func);
         }
     }
+    removeFromOnceQueue(eventName, func) {
+        this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
+        if (typeof func === "function") {
+            this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e === func);
+        }
+    }
     async sendAndReceiveJsonWait(sendObj, schemaPath, option) {
         this.Obniz.send(sendObj);
         return await this.receiveJsonWait(schemaPath, option);
@@ -72,7 +78,12 @@ class ComponentAbstract extends eventemitter3_1.default {
             }
             const clearListeners = () => {
                 this.Obniz.off("close", onObnizClosed);
-                this.off(schemaPath, onDataReceived);
+                if (option.queue) {
+                    this.removeFromOnceQueue(schemaPath, onDataReceived);
+                }
+                else {
+                    this.off(schemaPath, onDataReceived);
+                }
                 if (typeof timeoutHandler === "number") {
                     clearTimeout(timeoutHandler);
                     timeoutHandler = undefined;
