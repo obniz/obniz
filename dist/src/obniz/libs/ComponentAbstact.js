@@ -59,7 +59,7 @@ class ComponentAbstract extends eventemitter3_1.default {
     removeFromOnceQueue(eventName, func) {
         this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
         if (typeof func === "function") {
-            this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e === func);
+            this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e !== func);
         }
     }
     async sendAndReceiveJsonWait(sendObj, schemaPath, option) {

@@ -89,7 +89,7 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
   protected removeFromOnceQueue(eventName: string, func: EventHandler) {
     this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];
     if (typeof func === "function") {
-      this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e === func);
+      this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName].filter((e) => e !== func);
     }
   }
 
