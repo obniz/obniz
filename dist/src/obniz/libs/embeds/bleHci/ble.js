@@ -64,7 +64,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                 msg += "characteristic_uuid: " + error.characteristic_uuid;
                 msg += ", ";
                 msg += "descriptor_uuid: " + error.descriptor_uuid;
-                msg += ") ";
+                msg += ")";
                 this.Obniz.error({ alert: "error", message: msg });
             }
         });
