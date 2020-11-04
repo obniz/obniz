@@ -1829,8 +1829,6 @@ class ObnizApi {
 }
 exports.default = ObnizApi;
 
-//# sourceMappingURL=ObnizApi.js.map
-
 
 /***/ }),
 
@@ -1902,8 +1900,6 @@ class ObnizApp {
     }
 }
 exports.default = ObnizApp;
-
-//# sourceMappingURL=ObnizApp.js.map
 
 
 /***/ }),
@@ -2225,8 +2221,6 @@ class ObnizComponents extends ObnizParts_1.default {
     }
 }
 exports.default = ObnizComponents;
-
-//# sourceMappingURL=ObnizComponents.js.map
 
 
 /***/ }),
@@ -3029,8 +3023,6 @@ class ObnizConnection extends eventemitter3_1.default {
 }
 exports.default = ObnizConnection;
 
-//# sourceMappingURL=ObnizConnection.js.map
-
 
 /***/ }),
 
@@ -3200,8 +3192,6 @@ class ObnizDevice extends ObnizUIs_1.default {
     }
 }
 exports.default = ObnizDevice;
-
-//# sourceMappingURL=ObnizDevice.js.map
 
 
 /***/ }),
@@ -3452,8 +3442,6 @@ class ObnizBleScanStartError extends ObnizError {
 }
 exports.ObnizBleScanStartError = ObnizBleScanStartError;
 
-//# sourceMappingURL=ObnizError.js.map
-
 
 /***/ }),
 
@@ -3577,8 +3565,6 @@ class ObnizParts extends ObnizConnection_1.default {
 }
 exports.default = ObnizParts;
 
-//# sourceMappingURL=ObnizParts.js.map
-
 
 /***/ }),
 
@@ -3627,8 +3613,6 @@ class ObnizPartsBleInterface {
     }
 }
 exports.default = ObnizPartsBleInterface;
-
-//# sourceMappingURL=ObnizPartsBleInterface.js.map
 
 
 /***/ }),
@@ -3939,8 +3923,6 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
 }
 exports.default = ObnizSystemMethods;
 
-//# sourceMappingURL=ObnizSystemMethods.js.map
-
 
 /***/ }),
 
@@ -4242,8 +4224,6 @@ function _ReadCookie(name) {
     return null;
 }
 
-//# sourceMappingURL=ObnizUIs.js.map
-
 
 /***/ }),
 
@@ -4359,8 +4339,6 @@ for (const path of context.keys()) {
     }
 }
 module.exports = Obniz;
-
-//# sourceMappingURL=index.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
@@ -4500,8 +4478,6 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
 }
 exports.ComponentAbstract = ComponentAbstract;
-
-//# sourceMappingURL=ComponentAbstact.js.map
 
 
 /***/ }),
@@ -4909,8 +4885,6 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
 }
 exports.default = ObnizBLE;
 
-//# sourceMappingURL=ble.js.map
-
 
 /***/ }),
 
@@ -5074,8 +5048,6 @@ class BleAdvertisement {
 }
 exports.default = BleAdvertisement;
 
-//# sourceMappingURL=bleAdvertisement.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -5230,8 +5202,6 @@ class BleAdvertisementBuilder {
     }
 }
 exports.default = BleAdvertisementBuilder;
-
-//# sourceMappingURL=bleAdvertisementBuilder.js.map
 
 
 /***/ }),
@@ -5467,8 +5437,6 @@ class BleAttributeAbstract {
 }
 exports.default = BleAttributeAbstract;
 
-//# sourceMappingURL=bleAttributeAbstract.js.map
-
 
 /***/ }),
 
@@ -5699,8 +5667,6 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.default {
 }
 exports.default = BleCharacteristic;
 
-//# sourceMappingURL=bleCharacteristic.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -5782,8 +5748,6 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.default {
 }
 exports.default = BleDescriptor;
 
-//# sourceMappingURL=bleDescriptor.js.map
-
 
 /***/ }),
 
@@ -5811,8 +5775,6 @@ const BleHelper = {
     },
 };
 exports.default = BleHelper;
-
-//# sourceMappingURL=bleHelper.js.map
 
 
 /***/ }),
@@ -5943,8 +5905,6 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
 }
 exports.default = BleLocalAttributeAbstract;
 
-//# sourceMappingURL=bleLocalAttributeAbstract.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -6020,8 +5980,6 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
     }
 }
 exports.default = BleLocalValueAttributeAbstract;
-
-//# sourceMappingURL=bleLocalValueAttributeAbstract.js.map
 
 
 /***/ }),
@@ -6204,8 +6162,6 @@ class BlePeripheral {
 }
 exports.default = BlePeripheral;
 
-//# sourceMappingURL=blePeripheral.js.map
-
 
 /***/ }),
 
@@ -6245,8 +6201,6 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
     }
 }
 exports.default = BleRemoteAttributeAbstract;
-
-//# sourceMappingURL=bleRemoteAttributeAbstract.js.map
 
 
 /***/ }),
@@ -6685,8 +6639,6 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
 }
 exports.default = BleRemoteCharacteristic;
 
-//# sourceMappingURL=bleRemoteCharacteristic.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -6786,8 +6738,6 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.default {
     ondiscoverfinished(children) { }
 }
 exports.default = BleRemoteDescriptor;
-
-//# sourceMappingURL=bleRemoteDescriptor.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -7334,8 +7284,6 @@ class BleRemotePeripheral {
 }
 exports.default = BleRemotePeripheral;
 
-//# sourceMappingURL=bleRemotePeripheral.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -7539,8 +7487,6 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
 }
 exports.default = BleRemoteService;
 
-//# sourceMappingURL=bleRemoteService.js.map
-
 
 /***/ }),
 
@@ -7605,8 +7551,6 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
     }
 }
 exports.default = BleRemoteValueAttributeAbstract;
-
-//# sourceMappingURL=bleRemoteValueAttributeAbstract.js.map
 
 
 /***/ }),
@@ -8145,8 +8089,6 @@ class BleScan {
 }
 exports.default = BleScan;
 
-//# sourceMappingURL=bleScan.js.map
-
 
 /***/ }),
 
@@ -8260,8 +8202,6 @@ class BleService extends bleLocalAttributeAbstract_1.default {
     }
 }
 exports.default = BleService;
-
-//# sourceMappingURL=bleService.js.map
 
 
 /***/ }),
@@ -8469,8 +8409,6 @@ class ObnizBLEHci {
 }
 exports.default = ObnizBLEHci;
 
-//# sourceMappingURL=hci.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -8564,8 +8502,6 @@ class AclStream extends eventemitter3_1.default {
     }
 }
 exports.default = AclStream;
-
-//# sourceMappingURL=acl-stream.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -8880,8 +8816,6 @@ class NobleBindings extends eventemitter3_1.default {
 }
 exports.default = NobleBindings;
 
-//# sourceMappingURL=bindings.js.map
-
 
 /***/ }),
 
@@ -8948,8 +8882,6 @@ exports.default = {
     s1,
     e,
 };
-
-//# sourceMappingURL=crypto.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -9232,8 +9164,6 @@ class Gap extends eventemitter3_1.default {
     }
 }
 exports.default = Gap;
-
-//# sourceMappingURL=gap.js.map
 
 
 /***/ }),
@@ -9969,8 +9899,6 @@ class Gatt extends eventemitter3_1.default {
 }
 exports.default = Gatt;
 
-//# sourceMappingURL=gatt.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -10056,8 +9984,6 @@ class Signaling extends eventemitter3_1.default {
     }
 }
 exports.default = Signaling;
-
-//# sourceMappingURL=signaling.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -10348,8 +10274,6 @@ class Smp extends eventemitter3_1.default {
     }
 }
 exports.default = Smp;
-
-//# sourceMappingURL=smp.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -11309,8 +11233,6 @@ class Hci extends eventemitter3_1.default {
 Hci.STATUS_MAPPER = STATUS_MAPPER;
 exports.default = Hci;
 
-//# sourceMappingURL=hci.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer, __webpack_require__("./node_modules/process/browser.js")))
 
 /***/ }),
@@ -11359,8 +11281,6 @@ class AclStream extends eventemitter3_1.default {
     }
 }
 exports.default = AclStream;
-
-//# sourceMappingURL=acl-stream.js.map
 
 
 /***/ }),
@@ -11520,8 +11440,6 @@ class BlenoBindings extends eventemitter3_1.default {
 }
 exports.default = BlenoBindings;
 
-//# sourceMappingURL=bindings.js.map
-
 
 /***/ }),
 
@@ -11588,8 +11506,6 @@ exports.default = {
     s1,
     e,
 };
-
-//# sourceMappingURL=crypto.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -11760,8 +11676,6 @@ class Gap extends eventemitter3_1.default {
     }
 }
 exports.default = Gap;
-
-//# sourceMappingURL=gap.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -12699,8 +12613,6 @@ class Gatt extends eventemitter3_1.default {
 }
 exports.default = Gatt;
 
-//# sourceMappingURL=gatt.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -12765,8 +12677,6 @@ class Mgmt {
     }
 }
 exports.default = Mgmt;
-
-//# sourceMappingURL=mgmt.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -12915,8 +12825,6 @@ class Smp extends eventemitter3_1.default {
     }
 }
 exports.default = Smp;
-
-//# sourceMappingURL=smp.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -13559,8 +13467,6 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
 }
 exports.default = Display;
 
-//# sourceMappingURL=display.js.map
-
 
 /***/ }),
 
@@ -13644,8 +13550,6 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
 }
 exports.default = ObnizSwitch;
 
-//# sourceMappingURL=switch.js.map
-
 
 /***/ }),
 
@@ -13722,8 +13626,6 @@ class HW {
 }
 exports.default = HW;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -13760,8 +13662,6 @@ class M5StackBasic extends ObnizDevice_1.default {
     }
 }
 exports.M5StackBasic = M5StackBasic;
-
-//# sourceMappingURL=m5stack_basic.js.map
 
 
 /***/ }),
@@ -13865,8 +13765,6 @@ class M5StickC extends ObnizDevice_1.default {
     }
 }
 exports.M5StickC = M5StickC;
-
-//# sourceMappingURL=m5stickc.js.map
 
 
 /***/ }),
@@ -13987,8 +13885,6 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralAD;
-
-//# sourceMappingURL=ad.js.map
 
 
 /***/ }),
@@ -14192,8 +14088,6 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
 }
 exports.default = Directive;
 
-//# sourceMappingURL=directive.js.map
-
 
 /***/ }),
 
@@ -14356,8 +14250,6 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralGrove;
-
-//# sourceMappingURL=grove.js.map
 
 
 /***/ }),
@@ -14646,8 +14538,6 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
 }
 exports.default = PeripheralI2C;
 
-//# sourceMappingURL=i2c.js.map
-
 
 /***/ }),
 
@@ -14866,8 +14756,6 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralIO;
-
-//# sourceMappingURL=io.js.map
 
 
 /***/ }),
@@ -15103,8 +14991,6 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralPWM;
-
-//# sourceMappingURL=pwm.js.map
 
 
 /***/ }),
@@ -15348,8 +15234,6 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralSPI;
-
-//# sourceMappingURL=spi.js.map
 
 
 /***/ }),
@@ -15666,8 +15550,6 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
 }
 exports.default = PeripheralUART;
 
-//# sourceMappingURL=uart.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -15802,8 +15684,6 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
 }
 exports.default = LogicAnalyzer;
 
-//# sourceMappingURL=logicanalyzer.js.map
-
 
 /***/ }),
 
@@ -15903,8 +15783,6 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
 }
 exports.default = ObnizMeasure;
 
-//# sourceMappingURL=measure.js.map
-
 
 /***/ }),
 
@@ -15980,8 +15858,6 @@ class WiFi {
 }
 exports.default = WiFi;
 
-//# sourceMappingURL=wifi.js.map
-
 
 /***/ }),
 
@@ -16056,8 +15932,6 @@ class Plugin {
     }
 }
 exports.default = Plugin;
-
-//# sourceMappingURL=plugin.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -16273,8 +16147,6 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = Tcp;
-
-//# sourceMappingURL=tcp.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -17810,8 +17682,6 @@ const _qrcode = (() => {
 })();
 exports.default = _qrcode;
 
-//# sourceMappingURL=qr.js.map
-
 
 /***/ }),
 
@@ -17954,8 +17824,6 @@ class ObnizUtil {
 }
 exports.default = ObnizUtil;
 
-//# sourceMappingURL=util.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -17973,8 +17841,6 @@ exports.default = ObnizUtil;
 Object.defineProperty(exports, "__esModule", { value: true });
 const canvas = "canvas";
 exports.default = canvas;
-
-//# sourceMappingURL=canvas.js.map
 
 
 /***/ }),
@@ -17998,8 +17864,6 @@ const dialog_polyfill_1 = __importDefault(__webpack_require__("./node_modules/di
 const dialog_polyfill_css_1 = __importDefault(__webpack_require__("./node_modules/dialog-polyfill/dist/dialog-polyfill.css"));
 exports.default = { dialogPolyfill: dialog_polyfill_1.default, css: dialog_polyfill_css_1.default };
 
-//# sourceMappingURL=dialogPollyfill-browser.js.map
-
 
 /***/ }),
 
@@ -18014,8 +17878,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 exports.default = {};
-
-//# sourceMappingURL=require-context-browser.js.map
 
 
 /***/ }),
@@ -18042,8 +17904,6 @@ else {
     ws = window.WebSocket || window.MozWebSocket;
 }
 exports.default = ws;
-
-//# sourceMappingURL=ws.js.map
 
 
 /***/ }),
@@ -18353,8 +18213,6 @@ exports.default = WSCommand;
 class WSCommandNotFoundError extends Error {
 }
 
-//# sourceMappingURL=WSCommand.js.map
-
 
 /***/ }),
 
@@ -18441,8 +18299,6 @@ class WSCommandAD extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandAD;
-
-//# sourceMappingURL=WSCommandAD.js.map
 
 
 /***/ }),
@@ -19672,8 +19528,6 @@ class WSCommandBle extends WSCommand_1.default {
 }
 exports.default = WSCommandBle;
 
-//# sourceMappingURL=WSCommandBle.js.map
-
 
 /***/ }),
 
@@ -19746,8 +19600,6 @@ class WSCommandBleHci {
     }
 }
 exports.default = WSCommandBleHci;
-
-//# sourceMappingURL=WSCommandBleHci.js.map
 
 
 /***/ }),
@@ -19938,8 +19790,6 @@ class WSCommandDirective extends WSCommand_1.default {
 }
 exports.default = WSCommandDirective;
 
-//# sourceMappingURL=WSCommandDirective.js.map
-
 
 /***/ }),
 
@@ -20088,8 +19938,6 @@ class WSCommandDisplay extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandDisplay;
-
-//# sourceMappingURL=WSCommandDisplay.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -20272,8 +20120,6 @@ class WSCommandI2C extends WSCommand_1.default {
 }
 exports.default = WSCommandI2C;
 
-//# sourceMappingURL=WSCommandI2C.js.map
-
 
 /***/ }),
 
@@ -20444,8 +20290,6 @@ class WSCommandIO extends WSCommand_1.default {
 }
 exports.default = WSCommandIO;
 
-//# sourceMappingURL=WSCommandIO.js.map
-
 
 /***/ }),
 
@@ -20537,8 +20381,6 @@ class WSCommandLogicAnalyzer extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandLogicAnalyzer;
-
-//# sourceMappingURL=WSCommandLogicAnalyzer.js.map
 
 
 /***/ }),
@@ -20632,8 +20474,6 @@ class WSCommandMeasurement extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandMeasurement;
-
-//# sourceMappingURL=WSCommandMeasurement.js.map
 
 
 /***/ }),
@@ -20753,8 +20593,6 @@ class WSCommandPWM extends WSCommand_1.default {
 }
 exports.default = WSCommandPWM;
 
-//# sourceMappingURL=WSCommandPWM.js.map
-
 
 /***/ }),
 
@@ -20812,8 +20650,6 @@ class WSCommandPlugin extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandPlugin;
-
-//# sourceMappingURL=WSCommandPlugin.js.map
 
 
 /***/ }),
@@ -20935,8 +20771,6 @@ class WSCommandSPI extends WSCommand_1.default {
 }
 exports.default = WSCommandSPI;
 
-//# sourceMappingURL=WSCommandSPI.js.map
-
 
 /***/ }),
 
@@ -20999,8 +20833,6 @@ class WSCommandSwitch extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandSwitch;
-
-//# sourceMappingURL=WSCommandSwitch.js.map
 
 
 /***/ }),
@@ -21170,8 +21002,6 @@ class WSCommandSystem extends WSCommand_1.default {
 }
 exports.default = WSCommandSystem;
 
-//# sourceMappingURL=WSCommandSystem.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -21315,8 +21145,6 @@ class WSCommandTcp extends WSCommand_1.default {
 }
 exports.default = WSCommandTcp;
 
-//# sourceMappingURL=WSCommandTcp.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -21445,8 +21273,6 @@ class WSCommandUart extends WSCommand_1.default {
 }
 exports.default = WSCommandUart;
 
-//# sourceMappingURL=WSCommandUart.js.map
-
 
 /***/ }),
 
@@ -21551,8 +21377,6 @@ class WSCommandWiFi extends WSCommand_1.default {
 }
 exports.default = WSCommandWiFi;
 
-//# sourceMappingURL=WSCommandWiFi.js.map
-
 
 /***/ }),
 
@@ -21610,8 +21434,6 @@ for (const path of context.keys()) {
 wsSchema.map(tv4.addSchema);
 exports.default = tv4;
 
-//# sourceMappingURL=WSSchema.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
 /***/ }),
@@ -21664,8 +21486,6 @@ WSCommand_1.default.addCommandClass("WSCommandTcp", WSCommandTcp_1.default);
 WSCommand_1.default.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.default);
 WSCommand_1.default.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.default);
 exports.default = WSCommand_1.default;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -21924,8 +21744,6 @@ class JsonBinaryConverter {
     }
 }
 exports.default = JsonBinaryConverter;
-
-//# sourceMappingURL=jsonBinaryConverter.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -22241,8 +22059,6 @@ class Hx711 {
 }
 exports.default = Hx711;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -22280,8 +22096,6 @@ class USB {
     }
 }
 exports.default = USB;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -22368,8 +22182,6 @@ class Puls08M5stickcS {
     }
 }
 exports.default = Puls08M5stickcS;
-
-//# sourceMappingURL=index.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -22498,8 +22310,6 @@ class OMRON_2JCIE {
 }
 exports.default = OMRON_2JCIE;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -22614,8 +22424,6 @@ class ENERTALK_TOUCH {
     }
 }
 exports.default = ENERTALK_TOUCH;
-
-//# sourceMappingURL=index.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -22800,8 +22608,6 @@ class HEM_6233T {
 }
 exports.default = HEM_6233T;
 
-//# sourceMappingURL=index.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -22890,8 +22696,6 @@ class Logtta_AD {
     }
 }
 exports.default = Logtta_AD;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -23019,8 +22823,6 @@ Logtta_Accel.deviceAdv = [
     0x05,
     0x05,
 ];
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -23179,8 +22981,6 @@ class Logtta_CO2 {
 }
 exports.default = Logtta_CO2;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -23338,8 +23138,6 @@ class Logtta_TH {
 }
 exports.default = Logtta_TH;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -23475,8 +23273,6 @@ class MINEW_S1 {
     wired(obniz) { }
 }
 exports.default = MINEW_S1;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -23719,8 +23515,6 @@ class MT_500BT {
 }
 exports.default = MT_500BT;
 
-//# sourceMappingURL=index.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -23822,8 +23616,6 @@ class MiniBreeze {
 }
 exports.default = MiniBreeze;
 
-//# sourceMappingURL=index.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -23907,8 +23699,6 @@ class PLS_01BT {
     }
 }
 exports.default = PLS_01BT;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -24105,8 +23895,6 @@ class REX_BTPM25V {
 }
 exports.default = REX_BTPM25V;
 
-//# sourceMappingURL=index.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -24192,8 +23980,6 @@ class RS_BTIREX2 {
 }
 exports.default = RS_BTIREX2;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -24275,8 +24061,6 @@ class RS_Seek3 {
     }
 }
 exports.default = RS_Seek3;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -24443,8 +24227,6 @@ class UT201BLE {
 }
 exports.default = UT201BLE;
 
-//# sourceMappingURL=index.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -24476,8 +24258,6 @@ class BleBatteryService {
 }
 exports.default = BleBatteryService;
 
-//# sourceMappingURL=batteryService.js.map
-
 
 /***/ }),
 
@@ -24504,8 +24284,6 @@ class BleGenericAccess {
     }
 }
 exports.default = BleGenericAccess;
-
-//# sourceMappingURL=genericAccess.js.map
 
 
 /***/ }),
@@ -24770,8 +24548,6 @@ class cir415a {
 }
 exports.default = cir415a;
 
-//# sourceMappingURL=index.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -24864,8 +24640,6 @@ IBS01.deviceAdv = [
     -1,
     -1,
 ];
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -24985,8 +24759,6 @@ IBS01RG.deviceAdv = [
     -1,
 ];
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -25081,8 +24853,6 @@ IBS01T.deviceAdv = [
     -1,
 ];
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -25156,8 +24926,6 @@ IBS02IR.deviceAdv = [
     -1,
 ];
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -25230,8 +24998,6 @@ IBS02PIR.deviceAdv = [
     -1,
     -1,
 ];
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -25322,8 +25088,6 @@ IBS03T.deviceAdv = [
     -1,
     -1,
 ];
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -25416,8 +25180,6 @@ IBS03TP.deviceAdv = [
     -1,
 ];
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -25502,8 +25264,6 @@ IBS03.deviceAdv = [
     -1,
     -1,
 ];
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -25598,8 +25358,6 @@ IBS04I.deviceAdv = [
     -1,
     -1,
 ];
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -25792,8 +25550,6 @@ class Linking {
     }
 }
 exports.default = Linking;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -26019,8 +25775,6 @@ class LinkingAdvertising {
     constructor() { }
 }
 exports.default = LinkingAdvertising;
-
-//# sourceMappingURL=advertising.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -26897,8 +26651,6 @@ class LinkingDevice {
 }
 exports.default = LinkingDevice;
 
-//# sourceMappingURL=device.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -26954,8 +26706,6 @@ class LinkingIEEE754 {
     constructor() { }
 }
 exports.default = LinkingIEEE754;
-
-//# sourceMappingURL=ieee754.js.map
 
 
 /***/ }),
@@ -27984,8 +27734,6 @@ class LinkingServiceNotification {
 }
 exports.default = LinkingServiceNotification;
 
-//# sourceMappingURL=service-notification.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -28166,8 +27914,6 @@ class LinkingServiceOperation {
     }
 }
 exports.default = LinkingServiceOperation;
-
-//# sourceMappingURL=service-operation.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -28468,8 +28214,6 @@ class LinkingServiceProperty {
     }
 }
 exports.default = LinkingServiceProperty;
-
-//# sourceMappingURL=service-property.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -28954,8 +28698,6 @@ class LinkingServiceSensor {
     }
 }
 exports.default = LinkingServiceSensor;
-
-//# sourceMappingURL=service-sensor.js.map
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -29678,8 +29420,6 @@ class LinkingServiceSetting {
 }
 exports.default = LinkingServiceSetting;
 
-//# sourceMappingURL=service-setting.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -29799,8 +29539,6 @@ class LinkingService {
 }
 exports.default = LinkingService;
 
-//# sourceMappingURL=service.js.map
-
 
 /***/ }),
 
@@ -29859,8 +29597,6 @@ class SCBTGAAAC {
     }
 }
 exports.default = SCBTGAAAC;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -29936,8 +29672,6 @@ TM530.deviceAdv = [
     -1,
     -1,
 ];
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -30016,8 +29750,6 @@ TM551.deviceAdv = [
     -1,
     -1,
 ];
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -30223,8 +29955,6 @@ class Toio_CoreCube {
 }
 exports.default = Toio_CoreCube;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -30379,8 +30109,6 @@ class uPRISM {
     }
 }
 exports.default = uPRISM;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -31219,8 +30947,6 @@ class ArduCAMMini {
 }
 exports.default = ArduCAMMini;
 
-//# sourceMappingURL=index.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -31408,8 +31134,6 @@ class JpegSerialCam {
 }
 exports.default = JpegSerialCam;
 
-//# sourceMappingURL=index.js.map
-
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -31450,8 +31174,6 @@ class PT550 {
     }
 }
 exports.default = PT550;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -31509,8 +31231,6 @@ class S11059 {
     }
 }
 exports.default = S11059;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -31572,8 +31292,6 @@ class MCP4725 {
     }
 }
 exports.default = MCP4725;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -31700,8 +31418,6 @@ class _7SegmentLED {
 }
 exports.default = _7SegmentLED;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -31766,8 +31482,6 @@ class _7SegmentLEDArray {
     }
 }
 exports.default = _7SegmentLEDArray;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -31898,8 +31612,6 @@ class _7SegmentLED_MAX7219 {
 }
 exports.default = _7SegmentLED_MAX7219;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -32016,8 +31728,6 @@ class MatrixLED_HT16K33 {
     }
 }
 exports.default = MatrixLED_HT16K33;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -32150,8 +31860,6 @@ class MatrixLED_MAX7219 {
     }
 }
 exports.default = MatrixLED_MAX7219;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -34358,8 +34066,6 @@ const font = [
     0x00,
 ];
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -36547,8 +36253,6 @@ const font = [
     0x00,
 ];
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -36861,8 +36565,6 @@ class SharpMemoryTFT {
 }
 exports.default = SharpMemoryTFT;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -36946,8 +36648,6 @@ class GP2Y0A21YK0F {
     }
 }
 exports.default = GP2Y0A21YK0F;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -37044,8 +36744,6 @@ class HCSR04 {
 }
 exports.default = HCSR04;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -37122,8 +36820,6 @@ class VL53L0X {
     }
 }
 exports.default = VL53L0X;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -37480,8 +37176,6 @@ class GYSFDMAXB {
 }
 exports.default = GYSFDMAXB;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -37677,8 +37371,6 @@ class CCS811 extends i2cParts_1.default {
 }
 exports.default = CCS811;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -37707,8 +37399,6 @@ class MQ135 extends MQGas_1.default {
     }
 }
 exports.default = MQ135;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -37739,8 +37429,6 @@ class MQ2 extends MQGas_1.default {
 }
 exports.default = MQ2;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -37769,8 +37457,6 @@ class MQ3 extends MQGas_1.default {
     }
 }
 exports.default = MQ3;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -37801,8 +37487,6 @@ class MQ4 extends MQGas_1.default {
 }
 exports.default = MQ4;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -37831,8 +37515,6 @@ class MQ5 extends MQGas_1.default {
     }
 }
 exports.default = MQ5;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -37863,8 +37545,6 @@ class MQ6 extends MQGas_1.default {
 }
 exports.default = MQ6;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -37893,8 +37573,6 @@ class MQ7 extends MQGas_1.default {
     }
 }
 exports.default = MQ7;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -37925,8 +37603,6 @@ class MQ8 extends MQGas_1.default {
 }
 exports.default = MQ8;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -37955,8 +37631,6 @@ class MQ9 extends MQGas_1.default {
     }
 }
 exports.default = MQ9;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -38027,8 +37701,6 @@ class MQGasSensor {
     }
 }
 exports.default = MQGasSensor;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -38180,8 +37852,6 @@ class Grove_3AxisAccelerometer {
 }
 exports.default = Grove_3AxisAccelerometer;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -38242,8 +37912,6 @@ class Grove_Button {
 }
 exports.default = Grove_Button;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -38297,8 +37965,6 @@ class Grove_Buzzer {
 }
 exports.default = Grove_Buzzer;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -38340,8 +38006,6 @@ class Grove_DistanceSensor extends GP2Y0A21YK0F_1.default {
     }
 }
 exports.default = Grove_DistanceSensor;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -38393,8 +38057,6 @@ class Grove_EARTH {
     }
 }
 exports.default = Grove_EARTH;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -38468,8 +38130,6 @@ class Grove_EarHeartRate {
     }
 }
 exports.default = Grove_EarHeartRate;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -38809,8 +38469,6 @@ class Grove_GPS {
 }
 exports.default = Grove_GPS;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -38864,8 +38522,6 @@ class Grove_JoyStick {
 }
 exports.default = Grove_JoyStick;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -38910,8 +38566,6 @@ class Grove_LightSensor {
     }
 }
 exports.default = Grove_LightSensor;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39022,8 +38676,6 @@ class Grove_MP3 {
 }
 exports.default = Grove_MP3;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -39072,8 +38724,6 @@ class Grove_PressureSensor {
 }
 exports.default = Grove_PressureSensor;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -39119,8 +38769,6 @@ class Grove_RotaryAngleSensor {
 }
 exports.default = Grove_RotaryAngleSensor;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -39165,8 +38813,6 @@ class Grove_SoilMoistureSensor {
     }
 }
 exports.default = Grove_SoilMoistureSensor;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39221,8 +38867,6 @@ class Grove_Speaker {
     }
 }
 exports.default = Grove_Speaker;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39284,8 +38928,6 @@ class ENC03R_Module {
     }
 }
 exports.default = ENC03R_Module;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39357,8 +38999,6 @@ class IRModule {
     }
 }
 exports.default = IRModule;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39437,8 +39077,6 @@ class IRSensor {
 }
 exports.default = IRSensor;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -39489,8 +39127,6 @@ class InfraredLED {
 }
 exports.default = InfraredLED;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -39530,8 +39166,6 @@ class YG1006 {
     }
 }
 exports.default = YG1006;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39594,8 +39228,6 @@ class Keyestudio_Button {
 }
 exports.default = Keyestudio_Button;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -39643,8 +39275,6 @@ class Keyestudio_Buzzer {
     }
 }
 exports.default = Keyestudio_Buzzer;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39706,8 +39336,6 @@ class Keyestudio_HT16K33 extends MatrixLED_HT16K33_1.default {
 }
 exports.default = Keyestudio_HT16K33;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -39748,8 +39376,6 @@ class Keyestudio_MoistureSensor {
 }
 exports.default = Keyestudio_MoistureSensor;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -39786,8 +39412,6 @@ class Keyestudio_PIR {
     }
 }
 exports.default = Keyestudio_PIR;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39830,8 +39454,6 @@ class Keyestudio_TemperatureSensor {
     }
 }
 exports.default = Keyestudio_TemperatureSensor;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -39907,8 +39529,6 @@ class Keyestudio_TrafficLight {
     }
 }
 exports.default = Keyestudio_TrafficLight;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -40037,8 +39657,6 @@ class FullColorLED {
 }
 exports.default = FullColorLED;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -40148,8 +39766,6 @@ class LED {
     }
 }
 exports.default = LED;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -40276,8 +39892,6 @@ class WS2811 {
 }
 exports.default = WS2811;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -40401,8 +40015,6 @@ class WS2812 {
 }
 exports.default = WS2812;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -40525,8 +40137,6 @@ class WS2812B {
     }
 }
 exports.default = WS2812B;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -40652,8 +40262,6 @@ class SNx4HC595 {
     }
 }
 exports.default = SNx4HC595;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -40799,8 +40407,6 @@ class M5StickC_ADC {
 }
 exports.default = M5StickC_ADC;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -40839,8 +40445,6 @@ class M5StickC_DAC extends MCP4725_1.default {
     }
 }
 exports.default = M5StickC_DAC;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -41103,8 +40707,6 @@ class M5StickC_FINGER {
 }
 exports.default = M5StickC_FINGER;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -41176,8 +40778,6 @@ class M5StickC_JoyStick {
 }
 exports.default = M5StickC_JoyStick;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -41237,8 +40837,6 @@ class M5StickC_RS485 {
 }
 exports.default = M5StickC_RS485;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -41277,8 +40875,6 @@ class M5StickC_ToF extends VL53L0X_1.default {
     }
 }
 exports.default = M5StickC_ToF;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -41425,8 +41021,6 @@ class M5StickC_Yun {
 }
 exports.default = M5StickC_Yun;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -41487,8 +41081,6 @@ class CT10 {
     }
 }
 exports.default = CT10;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -41561,8 +41153,6 @@ HMC5883L.commands = {
 };
 HMC5883L.scales = [1 / 1370, 1 / 1090, 1 / 820, 1 / 660, 1 / 440, 1 / 390, 1 / 330, 1 / 230];
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -41609,8 +41199,6 @@ class _24LC256 {
     }
 }
 exports.default = _24LC256;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -41731,8 +41319,6 @@ class AK09916 extends i2cParts_1.default {
 }
 exports.default = AK09916;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -41795,8 +41381,6 @@ AK8963.scales = {
     so_14bit: 4912 / 8190,
     so_16bit: 4912 / 32760,
 };
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -41864,8 +41448,6 @@ class Button {
     }
 }
 exports.default = Button;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -42214,8 +41796,6 @@ class FlickHat {
 }
 exports.default = FlickHat;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -42254,8 +41834,6 @@ class HCSR505 {
     }
 }
 exports.default = HCSR505;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -42524,8 +42102,6 @@ class ICM20948 extends i2cParts_1.default {
 }
 exports.default = ICM20948;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -42564,8 +42140,6 @@ class IPM_165 {
     }
 }
 exports.default = IPM_165;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -42635,8 +42209,6 @@ class JoyStick {
     }
 }
 exports.default = JoyStick;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -42735,8 +42307,6 @@ class KXR94_2050 {
 }
 exports.default = KXR94_2050;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -42794,8 +42364,6 @@ class KXSC7_2050 {
     }
 }
 exports.default = KXSC7_2050;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -43006,8 +42574,6 @@ MPU6050.commands = {
     },
 };
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -43044,8 +42610,6 @@ class MPU6500 extends MPU6050_1.default {
     }
 }
 exports.default = MPU6500;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -43089,8 +42653,6 @@ class MPU6886 extends MPU6050_1.default {
     }
 }
 exports.default = MPU6886;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -43193,8 +42755,6 @@ class MPU9250 extends MPU6500_1.default {
 }
 exports.default = MPU9250;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -43231,8 +42791,6 @@ class PaPIRsVZ {
     }
 }
 exports.default = PaPIRsVZ;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -43274,8 +42832,6 @@ class Potentiometer {
     }
 }
 exports.default = Potentiometer;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -43457,8 +43013,6 @@ SH200Q.commands = {
     },
 };
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -43550,8 +43104,6 @@ class DCMotor {
     }
 }
 exports.default = DCMotor;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -43728,8 +43280,6 @@ class PCA9685 {
 }
 exports.default = PCA9685;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -43796,8 +43346,6 @@ class ServoMotor {
 }
 exports.default = ServoMotor;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -43854,8 +43402,6 @@ class Solenoid {
     }
 }
 exports.default = Solenoid;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -44058,8 +43604,6 @@ class StepperMotor {
 }
 exports.default = StepperMotor;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -44183,8 +43727,6 @@ const REG_GPIO0 = 0x90;
 const REG_CCOUNTER = 0xb8;
 const LDO2_EN_MASK = 0xfb;
 const LDO3_EN_MASK = 0xf7;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -44375,8 +43917,6 @@ class BMP280 {
     }
 }
 exports.default = BMP280;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -44777,8 +44317,6 @@ class DPS310 {
 }
 exports.default = DPS310;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -44826,8 +44364,6 @@ class FSR40X {
 }
 exports.default = FSR40X;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -44867,8 +44403,6 @@ class SEN0114 {
     }
 }
 exports.default = SEN0114;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -44918,8 +44452,6 @@ class Speaker {
 }
 exports.default = Speaker;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -44957,8 +44489,6 @@ class AnalogTemperatureSensor {
 }
 exports.default = AnalogTemperatureSensor;
 
-//# sourceMappingURL=AnalogTemperatureSensor.js.map
-
 
 /***/ }),
 
@@ -44983,8 +44513,6 @@ class LM35DZ extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = LM35DZ;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45011,8 +44539,6 @@ class LM60 extends AnalogTemperatureSensor_1.default {
 }
 exports.default = LM60;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -45037,8 +44563,6 @@ class LM61 extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = LM61;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45065,8 +44589,6 @@ class LMT87 extends AnalogTemperatureSensor_1.default {
 }
 exports.default = LMT87;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -45092,8 +44614,6 @@ class MCP9700 extends AnalogTemperatureSensor_1.default {
 }
 exports.default = MCP9700;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -45118,8 +44638,6 @@ class MCP9701 extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = MCP9701;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45150,8 +44668,6 @@ class S8100B extends AnalogTemperatureSensor_1.default {
 }
 exports.default = S8100B;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -45180,8 +44696,6 @@ class S8120C extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = S8120C;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45235,8 +44749,6 @@ class ADT7410 {
     }
 }
 exports.default = ADT7410;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45298,8 +44810,6 @@ class AM2320 {
     }
 }
 exports.default = AM2320;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45411,8 +44921,6 @@ class AMG8833 {
     }
 }
 exports.default = AMG8833;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45636,8 +45144,6 @@ class BME280 {
 }
 exports.default = BME280;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -45690,8 +45196,6 @@ class D6T44L {
     }
 }
 exports.default = D6T44L;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45755,8 +45259,6 @@ class DHT12 extends i2cParts_1.default {
     }
 }
 exports.default = DHT12;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -45864,8 +45366,6 @@ class S5851A {
 }
 exports.default = S5851A;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -45945,8 +45445,6 @@ class SHT20 {
     }
 }
 exports.default = SHT20;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -46034,8 +45532,6 @@ class SHT31 {
 }
 exports.default = SHT31;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -46082,8 +45578,6 @@ class ADT7310 {
     }
 }
 exports.default = ADT7310;
-
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -46589,8 +46083,6 @@ class MFRC522 {
 }
 exports.default = MFRC522;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -46792,8 +46284,6 @@ class RN42 {
 }
 exports.default = RN42;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -46946,8 +46436,6 @@ class XBee {
 }
 exports.default = XBee;
 
-//# sourceMappingURL=index.js.map
-
 
 /***/ }),
 
@@ -47016,8 +46504,6 @@ I2cCompassAbstract.unitScales = {
     kG: 0.001,
     uG: 1000 * 1000,
 };
-
-//# sourceMappingURL=i2cCompass.js.map
 
 
 /***/ }),
@@ -47190,8 +46676,6 @@ I2cImu6Abstract.scales = {
     },
 };
 
-//# sourceMappingURL=i2cImu6.js.map
-
 
 /***/ }),
 
@@ -47285,8 +46769,6 @@ class I2cPartsAbstract {
     }
 }
 exports.default = I2cPartsAbstract;
-
-//# sourceMappingURL=i2cParts.js.map
 
 
 /***/ }),

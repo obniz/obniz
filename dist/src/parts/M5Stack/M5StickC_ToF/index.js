@@ -29,5 +29,3 @@ class M5StickC_ToF extends VL53L0X_1.default {
     }
 }
 exports.default = M5StickC_ToF;
-
-//# sourceMappingURL=index.js.map

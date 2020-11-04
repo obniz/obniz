@@ -239,5 +239,3 @@ class ObnizBleScanStartError extends ObnizError {
     }
 }
 exports.ObnizBleScanStartError = ObnizBleScanStartError;
-
-//# sourceMappingURL=ObnizError.js.map

@@ -35,5 +35,3 @@ class Grove_SoilMoistureSensor {
     }
 }
 exports.default = Grove_SoilMoistureSensor;
-
-//# sourceMappingURL=index.js.map

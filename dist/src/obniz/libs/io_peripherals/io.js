@@ -209,5 +209,3 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = PeripheralIO;
-
-//# sourceMappingURL=io.js.map

@@ -212,5 +212,3 @@ class BME280 {
     }
 }
 exports.default = BME280;
-
-//# sourceMappingURL=index.js.map

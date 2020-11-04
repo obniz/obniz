@@ -192,5 +192,3 @@ class Directive extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = Directive;
-
-//# sourceMappingURL=directive.js.map

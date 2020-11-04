@@ -128,5 +128,3 @@ class ComponentAbstract extends eventemitter3_1.default {
     }
 }
 exports.ComponentAbstract = ComponentAbstract;
-
-//# sourceMappingURL=ComponentAbstact.js.map

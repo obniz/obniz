@@ -147,5 +147,3 @@ class Logtta_CO2 {
     }
 }
 exports.default = Logtta_CO2;
-
-//# sourceMappingURL=index.js.map
