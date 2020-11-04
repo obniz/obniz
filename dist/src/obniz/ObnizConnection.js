@@ -227,7 +227,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     }
                 }
                 catch (e) {
-                    this.error("------ errored json -------");
+                    this.error({ alert: "error", message: "------ errored json -------" });
                     this.error(sendData);
                     throw e;
                 }

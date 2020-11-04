@@ -65,7 +65,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
     this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
       if (this.isNode) {
-        this.error("invalid obniz id");
+        this.error({ alert: "error", message: "invalid obniz id" });
       } else {
         const filled: any = _ReadCookie("obniz-last-used") || "";
         this.prompt(filled, (obnizid: any) => {
