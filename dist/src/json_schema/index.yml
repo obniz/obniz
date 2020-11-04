@@ -118,6 +118,20 @@ definitions:
       - "de44"
       - null
 
+  uuidOrNullOrEmpty:
+    id: "uuidOrNullOrEmpty"
+    type: [string, "null"]
+    pattern: "^([-0-9a-fA-F]*)$"   ## "-"は許容
+    minLength: 0
+    maxLength: 36
+    description: "Bluetooth uuid. If it contain '-', it ignored."
+    example:
+      - "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+      - "8d3591bda71140fd8f9f00535fe57179"
+      - "d822b53c"
+      - "de44"
+      - null
+
   deviceAddress:
     id: "deviceAddress"
     type: string
@@ -127,6 +141,15 @@ definitions:
     description: "Bluetooth device id. It's hexString cannot contain '0x' or '-'."
     example: "77e754ab8591"
 
+  deviceAddressOrEmpty:
+    id: "deviceAddressOrEmpty"
+    type: string
+    pattern: "^([0-9a-fA-F]*)$"
+    minLength: 0
+    maxLength: 12
+    description: "Bluetooth device id. It's hexString cannot contain '0x' or '-'."
+    example: "77e754ab8591"
+  
   obnizId:
     id: "obnizId"
     type: [string, integer]

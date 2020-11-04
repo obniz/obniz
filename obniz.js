@@ -460,7 +460,7 @@ webpackContext.id = "./dist/src/json_schema sync recursive \\.yml$";
 /***/ "./dist/src/json_schema/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageDataArray":{"id":"imageDataArray","type":"array","minItems":0,"items":{"type":"integer","minimum":0}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":40,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageDataArray":{"id":"imageDataArray","type":"array","minItems":0,"items":{"type":"integer","minimum":0}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNullOrEmpty":{"id":"uuidOrNullOrEmpty","type":["string","null"],"pattern":"^([-0-9a-fA-F]*)$","minLength":0,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"deviceAddressOrEmpty":{"id":"deviceAddressOrEmpty","type":"string","pattern":"^([0-9a-fA-F]*)$","minLength":0,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
 
 /***/ }),
 
@@ -1349,7 +1349,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/ble/error.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/error","deprecated":"3.0.0","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"module_error_code":{"type":"integer"},"function_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/error","deprecated":"3.0.0","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"module_error_code":{"type":"integer"},"function_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddressOrEmpty"},"service_uuid":{"$ref":"/uuidOrNullOrEmpty"},"characteristic_uuid":{"$ref":"/uuidOrNullOrEmpty"},"descriptor_uuid":{"$ref":"/uuidOrNullOrEmpty"}}}}}
 
 /***/ }),
 
@@ -4556,6 +4556,28 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.on("/response/ble/hci/read", (obj) => {
             if (obj.hci) {
                 this.hci.notified(obj.hci);
+            }
+        });
+        this.on("/response/ble/error", (obj) => {
+            if (obj.error) {
+                const error = obj.error;
+                let msg = "BLE error: " + error.message;
+                msg += " (";
+                msg += "error_code: " + error.error_code;
+                msg += ", ";
+                msg += "module_error_code: " + error.module_error_code;
+                msg += ", ";
+                msg += "function_code: " + error.function_code;
+                msg += ", ";
+                msg += "address: " + error.address;
+                msg += ", ";
+                msg += "service_uuid: " + error.service_uuid;
+                msg += ", ";
+                msg += "characteristic_uuid: " + error.characteristic_uuid;
+                msg += ", ";
+                msg += "descriptor_uuid: " + error.descriptor_uuid;
+                msg += ")";
+                this.Obniz.error({ alert: "error", message: msg });
             }
         });
         this._reset();
