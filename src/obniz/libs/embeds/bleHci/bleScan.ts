@@ -272,7 +272,7 @@ export default class BleScan {
     } else {
       this._setTargetFilterOnDevice({}); // clear
     }
-    await this.obnizBle.centralBindings.startScanningWait(null, false, settings.activeScan);
+    await this.obnizBle.centralBindings.startScanningWait(null, settings.duplicate, settings.activeScan);
 
     this.clearTimeoutTimer();
     if (timeout !== null) {

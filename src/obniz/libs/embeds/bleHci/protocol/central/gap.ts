@@ -293,7 +293,7 @@ class Gap extends EventEmitter<GapEventTypes> {
   }
 
   private async setScanEnabledWait(enabled: boolean, filterDuplicates: boolean) {
-    const status = await this._hci.setScanEnabledWait(enabled, true);
+    const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
 
     // Check the status we got from the command complete function.
     if (status !== 0) {

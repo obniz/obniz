@@ -7689,7 +7689,7 @@ class BleScan {
         else {
             this._setTargetFilterOnDevice({}); // clear
         }
-        await this.obnizBle.centralBindings.startScanningWait(null, false, settings.activeScan);
+        await this.obnizBle.centralBindings.startScanningWait(null, settings.duplicate, settings.activeScan);
         this.clearTimeoutTimer();
         if (timeout !== null) {
             this._timeoutTimer = setTimeout(async () => {
@@ -9161,7 +9161,7 @@ class Gap extends eventemitter3_1.default {
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
-        const status = await this._hci.setScanEnabledWait(enabled, true);
+        const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
         // Check the status we got from the command complete function.
         if (status !== 0) {
             // If it is non-zero there was an error, and we should not change
@@ -10586,7 +10586,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x02, 3);
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
-        cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // duplicates: 0 -> duplicates, 0 -> duplicates
+        cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
         this.debug("set scan enabled - writing: " + cmd.toString("hex"));
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
