@@ -3981,6 +3981,10 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         if (this._isIpAddress(str)) {
             return true;
         }
+        // Serial Number 'sn_***'
+        if (str.startsWith("sn_")) {
+            return true;
+        }
         // 0000-0000
         if (str.length < 8) {
             return false;
