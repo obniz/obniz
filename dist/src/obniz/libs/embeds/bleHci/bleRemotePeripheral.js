@@ -137,6 +137,30 @@ class BleRemotePeripheral {
      * }
      * ```
      *
+     * There are options for connection
+     *
+     * ```javascript
+     * // Javascript Example
+     *
+     * await obniz.ble.initWait();
+     * var target = {
+     *    uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     * if(!peripheral) {
+     *    console.log('no such peripheral')
+     *    return;
+     * }
+     * try {
+     *   await peripheral.connectWait({
+     *
+     *   });
+     *   console.log("connected");
+     * } catch(e) {
+     *   console.log("can't connect");
+     * }
+     * ```
+     *
      */
     async connectWait(setting) {
         this._connectSetting = setting || {};
