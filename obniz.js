@@ -4695,6 +4695,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.scan) {
             this.scan = new bleScan_1.default(this);
         }
+        else {
+            this.scan.notifyFromServer("obnizClose", {});
+        }
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
         }
@@ -7611,11 +7614,8 @@ class BleScan {
         this.scanTarget = {};
         this.scanSettings = {};
         this.scanedPeripherals = [];
-        if (this._timeoutTimer) {
-            clearTimeout(this._timeoutTimer);
-            this._timeoutTimer = undefined;
-            this.finish(new Error(`Reset Occured while scanning.`));
-        }
+        this.clearTimeoutTimer();
+        this.finish(new Error(`Reset Occured while scanning.`));
     }
     /**
      * Use startWait() instead.
@@ -7839,7 +7839,7 @@ class BleScan {
                     this._notifyOnFind(peripheral);
                 }
                 else {
-                    const timer = setInterval(() => {
+                    const timer = setTimeout(() => {
                         this._notifyOnFind(peripheral);
                     }, 10000);
                     this._delayNotifyTimers.push({ timer, peripheral });

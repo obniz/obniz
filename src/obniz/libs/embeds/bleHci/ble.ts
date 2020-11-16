@@ -49,6 +49,7 @@ export default class ObnizBLE extends ComponentAbstract {
   public get isInitialized() {
     return this._initialized;
   }
+
   /**
    * @ignore
    *
@@ -149,6 +150,7 @@ export default class ObnizBLE extends ComponentAbstract {
 
     this._reset();
   }
+
   public debugHandler: any = () => {};
 
   /**
@@ -233,6 +235,8 @@ export default class ObnizBLE extends ComponentAbstract {
     }
     if (!this.scan) {
       this.scan = new BleScan(this);
+    } else {
+      this.scan.notifyFromServer("obnizClose", {});
     }
     if (!this.advertisement) {
       this.advertisement = new BleAdvertisement(this);

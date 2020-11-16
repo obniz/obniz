@@ -192,6 +192,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         if (!this.scan) {
             this.scan = new bleScan_1.default(this);
         }
+        else {
+            this.scan.notifyFromServer("obnizClose", {});
+        }
         if (!this.advertisement) {
             this.advertisement = new bleAdvertisement_1.default(this);
         }
