@@ -79,16 +79,16 @@ export default class HEM_9200T implements ObnizPartsBleInterface {
     if (!this._peripheral) {
       throw new Error("HEM_9200T is not find.");
     }
-    console.log(`connecting HEM passkey ${this._passkey}`);
+    // console.log(`connecting HEM passkey ${this._passkey}`);
     await this._peripheral.connectWait({
       pairingOption: {
         passkeyCallback: async () => {
-          console.log(`passkey called`);
+          // console.log(`passkey called`);
           return this._passkey;
         },
       },
     });
-    console.log(`connected HEM`);
+    // console.log(`connected HEM`);
     // const passkeyCallback = async () => {
     //   // HTML prompt
     //   const pass = 16393;
@@ -107,7 +107,7 @@ export default class HEM_9200T implements ObnizPartsBleInterface {
       await this.subscribeWait("1805", "2A2B"); // current time
       await this.subscribeWait("180F", "2A19"); // battery level
       await this.subscribeWait("1810", "2A35", async (data: any) => {
-        console.log(data);
+        // console.log(data);
         results.push(this._analyzeData(data));
       }); // blood pressure
     });
