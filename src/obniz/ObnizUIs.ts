@@ -59,6 +59,11 @@ export default class ObnizUIs extends ObnizSystemMethods {
       return true;
     }
 
+    // Serial Number 'sn_***'
+    if (str.startsWith("sn_")) {
+      return true;
+    }
+
     // 0000-0000
     if (str.length < 8) {
       return false;
