@@ -185,7 +185,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
     return result;
   }
 
-  public async setEncryptOption(options: any) {
+  public setEncryptOption(options: any) {
     this._aclStream.setEncryptOption(options);
   }
 

@@ -107,7 +107,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     await this._gap.stopScanningWait();
   }
 
-  public async connectWait(peripheralUuid: any) {
+  public async connectWait(peripheralUuid: any, onConnectCallback?: any) {
     const address: any = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
 
@@ -120,7 +120,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
       })
       .then((result) => {
-        return this.onLeConnComplete(
+        this.onLeConnComplete(
           result.status,
           result.handle,
           result.role,
@@ -131,6 +131,10 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
           result.supervisionTimeout,
           result.masterClockAccuracy,
         );
+        if (onConnectCallback && typeof onConnectCallback === "function") {
+          onConnectCallback();
+        }
+        return this._gatts[result.handle].exchangeMtuWait(256);
       })
       .then(
         (result) => {
@@ -211,7 +215,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     }
   }
 
-  public async onLeConnComplete(
+  public onLeConnComplete(
     status: any,
     handle?: any,
     role?: any,
@@ -262,7 +266,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
     this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
 
-    await this._gatts[handle].exchangeMtuWait(256);
     // public onMtu(address: any, mtu?: any) {}
   }
 

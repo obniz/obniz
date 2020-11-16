@@ -144,7 +144,7 @@ class Gatt extends eventemitter3_1.default {
         });
         return result;
     }
-    async setEncryptOption(options) {
+    setEncryptOption(options) {
         this._aclStream.setEncryptOption(options);
     }
     onEnd(reason) {

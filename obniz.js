@@ -6873,7 +6873,7 @@ class BleRemotePeripheral {
      *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
-        this.connectWait(); // background
+        this.connectWait(setting); // background
     }
     /**
      * This connects obniz to the peripheral.
@@ -6914,7 +6914,11 @@ class BleRemotePeripheral {
         this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
         await this.obnizBle.scan.endWait();
         try {
-            await this.obnizBle.centralBindings.connectWait(this.address);
+            await this.obnizBle.centralBindings.connectWait(this.address, () => {
+                if (this._connectSetting.pairingOption) {
+                    this.setPairingOption(this._connectSetting.pairingOption);
+                }
+            });
         }
         catch (e) {
             if (e instanceof ObnizError_1.ObnizTimeoutError) {
@@ -6925,9 +6929,6 @@ class BleRemotePeripheral {
         }
         this.connected = true;
         try {
-            if (this._connectSetting.pairingOption) {
-                this.setPairingOption(this._connectSetting.pairingOption);
-            }
             if (this._connectSetting.autoDiscovery) {
                 await this.discoverAllHandlesWait();
             }
@@ -8602,7 +8603,7 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    async connectWait(peripheralUuid) {
+    async connectWait(peripheralUuid, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         // Block parall connection ongoing for ESP32 bug.
@@ -8614,7 +8615,11 @@ class NobleBindings extends eventemitter3_1.default {
             return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
         })
             .then((result) => {
-            return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+            this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+            if (onConnectCallback && typeof onConnectCallback === "function") {
+                onConnectCallback();
+            }
+            return this._gatts[result.handle].exchangeMtuWait(256);
         })
             .then((result) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
@@ -8678,7 +8683,7 @@ class NobleBindings extends eventemitter3_1.default {
             this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
         }
     }
-    async onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+    onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 0) {
             // not master, ignore
             return;
@@ -8705,7 +8710,6 @@ class NobleBindings extends eventemitter3_1.default {
         this._gatts[handle].on("notification", this.onNotification.bind(this));
         this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
         this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
-        await this._gatts[handle].exchangeMtuWait(256);
         // public onMtu(address: any, mtu?: any) {}
     }
     onDisconnComplete(handle, reason) {
@@ -9337,7 +9341,7 @@ class Gatt extends eventemitter3_1.default {
         });
         return result;
     }
-    async setEncryptOption(options) {
+    setEncryptOption(options) {
         this._aclStream.setEncryptOption(options);
     }
     onEnd(reason) {
@@ -10117,31 +10121,6 @@ class Smp extends eventemitter3_1.default {
             this.handleSecurityRequest(data);
         }
         // console.warn("SMP: " + code);
-        return;
-        if (SMP.PAIRING_RESPONSE === code) {
-            this.handlePairingResponse(data);
-        }
-        else if (SMP.PAIRING_CONFIRM === code) {
-            this.handlePairingConfirm(data);
-        }
-        else if (SMP.PAIRING_RANDOM === code) {
-            this.handlePairingRandomWait(data);
-        }
-        else if (SMP.PAIRING_FAILED === code) {
-            this.handlePairingFailed(data);
-        }
-        else if (SMP.ENCRYPT_INFO === code) {
-            this.handleEncryptInfo(data);
-        }
-        else if (SMP.MASTER_IDENT === code) {
-            this.handleMasterIdent(data);
-        }
-        else if (SMP.SMP_SECURITY_REQUEST === code) {
-            this.handleSecurityRequest(data);
-        }
-        else {
-            throw new Error();
-        }
     }
     onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
@@ -21786,6 +21765,7 @@ var map = {
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./dist/src/parts/Ble/2jcie/index.js",
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
+	"./Ble/HEM-9200T/index.js": "./dist/src/parts/Ble/HEM-9200T/index.js",
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
@@ -22452,6 +22432,159 @@ class ENERTALK_TOUCH {
     }
 }
 exports.default = ENERTALK_TOUCH;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/HEM-9200T/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.HEM-9200T
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class HEM_9200T {
+    constructor(peripheral, options = {}) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this._peripheral = null;
+        // if (peripheral && !HEM_9200T.isDevice(peripheral)) {
+        //   throw new Error("peripheral is not HEM_9200T");
+        // }
+        this._peripheral = peripheral;
+        this._timezoneOffsetMinute = options.timezoneOffsetMinute || 0;
+        this._passkey = options.passkey || 0;
+    }
+    static info() {
+        return {
+            name: "HEM_9200T",
+        };
+    }
+    static isDevice(peripheral) {
+        if (peripheral.localName &&
+            (peripheral.localName.startsWith("BLESmart_") || peripheral.localName.startsWith("BLEsmart_"))) {
+            return true;
+        }
+        return false;
+    }
+    async getDataWait() {
+        if (!this._peripheral) {
+            throw new Error("HEM_9200T is not find.");
+        }
+        console.log(`connecting HEM passkey ${this._passkey}`);
+        await this._peripheral.connectWait({
+            pairingOption: {
+                passkeyCallback: async () => {
+                    console.log(`passkey called`);
+                    return this._passkey;
+                },
+            },
+        });
+        console.log(`connected HEM`);
+        // const passkeyCallback = async () => {
+        //   // HTML prompt
+        //   const pass = 16393;
+        //   return pass;
+        // };
+        // // pairing with user input passkey.
+        // console.log("connnected. pairing...");
+        // const key = await this._peripheral.pairingWait({ passkeyCallback });
+        // console.log("paired");
+        const results = [];
+        return await new Promise(async (resolve, reject) => {
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+            await this.subscribeWait("1805", "2A2B"); // current time
+            await this.subscribeWait("180F", "2A19"); // battery level
+            await this.subscribeWait("1810", "2A35", async (data) => {
+                console.log(data);
+                results.push(this._analyzeData(data));
+            }); // blood pressure
+        });
+    }
+    async subscribeWait(service, char, callback) {
+        if (!this._peripheral) {
+            throw new Error("HEM_9200T is not find.");
+        }
+        const characteristics = this._peripheral.getService(service).getCharacteristic(char);
+        await characteristics.registerNotifyWait(async (data) => {
+            if (callback) {
+                callback(data);
+            }
+        });
+    }
+    _analyzeData(data) {
+        const buf = Buffer.from(data);
+        const flags = buf.readUInt8(0);
+        let index = 1;
+        const result = {};
+        let scale = 1;
+        if (flags & 0x01) {
+            // kPa
+            scale = 7.501;
+        }
+        result.bloodPressure = {
+            systolic: this._readSFloat(buf, index) * scale,
+            diastolic: this._readSFloat(buf, index + 2) * scale,
+            meanArterialPressure: this._readSFloat(buf, index + 4) * scale,
+            unit: "mmHg",
+        };
+        index += 6;
+        if (flags & 0x02) {
+            // Time Stamp field present
+            result.date = {
+                year: buf.readUInt16LE(index),
+                month: buf.readUInt8(index + 2),
+                day: buf.readUInt8(index + 3),
+                hour: buf.readUInt8(index + 4),
+                minute: buf.readUInt8(index + 5),
+                second: buf.readUInt8(index + 6),
+            };
+            index += 7;
+        }
+        if (flags & 0x04) {
+            result.pulseRate = this._readSFloat(buf, index);
+            index += 2;
+        }
+        if (flags & 0x08) {
+            result.userId = buf.readUInt8(index);
+            index += 1;
+        }
+        if (flags & 0x10) {
+            const statusFlag = {
+                0x01: "BodyMovementDetection",
+                0x02: "CuffFitDetection",
+                0x04: "IrregularPulseDetection",
+                0x08: "PulseRateRangeDetection",
+                0x10: "MeasurementPositionDetection",
+            };
+            const mesurementStatus = buf.readUInt16LE(index);
+            index++;
+            result.measurementStatus = [];
+            for (const f in statusFlag) {
+                if (+f & mesurementStatus) {
+                    result.measurementStatus.push(statusFlag[f]);
+                }
+            }
+        }
+        return result;
+    }
+    _readSFloat(buffer, index) {
+        const data = buffer.readUInt16LE(index);
+        let mantissa = data & 0x0fff;
+        if ((mantissa & 0x0800) > 0) {
+            mantissa = -1 * (0x0fff + 1 - mantissa);
+        }
+        const exponential = data >> 12;
+        return mantissa * Math.pow(10, exponential);
+    }
+}
+exports.default = HEM_9200T;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
