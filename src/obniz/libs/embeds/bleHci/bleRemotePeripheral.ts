@@ -436,7 +436,7 @@ export default class BleRemotePeripheral {
    *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
    */
   public connect(setting?: BleConnectSetting) {
-    this.connectWait(); // background
+    this.connectWait(setting); // background
   }
 
   /**
@@ -502,7 +502,11 @@ export default class BleRemotePeripheral {
     this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
     await this.obnizBle.scan.endWait();
     try {
-      await this.obnizBle.centralBindings.connectWait(this.address);
+      await this.obnizBle.centralBindings.connectWait(this.address, () => {
+        if (this._connectSetting.pairingOption) {
+          this.setPairingOption(this._connectSetting.pairingOption);
+        }
+      });
     } catch (e) {
       if (e instanceof ObnizTimeoutError) {
         await this.obnizBle.resetWait();
@@ -512,9 +516,6 @@ export default class BleRemotePeripheral {
     }
     this.connected = true;
     try {
-      if (this._connectSetting.pairingOption) {
-        this.setPairingOption(this._connectSetting.pairingOption);
-      }
       if (this._connectSetting.autoDiscovery) {
         await this.discoverAllHandlesWait();
       }

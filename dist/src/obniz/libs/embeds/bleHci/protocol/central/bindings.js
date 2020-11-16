@@ -70,7 +70,7 @@ class NobleBindings extends eventemitter3_1.default {
     async stopScanningWait() {
         await this._gap.stopScanningWait();
     }
-    async connectWait(peripheralUuid) {
+    async connectWait(peripheralUuid, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
         const addressType = this._addresseTypes[peripheralUuid];
         // Block parall connection ongoing for ESP32 bug.
@@ -82,7 +82,11 @@ class NobleBindings extends eventemitter3_1.default {
             return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
         })
             .then((result) => {
-            return this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+            this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+            if (onConnectCallback && typeof onConnectCallback === "function") {
+                onConnectCallback();
+            }
+            return this._gatts[result.handle].exchangeMtuWait(256);
         })
             .then((result) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
@@ -146,7 +150,7 @@ class NobleBindings extends eventemitter3_1.default {
             this.emit("discover", uuid, address, addressType, connectable, advertisement, rssi);
         }
     }
-    async onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+    onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
         if (role !== 0) {
             // not master, ignore
             return;
@@ -173,7 +177,6 @@ class NobleBindings extends eventemitter3_1.default {
         this._gatts[handle].on("notification", this.onNotification.bind(this));
         this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
         this._signalings[handle].on("connectionParameterUpdateRequest", this.onConnectionParameterUpdateWait.bind(this));
-        await this._gatts[handle].exchangeMtuWait(256);
         // public onMtu(address: any, mtu?: any) {}
     }
     onDisconnComplete(handle, reason) {

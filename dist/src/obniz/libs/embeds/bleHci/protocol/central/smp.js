@@ -103,31 +103,6 @@ class Smp extends eventemitter3_1.default {
             this.handleSecurityRequest(data);
         }
         // console.warn("SMP: " + code);
-        return;
-        if (SMP.PAIRING_RESPONSE === code) {
-            this.handlePairingResponse(data);
-        }
-        else if (SMP.PAIRING_CONFIRM === code) {
-            this.handlePairingConfirm(data);
-        }
-        else if (SMP.PAIRING_RANDOM === code) {
-            this.handlePairingRandomWait(data);
-        }
-        else if (SMP.PAIRING_FAILED === code) {
-            this.handlePairingFailed(data);
-        }
-        else if (SMP.ENCRYPT_INFO === code) {
-            this.handleEncryptInfo(data);
-        }
-        else if (SMP.MASTER_IDENT === code) {
-            this.handleMasterIdent(data);
-        }
-        else if (SMP.SMP_SECURITY_REQUEST === code) {
-            this.handleSecurityRequest(data);
-        }
-        else {
-            throw new Error();
-        }
     }
     onAclStreamEnd() {
         this._aclStream.removeListener("data", this.onAclStreamDataBinded);
