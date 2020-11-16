@@ -49,6 +49,12 @@ export interface SmpEncryptOptions {
    * Callback function that call on pairing passkey required.
    */
   onPairedCallback?: (keys: string) => void;
+
+  /**
+   * Callback function that call on pairing failed internal.
+   * Some pairing error may caused internally when peripheral request regardless central side request.
+   */
+  onPairingFailed?: (e: Error) => void;
 }
 
 /**
@@ -273,7 +279,15 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public handleSecurityRequest(data: any) {
-    this.pairingWait();
+    this.pairingWait()
+      .then(() => {})
+      .catch((e) => {
+        if (this._options && this._options.onPairingFailed) {
+          this._options.onPairingFailed(e);
+        } else {
+          throw e;
+        }
+      });
   }
 
   public setKeys(keyStringBase64: string) {

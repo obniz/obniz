@@ -748,7 +748,7 @@ class Hci extends eventemitter3_1.default {
         this.emit("stateChange", state);
     }
     async readAclStreamWait(handle, cid, firstData, timeout) {
-        return this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
+        return await this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];

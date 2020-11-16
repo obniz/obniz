@@ -199,7 +199,16 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.write(SMP.CID, data);
     }
     handleSecurityRequest(data) {
-        this.pairingWait();
+        this.pairingWait()
+            .then(() => { })
+            .catch((e) => {
+            if (this._options && this._options.onPairingFailed) {
+                this._options.onPairingFailed(e);
+            }
+            else {
+                throw e;
+            }
+        });
     }
     setKeys(keyStringBase64) {
         const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");

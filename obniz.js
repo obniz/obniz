@@ -10213,7 +10213,16 @@ class Smp extends eventemitter3_1.default {
         this._aclStream.write(SMP.CID, data);
     }
     handleSecurityRequest(data) {
-        this.pairingWait();
+        this.pairingWait()
+            .then(() => { })
+            .catch((e) => {
+            if (this._options && this._options.onPairingFailed) {
+                this._options.onPairingFailed(e);
+            }
+            else {
+                throw e;
+            }
+        });
     }
     setKeys(keyStringBase64) {
         const keyString = Buffer.from(keyStringBase64, "base64").toString("ascii");
@@ -11059,7 +11068,7 @@ class Hci extends eventemitter3_1.default {
         this.emit("stateChange", state);
     }
     async readAclStreamWait(handle, cid, firstData, timeout) {
-        return this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
+        return await this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];

@@ -988,7 +988,7 @@ class Hci extends EventEmitter<HciEventTypes> {
   }
 
   public async readAclStreamWait(handle: Handle, cid: number, firstData: number, timeout?: number): Promise<Buffer> {
-    return this._obnizHci.timeoutPromiseWrapper(
+    return await this._obnizHci.timeoutPromiseWrapper(
       new Promise((resolve) => {
         const key = (cid << 8) + firstData;
         this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
