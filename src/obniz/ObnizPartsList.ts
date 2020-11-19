@@ -186,7 +186,7 @@ import Keyestudio_TemperatureSensor, {
 import Keyestudio_TrafficLight, { Keyestudio_TrafficLightOptions } from "../parts/Keyestudio/Keyestudio_TrafficLight";
 
 // M5StackC
-import HEM_9200T, { HEM_9200TOptions } from "../parts/Ble/HEM-9200T";
+import HEM_9200T, { HEM_9200TOptions } from "../parts/Ble/HEM_9200T";
 import M5StickC_ADC, { M5StickC_ADCOptions } from "../parts/M5Stack/M5StickC_ADC";
 import M5StickC_DAC, { M5StickC_DACOptions } from "../parts/M5Stack/M5StickC_DAC";
 import M5StickC_FINGER, { M5StickC_FINGEROptions } from "../parts/M5Stack/M5StickC_FINGER";
