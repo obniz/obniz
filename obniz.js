@@ -6958,7 +6958,12 @@ class BleRemotePeripheral {
             }
         }
         catch (e) {
-            await this.disconnectWait();
+            try {
+                await this.disconnectWait();
+            }
+            catch (e2) {
+                // nothing
+            }
             throw e;
         }
         this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
@@ -7004,6 +7009,7 @@ class BleRemotePeripheral {
             //   return;
             // }
             this.emitter.once("statusupdate", (params) => {
+                clearTimeout(timeoutTimer);
                 if (params.status === "disconnected") {
                     resolve(true); // for compatibility
                 }
@@ -7011,6 +7017,9 @@ class BleRemotePeripheral {
                     reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
                 }
             });
+            const timeoutTimer = setTimeout(() => {
+                reject(new ObnizError_1.ObnizTimeoutError(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+            }, 90 * 1000);
             this.obnizBle.centralBindings.disconnect(this.address);
         });
     }
