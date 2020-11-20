@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title> | obniz</title>
+	<title>HEM_9200TResult | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,30 +56,98 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="parts.html">Parts</a>
+					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="parts.reflection-18170.html"></a>
+					<a href="../modules/parts.hem_9200t.html">HEM-9200T</a>
+				</li>
+				<li>
+					<a href="parts.hem_9200t.hem_9200tresult.html">HEM_9200TResult</a>
 				</li>
 			</ul>
-			<h1>External module</h1>
+			<h1>Interface HEM_9200TResult</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">HEM_9200TResult</span>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>External modules</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-external-module tsd-parent-kind-external-module"><a href="parts.reflection-18170.grove_distancesensor.html" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.hem_9200t.hem_9200tresult.html#bloodpressure" class="tsd-kind-icon">blood<wbr>Pressure</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.hem_9200t.hem_9200tresult.html#date" class="tsd-kind-icon">date</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.hem_9200t.hem_9200tresult.html#measurementstatus" class="tsd-kind-icon">measurement<wbr>Status</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.hem_9200t.hem_9200tresult.html#pulserate" class="tsd-kind-icon">pulse<wbr>Rate</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.hem_9200t.hem_9200tresult.html#userid" class="tsd-kind-icon">user<wbr>Id</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="bloodpressure" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> blood<wbr>Pressure</h3>
+					<div class="tsd-signature tsd-kind-icon">blood<wbr>Pressure<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>diastolic<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>meanArterialPressure<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>systolic<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>unit<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"mmHg"</span><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:21</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="date" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> date</h3>
+					<div class="tsd-signature tsd-kind-icon">date<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>day<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>hour<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>minute<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>month<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>second<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>year<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:27</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="measurementstatus" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> measurement<wbr>Status</h3>
+					<div class="tsd-signature tsd-kind-icon">measurement<wbr>Status<span class="tsd-signature-symbol">:</span> <a href="../modules/parts.hem_9200t.html#hem_9200tmesurementstatus" class="tsd-signature-type">HEM_9200TMesurementStatus</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:37</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="pulserate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pulse<wbr>Rate</h3>
+					<div class="tsd-signature tsd-kind-icon">pulse<wbr>Rate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:35</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="userid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> user<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">user<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/HEM_9200T/index.ts:36</li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -93,6 +161,39 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/parts.hem_9200t.hem_9200t.html" class="tsd-kind-icon">HEM_<wbr>9200T</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.hem_9200t.hem_9200toptions.html" class="tsd-kind-icon">HEM_<wbr>9200TOptions</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.hem_9200t.hem_9200tresult.html" class="tsd-kind-icon">HEM_<wbr>9200TResult</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.hem_9200t.hem_9200tresult.html#bloodpressure" class="tsd-kind-icon">blood<wbr>Pressure</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.hem_9200t.hem_9200tresult.html#date" class="tsd-kind-icon">date</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.hem_9200t.hem_9200tresult.html#measurementstatus" class="tsd-kind-icon">measurement<wbr>Status</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.hem_9200t.hem_9200tresult.html#pulserate" class="tsd-kind-icon">pulse<wbr>Rate</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.hem_9200t.hem_9200tresult.html#userid" class="tsd-kind-icon">user<wbr>Id</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/parts.hem_9200t.html#hem_9200tmesurementstatus" class="tsd-kind-icon">HEM_<wbr>9200TMesurement<wbr>Status</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

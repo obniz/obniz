@@ -107,6 +107,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="obnizcore.components.ble.hci.blepairingoptions.html#keys" class="tsd-kind-icon">keys</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="obnizcore.components.ble.hci.blepairingoptions.html#onpairedcallback" class="tsd-kind-icon">on<wbr>Paired<wbr>Callback</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="obnizcore.components.ble.hci.blepairingoptions.html#onpairingfailed" class="tsd-kind-icon">on<wbr>Pairing<wbr>Failed</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="obnizcore.components.ble.hci.blepairingoptions.html#passkeycallback" class="tsd-kind-icon">passkey<wbr>Callback</a></li>
 							</ul>
 						</section>
@@ -122,7 +123,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides SmpEncryptOptions.keys</p>
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:99</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:120</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -134,14 +135,9 @@
 <span class="hljs-keyword">const</span> keys = <span class="hljs-string">"xxxxx"</span>;
 <span class="hljs-keyword">await</span> obniz.ble.initWait({});
 obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">peripheral</span>)</span>{
-<span class="hljs-keyword">if</span>(peripheral.localName == <span class="hljs-string">"my peripheral"</span>){
-     peripheral.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
-         <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"success"</span>);
-         <span class="hljs-keyword">await</span> peripheral.pairingWait({keys});  <span class="hljs-comment">// pairing with stored keys.</span>
-
-     }
-     <span class="hljs-keyword">await</span> peripheral.connectWait();
-    }
+  <span class="hljs-keyword">if</span>(peripheral.localName == <span class="hljs-string">"my peripheral"</span>){
+    <span class="hljs-keyword">await</span> peripheral.connectWait({keys});<span class="hljs-comment">// pairing with stored keys.</span>
+  }
 }
 <span class="hljs-keyword">await</span> obniz.ble.scan.startWait();</code></pre>
 					</div>
@@ -162,6 +158,23 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						</div>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="onpairingfailed" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Pairing<wbr>Failed</h3>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Pairing<wbr>Failed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><a href="../classes/obnizcore.errors.obnizerror.html#error" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from SmpEncryptOptions.onPairingFailed</p>
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/protocol/central/smp.ts:57</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Callback function that call on pairing failed internal.
+							Some pairing error may caused internally when peripheral request regardless central side request.</p>
+						</div>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="passkeycallback" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> passkey<wbr>Callback</h3>
@@ -169,7 +182,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<aside class="tsd-sources">
 						<p>Overrides SmpEncryptOptions.passkeyCallback</p>
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:128</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:142</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -181,18 +194,11 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 <span class="hljs-keyword">const</span> keys = <span class="hljs-string">"xxxxx"</span>;
 <span class="hljs-keyword">await</span> obniz.ble.initWait({});
 obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">peripheral</span>)</span>{
-<span class="hljs-keyword">if</span>(peripheral.localName == <span class="hljs-string">"my peripheral"</span>){
-     peripheral.onconnect = <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
-         <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"success"</span>);
-         <span class="hljs-keyword">let</span> passkeyCallback = <span class="hljs-keyword">await</span> ()=&gt;{
-             <span class="hljs-keyword">let</span> number = prompt(<span class="hljs-string">"Please type passkey code."</span>); <span class="hljs-comment">//HTML prompt</span>
-             <span class="hljs-keyword">return</span> number;
-         }
-         <span class="hljs-keyword">await</span> peripheral.pairingWait({passkeyCallback});  <span class="hljs-comment">// pairing with user input passkey.</span>
-
-     }
-     <span class="hljs-keyword">await</span> peripheral.connectWait();
-    }
+  <span class="hljs-keyword">if</span>(peripheral.localName == <span class="hljs-string">"my peripheral"</span>){
+    <span class="hljs-keyword">await</span> peripheral.connectWait({ <span class="hljs-attr">passkeyCallback</span>: <span class="hljs-keyword">async</span> () =&gt; {
+     <span class="hljs-keyword">return</span> <span class="hljs-string">"123456"</span>;
+    }});
+  }
 }
 <span class="hljs-keyword">await</span> obniz.ble.scan.startWait();</code></pre>
 					</div>
@@ -219,6 +225,9 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="obnizcore.components.ble.hci.blepairingoptions.html#onpairedcallback" class="tsd-kind-icon">on<wbr>Paired<wbr>Callback</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.blepairingoptions.html#onpairingfailed" class="tsd-kind-icon">on<wbr>Pairing<wbr>Failed</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.blepairingoptions.html#passkeycallback" class="tsd-kind-icon">passkey<wbr>Callback</a>

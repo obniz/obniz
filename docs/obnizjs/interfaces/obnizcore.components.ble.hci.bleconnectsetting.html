@@ -146,9 +146,30 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<div class="tsd-signature tsd-kind-icon">pairing<wbr>Option<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.blepairingoptions.html" class="tsd-signature-type">BlePairingOptions</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:70</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:96</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Piring Option</p>
+						</div>
+						<p>true : auto discover services/characteristics/descriptors on connection established.
+						false : don&#39;t discover automatically. Please manually.</p>
+						<p>Default is true;</p>
+						<p>If set false, you should manually discover services/characteristics/descriptors;</p>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+<span class="hljs-keyword">await</span> obniz.ble.initWait({});
+obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">peripheral</span>)</span>{
+  <span class="hljs-keyword">if</span>(peripheral.localName == <span class="hljs-string">"my peripheral"</span>){
+     <span class="hljs-keyword">await</span> peripheral.connectWait({<span class="hljs-attr">autoDiscovery</span>:<span class="hljs-literal">false</span>});
+     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"success"</span>);
+     <span class="hljs-keyword">await</span> peripheral.discoverAllServicesWait(); <span class="hljs-comment">//manually discover</span>
+     <span class="hljs-keyword">let</span> service = peripheral.getService(<span class="hljs-string">"1800"</span>);
+
+  }
+}
+<span class="hljs-keyword">await</span> obniz.ble.scan.startWait();</code></pre>
+					</div>
 				</section>
 			</section>
 		</div>
