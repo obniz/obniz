@@ -520,7 +520,11 @@ export default class BleRemotePeripheral {
         await this.discoverAllHandlesWait();
       }
     } catch (e) {
-      await this.disconnectWait();
+      try {
+        await this.disconnectWait();
+      } catch (e2) {
+        // nothing
+      }
       throw e;
     }
     this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
@@ -568,6 +572,7 @@ export default class BleRemotePeripheral {
       //   return;
       // }
       this.emitter.once("statusupdate", (params: any) => {
+        clearTimeout(timeoutTimer);
         if (params.status === "disconnected") {
           resolve(true); // for compatibility
         } else {
@@ -576,6 +581,14 @@ export default class BleRemotePeripheral {
           );
         }
       });
+      const timeoutTimer = setTimeout(() => {
+        reject(
+          new ObnizTimeoutError(
+            `cutting connection to peripheral name=${this.localName} address=${this.address} was failed`,
+          ),
+        );
+      }, 90 * 1000);
+
       this.obnizBle.centralBindings.disconnect(this.address);
     });
   }
