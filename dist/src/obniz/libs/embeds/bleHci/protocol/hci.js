@@ -279,7 +279,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x02, 3);
         // data
         cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
-        cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // duplicates: 0 -> duplicates, 0 -> duplicates
+        cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
         this.debug("set scan enabled - writing: " + cmd.toString("hex"));
         const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
         this._socket.write(cmd);
@@ -748,7 +748,7 @@ class Hci extends eventemitter3_1.default {
         this.emit("stateChange", state);
     }
     async readAclStreamWait(handle, cid, firstData, timeout) {
-        return this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
+        return await this._obnizHci.timeoutPromiseWrapper(new Promise((resolve) => {
             const key = (cid << 8) + firstData;
             this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];
             this._aclStreamObservers[handle][key] = this._aclStreamObservers[handle][cid] || [];
@@ -940,5 +940,3 @@ class Hci extends eventemitter3_1.default {
 }
 Hci.STATUS_MAPPER = STATUS_MAPPER;
 exports.default = Hci;
-
-//# sourceMappingURL=hci.js.map

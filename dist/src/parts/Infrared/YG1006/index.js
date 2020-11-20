@@ -30,5 +30,3 @@ class YG1006 {
     }
 }
 exports.default = YG1006;
-
-//# sourceMappingURL=index.js.map

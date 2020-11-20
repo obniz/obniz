@@ -60,5 +60,3 @@ class MQGasSensor {
     }
 }
 exports.default = MQGasSensor;
-
-//# sourceMappingURL=index.js.map

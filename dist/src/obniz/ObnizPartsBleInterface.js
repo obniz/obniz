@@ -39,5 +39,3 @@ class ObnizPartsBleInterface {
     }
 }
 exports.default = ObnizPartsBleInterface;
-
-//# sourceMappingURL=ObnizPartsBleInterface.js.map

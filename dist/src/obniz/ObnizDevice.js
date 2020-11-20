@@ -83,13 +83,12 @@ class ObnizDevice extends ObnizUIs_1.default {
         if (!this.isNode) {
             if (msg && typeof msg === "object" && msg.alert) {
                 this.showAlertUI(msg);
-                msg = msg.message;
             }
             if (typeof showObnizDebugError === "function") {
-                showObnizDebugError(new Error(msg));
+                showObnizDebugError(new Error(msg.message));
             }
         }
-        console.error(`${msg}`);
+        console.error(`${msg.message}`);
     }
     /**
      * Send message to obniz clients. If you want receive data, see [[Obniz.onmessage]]
@@ -161,5 +160,3 @@ class ObnizDevice extends ObnizUIs_1.default {
     }
 }
 exports.default = ObnizDevice;
-
-//# sourceMappingURL=ObnizDevice.js.map

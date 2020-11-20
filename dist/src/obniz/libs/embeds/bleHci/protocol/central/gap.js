@@ -253,7 +253,7 @@ class Gap extends eventemitter3_1.default {
         this.emit("discover", status, address, addressType, connectable, advertisement, rssi);
     }
     async setScanEnabledWait(enabled, filterDuplicates) {
-        const status = await this._hci.setScanEnabledWait(enabled, true);
+        const status = await this._hci.setScanEnabledWait(enabled, filterDuplicates);
         // Check the status we got from the command complete function.
         if (status !== 0) {
             // If it is non-zero there was an error, and we should not change
@@ -271,5 +271,3 @@ class Gap extends eventemitter3_1.default {
     }
 }
 exports.default = Gap;
-
-//# sourceMappingURL=gap.js.map

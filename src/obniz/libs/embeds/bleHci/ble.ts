@@ -49,6 +49,7 @@ export default class ObnizBLE extends ComponentAbstract {
   public get isInitialized() {
     return this._initialized;
   }
+
   /**
    * @ignore
    *
@@ -123,8 +124,33 @@ export default class ObnizBLE extends ComponentAbstract {
       }
     });
 
+    this.on("/response/ble/error", (obj) => {
+      if (obj.error) {
+        const error = obj.error;
+        let msg = "BLE error: " + error.message;
+        msg += " (";
+        msg += "error_code: " + error.error_code;
+        msg += ", ";
+        msg += "module_error_code: " + error.module_error_code;
+        msg += ", ";
+        msg += "function_code: " + error.function_code;
+        msg += ", ";
+        msg += "address: " + error.address;
+        msg += ", ";
+        msg += "service_uuid: " + error.service_uuid;
+        msg += ", ";
+        msg += "characteristic_uuid: " + error.characteristic_uuid;
+        msg += ", ";
+        msg += "descriptor_uuid: " + error.descriptor_uuid;
+        msg += ")";
+
+        this.Obniz.error({ alert: "error", message: msg });
+      }
+    });
+
     this._reset();
   }
+
   public debugHandler: any = () => {};
 
   /**
@@ -209,6 +235,8 @@ export default class ObnizBLE extends ComponentAbstract {
     }
     if (!this.scan) {
       this.scan = new BleScan(this);
+    } else {
+      this.scan.notifyFromServer("obnizClose", {});
     }
     if (!this.advertisement) {
       this.advertisement = new BleAdvertisement(this);

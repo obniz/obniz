@@ -204,5 +204,3 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.default = Tcp;
-
-//# sourceMappingURL=tcp.js.map

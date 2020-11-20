@@ -35,8 +35,20 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         this.updateOnlineUI();
     }
     isValidObnizId(str) {
-        if (typeof str !== "string" || str.length < 8) {
-            return null;
+        if (typeof str !== "string") {
+            return false;
+        }
+        // IP => accept
+        if (this._isIpAddress(str)) {
+            return true;
+        }
+        // Serial Number 'sn_***'
+        if (str.startsWith("sn_")) {
+            return true;
+        }
+        // 0000-0000
+        if (str.length < 8) {
+            return false;
         }
         str = str.replace("-", "");
         let id = parseInt(str);
@@ -49,7 +61,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         this.showOffLine();
         if (!this.isValidObnizId(this.id)) {
             if (this.isNode) {
-                this.error("invalid obniz id");
+                this.error({ alert: "error", message: "invalid obniz id" });
             }
             else {
                 const filled = _ReadCookie("obniz-last-used") || "";
@@ -291,5 +303,3 @@ function _ReadCookie(name) {
     }
     return null;
 }
-
-//# sourceMappingURL=ObnizUIs.js.map

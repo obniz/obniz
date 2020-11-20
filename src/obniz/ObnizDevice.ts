@@ -123,13 +123,12 @@ export default class ObnizDevice extends ObnizUIs {
     if (!this.isNode) {
       if (msg && typeof msg === "object" && msg.alert) {
         this.showAlertUI(msg);
-        msg = msg.message;
       }
       if (typeof showObnizDebugError === "function") {
-        showObnizDebugError(new Error(msg));
+        showObnizDebugError(new Error(msg.message));
       }
     }
-    console.error(`${msg}`);
+    console.error(`${msg.message}`);
   }
 
   /**

@@ -76,5 +76,3 @@ class ObnizApi {
     }
 }
 exports.default = ObnizApi;
-
-//# sourceMappingURL=ObnizApi.js.map

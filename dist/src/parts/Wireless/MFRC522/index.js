@@ -494,5 +494,3 @@ class MFRC522 {
     }
 }
 exports.default = MFRC522;
-
-//# sourceMappingURL=index.js.map

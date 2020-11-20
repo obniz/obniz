@@ -67,6 +67,32 @@ export interface BleConnectSetting {
    */
   autoDiscovery?: boolean;
 
+  /**
+   * Piring Option
+   *
+   * true : auto discover services/characteristics/descriptors on connection established.
+   * false : don't discover automatically. Please manually.
+   *
+   * Default is true;
+   *
+   * If set false, you should manually discover services/characteristics/descriptors;
+   *
+   * ```javascript
+   * // Javascript Example
+   * await obniz.ble.initWait({});
+   * obniz.ble.scan.onfind = function(peripheral){
+   *   if(peripheral.localName == "my peripheral"){
+   *      await peripheral.connectWait({autoDiscovery:false});
+   *      console.log("success");
+   *      await peripheral.discoverAllServicesWait(); //manually discover
+   *      let service = peripheral.getService("1800");
+   *
+   *   }
+   * }
+   * await obniz.ble.scan.startWait();
+   * ```
+   *
+   */
   pairingOption?: BlePairingOptions;
 }
 
@@ -84,14 +110,9 @@ export interface BlePairingOptions extends SmpEncryptOptions {
    * const keys = "xxxxx";
    * await obniz.ble.initWait({});
    * obniz.ble.scan.onfind = function(peripheral){
-   * if(peripheral.localName == "my peripheral"){
-   *      peripheral.onconnect = async function(){
-   *          console.log("success");
-   *          await peripheral.pairingWait({keys});  // pairing with stored keys.
-   *
-   *      }
-   *      await peripheral.connectWait();
-   *     }
+   *   if(peripheral.localName == "my peripheral"){
+   *     await peripheral.connectWait({keys});// pairing with stored keys.
+   *   }
    * }
    * await obniz.ble.scan.startWait();
    * ```
@@ -108,18 +129,11 @@ export interface BlePairingOptions extends SmpEncryptOptions {
    * const keys = "xxxxx";
    * await obniz.ble.initWait({});
    * obniz.ble.scan.onfind = function(peripheral){
-   * if(peripheral.localName == "my peripheral"){
-   *      peripheral.onconnect = async function(){
-   *          console.log("success");
-   *          let passkeyCallback = await ()=>{
-   *              let number = prompt("Please type passkey code."); //HTML prompt
-   *              return number;
-   *          }
-   *          await peripheral.pairingWait({passkeyCallback});  // pairing with user input passkey.
-   *
-   *      }
-   *      await peripheral.connectWait();
-   *     }
+   *   if(peripheral.localName == "my peripheral"){
+   *     await peripheral.connectWait({ passkeyCallback: async () => {
+   *      return "123456";
+   *     }});
+   *   }
    * }
    * await obniz.ble.scan.startWait();
    * ```
@@ -422,7 +436,7 @@ export default class BleRemotePeripheral {
    *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
    */
   public connect(setting?: BleConnectSetting) {
-    this.connectWait(); // background
+    this.connectWait(setting); // background
   }
 
   /**
@@ -458,13 +472,41 @@ export default class BleRemotePeripheral {
    * }
    * ```
    *
+   * There are options for connection
+   *
+   * ```javascript
+   * // Javascript Example
+   *
+   * await obniz.ble.initWait();
+   * var target = {
+   *    uuids: ["fff0"],
+   * };
+   * var peripheral = await obniz.ble.scan.startOneWait(target);
+   * if(!peripheral) {
+   *    console.log('no such peripheral')
+   *    return;
+   * }
+   * try {
+   *   await peripheral.connectWait({
+   *
+   *   });
+   *   console.log("connected");
+   * } catch(e) {
+   *   console.log("can't connect");
+   * }
+   * ```
+   *
    */
   public async connectWait(setting?: BleConnectSetting): Promise<void> {
     this._connectSetting = setting || {};
     this._connectSetting.autoDiscovery = this._connectSetting.autoDiscovery !== false;
     await this.obnizBle.scan.endWait();
     try {
-      await this.obnizBle.centralBindings.connectWait(this.address);
+      await this.obnizBle.centralBindings.connectWait(this.address, () => {
+        if (this._connectSetting.pairingOption) {
+          this.setPairingOption(this._connectSetting.pairingOption);
+        }
+      });
     } catch (e) {
       if (e instanceof ObnizTimeoutError) {
         await this.obnizBle.resetWait();
@@ -474,9 +516,6 @@ export default class BleRemotePeripheral {
     }
     this.connected = true;
     try {
-      if (this._connectSetting.pairingOption) {
-        this.setPairingOption(this._connectSetting.pairingOption);
-      }
       if (this._connectSetting.autoDiscovery) {
         await this.discoverAllHandlesWait();
       }

@@ -379,7 +379,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     // data
     cmd.writeUInt8(enabled ? 0x01 : 0x00, 4); // enable: 0 -> disabled, 1 -> enabled
-    cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // duplicates: 0 -> duplicates, 0 -> duplicates
+    cmd.writeUInt8(filterDuplicates ? 0x01 : 0x00, 5); // 0x01 => filter enabled, 0x00 => filter disable
 
     this.debug("set scan enabled - writing: " + cmd.toString("hex"));
     const p = this.readCmdCompleteEventWait(COMMANDS.LE_SET_SCAN_ENABLE_CMD);
@@ -988,7 +988,7 @@ class Hci extends EventEmitter<HciEventTypes> {
   }
 
   public async readAclStreamWait(handle: Handle, cid: number, firstData: number, timeout?: number): Promise<Buffer> {
-    return this._obnizHci.timeoutPromiseWrapper(
+    return await this._obnizHci.timeoutPromiseWrapper(
       new Promise((resolve) => {
         const key = (cid << 8) + firstData;
         this._aclStreamObservers[handle] = this._aclStreamObservers[handle] || [];

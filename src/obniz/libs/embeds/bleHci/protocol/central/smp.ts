@@ -49,6 +49,12 @@ export interface SmpEncryptOptions {
    * Callback function that call on pairing passkey required.
    */
   onPairedCallback?: (keys: string) => void;
+
+  /**
+   * Callback function that call on pairing failed internal.
+   * Some pairing error may caused internally when peripheral request regardless central side request.
+   */
+  onPairingFailed?: (e: Error) => void;
 }
 
 /**
@@ -165,24 +171,6 @@ class Smp extends EventEmitter<SmpEventTypes> {
       this.handleSecurityRequest(data);
     }
     // console.warn("SMP: " + code);
-    return;
-    if (SMP.PAIRING_RESPONSE === code) {
-      this.handlePairingResponse(data);
-    } else if (SMP.PAIRING_CONFIRM === code) {
-      this.handlePairingConfirm(data);
-    } else if (SMP.PAIRING_RANDOM === code) {
-      this.handlePairingRandomWait(data);
-    } else if (SMP.PAIRING_FAILED === code) {
-      this.handlePairingFailed(data);
-    } else if (SMP.ENCRYPT_INFO === code) {
-      this.handleEncryptInfo(data);
-    } else if (SMP.MASTER_IDENT === code) {
-      this.handleMasterIdent(data);
-    } else if (SMP.SMP_SECURITY_REQUEST === code) {
-      this.handleSecurityRequest(data);
-    } else {
-      throw new Error();
-    }
   }
 
   public onAclStreamEnd() {
@@ -273,7 +261,15 @@ class Smp extends EventEmitter<SmpEventTypes> {
   }
 
   public handleSecurityRequest(data: any) {
-    this.pairingWait();
+    this.pairingWait()
+      .then(() => {})
+      .catch((e) => {
+        if (this._options && this._options.onPairingFailed) {
+          this._options.onPairingFailed(e);
+        } else {
+          throw e;
+        }
+      });
   }
 
   public setKeys(keyStringBase64: string) {
