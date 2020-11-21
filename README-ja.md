@@ -8,14 +8,14 @@
 
 ドキュメント
 
-- [ガイド](https://docs.obniz.com/ja/guides/)
+- [ガイド](https://docs.obniz.io/ja/guides/)
 - [クラスリファレンス](https://obniz.github.io/obniz/obnizjs/index.html)
 
 関係するサイト
 
 - [obniz ウェブサイト](https://obniz.com/ja)
 - [デバイス一覧](https://obniz.com/ja/products)
-- [制作例](https://blog.obniz.com/example-2/)
+- [制作例](https://blog.obniz.io/example-2/)
 
 obniz.js内 Example集
 
@@ -57,11 +57,11 @@ obniz.js内 Example集
       uart.send($("#text").val());
     });
 
-    obniz.com7.drive("5v")
-    obniz.com7.output(true)
-    obniz.com8.pull("3v");
-    obniz.com8.drive("open-drain");
-    obniz.com8.output(false);
+    obniz.io7.drive("5v")
+    obniz.io7.output(true)
+    obniz.io8.pull("3v");
+    obniz.io8.drive("open-drain");
+    obniz.io8.output(false);
   }
 </script>
 </body>
@@ -127,13 +127,13 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    obniz.com0.drive("5v");
-    obniz.com0.output(true)
-    obniz.com1.pull("3v");
-    obniz.com1.drive("open-drain");
-    obniz.com1.output(true);
-    obniz.com2.drive("3v");
-    obniz.com2.output(true);
+    obniz.io0.drive("5v");
+    obniz.io0.output(true)
+    obniz.io1.pull("3v");
+    obniz.io1.drive("open-drain");
+    obniz.io1.output(true);
+    obniz.io2.drive("3v");
+    obniz.io2.output(true);
 
     obniz.ad3.start(function(voltage){
       console.log("changed to "+voltage+" v")

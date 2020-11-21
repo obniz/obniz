@@ -9,19 +9,18 @@ It works on both browser and nodejs.
 
 Docs
 
-- [Guides](https://docs.obniz.com/guides/)
+- [Guides](https://docs.obniz.io/guides/)
 - [Class References](https://obniz.github.io/obniz/obnizjs/index.html)
 
 Related Sites
 
 - [obniz WebSite](https://obniz.com/)
 - [obniz Devices](https://obniz.com/products)
-- [Examples](https://blog.obniz.com/example/)
+- [Examples](https://blog.obniz.io/example/)
 
 Examples in obniz.js
 
 - [Examples](./examples)
-
 
 ## Usage
 ```html
@@ -58,11 +57,11 @@ Examples in obniz.js
       uart.send($("#text").val());
     });
 
-    obniz.com7.drive("5v")
-    obniz.com7.output(true)
-    obniz.com8.pull("3v");
-    obniz.com8.drive("open-drain");
-    obniz.com8.output(false);
+    obniz.io7.drive("5v")
+    obniz.io7.output(true)
+    obniz.io8.pull("3v");
+    obniz.io8.drive("open-drain");
+    obniz.io8.output(false);
   }
 </script>
 </body>
@@ -131,13 +130,13 @@ and its io peripherals too can be used
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    obniz.com0.drive("5v");
-    obniz.com0.output(true)
-    obniz.com1.pull("3v");
-    obniz.com1.drive("open-drain");
-    obniz.com1.output(false);
-    obniz.com2.drive("3v");
-    obniz.com2.output(true);
+    obniz.io0.drive("5v");
+    obniz.io0.output(true)
+    obniz.io1.pull("3v");
+    obniz.io1.drive("open-drain");
+    obniz.io1.output(false);
+    obniz.io2.drive("3v");
+    obniz.io2.output(true);
 
     obniz.ad3.start(function(voltage){
       console.log("changed to "+voltage+" v")
