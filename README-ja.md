@@ -4,18 +4,22 @@
 ![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
 
-[obniz](https://obniz.io/ja/) や[obnizOS](https://obniz.io/ja/doc/obnizos)をobniz websocket APIを使いJavaScriptから操作するためのsdkです。
+[obniz](https://obniz.com/ja/) や[obnizOS](https://obniz.com/ja/doc/obnizos)をobniz websocket APIを使いJavaScriptから操作するためのsdkです。
 
-Docs
+ドキュメント
 
-- [ガイド](https://docs.obniz.io/ja/guides/)
+- [ガイド](https://docs.obniz.com/ja/guides/)
 - [クラスリファレンス](https://obniz.github.io/obniz/obnizjs/index.html)
 
-Related Sites
+関係するサイト
 
-- [obniz ウェブサイト](https://obniz.io/ja)
-- [デバイス一覧](https://obniz.io/ja/products)
-- [制作例](https://blog.obniz.io/example-2/)
+- [obniz ウェブサイト](https://obniz.com/ja)
+- [デバイス一覧](https://obniz.com/ja/products)
+- [制作例](https://blog.obniz.com/example-2/)
+
+obniz.js内 Example集
+
+- [Examples](./examples)
 
 ## 使い方
 
@@ -53,11 +57,11 @@ Related Sites
       uart.send($("#text").val());
     });
 
-    obniz.io7.drive("5v")
-    obniz.io7.output(true)
-    obniz.io8.pull("3v");
-    obniz.io8.drive("open-drain");
-    obniz.io8.output(false);
+    obniz.com7.drive("5v")
+    obniz.com7.output(true)
+    obniz.com8.pull("3v");
+    obniz.com8.drive("open-drain");
+    obniz.com8.output(false);
   }
 </script>
 </body>
@@ -123,13 +127,13 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    obniz.io0.drive("5v");
-    obniz.io0.output(true)
-    obniz.io1.pull("3v");
-    obniz.io1.drive("open-drain");
-    obniz.io1.output(true);
-    obniz.io2.drive("3v");
-    obniz.io2.output(true);
+    obniz.com0.drive("5v");
+    obniz.com0.output(true)
+    obniz.com1.pull("3v");
+    obniz.com1.drive("open-drain");
+    obniz.com1.output(true);
+    obniz.com2.drive("3v");
+    obniz.com2.output(true);
 
     obniz.ad3.start(function(voltage){
       console.log("changed to "+voltage+" v")
@@ -152,11 +156,11 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
 ## パーツライブラリ
 パーツライブラリはobniz.jsに含まれています。ドキュメントはこちらで
 
-[obniz Parts Library](https://obniz.io/sdk/parts)
+[obniz Parts Library](https://obniz.com/sdk/parts)
 
-obniz Boardにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.io/sdk/parts/) で確認できます。
+obniz Boardにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.com/sdk/parts/) で確認できます。
 
-例えば LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
+例えば LED [https://obniz.com/sdk/parts/LED](https://obniz.com/sdk/parts/LED)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -165,7 +169,7 @@ obniz Boardにつながれた部品をつかうにはpartsをonconnect関数の�
   }
 ```
 
-HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/sdk/parts/HC-SR04)
+HC-SR40(distance measure) [https://obniz.com/sdk/parts/HC-SR04](https://obniz.com/sdk/parts/HC-SR04)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
