@@ -8,3 +8,4 @@ test.js
 test-*.js
 test/test-*.js
 test/test-*.ts
+examples/*
