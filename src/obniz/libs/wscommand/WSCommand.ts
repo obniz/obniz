@@ -221,6 +221,12 @@ export default abstract class WSCommand {
     return results;
   }
 
+  public fastValidate(commandUri: any, json: any): boolean {
+    const schema: any = this.getSchema(commandUri);
+    const results: boolean = WSSchema.validate(json, schema);
+    return results;
+  }
+
   public onlyTypeErrorMessage(validateError: any, rootPath: any) {
     if (validateError.valid) {
       return true;
