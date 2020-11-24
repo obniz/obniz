@@ -1,0 +1,16 @@
+{
+  "name": "mutiple-scan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^2.6.1",
+    "obniz": "^3.10.1",
+    "obniz-cloud-sdk": "^0.1.0"
+  }
+}
