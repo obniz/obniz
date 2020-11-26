@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 /**
  * @ignore
  */
@@ -43,10 +44,7 @@ class Gap extends eventemitter3_1.default {
         }
         if (serviceUuids && serviceUuids.length) {
             for (i = 0; i < serviceUuids.length; i++) {
-                const serviceUuid = Buffer.from(serviceUuids[i]
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                const serviceUuid = bleHelper_1.default.hex2reversedBuffer(serviceUuids[i]);
                 if (serviceUuid.length === 2) {
                     serviceUuids16bit.push(serviceUuid);
                 }

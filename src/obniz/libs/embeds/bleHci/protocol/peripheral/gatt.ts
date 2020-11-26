@@ -3,6 +3,7 @@
  *
  * @ignore
  */
+import BleHelper from "../../bleHelper";
 import AclStream from "./acl-stream";
 
 // var debug = require('debug')('gatt');
@@ -478,13 +479,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
         response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
 
-        uuid = Buffer.from(
-          info.uuid
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(""),
-          "hex",
-        );
+        uuid = BleHelper.hex2reversedBuffer(info.uuid);
         for (let j = 0; j < uuid.length; j++) {
           response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
         }
@@ -501,18 +496,8 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
     const startHandle = request.readUInt16LE(1);
     const endHandle = request.readUInt16LE(3);
-    const uuid = request
-      .slice(5, 7)
-      .toString("hex")
-      .match(/.{1,2}/g)
-      .reverse()
-      .join("");
-    const value = request
-      .slice(7)
-      .toString("hex")
-      .match(/.{1,2}/g)
-      .reverse()
-      .join("");
+    const uuid = BleHelper.buffer2reversedHex(request.slice(5, 7));
+    const value = BleHelper.buffer2reversedHex(request.slice(7));
 
     const handles = [];
     let handle: any;
@@ -561,12 +546,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
     const startHandle = request.readUInt16LE(1);
     const endHandle = request.readUInt16LE(3);
-    const uuid = request
-      .slice(5)
-      .toString("hex")
-      .match(/.{1,2}/g)
-      .reverse()
-      .join("");
+    const uuid = BleHelper.buffer2reversedHex(request.slice(5));
 
     debug(
       "read by group: startHandle = 0x" +
@@ -620,13 +600,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
           response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
 
-          const serviceUuid = Buffer.from(
-            service.uuid
-              .match(/.{1,2}/g)
-              .reverse()
-              .join(""),
-            "hex",
-          );
+          const serviceUuid = BleHelper.hex2reversedBuffer(service.uuid);
           for (let j = 0; j < serviceUuid.length; j++) {
             response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
           }
@@ -647,12 +621,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
     const startHandle = request.readUInt16LE(1);
     const endHandle = request.readUInt16LE(3);
-    const uuid = request
-      .slice(5)
-      .toString("hex")
-      .match(/.{1,2}/g)
-      .reverse()
-      .join("");
+    const uuid = BleHelper.buffer2reversedHex(request.slice(5));
     let i: any;
     let handle: any;
 
@@ -707,13 +676,7 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
           response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
           response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
 
-          const characteristicUuid = Buffer.from(
-            characteristic.uuid
-              .match(/.{1,2}/g)
-              .reverse()
-              .join(""),
-            "hex",
-          );
+          const characteristicUuid = BleHelper.hex2reversedBuffer(characteristic.uuid);
           for (let j = 0; j < characteristicUuid.length; j++) {
             response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
           }
@@ -828,21 +791,9 @@ export default class Gatt extends EventEmitter<GattEventTypes> {
 
       if (handleType === "service" || handleType === "includedService") {
         result = ATT.ECODE_SUCCESS;
-        data = Buffer.from(
-          handle.uuid
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(""),
-          "hex",
-        );
+        data = BleHelper.hex2reversedBuffer(handle.uuid);
       } else if (handleType === "characteristic") {
-        const uuid = Buffer.from(
-          handle.uuid
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(""),
-          "hex",
-        );
+        const uuid = BleHelper.hex2reversedBuffer(handle.uuid);
 
         result = ATT.ECODE_SUCCESS;
         data = Buffer.alloc(3 + uuid.length);

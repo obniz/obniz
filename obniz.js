@@ -5820,7 +5820,7 @@ exports.default = BleDescriptor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const BleHelper = {
     uuidFilter(uuid) {
@@ -5838,9 +5838,45 @@ const BleHelper = {
             return "_" + s.charAt(0).toLowerCase();
         });
     },
+    buffer2reversedHex(buf, sepalator = "") {
+        return this.reverseHexString(buf.toString("hex"), sepalator);
+    },
+    hex2reversedBuffer(address, sepalator = "") {
+        if (sepalator === "") {
+            return Buffer.from(this.reverseHexString(address), "hex");
+        }
+        return Buffer.from(address
+            .split(":")
+            .reverse()
+            .join(""), "hex");
+    },
+    reverseHexString(str, separator = "") {
+        // 40msec (100000 times)
+        // return str
+        //   .match(/.{1,2}/g)!
+        //   .reverse()
+        //   .join(separator);
+        // 30msec (100000 times)
+        // const parts = [];
+        // for (let i = 0; i < str.length; i += 2) {
+        //   parts.push(str.slice(i, i + 2));
+        // }
+        // return parts.reverse().join(separator);
+        // 13msec (100000 times)
+        let result = "";
+        const len = str.length + (str.length % 2);
+        for (let i = len; i > 0; i -= 2) {
+            result += str.slice(i - 2, i) + separator;
+        }
+        if (separator.length !== 0) {
+            return result.slice(0, -1 * separator.length);
+        }
+        return result;
+    },
 };
 exports.default = BleHelper;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -8627,6 +8663,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js"));
 const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js"));
 const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gatt.js"));
@@ -8673,7 +8710,7 @@ class NobleBindings extends eventemitter3_1.default {
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
-            const address = uuid.match(/.{1,2}/g).join(":");
+            const address = bleHelper_1.default.reverseHexString(uuid, ":");
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = true;
@@ -9008,6 +9045,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = () => { };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @ignore
  */
@@ -9134,12 +9172,7 @@ class Gap extends eventemitter3_1.default {
                 case 0x06: // Incomplete List of 128-bit Service Class UUIDs
                 case 0x07: // Complete List of 128-bit Service Class UUIDs
                     for (j = 0; j < bytes.length; j += 16) {
-                        serviceUuid = bytes
-                            .slice(j, j + 16)
-                            .toString("hex")
-                            .match(/.{1,2}/g)
-                            .reverse()
-                            .join("");
+                        serviceUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(j, j + 16));
                         if (advertisement.serviceUuids.indexOf(serviceUuid) === -1) {
                             advertisement.serviceUuids.push(serviceUuid);
                         }
@@ -9167,12 +9200,7 @@ class Gap extends eventemitter3_1.default {
                 case 0x15: {
                     // List of 128 bit solicitation UUIDs
                     for (j = 0; j < bytes.length; j += 16) {
-                        serviceSolicitationUuid = bytes
-                            .slice(j, j + 16)
-                            .toString("hex")
-                            .match(/.{1,2}/g)
-                            .reverse()
-                            .join("");
+                        serviceSolicitationUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(j, j + 16));
                         if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
                             advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
                         }
@@ -9181,12 +9209,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x16: {
                     // 16-bit Service Data, there can be multiple occurences
-                    const serviceDataUuid = bytes
-                        .slice(0, 2)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceDataUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 2));
                     const serviceData = bytes.slice(2, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceDataUuid,
@@ -9196,12 +9219,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x20: {
                     // 32-bit Service Data, there can be multiple occurences
-                    const serviceData32Uuid = bytes
-                        .slice(0, 4)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceData32Uuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 4));
                     const serviceData32 = bytes.slice(4, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceData32Uuid,
@@ -9211,12 +9229,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x21: {
                     // 128-bit Service Data, there can be multiple occurences
-                    const serviceData128Uuid = bytes
-                        .slice(0, 16)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceData128Uuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 16));
                     const serviceData128 = bytes.slice(16, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceData128Uuid,
@@ -9288,6 +9301,7 @@ const debug = () => { };
 /* eslint-disable no-unused-vars */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @ignore
  */
@@ -9457,13 +9471,7 @@ class Gatt extends eventemitter3_1.default {
                         endHandle: data.readUInt16LE(2 + i * type + 2),
                         uuid: type === 6
                             ? data.readUInt16LE(2 + i * type + 4).toString(16)
-                            : data
-                                .slice(2 + i * type + 4)
-                                .slice(0, 16)
-                                .toString("hex")
-                                .match(/.{1,2}/g)
-                                .reverse()
-                                .join(""),
+                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 4).slice(0, 16)),
                     });
                 }
             }
@@ -9497,13 +9505,7 @@ class Gatt extends eventemitter3_1.default {
                         startHandle: data.readUInt16LE(2 + i * type + 2),
                         uuid: type === 8
                             ? data.readUInt16LE(2 + i * type + 6).toString(16)
-                            : data
-                                .slice(2 + i * type + 6)
-                                .slice(0, 16)
-                                .toString("hex")
-                                .match(/.{1,2}/g)
-                                .reverse()
-                                .join(""),
+                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 6).slice(0, 16)),
                     });
                 }
             }
@@ -9540,13 +9542,7 @@ class Gatt extends eventemitter3_1.default {
                         valueHandle: data.readUInt16LE(2 + i * type + 3),
                         uuid: type === 7
                             ? data.readUInt16LE(2 + i * type + 5).toString(16)
-                            : data
-                                .slice(2 + i * type + 5)
-                                .slice(0, 16)
-                                .toString("hex")
-                                .match(/.{1,2}/g)
-                                .reverse()
-                                .join(""),
+                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 5).slice(0, 16)),
                     });
                 }
             }
@@ -10111,6 +10107,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/crypto.js"));
 /**
  * @ignore
@@ -10139,15 +10136,9 @@ class Smp extends eventemitter3_1.default {
         this.debugHandler = () => { };
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-        this._ia = Buffer.from(localAddress
-            .split(":")
-            .reverse()
-            .join(""), "hex");
+        this._ia = bleHelper_1.default.hex2reversedBuffer(localAddress, ":");
         this._rat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-        this._ra = Buffer.from(remoteAddress
-            .split(":")
-            .reverse()
-            .join(""), "hex");
+        this._ra = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ":");
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
         this._aclStream.on("data", this.onAclStreamDataBinded);
@@ -10391,6 +10382,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -10582,11 +10574,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
         const data = await p;
         this.addressType = "public";
-        this.address = data.result
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(":");
+        this.address = bleHelper_1.default.buffer2reversedHex(data.result, ":");
         this.debug("address = " + this.address);
         return this.address;
     }
@@ -10681,10 +10669,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0030, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
         cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
-        Buffer.from(address
-            .split(":")
-            .reverse()
-            .join(""), "hex").copy(cmd, 10); // peer address
+        bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
         cmd.writeUInt16LE(0x0006, 17); // min interval
         cmd.writeUInt16LE(0x000c, 19); // max interval
@@ -11047,12 +11032,7 @@ class Hci extends eventemitter3_1.default {
         const handle = data.readUInt16LE(0);
         const role = data.readUInt8(2);
         const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
-        const address = data
-            .slice(4, 10)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(":");
+        const address = bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ":");
         const interval = data.readUInt16LE(10) * 1.25;
         const latency = data.readUInt16LE(12); // TODO: multiplier?
         const supervisionTimeout = data.readUInt16LE(14) * 10;
@@ -11086,12 +11066,7 @@ class Hci extends eventemitter3_1.default {
         for (let i = 0; i < count; i++) {
             const type = data.readUInt8(0);
             const addressType = data.readUInt8(1) === 0x01 ? "random" : "public";
-            const address = data
-                .slice(2, 8)
-                .toString("hex")
-                .match(/.{1,2}/g)
-                .reverse()
-                .join(":");
+            const address = bleHelper_1.default.buffer2reversedHex(data.slice(2, 8), ":");
             const eirLength = data.readUInt8(8);
             const eir = data.slice(9, eirLength + 9);
             const rssi = data.readInt8(eirLength + 9);
@@ -11617,6 +11592,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 /**
  * @ignore
  */
@@ -11651,10 +11627,7 @@ class Gap extends eventemitter3_1.default {
         }
         if (serviceUuids && serviceUuids.length) {
             for (i = 0; i < serviceUuids.length; i++) {
-                const serviceUuid = Buffer.from(serviceUuids[i]
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                const serviceUuid = bleHelper_1.default.hex2reversedBuffer(serviceUuids[i]);
                 if (serviceUuid.length === 2) {
                     serviceUuids16bit.push(serviceUuid);
                 }
@@ -11781,6 +11754,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 // var debug = require('debug')('gatt');
 const debug = () => { };
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
@@ -12157,10 +12136,7 @@ class Gatt extends eventemitter3_1.default {
             for (i = 0; i < numInfo; i++) {
                 const info = infos[i];
                 response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
-                uuid = Buffer.from(info.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                uuid = bleHelper_1.default.hex2reversedBuffer(info.uuid);
                 for (let j = 0; j < uuid.length; j++) {
                     response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
                 }
@@ -12175,18 +12151,8 @@ class Gatt extends eventemitter3_1.default {
         let response = null;
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5, 7)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
-        const value = request
-            .slice(7)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5, 7));
+        const value = bleHelper_1.default.buffer2reversedHex(request.slice(7));
         const handles = [];
         let handle;
         for (let i = startHandle; i <= endHandle; i++) {
@@ -12223,12 +12189,7 @@ class Gatt extends eventemitter3_1.default {
         let response = null;
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
         debug("read by group: startHandle = 0x" +
             startHandle.toString(16) +
             ", endHandle = 0x" +
@@ -12267,10 +12228,7 @@ class Gatt extends eventemitter3_1.default {
                     const service = services[i];
                     response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
                     response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
-                    const serviceUuid = Buffer.from(service.uuid
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join(""), "hex");
+                    const serviceUuid = bleHelper_1.default.hex2reversedBuffer(service.uuid);
                     for (let j = 0; j < serviceUuid.length; j++) {
                         response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
                     }
@@ -12290,12 +12248,7 @@ class Gatt extends eventemitter3_1.default {
         const requestType = request[0];
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
         let i;
         let handle;
         debug("read by type: startHandle = 0x" +
@@ -12335,10 +12288,7 @@ class Gatt extends eventemitter3_1.default {
                     response.writeUInt16LE(characteristic.startHandle, 2 + i * lengthPerCharacteristic);
                     response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
                     response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
-                    const characteristicUuid = Buffer.from(characteristic.uuid
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join(""), "hex");
+                    const characteristicUuid = bleHelper_1.default.hex2reversedBuffer(characteristic.uuid);
                     for (let j = 0; j < characteristicUuid.length; j++) {
                         response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
                     }
@@ -12441,16 +12391,10 @@ class Gatt extends eventemitter3_1.default {
             })(requestType, valueHandle);
             if (handleType === "service" || handleType === "includedService") {
                 result = ATT.ECODE_SUCCESS;
-                data = Buffer.from(handle.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                data = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
             }
             else if (handleType === "characteristic") {
-                const uuid = Buffer.from(handle.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                const uuid = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
                 result = ATT.ECODE_SUCCESS;
                 data = Buffer.alloc(3 + uuid.length);
                 data.writeUInt8(handle.properties, 0);
@@ -12788,6 +12732,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const bleHelper_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleHelper.js"));
 const crypto_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js"));
 const mgmt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js"));
 var SMP;
@@ -12811,15 +12756,9 @@ class Smp extends eventemitter3_1.default {
         this._aclStream = aclStream;
         this._mgmt = new mgmt_1.default(hciProtocol);
         this._iat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-        this._ia = Buffer.from(remoteAddress
-            .split(":")
-            .reverse()
-            .join(""), "hex");
+        this._ia = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ":");
         this._rat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-        this._ra = Buffer.from(localAddress
-            .split(":")
-            .reverse()
-            .join(""), "hex");
+        this._ra = bleHelper_1.default.hex2reversedBuffer(localAddress, ":");
         this._stk = null;
         this._random = null;
         this._diversifier = null;

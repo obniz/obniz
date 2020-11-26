@@ -5,6 +5,7 @@
  */
 import EventEmitter from "eventemitter3";
 
+import BleHelper from "../../bleHelper";
 import crypto from "./crypto";
 import Mgmt from "./mgmt";
 
@@ -60,21 +61,9 @@ export default class Smp extends EventEmitter<SmpEventTypes> {
     this._mgmt = new Mgmt(hciProtocol);
 
     this._iat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-    this._ia = Buffer.from(
-      remoteAddress
-        .split(":")
-        .reverse()
-        .join(""),
-      "hex",
-    );
+    this._ia = BleHelper.hex2reversedBuffer(remoteAddress, ":");
     this._rat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-    this._ra = Buffer.from(
-      localAddress
-        .split(":")
-        .reverse()
-        .join(""),
-      "hex",
-    );
+    this._ra = BleHelper.hex2reversedBuffer(localAddress, ":");
 
     this._stk = null;
     this._random = null;

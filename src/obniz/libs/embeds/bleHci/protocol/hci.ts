@@ -6,6 +6,7 @@ import EventEmitter from "eventemitter3";
 import ObnizBLEHci from "../hci";
 
 import { ObnizBleHciStateError, ObnizBleUnsupportedHciError } from "../../../../ObnizError";
+import BleHelper from "../bleHelper";
 import { Handle } from "../bleTypes";
 
 namespace COMMANDS {
@@ -273,11 +274,7 @@ class Hci extends EventEmitter<HciEventTypes> {
 
     const data = await p;
     this.addressType = "public";
-    this.address = data.result
-      .toString("hex")
-      .match(/.{1,2}/g)!
-      .reverse()
-      .join(":");
+    this.address = BleHelper.buffer2reversedHex(data.result, ":");
 
     this.debug("address = " + this.address);
 
@@ -405,13 +402,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     cmd.writeUInt8(0x00, 8); // initiator filter
 
     cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
-    Buffer.from(
-      address
-        .split(":")
-        .reverse()
-        .join(""),
-      "hex",
-    ).copy(cmd, 10); // peer address
+    BleHelper.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
 
     cmd.writeUInt8(0x00, 16); // own address type
 
@@ -878,16 +869,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
   }
 
-  public processLeConnComplete(status: any, data: any) {
+  public processLeConnComplete(status: any, data: Buffer) {
     const handle: Handle = data.readUInt16LE(0);
     const role = data.readUInt8(2);
     const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
-    const address = data
-      .slice(4, 10)
-      .toString("hex")
-      .match(/.{1,2}/g)
-      .reverse()
-      .join(":");
+    const address = BleHelper.buffer2reversedHex(data.slice(4, 10), ":");
     const interval = data.readUInt16LE(10) * 1.25;
     const latency = data.readUInt16LE(12); // TODO: multiplier?
     const supervisionTimeout = data.readUInt16LE(14) * 10;
@@ -934,16 +920,11 @@ class Hci extends EventEmitter<HciEventTypes> {
     };
   }
 
-  public processLeAdvertisingReport(count: any, data: any) {
+  public processLeAdvertisingReport(count: number, data: Buffer) {
     for (let i = 0; i < count; i++) {
       const type = data.readUInt8(0);
       const addressType = data.readUInt8(1) === 0x01 ? "random" : "public";
-      const address = data
-        .slice(2, 8)
-        .toString("hex")
-        .match(/.{1,2}/g)
-        .reverse()
-        .join(":");
+      const address = BleHelper.buffer2reversedHex(data.slice(2, 8), ":");
       const eirLength = data.readUInt8(8);
       const eir = data.slice(9, eirLength + 9);
       const rssi = data.readInt8(eirLength + 9);
