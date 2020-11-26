@@ -129,6 +129,21 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   public onconnect?: (obniz: this) => void;
 
   /**
+   * If an error occurs, the onerror function is called.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *
+   * }
+   * obniz.onerror = async function(ob, error) {
+   *    console.error(error);
+   * }
+   * ```
+   */
+  public onerror?: (obniz: this, error: Error) => void;
+
+  /**
    * This let you know connection state to your obniz Board as string value.
    *
    * - 'closed' : not connected.
@@ -489,22 +504,26 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   protected wsOnMessage(data: any) {
     this._lastDataReceivedAt = new Date().getTime();
 
-    let json: any;
-    if (typeof data === "string") {
-      json = JSON.parse(data);
-    } else if (this.wscommands) {
-      if (this.debugprintBinary) {
-        this.log("binalized: " + new Uint8Array(data).toString());
+    try {
+      let json: any;
+      if (typeof data === "string") {
+        json = JSON.parse(data);
+      } else if (this.wscommands) {
+        if (this.debugprintBinary) {
+          this.log("binalized: " + new Uint8Array(data).toString());
+        }
+        json = this.binary2Json(data);
       }
-      json = this.binary2Json(data);
-    }
 
-    if (Array.isArray(json)) {
-      for (const i in json) {
-        this.notifyToModule(json[i]);
+      if (Array.isArray(json)) {
+        for (const i in json) {
+          this.notifyToModule(json[i]);
+        }
+      } else {
+        // invalid json
       }
-    } else {
-      // invalid json
+    } catch (e) {
+      this.error(e);
     }
   }
 

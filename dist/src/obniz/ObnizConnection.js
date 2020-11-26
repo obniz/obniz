@@ -330,23 +330,28 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnMessage(data) {
         this._lastDataReceivedAt = new Date().getTime();
-        let json;
-        if (typeof data === "string") {
-            json = JSON.parse(data);
-        }
-        else if (this.wscommands) {
-            if (this.debugprintBinary) {
-                this.log("binalized: " + new Uint8Array(data).toString());
+        try {
+            let json;
+            if (typeof data === "string") {
+                json = JSON.parse(data);
             }
-            json = this.binary2Json(data);
-        }
-        if (Array.isArray(json)) {
-            for (const i in json) {
-                this.notifyToModule(json[i]);
+            else if (this.wscommands) {
+                if (this.debugprintBinary) {
+                    this.log("binalized: " + new Uint8Array(data).toString());
+                }
+                json = this.binary2Json(data);
+            }
+            if (Array.isArray(json)) {
+                for (const i in json) {
+                    this.notifyToModule(json[i]);
+                }
+            }
+            else {
+                // invalid json
             }
         }
-        else {
-            // invalid json
+        catch (e) {
+            this.error(e);
         }
     }
     wsOnClose(event) {

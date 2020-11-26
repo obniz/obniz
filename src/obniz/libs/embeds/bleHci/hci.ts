@@ -16,6 +16,8 @@ export default class ObnizBLEHci {
    */
   public timeout: number = 90 * 1000;
 
+  public hciProtocolOnSocketData: any;
+
   protected _eventHandlerQueue: { [key: string]: EventHandler[] } = {};
 
   constructor(Obniz: any) {
@@ -74,7 +76,13 @@ export default class ObnizBLEHci {
    */
   public notified(obj: any) {
     if (obj.read && obj.read.data) {
-      this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
+      if (this.onread === this.hciProtocolOnSocketData) {
+        // obnizjs internal function
+        this.onread(obj.read.data);
+      } else {
+        // user created function
+        this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
+      }
 
       for (const eventName in this._eventHandlerQueue) {
         if (typeof eventName !== "string" || !eventName.startsWith("[")) {
