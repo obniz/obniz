@@ -2561,23 +2561,28 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnMessage(data) {
         this._lastDataReceivedAt = new Date().getTime();
-        let json;
-        if (typeof data === "string") {
-            json = JSON.parse(data);
-        }
-        else if (this.wscommands) {
-            if (this.debugprintBinary) {
-                this.log("binalized: " + new Uint8Array(data).toString());
+        try {
+            let json;
+            if (typeof data === "string") {
+                json = JSON.parse(data);
             }
-            json = this.binary2Json(data);
-        }
-        if (Array.isArray(json)) {
-            for (const i in json) {
-                this.notifyToModule(json[i]);
+            else if (this.wscommands) {
+                if (this.debugprintBinary) {
+                    this.log("binalized: " + new Uint8Array(data).toString());
+                }
+                json = this.binary2Json(data);
+            }
+            if (Array.isArray(json)) {
+                for (const i in json) {
+                    this.notifyToModule(json[i]);
+                }
+            }
+            else {
+                // invalid json
             }
         }
-        else {
-            // invalid json
+        catch (e) {
+            this.error(e);
         }
     }
     wsOnClose(event) {
@@ -3119,6 +3124,14 @@ class ObnizDevice extends ObnizUIs_1.default {
      * @param msg
      */
     error(msg) {
+        if (this.onerror) {
+            let sendError = msg;
+            if (!(msg instanceof Error)) {
+                sendError = new Error(msg.message);
+            }
+            this.onerror(this, sendError);
+            return;
+        }
         if (!this.isNode) {
             if (msg && typeof msg === "object" && msg.alert) {
                 this.showAlertUI(msg);
@@ -3180,7 +3193,7 @@ class ObnizDevice extends ObnizUIs_1.default {
         super.notifyToModule(obj);
         // notify messaging
         if (typeof obj.message === "object" && this.onmessage) {
-            this.onmessage(obj.message.data, obj.message.from);
+            this._runUserCreatedFunction(this.onmessage, obj.message.data, obj.message.from);
         }
         // debug
         if (typeof obj.debug === "object") {
@@ -8328,7 +8341,14 @@ class ObnizBLEHci {
      */
     notified(obj) {
         if (obj.read && obj.read.data) {
-            this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
+            if (this.onread === this.hciProtocolOnSocketData) {
+                // obnizjs internal function
+                this.onread(obj.read.data);
+            }
+            else {
+                // user created function
+                this.Obniz._runUserCreatedFunction(this.onread, obj.read.data);
+            }
             for (const eventName in this._eventHandlerQueue) {
                 if (typeof eventName !== "string" || !eventName.startsWith("[")) {
                     continue;
@@ -10437,7 +10457,8 @@ class Hci extends eventemitter3_1.default {
                 this._obnizHci.write(arr);
             },
         };
-        this._obnizHci.onread = this.onSocketData.bind(this);
+        this._obnizHci.hciProtocolOnSocketData = this.onSocketData.bind(this);
+        this._obnizHci.onread = this._obnizHci.hciProtocolOnSocketData;
         this.resetBuffers();
     }
     /**

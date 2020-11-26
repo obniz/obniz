@@ -105,7 +105,8 @@ class Hci extends eventemitter3_1.default {
                 this._obnizHci.write(arr);
             },
         };
-        this._obnizHci.onread = this.onSocketData.bind(this);
+        this._obnizHci.hciProtocolOnSocketData = this.onSocketData.bind(this);
+        this._obnizHci.onread = this._obnizHci.hciProtocolOnSocketData;
         this.resetBuffers();
     }
     /**
