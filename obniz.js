@@ -2272,6 +2272,7 @@ class ObnizConnection extends eventemitter3_1.default {
             access_token: options.access_token || null,
             obniz_server: options.obniz_server || "wss://obniz.io",
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
+            obnizid_dialog: options.obnizid_dialog === false ? false : true,
         };
         if (this.options.binary) {
             this.wscommand = this.constructor.WSCommand;
@@ -4012,7 +4013,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     wsconnect(desired_server) {
         this.showOffLine();
         if (!this.isValidObnizId(this.id)) {
-            if (this.isNode) {
+            if (this.isNode || !this.options.obnizid_dialog) {
                 this.error({ alert: "error", message: "invalid obniz id" });
             }
             else {

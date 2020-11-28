@@ -41,6 +41,7 @@ class ObnizConnection extends eventemitter3_1.default {
             access_token: options.access_token || null,
             obniz_server: options.obniz_server || "wss://obniz.io",
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
+            obnizid_dialog: options.obnizid_dialog === false ? false : true,
         };
         if (this.options.binary) {
             this.wscommand = this.constructor.WSCommand;
