@@ -300,7 +300,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     _reset() {
-        this.received = new Uint8Array([]);
+        this.received = [];
         this.used = false;
     }
 }
