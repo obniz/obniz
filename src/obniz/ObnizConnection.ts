@@ -533,8 +533,8 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     const beforeOnConnectCalled = this._onConnectCalled;
     this.close();
 
-    this.emit("close", this);
     if (beforeOnConnectCalled === true) {
+      this.emit("close", this);
       this._runUserCreatedFunction(this.onclose, this);
     }
     this._reconnect();
