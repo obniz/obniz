@@ -15,9 +15,11 @@ hcsr04.measure(function( distance ){
 ```
 
 ## measure(callback(distance))
-距離を計測します、計測が完了したらcallback関数が呼ばれます。
+
+距離を計測し、計測が完了したらcallback関数が呼ばれます。
 距離の単位はmmで、unit()関数でinchに変えることも出来ます。
 もし、反射してくる超音波を受け取れなかった場合はundefinedが返ります。
+
 ```javascript
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
@@ -27,6 +29,7 @@ hcsr04.measure(function( distance ){
 ```
 
 ## [await] measureWait()
+
 measure()と同様ですが、こちらはpromiseを返す関数です。
 
 ```javascript
