@@ -16,8 +16,8 @@ hcsr04.measure(function( distance ){
 
 ## measure(callback(distance))
 
-距離を計測し、計測が完了したらcallback関数が呼ばれます。
-距離の単位はmmで、unit()関数でinchに変えることも出来ます。
+距離を計測し、計測が完了したらcallback関数が呼ばれます。\
+距離の単位はmmで、unit()関数でinchに変えることも出来ます。\
 もし、反射してくる超音波を受け取れなかった場合はundefinedが返ります。
 
 ```javascript
@@ -54,7 +54,7 @@ while(true) {
 ```
 
 ## temp
-超音波は温度により進む速度が違います。
+超音波は温度により進む速度が違います。\
 デフォルトで15度で計算していますが、変更して正しい値にすることでより精度の高い結果が欲しい場合はtempから調整します。
 ```javascript
 // Javascript Example
@@ -65,9 +65,8 @@ console.log("distance " + distance + " mm")
 ```
 
 ## reset_alltime
-一部のHC-SR04では、計測するときに毎回電源のON-OFFが必要なものがあります。
-もし、計測がうまくいかない場合はこのプロパティをtrueにすることで
-自動的にリセットを行います。
+一部のHC-SR04では、計測するときに毎回電源のON-OFFが必要なものがあります。\
+もし、計測がうまくいかない場合はこのプロパティをtrueにすることで自動的にリセットを行います。
 ```javascript
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});

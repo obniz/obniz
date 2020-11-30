@@ -17,7 +17,7 @@ hcsr04.measure(function( distance ){
 ## measure(callback(distance))
 
 The distance is measured and the callback function is called when the measurement is complete.\
-default return unit is "mm", which can be changed to inch by calling .unit() function.\
+Default return unit is "mm", which can be changed to inch by calling .unit() function.\
 If the reflected ultrasonic wave is not received, undefined is returned.
 
 ```javascript
