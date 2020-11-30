@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ioAnimation/changeState"
+
+type: object
+required: [animation]
+properties:
+  animation:
+    type: object
+    required: [name, status]
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+        example: "animation-1"
+        minLength: 1
+        maxLength: 254
+
+      status:
+        type: string
+        enum:
+          - pause
+          - resume
+

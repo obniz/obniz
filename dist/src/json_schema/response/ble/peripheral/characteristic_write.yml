@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/peripheral/characteristic_write"
+description: "callback of write characteristic"
+deprecated: 3.0.0
+
+type: object
+required: [peripheral]
+properties:
+  peripheral:
+    type: object
+    additionalProperties: false
+    required: [write_characteristic_result]
+    properties:
+      write_characteristic_result:
+        type: object
+        required: [service_uuid, characteristic_uuid, result]
+        additionalProperties: false
+        properties:
+          service_uuid: {$ref: "/uuid"}
+          characteristic_uuid: {$ref: "/uuid"}
+          result:
+            type: string
+            enum: [success , failed]

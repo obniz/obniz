@@ -1,0 +1,15 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/io/output_detail"
+
+type: object
+required: [direction, value]
+properties:
+  direction:
+    type: string
+    enum:
+      - output
+
+  value:
+    type: boolean

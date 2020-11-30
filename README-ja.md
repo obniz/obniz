@@ -4,7 +4,22 @@
 ![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
 
-[obniz](https://obniz.io/) を[obniz api](https://obniz.io/doc/about_obniz_api)を使いJavaScriptから操作するためのsdkです。
+[obniz](https://obniz.com/ja/) や[obnizOS](https://obniz.com/ja/doc/obnizos)をobniz websocket APIを使いJavaScriptから操作するためのsdkです。
+
+ドキュメント
+
+- [ガイド](https://docs.obniz.io/ja/guides/)
+- [クラスリファレンス](https://obniz.github.io/obniz/obnizjs/index.html)
+
+関係するサイト
+
+- [obniz ウェブサイト](https://obniz.com/ja)
+- [デバイス一覧](https://obniz.com/ja/products)
+- [制作例](https://blog.obniz.io/example-2/)
+
+obniz.js内 Example集
+
+- [Examples](./examples)
 
 ## 使い方
 
@@ -88,7 +103,7 @@ npmでインストールします。
 ```
 
 ## 接続
-obnizをobniz idを使ってインスタンス化します。
+obniz Boardをobniz idを使ってインスタンス化します。
 そして接続が完了した時に呼ばれる関数をセットします。
 ```javascript
   var obniz = new Obniz("0000-0000");
@@ -96,7 +111,7 @@ obnizをobniz idを使ってインスタンス化します。
 
   }
 ```
-接続完了後にobnizやobnizにつながれた部品を扱えます。
+接続完了後にobniz Boardやobniz Boardにつながれた部品を扱えます。
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -141,11 +156,11 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
 ## パーツライブラリ
 パーツライブラリはobniz.jsに含まれています。ドキュメントはこちらで
 
-[obniz Parts Library](https://obniz.io/sdk/parts)
+[obniz Parts Library](https://obniz.com/sdk/parts)
 
-obnizにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.io/sdk/parts/) で確認できます。
+obniz Boardにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.com/sdk/parts/) で確認できます。
 
-例えば LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
+例えば LED [https://obniz.com/sdk/parts/LED](https://obniz.com/sdk/parts/LED)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -154,7 +169,7 @@ obnizにつながれた部品をつかうにはpartsをonconnect関数の中で�
   }
 ```
 
-HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/sdk/parts/HC-SR04)
+HC-SR40(distance measure) [https://obniz.com/sdk/parts/HC-SR04](https://obniz.com/sdk/parts/HC-SR04)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -200,8 +215,8 @@ obniz.onconnect = async function () {
 ```
 
 ## Example: integrate two or more obniz
-web-obnizだけでなくobniz-obnizの連携も簡単に行なえます。  
-obnizにつながれたサーボモーターを別のobnizにつながれたつまみから操作してみます。
+web-obniz Boardだけでなくobniz Board-obniz Boardの連携も簡単に行なえます。  
+obniz Boardにつながれたサーボモーターを別のobniz Boardにつながれたつまみから操作してみます。
 ```javascript
 // control servomotor from potention meter which connected to another obniz.
 var obnizA = new Obniz("0000-0000");
@@ -216,3 +231,10 @@ obnizA.onconnect = async function () {
   }
 }
 ```
+
+## Lisence
+See [LICENSE.txt](./LICENSE.txt)
+
+## Contribute
+
+[Contribution](./devtools/docs/README.md)

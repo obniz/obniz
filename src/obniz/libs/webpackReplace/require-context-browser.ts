@@ -1,0 +1,5 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+export default {};

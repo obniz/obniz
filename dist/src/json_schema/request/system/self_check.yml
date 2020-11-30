@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/selfCheck"
+description: "circuit IO check"
+
+type: object
+required: [self_check]
+properties:
+  self_check:
+    type: boolean
+    enum: [true]

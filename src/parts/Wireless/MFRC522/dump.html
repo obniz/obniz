@@ -1,0 +1,79 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+  <script src="https://unpkg.com/obniz@2.3.0/obniz.js"></script>
+</head>
+
+<body>
+<div id="obniz-debug"></div>
+<script>
+  var obniz = new Obniz(" "); // obniz ID here
+  obniz.onconnect = async function () {	// If obniz connect
+    // Parts Registration
+    var mfrc522 = obniz.wired("MFRC522", {cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 4, RST: 5, vcc: 6});
+
+    console.log("Please put chip or keycard in the antenna inductive zone!");
+    while (1) {	// Loop until finishing to read all data
+      try {
+        // Find card
+        let response = await mfrc522.findCard();
+        console.log("Card is detected!");
+        console.log("UID		: " + response.uid);
+        console.log("PICC Type 	: " + response.PICC_Type);
+        const UID = response.uid;
+
+        // Alert buzzer
+        await alert(7);
+
+        // Read all data in the card
+        for (let Sector = 0; Sector < 16; Sector++) {
+          response = await mfrc522.readSectorData(Sector, UID);
+          console.log("Sector: " + Sector);
+          for (let i = 0; i < 4; i++)
+            console.log("Block: " + (Sector * 4 + i) + " Data: " + response[i]);
+        }
+
+        // Finish
+        console.log("Read finish!!");
+        break;
+      } catch (err) {	// If some error happen
+        if (err === "card_search_ERROR")
+          console.log("Card is not detected, scanning...");
+        if (err === "alert_ERROR")
+          console.log("Function alert() is not working without buzzer_pin setting.");
+        if (err === "uid_scan_ERROR")
+          console.log("Can't get UID!");
+        if (err === "uid_check_ERROR")
+          console.log("Incorrect UID!");
+        if (err === "PICC_type_ERROR")
+          console.log("Can't get PICC type!");
+        if (err === "password_authentication_ERROR")
+          console.log("Password Authentication ERROR");
+        if (err === "data_read_ERROR")
+          console.log("Error while reading!");
+      }
+    }
+  }
+
+  async function alert(buzzer) {	// Alert buzzer
+    if (buzzer === undefined)
+      throw "alert_ERROR";
+    // default settings
+    let frequency = 2800, count = 2, time = 70, duty = 20;
+    // generate PWM
+    var pwm = obniz.getFreePwm();
+    for (let i = 0; i < count; i++) {
+      await this.obniz.wait(time);
+      pwm.start({io: buzzer});
+      pwm.freq(frequency);
+      pwm.duty(duty);
+      await this.obniz.wait(time);
+      pwm.end();
+    }
+  };
+</script>
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/hci/write"
+
+type: object
+required: [hci]
+properties:
+  hci:
+    type: object
+    required: [write]
+    properties:
+      write: {$ref: "/dataArray"}

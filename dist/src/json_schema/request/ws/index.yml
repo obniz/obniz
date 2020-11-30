@@ -1,0 +1,8 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ws"
+basePath: "ws"
+
+"anyOf":
+  - {$ref: "/request/ws/reset_obniz_on_ws_disconnection"}

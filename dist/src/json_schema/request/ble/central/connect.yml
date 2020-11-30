@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central/connect"
+related:  "/response/ble/central/status_update"
+deprecated: 3.0.0
+
+type: object
+required: [connect]
+properties:
+  connect:
+    type: object
+    required: [address]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress" }

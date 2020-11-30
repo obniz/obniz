@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/tcp/connection"
+
+
+
+type: object
+required: [connection]
+properties:
+  connection:
+    type: object
+    required: [connected]
+    properties:
+      connected:
+        type: boolean

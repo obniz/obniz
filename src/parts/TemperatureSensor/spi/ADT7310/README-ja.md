@@ -1,0 +1,23 @@
+# Temperature Sensor - ADT7310
+温度センサADT7310です。センサで取得した温度を知ることができます。
+
+
+
+
+## wired(obniz, {vcc, gnd, din, dout, sclk})
+obniz Boardに温度センサをつなぎます。
+vcc,gnd,sclk,mosi,misoはそれぞれ温度センサの電源,GND,SCLK,DIN,DOUTピンへ接続してください。
+センサのCSピンはプルダウンする必要があります。
+```javascript
+// Javascript Example
+var sensor = obniz.wired("ADT7310", {vcc:0, gnd:1, din:2, dout:3, sclk:4});
+```
+## [await] getTempWait()
+現在の温度を計測して返します。単位は摂氏(℃)です。
+
+```javascript
+// Javascript Example
+var sensor = obniz.wired("ADT7310", {vcc:0, gnd:1, din:2, dout:3, sclk:4});
+var temp = await sensor.getTempWait();
+console.log('temperature:' + temp);
+```

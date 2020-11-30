@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system"
+basePath: "system"
+
+"anyOf":
+  - {$ref: "/request/system/wait"}
+  - {$ref: "/request/system/reset"}
+  - {$ref: "/request/system/reboot"}
+  - {$ref: "/request/system/selfCheck"}
+  - {$ref: "/request/system/keepWorkingAtOffline"}
+  - {$ref: "/request/system/ping"}
+  - {$ref: "/request/system/sleepSeconds"}
+  - {$ref: "/request/system/sleepMinute"}
+  - {$ref: "/request/system/sleepIoTrigger"}

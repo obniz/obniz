@@ -1,0 +1,945 @@
+{
+  "categories": [
+    {
+      "name": "Light",
+      "image_url": "https://obniz.io/sdk/parts/FullcolorLED/animation.gif",
+      "parts": [
+        {
+          "name": "LED",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-12519/",
+            "switchscience": "https://www.switch-science.com/catalog/3846/"
+          }
+        },
+        {
+          "name": "FullcolorLED",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-12167",
+            "amazon.com": "http://a.co/d/3UPMR4D",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005214929&SearchText=led+rgb+5mm+4pin"
+          }
+        },
+        {
+          "name": "WS2811",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-08412/",
+            "switchscience": "https://www.switch-science.com/catalog/1802/",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=200002296&initiative_id=AS_20181005215827&SearchText=ws2811+8mm+chipset"
+          }
+        },
+        {
+          "name": "WS2812",
+          "store": {}
+        },
+        {
+          "name": "WS2812B",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/1643",
+            "switchscience": "https://www.switch-science.com/catalog/1593/",
+            "amazon.com": "http://a.co/d/64zki38",
+            "aliexpress": "https://ja.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005221059&SearchText=ws2812b+ring"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Infrared",
+      "image_url": "https://obniz.io/sdk/parts/IRModule/image.jpg",
+      "parts": [
+        {
+          "name": "InfraredLED",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-03261/",
+            "adafruit": "https://www.adafruit.com/product/387",
+            "switchscience": "https://www.switch-science.com/catalog/1484/",
+            "amazon.com": "http://a.co/d/iuj6RdO",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005221626&SearchText=led+ir+5mm+940nm"
+          }
+        },
+        {
+          "name": "IRSensor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-04659/",
+            "adafruit": "https://learn.adafruit.com/ir-sensor",
+            "switchscience": "https://www.switch-science.com/catalog/1485/",
+            "amazon.com": "http://a.co/d/9ALVGNW",
+            "aliexpress": "https://www.aliexpress.com/wholesale?initiative_id=SC_20181005232108&SearchText=infrared+receiver+38khz&g=y&spellcheckPrompt=&misspellText=infrared+reciever+38khz"
+          }
+        },
+        {
+          "name": "IRModule",
+          "store": {
+            "obniz": "https://obniz.myshopify.com/products/ir-module-cbr-ir001?variant=15937533771834"
+          }
+        },
+        {
+          "name": "YG1006",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07041/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Display",
+      "image_url": "https://obniz.io/sdk/parts/SainSmartTFT18LCD/connect.jpg",
+      "parts": [
+        {
+          "name": "7SegmentLED",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-00640/",
+            "amazon.com": "http://a.co/d/h6WaBBc"
+          }
+        },
+        {
+          "name": "7SegmentLEDArray",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/c/c7seg5/",
+            "amazon.com": "http://a.co/d/6oG6kV0"
+          }
+        },
+        {
+          "name": "7SegmentLED_MAX7219",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/881",
+            "amazon.com": "http://a.co/d/hxB6AnJ"
+          }
+        },
+        {
+          "name": "MatrixLED_MAX7219",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-09984/",
+            "amazon.com": "http://a.co/d/hAS1cgI",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=AS_20181005222123&SearchText=max7219+dot+matrix+module"
+          }
+        },
+        {
+          "name": "SainSmartTFT18LCD",
+          "store": {
+            "amazon": "https://www.amazon.co.jp/dp/B008HWTVQ2/",
+            "amazon.com": "http://a.co/d/ceGfsNN",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005223948&SearchText=1.8%22+tft"
+          }
+        },
+        {
+          "name": "MatrixLED_HT16K33",
+          "store": {}
+        },
+        {
+          "name": "SharpMemoryTFT",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/3502"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Camera",
+      "image_url": "https://obniz.io/sdk/parts/ArduCAMMini/image.jpg",
+      "parts": [
+        {
+          "name": "ArduCAMMini",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/3780/",
+            "amazon.com": "http://a.co/d/b8sozEq"
+          }
+        },
+        {
+          "name": "JpegSerialCam",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07746/",
+            "adafruit": "https://www.adafruit.com/product/1386"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Moving",
+      "image_url": "https://obniz.io/sdk/parts/ServoMotor/servomotor.gif",
+      "parts": [
+        {
+          "name": "DCMotor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-09169/",
+            "adafruit": "https://www.adafruit.com/product/711",
+            "switchscience": "https://www.switch-science.com/catalog/2736/",
+            "amazon.com": "http://a.co/d/deQ8c6Q",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005225517&SearchText=motor+130"
+          }
+        },
+        {
+          "name": "ServoMotor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-08913/",
+            "adafruit": "https://www.adafruit.com/product/155",
+            "switchscience": "https://www.switch-science.com/catalog/3595/",
+            "amazon.com": "http://a.co/d/bF5FBA0",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005230005&SearchText=servo+motor+arduino"
+          }
+        },
+        {
+          "name": "StepperMotor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-05374/",
+            "adafruit": "https://www.adafruit.com/product/858",
+            "amazon.com": "https://www.amazon.com/Adafruit-Small-Reduction-Stepper-Motor/dp/B01BMRR0FM/ref=sr_1_8?ie=UTF8&qid=1550133053&sr=8-8&keywords=stepper+motor+5v"
+          }
+        },
+        {
+          "name": "Solenoid",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-10761/"
+          }
+        },
+        {
+          "name": "PCA9685",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-10350/",
+            "adafruit": "https://www.adafruit.com/product/815",
+            "switchscience": "https://www.switch-science.com/catalog/961/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sound",
+      "image_url": "https://obniz.io/sdk/parts/Speaker/wired.png",
+      "parts": [
+        {
+          "name": "Speaker",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-04118/",
+            "adafruit": "https://www.adafruit.com/product/1739",
+            "switchscience": "https://www.switch-science.com/catalog/472/",
+            "amazon.com": "http://a.co/d/gIoj5KN",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=AS_20181005230006&SearchText=piezo+buzzer"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GasSensor",
+      "image_url": "https://obniz.io/sdk/parts/MQ6/image.jpg",
+      "parts": [
+        {
+          "name": "MQ2",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ3",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ4",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ5",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ6",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ7",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ8",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ9",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ135",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Logic",
+      "image_url": "https://obniz.io/sdk/parts/SNx4HC595/image.jpg",
+      "parts": [
+        {
+          "name": "SNx4HC595",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-08605/",
+            "switchscience": "https://www.switch-science.com/catalog/674/",
+            "amazon.com": "http://a.co/d/bD1LVz4",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005230625&SearchText=74hc595+dip"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Accessory",
+      "image_url": "https://obniz.io/sdk/parts/USB/usb2.jpg",
+      "parts": [
+        {
+          "name": "USB",
+          "store": {}
+        }
+      ]
+    },
+    {
+      "name": "Wireless",
+      "image_url": "https://obniz.io/sdk/parts/XBee/wired.png",
+      "parts": [
+        {
+          "name": "RN42",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07735/",
+            "switchscience": "https://www.switch-science.com/catalog/2275/",
+            "amazon.com": "http://a.co/d/45bGHpk"
+          }
+        },
+        {
+          "name": "XBee",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-05793/",
+            "adafruit": "https://www.adafruit.com/product/967",
+            "switchscience": "https://www.switch-science.com/catalog/394/",
+            "amazon.com": "http://a.co/d/gyjg40I"
+          }
+        },
+        {
+          "name": "MFRC522",
+          "store": {
+            "amazon.co.jp": "https://www.amazon.co.jp/dp/B00HF1ACY6",
+            "amazon.com": "https://www.amazon.com/dp/B07KGBJ9VG"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Movement Sensor",
+      "image_url": "https://obniz.io/sdk/parts/JoyStick/joystick.jpg",
+      "parts": [
+        {
+          "name": "Button",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-09827/",
+            "adafruit": "https://www.adafruit.com/product/1009",
+            "switchscience": "https://www.switch-science.com/catalog/293/",
+            "amazon.com": "http://a.co/d/cgC9cZ5",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=AS_20181005231521&SearchText=tactile+switch+12x12"
+          }
+        },
+        {
+          "name": "JoyStick",
+          "store": {
+            "amazon.co.jp": "https://www.amazon.co.jp/EasyWordMall-Dual-axis-Joystick-ジョイスティック-モジュールArduino用/dp/B016PXVH66/ref=sr_1_fkmr1_3?ie=UTF8&qid=1531998812&sr=8-3-fkmr1&keywords=hiletgo+joystick",
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-08763/",
+            "adafruit": "https://www.adafruit.com/product/512"
+          }
+        },
+        {
+          "name": "Potentiometer",
+          "store": {
+            "amazon.co.jp": "https://www.amazon.co.jp/alpha-RV16シリーズ-Aカーブ-Potentiometer-可変抵抗器各種/dp/B01ARIWY5S/ref=sr_1_5?ie=UTF8&qid=1531998874&sr=8-5&keywords=Potentiometer",
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-00246/"
+          }
+        },
+        {
+          "name": "ENC03R_Module",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-04912/"
+          }
+        },
+        {
+          "name": "HC-SR505",
+          "store": {
+            "amazon.co.jp": "https://www.amazon.co.jp/Refaxi-Refaxi-HC-SR505ミニ赤外線PIRモーション-センサーモーションセンサーモジュール-ミニパッシブ-赤外線センサー人の動きを感知/dp/B01LS6NU9C"
+          }
+        },
+        {
+          "name": "PaPIRsVZ",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-09750/"
+          }
+        },
+        {
+          "name": "FSR-40X",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-04002/"
+          }
+        },
+        {
+          "name": "KXR94-2050",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-05153/",
+            "digikey": "https://www.digikey.jp/product-detail/en/kionix-inc/KXR94-2050-FR/1191-1012-1-ND/3137358"
+          }
+        },
+        {
+          "name": "MPU9250",
+          "store": {}
+        },
+        {
+          "name": "MPU6050",
+          "store": {}
+        },
+        {
+          "name": "MPU6886",
+          "store": {}
+        },
+        {
+          "name": "AK8963",
+          "store": {}
+        },
+        {
+          "name": "IPM-165",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-04911/"
+          }
+        },
+        {
+          "name": "BMP280",
+          "store": {}
+        }
+      ]
+    },
+    {
+      "name": "Distance Sensor",
+      "image_url": "https://obniz.io/sdk/parts/GP2Y0A21YK0F/image.gif",
+      "parts": [
+        {
+          "name": "HC-SR04",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-11009/"
+          }
+        },
+        {
+          "name": "GP2Y0A21YK0F",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-02551/",
+            "adafruit": "https://www.adafruit.com/product/164"
+          }
+        },
+        {
+          "name": "VL53L0X",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-12590/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GPS",
+      "image_url": "https://obniz.io/sdk/parts/GYSFDMAXB/image.jpg",
+      "parts": [
+        {
+          "name": "GYSFDMAXB",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-09991/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Magnet",
+      "parts": [
+        {
+          "name": "HMC5883L",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/1746"
+          }
+        },
+        {
+          "name": "CT10",
+          "store": {
+            "seedstudio": "https://jp.seeedstudio.com/Grove-Magnetic-Switch-p-744.html"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ADConverter",
+      "parts": [
+        {
+          "name": "hx711",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-12370/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "DAConverter",
+      "parts": [
+        {
+          "name": "MCP4725",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-08677/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Soil Moisture Sensor",
+      "image_url": "https://obniz.io/sdk/parts/SEN0114/wired.png",
+      "parts": [
+        {
+          "name": "SEN0114",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07047/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Biological Sensor",
+      "image_url": "https://obniz.io/sdk/parts/PULSE08-M5STICKC-S/image.jpg",
+      "parts": [
+        {
+          "name": "PULSE08-M5STICKC-S",
+          "store": {}
+        }
+      ]
+    },
+    {
+      "name": "Temperature Sensor",
+      "image_url": "https://obniz.io/sdk/parts/BME280/image.jpg",
+      "parts": [
+        {
+          "name": "LM35DZ",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-00116/"
+          }
+        },
+        {
+          "name": "LM60",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-02490/"
+          }
+        },
+        {
+          "name": "LM61",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-11160/",
+            "adafruit": ""
+          }
+        },
+        {
+          "name": "LMT87",
+          "store": {
+            "marutsu": "https://www.marutsu.co.jp/pc/i/15344336/",
+            "digikey": "https://www.digikey.com/product-detail/en/texas-instruments/LMT87LPM/296-43927-1-ND/5962168"
+          }
+        },
+        {
+          "name": "MCP9700",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-09692/",
+            "adafruit": ""
+          }
+        },
+        {
+          "name": "MCP9701",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-03199/",
+            "adafruit": ""
+          }
+        },
+        {
+          "name": "SHT31",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-12125/",
+            "adafruit": "https://www.adafruit.com/product/2857"
+          }
+        },
+        {
+          "name": "SHT20",
+          "store": {}
+        },
+        {
+          "name": "BME280",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/2236/",
+            "adafruit": "https://www.adafruit.com/product/2652"
+          }
+        },
+        {
+          "name": "AMG8833",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/3395/",
+            "adafruit": "https://www.adafruit.com/product/3538"
+          }
+        },
+        {
+          "name": "DHT12",
+          "store": {}
+        },
+        {
+          "name": "D6T44L",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/1297/"
+          }
+        },
+        {
+          "name": "AM2320",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-08663/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Light/Color Sensor",
+      "image_url": "https://obniz.io/sdk/parts/S11059/demo.gif",
+      "parts": [
+        {
+          "name": "S11059",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-08316/"
+          }
+        },
+        {
+          "name": "PT550",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07035/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Grove",
+      "image_url": "https://obniz.io/sdk/parts/Grove_MP3/image.jpg",
+      "parts": [
+        {
+          "name": "Grove_Button",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/804/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Button.html"
+          }
+        },
+        {
+          "name": "Grove_Buzzer",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/1179/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Buzzer.html"
+          }
+        },
+        {
+          "name": "Grove_EarHeartRate",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/2526/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Ear-clip-Heart-Rate-Sensor-p-1116.html"
+          }
+        },
+        {
+          "name": "Grove_MP3",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-10450/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-MP3-v2.0-p-2597.html"
+          }
+        },
+        {
+          "name": "Grove_GPS",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/1179/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-GPS-p-959.html"
+          }
+        },
+        {
+          "name": "Grove_EARTH",
+          "store": {}
+        },
+        {
+          "name": "Grove_JoyStick",
+          "store": {}
+        },
+        {
+          "name": "Grove_3AxisAccelerometer",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-3-Axis-Digital-Accelerometer-16g-p-1156.html"
+          }
+        },
+        {
+          "name": "Grove_RotaryAngleSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Rotary-Angle-Sensor-p-770.html"
+          }
+        },
+        {
+          "name": "Grove_DistanceSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-80cm-Infrared-Proximity-Sensor.html"
+          }
+        },
+        {
+          "name": "Grove_LightSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Light-Sensor-v1.2-p-2727.html"
+          }
+        },
+        {
+          "name": "Grove_PressureSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Round-Force-Sensor-FSR402.html"
+          }
+        },
+        {
+          "name": "Grove_SoilMoistureSensor",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Capacitive-Moisture-Sensor-Corrosion-Resistant-p-2850.html"
+          }
+        },
+        {
+          "name": "Grove_Speaker",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-Speaker-p-1445.html"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ble",
+      "image_url": "https://obniz.io/sdk/parts/2JCIE/sensor.JPG",
+      "parts": [
+        {
+          "name": "2jcie",
+          "store": {}
+        },
+        {
+          "name": "linking",
+          "store": {}
+        },
+        {
+          "name": "ENERTALK",
+          "store": {}
+        },
+        {
+          "name": "iBS01",
+          "store": {}
+        },
+        {
+          "name": "iBS01RG",
+          "store": {}
+        },
+        {
+          "name": "iBS01T",
+          "store": {}
+        },
+        {
+          "name": "iBS02IR",
+          "store": {}
+        },
+        {
+          "name": "iBS02PIR",
+          "store": {}
+        },
+        {
+          "name": "iBS03_iBS04",
+          "store": {}
+        },
+        {
+          "name": "iBS03T",
+          "store": {}
+        },
+        {
+          "name": "iBS03TP",
+          "store": {}
+        },
+        {
+          "name": "iBS04i",
+          "store": {}
+        },
+        {
+          "name": "LogttaAccel",
+          "store": {}
+        },
+        {
+          "name": "LogttaAD",
+          "store": {}
+        },
+        {
+          "name": "LogttaCO2",
+          "store": {}
+        },
+        {
+          "name": "LogttaTemp",
+          "store": {}
+        },
+        {
+          "name": "MINEW_S1",
+          "store": {}
+        },
+        {
+          "name": "REX_BTPM25V",
+          "store": {}
+        },
+        {
+          "name": "RS_SEEK3",
+          "store": {}
+        },
+        {
+          "name": "scbtgaaac",
+          "store": {}
+        },
+        {
+          "name": "uprism",
+          "store": {}
+        },
+        {
+          "name": "cir415a",
+          "store": {}
+        },
+        {
+          "name": "tm530",
+          "store": {}
+        },
+        {
+          "name": "tm551",
+          "store": {}
+        },
+        {
+          "name": "toio_CoreCube",
+          "store": {
+            "toio": "https://toio.io/",
+            "sony": "https://www.sony.jp/toio/",
+            "switchscience": "https://www.switch-science.com/catalog/6302/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Keyestudio",
+      "image_url": "https://obniz.io/sdk/parts/Keyestudio_Button/index.jpg",
+      "parts": [
+        {
+          "name": "Keyestudio_Button",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_Buzzer",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_MoistureSensor",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_PIR",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_TemperatureSensor",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_TrafficLight",
+          "store": {}
+        },
+        {
+          "name": "Keyestudio_HT16K33",
+          "store": {}
+        }
+      ]
+    },
+    {
+      "name": "M5Stack",
+      "image_url": "",
+      "parts": [
+        {
+          "name": "M5StickC_Yun",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6072/"
+          }
+        },
+        {
+          "name": "M5StickC_JoyStick",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6074/"
+          }
+        },
+        {
+          "name": "M5StickC_RS485",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6069/"
+          }
+        },
+        {
+          "name": "M5StickC_ADC",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6071/"
+          }
+        },
+        {
+          "name": "M5StickC_DAC",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6070/"
+          }
+        },
+        {
+          "name": "M5StickC_ToF",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6059/"
+          }
+        },
+        {
+          "name": "M5StickC_FINGER",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/6075/"
+          }
+        }
+      ]
+    }
+  ],
+  "store": {
+    "amazon.co.jp": {
+      "logo": "/images/shop/amazoncojp.png"
+    },
+    "akizuki": {
+      "logo": "/images/shop/akizuki.jpg"
+    },
+    "switchscience": {
+      "logo": "/images/shop/switchscience.png"
+    },
+    "adafruit": {
+      "logo": "/images/shop/adafruit.png"
+    },
+    "seedstudio": {
+      "logo": "/images/shop/seedstudio.png"
+    },
+    "digikey": {
+      "logo": "/images/shop/digikey.png"
+    },
+    "marutsu": {
+      "logo": "/images/shop/marutsu.png"
+    },
+    "obniz": {
+      "logo": "/images/shop/obniz.png"
+    }
+  }
+}
