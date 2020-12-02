@@ -8,6 +8,7 @@
 import EventEmitter from "eventemitter3";
 
 import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError, ObnizError } from "../../../../../ObnizError";
+import BleHelper from "../../bleHelper";
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
 import Hci from "../hci";
 import AclStream from "./acl-stream";
@@ -90,7 +91,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
   public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
     if (!this._addresses[uuid]) {
-      const address: any = uuid.match(/.{1,2}/g)!.join(":");
+      const address: any = BleHelper.reverseHexString(uuid, ":");
       this._addresses[uuid] = address;
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = true;

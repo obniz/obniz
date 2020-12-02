@@ -80,6 +80,14 @@ class ObnizDevice extends ObnizUIs_1.default {
      * @param msg
      */
     error(msg) {
+        if (this.onerror) {
+            let sendError = msg;
+            if (!(msg instanceof Error)) {
+                sendError = new Error(msg.message);
+            }
+            this.onerror(this, sendError);
+            return;
+        }
         if (!this.isNode) {
             if (msg && typeof msg === "object" && msg.alert) {
                 this.showAlertUI(msg);
@@ -141,7 +149,7 @@ class ObnizDevice extends ObnizUIs_1.default {
         super.notifyToModule(obj);
         // notify messaging
         if (typeof obj.message === "object" && this.onmessage) {
-            this.onmessage(obj.message.data, obj.message.from);
+            this._runUserCreatedFunction(this.onmessage, obj.message.data, obj.message.from);
         }
         // debug
         if (typeof obj.debug === "object") {

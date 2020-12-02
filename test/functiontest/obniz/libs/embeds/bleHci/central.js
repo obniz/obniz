@@ -171,7 +171,7 @@ describe('ble-hci-central', function() {
     peripheral.ondisconnect = disconnectStub;
 
     const p = peripheral.connectWait({autoDiscovery: false});
-    await wait(1);
+    await wait(0);
 
     // scan stop
     sendHciCommands(this.obniz, [1, 12, 32, 2, 0, 1]);
@@ -179,7 +179,7 @@ describe('ble-hci-central', function() {
     // connect req
     sendHciCommands(this.obniz, [1, 13, 32, 25, 96, 0, 48, 0, 0, 1, 130, 168, 133, 213, 252, 115, 0, 6, 0, 12, 0, 0, 0, 200, 0, 4, 0, 6, 0]);
 
-    await wait(1);
+    await wait(0);
     sinon.assert.callCount(connectStub, 0);
     sinon.assert.callCount(disconnectStub, 0);
     // connection established
@@ -195,7 +195,7 @@ describe('ble-hci-central', function() {
 
     await p;
 
-    await wait(1);
+    await wait(0);
 
     sinon.assert.callCount(connectStub, 1);
     sinon.assert.callCount(disconnectStub, 0);
@@ -203,7 +203,7 @@ describe('ble-hci-central', function() {
     //disconnect
     await receiveHciCommandsWait(this.obniz, [4, 5, 4, 0, 0, 0, 19]);
 
-    await wait(1);
+    await wait(0);
     sinon.assert.callCount(connectStub, 1);
     sinon.assert.callCount(disconnectStub, 1);
 
@@ -295,7 +295,7 @@ describe('ble-hci-central', function() {
       },
     ];
     testUtil.receiveJson(obniz, results);
-    await wait(1);
+    await wait(0);
     let secondCommands = [
       [0x01, 0x01, 0x0c, 0x08, 0xff, 0xff, 0xfb, 0xff, 0x07, 0xf8, 0xbf, 0x3d], //setEventMask
       [0x01, 0x01, 0x20, 0x08, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], //setLeEventMask
@@ -375,7 +375,7 @@ describe('ble-hci-central', function() {
     }
 
 
-    await wait(1);
+    await wait(0);
     expect(obniz).send([
       {ble: {hci: {write: [1, 11, 32, 7, 1, 16, 0, 16, 0, 0, 0]}}},
     ]);
@@ -410,7 +410,7 @@ describe('ble-hci-central', function() {
         ble: {hci: {read: {data: hci}}},
       },
     ]);
-    await wait(1);
+    await wait(0);
 
     if (!detect) {
       sinon.assert.callCount(stub, 0);
@@ -459,7 +459,7 @@ async function receiveHciCommandsWait(obniz, command) {
     {"ble": {"hci": {"read": {"data": command}}}}
     ,
   ]);
-  await wait(1);
+  await wait(0);
 }
 
 async function receiveMultiCommandsWait(obniz, response) {
@@ -469,7 +469,7 @@ async function receiveMultiCommandsWait(obniz, response) {
       ,
     ]);
   }
-  await wait(1);
+  await wait(0);
 }
 
 function wait(ms) {

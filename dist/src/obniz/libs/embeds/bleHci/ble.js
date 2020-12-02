@@ -41,33 +41,34 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.service = bleService_1.default;
         this.characteristic = bleCharacteristic_1.default;
         this.descriptor = bleDescriptor_1.default;
-        this.on("/response/ble/hci/read", (obj) => {
-            if (obj.hci) {
-                this.hci.notified(obj.hci);
-            }
-        });
-        this.on("/response/ble/error", (obj) => {
-            if (obj.error) {
-                const error = obj.error;
-                let msg = "BLE error: " + error.message;
-                msg += " (";
-                msg += "error_code: " + error.error_code;
-                msg += ", ";
-                msg += "module_error_code: " + error.module_error_code;
-                msg += ", ";
-                msg += "function_code: " + error.function_code;
-                msg += ", ";
-                msg += "address: " + error.address;
-                msg += ", ";
-                msg += "service_uuid: " + error.service_uuid;
-                msg += ", ";
-                msg += "characteristic_uuid: " + error.characteristic_uuid;
-                msg += ", ";
-                msg += "descriptor_uuid: " + error.descriptor_uuid;
-                msg += ")";
-                this.Obniz.error({ alert: "error", message: msg });
-            }
-        });
+        // this.on("/response/ble/hci/read", (obj) => {
+        //   if (obj.hci) {
+        //     this.hci.notified(obj.hci);
+        //   }
+        // });
+        // this.on("/response/ble/error", (obj) => {
+        //   if (obj.error) {
+        //     const error = obj.error;
+        //     let msg = "BLE error: " + error.message;
+        //     msg += " (";
+        //     msg += "error_code: " + error.error_code;
+        //     msg += ", ";
+        //     msg += "module_error_code: " + error.module_error_code;
+        //     msg += ", ";
+        //     msg += "function_code: " + error.function_code;
+        //     msg += ", ";
+        //     msg += "address: " + error.address;
+        //     msg += ", ";
+        //     msg += "service_uuid: " + error.service_uuid;
+        //     msg += ", ";
+        //     msg += "characteristic_uuid: " + error.characteristic_uuid;
+        //     msg += ", ";
+        //     msg += "descriptor_uuid: " + error.descriptor_uuid;
+        //     msg += ")";
+        //
+        //     this.Obniz.error({ alert: "error", message: msg });
+        //   }
+        // });
         this._reset();
     }
     // public security!: BleSecurity;
@@ -113,6 +114,31 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
                     str.slice(20);
         }
         return str;
+    }
+    notifyFromObniz(json) {
+        if (json.hci) {
+            this.hci.notified(json.hci);
+        }
+        if (json.error) {
+            const error = json.error;
+            let msg = "BLE error: " + error.message;
+            msg += " (";
+            msg += "error_code: " + error.error_code;
+            msg += ", ";
+            msg += "module_error_code: " + error.module_error_code;
+            msg += ", ";
+            msg += "function_code: " + error.function_code;
+            msg += ", ";
+            msg += "address: " + error.address;
+            msg += ", ";
+            msg += "service_uuid: " + error.service_uuid;
+            msg += ", ";
+            msg += "characteristic_uuid: " + error.characteristic_uuid;
+            msg += ", ";
+            msg += "descriptor_uuid: " + error.descriptor_uuid;
+            msg += ")";
+            this.Obniz.error({ alert: "error", message: msg });
+        }
     }
     /**
      * Initialize BLE module. You need call this first everything before.

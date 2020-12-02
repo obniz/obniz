@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../ObnizError");
+const bleHelper_1 = __importDefault(require("../bleHelper"));
 var COMMANDS;
 (function (COMMANDS) {
     COMMANDS.HCI_COMMAND_PKT = 0x01;
@@ -105,7 +106,8 @@ class Hci extends eventemitter3_1.default {
                 this._obnizHci.write(arr);
             },
         };
-        this._obnizHci.onread = this.onSocketData.bind(this);
+        this._obnizHci.hciProtocolOnSocketData = this.onSocketData.bind(this);
+        this._obnizHci.onread = this._obnizHci.hciProtocolOnSocketData;
         this.resetBuffers();
     }
     /**
@@ -199,11 +201,7 @@ class Hci extends eventemitter3_1.default {
         this._socket.write(cmd);
         const data = await p;
         this.addressType = "public";
-        this.address = data.result
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(":");
+        this.address = bleHelper_1.default.buffer2reversedHex(data.result, ":");
         this.debug("address = " + this.address);
         return this.address;
     }
@@ -298,10 +296,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(0x0030, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
         cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
-        Buffer.from(address
-            .split(":")
-            .reverse()
-            .join(""), "hex").copy(cmd, 10); // peer address
+        bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
         cmd.writeUInt16LE(0x0006, 17); // min interval
         cmd.writeUInt16LE(0x000c, 19); // max interval
@@ -664,12 +659,7 @@ class Hci extends eventemitter3_1.default {
         const handle = data.readUInt16LE(0);
         const role = data.readUInt8(2);
         const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
-        const address = data
-            .slice(4, 10)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(":");
+        const address = bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ":");
         const interval = data.readUInt16LE(10) * 1.25;
         const latency = data.readUInt16LE(12); // TODO: multiplier?
         const supervisionTimeout = data.readUInt16LE(14) * 10;
@@ -703,12 +693,7 @@ class Hci extends eventemitter3_1.default {
         for (let i = 0; i < count; i++) {
             const type = data.readUInt8(0);
             const addressType = data.readUInt8(1) === 0x01 ? "random" : "public";
-            const address = data
-                .slice(2, 8)
-                .toString("hex")
-                .match(/.{1,2}/g)
-                .reverse()
-                .join(":");
+            const address = bleHelper_1.default.buffer2reversedHex(data.slice(2, 8), ":");
             const eirLength = data.readUInt8(8);
             const eir = data.slice(9, eirLength + 9);
             const rssi = data.readInt8(eirLength + 9);
