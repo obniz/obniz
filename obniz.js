@@ -2272,6 +2272,7 @@ class ObnizConnection extends eventemitter3_1.default {
             access_token: options.access_token || null,
             obniz_server: options.obniz_server || "wss://obniz.io",
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
+            obnizid_dialog: options.obnizid_dialog === false ? false : true,
         };
         if (this.options.binary) {
             this.wscommand = this.constructor.WSCommand;
@@ -2589,8 +2590,8 @@ class ObnizConnection extends eventemitter3_1.default {
         this.print_debug(`closed from remote event=${event}`);
         const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
-        this.emit("close", this);
         if (beforeOnConnectCalled === true) {
+            this.emit("close", this);
             this._runUserCreatedFunction(this.onclose, this);
         }
         this._reconnect();
@@ -4012,7 +4013,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     wsconnect(desired_server) {
         this.showOffLine();
         if (!this.isValidObnizId(this.id)) {
-            if (this.isNode) {
+            if (this.isNode || !this.options.obnizid_dialog) {
                 this.error({ alert: "error", message: "invalid obniz id" });
             }
             else {
@@ -15574,7 +15575,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * @private
      */
     _reset() {
-        this.received = new Uint8Array([]);
+        this.received = [];
         this.used = false;
     }
 }
