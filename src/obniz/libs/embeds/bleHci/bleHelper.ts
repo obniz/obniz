@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @ignore
  */
-import { start } from "repl";
 import { UUID } from "./bleTypes";
 
 const BleHelper: any = {
