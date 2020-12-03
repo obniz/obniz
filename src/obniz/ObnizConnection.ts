@@ -876,8 +876,16 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       }
     }
     if (wsObj.redirect) {
-      const server: any = wsObj.redirect;
-      this.print_debug("WS connection changed to " + server);
+      const urlString: string = wsObj.redirect;
+      this.print_debug("WS connection changed to " + urlString);
+
+      const url = new URL(urlString);
+      const host = url.origin;
+      const paths = url.pathname;
+      if (paths && paths.split("/").length === 5) {
+        // migrate obnizID
+        this.id = paths.split("/")[2];
+      }
 
       /* close current ws immidiately */
       /*  */
