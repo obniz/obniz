@@ -876,8 +876,16 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       }
     }
     if (wsObj.redirect) {
-      const server: any = wsObj.redirect;
-      this.print_debug("WS connection changed to " + server);
+      const urlString: string = wsObj.redirect;
+      this.print_debug("WS connection changed to " + urlString);
+
+      const url = new URL(urlString);
+      const host = url.origin;
+      const paths = url.pathname;
+      if (paths && paths.split("/").length === 5) {
+        // migrate obnizID
+        this.id = paths.split("/")[2];
+      }
 
       /* close current ws immidiately */
       /*  */
@@ -886,23 +894,23 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       delete this.socket;
 
       /* connect to new server */
-      this.wsconnect(server);
+      this.wsconnect(host);
     }
   }
 
   protected handleSystemCommand(wsObj: any) {}
 
   protected binary2Json(binary: any) {
-    let data: any = new Uint8Array(binary);
+    let data = new Uint8Array(binary);
     const json: any = [];
     while (data !== null) {
-      const frame: any = WSCommand.dequeueOne(data);
+      const frame = WSCommand.dequeueOne(data);
       if (!frame) {
         break;
       }
       const obj: any = {};
       for (let i = 0; i < this.wscommands.length; i++) {
-        const command: any = this.wscommands[i];
+        const command = this.wscommands[i];
         if (command.module === frame.module) {
           command.notifyFromBinary(obj, frame.func, frame.payload);
           break;
