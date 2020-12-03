@@ -682,15 +682,22 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }
         if (wsObj.redirect) {
-            const server = wsObj.redirect;
-            this.print_debug("WS connection changed to " + server);
+            const urlString = wsObj.redirect;
+            this.print_debug("WS connection changed to " + urlString);
+            const url = new URL(urlString);
+            const host = url.origin;
+            const paths = url.pathname;
+            if (paths && paths.split("/").length === 5) {
+                // migrate obnizID
+                this.id = paths.split("/")[2];
+            }
             /* close current ws immidiately */
             /*  */
             this.socket.close(1000, "close");
             this.clearSocket(this.socket);
             delete this.socket;
             /* connect to new server */
-            this.wsconnect(server);
+            this.wsconnect(host);
         }
     }
     handleSystemCommand(wsObj) { }
