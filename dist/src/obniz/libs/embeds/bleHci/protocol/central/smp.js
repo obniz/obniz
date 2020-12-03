@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 const crypto_1 = __importDefault(require("./crypto"));
 /**
  * @ignore
@@ -38,15 +39,9 @@ class Smp extends eventemitter3_1.default {
         this.debugHandler = () => { };
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
-        this._ia = Buffer.from(localAddress
-            .split(":")
-            .reverse()
-            .join(""), "hex");
+        this._ia = bleHelper_1.default.hex2reversedBuffer(localAddress, ":");
         this._rat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
-        this._ra = Buffer.from(remoteAddress
-            .split(":")
-            .reverse()
-            .join(""), "hex");
+        this._ra = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ":");
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
         this._aclStream.on("data", this.onAclStreamDataBinded);

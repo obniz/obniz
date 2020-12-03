@@ -7,20 +7,31 @@ Connect a driver to an obniz.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 ```
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3, address: 0x71 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3, address: 0x71 });
 ```
+
+
+In some devices, the positions of the GND and VCC pins may be reversed.
+![](./check-keystudio_MatrixLED.jpg)
+If you look like the picture above, you should also reverse the pin you specify in obniz.wired
+
+```Javascript
+// Javascript Example
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:1, vcc:0, sda:2, scl:3 });
+```
+
 
 ## init(width)
 initialize module.
 if one module has 8*8 led and two modules are connected then
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.init(8);
 ```
 
@@ -29,7 +40,7 @@ value: 0 to 15;
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.init(8);
 matrix.brightness(7);
 ```
@@ -43,7 +54,7 @@ See more detail on obniz util document's.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.init(8);
 matrix.brightness(7);
 
@@ -63,9 +74,11 @@ Can be turned on in dot units.
  
  ```Javascript
  // Javascript Example
- const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
- const dots = [1,2,4,8,16,32,64,128]
- matrix.draw(dots);
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
+matrix.init(8);
+matrix.brightness(7);
+const dots = [1,2,4,8,16,32,64,128]
+matrix.dots(dots);
  ```
 
 ## clear()
@@ -73,7 +86,7 @@ clear all.
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.init(8);
 matrix.clear();
 ```

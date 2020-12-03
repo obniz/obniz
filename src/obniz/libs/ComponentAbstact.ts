@@ -48,8 +48,8 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
       if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
         continue;
       }
-      const errors = this.validate(eventName, json);
-      if (errors.valid) {
+      const isValid = this.fastValidate(eventName, json);
+      if (isValid) {
         this.emit(eventName, json);
       }
     }
@@ -60,8 +60,8 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
       if (this._eventHandlerQueue[eventName].length === 0) {
         continue;
       }
-      const errors = this.validate(eventName, json);
-      if (errors.valid) {
+      const isValid = this.fastValidate(eventName, json);
+      if (isValid) {
         const func = this._eventHandlerQueue[eventName].shift();
         if (func) {
           func(json);
@@ -73,6 +73,10 @@ export abstract class ComponentAbstract<EventTypes extends string = string> exte
   public validate(commandUri: any, json: any): WSSchema.MultiResult {
     const schema = WSSchema.getSchema(commandUri);
     return WSSchema.validateMultiple(json, schema);
+  }
+  public fastValidate(commandUri: any, json: any): boolean {
+    const schema = WSSchema.getSchema(commandUri);
+    return WSSchema.validate(json, schema);
   }
 
   public abstract schemaBasePath(): string | null;

@@ -25,8 +25,8 @@ class ComponentAbstract extends eventemitter3_1.default {
             if (typeof eventName !== "string" || !eventName.startsWith("/response/")) {
                 continue;
             }
-            const errors = this.validate(eventName, json);
-            if (errors.valid) {
+            const isValid = this.fastValidate(eventName, json);
+            if (isValid) {
                 this.emit(eventName, json);
             }
         }
@@ -37,8 +37,8 @@ class ComponentAbstract extends eventemitter3_1.default {
             if (this._eventHandlerQueue[eventName].length === 0) {
                 continue;
             }
-            const errors = this.validate(eventName, json);
-            if (errors.valid) {
+            const isValid = this.fastValidate(eventName, json);
+            if (isValid) {
                 const func = this._eventHandlerQueue[eventName].shift();
                 if (func) {
                     func(json);
@@ -49,6 +49,10 @@ class ComponentAbstract extends eventemitter3_1.default {
     validate(commandUri, json) {
         const schema = WSSchema_1.default.getSchema(commandUri);
         return WSSchema_1.default.validateMultiple(json, schema);
+    }
+    fastValidate(commandUri, json) {
+        const schema = WSSchema_1.default.getSchema(commandUri);
+        return WSSchema_1.default.validate(json, schema);
     }
     onceQueue(eventName, func) {
         this._eventHandlerQueue[eventName] = this._eventHandlerQueue[eventName] || [];

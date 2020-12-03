@@ -3,6 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 // var debug = require('debug')('gatt');
 const debug = () => { };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
@@ -379,10 +385,7 @@ class Gatt extends eventemitter3_1.default {
             for (i = 0; i < numInfo; i++) {
                 const info = infos[i];
                 response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
-                uuid = Buffer.from(info.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                uuid = bleHelper_1.default.hex2reversedBuffer(info.uuid);
                 for (let j = 0; j < uuid.length; j++) {
                     response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
                 }
@@ -397,18 +400,8 @@ class Gatt extends eventemitter3_1.default {
         let response = null;
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5, 7)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
-        const value = request
-            .slice(7)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5, 7));
+        const value = bleHelper_1.default.buffer2reversedHex(request.slice(7));
         const handles = [];
         let handle;
         for (let i = startHandle; i <= endHandle; i++) {
@@ -445,12 +438,7 @@ class Gatt extends eventemitter3_1.default {
         let response = null;
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
         debug("read by group: startHandle = 0x" +
             startHandle.toString(16) +
             ", endHandle = 0x" +
@@ -489,10 +477,7 @@ class Gatt extends eventemitter3_1.default {
                     const service = services[i];
                     response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
                     response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
-                    const serviceUuid = Buffer.from(service.uuid
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join(""), "hex");
+                    const serviceUuid = bleHelper_1.default.hex2reversedBuffer(service.uuid);
                     for (let j = 0; j < serviceUuid.length; j++) {
                         response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
                     }
@@ -512,12 +497,7 @@ class Gatt extends eventemitter3_1.default {
         const requestType = request[0];
         const startHandle = request.readUInt16LE(1);
         const endHandle = request.readUInt16LE(3);
-        const uuid = request
-            .slice(5)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+        const uuid = bleHelper_1.default.buffer2reversedHex(request.slice(5));
         let i;
         let handle;
         debug("read by type: startHandle = 0x" +
@@ -557,10 +537,7 @@ class Gatt extends eventemitter3_1.default {
                     response.writeUInt16LE(characteristic.startHandle, 2 + i * lengthPerCharacteristic);
                     response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
                     response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
-                    const characteristicUuid = Buffer.from(characteristic.uuid
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join(""), "hex");
+                    const characteristicUuid = bleHelper_1.default.hex2reversedBuffer(characteristic.uuid);
                     for (let j = 0; j < characteristicUuid.length; j++) {
                         response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
                     }
@@ -663,16 +640,10 @@ class Gatt extends eventemitter3_1.default {
             })(requestType, valueHandle);
             if (handleType === "service" || handleType === "includedService") {
                 result = ATT.ECODE_SUCCESS;
-                data = Buffer.from(handle.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                data = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
             }
             else if (handleType === "characteristic") {
-                const uuid = Buffer.from(handle.uuid
-                    .match(/.{1,2}/g)
-                    .reverse()
-                    .join(""), "hex");
+                const uuid = bleHelper_1.default.hex2reversedBuffer(handle.uuid);
                 result = ATT.ECODE_SUCCESS;
                 data = Buffer.alloc(3 + uuid.length);
                 data.writeUInt8(handle.properties, 0);

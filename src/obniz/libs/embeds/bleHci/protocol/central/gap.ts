@@ -13,6 +13,7 @@ const debug: any = () => {};
 
 import EventEmitter from "eventemitter3";
 import { ObnizBleScanStartError } from "../../../../../ObnizError";
+import BleHelper from "../../bleHelper";
 import Hci from "../hci";
 
 type GapEventTypes = "scanStop" | "discover";
@@ -161,12 +162,7 @@ class Gap extends EventEmitter<GapEventTypes> {
         case 0x06: // Incomplete List of 128-bit Service Class UUIDs
         case 0x07: // Complete List of 128-bit Service Class UUIDs
           for (j = 0; j < bytes.length; j += 16) {
-            serviceUuid = bytes
-              .slice(j, j + 16)
-              .toString("hex")
-              .match(/.{1,2}/g)
-              .reverse()
-              .join("");
+            serviceUuid = BleHelper.buffer2reversedHex(bytes.slice(j, j + 16));
             if (advertisement.serviceUuids.indexOf(serviceUuid) === -1) {
               advertisement.serviceUuids.push(serviceUuid);
             }
@@ -196,12 +192,7 @@ class Gap extends EventEmitter<GapEventTypes> {
         case 0x15: {
           // List of 128 bit solicitation UUIDs
           for (j = 0; j < bytes.length; j += 16) {
-            serviceSolicitationUuid = bytes
-              .slice(j, j + 16)
-              .toString("hex")
-              .match(/.{1,2}/g)
-              .reverse()
-              .join("");
+            serviceSolicitationUuid = BleHelper.buffer2reversedHex(bytes.slice(j, j + 16));
             if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
               advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
             }
@@ -210,12 +201,7 @@ class Gap extends EventEmitter<GapEventTypes> {
         }
         case 0x16: {
           // 16-bit Service Data, there can be multiple occurences
-          const serviceDataUuid: any = bytes
-            .slice(0, 2)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+          const serviceDataUuid: any = BleHelper.buffer2reversedHex(bytes.slice(0, 2));
           const serviceData: any = bytes.slice(2, bytes.length);
 
           advertisement.serviceData.push({
@@ -226,12 +212,7 @@ class Gap extends EventEmitter<GapEventTypes> {
         }
         case 0x20: {
           // 32-bit Service Data, there can be multiple occurences
-          const serviceData32Uuid: any = bytes
-            .slice(0, 4)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+          const serviceData32Uuid: any = BleHelper.buffer2reversedHex(bytes.slice(0, 4));
           const serviceData32: any = bytes.slice(4, bytes.length);
 
           advertisement.serviceData.push({
@@ -243,12 +224,7 @@ class Gap extends EventEmitter<GapEventTypes> {
         case 0x21: {
           // 128-bit Service Data, there can be multiple occurences
 
-          const serviceData128Uuid: any = bytes
-            .slice(0, 16)
-            .toString("hex")
-            .match(/.{1,2}/g)
-            .reverse()
-            .join("");
+          const serviceData128Uuid: any = BleHelper.buffer2reversedHex(bytes.slice(0, 16));
           const serviceData128: any = bytes.slice(16, bytes.length);
 
           advertisement.serviceData.push({
