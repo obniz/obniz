@@ -149,7 +149,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<aside class="tsd-sources">
 						<p>Inherited from SmpEncryptOptions.onPairedCallback</p>
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/protocol/central/smp.ts:51</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/protocol/central/smp.ts:52</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -165,7 +165,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<aside class="tsd-sources">
 						<p>Inherited from SmpEncryptOptions.onPairingFailed</p>
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/protocol/central/smp.ts:57</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/protocol/central/smp.ts:58</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -196,7 +196,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">peripheral</span>)</span>{
   <span class="hljs-keyword">if</span>(peripheral.localName == <span class="hljs-string">"my peripheral"</span>){
     <span class="hljs-keyword">await</span> peripheral.connectWait({ <span class="hljs-attr">passkeyCallback</span>: <span class="hljs-keyword">async</span> () =&gt; {
-     <span class="hljs-keyword">return</span> <span class="hljs-string">"123456"</span>;
+     <span class="hljs-keyword">return</span> <span class="hljs-number">123456</span>;
     }});
   }
 }
