@@ -16,6 +16,15 @@ const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3, address: 0x71 });
 ```
 
+デバイスによっては、GNDとVCCのピンの位置が逆になっていることがあります。
+![](./check-keystudio_MatrixLED.jpg)
+上記の写真のような場合は、obniz.wiredで指定するピンも逆にしてください
+
+```Javascript
+// Javascript Example
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:1, vcc:0, sda:2, scl:3 });
+```
+
 
 ## init(width)
 

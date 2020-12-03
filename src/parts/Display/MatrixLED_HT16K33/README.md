@@ -15,6 +15,17 @@ const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3, address: 0x71 });
 ```
 
+
+In some devices, the positions of the GND and VCC pins may be reversed.
+![](./check-keystudio_MatrixLED.jpg)
+If you look like the picture above, you should also reverse the pin you specify in obniz.wired
+
+```Javascript
+// Javascript Example
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:1, vcc:0, sda:2, scl:3 });
+```
+
+
 ## init(width)
 initialize module.
 if one module has 8*8 led and two modules are connected then
