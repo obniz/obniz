@@ -2974,7 +2974,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 finally {
                     if (this.connectionState === "connected") {
                         if (!this._nextLoopTimeout) {
-                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval);
+                            let interval = this._repeatInterval;
+                            if (typeof this.onloop !== "function") {
+                                interval = 100;
+                            }
+                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
                         }
                     }
                 }

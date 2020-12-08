@@ -959,7 +959,11 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
         } finally {
           if (this.connectionState === "connected") {
             if (!this._nextLoopTimeout) {
-              this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval);
+              let interval = this._repeatInterval;
+              if (typeof this.onloop !== "function") {
+                interval = 100;
+              }
+              this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
             }
           }
         }
