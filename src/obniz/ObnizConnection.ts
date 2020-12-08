@@ -196,7 +196,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   protected _connectionRetryCount: number;
   protected sendPool: any;
   private _onConnectCalled: boolean;
-  private _repeatInterval: any;
+  private _repeatInterval: number = 0;
   private _nextLoopTimeout?: Timeout;
   private _nextPingTimeout?: Timeout;
   private _lastDataReceivedAt: number = 0;
@@ -959,7 +959,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
         } finally {
           if (this.connectionState === "connected") {
             if (!this._nextLoopTimeout) {
-              this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+              this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval);
             }
           }
         }

@@ -16,6 +16,7 @@ const ObnizError_1 = require("./ObnizError");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._repeatInterval = 0;
         this._lastDataReceivedAt = 0;
         this.isNode = typeof window === "undefined";
         this.id = id;
@@ -742,7 +743,7 @@ class ObnizConnection extends eventemitter3_1.default {
                 finally {
                     if (this.connectionState === "connected") {
                         if (!this._nextLoopTimeout) {
-                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval);
                         }
                     }
                 }
