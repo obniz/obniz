@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.11.0",
+  "version": "3.12.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -142,7 +142,7 @@ module.exports = {
     "obniz"
   ],
   "repository": "obniz/obniz",
-  "author": "yukisato <yuki@yuki-sato.com>",
+  "author": "CambrianRobotics Inc. <supportteam@cambrianrobotics.com>",
   "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
