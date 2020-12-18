@@ -322,12 +322,13 @@ export default class ObnizBLE extends ComponentAbstract {
    * }
    * ```
    *
-   * @param uuid peripheral device address
+   * @param address peripheral device address
    * @param addressType "random" or "public"
    *
-   * @deprecated
+   * @deprecated replaced by {@link #directConnectWait()}
    */
   public directConnect(address: BleDeviceAddress, addressType: BleDeviceAddressType) {
+    // noinspection JSIgnoredPromiseFromCall
     this.directConnectWait(address, addressType); // background
     const peripheral: any = this.findPeripheral(address);
     return peripheral;

@@ -31,13 +31,11 @@ class AclStream extends eventemitter3_1.default {
         this._smp.on("end", this.onSmpEndBinded);
     }
     async encryptWait(options) {
-        let encrpytResult = null;
-        encrpytResult = await this._smp.pairingWait(options);
+        const encrpytResult = await this._smp.pairingWait(options);
         return encrpytResult;
     }
     setEncryptOption(options) {
-        let encrpytResult = null;
-        encrpytResult = this._smp.setPairingOption(options);
+        const encrpytResult = this._smp.setPairingOption(options);
         return encrpytResult;
     }
     write(cid, data) {

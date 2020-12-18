@@ -148,7 +148,7 @@ class BleScan {
         return new Promise((resolve, reject) => {
             this.emitter.once("onfind", async (peripheral, error) => {
                 if (error) {
-                    assert_1.rejects(error);
+                    reject(error);
                     return;
                 }
                 resolve(peripheral);
@@ -480,7 +480,6 @@ class BleScan {
             return false;
         }
         return true; // cannot detect on obnizjs
-        return false;
     }
     isUuidTarget(peripheral) {
         if (!this.scanTarget.uuids || this.scanTarget.uuids.length === 0) {

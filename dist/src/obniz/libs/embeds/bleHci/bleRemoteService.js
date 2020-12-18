@@ -108,8 +108,10 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     }
     /**
      * @ignore
+     * @deprecated  replaced by {@link #discoverAllCharacteristicsWait()}
      */
     discoverAllCharacteristics() {
+        // noinspection JSIgnoredPromiseFromCall
         this.discoverAllCharacteristicsWait(); // background
     }
     /**

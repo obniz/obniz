@@ -127,7 +127,7 @@ export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> exten
 
   /**
    * @ignore
-   * @param dataArray
+   * @return dataArray
    */
   public async readWait(): Promise<number[]> {
     this.notifyFromServer("onread", { data: this.data });

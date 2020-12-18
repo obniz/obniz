@@ -362,7 +362,6 @@ class Gatt extends eventemitter3_1.default {
         let value = data.readUInt16LE(4);
         const useNotify = characteristic.properties & 0x10;
         const useIndicate = characteristic.properties & 0x20;
-        console.error("before notify data " + value, useNotify, useIndicate);
         if (notify) {
             if (useNotify) {
                 value |= 0x0001;
@@ -381,12 +380,9 @@ class Gatt extends eventemitter3_1.default {
         }
         const valueBuffer = Buffer.alloc(2);
         valueBuffer.writeUInt16LE(value, 0);
-        console.error("set notify write: " + value);
         const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
         const _opcode = _data[0];
-        console.error("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
-        const check = await this._execCommandWait(this.readRequest(handle), ATT.OP_READ_RESP);
-        console.error("set notify write results: ", check.toString("hex"));
+        debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
     }
     async discoverDescriptorsWait(serviceUuid, characteristicUuid) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);

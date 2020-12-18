@@ -56,10 +56,11 @@ export default class BleAdvertisement {
   }
 
   /**
-   * @deprecated
+   * @deprecated  replaced by {@link #startWait()}
    */
   public start() {
     this.obnizBle.warningIfNotInitialize();
+    // noinspection JSIgnoredPromiseFromCall
     this.startWait(); // background
   }
 
@@ -79,9 +80,10 @@ export default class BleAdvertisement {
   }
 
   /**
-   *  @deprecated
+   *  @deprecated  replaced by {@link #endWait()}
    */
   public end() {
+    // noinspection JSIgnoredPromiseFromCall
     this.endWait(); // background
   }
 

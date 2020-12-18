@@ -426,7 +426,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return result;
   }
 
-  public async setPairingOption(peripheralUuid: any, options: any) {
+  public setPairingOption(peripheralUuid: any, options: any) {
     options = options || {};
     const gatt: Gatt = this.getGatt(peripheralUuid);
     gatt.setEncryptOption(options);

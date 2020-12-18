@@ -2755,7 +2755,7 @@ class ObnizConnection extends eventemitter3_1.default {
     /**
      * This function will be called before obniz.onconnect called;
      */
-    async _beforeOnConnect() { }
+    _beforeOnConnect() { }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -4810,12 +4810,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * }
      * ```
      *
-     * @param uuid peripheral device address
+     * @param address peripheral device address
      * @param addressType "random" or "public"
      *
-     * @deprecated
+     * @deprecated replaced by {@link #directConnectWait()}
      */
     directConnect(address, addressType) {
+        // noinspection JSIgnoredPromiseFromCall
         this.directConnectWait(address, addressType); // background
         const peripheral = this.findPeripheral(address);
         return peripheral;
@@ -5013,10 +5014,11 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
     /**
-     * @deprecated
+     * @deprecated  replaced by {@link #startWait()}
      */
     start() {
         this.obnizBle.warningIfNotInitialize();
+        // noinspection JSIgnoredPromiseFromCall
         this.startWait(); // background
     }
     /**
@@ -5034,9 +5036,10 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
     /**
-     *  @deprecated
+     *  @deprecated  replaced by {@link #endWait()}
      */
     end() {
+        // noinspection JSIgnoredPromiseFromCall
         this.endWait(); // background
     }
     /**
@@ -6008,7 +6011,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     }
     /**
      * @ignore
-     * @param dataArray
+     * @return dataArray
      */
     async readWait() {
         this.notifyFromServer("onread", { data: this.data });
@@ -6461,8 +6464,10 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      *
      * @param callback
+     * @deprecated  replaced by {@link #registerNotifyWait()}
      */
     registerNotify(callback) {
+        // noinspection JSIgnoredPromiseFromCall
         this.registerNotifyWait(callback); // background
     }
     /**
@@ -6521,8 +6526,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * });
      *
      * ```
+     *
+     * @deprecated  replaced by {@link #unregisterNotifyWait()}
      */
     unregisterNotify() {
+        // noinspection JSIgnoredPromiseFromCall
         this.unregisterNotifyWait(); // background
     }
     /**
@@ -6963,6 +6971,7 @@ class BleRemotePeripheral {
      *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
+        // noinspection JSIgnoredPromiseFromCall
         this.connectWait(setting); // background
     }
     /**
@@ -7060,9 +7069,10 @@ class BleRemotePeripheral {
         this.emitter.emit("connect");
     }
     /**
-     *  @deprecated
+     *  @deprecated replaced by {@link #disconnectWait()}
      */
     disconnect() {
+        // noinspection JSIgnoredPromiseFromCall
         this.disconnectWait(); // background
     }
     /**
@@ -7548,8 +7558,10 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     }
     /**
      * @ignore
+     * @deprecated  replaced by {@link #discoverAllCharacteristicsWait()}
      */
     discoverAllCharacteristics() {
+        // noinspection JSIgnoredPromiseFromCall
         this.discoverAllCharacteristicsWait(); // background
     }
     /**
@@ -7669,7 +7681,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      *
      * It throws an error when failed.
      *
-     * @param val
+     * @return val
      */
     readNumberWait() {
         return super.readNumberWait();
@@ -7680,6 +7692,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      *
      * It throws an error when failed.
      * @param str
+     * @param needResponse
      */
     writeTextWait(str, needResponse) {
         return super.writeTextWait(str, needResponse);
@@ -7691,6 +7704,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      * It throws an error when failed.
      *
      * @param val
+     * @param needResponse
      */
     writeNumberWait(val, needResponse) {
         return super.writeNumberWait(val, needResponse);
@@ -7855,7 +7869,7 @@ class BleScan {
         return new Promise((resolve, reject) => {
             this.emitter.once("onfind", async (peripheral, error) => {
                 if (error) {
-                    assert_1.rejects(error);
+                    reject(error);
                     return;
                 }
                 resolve(peripheral);
@@ -8187,7 +8201,6 @@ class BleScan {
             return false;
         }
         return true; // cannot detect on obnizjs
-        return false;
     }
     isUuidTarget(peripheral) {
         if (!this.scanTarget.uuids || this.scanTarget.uuids.length === 0) {
@@ -8452,6 +8465,7 @@ class ObnizBLEHci {
      * @ignore
      * @private
      * @param promise
+     * @param option
      * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
      * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
@@ -8600,13 +8614,11 @@ class AclStream extends eventemitter3_1.default {
         this._smp.on("end", this.onSmpEndBinded);
     }
     async encryptWait(options) {
-        let encrpytResult = null;
-        encrpytResult = await this._smp.pairingWait(options);
+        const encrpytResult = await this._smp.pairingWait(options);
         return encrpytResult;
     }
     setEncryptOption(options) {
-        let encrpytResult = null;
-        encrpytResult = this._smp.setPairingOption(options);
+        const encrpytResult = this._smp.setPairingOption(options);
         return encrpytResult;
     }
     write(cid, data) {
@@ -8951,7 +8963,7 @@ class NobleBindings extends eventemitter3_1.default {
         const result = await gatt.encryptWait(options);
         return result;
     }
-    async setPairingOption(peripheralUuid, options) {
+    setPairingOption(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
         gatt.setEncryptOption(options);
@@ -9666,7 +9678,6 @@ class Gatt extends eventemitter3_1.default {
         let value = data.readUInt16LE(4);
         const useNotify = characteristic.properties & 0x10;
         const useIndicate = characteristic.properties & 0x20;
-        console.error("before notify data " + value, useNotify, useIndicate);
         if (notify) {
             if (useNotify) {
                 value |= 0x0001;
@@ -9685,12 +9696,9 @@ class Gatt extends eventemitter3_1.default {
         }
         const valueBuffer = Buffer.alloc(2);
         valueBuffer.writeUInt16LE(value, 0);
-        console.error("set notify write: " + value);
         const _data = await this._execCommandWait(this.writeRequest(handle, valueBuffer, false), ATT.OP_WRITE_RESP);
         const _opcode = _data[0];
-        console.error("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
-        const check = await this._execCommandWait(this.readRequest(handle), ATT.OP_READ_RESP);
-        console.error("set notify write results: ", check.toString("hex"));
+        debug("set notify write results: " + (_opcode === ATT.OP_WRITE_RESP));
     }
     async discoverDescriptorsWait(serviceUuid, characteristicUuid) {
         const characteristic = this.getCharacteristic(serviceUuid, characteristicUuid);
@@ -13692,7 +13700,7 @@ class M5StackBasic extends ObnizDevice_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    async _beforeOnConnect() {
+    _beforeOnConnect() {
         super._beforeOnConnect();
         this.buttonA = this.wired("Button", { signal: 39 });
         this.buttonB = this.wired("Button", { signal: 38 });
@@ -13779,7 +13787,7 @@ class M5StickC extends ObnizDevice_1.default {
             return this.imu;
         });
     }
-    async _beforeOnConnect() {
+    _beforeOnConnect() {
         super._beforeOnConnect();
         if (this.ir) {
             // already wired parts

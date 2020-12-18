@@ -277,12 +277,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * }
      * ```
      *
-     * @param uuid peripheral device address
+     * @param address peripheral device address
      * @param addressType "random" or "public"
      *
-     * @deprecated
+     * @deprecated replaced by {@link #directConnectWait()}
      */
     directConnect(address, addressType) {
+        // noinspection JSIgnoredPromiseFromCall
         this.directConnectWait(address, addressType); // background
         const peripheral = this.findPeripheral(address);
         return peripheral;

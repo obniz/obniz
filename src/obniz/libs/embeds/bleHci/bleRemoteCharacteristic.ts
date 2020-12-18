@@ -194,8 +194,10 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * ```
    *
    * @param callback
+   * @deprecated  replaced by {@link #registerNotifyWait()}
    */
   public registerNotify(callback: (data: any) => void) {
+    // noinspection JSIgnoredPromiseFromCall
     this.registerNotifyWait(callback); // background
   }
 
@@ -261,8 +263,11 @@ export default class BleRemoteCharacteristic extends BleRemoteValueAttributeAbst
    * });
    *
    * ```
+   *
+   * @deprecated  replaced by {@link #unregisterNotifyWait()}
    */
   public unregisterNotify() {
+    // noinspection JSIgnoredPromiseFromCall
     this.unregisterNotifyWait(); // background
   }
 
