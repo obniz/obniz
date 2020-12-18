@@ -2,10 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleCharacteristic from "./bleCharacteristic";
-import BleHelper from "./bleHelper";
 import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
-import BleService from "./bleService";
 
 /**
  * @category Use as Peripheral

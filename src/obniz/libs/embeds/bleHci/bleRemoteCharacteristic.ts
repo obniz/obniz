@@ -3,7 +3,6 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import { ObnizDeprecatedFunctionError } from "../../../ObnizError";
-import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
 import BleRemoteDescriptor from "./bleRemoteDescriptor";
 import BleRemoteService from "./bleRemoteService";
 import BleRemoteValueAttributeAbstract from "./bleRemoteValueAttributeAbstract";

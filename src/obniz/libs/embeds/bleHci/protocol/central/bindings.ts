@@ -7,7 +7,7 @@
 
 import EventEmitter from "eventemitter3";
 
-import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError, ObnizError } from "../../../../../ObnizError";
+import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError } from "../../../../../ObnizError";
 import BleHelper from "../../bleHelper";
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
 import Hci from "../hci";

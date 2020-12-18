@@ -5,7 +5,7 @@
 import ObnizBLE from "./ble";
 import Builder from "./bleAdvertisementBuilder";
 import BleAdvertisementBuilder from "./bleAdvertisementBuilder";
-import { BleAdvertisementData, BleScanResponseData, UUID } from "./bleTypes";
+import { BleAdvertisementData, BleScanResponseData } from "./bleTypes";
 
 /**
  * @category Use as Peripheral

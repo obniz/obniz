@@ -26,6 +26,7 @@ export default abstract class ObnizParts extends ObnizConnection {
   /**
    * Register Parts class
    * @param arg0 Parts class
+   * @param arg1 param for parts
    */
   public static PartsRegistrate(arg0: typeof ObnizPartsInterface, arg1?: any) {
     if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
@@ -37,7 +38,7 @@ export default abstract class ObnizParts extends ObnizConnection {
 
   /**
    * Get parts class.
-   * @param string
+   * @param name string
    * @constructor
    */
   public static getPartsClass<K extends keyof WiredNameMap>(name: K): any {
@@ -61,7 +62,7 @@ export default abstract class ObnizParts extends ObnizConnection {
 
   /**
    * Check the param is valid ad pin no.
-   * @param io
+   * @param ad
    */
   public isValidAD(ad: any): boolean {
     return typeof ad === "number" && (this as any)["ad" + ad] !== null;

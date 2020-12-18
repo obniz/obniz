@@ -4,6 +4,7 @@
  * @module ObnizCore.Errors
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:max-classes-per-file
 class ObnizError extends Error {
     constructor(code, e) {
         super(e);

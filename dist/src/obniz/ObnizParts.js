@@ -24,6 +24,7 @@ class ObnizParts extends ObnizConnection_1.default {
     /**
      * Register Parts class
      * @param arg0 Parts class
+     * @param arg1 param for parts
      */
     static PartsRegistrate(arg0, arg1) {
         if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
@@ -35,7 +36,7 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Get parts class.
-     * @param string
+     * @param name string
      * @constructor
      */
     static getPartsClass(name) {
@@ -56,7 +57,7 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Check the param is valid ad pin no.
-     * @param io
+     * @param ad
      */
     isValidAD(ad) {
         return typeof ad === "number" && this["ad" + ad] !== null;

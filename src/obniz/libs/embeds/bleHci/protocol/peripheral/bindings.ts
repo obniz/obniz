@@ -12,7 +12,6 @@ import Hci from "../hci";
  */
 const debug: any = () => {};
 import EventEmitter from "eventemitter3";
-import os from "os";
 import { Handle } from "../../bleTypes";
 import AclStream from "./acl-stream";
 import Gap from "./gap";

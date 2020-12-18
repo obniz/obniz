@@ -3235,6 +3235,7 @@ exports.default = ObnizDevice;
  * @module ObnizCore.Errors
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:max-classes-per-file
 class ObnizError extends Error {
     constructor(code, e) {
         super(e);
@@ -3504,6 +3505,7 @@ class ObnizParts extends ObnizConnection_1.default {
     /**
      * Register Parts class
      * @param arg0 Parts class
+     * @param arg1 param for parts
      */
     static PartsRegistrate(arg0, arg1) {
         if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
@@ -3515,7 +3517,7 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Get parts class.
-     * @param string
+     * @param name string
      * @constructor
      */
     static getPartsClass(name) {
@@ -3536,7 +3538,7 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Check the param is valid ad pin no.
-     * @param io
+     * @param ad
      */
     isValidAD(ad) {
         return typeof ad === "number" && this["ad" + ad] !== null;
@@ -6033,6 +6035,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
 /**
  * @category Use as Peripheral
@@ -9058,6 +9064,12 @@ exports.default = {
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+// let debug = require('debug')('gap');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -12963,7 +12975,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * obniz.display.rect(0, 10, 10, 10, false)
      * ```
      *
-     * @param depth css acceptable color definition
+     * @param color css acceptable color definition
      */
     setColor(color) {
         this._color = color;
@@ -16240,8 +16252,8 @@ const _qrcode = (() => {
     // ---------------------------------------------------------------------
     /**
      * qrcode
-     * @param typeNumber 1 to 40
-     * @param errorCorrectionLevel 'L','M','Q','H'
+     * @param _typeNumber 1 to 40
+     * @param errorCorrectionLevelStr 'L','M','Q','H'
      */
     const qrcode = (_typeNumber, errorCorrectionLevelStr) => {
         const PAD0 = 0xec;
@@ -17814,7 +17826,7 @@ class ObnizUtil {
     /**
      * @ignore
      * @param data
-     * @param schema
+     * @param reverse
      */
     static hexToBinary(data, reverse = false) {
         const array = [];
@@ -20663,6 +20675,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandPlugin extends WSCommand_1.default {
     constructor() {

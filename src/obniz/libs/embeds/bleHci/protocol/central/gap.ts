@@ -4,7 +4,6 @@
  * @ignore
  */
 // let debug = require('debug')('gap');
-import ObnizBLEHci from "../../hci";
 
 /**
  * @ignore
