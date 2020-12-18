@@ -35,6 +35,7 @@
   "linterOptions": {
     "exclude": [
       "src/webpack-replace/*.js",
+      "test/test-*.{js,ts}",
       "dist",
       "examples"
     ]
