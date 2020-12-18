@@ -310,7 +310,7 @@ export default class BleScan {
     return new Promise((resolve: any, reject: any) => {
       this.emitter.once("onfind", async (peripheral: BleRemotePeripheral, error: any) => {
         if (error) {
-          rejects(error);
+          reject(error);
           return;
         }
         resolve(peripheral);
@@ -674,8 +674,6 @@ export default class BleScan {
       return false;
     }
     return true; // cannot detect on obnizjs
-
-    return false;
   }
 
   private isUuidTarget(peripheral: BleRemotePeripheral) {

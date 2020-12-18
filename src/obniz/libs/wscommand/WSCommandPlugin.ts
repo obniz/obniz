@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @ignore
  */
-import JsonBinaryConverter from "./jsonBinaryConverter";
 import WSCommand from "./WSCommand";
 
 class WSCommandPlugin extends WSCommand {

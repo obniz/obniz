@@ -70,7 +70,7 @@ class ObnizUtil {
   /**
    * @ignore
    * @param data
-   * @param schema
+   * @param reverse
    */
   public static hexToBinary(data: string, reverse: boolean = false): number[] {
     const array: number[] = [];

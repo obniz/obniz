@@ -113,6 +113,7 @@ export default class ObnizBLEHci {
    * @ignore
    * @private
    * @param promise
+   * @param option
    * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
    * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
    */

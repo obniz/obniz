@@ -385,7 +385,7 @@ export class M5StickC extends ObnizDevice {
     });
   }
 
-  protected async _beforeOnConnect() {
+  protected _beforeOnConnect() {
     super._beforeOnConnect();
 
     if (this.ir) {

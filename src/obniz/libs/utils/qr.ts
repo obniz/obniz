@@ -32,8 +32,8 @@ const _qrcode: any = (() => {
 
   /**
    * qrcode
-   * @param typeNumber 1 to 40
-   * @param errorCorrectionLevel 'L','M','Q','H'
+   * @param _typeNumber 1 to 40
+   * @param errorCorrectionLevelStr 'L','M','Q','H'
    */
   const qrcode: any = (_typeNumber: number, errorCorrectionLevelStr: "L" | "M" | "Q" | "H") => {
     const PAD0: any = 0xec;

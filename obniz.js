@@ -2755,7 +2755,7 @@ class ObnizConnection extends eventemitter3_1.default {
     /**
      * This function will be called before obniz.onconnect called;
      */
-    async _beforeOnConnect() { }
+    _beforeOnConnect() { }
     _callOnConnect() {
         let canChangeToConnected = true;
         if (this._waitForLocalConnectReadyTimer) {
@@ -3235,6 +3235,7 @@ exports.default = ObnizDevice;
  * @module ObnizCore.Errors
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:max-classes-per-file
 class ObnizError extends Error {
     constructor(code, e) {
         super(e);
@@ -3504,6 +3505,7 @@ class ObnizParts extends ObnizConnection_1.default {
     /**
      * Register Parts class
      * @param arg0 Parts class
+     * @param arg1 param for parts
      */
     static PartsRegistrate(arg0, arg1) {
         if (arg0 && typeof arg0.info === "function" && typeof arg0.info().name === "string") {
@@ -3515,7 +3517,7 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Get parts class.
-     * @param string
+     * @param name string
      * @constructor
      */
     static getPartsClass(name) {
@@ -3536,7 +3538,7 @@ class ObnizParts extends ObnizConnection_1.default {
     }
     /**
      * Check the param is valid ad pin no.
-     * @param io
+     * @param ad
      */
     isValidAD(ad) {
         return typeof ad === "number" && this["ad" + ad] !== null;
@@ -4810,17 +4812,15 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * }
      * ```
      *
-     * @param uuid peripheral device address
+     * @param address peripheral device address
      * @param addressType "random" or "public"
+     *
+     * @deprecated replaced by {@link #directConnectWait()}
      */
-    directConnect(uuid, addressType) {
-        let peripheral = this.findPeripheral(uuid);
-        if (!peripheral) {
-            peripheral = new bleRemotePeripheral_1.default(this, uuid);
-            this.remotePeripherals.push(peripheral);
-        }
-        this.centralBindings.addPeripheralData(uuid, addressType);
-        peripheral.connect();
+    directConnect(address, addressType) {
+        // noinspection JSIgnoredPromiseFromCall
+        this.directConnectWait(address, addressType); // background
+        const peripheral = this.findPeripheral(address);
         return peripheral;
     }
     /**
@@ -4844,7 +4844,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @param addressType "random" or "public"
      */
     async directConnectWait(address, addressType) {
-        const peripheral = this.directConnect(address, addressType);
+        let peripheral = this.findPeripheral(address);
+        if (!peripheral) {
+            peripheral = new bleRemotePeripheral_1.default(this, address);
+            this.remotePeripherals.push(peripheral);
+        }
+        this.centralBindings.addPeripheralData(address, addressType);
         await peripheral.connectWait();
         return peripheral;
     }
@@ -5011,10 +5016,11 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
     /**
-     * @deprecated
+     * @deprecated  replaced by {@link #startWait()}
      */
     start() {
         this.obnizBle.warningIfNotInitialize();
+        // noinspection JSIgnoredPromiseFromCall
         this.startWait(); // background
     }
     /**
@@ -5032,9 +5038,10 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
     /**
-     *  @deprecated
+     *  @deprecated  replaced by {@link #endWait()}
      */
     end() {
+        // noinspection JSIgnoredPromiseFromCall
         this.endWait(); // background
     }
     /**
@@ -6006,7 +6013,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     }
     /**
      * @ignore
-     * @param dataArray
+     * @return dataArray
      */
     async readWait() {
         this.notifyFromServer("onread", { data: this.data });
@@ -6028,6 +6035,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components.Ble.Hci
+ */
 const bleLocalAttributeAbstract_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js"));
 /**
  * @category Use as Peripheral
@@ -6459,8 +6470,10 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * ```
      *
      * @param callback
+     * @deprecated  replaced by {@link #registerNotifyWait()}
      */
     registerNotify(callback) {
+        // noinspection JSIgnoredPromiseFromCall
         this.registerNotifyWait(callback); // background
     }
     /**
@@ -6519,8 +6532,11 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * });
      *
      * ```
+     *
+     * @deprecated  replaced by {@link #unregisterNotifyWait()}
      */
     unregisterNotify() {
+        // noinspection JSIgnoredPromiseFromCall
         this.unregisterNotifyWait(); // background
     }
     /**
@@ -6961,6 +6977,7 @@ class BleRemotePeripheral {
      *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
+        // noinspection JSIgnoredPromiseFromCall
         this.connectWait(setting); // background
     }
     /**
@@ -7058,9 +7075,10 @@ class BleRemotePeripheral {
         this.emitter.emit("connect");
     }
     /**
-     *  @deprecated
+     *  @deprecated replaced by {@link #disconnectWait()}
      */
     disconnect() {
+        // noinspection JSIgnoredPromiseFromCall
         this.disconnectWait(); // background
     }
     /**
@@ -7546,8 +7564,10 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.default {
     }
     /**
      * @ignore
+     * @deprecated  replaced by {@link #discoverAllCharacteristicsWait()}
      */
     discoverAllCharacteristics() {
+        // noinspection JSIgnoredPromiseFromCall
         this.discoverAllCharacteristicsWait(); // background
     }
     /**
@@ -7667,7 +7687,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      *
      * It throws an error when failed.
      *
-     * @param val
+     * @return val
      */
     readNumberWait() {
         return super.readNumberWait();
@@ -7678,6 +7698,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      *
      * It throws an error when failed.
      * @param str
+     * @param needResponse
      */
     writeTextWait(str, needResponse) {
         return super.writeTextWait(str, needResponse);
@@ -7689,6 +7710,7 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
      * It throws an error when failed.
      *
      * @param val
+     * @param needResponse
      */
     writeNumberWait(val, needResponse) {
         return super.writeNumberWait(val, needResponse);
@@ -7853,7 +7875,7 @@ class BleScan {
         return new Promise((resolve, reject) => {
             this.emitter.once("onfind", async (peripheral, error) => {
                 if (error) {
-                    assert_1.rejects(error);
+                    reject(error);
                     return;
                 }
                 resolve(peripheral);
@@ -8185,7 +8207,6 @@ class BleScan {
             return false;
         }
         return true; // cannot detect on obnizjs
-        return false;
     }
     isUuidTarget(peripheral) {
         if (!this.scanTarget.uuids || this.scanTarget.uuids.length === 0) {
@@ -8450,6 +8471,7 @@ class ObnizBLEHci {
      * @ignore
      * @private
      * @param promise
+     * @param option
      * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
      * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
@@ -8598,13 +8620,11 @@ class AclStream extends eventemitter3_1.default {
         this._smp.on("end", this.onSmpEndBinded);
     }
     async encryptWait(options) {
-        let encrpytResult = null;
-        encrpytResult = await this._smp.pairingWait(options);
+        const encrpytResult = await this._smp.pairingWait(options);
         return encrpytResult;
     }
     setEncryptOption(options) {
-        let encrpytResult = null;
-        encrpytResult = this._smp.setPairingOption(options);
+        const encrpytResult = this._smp.setPairingOption(options);
         return encrpytResult;
     }
     write(cid, data) {
@@ -8949,7 +8969,7 @@ class NobleBindings extends eventemitter3_1.default {
         const result = await gatt.encryptWait(options);
         return result;
     }
-    async setPairingOption(peripheralUuid, options) {
+    setPairingOption(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
         gatt.setEncryptOption(options);
@@ -9044,6 +9064,12 @@ exports.default = {
 
 "use strict";
 
+/**
+ * @packageDocumentation
+ *
+ * @ignore
+ */
+// let debug = require('debug')('gap');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -12949,7 +12975,7 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
      * obniz.display.rect(0, 10, 10, 10, false)
      * ```
      *
-     * @param depth css acceptable color definition
+     * @param color css acceptable color definition
      */
     setColor(color) {
         this._color = color;
@@ -13686,7 +13712,7 @@ class M5StackBasic extends ObnizDevice_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    async _beforeOnConnect() {
+    _beforeOnConnect() {
         super._beforeOnConnect();
         this.buttonA = this.wired("Button", { signal: 39 });
         this.buttonB = this.wired("Button", { signal: 38 });
@@ -13773,7 +13799,7 @@ class M5StickC extends ObnizDevice_1.default {
             return this.imu;
         });
     }
-    async _beforeOnConnect() {
+    _beforeOnConnect() {
         super._beforeOnConnect();
         if (this.ir) {
             // already wired parts
@@ -16226,8 +16252,8 @@ const _qrcode = (() => {
     // ---------------------------------------------------------------------
     /**
      * qrcode
-     * @param typeNumber 1 to 40
-     * @param errorCorrectionLevel 'L','M','Q','H'
+     * @param _typeNumber 1 to 40
+     * @param errorCorrectionLevelStr 'L','M','Q','H'
      */
     const qrcode = (_typeNumber, errorCorrectionLevelStr) => {
         const PAD0 = 0xec;
@@ -17800,7 +17826,7 @@ class ObnizUtil {
     /**
      * @ignore
      * @param data
-     * @param schema
+     * @param reverse
      */
     static hexToBinary(data, reverse = false) {
         const array = [];
@@ -20649,6 +20675,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @ignore
+ */
 const WSCommand_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSCommand.js"));
 class WSCommandPlugin extends WSCommand_1.default {
     constructor() {

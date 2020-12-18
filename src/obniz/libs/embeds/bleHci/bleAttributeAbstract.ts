@@ -66,7 +66,7 @@ export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   protected data: any;
   protected emitter: EventEmitter;
 
-  constructor(params: any) {
+  protected constructor(params: any) {
     this.uuid = BleHelper.uuidFilter(params.uuid);
     this.parent = null;
     this.children = [];

@@ -102,6 +102,7 @@ class BleRemotePeripheral {
      *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
      */
     connect(setting) {
+        // noinspection JSIgnoredPromiseFromCall
         this.connectWait(setting); // background
     }
     /**
@@ -199,9 +200,10 @@ class BleRemotePeripheral {
         this.emitter.emit("connect");
     }
     /**
-     *  @deprecated
+     *  @deprecated replaced by {@link #disconnectWait()}
      */
     disconnect() {
+        // noinspection JSIgnoredPromiseFromCall
         this.disconnectWait(); // background
     }
     /**

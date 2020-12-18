@@ -7,7 +7,7 @@
 
 import EventEmitter from "eventemitter3";
 
-import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError, ObnizError } from "../../../../../ObnizError";
+import { ObnizBleHciStateError, ObnizBleUnknownPeripheralError } from "../../../../../ObnizError";
 import BleHelper from "../../bleHelper";
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from "../../bleTypes";
 import Hci from "../hci";
@@ -426,7 +426,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     return result;
   }
 
-  public async setPairingOption(peripheralUuid: any, options: any) {
+  public setPairingOption(peripheralUuid: any, options: any) {
     options = options || {};
     const gatt: Gatt = this.getGatt(peripheralUuid);
     gatt.setEncryptOption(options);

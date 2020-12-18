@@ -436,6 +436,7 @@ export default class BleRemotePeripheral {
    *  @deprecated As of release 3.5.0, replaced by {@link #connectWait()}
    */
   public connect(setting?: BleConnectSetting) {
+    // noinspection JSIgnoredPromiseFromCall
     this.connectWait(setting); // background
   }
 
@@ -532,9 +533,10 @@ export default class BleRemotePeripheral {
   }
 
   /**
-   *  @deprecated
+   *  @deprecated replaced by {@link #disconnectWait()}
    */
   public disconnect() {
+    // noinspection JSIgnoredPromiseFromCall
     this.disconnectWait(); // background
   }
 

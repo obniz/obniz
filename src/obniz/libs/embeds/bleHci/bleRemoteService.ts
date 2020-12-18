@@ -118,8 +118,10 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
 
   /**
    * @ignore
+   * @deprecated  replaced by {@link #discoverAllCharacteristicsWait()}
    */
   public discoverAllCharacteristics() {
+    // noinspection JSIgnoredPromiseFromCall
     this.discoverAllCharacteristicsWait(); // background
   }
 

@@ -43,10 +43,11 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.startAdvertisingWithEIRDataWait(Buffer.from(this.adv_data), Buffer.from(this.scan_resp));
     }
     /**
-     * @deprecated
+     * @deprecated  replaced by {@link #startWait()}
      */
     start() {
         this.obnizBle.warningIfNotInitialize();
+        // noinspection JSIgnoredPromiseFromCall
         this.startWait(); // background
     }
     /**
@@ -64,9 +65,10 @@ class BleAdvertisement {
         await this.obnizBle.peripheralBindings.stopAdvertisingWait();
     }
     /**
-     *  @deprecated
+     *  @deprecated  replaced by {@link #endWait()}
      */
     end() {
+        // noinspection JSIgnoredPromiseFromCall
         this.endWait(); // background
     }
     /**

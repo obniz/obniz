@@ -111,7 +111,7 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
     }
     /**
      * @ignore
-     * @param dataArray
+     * @return dataArray
      */
     async readWait() {
         this.notifyFromServer("onread", { data: this.data });

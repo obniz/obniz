@@ -728,7 +728,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   /**
    * This function will be called before obniz.onconnect called;
    */
-  protected async _beforeOnConnect() {}
+  protected _beforeOnConnect() {}
 
   protected _callOnConnect() {
     let canChangeToConnected = true;
