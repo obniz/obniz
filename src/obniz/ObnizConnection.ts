@@ -129,6 +129,27 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   public onconnect?: (obniz: this) => void;
 
   /**
+   * Called continuously while obniz device is online.
+   * Put your main code inside of onloop and put your setup code inside of onconnect.
+   *
+   * onloop will be called after onconnect called. If your funciton set to onconnect return promise, onloop wait until done promise. Even onconnect throws an error onloop will start.
+   *
+   * onloop call `pingWait()` every time to keep connection data buffer between device to your software clean.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *
+   * }
+   * obniz.onloop = async function() {
+   *
+   * }
+   * ```
+   *
+   */
+  public onloop?: (obniz: this) => void;
+
+  /**
    * If an error occurs, the onerror function is called.
    *
    * ```javascript
@@ -175,8 +196,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   protected _connectionRetryCount: number;
   protected sendPool: any;
   private _onConnectCalled: boolean;
-  private _looper: any;
-  private _repeatInterval: any;
+  private _repeatInterval: number = 0;
   private _nextLoopTimeout?: Timeout;
   private _nextPingTimeout?: Timeout;
   private _lastDataReceivedAt: number = 0;
@@ -463,31 +483,19 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   }
 
   /**
-   * Repeat will call the callback function periodically while it is connected to obniz Board.
-   * It will stop calling once it is disconnected from obniz Board.
-   *
-   * ```javascript
-   * // Javascript Example
-   *  obniz.ad0.start();
-   *  obniz.repeat(function(){
-   *    if (obniz.ad0.value > 2.5) {
-   *      obniz.io0.output(true);
-   *    } else {
-   *      obniz.io0.output(false);
-   *    }
-   *  }, 100)
-   * ```
+   * Set onloop function. Use onloop property instead. This is deprecated function.
    *
    * @param callback
    * @param interval  default 100. It mean 100ms interval loop.
+   * @deprecated
    */
   public repeat(callback: any, interval: any) {
-    if (this._looper) {
-      this._looper = callback;
+    if (this.onloop) {
+      this.onloop = callback;
       this._repeatInterval = interval || this._repeatInterval || 100;
       return;
     }
-    this._looper = callback;
+    this.onloop = callback;
     this._repeatInterval = interval || 100;
   }
 
@@ -745,9 +753,10 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       this.connectionState = "connected";
       this._beforeOnConnect();
       this.emit("connect", this);
+      let promise: any;
       if (typeof this.onconnect === "function") {
         try {
-          const promise: any = this.onconnect(this);
+          promise = this.onconnect(this);
           if (promise instanceof Promise) {
             promise.catch((err) => {
               setTimeout(() => {
@@ -764,7 +773,13 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       }
       this._onConnectCalled = true;
       this._startPingLoopInBackground();
-      this._startLoopInBackground();
+      if (promise instanceof Promise) {
+        promise.finally(() => {
+          this._startLoopInBackground();
+        });
+      } else {
+        this._startLoopInBackground();
+      }
     }
   }
 
@@ -931,9 +946,9 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
       this._nextLoopTimeout = undefined;
       if (this.connectionState === "connected") {
         try {
-          if (typeof this._looper === "function") {
+          if (typeof this.onloop === "function") {
             await this.pingWait();
-            const prom: any = this._looper();
+            const prom: any = (this.onloop as (obniz: this) => void)(this);
             if (prom instanceof Promise) {
               await prom;
             }
@@ -944,7 +959,11 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
         } finally {
           if (this.connectionState === "connected") {
             if (!this._nextLoopTimeout) {
-              this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+              let interval = this._repeatInterval;
+              if (typeof this.onloop !== "function") {
+                interval = 100;
+              }
+              this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
             }
           }
         }

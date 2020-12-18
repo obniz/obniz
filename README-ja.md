@@ -103,7 +103,7 @@ npmでインストールします。
 ```
 
 ## 接続
-obniz Boardをobniz idを使ってインスタンス化します。
+obnizをobniz idを使ってインスタンス化します。
 そして接続が完了した時に呼ばれる関数をセットします。
 ```javascript
   var obniz = new Obniz("0000-0000");
@@ -111,7 +111,7 @@ obniz Boardをobniz idを使ってインスタンス化します。
 
   }
 ```
-接続完了後にobniz Boardやobniz Boardにつながれた部品を扱えます。
+接続完了後にobnizデバイスを遠隔で操作できます。
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -121,6 +121,12 @@ obniz Boardをobniz idを使ってインスタンス化します。
         obniz.display.print("Button Pressed");
       }
     }
+  }
+  obniz.onloop = async function () {
+    // 接続中は繰り返し呼ばれる関数
+  }
+  obniz.onclose = async function () {
+    // 切断時に呼ばれる関数
   }
 ```
 IOペリフェラルも利用可能です。詳しくはそれぞれのペリフェラルドキュメントを見てください。
@@ -181,8 +187,8 @@ HC-SR40(distance measure) [https://obniz.com/sdk/parts/HC-SR04](https://obniz.co
   }
 ```
 
-## Example: browser integrates hardware
-HTML上のUIとハードウェアの連携も簡単です。
+## ブラウザのUIとハードウェアの連携
+HTML上のUIとハードウェアの連携
 ```html
 <input id="slider" type="range"  min="0" max="180" />
 
@@ -198,8 +204,8 @@ obniz.onconnect = async function () {
 </script>
 ```
 
-## Example: integrate web services
-DropboxやTwitterなどのwebサービスとの連携もとても簡単に行なえます。
+## 外部WEBサービスとの連携
+DropboxやTwitterなどのwebサービスとの連携
 ```javascript
 // save data from obniz to dropbox
 var obniz = new Obniz("0000-0000");
@@ -214,9 +220,8 @@ obniz.onconnect = async function () {
 }
 ```
 
-## Example: integrate two or more obniz
-web-obniz Boardだけでなくobniz Board-obniz Boardの連携も簡単に行なえます。  
-obniz Boardにつながれたサーボモーターを別のobniz Boardにつながれたつまみから操作してみます。
+## 2つ以上のobnizデバイスとの連携  
+obniz Boardにつながれたサーボモーターを別のobniz Boardにつながれたつまみから操作。
 ```javascript
 // control servomotor from potention meter which connected to another obniz.
 var obnizA = new Obniz("0000-0000");

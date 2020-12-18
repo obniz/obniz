@@ -282,7 +282,7 @@ describe('obniz.index', function() {
     });
   });
 
-  it('repeat', async () => {
+  it('onloop', async () => {
     let called = false;
     await new Promise(resolve => {
       testUtil.setupNotConnectedYetObnizPromise(this, resolve);
@@ -290,9 +290,9 @@ describe('obniz.index', function() {
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).to.be.finished; // input queue
 
-    this.obniz.repeat(function() {
+    this.obniz.onloop = function() {
       called = true;
-    });
+    };
     testUtil.receiveJson(this.obniz, [
       {
         ws: {
@@ -316,14 +316,14 @@ describe('obniz.index', function() {
     await pingPongWait(this.obniz);
 
     await new Promise(resolve => {
-      this.obniz._looper = null;
+      this.obniz.onloop = null;
       testUtil.releaseObnizePromise(this, resolve);
     });
 
     expect(called).to.be.true;
   });
 
-  it('repeat in onconnect', async () => {
+  it('onloop in onconnect', async () => {
     let called = false;
     await new Promise(resolve => {
       testUtil.setupNotConnectedYetObnizPromise(this, resolve);
@@ -333,9 +333,9 @@ describe('obniz.index', function() {
 
     this.obniz.onconnect = () => {
       console.log('set repeat');
-      this.obniz.repeat(function() {
+      this.obniz.onloop = function() {
         called = true;
-      });
+      };
     };
     testUtil.receiveJson(this.obniz, [
       {
@@ -361,7 +361,7 @@ describe('obniz.index', function() {
     await pingPongWait(this.obniz);
 
     await new Promise(resolve => {
-      this.obniz._looper = null;
+      this.obniz.onloop = null;
       testUtil.releaseObnizePromise(this, resolve);
     });
 
@@ -409,7 +409,7 @@ describe('obniz.index', function() {
     await wait(10);
 
     await new Promise(resolve => {
-      this.obniz._looper = null;
+      this.obniz.onloop = null;
       testUtil.releaseObnizePromise(this, resolve);
     });
 
@@ -460,7 +460,7 @@ describe('obniz.index', function() {
     await wait(510);
 
     await new Promise(resolve => {
-      this.obniz._looper = null;
+      this.obniz.onloop = null;
       testUtil.releaseObnizePromise(this, resolve);
     });
 
@@ -504,7 +504,53 @@ describe('obniz.index', function() {
       })
       .then(() => {
         return new Promise(resolve => {
-          this.obniz._looper = null;
+          this.obniz.onloop = null;
+          testUtil.releaseObnizePromise(this, resolve);
+        });
+      })
+      .then(() => {
+        expect(results).to.be.true;
+      });
+  });
+
+  it('connect_onloop', function() {
+    let results = true;
+    return new Promise(resolve => {
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
+    })
+      .then(() => {
+        expect(this.obniz).to.be.obniz;
+        expect(this.obniz).to.be.finished; // input queue
+
+        let called = false;
+
+        this.obniz.onconnect = function() {
+          results = results && called === false;
+          called = true;
+        };
+
+        this.obniz.onloop = function() {
+          results = results && called === true;
+          called = true;
+        };
+        testUtil.receiveJson(this.obniz, [
+          {
+            ws: {
+              ready: true,
+              obniz: {
+                firmware: '1.0.3',
+              },
+            },
+          },
+        ]);
+
+        return new Promise(resolve => {
+          setTimeout(resolve, 500);
+        });
+      })
+      .then(() => {
+        return new Promise(resolve => {
+          this.obniz.onloop = null;
           testUtil.releaseObnizePromise(this, resolve);
         });
       })

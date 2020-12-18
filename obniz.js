@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.11.0",
+  "version": "3.12.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -142,7 +142,7 @@ module.exports = {
     "obniz"
   ],
   "repository": "obniz/obniz",
-  "author": "yukisato <yuki@yuki-sato.com>",
+  "author": "CambrianRobotics Inc. <supportteam@cambrianrobotics.com>",
   "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
@@ -2247,6 +2247,7 @@ const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
 class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
+        this._repeatInterval = 0;
         this._lastDataReceivedAt = 0;
         this.isNode = typeof window === "undefined";
         this.id = id;
@@ -2525,31 +2526,19 @@ class ObnizConnection extends eventemitter3_1.default {
         }
     }
     /**
-     * Repeat will call the callback function periodically while it is connected to obniz Board.
-     * It will stop calling once it is disconnected from obniz Board.
-     *
-     * ```javascript
-     * // Javascript Example
-     *  obniz.ad0.start();
-     *  obniz.repeat(function(){
-     *    if (obniz.ad0.value > 2.5) {
-     *      obniz.io0.output(true);
-     *    } else {
-     *      obniz.io0.output(false);
-     *    }
-     *  }, 100)
-     * ```
+     * Set onloop function. Use onloop property instead. This is deprecated function.
      *
      * @param callback
      * @param interval  default 100. It mean 100ms interval loop.
+     * @deprecated
      */
     repeat(callback, interval) {
-        if (this._looper) {
-            this._looper = callback;
+        if (this.onloop) {
+            this.onloop = callback;
             this._repeatInterval = interval || this._repeatInterval || 100;
             return;
         }
-        this._looper = callback;
+        this.onloop = callback;
         this._repeatInterval = interval || 100;
     }
     wsOnOpen() {
@@ -2790,9 +2779,10 @@ class ObnizConnection extends eventemitter3_1.default {
             this.connectionState = "connected";
             this._beforeOnConnect();
             this.emit("connect", this);
+            let promise;
             if (typeof this.onconnect === "function") {
                 try {
-                    const promise = this.onconnect(this);
+                    promise = this.onconnect(this);
                     if (promise instanceof Promise) {
                         promise.catch((err) => {
                             setTimeout(() => {
@@ -2810,7 +2800,14 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             this._onConnectCalled = true;
             this._startPingLoopInBackground();
-            this._startLoopInBackground();
+            if (promise instanceof Promise) {
+                promise.finally(() => {
+                    this._startLoopInBackground();
+                });
+            }
+            else {
+                this._startLoopInBackground();
+            }
         }
     }
     _isIpAddress(str) {
@@ -2962,9 +2959,9 @@ class ObnizConnection extends eventemitter3_1.default {
             this._nextLoopTimeout = undefined;
             if (this.connectionState === "connected") {
                 try {
-                    if (typeof this._looper === "function") {
+                    if (typeof this.onloop === "function") {
                         await this.pingWait();
-                        const prom = this._looper();
+                        const prom = this.onloop(this);
                         if (prom instanceof Promise) {
                             await prom;
                         }
@@ -2977,7 +2974,11 @@ class ObnizConnection extends eventemitter3_1.default {
                 finally {
                     if (this.connectionState === "connected") {
                         if (!this._nextLoopTimeout) {
-                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), this._repeatInterval || 100);
+                            let interval = this._repeatInterval;
+                            if (typeof this.onloop !== "function") {
+                                interval = 100;
+                            }
+                            this._nextLoopTimeout = setTimeout(this._startLoopInBackground.bind(this), interval);
                         }
                     }
                 }
