@@ -279,15 +279,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      *
      * @param uuid peripheral device address
      * @param addressType "random" or "public"
+     *
+     * @deprecated
      */
-    directConnect(uuid, addressType) {
-        let peripheral = this.findPeripheral(uuid);
-        if (!peripheral) {
-            peripheral = new bleRemotePeripheral_1.default(this, uuid);
-            this.remotePeripherals.push(peripheral);
-        }
-        this.centralBindings.addPeripheralData(uuid, addressType);
-        peripheral.connect();
+    directConnect(address, addressType) {
+        this.directConnectWait(address, addressType); // background
+        const peripheral = this.findPeripheral(address);
         return peripheral;
     }
     /**
@@ -311,7 +308,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @param addressType "random" or "public"
      */
     async directConnectWait(address, addressType) {
-        const peripheral = this.directConnect(address, addressType);
+        let peripheral = this.findPeripheral(address);
+        if (!peripheral) {
+            peripheral = new bleRemotePeripheral_1.default(this, address);
+            this.remotePeripherals.push(peripheral);
+        }
+        this.centralBindings.addPeripheralData(address, addressType);
         await peripheral.connectWait();
         return peripheral;
     }
