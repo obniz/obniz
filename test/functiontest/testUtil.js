@@ -124,7 +124,7 @@ let testUtil = {
   },
 
   releaseObnizePromise: function(obj, done) {
-    obj.obniz.close();
+    obj.obniz._close();
     obj.obniz = null;
     Obniz.prototype.wsconnect.restore();
 
@@ -137,7 +137,7 @@ let testUtil = {
       serverDataCount = obj.obniz.socket.send.callCount;
 
       const socet = obj.obniz.socket; // stub
-      obj.obniz.close();
+      obj.obniz._close();
       obj.obniz.socket = socet; // stub
       obj.obniz.wsOnOpen();
       obj.obniz.wsOnMessage(
