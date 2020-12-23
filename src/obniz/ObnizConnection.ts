@@ -15,7 +15,15 @@ import Timeout = NodeJS.Timeout;
 
 export type ObnizConnectionEventNames = "connect" | "close" | "notify";
 
-export default abstract class ObnizConnection extends EventEmitter<ObnizConnectionEventNames> {
+/**
+ * @ignore
+ *
+ */
+type ObnizConnectionEventNamesInternal = "_close";
+
+export default abstract class ObnizConnection extends EventEmitter<
+  ObnizConnectionEventNames | ObnizConnectionEventNamesInternal
+> {
   /**
    * obniz.js version
    */
@@ -183,6 +191,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    *
    */
   public connectionState: "closed" | "connecting" | "connected" | "closing";
+  protected _userManualConnectionClose: boolean = false;
   protected socket: any;
   protected socket_local: any;
   protected debugs: any;
@@ -261,7 +270,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    * await obniz.connectWait();
    *
    * obniz.io0.output(true);
-   * obniz.close();
+   * await obniz.closeWait();
    *
    * ```
    *
@@ -275,7 +284,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    *
    * if(connected){
    *    obniz.io0.output(true);
-   *    obniz.close();
+   *    await obniz.closeWait();
    * }
    * ```
    *
@@ -290,7 +299,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
    *
    * if(connected){
    *   obniz.io0.output(true);
-   *   obniz.close();
+   *   await obniz.closeWait();
    * }
    * ```
    *
@@ -343,26 +352,69 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     this.wsconnect();
   }
 
+  /**
+   * This closes the current connection.
+   * You need to set auto_connect to false. Otherwise the connection will be recovered.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678', {
+   *   auto_connect: false,
+   *   reset_obniz_on_ws_disconnection: false
+   * });
+   *
+   * obniz.connect();
+   * obniz.onconnect = async function() {
+   *   obniz.io0.output(true);
+   *   obniz.close();
+   * }
+   * ```
+   *
+   * @deprecated replace with {@link closeWait}
+   */
   public close() {
-    this._stopLoopInBackground();
-    this._drainQueued();
-    // expire local connect waiting timer for call.
-    if (this._waitForLocalConnectReadyTimer) {
-      clearTimeout(this._waitForLocalConnectReadyTimer);
-      this._waitForLocalConnectReadyTimer = undefined;
+    // noinspection JSIgnoredPromiseFromCall
+    this.closeWait(); // background
+  }
+
+  /**
+   * This closes the current connection.
+   * You need to set auto_connect to false. Otherwise the connection will be recovered.
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678', {
+   *   auto_connect: false,
+   *   reset_obniz_on_ws_disconnection: false
+   * });
+   *
+   * obniz.connect();
+   * obniz.onconnect = async function() {
+   *   obniz.io0.output(true);
+   *   await obniz.closeWait();
+   * }
+   * ```
+   *
+   */
+  public async closeWait() {
+    if (this.socket && this.socket.readyState <= 1) {
+      // Connecting or Connected
+
+      this._userManualConnectionClose = true;
+      const p = new Promise((resolve) => {
+        this.once("_close", () => resolve);
+      });
+      this.connectionState = "closing";
+      this.socket.close(1000, "close");
+
+      await p;
+    } else if (this.socket && this.socket.readyState === 2) {
+      // closing
+      this._userManualConnectionClose = true;
+      await new Promise((resolve) => {
+        this.once("_close", () => resolve);
+      });
+    } else {
+      // already closed : do nothing
     }
-    this._disconnectLocal();
-    if (this.socket) {
-      if (this.socket.readyState <= 1) {
-        // Connecting & Connected
-        this.connectionState = "closing";
-        this.socket.close(1000, "close");
-      }
-      this.clearSocket(this.socket);
-      delete this.socket;
-    }
-    this.connectionState = "closed";
-    this._onConnectCalled = false;
   }
 
   /**
@@ -501,6 +553,27 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
 
   public abstract pingWait(unixtime?: number, rand?: number, forceGlobalNetwork?: boolean): Promise<void>;
 
+  protected _close() {
+    this._stopLoopInBackground();
+    this._drainQueued();
+    // expire local connect waiting timer for call.
+    if (this._waitForLocalConnectReadyTimer) {
+      clearTimeout(this._waitForLocalConnectReadyTimer);
+      this._waitForLocalConnectReadyTimer = undefined;
+    }
+    this._disconnectLocal();
+    if (this.socket) {
+      if (this.socket.readyState <= 1) {
+        // Connecting & Connected
+        this.connectionState = "closing";
+        this.socket.close(1000, "close");
+      }
+      this.clearSocket(this.socket);
+      delete this.socket;
+    }
+    this._onConnectCalled = false;
+  }
+
   protected wsOnOpen() {
     this.print_debug("ws connected");
     this._connectionRetryCount = 0;
@@ -539,13 +612,20 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
   protected wsOnClose(event: any) {
     this.print_debug(`closed from remote event=${event}`);
     const beforeOnConnectCalled = this._onConnectCalled;
-    this.close();
+    this._close();
+    this.connectionState = "closed";
 
+    if (this._userManualConnectionClose) {
+      this.emit("_close", this);
+    }
     if (beforeOnConnectCalled === true) {
       this.emit("close", this);
       this._runUserCreatedFunction(this.onclose, this);
     }
-    this._reconnect();
+    if (!this._userManualConnectionClose) {
+      this._reconnect();
+    }
+    this._userManualConnectionClose = false;
   }
 
   protected _reconnect() {
@@ -589,7 +669,7 @@ export default abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     }
 
     if (this.socket && this.socket.readyState <= 1) {
-      this.close();
+      this._close();
     }
 
     let url = server + "/obniz/" + this.id + "/ws/1";
