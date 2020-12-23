@@ -256,13 +256,6 @@ export default abstract class ObnizComponents extends ObnizParts {
     this._allComponentKeys = [];
   }
 
-  public close() {
-    super.close();
-    if (this.options.reset_obniz_on_ws_disconnection) {
-      this._resetComponents();
-    }
-  }
-
   /**
    * Output pin Vcc and Gnd
    * @param vcc
@@ -383,6 +376,13 @@ export default abstract class ObnizComponents extends ObnizParts {
       return this._hwDefinition.extraInterface[interfaceName];
     }
     return null;
+  }
+
+  protected _close() {
+    super._close();
+    if (this.options.reset_obniz_on_ws_disconnection) {
+      this._resetComponents();
+    }
   }
 
   protected _callOnConnect() {

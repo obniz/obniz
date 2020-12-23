@@ -13,25 +13,8 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    /**
-     * This closes the current connection.
-     * You need to set auto_connect to false. Otherwise the connection will be recovered.
-     *
-     * ```javascript
-     * var obniz = new Obniz('1234-5678', {
-     *   auto_connect: false,
-     *   reset_obniz_on_ws_disconnection: false
-     * });
-     *
-     * obniz.connect();
-     * obniz.onconnect = async function() {
-     *   obniz.io0.output(true);
-     *   obniz.close();
-     * }
-     * ```
-     */
-    close() {
-        super.close();
+    _close() {
+        super._close();
         this.updateOnlineUI();
     }
     isValidObnizId(str) {
