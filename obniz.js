@@ -106,7 +106,7 @@ module.exports = {
     "obniz.js"
   ],
   "engines": {
-    "node": ">=8.17.0"
+    "node": ">=10.23.0"
   },
   "engineStrict": true,
   "scripts": {
