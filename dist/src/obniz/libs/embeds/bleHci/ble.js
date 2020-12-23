@@ -284,7 +284,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     directConnect(address, addressType) {
         // noinspection JSIgnoredPromiseFromCall
-        this.directConnectWait(address, addressType); // background
+        this.directConnectWait(address, addressType).catch((e) => {
+            // background
+            this.Obniz.error(e);
+        });
         const peripheral = this.findPeripheral(address);
         return peripheral;
     }

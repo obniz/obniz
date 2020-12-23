@@ -48,7 +48,10 @@ class BleAdvertisement {
     start() {
         this.obnizBle.warningIfNotInitialize();
         // noinspection JSIgnoredPromiseFromCall
-        this.startWait(); // background
+        this.startWait().catch((e) => {
+            // background
+            this.obnizBle.Obniz.error(e);
+        });
     }
     /**
      * This stops advertisement of BLE.
@@ -69,7 +72,10 @@ class BleAdvertisement {
      */
     end() {
         // noinspection JSIgnoredPromiseFromCall
-        this.endWait(); // background
+        this.endWait().catch((e) => {
+            // background
+            this.obnizBle.Obniz.error(e);
+        });
     }
     /**
      * This sets advertise data from data array.

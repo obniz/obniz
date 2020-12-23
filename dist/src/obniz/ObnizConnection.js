@@ -184,7 +184,10 @@ class ObnizConnection extends eventemitter3_1.default {
      */
     close() {
         // noinspection JSIgnoredPromiseFromCall
-        this.closeWait(); // background
+        this.closeWait().catch((e) => {
+            // background
+            this.error(e);
+        });
     }
     /**
      * This closes the current connection.
@@ -209,7 +212,7 @@ class ObnizConnection extends eventemitter3_1.default {
             // Connecting or Connected
             this._userManualConnectionClose = true;
             const p = new Promise((resolve) => {
-                this.once("_close", () => resolve);
+                this.once("_close", resolve);
             });
             this.connectionState = "closing";
             this.socket.close(1000, "close");
@@ -219,7 +222,7 @@ class ObnizConnection extends eventemitter3_1.default {
             // closing
             this._userManualConnectionClose = true;
             await new Promise((resolve) => {
-                this.once("_close", () => resolve);
+                this.once("_close", resolve);
             });
         }
         else {

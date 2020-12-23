@@ -2415,7 +2415,10 @@ class ObnizConnection extends eventemitter3_1.default {
      */
     close() {
         // noinspection JSIgnoredPromiseFromCall
-        this.closeWait(); // background
+        this.closeWait().catch((e) => {
+            // background
+            this.error(e);
+        });
     }
     /**
      * This closes the current connection.
@@ -2440,7 +2443,7 @@ class ObnizConnection extends eventemitter3_1.default {
             // Connecting or Connected
             this._userManualConnectionClose = true;
             const p = new Promise((resolve) => {
-                this.once("_close", () => resolve);
+                this.once("_close", resolve);
             });
             this.connectionState = "closing";
             this.socket.close(1000, "close");
@@ -2450,7 +2453,7 @@ class ObnizConnection extends eventemitter3_1.default {
             // closing
             this._userManualConnectionClose = true;
             await new Promise((resolve) => {
-                this.once("_close", () => resolve);
+                this.once("_close", resolve);
             });
         }
         else {
@@ -4872,7 +4875,10 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     directConnect(address, addressType) {
         // noinspection JSIgnoredPromiseFromCall
-        this.directConnectWait(address, addressType); // background
+        this.directConnectWait(address, addressType).catch((e) => {
+            // background
+            this.Obniz.error(e);
+        });
         const peripheral = this.findPeripheral(address);
         return peripheral;
     }
@@ -5074,7 +5080,10 @@ class BleAdvertisement {
     start() {
         this.obnizBle.warningIfNotInitialize();
         // noinspection JSIgnoredPromiseFromCall
-        this.startWait(); // background
+        this.startWait().catch((e) => {
+            // background
+            this.obnizBle.Obniz.error(e);
+        });
     }
     /**
      * This stops advertisement of BLE.
@@ -5095,7 +5104,10 @@ class BleAdvertisement {
      */
     end() {
         // noinspection JSIgnoredPromiseFromCall
-        this.endWait(); // background
+        this.endWait().catch((e) => {
+            // background
+            this.obnizBle.Obniz.error(e);
+        });
     }
     /**
      * This sets advertise data from data array.

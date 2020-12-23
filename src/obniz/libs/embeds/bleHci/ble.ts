@@ -329,7 +329,10 @@ export default class ObnizBLE extends ComponentAbstract {
    */
   public directConnect(address: BleDeviceAddress, addressType: BleDeviceAddressType) {
     // noinspection JSIgnoredPromiseFromCall
-    this.directConnectWait(address, addressType); // background
+    this.directConnectWait(address, addressType).catch((e) => {
+      // background
+      this.Obniz.error(e);
+    });
     const peripheral: any = this.findPeripheral(address);
     return peripheral;
   }

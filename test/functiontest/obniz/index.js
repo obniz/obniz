@@ -282,6 +282,39 @@ describe('obniz.index', function() {
     });
   });
 
+  it('closeWait', async () => {
+    await new Promise(resolve => {
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
+    });
+
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).to.be.finished; // input queue
+
+    testUtil.receiveJson(this.obniz, [
+      {
+        ws: {
+          ready: true,
+          obniz: {
+            firmware: '1.0.3',
+          },
+        },
+      },
+    ]);
+    //connected
+    await wait(10);
+
+    let p = this.obniz.closeWait();
+
+    // wsOnClose wrapped by stub
+    this.obniz.wsOnClose.wrappedMethod.bind(this.obniz)();
+
+    await p;
+
+    await new Promise(resolve => {
+      testUtil.releaseObnizePromise(this, resolve);
+    });
+  });
+
   it('onloop', async () => {
     let called = false;
     await new Promise(resolve => {
