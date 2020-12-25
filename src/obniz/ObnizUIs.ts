@@ -79,7 +79,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
   protected wsconnect(desired_server: any) {
     this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
-      if (this.isNode) {
+      if (this.isNode || !this.options.obnizid_dialog) {
         this.error({ alert: "error", message: "invalid obniz id" });
       } else {
         const filled: any = _ReadCookie("obniz-last-used") || "";

@@ -8,12 +8,21 @@ obniz BoardにマトリックスLEDを接続します。
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 ```
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3, address: 0x71 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3, address: 0x71 });
+```
+
+デバイスによっては、GNDとVCCのピンの位置が逆になっていることがあります。
+![](./check-keystudio_MatrixLED.jpg)
+上記の写真のような場合は、obniz.wiredで指定するピンも逆にしてください
+
+```Javascript
+// Javascript Example
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:1, vcc:0, sda:2, scl:3 });
 ```
 
 
@@ -24,7 +33,7 @@ HT16K33チップでは8*16までのLEDを制御できます。7-16の間で指�
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.init(8);
 ```
 
@@ -33,7 +42,7 @@ matrix.init(8);
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.init(8);
 matrix.brightness(7);
 ```
@@ -48,7 +57,7 @@ HTML5のcanvasをそのまま描画します。html上でobniz Boardを使って
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.init(8);
 matrix.brightness(7);
 
@@ -68,16 +77,16 @@ matrix.draw(ctx);
  
  ```Javascript
  // Javascript Example
- const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+ const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
  const dots = [1,2,4,8,16,32,64,128]
- matrix.draw(dots);
+ matrix.dots(dots);
  ```
 
 ## clear()
 すべてを消去します。
 
 ```Javascript
-const matrix = obniz.wired("MatrixLED_HT16K33", { vcc:0, gnd:1, sda:2, scl:3 });
+const matrix = obniz.wired("MatrixLED_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
 matrix.init(8);
 matrix.clear();
 ```

@@ -11,6 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 const acl_stream_1 = __importDefault(require("./acl-stream"));
 const gap_1 = __importDefault(require("./gap"));
 const gatt_1 = __importDefault(require("./gatt"));
@@ -57,7 +58,7 @@ class NobleBindings extends eventemitter3_1.default {
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
-            const address = uuid.match(/.{1,2}/g).join(":");
+            const address = bleHelper_1.default.reverseHexString(uuid, ":");
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = true;

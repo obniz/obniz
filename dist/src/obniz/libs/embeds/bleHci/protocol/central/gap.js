@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = () => { };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
+const bleHelper_1 = __importDefault(require("../../bleHelper"));
 /**
  * @ignore
  */
@@ -135,12 +136,7 @@ class Gap extends eventemitter3_1.default {
                 case 0x06: // Incomplete List of 128-bit Service Class UUIDs
                 case 0x07: // Complete List of 128-bit Service Class UUIDs
                     for (j = 0; j < bytes.length; j += 16) {
-                        serviceUuid = bytes
-                            .slice(j, j + 16)
-                            .toString("hex")
-                            .match(/.{1,2}/g)
-                            .reverse()
-                            .join("");
+                        serviceUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(j, j + 16));
                         if (advertisement.serviceUuids.indexOf(serviceUuid) === -1) {
                             advertisement.serviceUuids.push(serviceUuid);
                         }
@@ -168,12 +164,7 @@ class Gap extends eventemitter3_1.default {
                 case 0x15: {
                     // List of 128 bit solicitation UUIDs
                     for (j = 0; j < bytes.length; j += 16) {
-                        serviceSolicitationUuid = bytes
-                            .slice(j, j + 16)
-                            .toString("hex")
-                            .match(/.{1,2}/g)
-                            .reverse()
-                            .join("");
+                        serviceSolicitationUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(j, j + 16));
                         if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
                             advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
                         }
@@ -182,12 +173,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x16: {
                     // 16-bit Service Data, there can be multiple occurences
-                    const serviceDataUuid = bytes
-                        .slice(0, 2)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceDataUuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 2));
                     const serviceData = bytes.slice(2, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceDataUuid,
@@ -197,12 +183,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x20: {
                     // 32-bit Service Data, there can be multiple occurences
-                    const serviceData32Uuid = bytes
-                        .slice(0, 4)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceData32Uuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 4));
                     const serviceData32 = bytes.slice(4, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceData32Uuid,
@@ -212,12 +193,7 @@ class Gap extends eventemitter3_1.default {
                 }
                 case 0x21: {
                     // 128-bit Service Data, there can be multiple occurences
-                    const serviceData128Uuid = bytes
-                        .slice(0, 16)
-                        .toString("hex")
-                        .match(/.{1,2}/g)
-                        .reverse()
-                        .join("");
+                    const serviceData128Uuid = bleHelper_1.default.buffer2reversedHex(bytes.slice(0, 16));
                     const serviceData128 = bytes.slice(16, bytes.length);
                     advertisement.serviceData.push({
                         uuid: serviceData128Uuid,

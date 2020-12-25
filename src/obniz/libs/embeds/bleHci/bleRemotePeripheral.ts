@@ -131,7 +131,7 @@ export interface BlePairingOptions extends SmpEncryptOptions {
    * obniz.ble.scan.onfind = function(peripheral){
    *   if(peripheral.localName == "my peripheral"){
    *     await peripheral.connectWait({ passkeyCallback: async () => {
-   *      return "123456";
+   *      return 123456;
    *     }});
    *   }
    * }

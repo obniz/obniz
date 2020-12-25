@@ -44,4 +44,10 @@ export interface ObnizOptions {
    * @default true
    */
   reset_obniz_on_ws_disconnection?: boolean;
+
+  /**
+   * With 'true', create input interface of obniz id If non-obniz Id string was passed on create Obniz instance. (HTML only)
+   * @default true
+   */
+  obnizid_dialog?: boolean;
 }

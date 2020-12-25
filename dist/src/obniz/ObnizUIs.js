@@ -60,7 +60,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     wsconnect(desired_server) {
         this.showOffLine();
         if (!this.isValidObnizId(this.id)) {
-            if (this.isNode) {
+            if (this.isNode || !this.options.obnizid_dialog) {
                 this.error({ alert: "error", message: "invalid obniz id" });
             }
             else {

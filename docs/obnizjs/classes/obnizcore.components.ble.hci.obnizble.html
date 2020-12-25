@@ -146,10 +146,11 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#directconnectwait" class="tsd-kind-icon">direct<wbr>Connect<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#emit" class="tsd-kind-icon">emit</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#eventnames" class="tsd-kind-icon">event<wbr>Names</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#fastvalidate" class="tsd-kind-icon">fast<wbr>Validate</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.components.ble.hci.obnizble.html#initwait" class="tsd-kind-icon">init<wbr>Wait</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#listenercount" class="tsd-kind-icon">listener<wbr>Count</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#listeners" class="tsd-kind-icon">listeners</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#notifyfromobniz" class="tsd-kind-icon">notify<wbr>From<wbr>Obniz</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="obnizcore.components.ble.hci.obnizble.html#notifyfromobniz" class="tsd-kind-icon">notify<wbr>From<wbr>Obniz</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#off" class="tsd-kind-icon">off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#on" class="tsd-kind-icon">on</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="obnizcore.components.ble.hci.obnizble.html#once" class="tsd-kind-icon">once</a></li>
@@ -367,7 +368,7 @@ obniz.ble.isInitialized; <span class="hljs-comment">// =&gt; true</span></code><
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:154</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:182</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -384,7 +385,7 @@ obniz.ble.isInitialized; <span class="hljs-comment">// =&gt; true</span></code><
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:300</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:328</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -429,7 +430,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:331</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:359</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -522,6 +523,33 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="fastvalidate" class="tsd-anchor"></a>
+					<h3>fast<wbr>Validate</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">fast<wbr>Validate<span class="tsd-signature-symbol">(</span>commandUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, json<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#fastvalidate">fastValidate</a></p>
+								<ul>
+									<li>Defined in src/obniz/libs/ComponentAbstact.ts:77</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>commandUri: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>json: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="initwait" class="tsd-anchor"></a>
 					<h3>init<wbr>Wait</h3>
@@ -532,7 +560,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:165</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:193</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -605,18 +633,18 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="notifyfromobniz" class="tsd-anchor"></a>
 					<h3>notify<wbr>From<wbr>Obniz</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">notify<wbr>From<wbr>Obniz<span class="tsd-signature-symbol">(</span>json<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#notifyfromobniz">notifyFromObniz</a></p>
+								<p>Overrides <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#notifyfromobniz">notifyFromObniz</a></p>
 								<ul>
-									<li>Defined in src/obniz/libs/ComponentAbstact.ts:46</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:154</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -809,7 +837,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:200</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:228</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -834,7 +862,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#schemabasepath">schemaBasePath</a></p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:350</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:378</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -936,6 +964,9 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="obnizcore.components.ble.hci.obnizble.html#eventnames" class="tsd-kind-icon">event<wbr>Names</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="obnizcore.components.ble.hci.obnizble.html#fastvalidate" class="tsd-kind-icon">fast<wbr>Validate</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="obnizcore.components.ble.hci.obnizble.html#initwait" class="tsd-kind-icon">init<wbr>Wait</a>
 							</li>
@@ -945,7 +976,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="obnizcore.components.ble.hci.obnizble.html#listeners" class="tsd-kind-icon">listeners</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="obnizcore.components.ble.hci.obnizble.html#notifyfromobniz" class="tsd-kind-icon">notify<wbr>From<wbr>Obniz</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">

@@ -41,6 +41,7 @@ class ObnizConnection extends eventemitter3_1.default {
             access_token: options.access_token || null,
             obniz_server: options.obniz_server || "wss://obniz.io",
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
+            obnizid_dialog: options.obnizid_dialog === false ? false : true,
         };
         if (this.options.binary) {
             this.wscommand = this.constructor.WSCommand;
@@ -330,31 +331,36 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     wsOnMessage(data) {
         this._lastDataReceivedAt = new Date().getTime();
-        let json;
-        if (typeof data === "string") {
-            json = JSON.parse(data);
-        }
-        else if (this.wscommands) {
-            if (this.debugprintBinary) {
-                this.log("binalized: " + new Uint8Array(data).toString());
+        try {
+            let json;
+            if (typeof data === "string") {
+                json = JSON.parse(data);
             }
-            json = this.binary2Json(data);
-        }
-        if (Array.isArray(json)) {
-            for (const i in json) {
-                this.notifyToModule(json[i]);
+            else if (this.wscommands) {
+                if (this.debugprintBinary) {
+                    this.log("binalized: " + new Uint8Array(data).toString());
+                }
+                json = this.binary2Json(data);
+            }
+            if (Array.isArray(json)) {
+                for (const i in json) {
+                    this.notifyToModule(json[i]);
+                }
+            }
+            else {
+                // invalid json
             }
         }
-        else {
-            // invalid json
+        catch (e) {
+            this.error(e);
         }
     }
     wsOnClose(event) {
         this.print_debug(`closed from remote event=${event}`);
         const beforeOnConnectCalled = this._onConnectCalled;
         this.close();
-        this.emit("close", this);
         if (beforeOnConnectCalled === true) {
+            this.emit("close", this);
             this._runUserCreatedFunction(this.onclose, this);
         }
         this._reconnect();
@@ -676,15 +682,22 @@ class ObnizConnection extends eventemitter3_1.default {
             }
         }
         if (wsObj.redirect) {
-            const server = wsObj.redirect;
-            this.print_debug("WS connection changed to " + server);
+            const urlString = wsObj.redirect;
+            this.print_debug("WS connection changed to " + urlString);
+            const url = new URL(urlString);
+            const host = url.origin;
+            const paths = url.pathname;
+            if (paths && paths.split("/").length === 5) {
+                // migrate obnizID
+                this.id = paths.split("/")[2];
+            }
             /* close current ws immidiately */
             /*  */
             this.socket.close(1000, "close");
             this.clearSocket(this.socket);
             delete this.socket;
             /* connect to new server */
-            this.wsconnect(server);
+            this.wsconnect(host);
         }
     }
     handleSystemCommand(wsObj) { }

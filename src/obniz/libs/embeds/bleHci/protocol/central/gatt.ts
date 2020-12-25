@@ -18,6 +18,7 @@ import {
   ObnizBleUnknownDescriptorError,
   ObnizBleUnknownServiceError,
 } from "../../../../../ObnizError";
+import BleHelper from "../../bleHelper";
 import { UUID } from "../../bleTypes";
 
 /**
@@ -228,13 +229,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
             uuid:
               type === 6
                 ? data.readUInt16LE(2 + i * type + 4).toString(16)
-                : data
-                    .slice(2 + i * type + 4)
-                    .slice(0, 16)
-                    .toString("hex")
-                    .match(/.{1,2}/g)!
-                    .reverse()
-                    .join(""),
+                : BleHelper.buffer2reversedHex(data.slice(2 + i * type + 4).slice(0, 16)),
           });
         }
       }
@@ -277,13 +272,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
             uuid:
               type === 8
                 ? data.readUInt16LE(2 + i * type + 6).toString(16)
-                : data
-                    .slice(2 + i * type + 6)
-                    .slice(0, 16)
-                    .toString("hex")
-                    .match(/.{1,2}/g)!
-                    .reverse()
-                    .join(""),
+                : BleHelper.buffer2reversedHex(data.slice(2 + i * type + 6).slice(0, 16)),
           });
         }
       }
@@ -335,13 +324,7 @@ class Gatt extends EventEmitter<GattEventTypes> {
             uuid:
               type === 7
                 ? data.readUInt16LE(2 + i * type + 5).toString(16)
-                : data
-                    .slice(2 + i * type + 5)
-                    .slice(0, 16)
-                    .toString("hex")
-                    .match(/.{1,2}/g)!
-                    .reverse()
-                    .join(""),
+                : BleHelper.buffer2reversedHex(data.slice(2 + i * type + 5).slice(0, 16)),
           });
         }
       }
