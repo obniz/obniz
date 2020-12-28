@@ -163,15 +163,15 @@ import Grove_Buzzer, { Grove_BuzzerOptions } from "../parts/Grove/Grove_Buzzer";
 import Grove_DistanceSensor, { Grove_DistanceSensorOptions } from "../parts/Grove/Grove_DistanceSensor";
 import Grove_EarHeartRate, { Grove_EarHeartRateOptions } from "../parts/Grove/Grove_EarHeartRate";
 import Grove_EARTH, { Grove_EARTHOptions } from "../parts/Grove/Grove_EARTH";
+import Grove_Gesture, { Grove_GestureSensorOptions } from "../parts/Grove/Grove_GestureSensor";
 import Grove_GPS, { Grove_GPSOptions } from "../parts/Grove/Grove_GPS";
 import Grove_JoyStick, { Grove_JoyStickOptions } from "../parts/Grove/Grove_JoyStick";
 import Grove_LightSensor, { Grove_LightSensorOptions } from "../parts/Grove/Grove_LightSensor";
 import Grove_MP3, { Grove_MP3Options } from "../parts/Grove/Grove_MP3";
 import Grove_PressureSensor, { Grove_PressureSensorOptions } from "../parts/Grove/Grove_PressureSensor";
+import { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
 import Grove_SoilMoistureSensor, { Grove_SoilMoistureSensorOptions } from "../parts/Grove/Grove_SoilMoistureSensor";
 import Grove_Speaker, { Grove_SpeakerOptions } from "../parts/Grove/Grove_Speaker";
-
-import { Grove_RotaryAngleSensorOptions } from "../parts/Grove/Grove_RotaryAngleSensor";
 // Keyestudio
 import Keyestudio_Button, { Keyestudio_ButtonOptions } from "../parts/Keyestudio/Keyestudio_Button";
 import Keyestudio_Buzzer, { Keyestudio_BuzzerOptions } from "../parts/Keyestudio/Keyestudio_Buzzer";
