@@ -7,7 +7,7 @@ import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
 import { ObnizOptions } from "./ObnizOptions";
 import ObnizPartsInterface from "./ObnizPartsInterface";
-import { WiredNameMap, WiredNameOptionsMap } from "./ObnizPartsList";
+import { PartsList } from "./ObnizPartsList";
 
 /**
  * @ignore
@@ -41,7 +41,7 @@ export default abstract class ObnizParts extends ObnizConnection {
    * @param name string
    * @constructor
    */
-  public static getPartsClass<K extends keyof WiredNameMap>(name: K): any {
+  public static getPartsClass<K extends keyof PartsList>(name: K): any {
     if (!_parts[name]) {
       throw new Error(`unknown parts [${name}]`);
     }
@@ -71,13 +71,13 @@ export default abstract class ObnizParts extends ObnizConnection {
   /**
    * Setup Parts of parts library
    *
-   * @param partsname
+   * @param partsName
    * @param options
    */
-  public wired<K extends keyof WiredNameMap>(partsname: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K] {
-    const Parts: any = ObnizParts.getPartsClass(partsname);
+  public wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]["options"]): PartsList[K]["class"] {
+    const Parts: any = ObnizParts.getPartsClass(partsName);
     if (!Parts) {
-      throw new Error("No such a parts [" + partsname + "] found");
+      throw new Error("No such a parts [" + partsName + "] found");
     }
     const parts = new Parts();
     const args: any = Array.from(arguments);
@@ -90,7 +90,7 @@ export default abstract class ObnizParts extends ObnizConnection {
       if (parts.requiredKeys) {
         const err: any = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
         if (err) {
-          throw new Error(partsname + " wired param '" + err + "' required, but not found ");
+          throw new Error(partsName + " wired param '" + err + "' required, but not found ");
         }
       }
       parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
@@ -99,7 +99,7 @@ export default abstract class ObnizParts extends ObnizConnection {
     parts.wired.apply(parts, args);
     if (parts.keys || parts.ioKeys) {
       const keys: any = parts.ioKeys || parts.keys;
-      const displayPartsName: any = parts.displayName || partsname;
+      const displayPartsName: any = parts.displayName || partsName;
       const ioNames: any = {};
       for (const index in keys) {
         let pinName: any = keys[index];

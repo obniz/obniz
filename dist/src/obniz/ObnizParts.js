@@ -65,13 +65,13 @@ class ObnizParts extends ObnizConnection_1.default {
     /**
      * Setup Parts of parts library
      *
-     * @param partsname
+     * @param partsName
      * @param options
      */
-    wired(partsname, options) {
-        const Parts = ObnizParts.getPartsClass(partsname);
+    wired(partsName, options) {
+        const Parts = ObnizParts.getPartsClass(partsName);
         if (!Parts) {
-            throw new Error("No such a parts [" + partsname + "] found");
+            throw new Error("No such a parts [" + partsName + "] found");
         }
         const parts = new Parts();
         const args = Array.from(arguments);
@@ -84,7 +84,7 @@ class ObnizParts extends ObnizConnection_1.default {
             if (parts.requiredKeys) {
                 const err = util_1.default._requiredKeys(args[1], parts.requiredKeys);
                 if (err) {
-                    throw new Error(partsname + " wired param '" + err + "' required, but not found ");
+                    throw new Error(partsName + " wired param '" + err + "' required, but not found ");
                 }
             }
             parts.params = util_1.default._keyFilter(args[1], parts.keys);
@@ -93,7 +93,7 @@ class ObnizParts extends ObnizConnection_1.default {
         parts.wired.apply(parts, args);
         if (parts.keys || parts.ioKeys) {
             const keys = parts.ioKeys || parts.keys;
-            const displayPartsName = parts.displayName || partsname;
+            const displayPartsName = parts.displayName || partsName;
             const ioNames = {};
             for (const index in keys) {
                 let pinName = keys[index];
