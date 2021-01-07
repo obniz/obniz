@@ -722,6 +722,13 @@
           }
         },
         {
+          "name": "Grove_GestureSensor",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/2645/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Gesture-PAJ7620U2.html"
+          }
+        },
+        {
           "name": "Grove_WaterLevelSensor",
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/6282/",
