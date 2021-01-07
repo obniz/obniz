@@ -79,7 +79,7 @@ export default class Logtta_CO2 implements ObnizPartsBleInterface {
   public batteryService?: BleBatteryService;
 
   constructor(peripheral: BleRemotePeripheral | null) {
-    if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
+    if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
       throw new Error("peripheral is not Logtta CO2");
     }
     this._peripheral = peripheral;

@@ -227,7 +227,6 @@ module.exports = {
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
     "semver": "^5.7.0",
-    "tsc": "^1.20150623.0",
     "tv4": "^1.3.0",
     "ws": "^6.1.4"
   },
@@ -1743,6 +1742,69 @@ webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
 webpackEmptyContext.id = "./dist/src/obniz sync recursive";
+
+/***/ }),
+
+/***/ "./dist/src/obniz/Obniz.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
+const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
+const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
+const ObnizApp_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApp.js"));
+const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
+/**
+ * obniz class is the abstract version of obniz Board hardware within JavaScript.
+ *
+ * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
+ * without the details of websocket api.
+ *
+ *
+ * ### obnizOS version and obniz.js version
+ *
+ * obniz cloud compare your obniz.js version and target device obnizOS version.
+ * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
+ * It will work somehow but some functions looses compatibility.
+ *
+ * ### one device from two program
+ *
+ * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
+ * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
+ *
+ * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
+ *
+ * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
+ *
+ */
+class Obniz extends ObnizDevice_1.default {
+    /**
+     * obniz REST api class
+     * @returns {ObnizApi}
+     */
+    static get api() {
+        return ObnizApi_1.default;
+    }
+    /**
+     * App Support class
+     * @returns {ObnizApp}
+     */
+    static get App() {
+        return ObnizApp_1.default;
+    }
+}
+exports.Obniz = Obniz;
+/**
+ * M5StickC device
+ */
+Obniz.M5StickC = m5stickc_1.M5StickC;
+Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
+
 
 /***/ }),
 
@@ -3619,13 +3681,13 @@ class ObnizParts extends ObnizConnection_1.default {
     /**
      * Setup Parts of parts library
      *
-     * @param partsname
+     * @param partsName
      * @param options
      */
-    wired(partsname, options) {
-        const Parts = ObnizParts.getPartsClass(partsname);
+    wired(partsName, options) {
+        const Parts = ObnizParts.getPartsClass(partsName);
         if (!Parts) {
-            throw new Error("No such a parts [" + partsname + "] found");
+            throw new Error("No such a parts [" + partsName + "] found");
         }
         const parts = new Parts();
         const args = Array.from(arguments);
@@ -3638,7 +3700,7 @@ class ObnizParts extends ObnizConnection_1.default {
             if (parts.requiredKeys) {
                 const err = util_1.default._requiredKeys(args[1], parts.requiredKeys);
                 if (err) {
-                    throw new Error(partsname + " wired param '" + err + "' required, but not found ");
+                    throw new Error(partsName + " wired param '" + err + "' required, but not found ");
                 }
             }
             parts.params = util_1.default._keyFilter(args[1], parts.keys);
@@ -3647,7 +3709,7 @@ class ObnizParts extends ObnizConnection_1.default {
         parts.wired.apply(parts, args);
         if (parts.keys || parts.ioKeys) {
             const keys = parts.ioKeys || parts.keys;
-            const displayPartsName = parts.displayName || partsname;
+            const displayPartsName = parts.displayName || partsName;
             const ioNames = {};
             for (const index in keys) {
                 let pinName = keys[index];
@@ -4331,62 +4393,7 @@ function _ReadCookie(name) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
-/**
- * @packageDocumentation
- * @module ObnizCore
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
-const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
-const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
-const ObnizApp_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApp.js"));
-const ObnizDevice_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizDevice.js"));
-/**
- * obniz class is the abstract version of obniz Board hardware within JavaScript.
- *
- * By providing obniz id and instantiating it, you can control obniz Board and the connected parts
- * without the details of websocket api.
- *
- *
- * ### obnizOS version and obniz.js version
- *
- * obniz cloud compare your obniz.js version and target device obnizOS version.
- * If your js sdk major number is below from OS version (eg obniz.js is 2.0.0 and obnizOS is 3.0.0) then obniz cloud will alert when connection established.
- * It will work somehow but some functions looses compatibility.
- *
- * ### one device from two program
- *
- * obniz cloud accept multiple websocket connection from multiple obniz.js at same time.
- * every commands from obniz.js will passed to a device and every command from a device will be dispatched to every obniz.js connected to the cloud.
- *
- * But If one of obniz.js established a connection to a device, then target device will send datas only via local connect. So other connected obniz.js only can send datas and never receive datas from a device.
- *
- * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
- *
- */
-class Obniz extends ObnizDevice_1.default {
-    /**
-     * obniz REST api class
-     * @returns {ObnizApi}
-     */
-    static get api() {
-        return ObnizApi_1.default;
-    }
-    /**
-     * App Support class
-     * @returns {ObnizApp}
-     */
-    static get App() {
-        return ObnizApp_1.default;
-    }
-}
-/**
- * M5StickC device
- */
-Obniz.M5StickC = m5stickc_1.M5StickC;
-Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
+const Obniz_1 = __webpack_require__("./dist/src/obniz/Obniz.js");
 /*===================*/
 /* Utils */
 /*===================*/
@@ -4430,14 +4437,14 @@ const context = __webpack_require__("./dist/src/parts sync recursive \\.js$");
 for (const path of context.keys()) {
     const anParts = context(path);
     if (anParts.info) {
-        Obniz.PartsRegistrate(anParts);
+        Obniz_1.Obniz.PartsRegistrate(anParts);
     }
     else if (anParts.default.info) {
         // for ts "export default"
-        Obniz.PartsRegistrate(anParts.default);
+        Obniz_1.Obniz.PartsRegistrate(anParts.default);
     }
 }
-module.exports = Obniz;
+module.exports = Obniz_1.Obniz;
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
@@ -6155,7 +6162,7 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         this.emitter.emit(notifyName, params);
         switch (notifyName) {
             case "onwritefromremote": {
-                this._runUserCreatedFunction(this.onwritefromremote, params.address, params.data);
+                this._runUserCreatedFunction(this.onwritefromremote, params.address, Array.from(params.data));
                 break;
             }
             case "onreadfromremote": {
@@ -21981,6 +21988,7 @@ var map = {
 	"./Grove/Grove_RotaryAngleSensor/index.js": "./dist/src/parts/Grove/Grove_RotaryAngleSensor/index.js",
 	"./Grove/Grove_SoilMoistureSensor/index.js": "./dist/src/parts/Grove/Grove_SoilMoistureSensor/index.js",
 	"./Grove/Grove_Speaker/index.js": "./dist/src/parts/Grove/Grove_Speaker/index.js",
+	"./Grove/Grove_WaterLevelSensor/index.js": "./dist/src/parts/Grove/Grove_WaterLevelSensor/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./dist/src/parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./dist/src/parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./dist/src/parts/Infrared/IRSensor/index.js",
@@ -23138,7 +23146,7 @@ const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/B
 const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/abstract/services/genericAccess.js"));
 class Logtta_CO2 {
     constructor(peripheral) {
-        if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
+        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
             throw new Error("peripheral is not Logtta CO2");
         }
         this._peripheral = peripheral;
@@ -39523,6 +39531,93 @@ class Grove_Speaker {
     }
 }
 exports.default = Grove_Speaker;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Grove/Grove_WaterLevelSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Grove_WaterLevelSensor
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+class Grove_WaterLevelSensor {
+    constructor() {
+        this.onchange = null;
+        this.keys = ["gnd", "vcc", "sda", "scl", "grove"];
+        this.requiredKeys = [];
+        this.ioKeys = this.keys;
+        this.displayName = "WaterLevel";
+        this.displayIoNames = { sda: "sda", scl: "scl" };
+        this.THRESHOLD = 100;
+        this.ATTINY1_HIGH_ADDR = 0x78;
+        this.ATTINY2_LOW_ADDR = 0x77;
+        this.check_interval_ms = 1000;
+        this.previous_val = 0;
+    }
+    static info() {
+        return {
+            name: "Grove_WaterLevelSensor",
+        };
+    }
+    async wired(obniz) {
+        // Grove_3AxisAccelerometer の I2C 参考
+        if (this.params.grove) {
+            this.i2c = this.params.grove.getI2c(400000, "5v");
+        }
+        else {
+            this.vcc = this.params.vcc;
+            this.gnd = this.params.gnd;
+            this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+            this.params.clock = 400000;
+            this.params.mode = "master";
+            this.i2c = obniz.getI2CWithConfig(this.params);
+        }
+        this.obniz.wait(100);
+        // power on
+        while (true) {
+            const current_val = await this.getWait();
+            if (current_val !== this.previous_val) {
+                if (this.onchange) {
+                    this.onchange(current_val);
+                }
+                this.previous_val = current_val;
+            }
+            this.obniz.wait(this.check_interval_ms);
+        }
+    }
+    // Grove_JoyStick 参考
+    async getWait() {
+        let water_level_mm;
+        const water_level_step = 5; // 5 mm step
+        const high_data = await this.i2c.readWait(this.ATTINY1_HIGH_ADDR, 12);
+        const low_data = await this.i2c.readWait(this.ATTINY2_LOW_ADDR, 8);
+        let i;
+        let touch_val = 0;
+        for (i = 0; i < 8; i++) {
+            if (low_data[i] > this.THRESHOLD) {
+                touch_val |= 1 << i;
+            }
+        }
+        for (i = 0; i < 12; i++) {
+            if (high_data[i] > this.THRESHOLD) {
+                touch_val |= 1 << (8 + i);
+            }
+        }
+        let trig_section = 0;
+        while (touch_val & 0x01) {
+            trig_section++;
+            touch_val >>= 1;
+        }
+        water_level_mm = trig_section * water_level_step;
+        return water_level_mm;
+    }
+}
+exports.default = Grove_WaterLevelSensor;
 
 
 /***/ }),

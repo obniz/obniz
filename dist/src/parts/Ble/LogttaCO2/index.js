@@ -11,7 +11,7 @@ const batteryService_1 = __importDefault(require("../abstract/services/batterySe
 const genericAccess_1 = __importDefault(require("../abstract/services/genericAccess"));
 class Logtta_CO2 {
     constructor(peripheral) {
-        if (!peripheral || !Logtta_CO2.isDevice(peripheral)) {
+        if (peripheral && !Logtta_CO2.isDevice(peripheral)) {
             throw new Error("peripheral is not Logtta CO2");
         }
         this._peripheral = peripheral;
