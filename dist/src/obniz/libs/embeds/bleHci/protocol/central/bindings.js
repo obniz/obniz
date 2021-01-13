@@ -250,13 +250,11 @@ class NobleBindings extends eventemitter3_1.default {
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const descriptors = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
-        return descriptors;
+        return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
     }
     async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
-        return resp;
+        return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
     }
     async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);

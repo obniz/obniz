@@ -109,7 +109,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async connectWait(peripheralUuid: any, onConnectCallback?: any) {
-    const address: any = this._addresses[peripheralUuid];
+    const address = this._addresses[peripheralUuid];
     const addressType: any = this._addresseTypes[peripheralUuid];
 
     // Block parall connection ongoing for ESP32 bug.
@@ -222,7 +222,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     handle?: any,
     role?: any,
     addressType?: any,
-    address?: any,
+    address?: BleDeviceAddress,
     interval?: any,
     latency?: any,
     supervisionTimeout?: any,
@@ -238,7 +238,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     if (status !== 0) {
       throw new ObnizBleHciStateError(status);
     }
-    uuid = address
+    uuid = address!
       .split(":")
       .join("")
       .toLowerCase();
@@ -254,7 +254,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     aclStream.debugHandler = (text: any) => {
       this.debug(text);
     };
-    const gatt = new Gatt(address, aclStream);
+    const gatt = new Gatt(address!, aclStream);
     const signaling: any = new Signaling(handle, aclStream);
 
     this._gatts[uuid] = this._gatts[handle] = gatt;
@@ -366,16 +366,23 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this.emit("notification", uuid, serviceUuid, characteristicUuid, data, true, true);
   }
 
-  public async discoverDescriptorsWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any) {
+  public async discoverDescriptorsWait(
+    peripheralUuid: UUID,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+  ): Promise<UUID[]> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    const descriptors = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
-    return descriptors;
+    return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
   }
 
-  public async readValueWait(peripheralUuid: any, serviceUuid: any, characteristicUuid: any, descriptorUuid: any) {
+  public async readValueWait(
+    peripheralUuid: UUID,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
+    descriptorUuid: UUID,
+  ): Promise<Buffer> {
     const gatt: Gatt = this.getGatt(peripheralUuid);
-    const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
-    return resp;
+    return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
   }
 
   public async writeValueWait(
