@@ -8832,19 +8832,19 @@ class NobleBindings extends eventemitter3_1.default {
             .catch((error) => {
             // nothing
         })
+            .then(async () => {
+            const result = await this._hci.createLeConnWait(address, addressType, 90 * 1000, () => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === "function") {
+                    onConnectCallback();
+                }
+            }); // connection timeout for 90 secs.
+            return await this._gatts[result.handle].exchangeMtuWait(256);
+        })
             .then(() => {
-            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-        })
-            .then((result) => {
-            this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-            if (onConnectCallback && typeof onConnectCallback === "function") {
-                onConnectCallback();
-            }
-            return this._gatts[result.handle].exchangeMtuWait(256);
-        })
-            .then((result) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-            return Promise.resolve(result);
+            return Promise.resolve();
         }, (error) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
             return Promise.reject(error);
@@ -9031,8 +9031,15 @@ class NobleBindings extends eventemitter3_1.default {
             .toLowerCase();
         this.emit("handleNotify", uuid, handle, data);
     }
-    async onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-        await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+        this._hci
+            .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
+            .then(() => { })
+            .catch((e) => {
+            // TODO:
+            // This must passed to Obniz class.
+            console.error(e);
+        });
         // this.onLeConnUpdateComplete(); is nop
     }
     async pairingWait(peripheralUuid, options) {
@@ -10764,7 +10771,7 @@ class Hci extends eventemitter3_1.default {
         const data = await p;
         return data.status;
     }
-    async createLeConnWait(address, addressType, timeout = 90 * 1000) {
+    async createLeConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -10790,7 +10797,7 @@ class Hci extends eventemitter3_1.default {
         });
         this._socket.write(cmd);
         const { status, data } = await p;
-        return this.processLeConnComplete(status, data);
+        return this.processLeConnComplete(status, data, onConnectCallback);
     }
     async createLeConnCancelWait() {
         const cmd = Buffer.alloc(4);
@@ -11128,14 +11135,17 @@ class Hci extends eventemitter3_1.default {
             this.processLeAdvertisingReport(status, data);
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-            this.processLeConnComplete(status, data);
+            const role = data.readUInt8(2);
+            if (role === 1) {
+                this.processLeConnComplete(status, data, undefined);
+            }
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
             this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
         }
     }
-    processLeConnComplete(status, data) {
+    processLeConnComplete(status, data, onConnectCallback) {
         const handle = data.readUInt16LE(0);
         const role = data.readUInt8(2);
         const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
@@ -11156,6 +11166,9 @@ class Hci extends eventemitter3_1.default {
         if (role === 1) {
             // only slave, emit
             this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
+        }
+        if (typeof onConnectCallback === "function") {
+            onConnectCallback();
         }
         return {
             status,

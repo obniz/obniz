@@ -862,7 +862,10 @@ class Hci extends EventEmitter<HciEventTypes> {
     if (eventType === COMMANDS.EVT_LE_ADVERTISING_REPORT) {
       this.processLeAdvertisingReport(status, data);
     } else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-      this.processLeConnComplete(status, data);
+      const role = data.readUInt8(2);
+      if (role === 1) {
+        this.processLeConnComplete(status, data, undefined);
+      }
     } else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
       const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
       this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
