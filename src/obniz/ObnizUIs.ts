@@ -23,22 +23,13 @@ export default class ObnizUIs extends ObnizSystemMethods {
    */
   public static _promptCount: number = 0;
 
-  constructor(id: string, options?: ObnizOptions) {
-    super(id, options);
-  }
-
-  protected _close() {
-    super._close();
-    this.updateOnlineUI();
-  }
-
-  protected isValidObnizId(str: string): boolean {
+  public static isValidObnizId(str: string): boolean {
     if (typeof str !== "string") {
       return false;
     }
 
     // IP => accept
-    if (this._isIpAddress(str)) {
+    if (this.isIpAddress(str)) {
       return true;
     }
 
@@ -59,9 +50,18 @@ export default class ObnizUIs extends ObnizSystemMethods {
     return id !== null;
   }
 
+  constructor(id: string, options?: ObnizOptions) {
+    super(id, options);
+  }
+
+  protected _close() {
+    super._close();
+    this.updateOnlineUI();
+  }
+
   protected wsconnect(desired_server: any) {
     this.showOffLine();
-    if (!this.isValidObnizId(this.id)) {
+    if (!(this.constructor as typeof ObnizUIs).isValidObnizId(this.id)) {
       if (this.isNode || !this.options.obnizid_dialog) {
         this.error({ alert: "error", message: "invalid obniz id" });
       } else {

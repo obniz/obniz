@@ -39,6 +39,11 @@ export default abstract class ObnizConnection extends EventEmitter<
     return WSCommand;
   }
 
+  public static isIpAddress(str: string) {
+    const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
+    return str.match(regex) !== null;
+  }
+
   /**
    * This lets obniz.js to show logs like communicated jsons and connection logs in console.log.
    *
@@ -676,7 +681,7 @@ export default abstract class ObnizConnection extends EventEmitter<
     }
 
     let url = server + "/obniz/" + this.id + "/ws/1";
-    if (this._isIpAddress(this.id)) {
+    if ((this.constructor as typeof ObnizConnection).isIpAddress(this.id)) {
       url = `ws://${this.id}/`;
     }
 
@@ -864,11 +869,6 @@ export default abstract class ObnizConnection extends EventEmitter<
         this._startLoopInBackground();
       }
     }
-  }
-
-  protected _isIpAddress(str: string) {
-    const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
-    return str.match(regex) !== null;
   }
 
   protected print_debug(str: any) {

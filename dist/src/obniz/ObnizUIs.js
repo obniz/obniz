@@ -13,16 +13,12 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
     constructor(id, options) {
         super(id, options);
     }
-    _close() {
-        super._close();
-        this.updateOnlineUI();
-    }
-    isValidObnizId(str) {
+    static isValidObnizId(str) {
         if (typeof str !== "string") {
             return false;
         }
         // IP => accept
-        if (this._isIpAddress(str)) {
+        if (this.isIpAddress(str)) {
             return true;
         }
         // Serial Number 'sn_***'
@@ -40,9 +36,13 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
         return id !== null;
     }
+    _close() {
+        super._close();
+        this.updateOnlineUI();
+    }
     wsconnect(desired_server) {
         this.showOffLine();
-        if (!this.isValidObnizId(this.id)) {
+        if (!this.constructor.isValidObnizId(this.id)) {
             if (this.isNode || !this.options.obnizid_dialog) {
                 this.error({ alert: "error", message: "invalid obniz id" });
             }

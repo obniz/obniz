@@ -76,6 +76,10 @@ class ObnizConnection extends eventemitter3_1.default {
     static get WSCommand() {
         return wscommand_1.default;
     }
+    static isIpAddress(str) {
+        const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
+        return str.match(regex) !== null;
+    }
     /**
      * With this you wait until the connection to obniz Board succeeds.
      *
@@ -466,7 +470,7 @@ class ObnizConnection extends eventemitter3_1.default {
             this._close();
         }
         let url = server + "/obniz/" + this.id + "/ws/1";
-        if (this._isIpAddress(this.id)) {
+        if (this.constructor.isIpAddress(this.id)) {
             url = `ws://${this.id}/`;
         }
         const query = [];
@@ -651,10 +655,6 @@ class ObnizConnection extends eventemitter3_1.default {
                 this._startLoopInBackground();
             }
         }
-    }
-    _isIpAddress(str) {
-        const regex = /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/;
-        return str.match(regex) !== null;
     }
     print_debug(str) {
         if (this.debugprint) {
