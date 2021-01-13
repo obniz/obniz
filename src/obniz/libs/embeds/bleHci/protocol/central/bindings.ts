@@ -118,7 +118,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         // nothing
       })
       .then(async () => {
-        const result = await this._hci.createLeConnWait(address, addressType, 90 * 1000, () => {
+        const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result: any) => {
           // on connect success
           this.onLeConnComplete(
             result.status,
@@ -136,7 +136,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
           }
         }); // connection timeout for 90 secs.
 
-        return await this._gatts[result.handle].exchangeMtuWait(256);
+        return await this._gatts[conResult.handle].exchangeMtuWait(256);
       })
       .then(
         () => {

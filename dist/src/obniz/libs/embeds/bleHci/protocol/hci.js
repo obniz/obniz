@@ -292,18 +292,18 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x19, 3);
         // data
-        cmd.writeUInt16LE(0x0060, 4); // interval
-        cmd.writeUInt16LE(0x0030, 6); // window
+        cmd.writeUInt16LE(0x0010, 4); // interval
+        cmd.writeUInt16LE(0x0010, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
         cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
         bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
-        cmd.writeUInt16LE(0x0006, 17); // min interval
-        cmd.writeUInt16LE(0x000c, 19); // max interval
-        cmd.writeUInt16LE(0x0000, 21); // latency
-        cmd.writeUInt16LE(0x00c8, 23); // supervision timeout
-        cmd.writeUInt16LE(0x0004, 25); // min ce length
-        cmd.writeUInt16LE(0x0006, 27); // max ce length
+        cmd.writeUInt16LE(0x0009, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
+        cmd.writeUInt16LE(0x0018, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
+        cmd.writeUInt16LE(0x0001, 21); // latency // cmd.writeUInt16LE(0x0000, 21);
+        cmd.writeUInt16LE(0x0190, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
+        cmd.writeUInt16LE(0x0000, 25); // min ce length
+        cmd.writeUInt16LE(0x0000, 27); // max ce length
         this.debug("create le conn - writing: " + cmd.toString("hex"));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
@@ -680,10 +680,7 @@ class Hci extends eventemitter3_1.default {
             // only slave, emit
             this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
         }
-        if (typeof onConnectCallback === "function") {
-            onConnectCallback();
-        }
-        return {
+        const result = {
             status,
             handle,
             role,
@@ -694,6 +691,10 @@ class Hci extends eventemitter3_1.default {
             supervisionTimeout,
             masterClockAccuracy,
         };
+        if (typeof onConnectCallback === "function") {
+            onConnectCallback(result);
+        }
+        return result;
     }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {

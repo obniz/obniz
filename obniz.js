@@ -6973,6 +6973,7 @@ class BleRemotePeripheral {
          * @ignore
          */
         this.discoverdOnRemote = undefined;
+        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -6984,7 +6985,6 @@ class BleRemotePeripheral {
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
-        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this._services = [];
         this.emitter = new eventemitter3_1.default();
     }
@@ -8833,14 +8833,14 @@ class NobleBindings extends eventemitter3_1.default {
             // nothing
         })
             .then(async () => {
-            const result = await this._hci.createLeConnWait(address, addressType, 90 * 1000, () => {
+            const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result) => {
                 // on connect success
                 this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
                 if (onConnectCallback && typeof onConnectCallback === "function") {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
-            return await this._gatts[result.handle].exchangeMtuWait(256);
+            return await this._gatts[conResult.handle].exchangeMtuWait(256);
         })
             .then(() => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
@@ -10779,18 +10779,18 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x19, 3);
         // data
-        cmd.writeUInt16LE(0x0060, 4); // interval
-        cmd.writeUInt16LE(0x0030, 6); // window
+        cmd.writeUInt16LE(0x0010, 4); // interval
+        cmd.writeUInt16LE(0x0010, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
         cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
         bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
-        cmd.writeUInt16LE(0x0006, 17); // min interval
-        cmd.writeUInt16LE(0x000c, 19); // max interval
-        cmd.writeUInt16LE(0x0000, 21); // latency
-        cmd.writeUInt16LE(0x00c8, 23); // supervision timeout
-        cmd.writeUInt16LE(0x0004, 25); // min ce length
-        cmd.writeUInt16LE(0x0006, 27); // max ce length
+        cmd.writeUInt16LE(0x0009, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
+        cmd.writeUInt16LE(0x0018, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
+        cmd.writeUInt16LE(0x0001, 21); // latency // cmd.writeUInt16LE(0x0000, 21);
+        cmd.writeUInt16LE(0x0190, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
+        cmd.writeUInt16LE(0x0000, 25); // min ce length
+        cmd.writeUInt16LE(0x0000, 27); // max ce length
         this.debug("create le conn - writing: " + cmd.toString("hex"));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
@@ -11167,10 +11167,7 @@ class Hci extends eventemitter3_1.default {
             // only slave, emit
             this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
         }
-        if (typeof onConnectCallback === "function") {
-            onConnectCallback();
-        }
-        return {
+        const result = {
             status,
             handle,
             role,
@@ -11181,6 +11178,10 @@ class Hci extends eventemitter3_1.default {
             supervisionTimeout,
             masterClockAccuracy,
         };
+        if (typeof onConnectCallback === "function") {
+            onConnectCallback(result);
+        }
+        return result;
     }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
@@ -12315,7 +12316,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2800" === uuid || "2802" === uuid) {
             const services = [];
             const type = "2800" === uuid ? "service" : "includedService";
@@ -12376,7 +12377,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2803" === uuid) {
             const characteristics = [];
             for (i = startHandle; i <= endHandle; i++) {
