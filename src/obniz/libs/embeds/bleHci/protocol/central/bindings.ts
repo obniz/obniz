@@ -117,30 +117,31 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       .catch((error) => {
         // nothing
       })
-      .then(() => {
-        return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-      })
-      .then((result) => {
-        this.onLeConnComplete(
-          result.status,
-          result.handle,
-          result.role,
-          result.addressType,
-          result.address,
-          result.interval,
-          result.latency,
-          result.supervisionTimeout,
-          result.masterClockAccuracy,
-        );
-        if (onConnectCallback && typeof onConnectCallback === "function") {
-          onConnectCallback();
-        }
-        return this._gatts[result.handle].exchangeMtuWait(256);
+      .then(async () => {
+        const result = await this._hci.createLeConnWait(address, addressType, 90 * 1000, () => {
+          // on connect success
+          this.onLeConnComplete(
+            result.status,
+            result.handle,
+            result.role,
+            result.addressType,
+            result.address,
+            result.interval,
+            result.latency,
+            result.supervisionTimeout,
+            result.masterClockAccuracy,
+          );
+          if (onConnectCallback && typeof onConnectCallback === "function") {
+            onConnectCallback();
+          }
+        }); // connection timeout for 90 secs.
+
+        return await this._gatts[result.handle].exchangeMtuWait(256);
       })
       .then(
-        (result) => {
+        () => {
           this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-          return Promise.resolve(result);
+          return Promise.resolve();
         },
         (error) => {
           this._connectPromises = this._connectPromises.filter((e) => e === doPromise);

@@ -386,7 +386,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     return data.status;
   }
 
-  public async createLeConnWait(address: any, addressType: any, timeout: number = 90 * 1000) {
+  public async createLeConnWait(address: any, addressType: any, timeout: number = 90 * 1000, onConnectCallback: any) {
     const cmd = Buffer.alloc(29);
 
     // header
@@ -420,7 +420,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     this._socket.write(cmd);
 
     const { status, data } = await p;
-    return this.processLeConnComplete(status, data);
+    return this.processLeConnComplete(status, data, onConnectCallback);
   }
 
   public async createLeConnCancelWait() {
@@ -872,7 +872,7 @@ class Hci extends EventEmitter<HciEventTypes> {
     }
   }
 
-  public processLeConnComplete(status: any, data: Buffer) {
+  public processLeConnComplete(status: any, data: Buffer, onConnectCallback: any) {
     const handle: Handle = data.readUInt16LE(0);
     const role = data.readUInt8(2);
     const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
@@ -908,6 +908,9 @@ class Hci extends EventEmitter<HciEventTypes> {
         supervisionTimeout,
         masterClockAccuracy,
       );
+    }
+    if (typeof onConnectCallback === "function") {
+      onConnectCallback();
     }
 
     return {
