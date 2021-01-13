@@ -409,14 +409,21 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this.emit("handleNotify", uuid, handle, data);
   }
 
-  public async onConnectionParameterUpdateWait(
+  public onConnectionParameterUpdateWait(
     handle: Handle,
     minInterval?: any,
     maxInterval?: any,
     latency?: any,
     supervisionTimeout?: any,
   ) {
-    await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    this._hci
+      .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
+      .then(() => {})
+      .catch((e) => {
+        // TODO:
+        // This must passed to Obniz class.
+        console.error(e);
+      });
     // this.onLeConnUpdateComplete(); is nop
   }
 
