@@ -45,7 +45,7 @@ Get a data from advertisement
 - barometric_pressure: (hPa)
 - soud_noise: (dB)
 - etvoc: eTVOC(ppb)
-- eCO2: eTVOC(ppm)
+- eco2: CO2 (ppm)
 
 
 ```javascript

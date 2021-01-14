@@ -46,7 +46,7 @@ advertisementからデータを取得(そのようにモード設定されたデ
 - barometric_pressure: 気圧(hPa)
 - soud_noise: 騒音(dB)
 - etvoc: eTVOC(ppb)
-- eCO2: eTVOC(ppm)
+- eco2: 等価CO2濃度(ppm)
 
 
 
