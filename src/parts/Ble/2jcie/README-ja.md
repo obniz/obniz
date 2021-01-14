@@ -43,7 +43,6 @@ advertisementからデータを取得(そのようにモード設定されたデ
 - temperature: 温度(degC)
 - relative_humidity: 湿度(%RH)
 - light: 照度(lx)
-- uv_index: 紫外線強度
 - barometric_pressure: 気圧(hPa)
 - soud_noise: 騒音(dB)
 - etvoc: eTVOC(ppb)

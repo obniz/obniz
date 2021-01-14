@@ -42,7 +42,6 @@ Get a data from advertisement
 - temperature: (degC)
 - relative_humidity: (%RH)
 - light: (lx)
-- uv_index: 
 - barometric_pressure: (hPa)
 - soud_noise: (dB)
 - etvoc: eTVOC(ppb)
