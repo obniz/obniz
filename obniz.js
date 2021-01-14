@@ -3762,6 +3762,16 @@ class ObnizPartsBleInterface {
         return val;
     }
     /**
+     * Utility function for reading 4 byte to signed number.
+     */
+    static signed32FromBinary(byte3, byte2, byte1, byte0) {
+        let val = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
+        if ((val & 0x80000000) !== 0) {
+            val = val - 0x100000000;
+        }
+        return val;
+    }
+    /**
      * Utility function for reading 1byte fixed point number
      */
     static readFraction(byte) {
@@ -22365,21 +22375,41 @@ class OMRON_2JCIE {
     }
     static isDevice(peripheral) {
         return ((peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0));
+            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf("Rbt") >= 0));
     }
     /**
      * Get a datas from advertisement mode of OMRON 2JCIE
      */
     static getData(peripheral) {
+        const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
-            const adv_data = peripheral.adv_data;
             return {
                 temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
                 relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
                 light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
                 uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
                 barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[18]) * 0.01,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
+                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[21]),
+                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[23]),
+                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[25]),
+                battery: (adv_data[26] + 100) / 100,
+            };
+        }
+        else if (peripheral.localName &&
+            peripheral.localName.indexOf("Rbt") >= 0 &&
+            adv_data[6] === 0x02 &&
+            adv_data[6] === 0x02 &&
+            adv_data[7] === 0x01) {
+            return {
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) * 0.01,
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+                etvoc: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[21]),
+                eco2: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[23]),
             };
         }
         return null;
@@ -23164,19 +23194,22 @@ class Logtta_CO2 {
             return false;
         }
         const data = peripheral.adv_data;
-        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
+        if (data[5] !== 0x10 ||
+            data[6] !== 0x05 ||
+            data[7] !== 0x02 ||
+            data[16] !== 0x43 ||
+            data[17] !== 0x4f ||
+            data[18] !== 0x32) {
+            // CompanyID, Apperance, "C" "O" "2"
             return false;
         }
         return true;
     }
     static getData(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
+        if (!this.isAdvDevice(peripheral)) {
             return null;
         }
         const data = peripheral.adv_data;
-        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
-            return null;
-        }
         const alert = data[15];
         const interval = (data[13] << 8) | data[14];
         const advData = {
@@ -23316,19 +23349,17 @@ class Logtta_TH {
             return false;
         }
         const data = peripheral.adv_data;
-        if (Logtta_TH.getName(data) !== "TH Sensor") {
+        if (data[5] !== 0x10 || data[6] !== 0x05 || data[7] !== 0x01 || data[16] !== 0x54 || data[17] !== 0x48) {
+            // CompanyID, Apperance, "T" "H"
             return false;
         }
         return true;
     }
     static getData(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
+        if (!this.isAdvDevice(peripheral)) {
             return null;
         }
         const data = peripheral.adv_data;
-        if (Logtta_TH.getName(data) !== "TH Sensor") {
-            return null;
-        }
         const alert = data[15];
         const interval = (data[13] << 8) | data[14];
         const advData = {

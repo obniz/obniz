@@ -24,6 +24,31 @@ await obniz.ble.scan.startWait();
 
 Get a data from advertisement
 
+2In case of advertisement with localName `IM` of JCIE-BU01 (bag shape)
+
+- temperature: (degC)
+- relative_humidity: (%RH)
+- light: (lx)
+- uv_index: 
+- barometric_pressure: (hPa)
+- soud_noise: (dB)
+- acceleration_x: 
+- acceleration_y: 
+- acceleration_z: 
+- battery: (V)
+
+2In case of advertisement with localName `Rbt` of JCIE-BL01 (USB connection)
+
+- temperature: (degC)
+- relative_humidity: (%RH)
+- light: (lx)
+- uv_index: 
+- barometric_pressure: (hPa)
+- soud_noise: (dB)
+- etvoc: eTVOC(ppb)
+- eCO2: eTVOC(ppm)
+
+
 ```javascript
 // Javascript Example
 const Device = Obniz.getPartsClass('2JCIE');
@@ -35,6 +60,19 @@ obniz.ble.scan.onfind = (p) => {
     }
 };
 await obniz.ble.scan.startWait();
+```
+
+```javascript
+// Example of "Rbt" pakcet
+{
+    barometric_pressure: 1015.755
+    eco2: 719
+    etvoc: 48
+    light: 241
+    relative_humidity: 30.46
+    soud_noise: 77.52
+    temperature: 24.16
+}
 ```
 
 
