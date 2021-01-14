@@ -23,6 +23,33 @@ await obniz.ble.scan.startWait();
 ## getData(BleRemotePeripheral)
 
 advertisementからデータを取得(そのようにモード設定されたデバイスのみ発信しています)
+デバイスの種類により取得できる値が異なります。デバイスの設定でも変更が可能です。
+
+2JCIE-BU01(バッグ形状)の`IM`というlocalNameを持つadvertisementの場合
+
+- temperature: 温度(degC)
+- relative_humidity: 湿度(%RH)
+- light: 照度(lx)
+- uv_index: 紫外線強度
+- barometric_pressure: 気圧(hPa)
+- soud_noise: 騒音(dB)
+- acceleration_x: 加速度
+- acceleration_y: 加速度
+- acceleration_z: 加速度
+- battery: バッテリー電圧(V)
+
+2JCIE-BL01(USB接続)の`Rbt`というlocalNameを持つadvertisementの場合
+
+- temperature: 温度(degC)
+- relative_humidity: 湿度(%RH)
+- light: 照度(lx)
+- uv_index: 紫外線強度
+- barometric_pressure: 気圧(hPa)
+- soud_noise: 騒音(dB)
+- etvoc: eTVOC(ppb)
+- eCO2: eTVOC(ppm)
+
+
 
 ```javascript
 // Javascript Example
@@ -35,6 +62,19 @@ obniz.ble.scan.onfind = (p) => {
     }
 };
 await obniz.ble.scan.startWait();
+```
+
+```javascript
+// Example of "Rbt" pakcet
+{
+    barometric_pressure: 1015.755
+    eco2: 719
+    etvoc: 48
+    light: 241
+    relative_humidity: 30.46
+    soud_noise: 77.52
+    temperature: 24.16
+}
 ```
 
 
