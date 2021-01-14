@@ -52,10 +52,10 @@ class Signaling extends EventEmitter<SignalingEventTypes> {
 
     debug("onAclStreamData: " + data.toString("hex"));
 
-    const code: any = data.readUInt8(0);
-    const identifier: any = data.readUInt8(1);
-    const length: any = data.readUInt16LE(2);
-    const signalingData: any = data.slice(4);
+    const code = data.readUInt8(0);
+    const identifier = data.readUInt8(1);
+    const length = data.readUInt16LE(2);
+    const signalingData = data.slice(4);
 
     debug("\tcode = " + code);
     debug("\tidentifier = " + identifier);
@@ -71,18 +71,18 @@ class Signaling extends EventEmitter<SignalingEventTypes> {
     this._aclStream.removeListener("end", this.onAclStreamEndBinded);
   }
 
-  public processConnectionParameterUpdateRequest(identifier: any, data: any) {
-    const minInterval: any = data.readUInt16LE(0) * 1.25;
-    const maxInterval: any = data.readUInt16LE(2) * 1.25;
-    const latency: any = data.readUInt16LE(4);
-    const supervisionTimeout: any = data.readUInt16LE(6) * 10;
+  private processConnectionParameterUpdateRequest(identifier: any, data: any) {
+    const minInterval = data.readUInt16LE(0) * 1.25;
+    const maxInterval = data.readUInt16LE(2) * 1.25;
+    const latency = data.readUInt16LE(4);
+    const supervisionTimeout = data.readUInt16LE(6) * 10;
 
     debug("\t\tmin interval = ", minInterval);
     debug("\t\tmax interval = ", maxInterval);
     debug("\t\tlatency = ", latency);
     debug("\t\tsupervision timeout = ", supervisionTimeout);
 
-    const response: any = Buffer.alloc(6);
+    const response = Buffer.alloc(6);
 
     response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
     response.writeUInt8(identifier, 1); // identifier

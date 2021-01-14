@@ -158,8 +158,8 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
 
     for (const char of chars) {
       const uuid = char.uuid;
-      const properties = char.properties.map((e: any) => BleHelper.toSnakeCase(e));
-      let child: any = this.getChild(uuid);
+      const properties = char.properties.map((e: string) => BleHelper.toSnakeCase(e));
+      let child = this.getChild(uuid);
       if (!child) {
         child = this.addChild({ uuid });
       }
@@ -167,7 +167,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
       child.properties = properties || [];
       this.ondiscover(child);
     }
-    return this.characteristics.filter((elm: any) => {
+    return this.characteristics.filter((elm: BleRemoteCharacteristic) => {
       return elm.discoverdOnRemote;
     });
   }
@@ -176,7 +176,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    * @param characteristic
    */
-  public ondiscover(characteristic: any) {
+  public ondiscover(characteristic: BleRemoteCharacteristic) {
     this._runUserCreatedFunction(this.ondiscovercharacteristic, characteristic);
   }
 
@@ -184,7 +184,7 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    * @param characteristics
    */
-  public ondiscoverfinished(characteristics: any) {
+  public ondiscoverfinished(characteristics: BleRemoteCharacteristic) {
     this._runUserCreatedFunction(this.ondiscovercharacteristicfinished, characteristics);
   }
 
@@ -192,13 +192,13 @@ export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemo
    * @ignore
    * @param characteristic
    */
-  public ondiscovercharacteristic(characteristic: any) {}
+  public ondiscovercharacteristic(characteristic: BleRemoteCharacteristic) {}
 
   /**
    * @ignore
    * @param characteristics
    */
-  public ondiscovercharacteristicfinished(characteristics: any[]) {}
+  public ondiscovercharacteristicfinished(characteristics: BleRemoteCharacteristic[]) {}
 
   /**
    * @ignore

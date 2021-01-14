@@ -333,7 +333,7 @@ export default class ObnizBLE extends ComponentAbstract {
       // background
       this.Obniz.error(e);
     });
-    const peripheral: any = this.findPeripheral(address);
+    const peripheral = this.findPeripheral(address);
     return peripheral;
   }
 
@@ -358,7 +358,7 @@ export default class ObnizBLE extends ComponentAbstract {
    * @param addressType "random" or "public"
    */
   public async directConnectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType) {
-    let peripheral: any = this.findPeripheral(address);
+    let peripheral = this.findPeripheral(address);
     if (!peripheral) {
       peripheral = new BleRemotePeripheral(this, address);
       this.remotePeripherals.push(peripheral);
