@@ -3762,6 +3762,16 @@ class ObnizPartsBleInterface {
         return val;
     }
     /**
+     * Utility function for reading 4 byte to signed number.
+     */
+    static signed32FromBinary(byte3, byte2, byte1, byte0) {
+        let val = (byte3 << (8 * 3)) | (byte2 << (8 * 2)) | (byte1 << (8 * 1)) | byte0;
+        if ((val & 0x80000000) !== 0) {
+            val = val - 0x100000000;
+        }
+        return val;
+    }
+    /**
      * Utility function for reading 1byte fixed point number
      */
     static readFraction(byte) {
@@ -6973,6 +6983,7 @@ class BleRemotePeripheral {
          * @ignore
          */
         this.discoverdOnRemote = undefined;
+        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this.obnizBle = obnizBle;
         this.address = address;
         this.connected = false;
@@ -6984,7 +6995,6 @@ class BleRemotePeripheral {
         this.scan_resp = null;
         this.localName = null;
         this.iBeacon = null;
-        this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
         this._services = [];
         this.emitter = new eventemitter3_1.default();
     }
@@ -8832,19 +8842,19 @@ class NobleBindings extends eventemitter3_1.default {
             .catch((error) => {
             // nothing
         })
+            .then(async () => {
+            const conResult = await this._hci.createLeConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === "function") {
+                    onConnectCallback();
+                }
+            }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(256);
+        })
             .then(() => {
-            return this._hci.createLeConnWait(address, addressType, 90 * 1000); // connection timeout for 90 secs.
-        })
-            .then((result) => {
-            this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
-            if (onConnectCallback && typeof onConnectCallback === "function") {
-                onConnectCallback();
-            }
-            return this._gatts[result.handle].exchangeMtuWait(256);
-        })
-            .then((result) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
-            return Promise.resolve(result);
+            return Promise.resolve();
         }, (error) => {
             this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
             return Promise.reject(error);
@@ -9003,13 +9013,11 @@ class NobleBindings extends eventemitter3_1.default {
     }
     async discoverDescriptorsWait(peripheralUuid, serviceUuid, characteristicUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const descriptors = await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
-        return descriptors;
+        return await gatt.discoverDescriptorsWait(serviceUuid, characteristicUuid);
     }
     async readValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
         const gatt = this.getGatt(peripheralUuid);
-        const resp = await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
-        return resp;
+        return await gatt.readValueWait(serviceUuid, characteristicUuid, descriptorUuid);
     }
     async writeValueWait(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
         const gatt = this.getGatt(peripheralUuid);
@@ -9031,8 +9039,15 @@ class NobleBindings extends eventemitter3_1.default {
             .toLowerCase();
         this.emit("handleNotify", uuid, handle, data);
     }
-    async onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-        await this._hci.connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout);
+    onConnectionParameterUpdateWait(handle, minInterval, maxInterval, latency, supervisionTimeout) {
+        this._hci
+            .connUpdateLeWait(handle, minInterval, maxInterval, latency, supervisionTimeout)
+            .then(() => { })
+            .catch((e) => {
+            // TODO:
+            // This must passed to Obniz class.
+            console.error(e);
+        });
         // this.onLeConnUpdateComplete(); is nop
     }
     async pairingWait(peripheralUuid, options) {
@@ -9645,6 +9660,7 @@ class Gatt extends eventemitter3_1.default {
                 for (i = 0; i < num; i++) {
                     characteristics.push({
                         startHandle: data.readUInt16LE(2 + i * type + 0),
+                        endHandle: 0,
                         properties: data.readUInt8(2 + i * type + 2),
                         valueHandle: data.readUInt16LE(2 + i * type + 3),
                         uuid: type === 7
@@ -9815,6 +9831,8 @@ class Gatt extends eventemitter3_1.default {
             }
             startHandle = descriptors[descriptors.length - 1].handle + 1;
         }
+        // never reached
+        return [];
     }
     async readValueWait(serviceUuid, characteristicUuid, descriptorUuid) {
         const descriptor = this.getDescriptor(serviceUuid, characteristicUuid, descriptorUuid);
@@ -10764,7 +10782,7 @@ class Hci extends eventemitter3_1.default {
         const data = await p;
         return data.status;
     }
-    async createLeConnWait(address, addressType, timeout = 90 * 1000) {
+    async createLeConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -10772,25 +10790,25 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x19, 3);
         // data
-        cmd.writeUInt16LE(0x0060, 4); // interval
-        cmd.writeUInt16LE(0x0030, 6); // window
+        cmd.writeUInt16LE(0x0010, 4); // interval
+        cmd.writeUInt16LE(0x0010, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
         cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
         bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
-        cmd.writeUInt16LE(0x0006, 17); // min interval
-        cmd.writeUInt16LE(0x000c, 19); // max interval
-        cmd.writeUInt16LE(0x0000, 21); // latency
-        cmd.writeUInt16LE(0x00c8, 23); // supervision timeout
-        cmd.writeUInt16LE(0x0004, 25); // min ce length
-        cmd.writeUInt16LE(0x0006, 27); // max ce length
+        cmd.writeUInt16LE(0x0009, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
+        cmd.writeUInt16LE(0x0018, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
+        cmd.writeUInt16LE(0x0001, 21); // latency // cmd.writeUInt16LE(0x0000, 21);
+        cmd.writeUInt16LE(0x0190, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
+        cmd.writeUInt16LE(0x0000, 25); // min ce length
+        cmd.writeUInt16LE(0x0000, 27); // max ce length
         this.debug("create le conn - writing: " + cmd.toString("hex"));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
         });
         this._socket.write(cmd);
         const { status, data } = await p;
-        return this.processLeConnComplete(status, data);
+        return this.processLeConnComplete(status, data, onConnectCallback);
     }
     async createLeConnCancelWait() {
         const cmd = Buffer.alloc(4);
@@ -11128,14 +11146,17 @@ class Hci extends eventemitter3_1.default {
             this.processLeAdvertisingReport(status, data);
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-            this.processLeConnComplete(status, data);
+            const role = data.readUInt8(2);
+            if (role === 1) {
+                this.processLeConnComplete(status, data, undefined);
+            }
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
             this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
         }
     }
-    processLeConnComplete(status, data) {
+    processLeConnComplete(status, data, onConnectCallback) {
         const handle = data.readUInt16LE(0);
         const role = data.readUInt8(2);
         const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
@@ -11157,7 +11178,7 @@ class Hci extends eventemitter3_1.default {
             // only slave, emit
             this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
         }
-        return {
+        const result = {
             status,
             handle,
             role,
@@ -11168,6 +11189,10 @@ class Hci extends eventemitter3_1.default {
             supervisionTimeout,
             masterClockAccuracy,
         };
+        if (typeof onConnectCallback === "function") {
+            onConnectCallback(result);
+        }
+        return result;
     }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
@@ -12302,7 +12327,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2800" === uuid || "2802" === uuid) {
             const services = [];
             const type = "2800" === uuid ? "service" : "includedService";
@@ -12363,7 +12388,7 @@ class Gatt extends eventemitter3_1.default {
             ", endHandle = 0x" +
             endHandle.toString(16) +
             ", uuid = 0x" +
-            uuid.toString(16));
+            uuid);
         if ("2803" === uuid) {
             const characteristics = [];
             for (i = startHandle; i <= endHandle; i++) {
@@ -22365,21 +22390,41 @@ class OMRON_2JCIE {
     }
     static isDevice(peripheral) {
         return ((peripheral.localName && peripheral.localName.indexOf("Env") >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0));
+            (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) ||
+            (peripheral.localName && peripheral.localName.indexOf("Rbt") >= 0));
     }
     /**
      * Get a datas from advertisement mode of OMRON 2JCIE
      */
     static getData(peripheral) {
+        const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf("IM") >= 0) {
-            const adv_data = peripheral.adv_data;
             return {
                 temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[8], adv_data[9]) * 0.01,
                 relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[11]) * 0.01,
                 light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[13]) * 1,
                 uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[15]) * 0.01,
                 barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[16], adv_data[17]) * 0.1,
-                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[18]) * 0.01,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[18], adv_data[19]) * 0.01,
+                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[21]),
+                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[23]),
+                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[25]),
+                battery: (adv_data[26] + 100) / 100,
+            };
+        }
+        else if (peripheral.localName &&
+            peripheral.localName.indexOf("Rbt") >= 0 &&
+            adv_data[6] === 0x02 &&
+            adv_data[6] === 0x02 &&
+            adv_data[7] === 0x01) {
+            return {
+                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) * 0.01,
+                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
+                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
+                barometric_pressure: ObnizPartsBleInterface_1.default.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
+                soud_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+                etvoc: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[21]),
+                eco2: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[23]),
             };
         }
         return null;
@@ -23164,19 +23209,22 @@ class Logtta_CO2 {
             return false;
         }
         const data = peripheral.adv_data;
-        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
+        if (data[5] !== 0x10 ||
+            data[6] !== 0x05 ||
+            data[7] !== 0x02 ||
+            data[16] !== 0x43 ||
+            data[17] !== 0x4f ||
+            data[18] !== 0x32) {
+            // CompanyID, Apperance, "C" "O" "2"
             return false;
         }
         return true;
     }
     static getData(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
+        if (!this.isAdvDevice(peripheral)) {
             return null;
         }
         const data = peripheral.adv_data;
-        if (Logtta_CO2.getName(data) !== "CO2 Sensor") {
-            return null;
-        }
         const alert = data[15];
         const interval = (data[13] << 8) | data[14];
         const advData = {
@@ -23316,19 +23364,17 @@ class Logtta_TH {
             return false;
         }
         const data = peripheral.adv_data;
-        if (Logtta_TH.getName(data) !== "TH Sensor") {
+        if (data[5] !== 0x10 || data[6] !== 0x05 || data[7] !== 0x01 || data[16] !== 0x54 || data[17] !== 0x48) {
+            // CompanyID, Apperance, "T" "H"
             return false;
         }
         return true;
     }
     static getData(peripheral) {
-        if (peripheral.adv_data.length !== 31) {
+        if (!this.isAdvDevice(peripheral)) {
             return null;
         }
         const data = peripheral.adv_data;
-        if (Logtta_TH.getName(data) !== "TH Sensor") {
-            return null;
-        }
         const alert = data[15];
         const interval = (data[13] << 8) | data[14];
         const advData = {

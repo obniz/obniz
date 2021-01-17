@@ -284,7 +284,7 @@ class Hci extends eventemitter3_1.default {
         const data = await p;
         return data.status;
     }
-    async createLeConnWait(address, addressType, timeout = 90 * 1000) {
+    async createLeConnWait(address, addressType, timeout = 90 * 1000, onConnectCallback) {
         const cmd = Buffer.alloc(29);
         // header
         cmd.writeUInt8(COMMANDS.HCI_COMMAND_PKT, 0);
@@ -292,25 +292,25 @@ class Hci extends eventemitter3_1.default {
         // length
         cmd.writeUInt8(0x19, 3);
         // data
-        cmd.writeUInt16LE(0x0060, 4); // interval
-        cmd.writeUInt16LE(0x0030, 6); // window
+        cmd.writeUInt16LE(0x0010, 4); // interval
+        cmd.writeUInt16LE(0x0010, 6); // window
         cmd.writeUInt8(0x00, 8); // initiator filter
         cmd.writeUInt8(addressType === "random" ? 0x01 : 0x00, 9); // peer address type
         bleHelper_1.default.hex2reversedBuffer(address, ":").copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
-        cmd.writeUInt16LE(0x0006, 17); // min interval
-        cmd.writeUInt16LE(0x000c, 19); // max interval
-        cmd.writeUInt16LE(0x0000, 21); // latency
-        cmd.writeUInt16LE(0x00c8, 23); // supervision timeout
-        cmd.writeUInt16LE(0x0004, 25); // min ce length
-        cmd.writeUInt16LE(0x0006, 27); // max ce length
+        cmd.writeUInt16LE(0x0009, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
+        cmd.writeUInt16LE(0x0018, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
+        cmd.writeUInt16LE(0x0001, 21); // latency // cmd.writeUInt16LE(0x0000, 21);
+        cmd.writeUInt16LE(0x0190, 23); // supervision timeout 4sec // cmd.writeUInt16LE(0x00c8, 23);
+        cmd.writeUInt16LE(0x0000, 25); // min ce length
+        cmd.writeUInt16LE(0x0000, 27); // max ce length
         this.debug("create le conn - writing: " + cmd.toString("hex"));
         const p = this.readLeMetaEventWait(COMMANDS.EVT_LE_CONN_COMPLETE, {
             timeout,
         });
         this._socket.write(cmd);
         const { status, data } = await p;
-        return this.processLeConnComplete(status, data);
+        return this.processLeConnComplete(status, data, onConnectCallback);
     }
     async createLeConnCancelWait() {
         const cmd = Buffer.alloc(4);
@@ -648,14 +648,17 @@ class Hci extends eventemitter3_1.default {
             this.processLeAdvertisingReport(status, data);
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_COMPLETE) {
-            this.processLeConnComplete(status, data);
+            const role = data.readUInt8(2);
+            if (role === 1) {
+                this.processLeConnComplete(status, data, undefined);
+            }
         }
         else if (eventType === COMMANDS.EVT_LE_CONN_UPDATE_COMPLETE) {
             const { handle, interval, latency, supervisionTimeout } = this.processLeConnUpdateComplete(status, data);
             this.emit("leConnUpdateComplete", status, handle, interval, latency, supervisionTimeout);
         }
     }
-    processLeConnComplete(status, data) {
+    processLeConnComplete(status, data, onConnectCallback) {
         const handle = data.readUInt16LE(0);
         const role = data.readUInt8(2);
         const addressType = data.readUInt8(3) === 0x01 ? "random" : "public";
@@ -677,7 +680,7 @@ class Hci extends eventemitter3_1.default {
             // only slave, emit
             this.emit("leConnComplete", status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy);
         }
-        return {
+        const result = {
             status,
             handle,
             role,
@@ -688,6 +691,10 @@ class Hci extends eventemitter3_1.default {
             supervisionTimeout,
             masterClockAccuracy,
         };
+        if (typeof onConnectCallback === "function") {
+            onConnectCallback(result);
+        }
+        return result;
     }
     processLeAdvertisingReport(count, data) {
         for (let i = 0; i < count; i++) {
