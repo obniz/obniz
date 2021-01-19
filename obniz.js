@@ -1712,7 +1712,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/ws/obniz.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"},"metadata":{"type":"string"}}}}}
 
 /***/ }),
 
@@ -3059,6 +3059,14 @@ class ObnizConnection extends eventemitter3_1.default {
             }
             if (this.options.reset_obniz_on_ws_disconnection) {
                 this.resetOnDisconnect(true);
+            }
+            if (wsObj.obniz.metadata) {
+                try {
+                    this.metadata = JSON.parse(wsObj.obniz.metadata);
+                }
+                catch (e) {
+                    // ignore parsing error.
+                }
             }
             if (wsObj.local_connect &&
                 wsObj.local_connect.ip &&
