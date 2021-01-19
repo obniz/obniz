@@ -43,28 +43,9 @@ export default class ObnizApi {
   /**
    * Get device is online or offline
    */
-  public getStateWait(): Promise<{ state: "online" | "offline" }> {
-    return new Promise((resolve) => {
-      this.post("/state", null, resolve);
-    });
-  }
-
-  /**
-   * Get metadata
-   * @param callback with result
-   */
-  public getMetadata(callback: (val: { metadata: any }) => void) {
-    return this.get("/metadata", callback);
-  }
-
-  /**
-   * Get metadata
-   * @param callback with result
-   */
-  public getMetadataWait(): Promise<{ metadata: any }> {
-    return new Promise((resolve) => {
-      this.get("/metadata", resolve);
-    });
+  public async getStateWait(): Promise<{ state: "online" | "offline" }> {
+    const json = await this.post("/state", null);
+    return json;
   }
 
   /**
@@ -72,11 +53,11 @@ export default class ObnizApi {
    * @param json
    * @param callback
    */
-  public postJson(json: any, callback: (result: any) => void) {
-    return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
+  public async postJson(json: any, callback: (result: any) => void) {
+    return await this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
   }
 
-  protected post(path: any, params: any, callback: any) {
+  protected async post(path: string, params: any, callback: any = null) {
     const url: any = this.urlBase + path;
 
     // let query = [];
@@ -99,18 +80,12 @@ export default class ObnizApi {
       fetchParams.body = JSON.stringify(params);
     }
 
-    return fetch(url, fetchParams)
-      .then((res: any) => {
-        return res.json();
-      })
-      .then((json: any) => {
-        if (typeof callback === "function") {
-          callback(json);
-        }
-        return new Promise((resolve: any) => {
-          resolve(json);
-        });
-      });
+    const res = await fetch(url, fetchParams);
+    const json = await res.json();
+    if (typeof callback === "function") {
+      callback(json);
+    }
+    return json;
   }
 
   protected get(path: any, callback: any) {
