@@ -568,10 +568,10 @@ export default class BleRemotePeripheral {
    */
   public disconnectWait(): Promise<void> {
     return new Promise((resolve: any, reject: any) => {
-      // if (!this.connected) {
-      //   resolve();
-      //   return;
-      // }
+      if (!this.connected) {
+        resolve();
+        return;
+      }
       this.emitter.once("statusupdate", (params: any) => {
         clearTimeout(timeoutTimer);
         if (params.status === "disconnected") {

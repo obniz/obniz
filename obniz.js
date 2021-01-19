@@ -7192,10 +7192,10 @@ class BleRemotePeripheral {
      */
     disconnectWait() {
         return new Promise((resolve, reject) => {
-            // if (!this.connected) {
-            //   resolve();
-            //   return;
-            // }
+            if (!this.connected) {
+                resolve();
+                return;
+            }
             this.emitter.once("statusupdate", (params) => {
                 clearTimeout(timeoutTimer);
                 if (params.status === "disconnected") {
